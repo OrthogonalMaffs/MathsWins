@@ -1,0 +1,980 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<!-- Google tag (gtag.js) -->
+<script async src="https://www.googletagmanager.com/gtag/js?id=G-CLNF7GSB28"></script>
+<script>
+  window.dataLayer = window.dataLayer || [];
+  function gtag(){dataLayer.push(arguments);}
+  gtag('js', new Date());
+
+  gtag('config', 'G-CLNF7GSB28', {
+    send_page_view: true,
+    storage: 'none',
+    anonymize_ip: true
+  });
+</script>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<link rel="icon" type="image/svg+xml" href="../../schools/assets/favicon.svg">
+<title>52-dle · Maffs Games</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=DM+Mono:ital,wght@0,300;0,400;0,500;1,300&family=Bebas+Neue&family=Inter:wght@300;400;500&display=swap" rel="stylesheet">
+<style>
+:root {
+  --ink:        #070d1a;
+  --navy:       #0b1629;
+  --navy-mid:   #0f1f3d;
+  --navy-light: #162847;
+  --gold:       #c9a84c;
+  --gold-warm:  #e2b96a;
+  --gold-dim:   #7a5e28;
+  --teal:       #2dd4bf;
+  --teal-dim:   #134e4a;
+  --body:       #a8b8d0;
+  --muted:      #4a6080;
+  --border:     #1a2e4a;
+  --border-dim: #111f33;
+  --success:    #22c55e;
+  --danger:     #ef4444;
+  --warn:       #f59e0b;
+  --higher:     #60a5fa;
+  --lower:      #f87171;
+}
+
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+body {
+  background: var(--ink);
+  color: var(--body);
+  font-family: 'Inter', sans-serif;
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  overflow-x: hidden;
+}
+
+/* Grid background */
+body::before {
+  content: '';
+  position: fixed;
+  inset: 0;
+  background-image:
+    linear-gradient(rgba(201,168,76,0.03) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(201,168,76,0.03) 1px, transparent 1px);
+  background-size: 40px 40px;
+  pointer-events: none;
+  z-index: 0;
+}
+
+/* Nav */
+nav {
+  position: sticky;
+  top: 0;
+  z-index: 100;
+  width: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 0 2rem;
+  height: 52px;
+  background: rgba(7,13,26,0.92);
+  backdrop-filter: blur(12px);
+  border-bottom: 1px solid var(--border-dim);
+}
+.nav-logo {
+  font-family: 'Bebas Neue', sans-serif;
+  font-size: 1.2rem;
+  letter-spacing: 0.15em;
+  color: var(--gold);
+  text-decoration: none;
+}
+.nav-back {
+  font-family: 'DM Mono', monospace;
+  font-size: 0.6rem;
+  letter-spacing: 0.12em;
+  color: var(--muted);
+  text-decoration: none;
+  transition: color 0.2s;
+}
+.nav-back:hover { color: var(--gold); }
+
+/* Page layout */
+.page {
+  position: relative;
+  z-index: 1;
+  width: 100%;
+  max-width: 520px;
+  padding: 2rem 1rem 4rem;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 1.5rem;
+}
+
+/* Header */
+.game-header { text-align: center; }
+.game-kicker {
+  font-family: 'DM Mono', monospace;
+  font-size: 0.6rem;
+  letter-spacing: 0.2em;
+  text-transform: uppercase;
+  color: var(--teal);
+  margin-bottom: 0.4rem;
+}
+.game-title {
+  font-family: 'Bebas Neue', sans-serif;
+  font-size: 3.5rem;
+  letter-spacing: 0.08em;
+  color: var(--gold-warm);
+  line-height: 1;
+}
+.game-sub {
+  font-size: 0.75rem;
+  color: var(--muted);
+  line-height: 1.6;
+  margin-top: 0.4rem;
+}
+
+/* Status bar */
+.status-bar {
+  display: flex;
+  gap: 1rem;
+  width: 100%;
+  background: var(--navy-mid);
+  border: 1px solid var(--border);
+  border-radius: 4px;
+  padding: 0.75rem 1rem;
+  justify-content: space-around;
+}
+.si { display: flex; flex-direction: column; align-items: center; gap: 0.15rem; }
+.si-val {
+  font-family: 'DM Mono', monospace;
+  font-size: 1.1rem;
+  font-weight: 500;
+  color: var(--gold);
+}
+.si-lbl {
+  font-family: 'DM Mono', monospace;
+  font-size: 0.48rem;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: var(--muted);
+}
+
+/* Guess history */
+.guess-history {
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+  gap: 0.4rem;
+}
+.guess-row {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  padding: 0.6rem 1rem;
+  background: var(--navy-mid);
+  border: 1px solid var(--border-dim);
+  border-radius: 3px;
+  animation: slideIn 0.2s ease;
+}
+@keyframes slideIn {
+  from { opacity: 0; transform: translateY(-6px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+.guess-num {
+  font-family: 'DM Mono', monospace;
+  font-size: 1.1rem;
+  font-weight: 500;
+  color: var(--body);
+  min-width: 60px;
+}
+.guess-feedback {
+  font-family: 'DM Mono', monospace;
+  font-size: 0.65rem;
+  flex: 1;
+}
+.guess-arrow {
+  font-size: 1rem;
+  min-width: 20px;
+}
+.fb-higher { color: var(--higher); }
+.fb-lower  { color: var(--lower); }
+.fb-exact  { color: var(--success); }
+.fb-warm   { color: var(--warn); }
+
+/* Empty rows */
+.guess-slot {
+  height: 46px;
+  background: var(--navy-mid);
+  border: 1px dashed var(--border-dim);
+  border-radius: 3px;
+  opacity: 0.4;
+}
+
+/* Input area */
+.input-area {
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+  gap: 0.6rem;
+}
+.input-row {
+  display: flex;
+  gap: 0.5rem;
+}
+.guess-input {
+  flex: 1;
+  background: var(--navy-mid);
+  border: 1px solid var(--border);
+  border-radius: 3px;
+  padding: 0.7rem 1rem;
+  font-family: 'DM Mono', monospace;
+  font-size: 1rem;
+  color: var(--body);
+  outline: none;
+  transition: border-color 0.2s;
+}
+.guess-input:focus { border-color: var(--gold-dim); }
+.guess-input::placeholder { color: var(--muted); font-size: 0.7rem; }
+
+.btn {
+  padding: 0.7rem 1.2rem;
+  font-family: 'DM Mono', monospace;
+  font-size: 0.62rem;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  cursor: pointer;
+  border-radius: 3px;
+  border: none;
+  transition: all 0.2s;
+  white-space: nowrap;
+}
+.btn-gold {
+  background: var(--gold);
+  color: var(--ink);
+  font-weight: 500;
+}
+.btn-gold:hover { background: var(--gold-warm); }
+.btn-gold:disabled { background: var(--muted); cursor: not-allowed; opacity: 0.5; }
+.btn-ghost {
+  background: transparent;
+  border: 1px solid var(--border);
+  color: var(--muted);
+}
+.btn-ghost:hover { border-color: var(--gold-dim); color: var(--gold); }
+.btn-ghost:disabled { opacity: 0.3; cursor: not-allowed; }
+.btn-teal {
+  background: transparent;
+  border: 1px solid var(--teal-dim);
+  color: var(--teal);
+}
+.btn-teal:hover { background: var(--teal-dim); }
+
+/* Hint area */
+.hint-area {
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+  gap: 0.4rem;
+}
+.hint-box {
+  background: var(--navy-mid);
+  border: 1px solid var(--teal-dim);
+  border-radius: 3px;
+  padding: 0.6rem 1rem;
+  font-family: 'DM Mono', monospace;
+  font-size: 0.65rem;
+  color: var(--teal);
+  line-height: 1.5;
+  animation: slideIn 0.2s ease;
+}
+.hint-label {
+  font-size: 0.48rem;
+  letter-spacing: 0.15em;
+  text-transform: uppercase;
+  color: var(--muted);
+  margin-bottom: 0.2rem;
+}
+.hint-controls {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+}
+.hint-cost {
+  font-family: 'DM Mono', monospace;
+  font-size: 0.55rem;
+  color: var(--muted);
+}
+
+/* Category badge */
+.cat-badge {
+  display: inline-block;
+  padding: 0.15rem 0.5rem;
+  font-family: 'DM Mono', monospace;
+  font-size: 0.48rem;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  border-radius: 2px;
+  background: rgba(201,168,76,0.1);
+  color: var(--gold-dim);
+  border: 1px solid var(--gold-dim);
+}
+
+/* Clue box */
+.clue-box {
+  width: 100%;
+  background: var(--navy-mid);
+  border: 1px solid var(--border);
+  border-left: 3px solid var(--gold-dim);
+  border-radius: 3px;
+  padding: 0.9rem 1rem;
+}
+.clue-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 0.5rem;
+}
+.clue-label {
+  font-family: 'DM Mono', monospace;
+  font-size: 0.48rem;
+  letter-spacing: 0.15em;
+  text-transform: uppercase;
+  color: var(--muted);
+}
+.clue-text {
+  font-size: 0.78rem;
+  line-height: 1.7;
+  color: var(--body);
+  font-style: italic;
+}
+
+/* Message */
+.msg {
+  font-family: 'DM Mono', monospace;
+  font-size: 0.65rem;
+  text-align: center;
+  min-height: 1.2rem;
+  color: var(--danger);
+}
+.msg.ok { color: var(--success); }
+
+/* Modal */
+.modal-overlay {
+  position: fixed;
+  inset: 0;
+  background: rgba(7,13,26,0.85);
+  backdrop-filter: blur(8px);
+  z-index: 200;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 1rem;
+  animation: fadeIn 0.2s ease;
+}
+@keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
+.modal-overlay.hidden { display: none; }
+
+.modal {
+  background: var(--navy-mid);
+  border: 1px solid var(--border);
+  border-radius: 4px;
+  width: 100%;
+  max-width: 380px;
+  overflow: hidden;
+  animation: popIn 0.25s ease;
+}
+@keyframes popIn {
+  from { transform: scale(0.95); opacity: 0; }
+  to   { transform: scale(1);    opacity: 1; }
+}
+.modal-header {
+  padding: 1.4rem 1.4rem 0;
+  text-align: center;
+}
+.modal-result {
+  font-family: 'Bebas Neue', sans-serif;
+  font-size: 2.2rem;
+  letter-spacing: 0.1em;
+  margin-bottom: 0.3rem;
+}
+.modal-result.win  { color: var(--success); }
+.modal-result.lose { color: var(--danger); }
+.modal-answer {
+  font-family: 'DM Mono', monospace;
+  font-size: 0.65rem;
+  color: var(--muted);
+}
+.modal-answer span { color: var(--gold); font-size: 0.9rem; }
+
+.modal-score {
+  margin: 1rem 1.4rem;
+  background: var(--navy-light);
+  border: 1px solid var(--border-dim);
+  border-radius: 3px;
+  padding: 0.8rem;
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 0.5rem;
+}
+.ms-item { display: flex; flex-direction: column; gap: 0.1rem; }
+.ms-val {
+  font-family: 'DM Mono', monospace;
+  font-size: 0.9rem;
+  color: var(--gold);
+}
+.ms-lbl {
+  font-family: 'DM Mono', monospace;
+  font-size: 0.45rem;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: var(--muted);
+}
+
+/* Name entry */
+.modal-name {
+  padding: 0 1.4rem;
+  display: flex;
+  flex-direction: column;
+  gap: 0.4rem;
+}
+.modal-name label {
+  font-family: 'DM Mono', monospace;
+  font-size: 0.52rem;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: var(--muted);
+}
+.name-input {
+  background: var(--navy);
+  border: 1px solid var(--border);
+  border-radius: 3px;
+  padding: 0.6rem 0.8rem;
+  font-family: 'DM Mono', monospace;
+  font-size: 0.8rem;
+  color: var(--body);
+  outline: none;
+  width: 100%;
+}
+.name-input:focus { border-color: var(--gold-dim); }
+
+.modal-acts {
+  display: flex;
+  gap: 0.5rem;
+  padding: 1rem 1.4rem 1.4rem;
+}
+.modal-acts .btn { flex: 1; }
+
+/* Leaderboard */
+.lb-section {
+  width: 100%;
+  background: var(--navy-mid);
+  border: 1px solid var(--border);
+  border-radius: 4px;
+  overflow: hidden;
+}
+.lb-header {
+  padding: 0.75rem 1rem;
+  border-bottom: 1px solid var(--border-dim);
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+.lb-title {
+  font-family: 'DM Mono', monospace;
+  font-size: 0.55rem;
+  letter-spacing: 0.15em;
+  text-transform: uppercase;
+  color: var(--muted);
+}
+.lb-body { padding: 0.5rem 0; }
+.lb-empty {
+  font-family: 'DM Mono', monospace;
+  font-size: 0.6rem;
+  color: var(--muted);
+  text-align: center;
+  padding: 1.2rem;
+  font-style: italic;
+}
+.lb-row {
+  display: grid;
+  grid-template-columns: 1.5rem 1fr auto auto auto;
+  gap: 0.5rem;
+  align-items: center;
+  padding: 0.4rem 1rem;
+  border-bottom: 1px solid var(--border-dim);
+  font-family: 'DM Mono', monospace;
+  font-size: 0.6rem;
+}
+.lb-row:last-child { border-bottom: none; }
+.lb-row.hl { background: rgba(201,168,76,0.06); }
+.lb-rank { color: var(--muted); }
+.lb-name { color: var(--body); }
+.lb-score { color: var(--gold); text-align: right; }
+.lb-g, .lb-h { color: var(--muted); text-align: right; font-size: 0.52rem; }
+
+/* Next puzzle */
+.next-box {
+  text-align: center;
+  font-family: 'DM Mono', monospace;
+  font-size: 0.55rem;
+  color: var(--muted);
+  padding: 0.75rem 0 0.25rem;
+}
+.next-box span { color: var(--teal); }
+
+/* Shake */
+@keyframes shake {
+  0%,100% { transform: translateX(0); }
+  20%      { transform: translateX(-6px); }
+  40%      { transform: translateX(6px); }
+  60%      { transform: translateX(-4px); }
+  80%      { transform: translateX(4px); }
+}
+.shake { animation: shake 0.35s ease; }
+
+/* Share grid */
+.share-grid {
+  font-family: 'DM Mono', monospace;
+  font-size: 1.1rem;
+  letter-spacing: 0.05em;
+  padding: 0.5rem 1.4rem;
+  color: var(--body);
+  text-align: center;
+  min-height: 1.5rem;
+}
+
+@media (max-width: 480px) {
+  .page { padding: 1.5rem 0.75rem 3rem; }
+  .game-title { font-size: 2.8rem; }
+  .status-bar { padding: 0.6rem 0.5rem; gap: 0.5rem; }
+  .si-val { font-size: 0.9rem; }
+}
+</style>
+</head>
+<body>
+
+<nav>
+  <a class="nav-logo" href="/">Maffs Games</a>
+  <span style="font-family:'DM Mono',monospace;font-size:0.48rem;letter-spacing:0.1em;text-transform:uppercase;padding:0.2rem 0.6rem;border:1px solid #134e4a;border-radius:2px;color:#2dd4bf">Hosted on QF Network</span>
+  <a class="nav-back" href="../../">← Back</a>
+</nav>
+
+<div class="page">
+
+  <div class="game-header">
+    <p class="game-kicker">Daily · Mathematical Deduction</p>
+    <h1 class="game-title">52<strong style="color:var(--teal)">-dle</strong></h1>
+    <p class="game-sub">Identify the hidden number. Six guesses. New puzzle every 24 hours.</p>
+  </div>
+
+  <div class="status-bar">
+    <div class="si"><span class="si-val" id="sv-g">6</span><span class="si-lbl">Guesses Left</span></div>
+    <div class="si"><span class="si-val" id="sv-t">0:00</span><span class="si-lbl">Time</span></div>
+    <div class="si"><span class="si-val" id="sv-h">0</span><span class="si-lbl">Hints Used</span></div>
+    <div class="si"><span class="si-val" id="sv-s">—</span><span class="si-lbl">Est. Score</span></div>
+  </div>
+
+  <div class="clue-box" id="clue-box">
+    <div class="clue-header">
+      <span class="clue-label">Today's Clue</span>
+      <span class="cat-badge" id="cat-badge">—</span>
+    </div>
+    <div class="clue-text" id="clue-text">Loading puzzle…</div>
+  </div>
+
+  <div class="guess-history" id="guess-history"></div>
+
+  <div class="input-area" id="input-area">
+    <div class="input-row">
+      <input class="guess-input" id="guess-input" type="number" placeholder="Enter your guess…" min="0" max="99999" autocomplete="off">
+      <button class="btn btn-gold" id="submit-btn" onclick="submitGuess()">Guess</button>
+    </div>
+    <div class="msg" id="msg-bar"></div>
+    <div class="hint-controls">
+      <button class="btn btn-teal" id="hint-btn" onclick="useHint()">Use Hint</button>
+      <span class="hint-cost">−150 pts per hint · 3 max</span>
+    </div>
+    <div class="hint-area" id="hint-area"></div>
+  </div>
+
+  <div class="lb-section">
+    <div class="lb-header">
+      <span class="lb-title">Today's Leaderboard</span>
+      <button class="btn btn-ghost" style="padding:0.3rem 0.7rem;font-size:0.5rem;" onclick="renderLB('')">Refresh</button>
+    </div>
+    <div class="lb-body" id="lb-out"><div class="lb-empty">No scores yet — be the first.</div></div>
+    <div class="next-box">Next puzzle in <span id="next-timer">—</span></div>
+  </div>
+
+</div>
+
+<!-- Result Modal -->
+<div class="modal-overlay hidden" id="modal">
+  <div class="modal">
+    <div class="modal-header">
+      <div class="modal-result" id="modal-result">—</div>
+      <div class="modal-answer" id="modal-answer"></div>
+    </div>
+    <div class="share-grid" id="share-grid"></div>
+    <div class="modal-score" id="modal-score"></div>
+    <div class="modal-name" id="modal-name-section">
+      <label for="name-input">Your name for the leaderboard</label>
+      <input class="name-input" id="name-input" type="text" maxlength="20" placeholder="Anonymous">
+    </div>
+    <div class="modal-acts">
+      <button class="btn btn-ghost" onclick="shareResult()">Share</button>
+      <button class="btn btn-gold" id="modal-submit-btn" onclick="submitToLB()">Submit Score</button>
+      <button class="btn btn-ghost" onclick="closeModal()">Close</button>
+    </div>
+  </div>
+</div>
+
+<script>
+// ─── PUZZLES ─────────────────────────────────────────────────────────
+const PUZZLES = [
+  {a:52,  cat:"Project 52F",    clue:"I am the soul of this project. The number of cards in a standard deck. 52! arrangements underpin the cryptographic sequencer.",hints:["I am less than 100","I am even","I am 4 × 13"]},
+  {a:89,  cat:"Fibonacci",      clue:"I am the 11th Fibonacci number. My reverse, 98, is NOT prime. I am the largest two-digit Fibonacci.",hints:["I am a Fibonacci number","I am between 80 and 100","I am odd"]},
+  {a:31,  cat:"Prime",          clue:"I am the 11th prime. Reverse me and you get 13, also prime. We are emirp twins.",hints:["I am prime","I am less than 40","My digits sum to 4"]},
+  {a:271, cat:"Euler's Number", clue:"The first three digits of e are 2.71… I am those digits without the decimal. e ≈ 2.71828…",hints:["I am between 200 and 300","I contain the digit 7","I am the first three digits of e"]},
+  {a:314, cat:"Pi",             clue:"π ≈ 3.14159… I am the first three significant digits of π, without the decimal point.",hints:["I am between 300 and 320","π ≈ 3.14…","I am 100 × π rounded to 2dp"]},
+  {a:144, cat:"Fibonacci",      clue:"I am 12 squared. I am also the 12th Fibonacci number — the only Fibonacci perfect square beyond 1.",hints:["I am a perfect square","I am a Fibonacci number","12 × 12"]},
+  {a:97,  cat:"Prime",          clue:"I am the largest two-digit prime. My reverse, 79, is also prime — we are emirp twins.",hints:["I am the largest two-digit prime","I am between 90 and 100","My digits sum to 16"]},
+  {a:53,  cat:"Prime",          clue:"I am the 16th prime. The nearest prime greater than 52 — the soul of this project plus one.",hints:["I am prime","I am one more than 52","I am between 50 and 55"]},
+  {a:42,  cat:"Mathematical Culture", clue:"The answer to life, the universe, and everything. Also 6 × 7. Ten less than 52.",hints:["6 × 7","The Hitchhiker's Guide number","I am between 40 and 45"]},
+  {a:1618,cat:"Golden Ratio",   clue:"φ ≈ 1.618… The golden ratio, first four digits. Nature's favourite proportion.",hints:["I am the golden ratio digits","I am between 1600 and 1650","φ ≈ 1.618"]},
+  {a:2704, cat:"Project 52F",   clue:"I am 52 squared. The square of the project's namesake.",hints:["I am 52²","I am between 2700 and 2710","52 × 52"]},
+  {a:13,  cat:"Prime",          clue:"I am the 6th prime, and the 7th Fibonacci number. Considered unlucky by many, loved by mathematicians.",hints:["I am prime and Fibonacci","I am less than 20","I am 12 + 1"]},
+  {a:37,  cat:"Prime",          clue:"I am a permutable prime — rearrange my digits and you still get primes: 37, 73. We are emirp cousins.",hints:["I am prime","37 reversed is also prime","I am between 30 and 40"]},
+  {a:100, cat:"Perfect Square", clue:"10 squared. The basis of our decimal system. One hundred.",hints:["I am a perfect square","I am 10²","I am between 90 and 110"]},
+  {a:7,   cat:"Prime",          clue:"The 4th prime. The number of days in a week. Considered the most favourite number of humans globally.",hints:["I am a single digit prime","I am the 4th prime","I am less than 10"]},
+  {a:28,  cat:"Perfect Number", clue:"I am the second perfect number. My divisors (1,2,4,7,14) sum to me. 6 is the first — I am the second.",hints:["I am a perfect number","My proper divisors sum to me","I am between 20 and 35"]},
+  {a:1597, cat:"Fibonacci",     clue:"I am the 17th Fibonacci number. I am also prime, making me a Fibonacci prime.",hints:["I am Fibonacci and prime","I am between 1500 and 1600","F(17)"]},
+  {a:64,  cat:"Perfect Square", clue:"I am 8 squared. I am also 4 cubed. I am the only number (besides 1) that is both a perfect square and a perfect cube below 100.",hints:["I am 8²","I am 4³","I am between 60 and 70"]},
+  {a:23,  cat:"Prime",          clue:"I am the 9th prime. I appear in the mathematical curiosity: 1² + 2² + 3² + ... has properties modulo me.",hints:["I am prime","I am the 9th prime","I am between 20 and 30"]},
+  {a:521, cat:"Mersenne Prime", clue:"2^521 − 1 is a Mersenne prime. I am the exponent. One of the earliest discovered by computer in 1952.",hints:["I am a Mersenne prime exponent","I am between 500 and 530","2^521 − 1 is prime"]},
+];
+
+// ─── STATE ────────────────────────────────────────────────────────────
+function dayStr() {
+  const d = new Date();
+  return `${d.getFullYear()}_${d.getMonth()}_${d.getDate()}`;
+}
+function dayIdx() {
+  const epoch = new Date('2026-01-01');
+  return Math.floor((new Date() - epoch) / 86400000) % PUZZLES.length;
+}
+
+const SKEY = () => '52dle_s_' + dayStr();
+const LKEY = () => '52dle_lb_' + dayStr();
+
+const MAX_GUESSES = 6;
+const MAX_HINTS   = 3;
+let puzzle, state, timerInterval;
+
+function defaultState() {
+  return { guesses:[], hintsUsed:0, done:false, won:false, startTime: Date.now(), elapsed:0 };
+}
+
+function loadState() {
+  try { return JSON.parse(localStorage.getItem(SKEY())) || defaultState(); }
+  catch { return defaultState(); }
+}
+function saveState() {
+  localStorage.setItem(SKEY(), JSON.stringify(state));
+}
+
+// ─── SCORING ─────────────────────────────────────────────────────────
+const BASE=1000, G_COST=100, H_COST=150, T_K=0.015;
+function calcScore(guesses, hints, secs, won) {
+  if (!won) return 0;
+  const pen = Math.max(0, (guesses - 1) * G_COST + hints * H_COST);
+  const mult = 1 / (1 + T_K * Math.log(1 + secs));
+  return Math.max(1, Math.round((BASE - pen) * mult));
+}
+function liveScore(guesses, hints, secs) {
+  const pen = Math.max(0, guesses * G_COST + hints * H_COST);
+  return Math.max(0, Math.round((BASE - pen) * (1 / (1 + T_K * Math.log(1 + secs)))));
+}
+
+// ─── FEEDBACK ────────────────────────────────────────────────────────
+function getFeedback(guess, answer) {
+  const diff = guess - answer;
+  const absDiff = Math.abs(diff);
+  let cls, arrow, text;
+  if (diff === 0) {
+    return { cls:'fb-exact', arrow:'✓', text:'Exact match.' };
+  }
+  if (absDiff <= 2)   { cls='fb-exact'; text='Incredibly close!'; }
+  else if (absDiff <= 10)  { cls='fb-warm';  text='Very warm.'; }
+  else if (absDiff <= 50)  { cls='fb-warn';  text='Getting warmer.'; }
+  else if (absDiff <= 200) { cls='fb-higher'; text='In the right area.'; }
+  else                     { cls='fb-lower'; text='Far off.'; }
+  arrow = diff < 0 ? '↑ Higher' : '↓ Lower';
+  return { cls, arrow, text };
+}
+
+// ─── RENDER ──────────────────────────────────────────────────────────
+function renderGuesses() {
+  const el = document.getElementById('guess-history');
+  el.innerHTML = '';
+  state.guesses.forEach(g => {
+    const fb = getFeedback(g, puzzle.a);
+    const row = document.createElement('div');
+    row.className = 'guess-row';
+    row.innerHTML = `
+      <span class="guess-num">${g}</span>
+      <span class="guess-feedback ${fb.cls}">${fb.text}</span>
+      <span class="guess-arrow ${fb.cls}">${fb.arrow}</span>
+    `;
+    el.appendChild(row);
+  });
+  // Empty slots
+  const remaining = MAX_GUESSES - state.guesses.length;
+  if (!state.done) {
+    for (let i = 0; i < remaining; i++) {
+      const slot = document.createElement('div');
+      slot.className = 'guess-slot';
+      el.appendChild(slot);
+    }
+  }
+}
+
+function renderHints() {
+  const el = document.getElementById('hint-area');
+  el.innerHTML = '';
+  for (let i = 0; i < state.hintsUsed; i++) {
+    const box = document.createElement('div');
+    box.className = 'hint-box';
+    box.innerHTML = `<div class="hint-label">Hint ${i+1}</div>${puzzle.hints[i]}`;
+    el.appendChild(box);
+  }
+}
+
+function renderStatus() {
+  document.getElementById('sv-g').textContent = MAX_GUESSES - state.guesses.length;
+  document.getElementById('sv-h').textContent = state.hintsUsed;
+  const secs = Math.floor((Date.now() - state.startTime) / 1000) + state.elapsed;
+  document.getElementById('sv-s').textContent = liveScore(state.guesses.length, state.hintsUsed, secs);
+  const btn = document.getElementById('hint-btn');
+  btn.disabled = state.hintsUsed >= MAX_HINTS || state.done;
+}
+
+function renderTimer() {
+  const secs = Math.floor((Date.now() - state.startTime) / 1000) + (state.elapsed || 0);
+  const m = Math.floor(secs / 60);
+  const s = secs % 60;
+  document.getElementById('sv-t').textContent = `${m}:${s.toString().padStart(2,'0')}`;
+  renderStatus();
+}
+
+function renderLB(highlightName) {
+  const arr = loadLB();
+  const el = document.getElementById('lb-out');
+  if (!arr.length) {
+    el.innerHTML = '<div class="lb-empty">No scores yet — be the first.</div>';
+    return;
+  }
+  el.innerHTML = arr.slice(0,10).map((e,i) => `
+    <div class="lb-row ${e.name === highlightName ? 'hl' : ''}">
+      <span class="lb-rank">${i+1}</span>
+      <span class="lb-name">${escHtml(e.name)}</span>
+      <span class="lb-score">${e.sc.toLocaleString()}</span>
+      <span class="lb-g">${e.guesses}g</span>
+      <span class="lb-h">${e.hints}h</span>
+    </div>
+  `).join('');
+}
+
+function escHtml(s) {
+  return s.replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;');
+}
+
+// ─── NEXT PUZZLE TIMER ────────────────────────────────────────────────
+function renderNextTimer() {
+  const now = new Date();
+  const tomorrow = new Date(now);
+  tomorrow.setHours(24,0,0,0);
+  const diff = Math.max(0, Math.floor((tomorrow - now) / 1000));
+  const h = Math.floor(diff/3600);
+  const m = Math.floor((diff%3600)/60);
+  const s = diff%60;
+  document.getElementById('next-timer').textContent =
+    `${h}h ${m.toString().padStart(2,'0')}m ${s.toString().padStart(2,'0')}s`;
+}
+
+// ─── LEADERBOARD STORAGE ─────────────────────────────────────────────
+function loadLB() {
+  try { return JSON.parse(localStorage.getItem(LKEY())) || []; }
+  catch { return []; }
+}
+function addEntry(name, sc, guesses, hints) {
+  const arr = loadLB();
+  arr.push({ name: name||'Anonymous', sc, guesses, hints, ts: Date.now() });
+  arr.sort((a,b) => b.sc - a.sc);
+  localStorage.setItem(LKEY(), JSON.stringify(arr));
+  return arr;
+}
+
+// ─── SHARE ───────────────────────────────────────────────────────────
+function buildShareGrid() {
+  const squares = state.guesses.map(g => {
+    const d = Math.abs(g - puzzle.a);
+    if (d === 0) return '🟩';
+    if (d <= 10) return '🟨';
+    return '🟥';
+  });
+  if (!state.won) squares.push('💀');
+  return squares.join('');
+}
+
+function shareResult() {
+  const grid = buildShareGrid();
+  const secs = Math.floor(((state.endTime||Date.now()) - state.startTime) / 1000) + (state.elapsed||0);
+  const txt = `52-dle ${new Date().toLocaleDateString('en-GB')}\n${state.won ? '✓ ' + state.guesses.length + '/6' : '✗ X/6'} · ${state.hintsUsed} hints\n${grid}\nmaffsgames.qfnetwork.io/52dle`;
+  if (navigator.clipboard) {
+    navigator.clipboard.writeText(txt).then(() => {
+      const btn = document.querySelector('.modal-acts .btn-ghost');
+      btn.textContent = 'Copied!';
+      setTimeout(() => btn.textContent = 'Share', 2000);
+    });
+  }
+}
+
+// ─── ACTIONS ─────────────────────────────────────────────────────────
+function setMsg(text, ok) {
+  const el = document.getElementById('msg-bar');
+  el.textContent = text;
+  el.className = 'msg' + (ok ? ' ok' : '');
+}
+
+function submitGuess() {
+  if (state.done) return;
+  const input = document.getElementById('guess-input');
+  const val = parseInt(input.value.trim());
+  if (isNaN(val) || val < 0) {
+    setMsg('Enter a valid positive number.');
+    input.classList.add('shake');
+    setTimeout(() => input.classList.remove('shake'), 400);
+    return;
+  }
+  setMsg('');
+  state.guesses.push(val);
+  const won = val === puzzle.a;
+  if (won || state.guesses.length >= MAX_GUESSES) {
+    endGame(won);
+  }
+  renderGuesses();
+  renderStatus();
+  saveState();
+  input.value = '';
+  input.focus();
+}
+
+function useHint() {
+  if (state.hintsUsed >= MAX_HINTS || state.done) return;
+  state.hintsUsed++;
+  renderHints();
+  renderStatus();
+  saveState();
+}
+
+function endGame(won) {
+  state.done = true;
+  state.won = won;
+  state.endTime = Date.now();
+  clearInterval(timerInterval);
+  saveState();
+  document.getElementById('input-area').style.opacity = '0.4';
+  document.getElementById('input-area').style.pointerEvents = 'none';
+  document.getElementById('submit-btn').disabled = true;
+
+  const secs = Math.floor((state.endTime - state.startTime) / 1000) + (state.elapsed||0);
+  const sc = calcScore(state.guesses.length, state.hintsUsed, secs, won);
+  state.finalScore = sc;
+  saveState();
+
+  setTimeout(() => showModal(won, sc, secs), 500);
+}
+
+function showModal(won, sc, secs) {
+  const m = document.getElementById('modal');
+  m.classList.remove('hidden');
+  document.getElementById('modal-result').textContent = won ? 'Correct!' : 'Hard Luck.';
+  document.getElementById('modal-result').className = 'modal-result ' + (won ? 'win' : 'lose');
+  document.getElementById('modal-answer').innerHTML = `The answer was <span>${puzzle.a}</span> — ${puzzle.cat}`;
+  document.getElementById('share-grid').textContent = buildShareGrid();
+
+  const guesses = state.guesses.length;
+  const hints   = state.hintsUsed;
+  const mins    = Math.floor(secs/60);
+  const remSecs = secs%60;
+  document.getElementById('modal-score').innerHTML = `
+    <div class="ms-item"><span class="ms-val">${sc.toLocaleString()}</span><span class="ms-lbl">Final Score</span></div>
+    <div class="ms-item"><span class="ms-val">${guesses}/${MAX_GUESSES}</span><span class="ms-lbl">Guesses</span></div>
+    <div class="ms-item"><span class="ms-val">${hints}</span><span class="ms-lbl">Hints Used</span></div>
+    <div class="ms-item"><span class="ms-val">${mins}:${remSecs.toString().padStart(2,'0')}</span><span class="ms-lbl">Time</span></div>
+  `;
+
+  if (!won) {
+    document.getElementById('modal-name-section').style.display = 'none';
+    document.getElementById('modal-submit-btn').style.display = 'none';
+  }
+}
+
+function closeModal() {
+  document.getElementById('modal').classList.add('hidden');
+}
+
+function submitToLB() {
+  const name = document.getElementById('name-input').value.trim().slice(0,20) || 'Anonymous';
+  const secs = Math.floor((state.endTime - state.startTime) / 1000) + (state.elapsed||0);
+  addEntry(name, state.finalScore, state.guesses.length, state.hintsUsed);
+  document.getElementById('modal').classList.add('hidden');
+  renderLB(name);
+  setMsg('Score submitted!', true);
+}
+
+// ─── KEYBOARD ────────────────────────────────────────────────────────
+document.addEventListener('keydown', e => {
+  if (e.key === 'Enter' && !state.done) submitGuess();
+});
+
+// ─── INIT ────────────────────────────────────────────────────────────
+function init() {
+  puzzle = PUZZLES[dayIdx()];
+  state  = loadState();
+
+  document.getElementById('clue-text').textContent = puzzle.clue;
+  document.getElementById('cat-badge').textContent  = puzzle.cat;
+
+  renderGuesses();
+  renderHints();
+  renderStatus();
+  renderLB('');
+
+  if (state.done) {
+    document.getElementById('input-area').style.opacity = '0.4';
+    document.getElementById('input-area').style.pointerEvents = 'none';
+    const secs = Math.floor(((state.endTime||Date.now()) - state.startTime) / 1000) + (state.elapsed||0);
+    document.getElementById('sv-t').textContent = (() => {
+      const m = Math.floor(secs/60);
+      const s = secs%60;
+      return `${m}:${s.toString().padStart(2,'0')}`;
+    })();
+    document.getElementById('sv-s').textContent = state.finalScore || 0;
+  } else {
+    timerInterval = setInterval(renderTimer, 1000);
+  }
+
+  setInterval(renderNextTimer, 1000);
+  renderNextTimer();
+}
+
+init();
+</script>
+</body>
+</html>

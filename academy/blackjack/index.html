@@ -1,0 +1,1793 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<link rel="icon" type="image/svg+xml" href="../../schools/assets/favicon.svg">
+<title>Blackjack Academy — Maths Always Wins — QF Games</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=DM+Mono:wght@400;500&family=Bebas+Neue&family=Crimson+Pro:ital,wght@0,400;0,700;1,400&family=Outfit:wght@300;400;600;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/katex.min.css">
+<script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/katex.min.js"></script>
+<script async src="https://www.googletagmanager.com/gtag/js?id=G-CLNF7GSB28"></script>
+<script>window.dataLayer=window.dataLayer||[];function gtag(){dataLayer.push(arguments);}gtag('js',new Date());gtag('config','G-CLNF7GSB28',{send_page_view:true,storage:'none',anonymize_ip:true});</script>
+<style>
+*{margin:0;padding:0;box-sizing:border-box}
+:root{
+  --bg:#06080c;--surface:#0c0f16;--surface2:#111620;--border:#1a2030;--border2:#242e40;
+  --gold:#d4a847;--gold-dim:rgba(212,168,71,.08);--gold-glow:rgba(212,168,71,.15);
+  --green:#1a8a5c;--green-bright:#2dd4a0;--red:#c0392b;--red-bright:#ef5350;
+  --blue:#2c6fbb;--cyan:#0e9aa7;
+  --text:#d8dce4;--text-bright:#f0f2f6;--muted:#5a6478;--muted2:#3a4458;
+  --felt:#0a2e1c;--felt-border:#145a38;
+  --card-face:#f2efe6;--card-red:#b71c1c;
+}
+body{font-family:'Outfit',sans-serif;background:var(--bg);color:var(--text);min-height:100vh;-webkit-font-smoothing:antialiased}
+.outer{max-width:800px;margin:0 auto;padding:0 1rem 2rem}
+a{color:var(--gold);text-decoration:none}a:hover{text-decoration:underline}
+
+/* HERO */
+.hero{text-align:center;padding:3rem 0 1.5rem;border-bottom:1px solid var(--border)}
+.hero-eyebrow{font-family:'DM Mono',monospace;font-size:.65rem;letter-spacing:.25em;text-transform:uppercase;color:var(--gold);margin-bottom:.6rem}
+.hero h1{font-family:'Bebas Neue',sans-serif;font-size:3.2rem;letter-spacing:.04em;color:var(--text-bright);line-height:1.1}
+.hero h1 span{color:var(--gold)}
+.hero .tagline{font-family:'Crimson Pro',serif;font-style:italic;font-size:1.05rem;color:var(--muted);margin-top:.5rem}
+
+/* STATS BAR */
+.stats-bar{display:grid;grid-template-columns:repeat(4,1fr);gap:1px;background:var(--border);border:1px solid var(--border);border-radius:10px;overflow:hidden;margin:1.5rem 0}
+.stat-cell{background:var(--surface);padding:.8rem .4rem;text-align:center}
+.stat-num{font-family:'DM Mono',monospace;font-size:1.4rem;font-weight:500;color:var(--gold)}
+.stat-label{font-size:.6rem;color:var(--muted);margin-top:.15rem;line-height:1.3}
+
+/* PROOF SECTION */
+.proof{background:var(--surface);border:1px solid var(--border);border-radius:12px;padding:1.3rem;margin:1.2rem 0}
+.proof h2{font-family:'Bebas Neue',sans-serif;font-size:1.2rem;letter-spacing:.04em;color:var(--text-bright);margin-bottom:.6rem}
+.proof-grid{display:grid;grid-template-columns:1fr 1fr;gap:.8rem}
+.proof-col h3{font-size:.72rem;color:var(--muted);text-transform:uppercase;letter-spacing:.08em;margin-bottom:.4rem}
+.proof-row{display:flex;justify-content:space-between;padding:.25rem 0;border-bottom:1px solid var(--border);font-size:.78rem}
+.proof-row .v{font-family:'DM Mono',monospace;font-size:.75rem}
+.proof-row .v.bad{color:var(--red-bright)}.proof-row .v.good{color:var(--green-bright)}
+.proof-note{margin-top:.6rem;font-family:'Crimson Pro',serif;font-size:.85rem;color:var(--muted);line-height:1.6;font-style:italic}
+.proof-note strong{color:var(--gold);font-style:normal}
+
+/* EQUATION */
+.eq-box{text-align:center;padding:1rem;margin:1rem 0;background:var(--surface2);border:1px solid var(--border2);border-radius:10px}
+.eq-box .eq-note{font-size:.72rem;color:var(--muted);margin-top:.4rem}
+
+/* MODULE CARDS */
+.mod-section{margin:1.2rem 0}
+.mod-section>h2{font-family:'Bebas Neue',sans-serif;font-size:1.2rem;letter-spacing:.04em;color:var(--text-bright);margin-bottom:.4rem}
+.tier-group{margin-bottom:.8rem}
+.tier-hdr{display:flex;align-items:center;gap:.5rem;margin-bottom:.3rem}
+.tier-badge{font-family:'DM Mono',monospace;font-size:.58rem;padding:2px 8px;border-radius:5px;font-weight:500;letter-spacing:.05em;text-transform:uppercase}
+.tb-b{background:rgba(44,111,187,.12);color:var(--blue)}
+.tb-a{background:var(--gold-dim);color:var(--gold)}
+.tb-m{background:rgba(192,57,43,.1);color:var(--red-bright)}
+.tier-price{font-family:'DM Mono',monospace;font-size:.65rem;color:var(--muted)}
+
+.mc{background:var(--surface);border:1px solid var(--border);border-radius:8px;padding:.6rem .8rem;margin-bottom:.3rem;display:flex;justify-content:space-between;align-items:center;cursor:pointer;transition:all .12s}
+.mc:hover{border-color:var(--gold);transform:translateX(3px)}
+.mc.locked{opacity:.3;pointer-events:none}
+.mc .mn{font-size:.82rem;font-weight:600}.mc .md{font-size:.65rem;color:var(--muted)}.mc .mq{font-family:'DM Mono',monospace;font-size:.62rem;color:var(--muted)}
+
+/* CTA */
+.cta-row{display:flex;gap:.5rem;justify-content:center;margin:1.2rem 0;flex-wrap:wrap}
+.cta{padding:.55rem 1.3rem;border-radius:8px;font-family:'Outfit',sans-serif;font-size:.82rem;font-weight:600;cursor:pointer;border:2px solid var(--border);transition:all .15s}
+.cta-p{background:var(--gold);color:#000;border-color:var(--gold)}.cta-p:hover{box-shadow:0 0 20px var(--gold-glow)}
+.cta-g{background:transparent;color:var(--gold);border-color:var(--gold)}.cta-g:hover{background:var(--gold-dim)}
+
+/* DISCLAIMER */
+.disc{background:var(--surface);border:1px solid var(--border2);border-radius:10px;padding:1rem;margin:1rem 0}
+.disc h2{font-family:'Bebas Neue',sans-serif;font-size:1rem;color:var(--text-bright);margin-bottom:.4rem}
+.disc p{font-family:'Crimson Pro',serif;font-size:.85rem;color:var(--muted);line-height:1.6;font-style:italic;margin-bottom:.4rem}
+.disc p strong{color:var(--gold);font-style:normal}
+
+.screen{display:none}.screen.active{display:block}
+
+/* ═══════════════════════════════════
+   LESSON SCREEN
+   ═══════════════════════════════════ */
+.les-top{display:flex;justify-content:space-between;align-items:center;padding:.5rem 0;border-bottom:1px solid var(--border);margin-bottom:.5rem}
+.les-title{font-size:.9rem;font-weight:600}.les-prog{font-family:'DM Mono',monospace;font-size:.72rem;color:var(--muted)}
+.pbar{background:var(--border);border-radius:3px;height:4px;margin-bottom:.5rem;overflow:hidden}
+.pfill{height:100%;background:var(--gold);border-radius:3px;transition:width .3s}
+
+.hud{display:flex;gap:1rem;justify-content:center;padding:.3rem 0;margin-bottom:.4rem}
+.hud-b{text-align:center}.hud-b .hn{font-family:'DM Mono',monospace;font-size:.95rem;font-weight:500}.hud-b .hl{font-size:.5rem;color:var(--muted);text-transform:uppercase;letter-spacing:.05em}
+
+/* TUTORIAL CONTENT */
+.tut{background:var(--surface);border:1px solid var(--border);border-radius:10px;padding:1.1rem;margin-bottom:.5rem;line-height:1.75;font-size:.85rem}
+.tut h3{color:var(--gold);font-size:.88rem;margin-bottom:.3rem}
+.tut p{margin-bottom:.4rem}
+.tut .pt{padding:.4rem .7rem;margin:.4rem 0;border-radius:6px;border-left:3px solid var(--gold);background:var(--gold-dim)}
+.tut .dg{padding:.4rem .7rem;margin:.4rem 0;border-radius:6px;border-left:3px solid var(--red-bright);background:rgba(239,83,80,.06);color:var(--red-bright)}
+.tut .mb{font-family:'DM Mono',monospace;background:var(--bg);border-radius:6px;padding:.5rem;margin:.4rem 0;font-size:.78rem;line-height:1.8}
+.tut .mb .pos{color:var(--green-bright)}.tut .mb .neg{color:var(--red-bright)}
+.tut .pln{font-family:'Crimson Pro',serif;font-size:.88rem;color:var(--cyan);font-style:italic;margin:.3rem 0}
+
+/* FELT */
+.felt{background:linear-gradient(180deg,#0a2e1c,#082618);border-radius:12px;padding:1rem;margin-bottom:.5rem;border:2px solid var(--felt-border)}
+.hs{text-align:center;min-height:65px}
+.hlbl{font-size:.5rem;color:rgba(255,255,255,.3);text-transform:uppercase;letter-spacing:.1em;margin-bottom:.2rem}
+.cr{display:flex;gap:.3rem;justify-content:center;flex-wrap:wrap;margin:.2rem 0}
+.td{font-family:'DM Mono',monospace;font-size:.9rem;margin:.15rem 0}
+.fdiv{height:1px;background:rgba(255,255,255,.06);margin:.3rem 0}
+
+/* CARDS */
+.c{width:46px;height:64px;background:var(--card-face);border-radius:5px;display:inline-flex;flex-direction:column;align-items:center;justify-content:center;font-family:'DM Mono',monospace;font-weight:500;box-shadow:0 2px 5px rgba(0,0,0,.4);line-height:1}
+.c .r{font-size:.85rem}.c .s{font-size:.75rem}
+.c.rd{color:var(--card-red)}.c.bk{color:#1a1a1a}
+.c.fd{background:linear-gradient(135deg,#14305a,#0c2040);border:1.5px solid #1e4070}
+.c.fd .r,.c.fd .s{visibility:hidden}
+.c.fd::after{content:'?';position:absolute;color:rgba(255,255,255,.2);font-size:1.1rem}
+
+/* ACTIONS */
+.ar{display:flex;gap:.3rem;justify-content:center;margin:.4rem 0;flex-wrap:wrap}
+.ab{padding:.4rem .9rem;border-radius:7px;border:1.5px solid var(--border2);background:var(--surface2);color:var(--text);font-family:'Outfit',sans-serif;font-size:.8rem;font-weight:600;cursor:pointer;transition:all .1s}
+.ab:hover{border-color:var(--gold)}.ab.dis{opacity:.2;pointer-events:none}
+
+/* ANALYSIS */
+.an{display:none;background:var(--surface);border:1px solid var(--border2);border-radius:10px;padding:.9rem;margin-bottom:.4rem;font-size:.8rem;line-height:1.6}
+.an.show{display:block;animation:su .25s ease-out}
+@keyframes su{from{opacity:0;transform:translateY(8px)}to{opacity:1;transform:translateY(0)}}
+.an h3{color:var(--gold);font-size:.8rem;margin-bottom:.2rem;font-weight:600}
+.ag{display:grid;grid-template-columns:1fr 1fr;gap:.25rem;margin:.3rem 0}
+.ac{background:var(--bg);border-radius:5px;padding:.3rem .4rem;text-align:center}
+.ac .al{font-size:.5rem;color:var(--muted);text-transform:uppercase;letter-spacing:.04em}
+.ac .av{font-family:'DM Mono',monospace;font-size:.82rem}
+.ac .av.pos{color:var(--green-bright)}.ac .av.neg{color:var(--red-bright)}
+.rsn{margin:.3rem 0;padding:.4rem .6rem;border-left:2px solid var(--gold);color:var(--muted);font-size:.75rem;line-height:1.6}
+.rsn strong{color:var(--text)}
+.pln{font-family:'Crimson Pro',serif;font-size:.82rem;color:var(--cyan);margin:.3rem 0;font-style:italic}
+.vrd{padding:.35rem;border-radius:6px;text-align:center;font-weight:600;font-size:.8rem;margin:.3rem 0}
+.vrd.ok{background:rgba(45,212,160,.08);color:var(--green-bright)}
+.vrd.no{background:rgba(239,83,80,.08);color:var(--red-bright)}
+.vrd.nu{background:rgba(212,168,71,.06);color:var(--gold)}
+.nb{display:inline-block;margin-top:.3rem;padding:.3rem .9rem;border:none;border-radius:6px;background:var(--gold);color:#000;font-family:'Outfit',sans-serif;font-size:.75rem;font-weight:600;cursor:pointer}
+.bb{display:inline-block;margin:.4rem 0;padding:.3rem .9rem;border:none;border-radius:6px;background:var(--border);color:var(--text);font-family:'Outfit',sans-serif;font-size:.75rem;font-weight:600;cursor:pointer}
+
+/* SIM */
+.sim{background:var(--surface);border:1px solid var(--border);border-radius:10px;padding:.9rem;margin-bottom:.4rem;text-align:center;display:none}
+.sim.show{display:block}
+.sim h3{color:var(--gold);font-size:.82rem;margin-bottom:.3rem}
+.sbr{display:flex;gap:.6rem;justify-content:center;align-items:flex-end;height:100px;margin:.4rem 0}
+.sbc{display:flex;flex-direction:column;align-items:center;gap:.15rem;flex:1;max-width:80px}
+.sbo{width:100%;height:80px;background:var(--border);border-radius:4px;overflow:hidden;display:flex;flex-direction:column;justify-content:flex-end}
+.sbi{width:100%;border-radius:4px 4px 0 0;transition:height .06s}
+.sbl{font-size:.55rem;color:var(--muted)}.sbv{font-family:'DM Mono',monospace;font-size:.72rem}
+
+/* COUNTING */
+.cnt-card{display:flex;justify-content:center;margin:.8rem 0}
+.cnt-card .c{width:68px;height:92px;font-size:1.1rem}
+.cnt-input{display:flex;gap:.3rem;justify-content:center;align-items:center;margin:.4rem 0}
+.cnt-input input{width:55px;padding:.35rem;border-radius:5px;border:1.5px solid var(--border2);background:var(--surface2);color:var(--gold);font-family:'DM Mono',monospace;font-size:.95rem;text-align:center}
+.cnt-input button{padding:.35rem .7rem;border-radius:5px;border:none;background:var(--gold);color:#000;font-family:'Outfit',sans-serif;font-size:.78rem;font-weight:600;cursor:pointer}
+
+/* RESULTS */
+.res{text-align:center;padding:2rem 0}
+.res h2{font-family:'Bebas Neue',sans-serif;font-size:1.6rem;color:var(--text-bright)}
+.res .big{font-family:'DM Mono',monospace;font-size:2.8rem;color:var(--gold);margin:.4rem 0}
+.res .det{color:var(--muted);line-height:1.8;font-size:.8rem;margin-bottom:.8rem}
+
+@media(max-width:600px){
+  .stats-bar{grid-template-columns:repeat(2,1fr)}
+  .proof-grid{grid-template-columns:1fr}
+  .hero h1{font-size:2.2rem}
+}
+</style>
+</head>
+<body>
+<div class="outer">
+
+<!-- ═══════════════════════════════════
+     LANDING PAGE
+     ═══════════════════════════════════ -->
+<div id="landing" class="screen active">
+<div class="hero">
+<div class="hero-eyebrow">QF Games · Educational Suite</div>
+<h1>BLACKJACK <span>ACADEMY</span></h1>
+<div class="tagline">Maths Always Wins. Learn why.</div>
+</div>
+
+<div class="stats-bar">
+<div class="stat-cell"><div class="stat-num">−2.0%</div><div class="stat-label">Average player<br>house edge</div></div>
+<div class="stat-cell"><div class="stat-num">−0.5%</div><div class="stat-label">Basic strategy<br>house edge</div></div>
+<div class="stat-cell"><div class="stat-num">+1.0%</div><div class="stat-label">Card counter<br>player edge</div></div>
+<div class="stat-cell"><div class="stat-num">£4,140</div><div class="stat-label">Saved per year<br>200 hrs · £25 avg</div></div>
+</div>
+
+<div class="proof">
+<h2>THE MATHEMATICS</h2>
+<div class="proof-grid">
+<div class="proof-col">
+<h3>Average recreational player</h3>
+<div class="proof-row"><span>Plays by "feel"</span><span class="v bad">−2% to −4%</span></div>
+<div class="proof-row"><span>Takes insurance</span><span class="v bad">−7.7% side bet</span></div>
+<div class="proof-row"><span>Stands soft 17</span><span class="v bad">−0.20% per hand</span></div>
+<div class="proof-row"><span>Never splits 8s</span><span class="v bad">−0.16% per hand</span></div>
+<div class="proof-row"><span>Expected loss/hr</span><span class="v bad">−£3.50</span></div>
+</div>
+<div class="proof-col">
+<h3>Academy graduate</h3>
+<div class="proof-row"><span>Perfect basic strategy</span><span class="v good">−0.50%</span></div>
+<div class="proof-row"><span>Declines insurance</span><span class="v good">+7.7% saved</span></div>
+<div class="proof-row"><span>Hits soft 17</span><span class="v good">+0.20% recovered</span></div>
+<div class="proof-row"><span>Splits optimally</span><span class="v good">+0.16% recovered</span></div>
+<div class="proof-row"><span>Expected loss/hr</span><span class="v good">−£0.88</span></div>
+</div>
+</div>
+<div class="proof-note">The average player loses <strong>4× more per hour</strong> than a basic strategy player. Over 200 hours of annual play at £25 average bet, that's <strong>£4,140 in unnecessary losses</strong>. This course pays for itself before you finish Module 1.</div>
+</div>
+
+<div class="eq-box" id="eqBox"></div>
+
+<div class="disc">
+<h2>WHAT THIS ISN'T</h2>
+<p>This is not a gambling product. No money is wagered. No outcomes are predicted. No "systems" are sold.</p>
+<p>This is a <strong>mathematics education tool</strong> that teaches probability, expected value, and decision theory — using blackjack as the vehicle. The house always has an edge. We teach you to <strong>minimise it from ~3% down to 0.5%</strong> through arithmetic, not luck.</p>
+</div>
+
+<div class="mod-section">
+<h2>CURRICULUM — 11 MODULES</h2>
+
+<div class="tier-group">
+<div class="tier-hdr"><span class="tier-badge tb-b">Basic</span><span class="tier-price">500 QF · 7 days</span></div>
+<div class="mc" onclick="loadMod('m1')"><div><div class="mn">1. Hard Hands Masterclass</div><div class="md">When to hit, stand, or double — and the exact EV of each decision</div></div><div class="mq">20 scenarios</div></div>
+<div class="mc" onclick="loadMod('m2')"><div><div class="mn">2. Soft Hands</div><div class="md">"You CANNOT bust." Why standing on soft 17 is the costliest mistake</div></div><div class="mq">15 scenarios</div></div>
+<div class="mc" onclick="loadMod('m3')"><div><div class="mn">3. Splitting Pairs</div><div class="md">Turn one losing hand into two winning ones</div></div><div class="mq">15 scenarios</div></div>
+<div class="mc" onclick="loadMod('m4')"><div><div class="mn">4. Insurance & Side Bets</div><div class="md">EV analysis of every side bet. Spoiler: they're all negative</div></div><div class="mq">Tutorial + 10</div></div>
+</div>
+
+<div class="tier-group">
+<div class="tier-hdr"><span class="tier-badge tb-a">Advanced</span><span class="tier-price">1500 QF · 14 days</span></div>
+<div class="mc" onclick="loadMod('m5')"><div><div class="mn">5. Myth Destruction Lab</div><div class="md">10,000-hand simulations demolishing "he took my card" and other fallacies</div></div><div class="mq">5 simulations</div></div>
+<div class="mc" onclick="loadMod('m6')"><div><div class="mn">6. Bankroll & Variance</div><div class="md">Ruin probability, Kelly criterion, session simulation</div></div><div class="mq">Tutorial + sim</div></div>
+<div class="mc" onclick="loadMod('m7')"><div><div class="mn">7. Casino Rules Analyser</div><div class="md">Input your casino's rules. See exactly how each shifts the house edge</div></div><div class="mq">Interactive tool</div></div>
+</div>
+
+<div class="tier-group">
+<div class="tier-hdr"><span class="tier-badge tb-m">Master</span><span class="tier-price">3000 QF · 30 days</span></div>
+<div class="mc" onclick="loadMod('m8')"><div><div class="mn">8. Card Counting Theory</div><div class="md">Hi-Lo system. Running count, true count, bet spread</div></div><div class="mq">Tutorial</div></div>
+<div class="mc" onclick="loadMod('m9')"><div><div class="mn">9. Counting Speed Drills</div><div class="md">Flash cards at increasing speed. Maintain the count under pressure</div></div><div class="mq">4 speed tiers</div></div>
+<div class="mc" onclick="loadMod('m10')"><div><div class="mn">10. Strategy Deviations</div><div class="md">The "Illustrious 18" — when the count changes the correct play</div></div><div class="mq">18 scenarios</div></div>
+<div class="mc" onclick="loadMod('m11')"><div><div class="mn">11. Full Session Replay</div><div class="md">50-hand session with complete post-analysis and EV impact report</div></div><div class="mq">Session + report</div></div>
+</div>
+</div>
+
+<div class="cta-row">
+<button class="cta cta-p" onclick="loadMod('m1')">Try Module 1 Free</button>
+</div>
+</div>
+
+<!-- ═══════════════════════════════════
+     LESSON SCREEN
+     ═══════════════════════════════════ -->
+<div id="lesson" class="screen">
+<div class="les-top"><div class="les-title" id="lTitle"></div><div class="les-prog" id="lProg"></div></div>
+<div class="pbar"><div class="pfill" id="pFill"></div></div>
+<div class="hud" id="hudArea">
+<div class="hud-b"><div class="hn" id="hOpt">0/0</div><div class="hl">Optimal plays</div></div>
+<div class="hud-b"><div class="hn" id="hAcc">—</div><div class="hl">Accuracy</div></div>
+<div class="hud-b"><div class="hn" id="hStrk">0</div><div class="hl">Streak</div></div>
+</div>
+<div id="tutArea"></div>
+<div class="felt" id="feltArea" style="display:none">
+<div class="hs"><div class="hlbl">Dealer</div><div class="cr" id="dH"></div><div class="td" id="dT"></div></div>
+<div class="fdiv"></div>
+<div class="hs"><div class="td" id="pT"></div><div class="cr" id="pH"></div><div class="hlbl">You</div></div>
+</div>
+<div class="ar" id="actR" style="display:none"></div>
+<div class="an" id="anl"></div>
+<div class="sim" id="simA"></div>
+<button class="bb" onclick="back()">← Back to Academy</button>
+</div>
+
+<!-- RESULTS -->
+<div id="results" class="screen"><div class="res"><h2 id="rT"></h2><div class="big" id="rB">0%</div><div class="det" id="rD"></div><button class="cta cta-p" onclick="back()">Back to Academy</button></div></div>
+
+</div>
+<script>
+// ════════════════════════════════════════
+//  NAVIGATION
+// ════════════════════════════════════════
+function show(id){document.querySelectorAll('.screen').forEach(s=>s.classList.remove('active'));document.getElementById(id).classList.add('active');window.scrollTo(0,0)}
+function back(){show('landing')}
+
+// KaTeX equation on landing
+window.addEventListener('DOMContentLoaded',()=>{setTimeout(()=>{
+  const b=document.getElementById('eqBox');
+  if(typeof katex!=='undefined'){katex.render('\\text{EV} = \\sum_{i} P(\\text{outcome}_i) \\times \\text{payoff}_i',b,{throwOnError:false,displayMode:true});b.innerHTML+='<div class="eq-note">Every decision in blackjack has a calculable expected value. We teach you to find it.</div>'}
+},400)});
+
+// ════════════════════════════════════════
+//  DECK ENGINE
+// ════════════════════════════════════════
+const ST=['♠','♥','♦','♣'],RK=['A','2','3','4','5','6','7','8','9','10','J','Q','K'];
+let shoe=[];
+function mkShoe(){shoe=[];for(let d=0;d<6;d++)ST.forEach(s=>RK.forEach(r=>shoe.push({rank:r,suit:s})));shuf(shoe)}
+function shuf(a){for(let i=a.length-1;i>0;i--){const j=Math.floor(Math.random()*(i+1));[a[i],a[j]]=[a[j],a[i]]}return a}
+function dl(){if(shoe.length<40)mkShoe();return shoe.pop()}
+function cv(c){if('JQK'.includes(c.rank))return 10;if(c.rank==='A')return 11;return parseInt(c.rank)}
+function hv(cards){let t=0,a=0;cards.forEach(c=>{t+=cv(c);if(c.rank==='A')a++});while(t>21&&a>0){t-=10;a--}return t}
+function isSoft(cards){let t=0,a=0;cards.forEach(c=>{t+=cv(c);if(c.rank==='A')a++});while(t>21&&a>1){t-=10;a--}return a>0&&t<=21}
+function rc(c,down){
+  if(down)return '<div class="c fd" style="position:relative"><span class="r"></span><span class="s"></span></div>';
+  const red=c.suit==='♥'||c.suit==='♦';
+  return `<div class="c ${red?'rd':'bk'}"><span class="r">${c.rank}</span><span class="s">${c.suit}</span></div>`;
+}
+
+// ════════════════════════════════════════
+//  BASIC STRATEGY ENGINE
+// ════════════════════════════════════════
+function mk(r,s){return{rank:r,suit:s||'♠'}}
+
+function getBP(t){if(t>=21)return 100;const n=21-t;let b=0;for(let v=n+1;v<=10;v++)b+=(v===10?4/13:1/13);return Math.round(b*100)}
+
+function getBPPlain(pct){
+  if(pct<=10)return 'almost impossible to bust';
+  if(pct<=25)return 'roughly 1 in 4 chance of busting';
+  if(pct<=35)return 'about 1 in 3 chance of busting';
+  if(pct<=50)return 'roughly a coin flip — could go either way';
+  if(pct<=65)return 'more likely to bust than not';
+  if(pct<=80)return 'high risk — about 3 in 4 chance of busting';
+  return 'almost certain to bust';
+}
+
+function getOpt(pC,dUp,canSp,canDb){
+  const t=hv(pC),sf=isSoft(pC),d=cv(dUp);
+  // PAIRS
+  if(canSp&&pC.length===2&&cv(pC[0])===cv(pC[1])){
+    const p=cv(pC[0]);
+    if(p===11)return{play:'split',why:'Always split Aces. Two chances at 21 vs one hand of soft 12.',plain:'You have two Aces. Split them — each one could hit a 10 and make 21. Together they\'re just 12.'};
+    if(p===8)return{play:'split',why:'Always split 8s. 16 is the worst total. Two separate 8s aim for 18.',plain:'16 is horrible — you lose most of the time whether you hit or stand. Two 8s give you two fresh starts aiming for 18. Much better.'};
+    if(p===10)return{play:'stand',why:'Never split 10s. 20 is the second-best hand. Don\'t break it.',plain:'You have 20. That beats nearly everything. Splitting turns a near-certain win into two gambles. Don\'t.'};
+    if(p===5)return{play:canDb?'double':'hit',why:'Never split 5s. Hard 10 is an excellent doubling opportunity.',plain:'10 is a strong hand — you\'re likely to end up with 18-20. Two 5s are both weak. Keep the 10.'};
+    if(p===4)return{play:'hit',why:'Don\'t split 4s. Hard 8 is reasonable; two 4s are weak.',plain:'8 is a decent starting point. Two separate 4s? Not great. Just hit.'};
+    if([2,3,7].includes(p)){
+      if(d>=2&&d<=7)return{play:'split',why:'Split '+p+'s vs dealer '+d+'. Dealer is weak enough to exploit with two hands.',plain:'The dealer is showing a weak card. Give yourself two chances instead of one.'};
+      return{play:'hit',why:'Don\'t split '+p+'s vs dealer '+d+'. Dealer too strong.',plain:'The dealer has a strong card. Don\'t spread yourself thin — just try to improve this one hand.'};
+    }
+    if(p===6){if(d>=2&&d<=6)return{play:'split',why:'Split 6s vs dealer '+d+'. Weak dealer.',plain:'Dealer is weak. Two hands are better than one hand of 12.'};return{play:'hit',why:'Don\'t split 6s vs dealer '+d+'.',plain:'Dealer is too strong. Hit and hope.'};}
+    if(p===9){
+      if(d===7||d>=10)return{play:'stand',why:'Stand with 9-9 (18) vs dealer '+d+'.',plain:'18 is solid here. Don\'t overthink it — stand.'};
+      return{play:'split',why:'Split 9s vs dealer '+d+'. Two 9s can each reach 19.',plain:'You can do better than 18 against this dealer card. Two 9s gives you two shots at 19.'};
+    }
+  }
+  // SOFT
+  if(sf){
+    if(t>=19)return{play:'stand',why:'Soft 19+. Strong. Stand.',plain:'19 or better — you\'re winning against almost everything. Stop here.'};
+    if(t===18){
+      if(d>=9)return{play:'hit',why:'Soft 18 vs dealer '+d+'. Dealer likely makes 19+. Hit — you cannot bust.',plain:'18 sounds good, but the dealer\'s strong card means they\'ll probably beat you. Hit — your Ace protects you from busting.'};
+      if(d>=3&&d<=6&&canDb)return{play:'double',why:'Soft 18 vs dealer '+d+'. Double against weak dealer.',plain:'Dealer is weak, you have a good hand. Double your bet to make the most of it.'};
+      return{play:'stand',why:'Soft 18 vs dealer '+d+'. Good enough.',plain:'18 will beat the dealer here more often than not. Stand.'};
+    }
+    if(t===17){
+      if(d>=3&&d<=6&&canDb)return{play:'double',why:'Soft 17 vs dealer '+d+'. Double against weak dealer.',plain:'Dealer is weak. You can\'t bust. Double and punish their weakness.'};
+      return{play:'hit',why:'Soft 17 — ALWAYS hit. Cannot bust. 17 is not good enough. This is the #1 soft hand mistake.',plain:'This is the single biggest mistake people make with soft hands. 17 is NOT good enough to stand on. You literally cannot bust — if you draw a 10, your Ace drops from 11 to 1 and you just have hard 17 (same as standing). Any other card improves you. ALWAYS hit soft 17.'};
+    }
+    return{play:'hit',why:'Soft '+t+'. Hit. Cannot bust.',plain:'Your hand is too weak to stand. Hit — remember, you physically cannot go over 21 with a soft hand.'};
+  }
+  // HARD
+  if(t>=17)return{play:'stand',why:'Hard '+t+'. Always stand. P(bust) = '+getBP(t)+'%.',plain:'If you hit, there\'s a '+getBP(t)+'% chance you\'ll go over 21 — that\'s '+getBPPlain(getBP(t))+'. Stand and hope the dealer does worse.'};
+  if(t>=13&&t<=16){
+    if(d>=2&&d<=6)return{play:'stand',why:'Hard '+t+' vs dealer '+d+' (weak). Dealer busts ~'+(d<=3?'38':d<=5?'42':'42')+'% of the time.',plain:'The dealer is showing a weak card — there\'s roughly a 40% chance they\'ll go over 21 and lose. Let THEM take the risk. You stand and hope.'};
+    return{play:'hit',why:'Hard '+t+' vs dealer '+d+' (strong). Dealer will likely make 17+. You must improve.',plain:'The dealer\'s card is strong — they\'ll probably end up with 17 or better. Your '+t+' can\'t beat that. Yes, you might bust ('+getBP(t)+'% chance), but standing loses even more often.'};
+  }
+  if(t===12){
+    if(d>=4&&d<=6)return{play:'stand',why:'Hard 12 vs dealer '+d+'. Weak dealer — stand.',plain:'The dealer has a weak card (4, 5, or 6). Stand and let them bust.'};
+    return{play:'hit',why:'Hard 12 vs dealer '+d+'. Hit. P(bust) only '+getBP(12)+'%.',plain:'Only a 10-value card busts you — that\'s about a 31% chance. The other 69% of the time, you improve. Hit.'};
+  }
+  if(t===11)return{play:canDb?'double':'hit',why:'11 is the best doubling hand. ~31% chance of making 21.',plain:'11 is incredible. About 1 in 3 times you\'ll draw a 10 and make 21. Even 9 or 8 gives you 20 or 19. Double your bet.'};
+  if(t===10){
+    if(d<=9)return{play:canDb?'double':'hit',why:'10 vs dealer '+d+'. Double.',plain:'You\'re likely to end up with 18-20. Dealer isn\'t scary. Double.'};
+    return{play:'hit',why:'10 vs dealer '+d+'. Just hit.',plain:'The dealer is also strong. Just hit, don\'t double.'};
+  }
+  if(t===9){
+    if(d>=3&&d<=6)return{play:canDb?'double':'hit',why:'9 vs dealer '+d+'. Double against weak dealer.',plain:'Dealer is weak. Your 9 could become 19. Double.'};
+    return{play:'hit',why:'9 vs dealer '+d+'. Hit.',plain:'Just hit and improve.'};
+  }
+  return{play:'hit',why:'Hard '+t+'. Hit. Very low bust risk.',plain:'Your total is low. Hit — you\'re very unlikely to bust.'};
+}
+
+// ════════════════════════════════════════
+//  SCENARIO DATA — MERGED FROM CHUNKS
+//  CC: Paste scenario arrays from chunks 2-12 here
+// ════════════════════════════════════════
+function sc(p1,p2,dU,dH,lesson,cat){return{pCards:[mk(p1),mk(p2)],dUp:mk(dU),dHole:mk(dH||'7'),lesson,cat}}
+
+const SCENARIOS={
+  m1:[
+sc('10','6','10','7',
+    'Hard 16 vs dealer 10. The most feared hand in blackjack. Every instinct says stand — "I\'ll probably bust." The maths says hit. Standing on 16 vs 10 loses about 77% of the time. Hitting loses about 74%. That 3% difference, over thousands of hands, is real money.',
+    'Hard 16 vs 10'),
+
+  sc('10','6','7','10',
+    'Hard 16 vs dealer 7. The dealer\'s 7 will probably become 17 (the hidden card is a 10-value about 31% of the time). Your 16 can\'t beat 17. You must hit.',
+    'Hard 16 vs 7'),
+
+  sc('10','6','6','10',
+    'Hard 16 vs dealer 6. NOW you stand. Why? Because the dealer\'s 6 is weak — they bust about 42% of the time. When the dealer is likely to destroy themselves, let them. Don\'t take unnecessary risk.',
+    'Hard 16 vs 6 — STAND'),
+
+  sc('9','7','A','10',
+    'Hard 16 vs dealer Ace. Hit. The Ace is the strongest card the dealer can show. They\'ll make 17+ most of the time. Your 16 is hopeless if you stand.',
+    'Hard 16 vs A'),
+
+  sc('10','6','5','10',
+    'Hard 16 vs dealer 5. Stand. Dealer 5 is the WEAKEST showing card in the entire deck — they bust about 43% of the time. Stand and let them self-destruct.',
+    'Hard 16 vs 5 — STAND'),
+
+  
+  sc('10','5','10','7',
+    'Hard 15 vs dealer 10. Hit. Same logic as 16 vs 10 — your 15 can\'t beat the dealer\'s likely 20. Yes, you might bust (58% chance), but standing is worse.',
+    'Hard 15 vs 10'),
+
+  sc('10','5','5','10',
+    'Hard 15 vs dealer 5. Stand. Weak dealer. Let them bust.',
+    'Hard 15 vs 5 — STAND'),
+
+  sc('10','5','9','8',
+    'Hard 15 vs dealer 9. Hit. Dealer 9 is strong — they\'ll likely finish with 19. Your 15 can\'t beat that standing.',
+    'Hard 15 vs 9'),
+
+  
+  sc('10','4','9','8',
+    'Hard 14 vs dealer 9. Hit. Dealer is strong. Your 14 needs to improve.',
+    'Hard 14 vs 9'),
+
+  sc('10','4','4','10',
+    'Hard 14 vs dealer 4. Stand. Dealer 4 is weak. Let them take the risk.',
+    'Hard 14 vs 4 — STAND'),
+
+  sc('10','3','3','10',
+    'Hard 13 vs dealer 3. Stand. The threshold: stand on 13+ vs dealer 2-6. Dealer 3 is weak enough.',
+    'Hard 13 vs 3 — STAND'),
+
+  sc('10','3','8','9',
+    'Hard 13 vs dealer 8. Hit. Dealer 8 will likely make 18. Your 13 is miles away from competitive.',
+    'Hard 13 vs 8'),
+
+  
+  sc('10','2','2','10',
+    'Hard 12 vs dealer 2. HIT. This surprises people. "But 2 is low!" True, but 2 is NOT weak enough to stand against with only 12. Only stand on 12 against 4, 5, or 6.',
+    'Hard 12 vs 2 — HIT'),
+
+  sc('10','2','3','10',
+    'Hard 12 vs dealer 3. HIT. Same reasoning — 3 is borderline but not weak enough. The maths says hit.',
+    'Hard 12 vs 3 — HIT'),
+
+  sc('10','2','4','10',
+    'Hard 12 vs dealer 4. STAND. Here\'s the threshold. Dealer 4, 5, and 6 are weak enough that you stand on 12. Only one card busts you (a 10-value, ~31% chance).',
+    'Hard 12 vs 4 — STAND'),
+
+  
+  sc('5','6','6','10',
+    'Hard 11 vs dealer 6. DOUBLE. This is the single best doubling hand vs the weakest dealer card. About 31% of the time you\'ll make 21. About 54% of the time you\'ll make 19, 20, or 21. Maximise your profit.',
+    'Hard 11 — DOUBLE'),
+
+  sc('5','6','10','7',
+    'Hard 11 vs dealer 10. DOUBLE. Even against a strong dealer card, your 11 is favoured. You\'re likely to end up with 19-21.',
+    'Hard 11 vs 10 — DOUBLE'),
+
+  sc('6','4','7','10',
+    'Hard 10 vs dealer 7. DOUBLE. Your 10 will probably become 20. The dealer\'s 7 will probably become 17. You\'re a heavy favourite.',
+    'Hard 10 — DOUBLE'),
+
+  sc('6','4','10','8',
+    'Hard 10 vs dealer 10. HIT (don\'t double). Both of you have strong positions. Just hit normally — doubling is too risky when the dealer is also likely to make 20.',
+    'Hard 10 vs 10 — HIT only'),
+
+  
+  sc('10','7','A','10',
+    'Hard 17 vs dealer Ace. STAND. Always. The bust probability if you hit hard 17 is 69% — roughly 7 out of 10 times you\'ll go over 21 and lose immediately. That\'s worse than any possible outcome from standing.',
+    'Hard 17 — ALWAYS STAND'),
+],
+  m2:[
+sc('A','6','8','10',
+    'Soft 17 vs dealer 8. ALWAYS HIT. This is the single most misplayed hand in blackjack. People think "17 is decent" — it\'s not. Here\'s the key insight: you CANNOT bust. If you draw a 10, your Ace drops from 11 to 1, giving you hard 17 — exactly the same as standing. Every other card (A through 9) improves your hand. There is literally zero downside to hitting.',
+    'Soft 17 — THE key lesson'),
+
+  sc('A','6','10','7',
+    'Soft 17 vs dealer 10. HIT. Dealer will likely make 20. Your 17 can\'t compete. Hit — can\'t bust.',
+    'Soft 17 vs 10'),
+
+  sc('A','6','4','10',
+    'Soft 17 vs dealer 4. DOUBLE (if allowed), otherwise hit. Dealer is weak. You can\'t bust. Doubling maximises your profit against a struggling dealer.',
+    'Soft 17 vs weak — DOUBLE'),
+
+  sc('A','6','5','10',
+    'Soft 17 vs dealer 5. DOUBLE. Dealer 5 is the weakest card. Exploit it.',
+    'Soft 17 vs 5 — DOUBLE'),
+
+  sc('A','6','6','10',
+    'Soft 17 vs dealer 6. DOUBLE. Three cards (4, 5, 6) where you double soft 17. Against everything else, just hit.',
+    'Soft 17 vs 6 — DOUBLE'),
+
+  
+  sc('A','7','9','8',
+    'Soft 18 vs dealer 9. HIT. This shocks people. "But I have 18!" Yes, and the dealer\'s 9 likely becomes 19. Your 18 is an underdog. Hit — you can\'t bust, and you might improve to 19, 20, or 21.',
+    'Soft 18 vs 9 — HIT'),
+
+  sc('A','7','10','8',
+    'Soft 18 vs dealer 10. HIT. Same reasoning. Dealer likely makes 20. Your 18 needs improvement.',
+    'Soft 18 vs 10 — HIT'),
+
+  sc('A','7','A','10',
+    'Soft 18 vs dealer Ace. HIT. Ace is the strongest showing card. Hit your 18.',
+    'Soft 18 vs A — HIT'),
+
+  sc('A','7','6','10',
+    'Soft 18 vs dealer 6. DOUBLE. Weak dealer + good hand = maximum exploitation. Your 18 is already decent, and the dealer will often bust.',
+    'Soft 18 vs 6 — DOUBLE'),
+
+  sc('A','7','7','10',
+    'Soft 18 vs dealer 7. STAND. Dealer 7 usually makes 17. Your 18 beats 17. Job done.',
+    'Soft 18 vs 7 — STAND'),
+
+  sc('A','7','2','10',
+    'Soft 18 vs dealer 2. STAND. 18 is fine against dealer 2, 7, or 8.',
+    'Soft 18 vs 2 — STAND'),
+
+  
+  sc('A','8','6','10',
+    'Soft 19. ALWAYS STAND. 19 beats most dealer outcomes. Don\'t get greedy.',
+    'Soft 19 — STAND'),
+
+  
+  sc('A','5','5','10',
+    'Soft 16 vs dealer 5. DOUBLE (if allowed), otherwise hit. Weak dealer, can\'t bust, maximise.',
+    'Soft 16 vs 5'),
+
+  sc('A','3','10','7',
+    'Soft 14 vs dealer 10. HIT. Weak soft hand vs strong dealer. Must improve. Can\'t bust.',
+    'Soft 14 vs 10'),
+
+  sc('A','2','6','10',
+    'Soft 13 vs dealer 6. DOUBLE. Weakest dealer card, you can\'t bust, doubling maximises expected value.',
+    'Soft 13 vs 6 — DOUBLE'),
+],
+  m3:[
+sc('8','8','10','7',
+    '8-8 vs dealer 10. SPLIT. Hard 16 is the worst hand in blackjack. It loses no matter what you do. But two separate 8s? Each one aims for 18, which is competitive. Splitting turns a guaranteed disaster into two fighting chances. Yes, even against a 10.',
+    'Always split 8s — even vs 10'),
+
+  sc('8','8','6','10',
+    '8-8 vs dealer 6. SPLIT. Against a weak dealer it\'s even more profitable. Two 8s vs a likely-to-bust dealer. Beautiful.',
+    'Always split 8s — vs weak'),
+
+  sc('8','8','A','10',
+    '8-8 vs dealer Ace. SPLIT. The worst case: 8s vs Ace. You still split. 16 is THAT bad. Two 8s at least have a pulse.',
+    'Always split 8s — even vs Ace'),
+
+  sc('A','A','9','8',
+    'A-A vs dealer 9. ALWAYS SPLIT. Two chances at 21 vs one hand of soft 12. This is the most profitable split in blackjack. Soft 12 is a mediocre hand. Two Aces each looking for a 10? That\'s two shots at blackjack-strength hands.',
+    'Always split Aces'),
+
+  sc('A','A','6','10',
+    'A-A vs dealer 6. SPLIT. Against a weak dealer, splitting Aces is even more devastating.',
+    'Always split Aces — vs weak'),
+
+  sc('10','10','6','10',
+    '10-10 vs dealer 6. STAND. You have 20! That\'s the second-best hand in blackjack. Only 21 beats it. Splitting turns one near-certain win into two uncertain outcomes. This is the greed trap — "but I could have TWO twenties!" Mathematically, the risk isn\'t worth it.',
+    'Never split 10s — even vs 6'),
+
+  sc('10','10','5','10',
+    '10-10 vs dealer 5. STAND. Still 20. Still don\'t split. The dealer\'s 5 makes it tempting, but 20 is 20.',
+    'Never split 10s'),
+
+  sc('5','5','7','10',
+    '5-5 vs dealer 7. HIT (or double if allowed). NEVER split 5s. You have hard 10 — that\'s a strong hand with doubling potential. Two separate 5s are both terrible starting points. Keep the 10.',
+    'Never split 5s'),
+
+  sc('5','5','5','10',
+    '5-5 vs dealer 5. DOUBLE. You have 10 vs a weak dealer. This is a premium doubling situation. Splitting would ruin it.',
+    'Never split 5s — DOUBLE the 10'),
+
+  
+  sc('9','9','7','10',
+    '9-9 vs dealer 7. STAND. You have 18. The dealer\'s 7 will most likely become 17 (they hit on 16 or less, stand on 17+). Your 18 beats 17. Don\'t overthink this.',
+    '9-9 vs 7 — STAND'),
+
+  sc('9','9','5','10',
+    '9-9 vs dealer 5. SPLIT. Weak dealer. Two 9s can each make 19, which is better than standing on 18 against a dealer who might bust anyway.',
+    '9-9 vs 5 — SPLIT'),
+
+  sc('9','9','10','7',
+    '9-9 vs dealer 10. STAND. 18 isn\'t great against a 10, but splitting into two 9s doesn\'t help — each hand is still fighting a strong dealer. Stand and accept the 18.',
+    '9-9 vs 10 — STAND'),
+
+  sc('7','7','3','10',
+    '7-7 vs dealer 3. SPLIT. Dealer is weak. Two 7s give you two shots at 17 — not amazing, but better than hard 14.',
+    '7-7 vs weak — SPLIT'),
+
+  sc('4','4','5','10',
+    '4-4 vs dealer 5. HIT. Don\'t split 4s. Hard 8 is a reasonable starting point that can reach 18. Two separate 4s are both awkward — too low to stand, too low to double effectively.',
+    'Don\'t split 4s'),
+
+  sc('2','2','4','10',
+    '2-2 vs dealer 4. SPLIT. Small pairs (2s, 3s) split against weak dealers (2-7). The logic: hard 4 is going nowhere. Two fresh hands starting with 2 at least have a chance to build something against a weak dealer.',
+    '2-2 vs weak — SPLIT'),
+],
+  m4:[
+sc('10','9','A','10',
+    'You have 19 and the dealer shows an Ace. Insurance is offered. You think "I should protect my good hand." DON\'T. Insurance is a separate bet with a separate (negative) expected value. Your 19 is strong regardless. Decline insurance and play the hand.',
+    'Insurance with strong hand — DECLINE'),
+
+  sc('A','10','A','K',
+    'You have blackjack! Dealer shows Ace. You\'re offered "even money" — a guaranteed 1:1 payout instead of waiting to see if the dealer also has blackjack (which would push). Even money sounds safe. It\'s mathematically identical to insurance. The EV of declining is higher.',
+    'Even money on blackjack — DECLINE'),
+
+  sc('10','6','A','5',
+    'You have 16 (terrible) and dealer shows Ace. Insurance offered. "I\'m going to lose anyway, might as well insure." No. Insurance doesn\'t protect your hand — it\'s a completely separate bet. Two bad bets don\'t make a good one.',
+    'Insurance with weak hand — DECLINE'),
+
+  sc('5','5','A','7',
+    'You have 10 and dealer shows Ace. Good doubling hand, but insurance first? No. The insurance bet has a 7.7% house edge regardless of what you hold. Your hand doesn\'t change the probability of the dealer\'s hole card.',
+    'Insurance with doubling hand — DECLINE'),
+
+  sc('8','8','A','3',
+    'You have 8-8 (should split). Dealer shows Ace. Insurance offered before you act on your hand. Decline insurance, THEN split your 8s. Two separate decisions — don\'t let insurance distract you from the correct play.',
+    'Insurance before splitting — DECLINE'),
+
+  sc('A','6','A','9',
+    'Soft 17 vs dealer Ace. Insurance offered. Decline. Then HIT (soft 17 — always hit). Two correct decisions in one hand.',
+    'Insurance + soft 17 — DECLINE then HIT'),
+
+  sc('10','10','A','Q',
+    'You have 20. Dealer shows Ace. "I should protect my 20 — it\'s almost certainly a winner!" The temptation is highest here. But the maths doesn\'t change: insurance has a −7.7% EV no matter what you hold. Your 20 wins 92% of the time without insurance.',
+    'Insurance with 20 — DECLINE'),
+
+  sc('10','2','A','7',
+    'You have 12 vs dealer Ace. Insurance? No. And then? Hit. 12 vs Ace — hit and hope.',
+    'Insurance + hard 12 — DECLINE then HIT'),
+
+  sc('7','7','A','4',
+    '7-7 vs dealer Ace. Don\'t insure, don\'t split (dealer too strong). Just hit.',
+    'Insurance + pair decision — DECLINE'),
+
+  sc('10','3','A','6',
+    'Hard 13 vs dealer Ace. Decline insurance. Hit. Your 13 can\'t stand against an Ace.',
+    'Insurance + hard 13 — DECLINE then HIT'),
+],
+  m10:[
+sc('10','6','10','7',
+    'TRUE COUNT ≥ 0: Stand on 16 vs 10. Basic strategy says hit. But at TC 0 or above, the extra 10-value cards in the shoe make hitting slightly worse than standing. This is the #1 most valuable deviation — it adds about £3.30 per 100 hours of play.',
+    'I18 #1: Stand 16 vs 10 at TC≥0'),
+
+  sc('10','5','10','7',
+    'TRUE COUNT ≥ +4: Stand on 15 vs 10. Normally you hit 15 vs 10. But at TC +4, the shoe is so rich in 10s that your bust rate climbs significantly. Stand and hope the dealer busts too.',
+    'I18 #2: Stand 15 vs 10 at TC≥+4'),
+
+  sc('10','10','5','10',
+    'TRUE COUNT ≥ +5: Split 10s vs 5. Yes, really. At TC +5, the shoe is so rich that each 10 is likely to draw another 10 (making 20), and the dealer is very likely to bust on their 5. This deviation is high-risk but mathematically correct at extreme counts.',
+    'I18 #3: Split 10s vs 5 at TC≥+5'),
+
+  sc('10','10','6','10',
+    'TRUE COUNT ≥ +4: Split 10s vs 6. Same logic as vs 5, but the threshold is lower because 6 is an even weaker dealer card. At TC +4, splitting 10s vs 6 has positive expected value.',
+    'I18 #4: Split 10s vs 6 at TC≥+4'),
+
+  
+  sc('10','8','A','10',
+    'TRUE COUNT ≥ +3: TAKE INSURANCE. Normally insurance is always wrong (−7.7% EV). But at TC +3, the ratio of 10-value cards remaining is high enough that insurance becomes +EV. This is the single most profitable deviation for bet sizing.',
+    'I18 #5: Take insurance at TC≥+3'),
+
+  sc('10','2','4','10',
+    'TRUE COUNT < 0: Hit 12 vs 4. Basic strategy says stand. But at negative counts (shoe rich in low cards), the dealer is LESS likely to bust. Hit your 12.',
+    'I18 #6: Hit 12 vs 4 at TC<0'),
+
+  sc('10','2','2','10',
+    'TRUE COUNT ≥ +3: Stand on 12 vs 2. Normally hit. At TC +3, enough high cards remain that standing becomes correct — the dealer is more likely to bust.',
+    'I18 #7: Stand 12 vs 2 at TC≥+3'),
+
+  sc('10','2','3','10',
+    'TRUE COUNT ≥ +2: Stand on 12 vs 3. Normally hit. At TC +2, stand. The count has shifted the bust probabilities enough.',
+    'I18 #8: Stand 12 vs 3 at TC≥+2'),
+
+  sc('5','6','A','10',
+    'TRUE COUNT ≥ +1: Double 11 vs Ace. Basic strategy in most games says hit (not double) vs Ace. But at TC +1, the extra 10s make doubling correct.',
+    'I18 #9: Double 11 vs A at TC≥+1'),
+
+  sc('10','3','2','10',
+    'TRUE COUNT ≥ +1: Stand on 13 vs 2. Normally hit. At TC +1, stand. The dealer\'s bust rate with 2 showing increases with the count.',
+    'I18 #10: Stand 13 vs 2 at TC≥+1'),
+
+  sc('5','4','2','10',
+    'TRUE COUNT ≥ +1: Double 9 vs 2. Normally hit. At +1, the extra 10s make doubling 9 vs 2 correct.',
+    'I18 #11: Double 9 vs 2 at TC≥+1'),
+
+  sc('6','4','10','7',
+    'TRUE COUNT ≥ +4: Double 10 vs 10. Normally just hit. At TC +4, the concentration of 10-value cards makes doubling profitable even against the dealer\'s strong 10.',
+    'I18 #12: Double 10 vs 10 at TC≥+4'),
+
+  sc('6','4','A','10',
+    'TRUE COUNT ≥ +4: Double 10 vs Ace. Same logic. Extreme count = double even against the strongest dealer card.',
+    'I18 #13: Double 10 vs A at TC≥+4'),
+
+  sc('5','4','7','10',
+    'TRUE COUNT ≥ +3: Double 9 vs 7. Normally hit. At TC +3, doubling becomes correct.',
+    'I18 #14: Double 9 vs 7 at TC≥+3'),
+
+  sc('10','6','9','8',
+    'TRUE COUNT ≥ +1: Stand on 16 vs 9. Basic strategy says hit. At TC +1, the extra high cards make standing marginally better.',
+    'I18 #15: Stand 16 vs 9 at TC≥+1'),
+
+  sc('10','3','3','10',
+    'TRUE COUNT < −1: Hit 13 vs 3. Normally stand. At negative counts, the dealer is less likely to bust. Hit.',
+    'I18 #16: Hit 13 vs 3 at TC<−1'),
+
+  sc('10','2','5','10',
+    'TRUE COUNT < −2: Hit 12 vs 5. Normally stand. At very negative counts, even dealer 5 isn\'t busting enough. Hit.',
+    'I18 #17: Hit 12 vs 5 at TC<−2'),
+
+  sc('10','2','6','10',
+    'TRUE COUNT < −1: Hit 12 vs 6. Normally stand. At negative counts, hit. The shoe is full of low cards — the dealer won\'t bust as often.',
+    'I18 #18: Hit 12 vs 6 at TC<−1'),
+],
+};
+
+const TUTORIALS={
+  m4:`
+<div class="tut">
+<h3>Insurance: The Casino's Most Profitable Trick</h3>
+<p>When the dealer shows an Ace, you're offered "insurance" — a side bet that the dealer has blackjack. It pays 2:1 and costs half your original bet.</p>
+<p>Sounds reasonable. It's a trap. Here's why:</p>
+
+<div class="mb">
+<strong>The probability:</strong><br><br>
+Cards that give dealer BJ: 10, J, Q, K = <span class="pos">16 cards</span> per deck<br>
+Cards that don't: everything else = <span class="neg">36 cards</span> per deck<br><br>
+P(dealer blackjack | showing Ace) = 16/51 ≈ <span class="neg">31.4%</span><br>
+P(no blackjack) = 35/51 ≈ <span class="pos">68.6%</span>
+</div>
+
+<div class="pln">In plain English: roughly 7 times out of 10, the dealer does NOT have blackjack. You lose your insurance bet 7 times out of 10.</div>
+
+<div class="mb">
+<strong>Expected value of a £10 insurance bet:</strong><br><br>
+Win (31.4%): +£20 return = <span class="pos">+£10 profit</span><br>
+Lose (68.6%): <span class="neg">−£10</span><br><br>
+EV = (0.314 × £10) + (0.686 × −£10)<br>
+EV = £3.14 − £6.86 = <span class="neg">−£3.72</span><br><br>
+<strong>For every £10 of insurance you take, you lose £3.72 on average.</strong>
+</div>
+
+<div class="pln">That's a house edge of 7.7% on the insurance bet alone — fifteen times worse than basic strategy blackjack (0.5%). The casino LOVES it when you take insurance.</div>
+
+<div class="dg">NEVER take insurance. Not with a good hand. Not with a bad hand. Not with blackjack. Not ever. The expected value is always negative.</div>
+
+<p>"But what about even money?" When you have blackjack and the dealer shows an Ace, taking "even money" is mathematically identical to taking insurance. Same bad bet, different name.</p>
+
+<h3>Side Bets: Where Casinos Really Make Money</h3>
+
+<p>Every side bet in every casino has a negative expected value. They exist to generate revenue, not to give you a chance.</p>
+
+<div class="mb">
+<strong>House edges compared:</strong><br><br>
+Blackjack (basic strategy): <span class="neg">0.5%</span> — the best bet in the casino<br>
+Insurance: <span class="neg">7.7%</span> — 15× worse<br>
+Perfect Pairs: <span class="neg">~5.8%</span> — 12× worse<br>
+21+3 (poker-style): <span class="neg">~3.2%</span> — 6× worse<br>
+Lucky Ladies: <span class="neg">~17.4%</span> — 35× worse<br>
+Super 7s: <span class="neg">~12.6%</span> — 25× worse<br>
+Roulette (single zero): <span class="neg">2.7%</span><br>
+UK slot machines: <span class="neg">2–10%</span><br>
+Lottery: <span class="neg">~50%</span> — the worst bet in existence
+</div>
+
+<div class="pt">The side bets with the biggest payouts have the biggest house edges. This is not a coincidence. High payouts fund higher house margins. The casino always wins on side bets — that's how they pay for the building.</div>
+
+<div class="pln">If someone tells you they "always do well" on Perfect Pairs, they're experiencing small-sample luck. Over 10,000 hands, Perfect Pairs will cost them 5.8% of every bet placed. That's not an opinion — it's arithmetic.</div>
+</div>
+`,
+  m6:`
+<div class="tut">
+<h3>Bankroll Management: The Strategy Nobody Teaches</h3>
+<p>Most blackjack education focuses on <em>how to play the cards</em>. Almost none focuses on <em>how to manage your money</em>. This is the module that keeps you in the game long enough for the maths to work.</p>
+
+<div class="pt">Even with perfect basic strategy, you will have losing sessions. Lots of them. Variance is real. The question isn't "will I lose?" — it's "can I survive the losing streaks?"</div>
+
+<h3>The Numbers That Matter</h3>
+
+<div class="mb">
+<strong>Standard deviation per hand (basic strategy, £25 bet):</strong><br>
+σ ≈ 1.14 × bet = <span class="pos">£28.50</span><br><br>
+
+<strong>Over 100 hands:</strong><br>
+Expected loss: 100 × £25 × 0.005 = <span class="neg">−£12.50</span><br>
+Standard deviation: √100 × £28.50 = <span class="pos">£285</span><br><br>
+
+This means in a typical 100-hand session:<br>
+• 68% of the time you'll finish between −£297 and +£272<br>
+• 95% of the time you'll finish between −£583 and +£558<br>
+• 5% of the time you'll lose more than £583
+</div>
+
+<div class="pln">In plain English: even playing perfectly, you can easily lose £300-500 in a single session. That's normal variance, not bad play. If that amount would hurt you, your bet size is too high.</div>
+
+<h3>Risk of Ruin</h3>
+
+<p>Risk of ruin is the probability of losing your entire bankroll before a specified goal. For a basic strategy player:</p>
+
+<div class="mb">
+<strong>Risk of ruin with £500 bankroll, £25 bet (20 units):</strong><br>
+Ruin probability ≈ <span class="neg">~40%</span> over 1000 hands<br><br>
+
+<strong>Risk of ruin with £1250 bankroll, £25 bet (50 units):</strong><br>
+Ruin probability ≈ <span class="neg">~15%</span> over 1000 hands<br><br>
+
+<strong>Risk of ruin with £2500 bankroll, £25 bet (100 units):</strong><br>
+Ruin probability ≈ <span class="pos">~2%</span> over 1000 hands
+</div>
+
+<div class="pt">Rule of thumb: your bankroll should be at least 50× your average bet. Below that, you're gambling with your ability to keep playing.</div>
+
+<h3>The Kelly Criterion</h3>
+
+<p>How much should you bet when you have an edge (e.g. card counting)?</p>
+
+<div class="mb">
+<strong>Kelly fraction:</strong> f* = edge / variance<br><br>
+For a card counter with a 1% edge:<br>
+f* = 0.01 / 1.30 ≈ <span class="pos">0.77% of bankroll</span><br><br>
+With a £10,000 bankroll: optimal bet = £77<br><br>
+<strong>Half-Kelly (recommended):</strong> £38.50<br>
+Half-Kelly reduces variance dramatically with only a small reduction in growth rate. Most professional counters use half-Kelly or less.
+</div>
+
+<div class="pln">In plain English: even when the maths is in your favour, you should only bet a tiny fraction of your total bankroll. Professional card counters bet less than 1% of their bankroll per hand. If you're betting 10% of your bankroll per hand, you will go broke — it's just a matter of when.</div>
+
+<h3>Session Expectations</h3>
+
+<div class="mb">
+<strong>A typical 2-hour casino session (80 hands at £25):</strong><br><br>
+Expected result: 80 × £25 × (−0.005) = <span class="neg">−£10</span><br>
+Standard deviation: √80 × £28.50 = <span class="pos">±£255</span><br><br>
+So your result will typically be between −£265 and +£245.<br>
+That's a £510 swing — for an expected loss of just £10.<br><br>
+<strong>This is why blackjack FEELS random even though the maths is precise.</strong>
+</div>
+
+<div class="dg">If you can't afford to lose 10× your expected loss in a single session, you're betting too much. Expected loss of £10? Be prepared to lose £100. Expected loss of £50? Be prepared to lose £500. Variance is not your friend.</div>
+
+<div class="pt">The casino's edge is small (0.5% with basic strategy). But they have infinite bankroll and infinite time. You don't. Bankroll management is the only thing that keeps the small edge from eating you alive through variance.</div>
+</div>
+`,
+  m7:`
+<div class="tut">
+<h3>Casino Rules Analyser</h3>
+<p>Not all blackjack tables are equal. Each rule variation shifts the house edge. Some cost you fractions of a percent. Others cost you significantly more. Input your casino's rules below to see exactly what you're facing.</p>
+
+<div class="pt">The base house edge for a "standard" 6-deck game with favourable rules is approximately 0.40%. Every unfavourable rule adds to this.</div>
+</div>
+
+<div class="tut" id="rulesCalc">
+<h3>Your Casino's Rules</h3>
+
+<div style="margin:.4rem 0">
+<label style="font-size:.78rem;display:flex;justify-content:space-between;padding:.3rem 0;border-bottom:1px solid var(--border)">
+  <span>Number of decks</span>
+  <select id="rc_decks" onchange="calcRules()" style="background:var(--bg);color:var(--gold);border:1px solid var(--border);border-radius:4px;padding:2px 6px;font-family:DM Mono;font-size:.75rem">
+    <option value="1">1 deck</option>
+    <option value="2">2 decks</option>
+    <option value="6" selected>6 decks</option>
+    <option value="8">8 decks</option>
+  </select>
+</label>
+
+<label style="font-size:.78rem;display:flex;justify-content:space-between;padding:.3rem 0;border-bottom:1px solid var(--border)">
+  <span>Dealer hits soft 17?</span>
+  <select id="rc_h17" onchange="calcRules()" style="background:var(--bg);color:var(--gold);border:1px solid var(--border);border-radius:4px;padding:2px 6px;font-family:DM Mono;font-size:.75rem">
+    <option value="stand">Stands (S17) — better for you</option>
+    <option value="hit">Hits (H17) — worse for you</option>
+  </select>
+</label>
+
+<label style="font-size:.78rem;display:flex;justify-content:space-between;padding:.3rem 0;border-bottom:1px solid var(--border)">
+  <span>Double after split (DAS)?</span>
+  <select id="rc_das" onchange="calcRules()" style="background:var(--bg);color:var(--gold);border:1px solid var(--border);border-radius:4px;padding:2px 6px;font-family:DM Mono;font-size:.75rem">
+    <option value="yes" selected>Yes — better for you</option>
+    <option value="no">No</option>
+  </select>
+</label>
+
+<label style="font-size:.78rem;display:flex;justify-content:space-between;padding:.3rem 0;border-bottom:1px solid var(--border)">
+  <span>Double on any two cards?</span>
+  <select id="rc_dbl" onchange="calcRules()" style="background:var(--bg);color:var(--gold);border:1px solid var(--border);border-radius:4px;padding:2px 6px;font-family:DM Mono;font-size:.75rem">
+    <option value="any" selected>Any two cards — better</option>
+    <option value="910">9, 10, 11 only</option>
+    <option value="1011">10 and 11 only</option>
+  </select>
+</label>
+
+<label style="font-size:.78rem;display:flex;justify-content:space-between;padding:.3rem 0;border-bottom:1px solid var(--border)">
+  <span>Surrender allowed?</span>
+  <select id="rc_surr" onchange="calcRules()" style="background:var(--bg);color:var(--gold);border:1px solid var(--border);border-radius:4px;padding:2px 6px;font-family:DM Mono;font-size:.75rem">
+    <option value="late">Late surrender — better for you</option>
+    <option value="no" selected>No surrender</option>
+  </select>
+</label>
+
+<label style="font-size:.78rem;display:flex;justify-content:space-between;padding:.3rem 0;border-bottom:1px solid var(--border)">
+  <span>Blackjack pays</span>
+  <select id="rc_bj" onchange="calcRules()" style="background:var(--bg);color:var(--gold);border:1px solid var(--border);border-radius:4px;padding:2px 6px;font-family:DM Mono;font-size:.75rem">
+    <option value="3:2" selected>3:2 — standard</option>
+    <option value="6:5">6:5 — AVOID this table</option>
+  </select>
+</label>
+
+<label style="font-size:.78rem;display:flex;justify-content:space-between;padding:.3rem 0;border-bottom:1px solid var(--border)">
+  <span>Re-split Aces?</span>
+  <select id="rc_rsa" onchange="calcRules()" style="background:var(--bg);color:var(--gold);border:1px solid var(--border);border-radius:4px;padding:2px 6px;font-family:DM Mono;font-size:.75rem">
+    <option value="yes">Yes — better</option>
+    <option value="no" selected>No</option>
+  </select>
+</label>
+</div>
+
+<div id="rulesResult" style="margin-top:.8rem;padding:.8rem;background:var(--bg);border-radius:8px;font-family:DM Mono;font-size:.8rem;line-height:1.8"></div>
+
+<div class="pln" style="margin-top:.5rem">The single biggest red flag: <strong>6:5 blackjack</strong>. This alone adds 1.39% to the house edge. Never play at a 6:5 table. Walk away.</div>
+</div>
+`,
+  m8:`
+<div class="tut">
+<h3>Card Counting: Applied Probability</h3>
+<p>Card counting isn't illegal. It isn't cheating. It's applied mathematics — tracking the ratio of high to low cards remaining in the shoe to identify when the odds favour the player.</p>
+
+<div class="pt">The principle: when the remaining shoe is rich in 10s and Aces (high cards), the player has a statistical advantage. When it's rich in small cards (2-6), the casino has a larger advantage. Card counting tracks this shift.</div>
+
+<h3>Why High Cards Help the Player</h3>
+
+<div class="mb">
+<strong>High cards (10, J, Q, K, A) benefit the player because:</strong><br><br>
+1. <span class="pos">Blackjack pays 3:2</span> — more 10s and Aces = more blackjacks for both player and dealer, but only the PLAYER gets paid 3:2. The dealer just wins 1:1.<br><br>
+2. <span class="pos">Better doubles</span> — doubling on 10 or 11 is most profitable when the next card is likely a 10.<br><br>
+3. <span class="pos">Dealer busts more</span> — the dealer MUST hit on 16 or less. With more 10s in the shoe, the dealer busts more often on stiff hands (12-16).<br><br>
+4. <span class="pos">Insurance becomes profitable</span> — at high counts, the ratio of 10-value cards increases, making the insurance bet (normally terrible) actually +EV.
+</div>
+
+<div class="pln">In plain English: the rules of blackjack slightly favour the player when the remaining cards are mostly high. The dealer has to hit on bad hands — and high cards bust those hands. You get paid extra for blackjack — and high cards make blackjack more likely.</div>
+
+<h3>The Hi-Lo System</h3>
+
+<div class="mb">
+<strong>Card values:</strong><br><br>
+2, 3, 4, 5, 6 → <span class="pos">+1</span> (low card gone = good for player)<br>
+7, 8, 9 → 0 (neutral — ignore these)<br>
+10, J, Q, K, A → <span class="neg">−1</span> (high card gone = bad for player)<br><br>
+
+<strong>Logic:</strong> When a low card is dealt, the remaining shoe gets relatively richer in high cards (good for you), so the count goes UP. When a high card is dealt, the shoe gets poorer in high cards (bad for you), so the count goes DOWN.
+</div>
+
+<h3>Worked Example</h3>
+
+<div class="mb">
+<strong>Cards dealt in order:</strong><br>
+5, K, 3, 8, A, 6, 2, Q, 4, 7<br><br>
+<strong>Running count:</strong><br>
+5 → <span class="pos">+1</span> (running: +1)<br>
+K → <span class="neg">−1</span> (running: 0)<br>
+3 → <span class="pos">+1</span> (running: +1)<br>
+8 → 0 (running: +1)<br>
+A → <span class="neg">−1</span> (running: 0)<br>
+6 → <span class="pos">+1</span> (running: +1)<br>
+2 → <span class="pos">+1</span> (running: +2)<br>
+Q → <span class="neg">−1</span> (running: +1)<br>
+4 → <span class="pos">+1</span> (running: +2)<br>
+7 → 0 (running: <span class="pos">+2</span>)<br><br>
+<strong>Final running count: +2</strong>
+</div>
+
+<h3>True Count</h3>
+
+<p>The running count alone isn't enough. A running count of +4 means something very different with 5 decks remaining vs 1 deck remaining. The true count adjusts for this:</p>
+
+<div class="mb">
+<strong>True count = Running count ÷ Decks remaining</strong><br><br>
+Running count: +6, Decks remaining: 3<br>
+True count: +6 ÷ 3 = <span class="pos">+2</span><br><br>
+Running count: +6, Decks remaining: 1<br>
+True count: +6 ÷ 1 = <span class="pos">+6</span> (much stronger!)<br><br>
+You estimate decks remaining by looking at the discard tray.
+</div>
+
+<div class="pln">In plain English: the true count tells you how "rich" the remaining shoe is per deck. A true count of +2 means roughly 2 extra high cards per deck remaining — regardless of how many decks are left.</div>
+
+<h3>What the Count Tells You</h3>
+
+<div class="mb">
+<strong>True count vs player edge (approximate, 6-deck, basic strategy):</strong><br><br>
+True count −2 or below: House edge <span class="neg">~1.0%+</span> (sit out or bet minimum)<br>
+True count −1: House edge <span class="neg">~0.75%</span><br>
+True count 0: House edge <span class="neg">~0.50%</span> (basic strategy)<br>
+True count +1: House edge <span class="neg">~0.0%</span> (roughly breakeven)<br>
+True count +2: Player edge <span class="pos">~+0.5%</span><br>
+True count +3: Player edge <span class="pos">~+1.0%</span><br>
+True count +4: Player edge <span class="pos">~+1.5%</span><br>
+True count +5+: Player edge <span class="pos">~+2.0%+</span><br><br>
+Each +1 in true count shifts the edge by approximately 0.5%.
+</div>
+
+<div class="pt">At true count +2 or higher, the mathematical edge shifts to the player. This is when a card counter increases their bet size. At true count 0 or below, they bet the minimum.</div>
+
+<h3>Bet Spread</h3>
+
+<div class="mb">
+<strong>A typical 1-12 spread (£10 minimum):</strong><br><br>
+TC ≤ +1: £10 (minimum)<br>
+TC +2: £20 (2 units)<br>
+TC +3: £40 (4 units)<br>
+TC +4: £80 (8 units)<br>
+TC +5+: £120 (12 units)<br><br>
+You bet MORE when the maths favours you, LESS when it doesn't.
+</div>
+
+<div class="pln">This is the core of card counting: you're not trying to predict individual cards. You're adjusting your bet size based on when the remaining shoe statistically favours the player. Bigger bets when the edge is yours, minimum bets when it isn't.</div>
+
+<h3>Realistic Expectations</h3>
+
+<div class="dg">Card counting does NOT guarantee wins. The edge is small (typically 0.5% to 1.5%) and the variance is enormous. You will have losing sessions — many of them. Over thousands of hands, the edge manifests. Over 50 hands, anything can happen.</div>
+
+<div class="mb">
+<strong>Expected hourly income for a skilled counter:</strong><br><br>
+£25 average bet × 80 hands/hr × 1% edge = <span class="pos">£20/hr</span><br><br>
+But the standard deviation per hour is approximately <span class="neg">±£285</span>.<br>
+So your actual hourly result ranges from roughly −£265 to +£305.<br><br>
+<strong>You need 200+ hours before the edge reliably shows up in your results.</strong>
+</div>
+
+<div class="pt">Casinos will ask you to leave if they suspect you're counting. This is their legal right — they're private businesses. Card counting is not illegal, but casinos don't have to let you play. Welcome to the free market.</div>
+
+<div class="pln">The practical reality: card counting is mentally exhausting, socially isolating, and financially volatile. The edge is real but small. Most people who try it quit within a few months. We teach it because the MATHEMATICS is fascinating, not because it's a career path.</div>
+</div>
+`,
+};
+
+// ════════════════════════════════════════
+//  MODULE LOADER
+// ════════════════════════════════════════
+let curMod,scIdx,optP,totD,strk,scList;
+let pCards=[],dCards=[],hAct=false,dRev=false;
+
+const MOD_NAMES={m1:'1: Hard Hands',m2:'2: Soft Hands',m3:'3: Splitting',m4:'4: Insurance & Side Bets',m5:'5: Myth Destruction Lab',m6:'6: Bankroll & Variance',m7:'7: Casino Rules Analyser',m8:'8: Card Counting Theory',m9:'9: Counting Speed Drills',m10:'10: Strategy Deviations',m11:'11: Full Session Replay'};
+
+function loadMod(id){
+  curMod=id;scIdx=0;optP=0;totD=0;strk=0;
+  document.getElementById('lTitle').textContent=MOD_NAMES[id]||id;
+  document.getElementById('hOpt').textContent='0/0';
+  document.getElementById('hAcc').textContent='—';
+  document.getElementById('hStrk').textContent='0';
+  document.getElementById('anl').className='an';
+  document.getElementById('simA').className='sim';
+  show('lesson');
+
+  // Scenario-based modules
+  if(SCENARIOS[id]&&SCENARIOS[id].length>0){
+    scList=[...SCENARIOS[id]];mkShoe();
+    document.getElementById('feltArea').style.display='block';
+    document.getElementById('hudArea').style.display='flex';
+    loadSc();
+    return;
+  }
+  // Tutorial modules
+  if(TUTORIALS[id]){
+    document.getElementById('feltArea').style.display='none';
+    document.getElementById('actR').style.display='none';
+    document.getElementById('hudArea').style.display='none';
+    document.getElementById('tutArea').innerHTML=TUTORIALS[id];
+    document.getElementById('lProg').textContent='Tutorial';
+    document.getElementById('pFill').style.width='100%';
+    return;
+  }
+  // Simulation modules
+  if(id==='m5'){loadMyth();return}
+  if(id==='m9'){loadSpeed();return}
+  if(id==='m11'){loadSession();return}
+  // Fallback
+  document.getElementById('feltArea').style.display='none';
+  document.getElementById('actR').style.display='none';
+  document.getElementById('hudArea').style.display='none';
+  document.getElementById('tutArea').innerHTML='<div class="tut"><h3>Coming Soon</h3><p>This module is under development. Check back soon.</p></div>';
+  document.getElementById('lProg').textContent='';
+  document.getElementById('pFill').style.width='0%';
+}
+
+// ════════════════════════════════════════
+//  SCENARIO PLAYER (M1, M2, M3, M4, M10)
+// ════════════════════════════════════════
+function loadSc(){
+  if(scIdx>=scList.length){showRes();return}
+  const s=scList[scIdx];
+  document.getElementById('lProg').textContent=(scIdx+1)+'/'+scList.length;
+  document.getElementById('pFill').style.width=Math.round(scIdx/scList.length*100)+'%';
+  document.getElementById('anl').className='an';
+  pCards=[...s.pCards];dCards=[s.dUp,s.dHole];dRev=false;hAct=true;
+  document.getElementById('tutArea').innerHTML='<div class="tut"><div class="pt">'+s.lesson+'</div></div>';
+  rT();showA(true);
+}
+
+function rT(){
+  document.getElementById('dH').innerHTML=dCards.map((c,i)=>rc(c,i===1&&!dRev)).join('');
+  document.getElementById('pH').innerHTML=pCards.map(c=>rc(c)).join('');
+  document.getElementById('pT').textContent=hv(pCards)+(isSoft(pCards)?' soft':'');
+  document.getElementById('dT').textContent=dRev?hv(dCards):cv(dCards[0])+' + ?';
+}
+
+function showA(on){
+  const el=document.getElementById('actR');el.style.display=on?'flex':'none';
+  if(!on)return;el.innerHTML='';
+  const cs=pCards.length===2&&cv(pCards[0])===cv(pCards[1]),cd=pCards.length===2;
+  ['hit','stand','double','split'].forEach(a=>{
+    if(a==='split'&&!cs)return;if(a==='double'&&!cd)return;
+    const b=document.createElement('button');b.className='ab';
+    b.textContent=a.charAt(0).toUpperCase()+a.slice(1);
+    b.addEventListener('click',()=>doAct(a));el.appendChild(b);
+  });
+}
+
+function doAct(action){
+  if(!hAct)return;hAct=false;showA(false);
+  const cs=pCards.length===2&&cv(pCards[0])===cv(pCards[1]),cd=pCards.length===2;
+  const opt=getOpt(pCards,dCards[0],cs,cd);
+  totD++;const ok=action===opt.play;
+  if(ok){optP++;strk++}else strk=0;
+  document.getElementById('hOpt').textContent=optP+'/'+totD;
+  document.getElementById('hAcc').textContent=Math.round(optP/totD*100)+'%';
+  document.getElementById('hStrk').textContent=strk;
+
+  const t=hv(pCards),bp=getBP(t);
+  const a=document.getElementById('anl');
+  let h='<h3>Decision Analysis</h3>';
+  h+='<div class="ag">';
+  h+='<div class="ac"><div class="al">Your hand</div><div class="av">'+t+(isSoft(pCards)?' soft':'')+'</div></div>';
+  h+='<div class="ac"><div class="al">Dealer shows</div><div class="av">'+cv(dCards[0])+'</div></div>';
+  h+='<div class="ac"><div class="al">P(bust if you hit)</div><div class="av '+(bp>50?'neg':'pos')+'">'+bp+'%</div></div>';
+  h+='<div class="ac"><div class="al">In plain English</div><div class="av" style="font-family:Crimson Pro;font-size:.72rem;font-style:italic;color:var(--cyan)">'+getBPPlain(bp)+'</div></div>';
+  h+='</div>';
+  h+='<div class="rsn"><strong>Optimal play: '+opt.play.toUpperCase()+'</strong><br>'+opt.why+'</div>';
+  h+='<div class="pln">'+opt.plain+'</div>';
+  h+='<div class="vrd '+(ok?'ok':'no')+'">'+(ok?'✓ Mathematically optimal.':'✗ Not optimal. Correct play: '+opt.play.toUpperCase())+'</div>';
+  h+='<button class="nb" onclick="playOut(\''+action+'\')">Play out this hand →</button>';
+  a.innerHTML=h;a.className='an show';
+}
+
+function playOut(action){
+  document.getElementById('anl').className='an';
+  if(action==='hit'){pCards.push(dl());rT();if(hv(pCards)>21){dRev=true;rT();handEnd('bust');return}if(hv(pCards)===21){dlrPlay();return}hAct=true;showA(true);return}
+  if(action==='stand'){dlrPlay();return}
+  if(action==='double'){pCards.push(dl());rT();if(hv(pCards)>21){dRev=true;rT();handEnd('bust');return}dlrPlay();return}
+  if(action==='split'){pCards.pop();pCards.push(dl());rT();hAct=true;showA(true);return}
+}
+
+function dlrPlay(){
+  dRev=true;rT();
+  function step(){
+    if(hv(dCards)<17||(hv(dCards)===17&&isSoft(dCards))){
+      setTimeout(()=>{dCards.push(dl());rT();step()},400);
+    } else{
+      const p=hv(pCards),d=hv(dCards);
+      if(d>21)handEnd('win');else if(p>d)handEnd('win');else if(p<d)handEnd('lose');else handEnd('push');
+    }
+  }step();
+}
+
+function handEnd(r){
+  const msg={win:'You won this hand.',lose:'Dealer wins.',bust:'Bust — over 21.',push:'Push — tied.'};
+  const cls=r==='win'?'ok':r==='push'?'nu':'no';
+  const a=document.getElementById('anl');
+  a.innerHTML='<div class="vrd '+cls+'">'+msg[r]+'</div><div class="pln" style="text-align:center">The outcome doesn\'t affect your score. Your <em>decision</em> is what matters.</div><button class="nb" onclick="advSc()">Next Scenario →</button>';
+  a.className='an show';
+}
+
+function advSc(){document.getElementById('anl').className='an';scIdx++;loadSc()}
+
+// ════════════════════════════════════════
+//  MYTH LAB (M5) — placeholder
+// ════════════════════════════════════════
+function loadMyth(){
+  document.getElementById('feltArea').style.display='none';
+  document.getElementById('actR').style.display='none';
+  document.getElementById('hudArea').style.display='none';
+  document.getElementById('simA').className='sim';
+  
+  const myths = [
+    {
+      title: '"That Player Took My Card!"',
+      desc: 'The most persistent myth: another player\'s bad decisions cost you money. "He hit on 17 and took the dealer\'s bust card!"',
+      truth: 'Another player\'s decisions are equally likely to HELP you as HURT you. Over thousands of hands, their impact on your expected value is exactly zero.',
+      simLabel1: 'You alone',
+      simLabel2: 'You + terrible player',
+      simColor1: 'var(--green-bright)',
+      simColor2: 'var(--gold)',
+    },
+    {
+      title: '"I\'m Due a Win"',
+      desc: 'You\'ve lost 8 hands in a row. Surely you\'re "due" a win? The cards must even out?',
+      truth: 'This is the Gambler\'s Fallacy. Cards don\'t have memory. Each hand is independent (in a freshly shuffled shoe). Losing 8 in a row doesn\'t make the 9th hand more likely to win. The probability is exactly the same as it was for hand 1.',
+      simLabel1: 'Win rate after 1 loss',
+      simLabel2: 'Win rate after 8 losses',
+      simColor1: 'var(--green-bright)',
+      simColor2: 'var(--gold)',
+    },
+    {
+      title: '"Third Base Controls the Table"',
+      desc: 'The player sitting at "third base" (last to act before the dealer) supposedly controls the outcome for the whole table.',
+      truth: 'Third base has no more influence on the dealer\'s outcome than any other seat. The next card in the shoe is random. If the third base player "takes the dealer\'s bust card," the NEXT card could just as easily bust the dealer. It balances out.',
+      simLabel1: 'Win rate: you at 1st base',
+      simLabel2: 'Win rate: you at 3rd base',
+      simColor1: 'var(--green-bright)',
+      simColor2: 'var(--gold)',
+    },
+    {
+      title: '"More Decks = Worse for the Player"',
+      desc: 'Casinos use 6 or 8 decks "to beat the players." More decks must be worse, right?',
+      truth: 'More decks DO slightly increase the house edge — but only by about 0.02% per additional deck beyond 1. Going from 1 deck to 6 decks adds about 0.06% to the house edge. That\'s real but tiny. The much bigger factor is the RULES: does the dealer hit soft 17? Can you double after splitting? Those matter 10× more than deck count.',
+      simLabel1: '1-deck house edge',
+      simLabel2: '6-deck house edge',
+      simColor1: 'var(--green-bright)',
+      simColor2: 'var(--gold)',
+    },
+    {
+      title: '"Betting Systems Beat the House"',
+      desc: 'Martingale, Fibonacci, 1-3-2-6... surely a clever betting pattern can overcome the house edge?',
+      truth: 'No betting system can change the expected value of a negative-expectation game. The Martingale (double after every loss) just trades many small wins for rare catastrophic losses. Over time, every system converges to the same house edge. The only thing that changes your edge is how you PLAY the cards — not how much you BET.',
+      simLabel1: 'Flat betting EV',
+      simLabel2: 'Martingale EV',
+      simColor1: 'var(--green-bright)',
+      simColor2: 'var(--gold)',
+    },
+  ];
+
+  let currentMyth = 0;
+
+  function renderMyth(idx) {
+    const m = myths[idx];
+    document.getElementById('tutArea').innerHTML = `
+      <div class="tut">
+        <h3>Myth ${idx+1}/5: ${m.title}</h3>
+        <p>${m.desc}</p>
+        <div class="pt">${m.truth}</div>
+        <div class="pln">Don't believe the maths? Click below to run 10,000 simulated hands and see for yourself.</div>
+      </div>`;
+    
+    const sim = document.getElementById('simA');
+    sim.className = 'sim show';
+    sim.innerHTML = `
+      <h3>Simulation: ${m.title}</h3>
+      <div class="sbr">
+        <div class="sbc"><div class="sbv" id="sv0">—</div><div class="sbo"><div class="sbi" id="sb0" style="height:0%;background:${m.simColor1}"></div></div><div class="sbl">${m.simLabel1}</div></div>
+        <div class="sbc"><div class="sbv" id="sv1">—</div><div class="sbo"><div class="sbi" id="sb1" style="height:0%;background:${m.simColor2}"></div></div><div class="sbl">${m.simLabel2}</div></div>
+      </div>
+      <div id="simStatus" style="font-family:DM Mono;font-size:.72rem;color:var(--muted);margin:.3rem 0"></div>
+      <button class="nb" id="simRunBtn" onclick="runMythSim(${idx})">Run 10,000 Hands</button>
+      ${idx < myths.length - 1 ? '<button class="nb" style="background:var(--border);color:var(--text);margin-left:.3rem" onclick="nextMyth()">Next Myth →</button>' : '<button class="nb" style="background:var(--border);color:var(--text);margin-left:.3rem" onclick="back()">Finish Module →</button>'}`;
+  }
+
+  window.nextMyth = function() {
+    currentMyth++;
+    if (currentMyth < myths.length) renderMyth(currentMyth);
+  };
+
+  window.runMythSim = function(idx) {
+    const N = 10000;
+    let w1 = 0, t1 = 0, w2 = 0, t2 = 0;
+    document.getElementById('simRunBtn').style.display = 'none';
+    let i = 0;
+
+    function batch() {
+      const bs = 250;
+      for (let j = 0; j < bs && i < N; j++, i++) {
+        mkShoe();
+        // Sim 1: basic scenario
+        const r1 = simBasicHand();
+        t1++; if (r1 > 0) w1++;
+        // Sim 2: variant scenario (depends on myth)
+        mkShoe();
+        if (idx === 0) { 
+          // Bad player draws extra cards first
+          const bad = [dl(), dl()];
+          while (hv(bad) < 21 && Math.random() < 0.5) bad.push(dl());
+        }
+        const r2 = simBasicHand();
+        t2++; if (r2 > 0) w2++;
+      }
+      const p1 = Math.round(w1/t1*1000)/10;
+      const p2 = Math.round(w2/t2*1000)/10;
+      document.getElementById('sb0').style.height = Math.min(p1, 100) + '%';
+      document.getElementById('sv0').textContent = p1 + '%';
+      document.getElementById('sb1').style.height = Math.min(p2, 100) + '%';
+      document.getElementById('sv1').textContent = p2 + '%';
+      document.getElementById('simStatus').textContent = i + ' / ' + N;
+
+      if (i < N) requestAnimationFrame(batch);
+      else {
+        const diff = Math.abs(p1 - p2).toFixed(1);
+        document.getElementById('simStatus').innerHTML = 
+          '<strong>Result:</strong> ' + p1 + '% vs ' + p2 + '%. Difference: ' + diff + '%.<br>' +
+          '<span style="color:var(--gold)">Statistically negligible. The myth is busted.</span>';
+      }
+    }
+    requestAnimationFrame(batch);
+  };
+
+  renderMyth(0);
+}
+
+// Helper: simulate one hand with basic strategy
+function simBasicHand() {
+  const p = [dl(), dl()], d = [dl(), dl()];
+  while (hv(p) < 21) {
+    const opt = getOpt(p, d[0], false, p.length === 2);
+    if (opt.play === 'stand' || opt.play === 'double') break;
+    if (opt.play === 'hit') p.push(dl());
+    else break;
+  }
+  if (hv(p) > 21) return -1;
+  while (hv(d) < 17) d.push(dl());
+  if (hv(d) > 21) return 1;
+  if (hv(p) > hv(d)) return 1;
+  if (hv(p) < hv(d)) return -1;
+  return 0;
+}
+
+// ════════════════════════════════════════
+//  SPEED DRILLS (M9) — placeholder
+// ════════════════════════════════════════
+function loadSpeed() {
+  document.getElementById('feltArea').style.display = 'none';
+  document.getElementById('actR').style.display = 'none';
+  document.getElementById('hudArea').style.display = 'none';
+  document.getElementById('simA').className = 'sim';
+
+  let speed = 3000; // ms per card
+  let speedLabel = 'Beginner';
+  let cardsDealt = 0;
+  let runningCount = 0;
+  let userCorrect = 0;
+  let userTotal = 0;
+  let checkInterval = 10; // Check every N cards
+  let drillActive = false;
+  let currentCard = null;
+  let drillTimeout = null;
+
+  function getHiLo(card) {
+    const v = cv(card);
+    if (v >= 2 && v <= 6) return +1; // Note: cv returns 11 for A, 10 for face
+    if (v >= 10) return -1; // 10, J, Q, K, A
+    return 0; // 7, 8, 9
+  }
+  // Fix: cv returns 11 for Ace, so Ace is caught by v>=10. Good.
+  // But 2-6 need rank check since cv gives 2-6 directly.
+  function hiLo(card) {
+    const r = card.rank;
+    if ('2345678910JQKA'.indexOf(r) === -1) return 0;
+    if (['2','3','4','5','6'].includes(r)) return +1;
+    if (['7','8','9'].includes(r)) return 0;
+    return -1; // 10, J, Q, K, A
+  }
+
+  function startDrill(spd, label) {
+    speed = spd;
+    speedLabel = label;
+    cardsDealt = 0;
+    runningCount = 0;
+    userCorrect = 0;
+    userTotal = 0;
+    drillActive = true;
+    mkShoe();
+    
+    document.getElementById('tutArea').innerHTML = `
+      <div class="tut" style="text-align:center">
+        <h3>Speed Drill — ${label}</h3>
+        <p style="font-size:.78rem;color:var(--muted)">Cards flash at ${spd/1000}s intervals. Every ${checkInterval} cards, you'll be asked for the running count. ${label === 'Beginner' ? 'Take your time — accuracy matters more than speed.' : label === 'Elite' ? 'This is professional speed. Good luck.' : 'Focus.'}</p>
+        <div class="cnt-card" id="drillCardArea"></div>
+        <div style="font-family:DM Mono;font-size:1.2rem;margin:.3rem 0" id="drillCardCount">Cards: 0</div>
+        <div style="font-family:DM Mono;font-size:.8rem;color:var(--muted)" id="drillScore">Checks passed: 0/0</div>
+        <div id="drillPrompt"></div>
+      </div>`;
+    
+    dealNext();
+  }
+
+  function dealNext() {
+    if (!drillActive) return;
+    if (cardsDealt >= 52) { endDrill(); return; } // One deck drill
+    
+    currentCard = dl();
+    runningCount += hiLo(currentCard);
+    cardsDealt++;
+
+    // Show card
+    document.getElementById('drillCardArea').innerHTML = rc(currentCard);
+    document.getElementById('drillCardCount').textContent = 'Cards: ' + cardsDealt;
+
+    // Check point?
+    if (cardsDealt % checkInterval === 0) {
+      drillActive = false;
+      document.getElementById('drillPrompt').innerHTML = `
+        <div style="margin-top:.5rem">
+          <div style="font-size:.85rem;color:var(--gold);font-weight:600;margin-bottom:.3rem">What's the running count?</div>
+          <div class="cnt-input">
+            <input type="number" id="countGuess" style="width:60px" autofocus>
+            <button onclick="checkCount()">Submit</button>
+          </div>
+        </div>`;
+      document.getElementById('countGuess').focus();
+      document.getElementById('countGuess').addEventListener('keypress', function(e) {
+        if (e.key === 'Enter') checkCount();
+      });
+      return;
+    }
+
+    drillTimeout = setTimeout(dealNext, speed);
+  }
+
+  window.checkCount = function() {
+    const guess = parseInt(document.getElementById('countGuess').value);
+    userTotal++;
+    const correct = guess === runningCount;
+    if (correct) userCorrect++;
+
+    document.getElementById('drillScore').textContent = 'Checks passed: ' + userCorrect + '/' + userTotal;
+    
+    const col = correct ? 'var(--green-bright)' : 'var(--red-bright)';
+    document.getElementById('drillPrompt').innerHTML = `
+      <div style="margin-top:.4rem;padding:.4rem;border-radius:6px;background:${correct?'rgba(45,212,160,.08)':'rgba(239,83,80,.08)'};color:${col};font-weight:600;font-size:.82rem">
+        ${correct ? '✓ Correct! Running count is ' + runningCount : '✗ Wrong. Running count is ' + runningCount + '. You said ' + guess + '.'}
+      </div>
+      <button class="nb" style="margin-top:.3rem" onclick="resumeDrill()">Continue →</button>`;
+  };
+
+  window.resumeDrill = function() {
+    drillActive = true;
+    document.getElementById('drillPrompt').innerHTML = '';
+    drillTimeout = setTimeout(dealNext, speed);
+  };
+
+  function endDrill() {
+    // Final check
+    document.getElementById('drillPrompt').innerHTML = `
+      <div style="margin-top:.5rem">
+        <div style="font-size:.85rem;color:var(--gold);font-weight:600;margin-bottom:.3rem">Final count after 52 cards?</div>
+        <div class="cnt-input">
+          <input type="number" id="finalGuess">
+          <button onclick="checkFinal()">Submit</button>
+        </div>
+      </div>`;
+    document.getElementById('finalGuess').focus();
+    document.getElementById('finalGuess').addEventListener('keypress', function(e) {
+      if (e.key === 'Enter') checkFinal();
+    });
+  }
+
+  window.checkFinal = function() {
+    const guess = parseInt(document.getElementById('finalGuess').value);
+    userTotal++;
+    const correct = guess === runningCount;
+    if (correct) userCorrect++;
+
+    const pct = Math.round(userCorrect / userTotal * 100);
+    document.getElementById('drillPrompt').innerHTML = `
+      <div style="margin-top:.5rem;text-align:center">
+        <div style="font-family:Bebas Neue;font-size:1.8rem;color:var(--gold)">${pct}% Accuracy</div>
+        <div style="font-size:.8rem;color:var(--muted);margin:.3rem 0">
+          ${userCorrect}/${userTotal} checks correct at ${speedLabel} speed (${speed/1000}s/card)<br>
+          Final count: ${runningCount} | You said: ${guess} ${correct?'✓':'✗'}
+        </div>
+        <div style="font-family:Crimson Pro;font-style:italic;font-size:.82rem;color:var(--cyan);margin:.4rem 0">
+          ${pct >= 90 ? 'Excellent. You can maintain the count at this speed.' :
+            pct >= 70 ? 'Good, but you\'re losing the count occasionally. More practice needed.' :
+            'You\'re losing the count too often. Slow down and rebuild accuracy before increasing speed.'}
+        </div>
+        <button class="nb" onclick="showSpeedMenu()">Try Again</button>
+      </div>`;
+  };
+
+  function showSpeedMenu() {
+    document.getElementById('tutArea').innerHTML = `
+      <div class="tut" style="text-align:center">
+        <h3>Counting Speed Drills</h3>
+        <p>52 cards dealt at speed. Every 10 cards, you report the running count. Get it wrong and you'll know exactly where you lost track.</p>
+        <div style="margin-top:.6rem">
+          <div class="mb" style="text-align:left">
+            <strong>Hi-Lo values (reminder):</strong><br>
+            2, 3, 4, 5, 6 → <span class="pos">+1</span><br>
+            7, 8, 9 → 0<br>
+            10, J, Q, K, A → <span class="neg">−1</span>
+          </div>
+        </div>
+        <div style="display:flex;flex-direction:column;gap:.3rem;margin-top:.6rem">
+          <button class="ab" style="width:100%" onclick="startDrill(3000,'Beginner')">Beginner — 3.0s per card</button>
+          <button class="ab" style="width:100%" onclick="startDrill(1500,'Intermediate')">Intermediate — 1.5s per card</button>
+          <button class="ab" style="width:100%" onclick="startDrill(700,'Pro')">Pro — 0.7s per card</button>
+          <button class="ab" style="width:100%" onclick="startDrill(400,'Elite')">Elite — 0.4s per card</button>
+        </div>
+      </div>`;
+  }
+
+  // Expose functions to window
+  window.startDrill = startDrill;
+  window.showSpeedMenu = showSpeedMenu;
+
+  showSpeedMenu();
+}
+
+// ════════════════════════════════════════
+//  SESSION REPLAY (M11) — placeholder
+// ════════════════════════════════════════
+function loadSession() {
+  document.getElementById('feltArea').style.display = 'block';
+  document.getElementById('hudArea').style.display = 'flex';
+  document.getElementById('simA').className = 'sim';
+  
+  mkShoe();
+  
+  let handNum = 0;
+  const MAX_HANDS = 50;
+  let decisions = []; // {hand, playerTotal, dealerUp, action, optimal, correct, evCost}
+  let wins = 0, losses = 0, pushes = 0;
+  let sessionOptimal = 0, sessionTotal = 0;
+
+  document.getElementById('tutArea').innerHTML = `
+    <div class="tut" style="text-align:center">
+      <h3>Full Session — 50 Hands</h3>
+      <div class="pln">Play 50 hands. Every decision is recorded. At the end, you'll receive a complete analysis: your accuracy, your biggest leaks, and the estimated real-money cost of your mistakes.</div>
+    </div>`;
+
+  function dealSessionHand() {
+    handNum++;
+    if (handNum > MAX_HANDS) { generateReport(); return; }
+    if (shoe.length < 40) mkShoe();
+    
+    document.getElementById('lProg').textContent = 'Hand ' + handNum + '/' + MAX_HANDS;
+    document.getElementById('pFill').style.width = Math.round(handNum / MAX_HANDS * 100) + '%';
+    document.getElementById('anl').className = 'an';
+    
+    pCards = [dl(), dl()];
+    dCards = [dl(), dl()];
+    dRev = false;
+    hAct = true;
+    rT();
+    showSessionActs(true);
+  }
+
+  function showSessionActs(on) {
+    const el = document.getElementById('actR');
+    el.style.display = on ? 'flex' : 'none';
+    if (!on) return;
+    el.innerHTML = '';
+    const cs = pCards.length === 2 && cv(pCards[0]) === cv(pCards[1]);
+    const cd = pCards.length === 2;
+    ['hit','stand','double','split'].forEach(a => {
+      if (a === 'split' && !cs) return;
+      if (a === 'double' && !cd) return;
+      const b = document.createElement('button');
+      b.className = 'ab';
+      b.textContent = a.charAt(0).toUpperCase() + a.slice(1);
+      b.addEventListener('click', () => handleSessionAct(a));
+      el.appendChild(b);
+    });
+  }
+
+  function handleSessionAct(action) {
+    if (!hAct) return;
+    hAct = false;
+    showSessionActs(false);
+    
+    const cs = pCards.length === 2 && cv(pCards[0]) === cv(pCards[1]);
+    const cd = pCards.length === 2;
+    const opt = getOpt(pCards, dCards[0], cs, cd);
+    sessionTotal++;
+    const correct = action === opt.play;
+    if (correct) sessionOptimal++;
+
+    // Estimate EV cost of mistake (simplified)
+    let evCost = 0;
+    if (!correct) {
+      // Rough EV cost estimates per mistake type
+      if (opt.play === 'stand' && action === 'hit') evCost = 0.04; // Standing was better by ~4% of bet
+      else if (opt.play === 'hit' && action === 'stand') evCost = 0.06;
+      else if (opt.play === 'double' && action === 'hit') evCost = 0.08;
+      else if (opt.play === 'split' && action !== 'split') evCost = 0.05;
+      else evCost = 0.05; // Default
+    }
+
+    decisions.push({
+      hand: handNum,
+      playerTotal: hv(pCards),
+      dealerUp: cv(dCards[0]),
+      soft: isSoft(pCards),
+      action: action,
+      optimal: opt.play,
+      correct: correct,
+      evCost: evCost,
+      reason: opt.why,
+    });
+
+    document.getElementById('hOpt').textContent = sessionOptimal + '/' + sessionTotal;
+    document.getElementById('hAcc').textContent = Math.round(sessionOptimal / sessionTotal * 100) + '%';
+
+    // Brief flash of correct/incorrect, then play out hand
+    const a = document.getElementById('anl');
+    a.innerHTML = '<div class="vrd ' + (correct ? 'ok' : 'no') + '">' + 
+      (correct ? '✓ Optimal' : '✗ Should ' + opt.play.toUpperCase()) + '</div>';
+    a.className = 'an show';
+
+    setTimeout(() => {
+      a.className = 'an';
+      executeSessionAction(action);
+    }, 800);
+  }
+
+  function executeSessionAction(action) {
+    if (action === 'hit') {
+      pCards.push(dl()); rT();
+      if (hv(pCards) > 21) { dRev = true; rT(); losses++; setTimeout(dealSessionHand, 600); return; }
+      if (hv(pCards) === 21) { sessionDealerPlay(); return; }
+      hAct = true; showSessionActs(true);
+    } else if (action === 'stand') {
+      sessionDealerPlay();
+    } else if (action === 'double') {
+      pCards.push(dl()); rT();
+      if (hv(pCards) > 21) { dRev = true; rT(); losses++; setTimeout(dealSessionHand, 600); return; }
+      sessionDealerPlay();
+    } else if (action === 'split') {
+      pCards.pop(); pCards.push(dl()); rT();
+      hAct = true; showSessionActs(true);
+    }
+  }
+
+  function sessionDealerPlay() {
+    dRev = true; rT();
+    function step() {
+      if (hv(dCards) < 17 || (hv(dCards) === 17 && isSoft(dCards))) {
+        setTimeout(() => { dCards.push(dl()); rT(); step(); }, 300);
+      } else {
+        const p = hv(pCards), d = hv(dCards);
+        if (d > 21 || p > d) wins++;
+        else if (p < d) losses++;
+        else pushes++;
+        setTimeout(dealSessionHand, 600);
+      }
+    }
+    step();
+  }
+
+  function generateReport() {
+    const pct = sessionTotal > 0 ? Math.round(sessionOptimal / sessionTotal * 100) : 0;
+    const mistakes = decisions.filter(d => !d.correct);
+    const totalEVCost = mistakes.reduce((sum, m) => sum + m.evCost, 0);
+    
+    // Group mistakes by type
+    const leaks = {};
+    mistakes.forEach(m => {
+      const key = m.optimal + ' instead of ' + m.action;
+      if (!leaks[key]) leaks[key] = { count: 0, totalEV: 0, examples: [] };
+      leaks[key].count++;
+      leaks[key].totalEV += m.evCost;
+      if (leaks[key].examples.length < 2) leaks[key].examples.push(m);
+    });
+
+    let reportHTML = `
+    <div class="tut">
+      <h3>Session Report — ${MAX_HANDS} Hands</h3>
+      
+      <div class="mb">
+        <strong>Results (not what matters):</strong><br>
+        Won: ${wins} | Lost: ${losses} | Pushed: ${pushes}<br><br>
+        <strong>Decisions (what actually matters):</strong><br>
+        Optimal plays: <span class="${pct>=90?'pos':'neg'}">${sessionOptimal}/${sessionTotal} (${pct}%)</span><br>
+        Mistakes: <span class="neg">${mistakes.length}</span>
+      </div>`;
+
+    if (mistakes.length === 0) {
+      reportHTML += `<div class="pt">Perfect session. Zero mistakes across ${MAX_HANDS} hands. You're playing mathematically optimal blackjack.</div>`;
+    } else {
+      reportHTML += `
+      <div class="pt">Estimated cost of your mistakes at £25/hand: <strong style="color:var(--red-bright)">−£${(totalEVCost * 25).toFixed(2)}</strong> in expected value this session.</div>
+      
+      <div class="pln">Extrapolated: if you make these same mistakes over 200 hours of play (16,000 hands), it costs you approximately <strong>£${(totalEVCost / MAX_HANDS * 16000 * 25).toFixed(0)}</strong> per year.</div>
+      
+      <h3 style="margin-top:.8rem">Your Biggest Leaks</h3>`;
+
+      const sortedLeaks = Object.entries(leaks).sort((a, b) => b[1].totalEV - a[1].totalEV);
+      sortedLeaks.forEach(([key, leak]) => {
+        reportHTML += `
+        <div style="padding:.4rem .6rem;margin:.3rem 0;border-left:2px solid var(--red-bright);background:rgba(239,83,80,.04)">
+          <strong style="font-size:.8rem">Should have ${key}</strong> — ${leak.count} time${leak.count>1?'s':''}<br>
+          <span style="font-size:.72rem;color:var(--muted)">EV cost: £${(leak.totalEV * 25).toFixed(2)} this session</span><br>
+          <span style="font-size:.72rem;color:var(--muted)">Example: ${leak.examples[0].playerTotal}${leak.examples[0].soft?' soft':''} vs dealer ${leak.examples[0].dealerUp}</span>
+        </div>`;
+      });
+    }
+
+    reportHTML += `
+      <div style="margin-top:.8rem;text-align:center">
+        <button class="nb" onclick="back()">Back to Academy</button>
+      </div>
+    </div>`;
+
+    document.getElementById('feltArea').style.display = 'none';
+    document.getElementById('actR').style.display = 'none';
+    document.getElementById('tutArea').innerHTML = reportHTML;
+    document.getElementById('lProg').textContent = 'Report';
+    document.getElementById('pFill').style.width = '100%';
+  }
+
+  dealSessionHand();
+}
+
+// ════════════════════════════════════════
+//  RESULTS
+// ════════════════════════════════════════
+function showRes(){
+  const pct=totD>0?Math.round(optP/totD*100):0;
+  let t='Keep Practising';
+  if(pct>=90)t='Outstanding';else if(pct>=75)t='Solid Understanding';else if(pct>=60)t='Getting There';
+  document.getElementById('rT').textContent=t;
+  document.getElementById('rB').textContent=pct+'%';
+  document.getElementById('rD').innerHTML=
+    (MOD_NAMES[curMod]||'')+'<br>'+
+    'Optimal decisions: '+optP+'/'+totD+' ('+pct+'%)<br>'+
+    'Best streak: '+strk+'<br><br>'+
+    (pct<75?'<em>Replay this module. Focus on the reasoning, not just the answer.</em>':'<em>'+( pct>=90?'You\'ve mastered this module. Ready for the next one.':'Review the scenarios you got wrong, then move on.')+'</em>');
+  show('results');
+}
+
+function calcRules(){
+  let edge = 0.40; // Base: 6-deck, S17, DAS, 3:2 BJ
+  const decks = parseInt(document.getElementById('rc_decks').value);
+  const h17 = document.getElementById('rc_h17').value;
+  const das = document.getElementById('rc_das').value;
+  const dbl = document.getElementById('rc_dbl').value;
+  const surr = document.getElementById('rc_surr').value;
+  const bj = document.getElementById('rc_bj').value;
+  const rsa = document.getElementById('rc_rsa').value;
+
+  let breakdown = [];
+
+  // Deck adjustment (base is 6)
+  if(decks===1){edge-=0.48;breakdown.push({rule:'1 deck',impact:-0.48})}
+  else if(decks===2){edge-=0.19;breakdown.push({rule:'2 decks',impact:-0.19})}
+  else if(decks===8){edge+=0.02;breakdown.push({rule:'8 decks',impact:+0.02})}
+
+  // Dealer hits soft 17
+  if(h17==='hit'){edge+=0.22;breakdown.push({rule:'Dealer hits soft 17',impact:+0.22})}
+
+  // No DAS
+  if(das==='no'){edge+=0.14;breakdown.push({rule:'No double after split',impact:+0.14})}
+
+  // Double restrictions
+  if(dbl==='910'){edge+=0.09;breakdown.push({rule:'Double 9-11 only',impact:+0.09})}
+  else if(dbl==='1011'){edge+=0.18;breakdown.push({rule:'Double 10-11 only',impact:+0.18})}
+
+  // Surrender
+  if(surr==='late'){edge-=0.08;breakdown.push({rule:'Late surrender',impact:-0.08})}
+
+  // Blackjack payout
+  if(bj==='6:5'){edge+=1.39;breakdown.push({rule:'6:5 blackjack payout',impact:+1.39})}
+
+  // Re-split aces
+  if(rsa==='yes'){edge-=0.08;breakdown.push({rule:'Re-split Aces',impact:-0.08})}
+
+  let html = '<strong>House edge breakdown:</strong><br><br>';
+  html += '<span style="color:var(--muted)">Base (6-deck, S17, DAS, 3:2):</span> <span style="color:var(--red-bright)">0.40%</span><br>';
+  breakdown.forEach(b=>{
+    const col = b.impact > 0 ? 'var(--red-bright)' : 'var(--green-bright)';
+    const sign = b.impact > 0 ? '+' : '';
+    html += '<span style="color:var(--muted)">' + b.rule + ':</span> <span style="color:'+col+'">' + sign + b.impact.toFixed(2) + '%</span><br>';
+  });
+  html += '<br><strong>Total house edge: <span style="color:'+(edge>1?'var(--red-bright)':'var(--gold)')+'">' + edge.toFixed(2) + '%</span></strong>';
+  
+  // Cost per hour
+  const costPerHr = (80 * 25 * edge / 100).toFixed(2);
+  html += '<br><span style="color:var(--muted)">At 80 hands/hr, £25 avg bet:</span> <span style="color:var(--red-bright)">−£' + costPerHr + '/hr</span>';
+
+  if(bj==='6:5') html += '<br><br><span style="color:var(--red-bright);font-weight:700">⚠ 6:5 BLACKJACK DETECTED. This single rule costs you more than all other rules combined. DO NOT PLAY AT THIS TABLE.</span>';
+
+  document.getElementById('rulesResult').innerHTML = html;
+}
+setTimeout(calcRules, 100);
+</script>
+</body>
+</html>

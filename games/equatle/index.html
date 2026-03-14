@@ -1,0 +1,915 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<!-- Google tag (gtag.js) -->
+<script async src="https://www.googletagmanager.com/gtag/js?id=G-CLNF7GSB28"></script>
+<script>
+  window.dataLayer = window.dataLayer || [];
+  function gtag(){dataLayer.push(arguments);}
+  gtag('js', new Date());
+
+  gtag('config', 'G-CLNF7GSB28', {
+    send_page_view: true,
+    storage: 'none',
+    anonymize_ip: true
+  });
+</script>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<link rel="icon" type="image/svg+xml" href="../../schools/assets/favicon.svg">
+<title>Equatle · Maffs Games</title>
+<link href="https://fonts.googleapis.com/css2?family=DM+Mono:wght@300;400;500&family=Bebas+Neue&family=Inter:wght@300;400;500&display=swap" rel="stylesheet">
+<style>
+:root{
+  --ink:#070d1a;--navy:#0b1629;--mid:#0f1f3d;--light:#162847;
+  --gold:#c9a84c;--gwarm:#e2b96a;--gdim:#7a5e28;
+  --teal:#2dd4bf;--tdim:#134e4a;
+  --body:#a8b8d0;--muted:#4a6080;--bdr:#1a2e4a;--bdrdim:#111f33;
+  --cor:#22c55e;--pre:#f59e0b;--abs:#1e3050;--abst:#4a6080;
+  --err:#ef4444;
+}
+body.cb{--cor:#2563eb;--pre:#ea580c;}
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+body{background:var(--ink);color:var(--body);font-family:'Inter',sans-serif;min-height:100vh;display:flex;flex-direction:column;align-items:center}
+body::before{content:'';position:fixed;inset:0;background-image:linear-gradient(rgba(201,168,76,.03) 1px,transparent 1px),linear-gradient(90deg,rgba(201,168,76,.03) 1px,transparent 1px);background-size:40px 40px;pointer-events:none;z-index:0}
+
+nav{position:sticky;top:0;z-index:100;width:100%;display:flex;align-items:center;justify-content:space-between;padding:0 1rem;height:52px;background:rgba(7,13,26,.96);backdrop-filter:blur(12px);border-bottom:1px solid var(--bdrdim);gap:.5rem}
+.logo{font-family:'Bebas Neue',sans-serif;font-size:1.2rem;letter-spacing:.15em;color:var(--gold);text-decoration:none}
+.pill{font-family:'DM Mono',monospace;font-size:.44rem;letter-spacing:.1em;text-transform:uppercase;padding:.2rem .5rem;border-radius:20px;border:1px solid var(--tdim);color:var(--teal)}
+.pill.free{border-color:var(--gdim);color:var(--gold)}
+.nav-r{display:flex;gap:.35rem;align-items:center}
+.nb{width:30px;height:30px;display:flex;align-items:center;justify-content:center;font-size:.85rem;cursor:pointer;border-radius:3px;border:1px solid var(--bdr);background:transparent;color:var(--muted);transition:all .2s}
+.nb:hover{border-color:var(--gdim);color:var(--gold)}
+.wchip{display:flex;align-items:center;gap:.3rem;padding:.2rem .5rem;border-radius:20px;font-family:'DM Mono',monospace;font-size:.44rem;border:1px solid var(--bdr);color:var(--muted);cursor:pointer;transition:all .2s;white-space:nowrap}
+.wchip:hover,.wchip.on{border-color:var(--tdim);color:var(--teal)}
+.wdot{width:5px;height:5px;border-radius:50%;background:var(--muted)}
+.wchip.on .wdot{background:var(--teal);box-shadow:0 0 4px var(--teal)}
+
+.page{position:relative;z-index:1;width:100%;max-width:500px;padding:1rem 1rem 2rem;display:flex;flex-direction:column;align-items:center;gap:.85rem}
+.kicker{font-family:'DM Mono',monospace;font-size:.55rem;letter-spacing:.2em;text-transform:uppercase;color:var(--teal);text-align:center}
+.title{font-family:'Bebas Neue',sans-serif;font-size:2.8rem;letter-spacing:.06em;color:var(--gwarm);line-height:1;text-align:center}
+.title span{color:var(--teal)}
+.sub{font-size:.68rem;color:var(--muted);text-align:center}
+
+.sbar{width:100%;display:flex;border:1px solid var(--bdr);border-radius:4px;overflow:hidden}
+.si{flex:1;padding:.5rem .2rem;text-align:center;background:var(--mid);border-right:1px solid var(--bdrdim);display:flex;flex-direction:column;gap:.06rem}
+.si:last-child{border-right:none}
+.si.hi{background:rgba(45,212,191,.04)}
+.sv{font-family:'DM Mono',monospace;font-size:.95rem;font-weight:500;color:var(--gold)}
+.sv.tl{color:var(--teal)}
+.sl{font-family:'DM Mono',monospace;font-size:.38rem;letter-spacing:.08em;text-transform:uppercase;color:var(--muted)}
+
+.msg{min-height:20px;width:100%;text-align:center;font-family:'DM Mono',monospace;font-size:.6rem;letter-spacing:.06em;color:var(--muted)}
+.msg.err{color:var(--err)}
+.msg.ok{color:var(--cor)}
+
+.grid{display:flex;flex-direction:column;gap:5px;width:100%;max-width:420px}
+.row{display:grid;grid-template-columns:repeat(8,1fr);gap:5px}
+.tile{aspect-ratio:1;border:2px solid var(--bdrdim);background:var(--mid);border-radius:3px;display:flex;align-items:center;justify-content:center;font-family:'DM Mono',monospace;font-size:clamp(.85rem,3.5vw,1.1rem);font-weight:500;color:var(--body);user-select:none;position:relative}
+.tile.f{border-color:var(--muted)}
+.tile.ar.f{border-color:var(--gdim)}
+.tile[data-s=correct]{background:var(--cor);border-color:var(--cor);color:#fff}
+.tile[data-s=present]{background:var(--pre);border-color:var(--pre);color:#fff}
+.tile[data-s=absent]{background:var(--abs);border-color:var(--abs);color:var(--abst)}
+body.cb .tile[data-s=correct]::after{content:'';position:absolute;bottom:2px;right:2px;width:6px;height:6px;border-radius:50%;background:rgba(255,255,255,.6)}
+body.cb .tile[data-s=present]::after{content:'▲';position:absolute;bottom:1px;right:2px;font-size:.35rem;color:rgba(255,255,255,.6);line-height:1}
+
+@keyframes flip{0%{transform:scaleY(1)}49%{transform:scaleY(0)}50%{transform:scaleY(0)}100%{transform:scaleY(1)}}
+@keyframes pop{0%,100%{transform:scale(1)}50%{transform:scale(1.12)}}
+@keyframes shake{0%,100%{transform:translateX(0)}20%{transform:translateX(-5px)}40%{transform:translateX(5px)}60%{transform:translateX(-3px)}80%{transform:translateX(3px)}}
+@keyframes bnc{0%,100%{transform:translateY(0)}50%{transform:translateY(-8px)}}
+.tile.flip{animation:flip .5s ease forwards}
+.tile.pop{animation:pop .1s ease}
+.row.shake{animation:shake .35s ease}
+.tile.bnc{animation:bnc .4s ease}
+
+.kbd{width:100%;max-width:420px;display:flex;flex-direction:column;gap:5px}
+.kr{display:flex;gap:5px;justify-content:center}
+.key{height:42px;min-width:33px;flex:1;max-width:40px;border-radius:3px;border:1px solid transparent;background:var(--light);color:var(--body);font-family:'DM Mono',monospace;font-size:.85rem;cursor:pointer;transition:all .15s;display:flex;align-items:center;justify-content:center;user-select:none}
+.key:hover{background:var(--mid);border-color:var(--bdr)}
+.key.wide{min-width:54px;max-width:66px;font-size:.5rem;letter-spacing:.04em;text-transform:uppercase}
+.key.ke{background:rgba(45,212,191,.1);border-color:var(--tdim);color:var(--teal)}
+.key.ke:hover{background:rgba(45,212,191,.2)}
+.key.kd{background:rgba(239,68,68,.08);border-color:rgba(239,68,68,.2);color:var(--err)}
+.key.kd:hover{background:rgba(239,68,68,.18)}
+.key[data-s=correct]{background:var(--cor);color:#fff;border-color:var(--cor)}
+.key[data-s=present]{background:var(--pre);color:#fff;border-color:var(--pre)}
+.key[data-s=absent]{background:var(--abs);color:var(--abst);border-color:var(--abs)}
+
+.ov{position:fixed;inset:0;z-index:200;background:rgba(7,13,26,.9);backdrop-filter:blur(10px);display:flex;align-items:center;justify-content:center;padding:1rem}
+.ov.hidden{display:none}
+.modal{background:var(--mid);border:1px solid var(--bdr);border-radius:4px;width:100%;max-width:400px;max-height:90vh;overflow-y:auto;position:relative}
+.mc{position:absolute;top:.75rem;right:.75rem;background:transparent;border:none;color:var(--muted);font-size:1.2rem;cursor:pointer;z-index:1}
+.mc:hover{color:var(--body)}
+.mh{padding:1.2rem 1.4rem 0;text-align:center}
+.mt{font-family:'Bebas Neue',sans-serif;font-size:1.8rem;letter-spacing:.1em;color:var(--gwarm)}
+.ms{font-family:'DM Mono',monospace;font-size:.5rem;letter-spacing:.1em;text-transform:uppercase;color:var(--muted);margin-top:.15rem}
+.mb{padding:1rem 1.4rem}
+.mf{padding:0 1.4rem 1.2rem;display:flex;gap:.5rem}
+.mf .btn{flex:1}
+
+.hrow{display:flex;align-items:flex-start;gap:.7rem;margin-bottom:.7rem}
+.hts{display:flex;gap:3px}
+.ht{width:25px;height:25px;border-radius:2px;border:1px solid var(--bdr);background:var(--light);display:flex;align-items:center;justify-content:center;font-family:'DM Mono',monospace;font-size:.65rem;font-weight:500}
+.ht.c{background:var(--cor);border-color:var(--cor);color:#fff}
+.ht.p{background:var(--pre);border-color:var(--pre);color:#fff}
+.ht.a{background:var(--abs);border-color:var(--abs);color:var(--abst)}
+.hd{font-size:.68rem;color:var(--body);line-height:1.5}
+.hd strong{color:var(--gold)}
+.hdiv{height:1px;background:var(--bdrdim);margin:.7rem 0}
+.hn{font-family:'DM Mono',monospace;font-size:.53rem;color:var(--muted);line-height:1.6}
+.hn strong{color:var(--teal)}
+
+.sg{display:grid;grid-template-columns:repeat(4,1fr);gap:.4rem;margin-bottom:1rem}
+.sb{background:var(--light);border:1px solid var(--bdrdim);border-radius:3px;padding:.6rem .2rem;text-align:center}
+.sbv{font-family:'Bebas Neue',sans-serif;font-size:1.5rem;letter-spacing:.06em;color:var(--gold);line-height:1}
+.sbl{font-family:'DM Mono',monospace;font-size:.37rem;letter-spacing:.07em;text-transform:uppercase;color:var(--muted);margin-top:.1rem}
+.dt{font-family:'DM Mono',monospace;font-size:.48rem;letter-spacing:.12em;text-transform:uppercase;color:var(--muted);margin-bottom:.5rem}
+.dr{display:flex;align-items:center;gap:.4rem;margin-bottom:.3rem}
+.dl{font-family:'DM Mono',monospace;font-size:.6rem;color:var(--muted);width:.6rem;text-align:right}
+.db{flex:1;height:18px;background:var(--light);border-radius:2px;display:flex;align-items:center;padding:0 .35rem;min-width:24px}
+.db.cur{background:var(--gdim)}
+.dc{font-family:'DM Mono',monospace;font-size:.52rem;color:var(--body)}
+
+.srow{display:flex;align-items:center;justify-content:space-between;gap:1rem;padding:.75rem 0;border-bottom:1px solid var(--bdrdim)}
+.srow:last-child{border-bottom:none}
+.stit{font-size:.82rem;font-weight:500;color:var(--body);margin-bottom:.1rem}
+.sdesc{font-family:'DM Mono',monospace;font-size:.5rem;color:var(--muted);line-height:1.4}
+.snote{font-family:'DM Mono',monospace;font-size:.48rem;color:var(--gdim);margin-top:.25rem;font-style:italic}
+.tog{position:relative;width:38px;height:20px;flex-shrink:0}
+.tog input{opacity:0;width:0;height:0}
+.ts{position:absolute;inset:0;background:var(--bdr);border-radius:20px;cursor:pointer;transition:.2s}
+.ts::before{content:'';position:absolute;width:14px;height:14px;left:3px;top:3px;background:var(--muted);border-radius:50%;transition:.2s}
+.tog input:checked+.ts{background:var(--tdim)}
+.tog input:checked+.ts::before{transform:translateX(18px);background:var(--teal)}
+.tog input:disabled+.ts{opacity:.4;cursor:not-allowed}
+
+.eres{font-family:'Bebas Neue',sans-serif;font-size:2rem;letter-spacing:.1em;color:var(--gwarm);text-align:center;margin-bottom:.2rem}
+.esub{font-family:'DM Mono',monospace;font-size:.58rem;color:var(--muted);text-align:center;margin-bottom:.9rem}
+.eeq{width:100%;display:flex;gap:3px;justify-content:center;margin-bottom:.9rem}
+.etile{width:34px;height:34px;border-radius:3px;background:rgba(45,212,191,.1);border:1px solid var(--tdim);display:flex;align-items:center;justify-content:center;font-family:'DM Mono',monospace;font-size:.95rem;font-weight:500;color:var(--teal)}
+.cd{font-family:'DM Mono',monospace;font-size:.7rem;color:var(--teal);text-align:center;margin-bottom:.8rem}
+
+.lbw{position:relative;z-index:1;width:100%;max-width:500px;padding:0 1rem 4rem}
+.lbc{background:var(--mid);border:1px solid var(--bdr);border-radius:4px;overflow:hidden}
+.lbh{padding:.8rem 1rem;border-bottom:1px solid var(--bdrdim);display:flex;align-items:center;justify-content:space-between}
+.lbt{font-family:'DM Mono',monospace;font-size:.52rem;letter-spacing:.14em;text-transform:uppercase;color:var(--muted)}
+.lbdate{font-family:'DM Mono',monospace;font-size:.48rem;color:var(--muted)}
+.lbgate{padding:1.4rem 1rem;text-align:center}
+.lbgm{font-family:'DM Mono',monospace;font-size:.58rem;color:var(--muted);line-height:1.6;margin-bottom:.9rem}
+.lbgm strong{color:var(--gold)}
+.lbr{display:grid;grid-template-columns:1.6rem 1fr auto auto auto;gap:.4rem;align-items:center;padding:.45rem .9rem;border-bottom:1px solid var(--bdrdim);font-family:'DM Mono',monospace;font-size:.55rem}
+.lbr:last-child{border-bottom:none}
+.lbr.you{background:rgba(201,168,76,.05)}
+.lbr .rk{color:var(--muted)}
+.lbr .wa{color:var(--body)}
+.lbr .gu{color:var(--gold);text-align:right}
+.lbr .st{color:var(--teal);text-align:right;font-size:.48rem}
+.lbr .ti{color:var(--muted);text-align:right;font-size:.48rem}
+.lbempty{font-family:'DM Mono',monospace;font-size:.58rem;color:var(--muted);text-align:center;padding:1.8rem;font-style:italic}
+.lbsr{padding:.75rem .9rem;border-top:1px solid var(--bdrdim)}
+.lbnote{font-family:'DM Mono',monospace;font-size:.46rem;color:var(--muted);text-align:center;padding:.5rem .9rem}
+
+.btn{padding:.62rem 1.1rem;font-family:'DM Mono',monospace;font-size:.6rem;letter-spacing:.1em;text-transform:uppercase;cursor:pointer;border-radius:3px;border:none;transition:all .2s;width:100%}
+.bg{background:var(--gold);color:var(--ink);font-weight:500}
+.bg:hover{background:var(--gwarm)}
+.bt{background:transparent;border:1px solid var(--tdim);color:var(--teal)}
+.bt:hover{background:var(--tdim)}
+.bgh{background:transparent;border:1px solid var(--bdr);color:var(--muted)}
+.bgh:hover{border-color:var(--gdim);color:var(--gold)}
+.btn:disabled{opacity:.4;cursor:not-allowed}
+
+.toast{position:fixed;top:66px;left:50%;transform:translateX(-50%);background:var(--body);color:var(--ink);z-index:300;padding:.55rem 1.1rem;border-radius:3px;font-family:'DM Mono',monospace;font-size:.62rem;font-weight:500;opacity:0;transition:opacity .2s;pointer-events:none;white-space:nowrap}
+.toast.on{opacity:1}
+</style>
+</head>
+<body>
+<nav>
+  <a class="logo" href="/">Maffs Games</a>
+  <span style="font-family:'DM Mono',monospace;font-size:0.48rem;letter-spacing:0.1em;text-transform:uppercase;padding:0.2rem 0.6rem;border:1px solid #134e4a;border-radius:2px;color:#2dd4bf">Hosted on QF Network</span>
+  <span class="pill" id="mode-pill">Daily</span>
+  <div class="nav-r">
+    <div class="wchip" id="wchip" onclick="connectWallet()"><div class="wdot"></div><span id="wlbl">Connect</span></div>
+    <button class="nb" title="How to Play" onclick="openM('htp')">?</button>
+    <button class="nb" title="Statistics"   onclick="openM('stats')">📊</button>
+    <button class="nb" title="Settings"     onclick="openM('set')">⚙</button>
+    <a class="nb" href="../../" title="Home" style="text-decoration:none">←</a>
+  </div>
+</nav>
+
+<div class="page">
+  <div>
+    <p class="kicker">Maths · Equation Deduction</p>
+    <h1 class="title">Equa<span>tle</span></h1>
+    <p class="sub" id="gsub">Guess the 8-character equation in 6 tries · BODMAS applies</p>
+  </div>
+
+  <div class="sbar">
+    <div class="si"><span class="sv" id="sbp">0</span><span class="sl">Played</span></div>
+    <div class="si"><span class="sv" id="sbw">—</span><span class="sl">Win %</span></div>
+    <div class="si hi"><span class="sv tl" id="sbs">0</span><span class="sl">🔥 Streak</span></div>
+    <div class="si"><span class="sv" id="sbm">0</span><span class="sl">Max</span></div>
+    <div class="si"><span class="sv" id="sbn">#—</span><span class="sl">Puzzle</span></div>
+  </div>
+
+  <div class="msg" id="msg"></div>
+  <div class="grid" id="grid"></div>
+
+  <div class="kbd">
+    <div class="kr">
+      <button class="key" data-k="1" onclick="key('1')">1</button><button class="key" data-k="2" onclick="key('2')">2</button><button class="key" data-k="3" onclick="key('3')">3</button><button class="key" data-k="4" onclick="key('4')">4</button><button class="key" data-k="5" onclick="key('5')">5</button><button class="key" data-k="6" onclick="key('6')">6</button><button class="key" data-k="7" onclick="key('7')">7</button><button class="key" data-k="8" onclick="key('8')">8</button><button class="key" data-k="9" onclick="key('9')">9</button><button class="key" data-k="0" onclick="key('0')">0</button>
+    </div>
+    <div class="kr">
+      <button class="key" data-k="+" onclick="key('+')">+</button><button class="key" data-k="-" onclick="key('-')">−</button><button class="key" data-k="*" onclick="key('*')">×</button><button class="key" data-k="/" onclick="key('/')">÷</button><button class="key" data-k="=" onclick="key('=')">=</button>
+      <button class="key wide kd" onclick="key('DEL')">⌫ Del</button>
+    </div>
+    <div class="kr"><button class="key wide ke" onclick="key('ENTER')">↵ Enter</button></div>
+  </div>
+
+  <button class="btn bgh" id="nxtbtn" style="display:none;max-width:420px" onclick="nextFree()">Next Puzzle →</button>
+</div>
+
+<!-- Leaderboard -->
+<div class="lbw">
+  <div class="lbc">
+    <div class="lbh"><span class="lbt">Daily Leaderboard</span><span class="lbdate" id="lbd">—</span></div>
+    <div id="lbgate">
+      <div class="lbgate"><div class="lbgm">Connect a wallet on <strong>QF Network</strong> to submit.<br>Scores are visible to all — submission is wallet-gated.</div><button class="btn bt" onclick="connectWallet()">Connect Wallet</button></div>
+    </div>
+    <div id="lbrows"></div>
+    <div id="lbsub" style="display:none"><div class="lbsr"><button class="btn bg" id="lbsbtn" onclick="submitLB()" disabled>Submit Score (finish puzzle first)</button></div></div>
+    <div class="lbnote">Local scores until Maffs Games launches on-chain.</div>
+  </div>
+</div>
+
+<!-- HTP -->
+<div class="ov hidden" id="m-htp">
+  <div class="modal">
+    <button class="mc" onclick="closeM('htp')">×</button>
+    <div class="mh"><div class="mt">How to Play</div><div class="ms">Equatle · 8-character equation deduction</div></div>
+    <div class="mb">
+      <p style="font-size:.7rem;color:var(--body);line-height:1.6;margin-bottom:.8rem">
+        Guess the equation in 6 tries. Each guess must be a <strong style="color:var(--gold)">valid, true equation</strong>.
+        <strong style="color:var(--teal)">BODMAS applies</strong> — so <strong style="color:var(--gold)">9+4*7=37</strong> is correct (4×7=28, then +9).
+        Leading zeros are valid characters: <strong style="color:var(--gold)">09+15=24</strong> is a legal guess.
+      </p>
+      <div class="hdiv"></div>
+      <div class="hrow"><div class="hts"><div class="ht c">9</div><div class="ht">+</div><div class="ht">4</div><div class="ht">*</div><div class="ht">7</div><div class="ht">=</div><div class="ht">3</div><div class="ht">7</div></div></div>
+      <div class="hrow"><div class="hts"><div class="ht c">9</div></div><div class="hd"><strong>Green</strong> — right character, right position.</div></div>
+      <div class="hrow"><div class="hts"><div class="ht p">4</div></div><div class="hd"><strong>Yellow</strong> — in the equation, wrong position.</div></div>
+      <div class="hrow"><div class="hts"><div class="ht a">7</div></div><div class="hd"><strong>Grey</strong> — not in the equation at all.</div></div>
+      <div class="hdiv"></div>
+      <div class="hn">
+        Duplicate digits use the Wordle minimum-match rule — greens are locked first, then yellows drawn from what remains.<br><br>
+        <strong>Valid 8-char equation examples:</strong><br>
+        <span style="color:var(--gold)">9+4*7=37</span> &nbsp;·&nbsp; <span style="color:var(--gold)">09+15=24</span> &nbsp;·&nbsp; <span style="color:var(--gold)">108/9=12</span> &nbsp;·&nbsp; <span style="color:var(--gold)">15-2*7=1</span> &nbsp;·&nbsp; <span style="color:var(--gold)">3*5-09=6</span><br><br>
+        <strong>Hard Mode:</strong> confirmed positions must be reused; present characters must appear somewhere.
+      </div>
+    </div>
+    <div class="mf"><button class="btn bg" onclick="closeM('htp')">Let's Go</button></div>
+  </div>
+</div>
+
+<!-- Stats -->
+<div class="ov hidden" id="m-stats">
+  <div class="modal">
+    <button class="mc" onclick="closeM('stats')">×</button>
+    <div class="mh"><div class="mt">Statistics</div></div>
+    <div class="mb">
+      <div class="sg" id="sgrid"></div>
+      <div class="dt">Guess Distribution</div>
+      <div id="dchart"></div>
+    </div>
+    <div class="mf"><button class="btn bgh" onclick="closeM('stats')">Close</button><button class="btn bg" onclick="share()">Share 📋</button></div>
+  </div>
+</div>
+
+<!-- Settings -->
+<div class="ov hidden" id="m-set">
+  <div class="modal">
+    <button class="mc" onclick="closeM('set')">×</button>
+    <div class="mh"><div class="mt">Settings</div></div>
+    <div class="mb">
+      <div class="srow">
+        <div><div class="stit">Hard Mode</div><div class="sdesc">Confirmed hints must be used in subsequent guesses.</div><div class="snote" id="hnote"></div></div>
+        <label class="tog"><input type="checkbox" id="t-hard" onchange="setHard(this.checked)"><span class="ts"></span></label>
+      </div>
+      <div class="srow">
+        <div><div class="stit">Free Play</div><div class="sdesc">Unlimited random puzzles. No leaderboard in free play.</div></div>
+        <label class="tog"><input type="checkbox" id="t-free" onchange="setFree(this.checked)"><span class="ts"></span></label>
+      </div>
+      <div class="srow">
+        <div><div class="stit">Colourblind Mode</div><div class="sdesc">Blue/orange palette with shape markers on tiles.</div></div>
+        <label class="tog"><input type="checkbox" id="t-cb" onchange="setCB(this.checked)"><span class="ts"></span></label>
+      </div>
+    </div>
+    <div class="mf"><button class="btn bgh" onclick="closeM('set')">Close</button></div>
+  </div>
+</div>
+
+<!-- End -->
+<div class="ov hidden" id="m-end">
+  <div class="modal">
+    <div class="mh"><div class="eres" id="eres">—</div><div class="esub" id="esub">—</div></div>
+    <div class="mb">
+      <div class="eeq" id="eeq"></div>
+      <div class="cd" id="cdtxt"></div>
+      <div class="sg" id="endsg"></div>
+    </div>
+    <div class="mf"><button class="btn bgh" onclick="closeM('end')">See Board</button><button class="btn bt" onclick="share()">Share 📋</button></div>
+  </div>
+</div>
+
+<div class="toast" id="toast"></div>
+
+<script src="https://cdn.jsdelivr.net/npm/ethers@6.7.1/dist/ethers.umd.min.js"></script>
+<script>
+// ═══════════════════════════════════════════════════════════════════════════════
+//  EQUATION BANK — Fully programmatic, zero hardcoded equations
+//
+//  Formats by = position (0-indexed):
+//    pos 4  →  LHS=4 chars, RHS=3 chars  (e.g. 9*12=108, 09+1=010)
+//    pos 5  →  LHS=5 chars, RHS=2 chars  (e.g. 9+4*7=37, 09+15=24, 100/4=25)
+//    pos 6  →  LHS=6 chars, RHS=1 char   (e.g. 15-2*7=1, 100-99=1, 12/4+3=6)
+//
+//  Three-operator coverage:
+//    D+D*D, D*D+D, D*D-D, D*D*D, D+D+D, D*D/D, D/D*D (pos 5)
+//    DD-D*D, DD/D+D, DD/D-D, 0D*D±D, 0D±D*D         (pos 6)
+//
+//  Leading-zero coverage (legal game character, valid in expressions and results):
+//    0D+DD, DD+0D, 0D+0D, DD-0D, 0D*DD, 0D+D*D,
+//    0D*D±D, DDD/0D, results like 09, 037, 007
+// ═══════════════════════════════════════════════════════════════════════════════
+
+let _bank = null;
+
+function getBank() {
+  if (_bank) return _bank;
+  const seen = new Set(), out = [];
+
+  const p2 = n => String(Math.round(n)).padStart(2,'0');
+  const p3 = n => String(Math.round(n)).padStart(3,'0');
+  const p1 = n => String(Math.round(n));
+
+  function add(lhs, rhs) {
+    const eq = lhs + '=' + rhs;
+    if (eq.length !== 8 || seen.has(eq)) return;
+    if (!/^[0-9+\-*/=]+$/.test(eq)) return;
+    // Verify: strip leading zeros from numeric tokens, eval LHS, compare to rhs
+    const lv = safeEval(lhs);
+    const rv = parseInt(rhs, 10);
+    if (lv === null || isNaN(rv) || lv !== rv || rv <= 0) return;
+    seen.add(eq);
+    out.push(eq);
+  }
+
+  // ── = AT INDEX 4 (LHS=4, RHS=3) ──────────────────────────────────────────
+  // D+DD, DD+D
+  for (let a=1;a<=9;a++) for (let b=10;b<=99;b++) {
+    add(`${a}+${b}`, p3(a+b));
+    add(`${b}+${a}`, p3(b+a));
+  }
+  // D*DD, DD*D
+  for (let a=2;a<=9;a++) for (let b=10;b<=99;b++) {
+    add(`${a}*${b}`, p3(a*b));
+    add(`${b}*${a}`, p3(b*a));
+  }
+  // D-DD (result mostly negative, p3 filters), DD-D
+  for (let a=10;a<=99;a++) for (let b=1;b<=9;b++) {
+    add(`${a}-${b}`, p3(a-b));
+    add(`${b}-${a}`, p3(b-a)); // negative → rv<=0 → rejected
+  }
+  // DD/D (result is 3 digits only if a/b>=100: impossible since a<=99)
+  // kept for completeness — add() will reject impossible sizes
+  for (let a=10;a<=99;a++) for (let b=2;b<=9;b++) {
+    if (a%b===0) add(`${a}/${b}`, p3(a/b));
+  }
+  // 0D patterns (leading zero on first operand)
+  for (let a=1;a<=9;a++) for (let b=1;b<=99;b++) {
+    add(`0${a}+${b}`, p3(a+b));
+    add(`0${a}-${b}`, p3(a-b));
+    add(`0${a}*${b}`, p3(a*b));
+    if (b>=2 && a%b===0) add(`0${a}/${b}`, p3(a/b));
+  }
+  // D+0D, D-0D, D*0D
+  for (let a=1;a<=99;a++) for (let b=1;b<=9;b++) {
+    add(`${a}+0${b}`, p3(a+b));
+    add(`${a}-0${b}`, p3(a-b));
+    add(`${a}*0${b}`, p3(a*b));
+    if (b>=2 && a%b===0) add(`${a}/0${b}`, p3(a/b));
+  }
+
+  // ── = AT INDEX 5 (LHS=5, RHS=2) ──────────────────────────────────────────
+  // DD±DD
+  for (let a=10;a<=99;a++) for (let b=10;b<=99;b++) {
+    add(`${a}+${b}`, p2(a+b));
+    if (a>b) add(`${a}-${b}`, p2(a-b));
+  }
+  // DDD/D (3÷1→2)
+  for (let a=100;a<=999;a++) for (let b=2;b<=9;b++) {
+    if (a%b===0) add(`${a}/${b}`, p2(a/b));
+  }
+  // DDD*D... result 4+ digits, add() rejects. Kept for completeness.
+  // 0D±DD, DD±0D, 0D±0D
+  for (let a=1;a<=9;a++) for (let b=10;b<=99;b++) {
+    add(`0${a}+${b}`, p2(a+b));
+    add(`0${a}-${b}`, p2(a-b));
+    add(`${b}+0${a}`, p2(b+a));
+    add(`${b}-0${a}`, p2(b-a));
+  }
+  for (let a=1;a<=9;a++) for (let b=1;b<=9;b++) {
+    add(`0${a}+0${b}`, p2(a+b));
+    if (a>b) add(`0${a}-0${b}`, p2(a-b));
+  }
+  // 0D*DD, DD*0D
+  for (let a=1;a<=9;a++) for (let b=10;b<=99;b++) {
+    add(`0${a}*${b}`, p2(a*b));
+    add(`${b}*0${a}`, p2(b*a));
+    if (b>=2 && a%b===0) add(`0${a}/${b}`, p2(a/b));
+    if (a>=2 && b%a===0) add(`${b}/0${a}`, p2(b/a));
+  }
+  // DDD/0D  (e.g. 100/05=20 → "100/05=20" but 0D means 01-09)
+  for (let a=100;a<=999;a++) for (let b=1;b<=9;b++) {
+    if (a%b===0) add(`${a}/0${b}`, p2(a/b));
+  }
+
+  // ── THREE-OPERAND, LHS=5, RHS=2  (D op D op D) ──────────────────────────
+  for (let a=1;a<=9;a++) for (let b=1;b<=9;b++) for (let c=1;c<=9;c++) {
+    add(`${a}+${b}*${c}`, p2(a+b*c));
+    add(`${a}*${b}+${c}`, p2(a*b+c));
+    add(`${a}*${b}-${c}`, p2(a*b-c));
+    add(`${a}*${b}*${c}`, p2(a*b*c));
+    add(`${a}+${b}+${c}`, p2(a+b+c));
+    add(`${a}-${b}+${c}`, p2(a-b+c));
+    add(`${a}-${b}-${c}`, p2(a-b-c));
+    add(`${a}+${b}-${c}`, p2(a+b-c));
+    // Integer division chains
+    if (b!==0 && (a*b)%c===0) add(`${a}*${b}/${c}`, p2(a*b/c));
+    if (a!==0 && b!==0 && a%b===0) {
+      add(`${a}/${b}*${c}`, p2((a/b)*c));
+      add(`${a}/${b}+${c}`, p2((a/b)+c));
+      add(`${a}/${b}-${c}`, p2((a/b)-c));
+    }
+  }
+
+  // ── = AT INDEX 6 (LHS=6, RHS=1, result=single digit 1-9) ──────────────────
+  // DDD-DD
+  for (let a=100;a<=200;a++) for (let b=10;b<=99;b++) {
+    const r=a-b; if (r>=1&&r<=9) add(`${a}-${b}`, p1(r));
+  }
+  // DDD/DD (e.g. 100/25=4)
+  for (let a=100;a<=999;a++) for (let b=10;b<=99;b++) {
+    if (a%b===0) { const r=a/b; if (r>=1&&r<=9) add(`${a}/${b}`, p1(r)); }
+  }
+  // DD-D*D (BODMAS: a-(b*c), two-digit minus product)
+  for (let a=10;a<=99;a++) for (let b=1;b<=9;b++) for (let c=1;c<=9;c++) {
+    const r=a-b*c; if (r>=1&&r<=9) add(`${a}-${b}*${c}`, p1(r));
+    const r2=a+b*c; // a+b*c→single digit: impossible if a>=10. Skipped by add.
+    add(`${a}+${b}*${c}`, p1(r2));
+  }
+  // DD/D±D
+  for (let a=10;a<=99;a++) for (let b=2;b<=9;b++) for (let c=1;c<=9;c++) {
+    if (a%b!==0) continue;
+    const q=a/b;
+    const r1=q+c; if (r1>=1&&r1<=9) add(`${a}/${b}+${c}`, p1(r1));
+    const r2=q-c; if (r2>=1&&r2<=9) add(`${a}/${b}-${c}`, p1(r2));
+  }
+  // D*D+0D, D*D-0D  (leading zero on last operand gives 6-char LHS)
+  for (let a=1;a<=9;a++) for (let b=1;b<=9;b++) for (let c=1;c<=9;c++) {
+    const r1=a*b+c; if (r1>=1&&r1<=9) add(`${a}*${b}+0${c}`, p1(r1));
+    const r2=a*b-c; if (r2>=1&&r2<=9) add(`${a}*${b}-0${c}`, p1(r2));
+    // 0D*D±D
+    const r3=a*b-c; if (r3>=1&&r3<=9) add(`0${a}*${b}-${c}`, p1(r3));
+    const r4=a*b+c; if (r4>=1&&r4<=9) add(`0${a}*${b}+${c}`, p1(r4));
+    // 0D+D*D, 0D-D*D
+    const r5=a+b*c; if (r5>=1&&r5<=9) add(`0${a}+${b}*${c}`, p1(r5));
+    const r6=a-b*c; if (r6>=1&&r6<=9) add(`0${a}-${b}*${c}`, p1(r6));
+  }
+  // DDD-0D*D, DDD/0D (leading zeros mid-expression)
+  for (let a=100;a<=200;a++) for (let b=1;b<=9;b++) {
+    const r=a-b; if (r>=1&&r<=9) add(`${a}-0${b}`, p1(r)); // DDD-0D=D... but 0D is 2 chars → LHS=100-09=6 ✓
+  }
+
+  // ── Shuffle with stable seeded RNG ───────────────────────────────────────
+  let s=20250101;
+  const rng=()=>{s=(s*1664525+1013904223)&0xffffffff;return(s>>>0)/0xffffffff};
+  for (let i=out.length-1;i>0;i--){const j=Math.floor(rng()*(i+1));[out[i],out[j]]=[out[j],out[i]];}
+
+  _bank = out;
+  console.log(`Equatle: ${out.length} equations generated.`);
+  return _bank;
+}
+
+// Evaluate an expression string safely (handles leading zeros, BODMAS via JS engine)
+function safeEval(expr) {
+  if (!/^[0-9+\-*/]+$/.test(expr)) return null;
+  // Strip leading zeros from each numeric token to avoid octal interpretation
+  const clean = expr.replace(/\d+/g, m => String(parseInt(m, 10)));
+  try {
+    const v = Function('"use strict";return(' + clean + ')')();
+    return (typeof v === 'number' && isFinite(v) && Number.isInteger(v)) ? v : null;
+  } catch { return null; }
+}
+
+// ═══════════════════════════════════════════════════════════════════════════════
+//  CONFIG
+// ═══════════════════════════════════════════════════════════════════════════════
+const EQ_LEN=8, MAX_G=6;
+const QF_ID=42, QF_HEX='0x2a', QF_RPC='https://archive.mainnet.qfnode.net/eth';
+const HUB='0x0000000000000000000000000000000000000000';
+
+function dstr(){const d=new Date();return`${d.getFullYear()}_${d.getMonth()}_${d.getDate()}`}
+function pnum(){return Math.floor((new Date()-new Date('2025-01-01'))/86400000)+1}
+function srng(seed){let n=seed;return()=>{n=(n*1664525+1013904223)&0xffffffff;return(n>>>0)/0xffffffff}}
+
+const STSK='eq_stats', PRFK='eq_prefs', LBK=()=>'eq_lb_'+dstr();
+const DSK=()=>'eq_d_'+dstr(), FPSK='eq_fp';
+
+// ═══════════════════════════════════════════════════════════════════════════════
+//  STATE
+// ═══════════════════════════════════════════════════════════════════════════════
+let G, PREFS, WALLET=null, PROVIDER=null, _tt;
+
+function lp(){try{PREFS=JSON.parse(localStorage.getItem(PRFK))||{};}catch{PREFS={}}PREFS.hard=!!PREFS.hard;PREFS.free=!!PREFS.free;PREFS.cb=!!PREFS.cb;}
+function sp(){localStorage.setItem(PRFK,JSON.stringify(PREFS))}
+function lstats(){try{return JSON.parse(localStorage.getItem(STSK))||{};}catch{return{}}}
+function sstats(s){localStorage.setItem(STSK,JSON.stringify(s))}
+function llb(){try{return JSON.parse(localStorage.getItem(LBK()))||[];}catch{return[]}}
+function slb(a){localStorage.setItem(LBK(),JSON.stringify(a))}
+
+function dailyTarget(){
+  const bank=getBank();
+  const d=new Date(), seed=d.getFullYear()*10000+(d.getMonth()+1)*100+d.getDate();
+  const rng=srng(seed);
+  return bank[Math.floor(rng()*bank.length)];
+}
+function freeTarget(){
+  const bank=getBank();
+  let hist=[]; try{hist=JSON.parse(localStorage.getItem('eq_hist'))||[];}catch{}
+  const pool=bank.filter(e=>!hist.includes(e));
+  const eq=(pool.length>10?pool:bank)[Math.floor(Math.random()*(pool.length>10?pool:bank).length)];
+  hist.push(eq); if(hist.length>50)hist.shift();
+  localStorage.setItem('eq_hist',JSON.stringify(hist));
+  return eq;
+}
+
+function initGame(){
+  if(PREFS.free){
+    let s=null;try{s=JSON.parse(sessionStorage.getItem(FPSK));}catch{}
+    G=(s&&s.status==='playing')?s:{target:freeTarget(),guesses:[],status:'playing',t0:Date.now(),t1:null};
+    sessionStorage.setItem(FPSK,JSON.stringify(G));
+  } else {
+    let s=null;try{s=JSON.parse(localStorage.getItem(DSK()));}catch{}
+    const t=dailyTarget();
+    G=(s&&s.target===t)?s:{target:t,guesses:[],status:'playing',t0:Date.now(),t1:null};
+    saveG();
+  }
+}
+function saveG(){
+  if(PREFS.free)try{sessionStorage.setItem(FPSK,JSON.stringify(G));}catch{}
+  else localStorage.setItem(DSK(),JSON.stringify(G));
+}
+
+// ═══════════════════════════════════════════════════════════════════════════════
+//  VALIDATION
+// ═══════════════════════════════════════════════════════════════════════════════
+function validate(guess){
+  if(guess.length!==EQ_LEN) return `Must be ${EQ_LEN} characters`;
+  const ei=guess.indexOf('=');
+  if(ei<0) return 'Must contain =';
+  if(guess.indexOf('=',ei+1)>=0) return 'Only one = allowed';
+  const lhs=guess.slice(0,ei), rhs=guess.slice(ei+1);
+  if(!lhs||!rhs) return 'Both sides required';
+  if(!/^[0-9]+$/.test(rhs)) return 'Right side: digits only';
+  if(/[+\-*/]{2}/.test(lhs)||/^[+\-*/]/.test(lhs)||/[+\-*/]$/.test(lhs)) return 'Invalid expression';
+  // Division by zero: check cleaned expression
+  const cl=lhs.replace(/\d+/g,m=>String(parseInt(m,10)));
+  if(/\/0(?!\d)/.test(cl)) return 'Division by zero';
+  const lv=safeEval(lhs), rv=parseInt(rhs,10);
+  if(lv===null) return 'Invalid expression';
+  if(rv<=0) return 'Result must be positive';
+  if(lv!==rv) return `${cl} = ${lv}, not ${rv}`;
+  return null;
+}
+
+function checkHard(guess){
+  for(const g of G.guesses){
+    const sts=states(g,G.target);
+    for(let i=0;i<EQ_LEN;i++)
+      if(sts[i]==='correct'&&guess[i]!==g[i]) return `Position ${i+1} must be "${g[i]}" (Hard Mode)`;
+    for(let i=0;i<EQ_LEN;i++)
+      if(sts[i]==='present'&&!guess.includes(g[i])) return `Must include "${g[i]}" (Hard Mode)`;
+  }
+  return null;
+}
+
+// ═══════════════════════════════════════════════════════════════════════════════
+//  FEEDBACK — correct duplicate handling (Wordle algorithm)
+// ═══════════════════════════════════════════════════════════════════════════════
+function states(guess,target){
+  const res=Array(EQ_LEN).fill('absent'),tu=Array(EQ_LEN).fill(false),gu=Array(EQ_LEN).fill(false);
+  for(let i=0;i<EQ_LEN;i++) if(guess[i]===target[i]){res[i]='correct';tu[i]=gu[i]=true;}
+  for(let i=0;i<EQ_LEN;i++){
+    if(gu[i]) continue;
+    for(let j=0;j<EQ_LEN;j++){
+      if(tu[j]) continue;
+      if(guess[i]===target[j]){res[i]='present';tu[j]=true;break;}
+    }
+  }
+  return res;
+}
+
+// ═══════════════════════════════════════════════════════════════════════════════
+//  INPUT
+// ═══════════════════════════════════════════════════════════════════════════════
+let cur='';
+function key(k){
+  if(G.status!=='playing') return;
+  if(k==='DEL'||k==='Backspace'){if(cur.length){cur=cur.slice(0,-1);renderCur();}return;}
+  if(k==='ENTER'||k==='Enter'){submit();return;}
+  if('0123456789+-*/='.includes(k)&&cur.length<EQ_LEN){cur+=k;renderCur();popTile();}
+}
+document.addEventListener('keydown',e=>{if(!e.ctrlKey&&!e.metaKey&&!e.altKey)key(e.key);});
+
+function submit(){
+  const row=G.guesses.length; if(row>=MAX_G) return;
+  const err=validate(cur); if(err){setMsg(err,'err');shake(row);return;}
+  if(PREFS.hard){const h=checkHard(cur);if(h){setMsg(h,'err');shake(row);return;}}
+  const sts=states(cur,G.target);
+  G.guesses.push(cur); clearMsg();
+  reveal(row,sts,cur); updateKbd();
+  const won=cur===G.target, lost=!won&&G.guesses.length>=MAX_G;
+  if(won||lost){G.status=won?'won':'lost';G.t1=Date.now();recStats(won,G.guesses.length);renderSbar();}
+  saveG(); cur='';
+  if(won||lost) setTimeout(showEnd,1600); else renderCur();
+  enableSub();
+}
+
+// ═══════════════════════════════════════════════════════════════════════════════
+//  GRID
+// ═══════════════════════════════════════════════════════════════════════════════
+function buildGrid(){
+  const g=document.getElementById('grid'); g.innerHTML='';
+  for(let r=0;r<MAX_G;r++){
+    const row=document.createElement('div'); row.className='row'; row.id='row'+r;
+    for(let c=0;c<EQ_LEN;c++){const t=document.createElement('div');t.className='tile';t.id=`t${r}${c}`;row.appendChild(t);}
+    g.appendChild(row);
+  }
+}
+function disp(ch){return ch==='*'?'×':ch==='/'?'÷':ch;}
+function renderCur(){
+  const r=G.guesses.length;
+  for(let c=0;c<EQ_LEN;c++){
+    const t=document.getElementById(`t${r}${c}`), ch=cur[c]||'';
+    t.textContent=disp(ch); t.className='tile'+(ch?' f ar':'');
+  }
+}
+function popTile(){
+  const t=document.getElementById(`t${G.guesses.length}${cur.length-1}`);
+  if(!t) return; t.classList.add('pop'); t.addEventListener('animationend',()=>t.classList.remove('pop'),{once:true});
+}
+function reveal(row,sts,guess){
+  for(let c=0;c<EQ_LEN;c++){
+    const t=document.getElementById(`t${row}${c}`), delay=c*120;
+    setTimeout(()=>{
+      t.classList.add('flip');
+      setTimeout(()=>{delete t.dataset.s;t.className='tile';t.dataset.s=sts[c];t.textContent=disp(guess[c]);},150+delay);
+    },delay);
+  }
+  if(sts.every(s=>s==='correct')){
+    for(let c=0;c<EQ_LEN;c++) setTimeout(()=>{
+      const t=document.getElementById(`t${row}${c}`);
+      t.classList.add('bnc'); t.addEventListener('animationend',()=>t.classList.remove('bnc'),{once:true});
+    },EQ_LEN*120+c*80+200);
+  }
+}
+function replay(){
+  for(let r=0;r<G.guesses.length;r++){
+    const sts=states(G.guesses[r],G.target);
+    for(let c=0;c<EQ_LEN;c++){
+      const t=document.getElementById(`t${r}${c}`);
+      t.textContent=disp(G.guesses[r][c]); t.className='tile'; t.dataset.s=sts[c];
+    }
+  }
+}
+function shake(r){const el=document.getElementById('row'+r);el.classList.add('shake');el.addEventListener('animationend',()=>el.classList.remove('shake'),{once:true});}
+
+// ═══════════════════════════════════════════════════════════════════════════════
+//  KEYBOARD
+// ═══════════════════════════════════════════════════════════════════════════════
+const PRIO=['correct','present','absent'];
+function updateKbd(){
+  const map={};
+  for(const g of G.guesses){
+    const sts=states(g,G.target);
+    for(let i=0;i<EQ_LEN;i++){const ch=g[i],nxt=sts[i],cur2=map[ch];if(!cur2||PRIO.indexOf(nxt)<PRIO.indexOf(cur2))map[ch]=nxt;}
+  }
+  document.querySelectorAll('.key[data-k]').forEach(b=>{const s=map[b.dataset.k];if(s)b.dataset.s=s;else delete b.dataset.s;});
+}
+
+// ═══════════════════════════════════════════════════════════════════════════════
+//  MSG / TOAST
+// ═══════════════════════════════════════════════════════════════════════════════
+function setMsg(m,cls=''){const el=document.getElementById('msg');el.textContent=m;el.className='msg '+(cls||'');}
+function clearMsg(){setMsg('');}
+function toast(m,d=1800){clearTimeout(_tt);const t=document.getElementById('toast');t.textContent=m;t.classList.add('on');_tt=setTimeout(()=>t.classList.remove('on'),d);}
+
+// ═══════════════════════════════════════════════════════════════════════════════
+//  STATS
+// ═══════════════════════════════════════════════════════════════════════════════
+function ystr(){const d=new Date();d.setDate(d.getDate()-1);return`${d.getFullYear()}_${d.getMonth()}_${d.getDate()}`}
+function recStats(won,guesses){
+  if(PREFS.free) return;
+  const s=lstats(); s.played=(s.played||0)+1; s.dist=s.dist||[0,0,0,0,0,0];
+  if(won){
+    s.won=(s.won||0)+1;
+    s.streak=(s.lastWin===ystr())?(s.streak||0)+1:(s.lastWin===dstr()?s.streak:1);
+    s.maxStreak=Math.max(s.maxStreak||0,s.streak);
+    s.lastWin=dstr(); s.dist[guesses-1]++;
+  } else { if(s.lastWin!==dstr()&&s.lastWin!==ystr()) s.streak=0; }
+  sstats(s);
+}
+function renderSbar(){
+  const s=lstats();
+  document.getElementById('sbp').textContent=s.played||0;
+  document.getElementById('sbw').textContent=(s.played&&s.won)?Math.round(s.won/s.played*100)+'%':'—';
+  document.getElementById('sbs').textContent=s.streak||0;
+  document.getElementById('sbm').textContent=s.maxStreak||0;
+  document.getElementById('sbn').textContent=PREFS.free?'Free':'#'+pnum();
+}
+function renderStatsModal(){
+  const s=lstats(),p=s.played||0,w=s.won||0;
+  document.getElementById('sgrid').innerHTML=`
+    <div class="sb"><div class="sbv">${p}</div><div class="sbl">Played</div></div>
+    <div class="sb"><div class="sbv">${p?Math.round(w/p*100):0}%</div><div class="sbl">Win %</div></div>
+    <div class="sb"><div class="sbv" style="color:var(--teal)">${s.streak||0}</div><div class="sbl">🔥 Streak</div></div>
+    <div class="sb"><div class="sbv">${s.maxStreak||0}</div><div class="sbl">Max</div></div>`;
+  const dist=s.dist||[0,0,0,0,0,0], mx=Math.max(...dist,1);
+  document.getElementById('dchart').innerHTML=dist.map((n,i)=>`
+    <div class="dr"><div class="dl">${i+1}</div>
+    <div style="flex:1"><div class="db${G.status!=='playing'&&G.guesses.length===i+1?' cur':''}" style="width:${Math.max(7,Math.round(n/mx*100))}%"><span class="dc">${n}</span></div></div></div>`).join('');
+}
+
+// ═══════════════════════════════════════════════════════════════════════════════
+//  END MODAL
+// ═══════════════════════════════════════════════════════════════════════════════
+function showEnd(){
+  const won=G.status==='won', s=lstats();
+  const v=['Exceptional.','Impressive.','Solid.','That\'ll Do.','Phew.','Better Luck Tomorrow.'];
+  document.getElementById('eres').textContent=won?v[G.guesses.length-1]:'Hard Luck.';
+  document.getElementById('eres').style.color=won?'var(--gwarm)':'var(--err)';
+  document.getElementById('esub').textContent=won?`Solved in ${G.guesses.length}/6 — Puzzle #${pnum()}`:`The equation was:`;
+  document.getElementById('eeq').innerHTML=G.target.split('').map(ch=>`<div class="etile">${disp(ch)}</div>`).join('');
+  if(!PREFS.free) startCD(); else document.getElementById('cdtxt').textContent='Free Play — tap Next Puzzle for another.';
+  document.getElementById('endsg').innerHTML=`
+    <div class="sb"><div class="sbv" style="color:var(--teal)">${s.streak||0}</div><div class="sbl">🔥 Streak</div></div>
+    <div class="sb"><div class="sbv">${s.maxStreak||0}</div><div class="sbl">Max</div></div>
+    <div class="sb"><div class="sbv">${s.played||0}</div><div class="sbl">Played</div></div>
+    <div class="sb"><div class="sbv">${s.played?Math.round((s.won||0)/s.played*100):0}%</div><div class="sbl">Win %</div></div>`;
+  openM('end');
+  if(PREFS.free) document.getElementById('nxtbtn').style.display='block';
+}
+let _cdi;
+function startCD(){
+  clearInterval(_cdi);
+  const tick=()=>{const now=new Date(),nxt=new Date(now);nxt.setHours(24,0,0,0);const d=nxt-now,h=Math.floor(d/3600000),m=Math.floor((d%3600000)/60000),s=Math.floor((d%60000)/1000);document.getElementById('cdtxt').textContent=`Next Equatle in ${String(h).padStart(2,'0')}:${String(m).padStart(2,'0')}:${String(s).padStart(2,'0')}`;};
+  tick(); _cdi=setInterval(tick,1000);
+}
+
+// ═══════════════════════════════════════════════════════════════════════════════
+//  FREE PLAY
+// ═══════════════════════════════════════════════════════════════════════════════
+function nextFree(){
+  if(G.status==='playing'&&G.guesses.length>0&&!confirm('Abandon current puzzle?')) return;
+  closeM('end'); document.getElementById('nxtbtn').style.display='none';
+  G={target:freeTarget(),guesses:[],status:'playing',t0:Date.now(),t1:null};
+  saveG(); cur=''; buildGrid(); updateKbd(); clearMsg(); renderSbar(); enableSub();
+}
+
+// ═══════════════════════════════════════════════════════════════════════════════
+//  SHARE
+// ═══════════════════════════════════════════════════════════════════════════════
+function share(){
+  const s=lstats(), score=G.status==='won'?G.guesses.length+'/6':'X/6';
+  const EM={correct:'🟩',present:'🟨',absent:'⬜'};
+  const lines=G.guesses.map(g=>states(g,G.target).map(st=>EM[st]).join(''));
+  const text=[`Equatle #${pnum()} ${score} 🔥${s.streak||0}`,...lines,'equatle.maffsgames.io'].join('\n');
+  navigator.clipboard.writeText(text).then(()=>toast('Copied!')).catch(()=>{});
+}
+
+// ═══════════════════════════════════════════════════════════════════════════════
+//  MODALS
+// ═══════════════════════════════════════════════════════════════════════════════
+function openM(id){if(id==='stats')renderStatsModal();document.getElementById('m-'+id).classList.remove('hidden');}
+function closeM(id){document.getElementById('m-'+id).classList.add('hidden');}
+
+// ═══════════════════════════════════════════════════════════════════════════════
+//  SETTINGS
+// ═══════════════════════════════════════════════════════════════════════════════
+function setHard(v){
+  if(v&&G.guesses.length>0){toast('Hard Mode only at start of puzzle.');document.getElementById('t-hard').checked=false;return;}
+  PREFS.hard=v; sp(); toast(v?'Hard Mode on.':'Hard Mode off.');
+  document.getElementById('hnote').textContent=v?'Confirmed hints must be reused.':'';
+}
+function setFree(v){
+  if(G.status==='playing'&&G.guesses.length>0&&!confirm('Switch mode and abandon current puzzle?')){document.getElementById('t-free').checked=!v;return;}
+  PREFS.free=v; sp();
+  const pill=document.getElementById('mode-pill'); pill.textContent=v?'Free Play':'Daily'; pill.className='pill'+(v?' free':'');
+  document.getElementById('gsub').textContent=v?'Free Play — unlimited random puzzles.':'Guess the 8-character equation in 6 tries · BODMAS applies';
+  const lbw=document.querySelector('.lbw'); if(lbw) lbw.style.display=v?'none':'block';
+  G={target:v?freeTarget():dailyTarget(),guesses:[],status:'playing',t0:Date.now(),t1:null};
+  saveG(); cur=''; buildGrid(); updateKbd(); clearMsg(); renderSbar(); enableSub();
+  if(v) document.getElementById('nxtbtn').style.display='none';
+}
+function setCB(v){PREFS.cb=v;sp();document.body.classList.toggle('cb',v);toast(v?'Colourblind mode on.':'Off.');}
+
+// ═══════════════════════════════════════════════════════════════════════════════
+//  WALLET
+// ═══════════════════════════════════════════════════════════════════════════════
+async function connectWallet(){
+  if(!window.ethereum){toast('No wallet detected.',2500);return;}
+  try{
+    PROVIDER=new ethers.BrowserProvider(window.ethereum);
+    await PROVIDER.send('eth_requestAccounts',[]);
+    const net=await PROVIDER.getNetwork();
+    if(Number(net.chainId)!==QF_ID){
+      try{await window.ethereum.request({method:'wallet_switchEthereumChain',params:[{chainId:QF_HEX}]});}
+      catch(sw){
+        if(sw.code===4902||sw.code===-32603) await window.ethereum.request({method:'wallet_addEthereumChain',params:[{chainId:QF_HEX,chainName:'QF Network',rpcUrls:[QF_RPC],nativeCurrency:{name:'QF',symbol:'QF',decimals:18}}]});
+        else throw sw;
+      }
+      PROVIDER=new ethers.BrowserProvider(window.ethereum);
+    }
+    WALLET=await (await PROVIDER.getSigner()).getAddress();
+    const c=document.getElementById('wchip'); c.classList.add('on'); document.getElementById('wlbl').textContent=abbr(WALLET);
+    document.getElementById('lbgate').style.display='none';
+    renderLB(); enableSub(); toast('Connected: '+abbr(WALLET));
+  } catch(e){toast('Connection failed.',2500);}
+}
+function abbr(a){return a.slice(0,6)+'…'+a.slice(-4);}
+if(window.ethereum){window.ethereum.on('accountsChanged',()=>location.reload());window.ethereum.on('chainChanged',()=>location.reload());}
+
+// ═══════════════════════════════════════════════════════════════════════════════
+//  LEADERBOARD
+// ═══════════════════════════════════════════════════════════════════════════════
+function enableSub(){
+  const sub=document.getElementById('lbsub'), btn=document.getElementById('lbsbtn');
+  if(!sub||!btn) return;
+  const done=G.status!=='playing', daily=!PREFS.free;
+  sub.style.display=(WALLET&&daily)?'block':'none';
+  btn.disabled=!(WALLET&&done&&daily);
+  btn.textContent=done?'Submit Score to Leaderboard':'Submit Score (finish puzzle first)';
+}
+async function submitLB(){
+  if(!WALLET){toast('Connect wallet first.');return;}
+  if(G.status==='playing'){toast('Finish the puzzle first.');return;}
+  const lb=llb();
+  if(lb.find(e=>e.w.toLowerCase()===WALLET.toLowerCase())){toast('Already submitted today.',2500);return;}
+  const s=lstats(), elapsed=G.t1?Math.round((G.t1-G.t0)/1000):999;
+  lb.push({w:WALLET,g:G.status==='won'?G.guesses.length:7,t:elapsed,s:s.streak||0});
+  lb.sort((a,b)=>a.g-b.g||a.t-b.t||b.s-a.s);
+  slb(lb); renderLB(); toast('Score submitted! 🏆',2500);
+  document.getElementById('lbsbtn').disabled=true;
+  document.getElementById('lbsbtn').textContent='Submitted ✓';
+}
+function renderLB(){
+  const lb=llb(), rows=document.getElementById('lbrows');
+  if(!rows) return;
+  const d=new Date(); document.getElementById('lbd').textContent=d.toLocaleDateString('en-GB',{day:'numeric',month:'short',year:'numeric'});
+  if(!lb.length){rows.innerHTML='<div class="lbempty">No scores yet today.</div>';return;}
+  rows.innerHTML=lb.slice(0,20).map((e,i)=>{
+    const you=WALLET&&e.w.toLowerCase()===WALLET.toLowerCase();
+    return`<div class="lbr${you?' you':''}"><span class="rk">${i+1}</span><span class="wa">${you?'<strong>You</strong>':abbr(e.w)}</span><span class="gu">${e.g===7?'X/6':e.g+'/6'}</span><span class="st">🔥${e.s}</span><span class="ti">${e.t<999?fmt(e.t):'—'}</span></div>`;
+  }).join('');
+}
+function fmt(s){const m=Math.floor(s/60),sec=s%60;return m?`${m}m${String(sec).padStart(2,'0')}s`:`${sec}s`;}
+
+// ═══════════════════════════════════════════════════════════════════════════════
+//  INIT
+// ═══════════════════════════════════════════════════════════════════════════════
+function init(){
+  lp();
+  document.body.classList.toggle('cb',PREFS.cb);
+  document.getElementById('t-hard').checked=PREFS.hard;
+  document.getElementById('t-free').checked=PREFS.free;
+  document.getElementById('t-cb').checked=PREFS.cb;
+  document.getElementById('mode-pill').textContent=PREFS.free?'Free Play':'Daily';
+  document.getElementById('mode-pill').className='pill'+(PREFS.free?' free':'');
+  document.getElementById('gsub').textContent=PREFS.free?'Free Play — unlimited random puzzles.':'Guess the 8-character equation in 6 tries · BODMAS applies';
+  if(PREFS.free){const lbw=document.querySelector('.lbw');if(lbw)lbw.style.display='none';}
+
+  // Build bank (cached; runs once, ~20-30ms)
+  getBank();
+
+  initGame();
+  buildGrid();
+  if(G.guesses.length){replay();updateKbd();}
+  if(G.status!=='playing'){setTimeout(showEnd,400);if(PREFS.free)document.getElementById('nxtbtn').style.display='block';}
+  else renderCur();
+  renderSbar(); renderLB(); enableSub();
+}
+
+init();
+</script>
+</body>
+</html>

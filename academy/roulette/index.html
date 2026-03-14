@@ -1,0 +1,426 @@
+<!--
+  ROULETTE REALITY CHECK — CORE ENGINE + ALL CONTENT
+  Single-tier product: 250 QF, 7-day access
+  
+  This is simpler than BJ/Poker — no scenarios, just tutorials and
+  live simulations that prove every system fails. CC can ship this as-is.
+-->
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<link rel="icon" type="image/svg+xml" href="../../schools/assets/favicon.svg">
+<title>Roulette Reality Check — Maths Always Wins — QF Games</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=DM+Mono:wght@400;500&family=Bebas+Neue&family=Crimson+Pro:ital,wght@0,400;0,700;1,400&family=Outfit:wght@300;400;600;700&display=swap" rel="stylesheet">
+<script async src="https://www.googletagmanager.com/gtag/js?id=G-CLNF7GSB28"></script>
+<script>window.dataLayer=window.dataLayer||[];function gtag(){dataLayer.push(arguments);}gtag('js',new Date());gtag('config','G-CLNF7GSB28',{send_page_view:true,storage:'none',anonymize_ip:true});</script>
+<style>
+*{margin:0;padding:0;box-sizing:border-box}
+:root{
+  --bg:#06080c;--surface:#0c0f16;--surface2:#111620;--border:#1a2030;--border2:#242e40;
+  --accent:#dc2626;--accent-dim:rgba(220,38,38,.08);--accent-glow:rgba(220,38,38,.15);
+  --green:#1a8a5c;--green-bright:#2dd4a0;--gold:#d4a847;
+  --text:#d8dce4;--text-bright:#f0f2f6;--muted:#5a6478;
+}
+body{font-family:'Outfit',sans-serif;background:var(--bg);color:var(--text);min-height:100vh;-webkit-font-smoothing:antialiased}
+.outer{max-width:800px;margin:0 auto;padding:0 1rem 2rem}
+
+.hero{text-align:center;padding:3rem 0 1.5rem;border-bottom:1px solid var(--border)}
+.hero-ey{font-family:'DM Mono',monospace;font-size:.65rem;letter-spacing:.25em;text-transform:uppercase;color:var(--accent);margin-bottom:.6rem}
+.hero h1{font-family:'Bebas Neue',sans-serif;font-size:3rem;letter-spacing:.04em;color:var(--text-bright);line-height:1.1}
+.hero h1 span{color:var(--accent)}
+.hero .tag{font-family:'Crimson Pro',serif;font-style:italic;font-size:1.05rem;color:var(--muted);margin-top:.5rem}
+
+.stats-bar{display:grid;grid-template-columns:repeat(3,1fr);gap:1px;background:var(--border);border:1px solid var(--border);border-radius:10px;overflow:hidden;margin:1.5rem 0}
+.sc{background:var(--surface);padding:.8rem .4rem;text-align:center}
+.sc .sn{font-family:'DM Mono',monospace;font-size:1.4rem;font-weight:500;color:var(--accent)}
+.sc .sl{font-size:.6rem;color:var(--muted);margin-top:.15rem;line-height:1.3}
+
+.screen{display:none}.screen.active{display:block}
+
+.mc{background:var(--surface);border:1px solid var(--border);border-radius:8px;padding:.6rem .8rem;margin-bottom:.3rem;display:flex;justify-content:space-between;align-items:center;cursor:pointer;transition:all .12s}
+.mc:hover{border-color:var(--accent);transform:translateX(3px)}
+.mc .mn{font-size:.82rem;font-weight:600}.mc .md{font-size:.65rem;color:var(--muted)}.mc .mq{font-family:'DM Mono',monospace;font-size:.62rem;color:var(--muted)}
+
+.cta{display:block;margin:1rem auto;padding:.55rem 1.5rem;border-radius:8px;font-family:'Outfit',sans-serif;font-size:.82rem;font-weight:600;cursor:pointer;border:2px solid var(--accent);background:var(--accent);color:#fff;text-align:center;max-width:300px}
+.bb{display:inline-block;margin:.4rem 0;padding:.3rem .9rem;border:none;border-radius:6px;background:var(--border);color:var(--text);font-family:'Outfit',sans-serif;font-size:.75rem;font-weight:600;cursor:pointer}
+.nb{display:inline-block;margin-top:.3rem;padding:.3rem .9rem;border:none;border-radius:6px;background:var(--accent);color:#fff;font-family:'Outfit',sans-serif;font-size:.75rem;font-weight:600;cursor:pointer}
+
+.tut{background:var(--surface);border:1px solid var(--border);border-radius:10px;padding:1.1rem;margin-bottom:.5rem;line-height:1.75;font-size:.85rem}
+.tut h3{color:var(--accent);font-size:.88rem;margin-bottom:.3rem}
+.tut p{margin-bottom:.4rem}
+.tut .pt{padding:.4rem .7rem;margin:.4rem 0;border-radius:6px;border-left:3px solid var(--accent);background:var(--accent-dim)}
+.tut .dg{padding:.4rem .7rem;margin:.4rem 0;border-radius:6px;border-left:3px solid var(--green-bright);background:rgba(45,212,160,.06);color:var(--green-bright)}
+.tut .mb{font-family:'DM Mono',monospace;background:var(--bg);border-radius:6px;padding:.5rem;margin:.4rem 0;font-size:.78rem;line-height:1.8}
+.tut .mb .pos{color:var(--green-bright)}.tut .mb .neg{color:var(--accent)}
+.tut .pln{font-family:'Crimson Pro',serif;font-size:.88rem;color:#0e9aa7;font-style:italic;margin:.3rem 0}
+
+.sim{background:var(--surface);border:1px solid var(--border);border-radius:10px;padding:.9rem;margin-bottom:.5rem;text-align:center}
+.sim h3{color:var(--accent);font-size:.82rem;margin-bottom:.3rem}
+.sim canvas{display:block;width:100%;height:auto;margin:.3rem auto}
+.sim-status{font-family:'DM Mono',monospace;font-size:.72rem;color:var(--muted);margin:.3rem 0}
+
+.disc{background:var(--surface);border:1px solid var(--border2);border-radius:10px;padding:1rem;margin:1rem 0}
+.disc p{font-family:'Crimson Pro',serif;font-size:.85rem;color:var(--muted);line-height:1.6;font-style:italic;margin-bottom:.3rem}
+.disc p strong{color:var(--accent);font-style:normal}
+
+@media(max-width:600px){.hero h1{font-size:2.2rem}}
+</style>
+</head>
+<body>
+<div class="outer">
+
+<div id="landing" class="screen active">
+<div class="hero">
+<div class="hero-ey">QF Games · Educational Suite</div>
+<h1>ROULETTE <span>REALITY CHECK</span></h1>
+<div class="tag">The house always wins. Here's the mathematical proof.</div>
+</div>
+
+<div class="stats-bar">
+<div class="sc"><div class="sn">2.70%</div><div class="sl">House edge<br>European (single zero)</div></div>
+<div class="sc"><div class="sn">5.26%</div><div class="sl">House edge<br>American (double zero)</div></div>
+<div class="sc"><div class="sn">0</div><div class="sl">Number of systems<br>that beat the house</div></div>
+</div>
+
+<div class="disc">
+<p>This product exists to <strong>save you money</strong>. Every roulette "system" — Martingale, Fibonacci, D'Alembert, Labouchère — fails mathematically. We prove it with 100,000-spin simulations you can watch in real time.</p>
+<p>Price: <strong>250 QF · 7-day access</strong>. If it stops you making one bad bet, it's paid for itself a hundred times over.</p>
+</div>
+
+<div style="margin:1rem 0">
+<div class="mc" onclick="loadMod(0)"><div><div class="mn">1. The Mathematics of the Wheel</div><div class="md">Every bet, its true probability, and the house edge. No exceptions.</div></div><div class="mq">Tutorial</div></div>
+<div class="mc" onclick="loadMod(1)"><div><div class="mn">2. Martingale Destruction</div><div class="md">The most popular system. 100,000 spins prove why it fails.</div></div><div class="mq">Simulation</div></div>
+<div class="mc" onclick="loadMod(2)"><div><div class="mn">3. System Graveyard</div><div class="md">Fibonacci, D'Alembert, Labouchère, Paroli — all demolished</div></div><div class="mq">4 simulations</div></div>
+<div class="mc" onclick="loadMod(3)"><div><div class="mn">4. The Gambler's Fallacy</div><div class="md">"Red is due." No it isn't. Here's 10,000 spins of proof.</div></div><div class="mq">Simulation</div></div>
+<div class="mc" onclick="loadMod(4)"><div><div class="mn">5. The Only Honest Advice</div><div class="md">If you're going to play anyway, here's how to lose the least.</div></div><div class="mq">Tutorial</div></div>
+</div>
+
+<button class="cta" onclick="loadMod(0)">Start Learning</button>
+</div>
+
+<div id="lesson" class="screen">
+<div id="content"></div>
+<button class="bb" onclick="show('landing')">← Back</button>
+</div>
+</div>
+
+<script>
+function show(id){document.querySelectorAll('.screen').forEach(s=>s.classList.remove('active'));document.getElementById(id).classList.add('active');window.scrollTo(0,0)}
+
+function loadMod(idx){
+  show('lesson');
+  const c=document.getElementById('content');
+  if(idx===0)modWheel(c);
+  else if(idx===1)modMartingale(c);
+  else if(idx===2)modGraveyard(c);
+  else if(idx===3)modFallacy(c);
+  else if(idx===4)modHonest(c);
+}
+
+// MODULE 1: THE WHEEL
+function modWheel(c){
+  c.innerHTML=`
+<div class="tut">
+<h3>The Mathematics of the Wheel</h3>
+<p>A European roulette wheel has 37 pockets: numbers 1-36 (red/black) plus one green zero. Every bet on the table has a house edge of exactly 2.70%. There are no exceptions.</p>
+
+<div class="mb">
+<strong>Bet types and their true probabilities:</strong><br><br>
+<span class="neg">Straight up (single number):</span> Pays 35:1. True odds: 36:1. P(win) = 1/37 = 2.70%<br>
+<span class="neg">Split (two numbers):</span> Pays 17:1. True odds: 17.5:1. P(win) = 2/37 = 5.41%<br>
+<span class="neg">Street (three numbers):</span> Pays 11:1. True odds: 11.33:1. P(win) = 3/37 = 8.11%<br>
+<span class="neg">Corner (four numbers):</span> Pays 8:1. True odds: 8.25:1. P(win) = 4/37 = 10.81%<br>
+<span class="neg">Six line (six numbers):</span> Pays 5:1. True odds: 5.17:1. P(win) = 6/37 = 16.22%<br>
+<span class="neg">Dozen/Column (12 numbers):</span> Pays 2:1. True odds: 2.08:1. P(win) = 12/37 = 32.43%<br>
+<span class="neg">Red/Black, Odd/Even, High/Low:</span> Pays 1:1. True odds: 1.06:1. P(win) = 18/37 = 48.65%
+</div>
+
+<div class="pt">Notice: EVERY bet pays slightly less than the true odds. That gap — the difference between the payout and the true probability — is the house edge. It's always 2.70% on a European wheel.</div>
+
+<div class="mb">
+<strong>The house edge formula:</strong><br><br>
+EV per £1 bet = (P(win) × payout) + (P(lose) × −1)<br><br>
+Red/Black: (18/37 × 1) + (19/37 × −1) = 0.4865 − 0.5135 = <span class="neg">−0.027</span><br>
+Straight up: (1/37 × 35) + (36/37 × −1) = 0.9459 − 0.9730 = <span class="neg">−0.027</span><br><br>
+<strong>−0.027 = −2.70%. Every bet. Every time. No exceptions.</strong>
+</div>
+
+<div class="pln">In plain English: for every £100 you bet on roulette, you will lose £2.70 on average. It doesn't matter if you bet red, black, a single number, a dozen, or any combination. The house edge is identical on every bet.</div>
+
+<div class="dg">American roulette has TWO zeros (0 and 00), giving 38 pockets. The house edge jumps to 5.26% — nearly double. Never play American roulette. If you see a double zero, walk away.</div>
+
+<h3>Why Combinations Don't Help</h3>
+<p>"But what if I bet on both red AND the third column? That covers more numbers!"</p>
+
+<div class="mb">
+Covering more numbers increases your P(win) but reduces your payout proportionally.<br>
+The expected value per £1 wagered is ALWAYS <span class="neg">−2.70%</span>, regardless of which combination of bets you place.<br><br>
+Covering 35 out of 37 numbers? You'll win 35/37 = 94.6% of spins — but your net profit when you win is tiny, and the two spins you lose wipe out all gains plus 2.70% more.
+</div>
+
+<div class="pt">There is no combination of bets that changes the house edge. This is mathematically provable. The expected value of any combination of bets equals the sum of the expected values of each individual bet. Since every individual bet has EV = −2.70%, every combination also has EV = −2.70%.</div>
+</div>`;
+}
+
+// MODULE 2: MARTINGALE
+function modMartingale(c){
+  c.innerHTML=`
+<div class="tut">
+<h3>The Martingale System: Why It Fails</h3>
+<p>The Martingale is the most famous betting system: double your bet after every loss. When you eventually win, you recover all losses plus one unit of profit.</p>
+
+<div class="mb">
+<strong>Example sequence (£10 starting bet on red):</strong><br><br>
+Spin 1: Bet £10 → <span class="neg">Lose</span> → Down £10<br>
+Spin 2: Bet £20 → <span class="neg">Lose</span> → Down £30<br>
+Spin 3: Bet £40 → <span class="neg">Lose</span> → Down £70<br>
+Spin 4: Bet £80 → <span class="neg">Lose</span> → Down £150<br>
+Spin 5: Bet £160 → <span class="neg">Lose</span> → Down £310<br>
+Spin 6: Bet £320 → <span class="neg">Lose</span> → Down £630<br>
+Spin 7: Bet £640 → <span class="pos">Win!</span> → Down £630 + £640 = <span class="pos">+£10 profit</span>
+</div>
+
+<p>Looks clever. Seven spins of stress for £10 profit. But here's why it's catastrophic:</p>
+
+<div class="pt">After 7 consecutive losses, your next bet is £1,280. After 10 losses: £10,240. After 13: £81,920. The bet size grows exponentially while the profit stays at £10. You're risking £81,920 to win £10.</div>
+
+<div class="mb">
+<strong>P(losing 10 in a row on red):</strong><br>
+(19/37)^10 = <span class="neg">0.162%</span> ≈ 1 in 617 sequences<br><br>
+Sounds rare. But if you play 100 spins per session, 3 sessions per week:<br>
+You'll hit a 10-loss streak approximately <span class="neg">once every 2 weeks</span>.<br><br>
+When it happens, you lose <span class="neg">£10,230</span> (or hit the table maximum and can't recover).
+</div>
+
+<div class="pln">In plain English: the Martingale trades MANY small wins for RARE catastrophic losses. It FEELS like it works because you win most sessions. But the occasional wipeout more than erases all your winnings. Over enough time, you lose exactly 2.70% of total money wagered — same as any other strategy.</div>
+</div>
+
+<div class="sim">
+<h3>Live Simulation: 10,000 Martingale Sessions</h3>
+<p style="font-size:.72rem;color:var(--muted)">Each session: 100 spins, £10 base bet, £5,000 table max, £1,000 starting bankroll. Watch the results accumulate.</p>
+<canvas id="martCanvas" width="700" height="250"></canvas>
+<div class="sim-status" id="martStatus">Click to start</div>
+<button class="nb" id="martBtn" onclick="runMartSim()">Run 10,000 Sessions</button>
+</div>`;
+
+  window.runMartSim=function(){
+    document.getElementById('martBtn').style.display='none';
+    const canvas=document.getElementById('martCanvas');
+    const ctx=canvas.getContext('2d');
+    const W=700,H=250,N=10000;
+    let wins=0,losses=0,totalProfit=0,maxDrawdown=0;
+    const results=[];
+    let i=0;
+
+    function batch(){
+      for(let j=0;j<100&&i<N;j++,i++){
+        let bank=1000,bet=10,profit=0;
+        for(let s=0;s<100;s++){
+          if(bet>bank)bet=bank;
+          if(bet>5000)bet=5000;
+          if(bet<=0)break;
+          const win=Math.random()<18/37;
+          if(win){profit+=bet;bank+=bet;bet=10}
+          else{profit-=bet;bank-=bet;bet*=2}
+          if(bank<=0)break;
+        }
+        results.push(profit);
+        totalProfit+=profit;
+        if(profit>0)wins++;else losses++;
+        if(profit<maxDrawdown)maxDrawdown=profit;
+      }
+
+      // Draw
+      ctx.fillStyle='#0c0f16';ctx.fillRect(0,0,W,H);
+      ctx.strokeStyle='#1a2030';ctx.beginPath();ctx.moveTo(0,H/2);ctx.lineTo(W,H/2);ctx.stroke();
+      const step=Math.max(1,Math.floor(results.length/(W-20)));
+      ctx.fillStyle='rgba(45,212,160,.6)';
+      let cumulative=0;
+      for(let k=0;k<results.length;k+=step){
+        cumulative+=results[k];
+        const x=20+(k/results.length)*(W-40);
+        const y=H/2-cumulative/Math.max(1,Math.abs(totalProfit))*H*0.4;
+        ctx.fillRect(x,Math.min(y,H/2),2,Math.abs(y-H/2)||1);
+      }
+      // Colour: green above zero, red below
+      const finalY=H/2-totalProfit/Math.max(1,Math.abs(totalProfit))*H*0.4;
+      ctx.fillStyle=totalProfit>0?'var(--green-bright)':'var(--accent)';
+      ctx.font='bold 14px DM Mono';ctx.textAlign='right';
+      ctx.fillText(totalProfit>0?'+£'+totalProfit.toFixed(0):'−£'+Math.abs(totalProfit).toFixed(0),W-20,20);
+
+      const winPct=Math.round(wins/(wins+losses)*100);
+      document.getElementById('martStatus').textContent=
+        i+'/'+N+' sessions | Won: '+wins+' ('+winPct+'%) | Lost: '+losses+' | Net: £'+totalProfit.toFixed(0)+' | Worst session: £'+maxDrawdown.toFixed(0);
+
+      if(i<N)requestAnimationFrame(batch);
+      else{
+        document.getElementById('martStatus').innerHTML=
+          '<strong>Final result after '+N+' sessions:</strong> Won '+wins+' ('+winPct+'%), Lost '+losses+'<br>'+
+          'Total profit: <span style="color:'+(totalProfit>0?'var(--green-bright)':'var(--accent)')+'">£'+totalProfit.toFixed(0)+'</span> | Worst single session: <span style="color:var(--accent)">£'+maxDrawdown.toFixed(0)+'</span><br>'+
+          '<span style="color:var(--gold)">The Martingale wins most sessions but loses overall. The rare catastrophic losses outweigh all the small wins.</span>';
+      }
+    }
+    requestAnimationFrame(batch);
+  };
+}
+
+// MODULE 3: SYSTEM GRAVEYARD
+function modGraveyard(c){
+  c.innerHTML=`
+<div class="tut">
+<h3>The System Graveyard</h3>
+<p>Every "system" ever invented for roulette fails for the same mathematical reason: no betting pattern can change the expected value of a negative-expectation game.</p>
+
+<div class="pt">This isn't an opinion. It's a theorem. The expected value of any sequence of bets is the sum of the expected values of each individual bet. Since every bet has EV = −2.70%, every sequence has total EV = −2.70% × total amount wagered.</div>
+
+<h3>Fibonacci System</h3>
+<div class="mb">
+Bet sequence follows Fibonacci: 1, 1, 2, 3, 5, 8, 13, 21, 34, 55...<br>
+After a loss, move to next number. After a win, move back two.<br><br>
+<span class="neg">Why it fails:</span> Same as Martingale but slower escalation. Still hits table limits. Still loses 2.70% of total wagered. The Fibonacci sequence grows exponentially (just slower than doubling).
+</div>
+
+<h3>D'Alembert System</h3>
+<div class="mb">
+Increase bet by 1 unit after a loss, decrease by 1 after a win.<br>
+Example: Bet 10, lose → bet 11, lose → bet 12, win → bet 11...<br><br>
+<span class="neg">Why it fails:</span> Assumes wins and losses "balance out." They don't — the zero ensures more losses than wins on even-money bets (48.65% vs 51.35%). Slow bleed guaranteed.
+</div>
+
+<h3>Labouchère (Cancellation) System</h3>
+<div class="mb">
+Write a sequence of numbers: 1-2-3-4-5. Bet = first + last (6).<br>
+Win: cross off both ends (sequence becomes 2-3-4). Lose: add the bet to end (1-2-3-4-5-6).<br>
+Goal: cancel all numbers for a profit equal to their sum.<br><br>
+<span class="neg">Why it fails:</span> Losing streaks cause the sequence to grow faster than wins can shrink it. Bets escalate. Table limits or bankroll ruin end the sequence uncompleted.
+</div>
+
+<h3>Paroli (Reverse Martingale)</h3>
+<div class="mb">
+Double your bet after a WIN. Reset after 3 consecutive wins or any loss.<br>
+Chasing winning streaks instead of recovering losses.<br><br>
+<span class="neg">Why it fails:</span> You need 3 consecutive wins (probability: (18/37)³ = 11.5%). Most of the time you lose your initial bet. When you do win 3 in a row, you profit 7 units — but the 88.5% of sequences where you don't wipe out the gains.
+</div>
+
+<div class="pln">Every system ever published is either (a) a betting progression that escalates to ruin, or (b) a flat-bet strategy that loses 2.70% steadily. There are no exceptions. If someone claims to have a winning roulette system, they either haven't played enough spins or they're selling something.</div>
+
+<div class="dg">The only mathematical truth about roulette: the fewer spins you play, the more likely you are to walk away ahead. The house edge compounds over time. Play 10 spins? Variance might save you. Play 10,000? The maths is inescapable.</div>
+</div>`;
+}
+
+// MODULE 4: GAMBLER'S FALLACY
+function modFallacy(c){
+  c.innerHTML=`
+<div class="tut">
+<h3>The Gambler's Fallacy: "Red Is Due"</h3>
+<p>You've watched 8 black results in a row. Every instinct screams: "Red is due!" You bet big on red.</p>
+
+<div class="pt">Red is not due. The wheel has no memory. The probability of red on the next spin is EXACTLY 18/37 = 48.65%, regardless of what happened on the previous 8, 80, or 800 spins.</div>
+
+<div class="mb">
+<strong>P(9th spin is red | 8 blacks in a row) = 18/37 = 48.65%</strong><br><br>
+The previous results do not affect the next spin.<br>
+The wheel doesn't know what it did last time.<br>
+Each spin is an independent event.<br><br>
+<strong>P(8 blacks in a row) = (19/37)^8 = 0.65% ≈ 1 in 154</strong><br>
+This feels rare — but in 1000 spins, you'll see it about 6-7 times. It's not supernatural. It's statistics.
+</div>
+
+<div class="pln">In plain English: the ball doesn't know what colour came before. It doesn't "owe" you a red. Each spin is fresh. The casino LOVES the gambler's fallacy because it makes people bet bigger after streaks, chasing "corrections" that don't exist.</div>
+</div>
+
+<div class="sim">
+<h3>Simulation: 10,000 Spins — Streak Analysis</h3>
+<p style="font-size:.72rem;color:var(--muted)">Watch how often streaks of 5, 8, and 10+ occur. They're not rare — they're inevitable.</p>
+<div id="streakResult" style="font-family:DM Mono;font-size:.78rem;color:var(--muted);line-height:1.8;margin:.5rem 0"></div>
+<button class="nb" onclick="runStreakSim()">Run 10,000 Spins</button>
+</div>`;
+
+  window.runStreakSim=function(){
+    const N=10000;
+    let streak=0,maxStreak=0,lastColor='',streaks5=0,streaks8=0,streaks10=0;
+    const colors=[];
+
+    for(let i=0;i<N;i++){
+      const r=Math.random();
+      let color;
+      if(r<18/37)color='red';
+      else if(r<36/37)color='black';
+      else color='green';
+      colors.push(color);
+
+      if(color===lastColor&&color!=='green'){streak++}
+      else{
+        if(streak>=5)streaks5++;
+        if(streak>=8)streaks8++;
+        if(streak>=10)streaks10++;
+        streak=1;
+      }
+      if(streak>maxStreak)maxStreak=streak;
+      lastColor=color;
+    }
+
+    let reds=colors.filter(c=>c==='red').length;
+    let blacks=colors.filter(c=>c==='black').length;
+    let greens=colors.filter(c=>c==='green').length;
+
+    document.getElementById('streakResult').innerHTML=
+      '<strong>Results from '+N+' spins:</strong><br>'+
+      'Red: '+reds+' ('+Math.round(reds/N*100)+'%) | Black: '+blacks+' ('+Math.round(blacks/N*100)+'%) | Green: '+greens+'<br><br>'+
+      'Streaks of 5+ same colour: <span style="color:var(--accent)">'+streaks5+'</span><br>'+
+      'Streaks of 8+ same colour: <span style="color:var(--accent)">'+streaks8+'</span><br>'+
+      'Streaks of 10+ same colour: <span style="color:var(--accent)">'+streaks10+'</span><br>'+
+      'Longest streak: <span style="color:var(--accent)">'+maxStreak+'</span> in a row<br><br>'+
+      '<span style="color:var(--gold)">Streaks are normal. They\'re not patterns, they\'re not "runs" that need to be corrected. They\'re what random numbers look like.</span>';
+  };
+}
+
+// MODULE 5: HONEST ADVICE
+function modHonest(c){
+  c.innerHTML=`
+<div class="tut">
+<h3>The Only Honest Advice About Roulette</h3>
+<p>If you're reading this, you probably enjoy playing roulette. We're not going to tell you to stop — that's your decision. But we ARE going to give you the mathematical tools to lose the least.</p>
+
+<div class="pt">Roulette is entertainment, not an investment. The price of entertainment is 2.70% of whatever you bet. Know your price before you sit down.</div>
+
+<h3>Rules for Damage Limitation</h3>
+<div class="mb">
+<strong>1. Play European (single zero), NEVER American (double zero)</strong><br>
+European: 2.70% edge. American: 5.26% edge. That's nearly double. Always check for the double zero.<br><br>
+
+<strong>2. Play "En Prison" or "La Partage" if available</strong><br>
+Some European tables return half your even-money bet when zero hits. This cuts the house edge to <span style="color:var(--green-bright)">1.35%</span> — the best roulette bet in existence.<br><br>
+
+<strong>3. Set a LOSS LIMIT before you sit down</strong><br>
+Decide: "I will lose a maximum of £X tonight." When you hit it, leave. No exceptions. No "one more spin." The maths doesn't negotiate.<br><br>
+
+<strong>4. Set a WIN LIMIT too</strong><br>
+If you're up £Y, leave. Variance gave you a gift — take it. The longer you stay, the more the 2.70% reclaims.<br><br>
+
+<strong>5. Bet less, play longer</strong><br>
+If your entertainment budget is £100, betting £5 per spin gives you ~20 spins (expected loss: £2.70). Betting £1 per spin gives you ~100 spins (expected loss: £2.70). Same cost, five times the entertainment.<br><br>
+
+<strong>6. Never chase losses</strong><br>
+This is the #1 rule of all gambling. When you're losing, the WORST thing you can do is increase your bets. The maths hasn't changed. You're just losing faster.
+</div>
+
+<div class="mb">
+<strong>Expected cost of a roulette session:</strong><br><br>
+£5/spin × 50 spins = £250 wagered × 2.70% = <span class="neg">£6.75 expected loss</span><br>
+£10/spin × 50 spins = £500 wagered × 2.70% = <span class="neg">£13.50 expected loss</span><br>
+£25/spin × 50 spins = £1250 wagered × 2.70% = <span class="neg">£33.75 expected loss</span><br><br>
+Think of it like cinema tickets: £6.75 for an hour of entertainment? Not unreasonable. But know the price BEFORE you sit down.
+</div>
+
+<div class="pln">The most expensive roulette player is the one who doesn't know the maths. They chase losses, believe in systems, play American tables, and never set limits. The cheapest roulette player knows exactly what it costs, treats it as entertainment, and walks away when the budget is spent.</div>
+
+<div class="dg">If you or someone you know has a problem with gambling, contact the National Gambling Helpline: <strong>0808 8020 133</strong> (UK, free, 24/7). Understanding the maths is the best defence against problem gambling — but it's not the only defence. Please play responsibly.</div>
+</div>`;
+}
+</script>
+</body>
+</html>

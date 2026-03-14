@@ -1,0 +1,277 @@
+<!--
+  CRAPS DECODED — COMPLETE PRODUCT
+  Single tier: 250 QF, 7-day access
+  The most intimidating casino game explained mathematically.
+-->
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<link rel="icon" type="image/svg+xml" href="../../schools/assets/favicon.svg">
+<title>Craps Decoded — Maths Always Wins — QF Games</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=DM+Mono:wght@400;500&family=Bebas+Neue&family=Crimson+Pro:ital,wght@0,400;0,700;1,400&family=Outfit:wght@300;400;600;700&display=swap" rel="stylesheet">
+<script async src="https://www.googletagmanager.com/gtag/js?id=G-CLNF7GSB28"></script>
+<script>window.dataLayer=window.dataLayer||[];function gtag(){dataLayer.push(arguments);}gtag('js',new Date());gtag('config','G-CLNF7GSB28',{send_page_view:true,storage:'none',anonymize_ip:true});</script>
+<style>
+*{margin:0;padding:0;box-sizing:border-box}
+:root{--bg:#06080c;--surface:#0c0f16;--surface2:#111620;--border:#1a2030;--border2:#242e40;--accent:#f59e0b;--accent-dim:rgba(245,158,11,.08);--green-bright:#2dd4a0;--red-bright:#ef5350;--text:#d8dce4;--text-bright:#f0f2f6;--muted:#5a6478}
+body{font-family:'Outfit',sans-serif;background:var(--bg);color:var(--text);min-height:100vh;-webkit-font-smoothing:antialiased}
+.outer{max-width:800px;margin:0 auto;padding:0 1rem 2rem}
+.hero{text-align:center;padding:3rem 0 1.5rem;border-bottom:1px solid var(--border)}
+.hero-ey{font-family:'DM Mono',monospace;font-size:.65rem;letter-spacing:.25em;text-transform:uppercase;color:var(--accent);margin-bottom:.6rem}
+.hero h1{font-family:'Bebas Neue',sans-serif;font-size:3rem;letter-spacing:.04em;color:var(--text-bright);line-height:1.1}
+.hero h1 span{color:var(--accent)}
+.hero .tag{font-family:'Crimson Pro',serif;font-style:italic;font-size:1.05rem;color:var(--muted);margin-top:.5rem}
+.stats-bar{display:grid;grid-template-columns:repeat(3,1fr);gap:1px;background:var(--border);border:1px solid var(--border);border-radius:10px;overflow:hidden;margin:1.5rem 0}
+.sc{background:var(--surface);padding:.8rem .4rem;text-align:center}
+.sc .sn{font-family:'DM Mono',monospace;font-size:1.4rem;font-weight:500;color:var(--accent)}
+.sc .sl{font-size:.6rem;color:var(--muted);margin-top:.15rem;line-height:1.3}
+.screen{display:none}.screen.active{display:block}
+.mc{background:var(--surface);border:1px solid var(--border);border-radius:8px;padding:.6rem .8rem;margin-bottom:.3rem;display:flex;justify-content:space-between;align-items:center;cursor:pointer;transition:all .12s}
+.mc:hover{border-color:var(--accent);transform:translateX(3px)}
+.mc .mn{font-size:.82rem;font-weight:600}.mc .md{font-size:.65rem;color:var(--muted)}.mc .mq{font-family:'DM Mono',monospace;font-size:.62rem;color:var(--muted)}
+.cta{display:block;margin:1rem auto;padding:.55rem 1.5rem;border-radius:8px;font-family:'Outfit',sans-serif;font-size:.82rem;font-weight:600;cursor:pointer;border:2px solid var(--accent);background:var(--accent);color:#000;text-align:center;max-width:300px}
+.bb{display:inline-block;margin:.4rem 0;padding:.3rem .9rem;border:none;border-radius:6px;background:var(--border);color:var(--text);font-family:'Outfit',sans-serif;font-size:.75rem;font-weight:600;cursor:pointer}
+.tut{background:var(--surface);border:1px solid var(--border);border-radius:10px;padding:1.1rem;margin-bottom:.5rem;line-height:1.75;font-size:.85rem}
+.tut h3{color:var(--accent);font-size:.88rem;margin-bottom:.3rem}
+.tut p{margin-bottom:.4rem}
+.tut .pt{padding:.4rem .7rem;margin:.4rem 0;border-radius:6px;border-left:3px solid var(--accent);background:var(--accent-dim)}
+.tut .dg{padding:.4rem .7rem;margin:.4rem 0;border-radius:6px;border-left:3px solid var(--green-bright);background:rgba(45,212,160,.06);color:var(--green-bright)}
+.tut .mb{font-family:'DM Mono',monospace;background:var(--bg);border-radius:6px;padding:.5rem;margin:.4rem 0;font-size:.78rem;line-height:1.8}
+.tut .mb .pos{color:var(--green-bright)}.tut .mb .neg{color:var(--red-bright)}
+.tut .pln{font-family:'Crimson Pro',serif;font-size:.88rem;color:#0e9aa7;font-style:italic;margin:.3rem 0}
+.disc{background:var(--surface);border:1px solid var(--border2);border-radius:10px;padding:1rem;margin:1rem 0}
+.disc p{font-family:'Crimson Pro',serif;font-size:.85rem;color:var(--muted);line-height:1.6;font-style:italic;margin-bottom:.3rem}
+.disc p strong{color:var(--accent);font-style:normal}
+@media(max-width:600px){.hero h1{font-size:2.2rem}}
+</style>
+</head>
+<body>
+<div class="outer">
+
+<div id="landing" class="screen active">
+<div class="hero">
+<div class="hero-ey">QF Games · Educational Suite</div>
+<h1>CRAPS <span>DECODED</span></h1>
+<div class="tag">The most intimidating game in the casino. The best maths on the floor.</div>
+</div>
+
+<div class="stats-bar">
+<div class="sc"><div class="sn">1.41%</div><div class="sl">Pass line<br>house edge</div></div>
+<div class="sc"><div class="sn">0%</div><div class="sl">Odds bet<br>house edge</div></div>
+<div class="sc"><div class="sn">16.67%</div><div class="sl">"Any 7" bet<br>house edge</div></div>
+</div>
+
+<div class="disc">
+<p>Craps has the <strong>best bets AND the worst bets</strong> in the entire casino, sitting right next to each other on the same table. This course teaches you which is which — and why the odds bet is the only zero-edge bet in any casino game.</p>
+<p><strong>250 QF · 7-day access</strong></p>
+</div>
+
+<div style="margin:1rem 0">
+<div class="mc" onclick="loadMod(0)"><div><div class="mn">1. Two Dice Probability</div><div class="md">36 outcomes. The probability of every total. The foundation.</div></div><div class="mq">Tutorial</div></div>
+<div class="mc" onclick="loadMod(1)"><div><div class="mn">2. The Pass Line — The Core Bet</div><div class="md">How the game actually works. Come-out roll, point, resolution.</div></div><div class="mq">Tutorial</div></div>
+<div class="mc" onclick="loadMod(2)"><div><div class="mn">3. The Odds Bet — Zero House Edge</div><div class="md">The only bet in any casino that pays true odds. And it's hidden.</div></div><div class="mq">Tutorial</div></div>
+<div class="mc" onclick="loadMod(3)"><div><div class="mn">4. Every Other Bet — Ranked by Edge</div><div class="md">From good (1.41%) to terrible (16.67%). Know what you're paying.</div></div><div class="mq">Tutorial</div></div>
+<div class="mc" onclick="loadMod(4)"><div><div class="mn">5. Optimal Strategy</div><div class="md">The mathematically best way to play craps. Spoiler: it's simple.</div></div><div class="mq">Tutorial</div></div>
+</div>
+
+<button class="cta" onclick="loadMod(0)">Start Learning</button>
+</div>
+
+<div id="lesson" class="screen">
+<div id="content"></div>
+<button class="bb" onclick="show('landing')">← Back</button>
+</div>
+</div>
+
+<script>
+function show(id){document.querySelectorAll('.screen').forEach(s=>s.classList.remove('active'));document.getElementById(id).classList.add('active');window.scrollTo(0,0)}
+function loadMod(i){show('lesson');const c=document.getElementById('content');[modDice,modPass,modOdds,modAllBets,modOptimal][i](c)}
+
+function modDice(c){c.innerHTML=`
+<div class="tut">
+<h3>Two Dice: 36 Outcomes</h3>
+<p>Everything in craps derives from the probability of two six-sided dice. There are exactly 36 equally likely outcomes.</p>
+
+<div class="mb">
+<strong>Total — Ways to make it — Probability:</strong><br><br>
+ 2: 1 way  (1+1) → <span class="neg">2.78%</span><br>
+ 3: 2 ways (1+2, 2+1) → 5.56%<br>
+ 4: 3 ways → 8.33%<br>
+ 5: 4 ways → 11.11%<br>
+ 6: 5 ways → 13.89%<br>
+ 7: 6 ways → <span class="pos">16.67%</span> ← THE MOST COMMON TOTAL<br>
+ 8: 5 ways → 13.89%<br>
+ 9: 4 ways → 11.11%<br>
+10: 3 ways → 8.33%<br>
+11: 2 ways → 5.56%<br>
+12: 1 way  (6+6) → <span class="neg">2.78%</span>
+</div>
+
+<div class="pt">Seven is the most likely total — it comes up 1 in 6 rolls (16.67%). This is the single most important fact in craps. The entire game is built around the tension between seven and your point number.</div>
+
+<div class="pln">In plain English: there are 6 ways to roll a 7 (1+6, 2+5, 3+4, 4+3, 5+2, 6+1) but only 3 ways to roll a 4 (1+3, 2+2, 3+1). Seven comes up twice as often as 4. That asymmetry is the game.</div>
+</div>`}
+
+function modPass(c){c.innerHTML=`
+<div class="tut">
+<h3>The Pass Line: How Craps Works</h3>
+<p>The pass line is the fundamental bet. Most players start here. Understanding it is understanding the game.</p>
+
+<h3>Phase 1: The Come-Out Roll</h3>
+<div class="mb">
+Roll 7 or 11: <span class="pos">Pass line WINS</span> (7: 16.67%, 11: 5.56% → total 22.22%)<br>
+Roll 2, 3, or 12: <span class="neg">Pass line LOSES ("craps")</span> (2: 2.78%, 3: 5.56%, 12: 2.78% → total 11.11%)<br>
+Roll 4, 5, 6, 8, 9, or 10: That number becomes "the point"<br><br>
+<strong>Come-out: you win 22.22% and lose 11.11%. So far, so good.</strong>
+</div>
+
+<h3>Phase 2: The Point</h3>
+<div class="mb">
+Once a point is established, the shooter keeps rolling until:<br>
+• <span class="pos">The point is rolled again → Pass line WINS</span><br>
+• <span class="neg">7 is rolled → Pass line LOSES ("seven out")</span><br><br>
+
+<strong>Probability of making each point (before rolling 7):</strong><br>
+Point 4 or 10: 3 ways vs 6 ways for 7 → P(win) = 3/9 = <span class="neg">33.3%</span><br>
+Point 5 or 9: 4 ways vs 6 ways for 7 → P(win) = 4/10 = <span class="neg">40.0%</span><br>
+Point 6 or 8: 5 ways vs 6 ways for 7 → P(win) = 5/11 = <span class="neg">45.5%</span>
+</div>
+
+<div class="pln">The come-out roll favours you (22% vs 11%). The point phase is against you (7 is always more likely than your point). Combined, the house edge on the pass line is 1.41% — one of the lowest in the casino.</div>
+
+<div class="mb">
+<strong>Overall pass line probability:</strong><br><br>
+P(win on come-out) = 8/36 = 22.22%<br>
+P(win via point) = various weighted combinations<br>
+<strong>Total P(win) = 244/495 = 49.29%</strong><br>
+<strong>Total P(lose) = 251/495 = 50.71%</strong><br><br>
+House edge = 50.71% − 49.29% = <span class="neg">1.41%</span>
+</div>
+
+<div class="pt">1.41% is excellent. For comparison: roulette is 2.70%, slots are 5-15%, and most table game side bets are 5-20%. The pass line is one of the best bets in the building.</div>
+</div>`}
+
+function modOdds(c){c.innerHTML=`
+<div class="tut">
+<h3>The Odds Bet: The Casino's Best-Kept Secret</h3>
+<p>After a point is established, you can place an additional bet behind your pass line bet called the "odds" bet. This bet pays at TRUE ODDS — meaning the casino has ZERO house edge on it.</p>
+
+<div class="dg">The odds bet is the ONLY bet in any casino game with a 0% house edge. It pays exactly what the true probability dictates. No margin. No overround. Fair odds.</div>
+
+<div class="mb">
+<strong>Odds bet payouts (true odds):</strong><br><br>
+Point 4 or 10: Pays <span class="pos">2:1</span> (true odds: 6 ways to roll 7 vs 3 ways to roll point = 2:1)<br>
+Point 5 or 9: Pays <span class="pos">3:2</span> (6 vs 4 = 3:2)<br>
+Point 6 or 8: Pays <span class="pos">6:5</span> (6 vs 5 = 6:5)<br><br>
+<strong>These are the exact mathematical odds. No house edge whatsoever.</strong>
+</div>
+
+<div class="pln">In plain English: if the point is 4, there are 3 ways to roll it and 6 ways to roll a 7. The true odds are 2:1 against. The odds bet pays exactly 2:1. The casino makes zero profit on this bet. It exists because it keeps players at the table — they make their money from the pass line (1.41%), not the odds.</div>
+
+<h3>Why Casinos Limit the Odds Bet</h3>
+<div class="mb">
+Casinos typically offer 1×, 2×, 3×, or (rarely) 10× or 100× odds.<br>
+"3× odds" means you can bet up to 3 times your pass line bet on the odds.<br><br>
+
+<strong>Combined house edge (pass + odds):</strong><br>
+Pass line only: <span class="neg">1.41%</span><br>
+Pass + 1× odds: <span class="neg">0.85%</span><br>
+Pass + 2× odds: <span class="neg">0.61%</span><br>
+Pass + 3× odds: <span class="neg">0.47%</span><br>
+Pass + 5× odds: <span class="neg">0.33%</span><br>
+Pass + 10× odds: <span class="neg">0.18%</span><br>
+Pass + 100× odds: <span class="neg">0.02%</span><br><br>
+<strong>The more you bet on odds (at 0% edge) relative to the pass line (at 1.41% edge), the lower your overall house edge.</strong>
+</div>
+
+<div class="pt">This is the optimal strategy in craps: minimum pass line bet, maximum odds bet. You're minimising the amount exposed to the 1.41% edge and maximising the amount at 0% edge.</div>
+</div>`}
+
+function modAllBets(c){c.innerHTML=`
+<div class="tut">
+<h3>Every Craps Bet, Ranked by House Edge</h3>
+<p>The craps table is covered in bets. Most of them are terrible. Here's every major bet ranked from best to worst.</p>
+
+<div class="mb">
+<strong>THE GOOD (house edge under 2%):</strong><br><br>
+<span class="pos">Odds bet: 0%</span> — The only fair bet in the casino<br>
+<span class="pos">Don't Pass / Don't Come: 1.36%</span> — Slightly better than pass line, but you're betting against the table (socially unpopular)<br>
+<span class="pos">Pass line / Come: 1.41%</span> — The standard bet. Excellent value.<br>
+<span class="pos">Place 6 or 8: 1.52%</span> — Nearly as good as the pass line<br>
+</div>
+
+<div class="mb">
+<strong>THE BAD (house edge 2-7%):</strong><br><br>
+<span class="neg">Place 5 or 9: 4.00%</span><br>
+<span class="neg">Field bet: 5.56%</span> (2.78% if 12 pays triple)<br>
+<span class="neg">Place 4 or 10: 6.67%</span><br>
+</div>
+
+<div class="mb">
+<strong>THE UGLY (house edge 7%+):</strong><br><br>
+<span class="neg">Hard 6 or 8: 9.09%</span><br>
+<span class="neg">Hard 4 or 10: 11.11%</span><br>
+<span class="neg">Any craps: 11.11%</span><br>
+<span class="neg">Yo (11): 11.11%</span><br>
+<span class="neg">Hi-Lo (2 or 12): 11.11%</span><br>
+<span class="neg">Horn bet: 12.50%</span><br>
+<span class="neg">Any 7: 16.67%</span> — THE WORST BET ON THE TABLE<br>
+<span class="neg">Big 6 / Big 8: 9.09%</span> — literally a worse version of Place 6/8 (1.52%)<br>
+</div>
+
+<div class="pt">"Any 7" has a 16.67% house edge — six times worse than the pass line. Big 6/Big 8 pays even money when Place 6/8 pays 7:6 for the same outcome. The table layout is designed to put the worst bets in the most visible positions.</div>
+
+<div class="pln">In plain English: stick to the pass line and odds. Everything else on the table exists to take your money faster. The centre of the table (proposition bets) has house edges of 10-17%. The casino makes most of its craps profit from players making these bets.</div>
+</div>`}
+
+function modOptimal(c){c.innerHTML=`
+<div class="tut">
+<h3>The Optimal Craps Strategy</h3>
+<p>The mathematically best way to play craps is also the simplest. Three steps. That's it.</p>
+
+<div class="dg">
+<strong>Step 1:</strong> Bet the TABLE MINIMUM on the Pass line.<br>
+<strong>Step 2:</strong> When a point is established, bet the MAXIMUM ALLOWED on the Odds.<br>
+<strong>Step 3:</strong> Make no other bets. None. Ever.
+</div>
+
+<div class="mb">
+<strong>Why this works:</strong><br><br>
+Your pass line bet: exposed to 1.41% house edge<br>
+Your odds bet: exposed to 0% house edge<br><br>
+
+If the table minimum is £5 and allows 3× odds:<br>
+Pass line: £5 at 1.41% → expected loss of £0.07 per roll cycle<br>
+Odds: £15 at 0% → expected loss of £0.00<br>
+Total: £20 at risk, expected loss of £0.07 → effective edge of <span class="pos">0.35%</span><br><br>
+
+Compare to betting £20 on the pass line alone: expected loss of £0.28 per cycle. The odds bet cuts your effective edge by 75%.
+</div>
+
+<h3>What About Don't Pass?</h3>
+<div class="mb">
+Don't Pass has a slightly lower house edge (1.36% vs 1.41%) because you're betting WITH the 7 after a point is established.<br><br>
+Mathematically, Don't Pass + max odds is 0.01% better than Pass + max odds. The difference is negligible.<br><br>
+<span class="neg">The social cost:</span> Don't Pass bettors bet against the shooter. When the table is celebrating, you're losing. When they're groaning, you're winning. Some people don't care. Others find it ruins the experience. Your call.
+</div>
+
+<h3>The Honest Truth About Craps</h3>
+<div class="pt">Even with optimal play (pass + max odds), the house still has an edge. You will lose in the long run. The difference is HOW FAST you lose. With optimal play, craps is one of the cheapest games in the casino per hour — comparable to blackjack basic strategy. With bad play (proposition bets, hardways, field bets), it's one of the most expensive.</div>
+
+<div class="mb">
+<strong>Cost per hour (60 rolls/hour, £5 minimum):</strong><br><br>
+Optimal (pass + 3× odds): ~£0.35/hr expected loss → <span class="pos">incredibly cheap entertainment</span><br>
+Pass line only: ~£1.40/hr<br>
+Pass + proposition bets: ~£8-15/hr<br>
+Full layout betting: ~£20-40/hr<br><br>
+<strong>The same game, the same table, the same dice — 100× difference in cost depending on which bets you make.</strong>
+</div>
+
+<div class="pln">That is the entire message of Craps Decoded: the game has the best and worst bets in the casino, inches apart on the same table. Knowing the difference between a 0% edge bet and a 16.67% edge bet is the difference between cheap entertainment and expensive stupidity. Now you know.</div>
+</div>`}
+</script>
+</body>
+</html>

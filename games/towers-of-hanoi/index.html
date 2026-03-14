@@ -1,0 +1,410 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<!-- Google tag (gtag.js) -->
+<script async src="https://www.googletagmanager.com/gtag/js?id=G-CLNF7GSB28"></script>
+<script>
+  window.dataLayer = window.dataLayer || [];
+  function gtag(){dataLayer.push(arguments);}
+  gtag('js', new Date());
+
+  gtag('config', 'G-CLNF7GSB28', {
+    send_page_view: true,
+    storage: 'none',
+    anonymize_ip: true
+  });
+</script>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<link rel="icon" type="image/svg+xml" href="../../schools/assets/favicon.svg">
+<title>Towers of Hanoi · Maffs Games</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=DM+Mono:ital,wght@0,300;0,400;0,500&family=Bebas+Neue&family=Inter:wght@300;400;500&display=swap" rel="stylesheet">
+<style>
+:root{
+  --ink:#070d1a;--navy:#0b1629;--navy-mid:#0f1f3d;--navy-light:#162847;
+  --gold:#c9a84c;--gold-warm:#e2b96a;--gold-dim:#7a5e28;
+  --teal:#2dd4bf;--teal-dim:#134e4a;
+  --body:#a8b8d0;--muted:#4a6080;--border:#1a2e4a;--border-dim:#111f33;
+  --success:#22c55e;--danger:#ef4444;--warn:#f59e0b;
+  --disk1:#ef4444;--disk2:#f97316;--disk3:#eab308;--disk4:#22c55e;--disk5:#3b82f6;--disk6:#8b5cf6;--disk7:#ec4899;
+}
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+body{background:var(--ink);color:var(--body);font-family:'Inter',sans-serif;min-height:100vh;display:flex;flex-direction:column;align-items:center;overflow-x:hidden}
+body::before{content:'';position:fixed;inset:0;background-image:linear-gradient(rgba(201,168,76,0.03) 1px,transparent 1px),linear-gradient(90deg,rgba(201,168,76,0.03) 1px,transparent 1px);background-size:40px 40px;pointer-events:none;z-index:0}
+nav{position:sticky;top:0;z-index:100;width:100%;display:flex;align-items:center;justify-content:space-between;padding:0 2rem;height:52px;background:rgba(7,13,26,0.92);backdrop-filter:blur(12px);border-bottom:1px solid var(--border-dim)}
+.nav-logo{font-family:'Bebas Neue',sans-serif;font-size:1.2rem;letter-spacing:0.15em;color:var(--gold);text-decoration:none}
+.nav-back{font-family:'DM Mono',monospace;font-size:0.6rem;letter-spacing:0.12em;color:var(--muted);text-decoration:none;transition:color 0.2s}
+.nav-back:hover{color:var(--gold)}
+.page{position:relative;z-index:1;width:100%;max-width:580px;padding:2rem 1rem 4rem;display:flex;flex-direction:column;align-items:center;gap:1.2rem}
+.game-header{text-align:center}
+.game-kicker{font-family:'DM Mono',monospace;font-size:0.6rem;letter-spacing:0.2em;text-transform:uppercase;color:var(--teal);margin-bottom:0.4rem}
+.game-title{font-family:'Bebas Neue',sans-serif;font-size:3rem;letter-spacing:0.06em;color:var(--gold-warm);line-height:1}
+.game-sub{font-size:0.75rem;color:var(--muted);line-height:1.6;margin-top:0.4rem}
+.status-bar{display:flex;gap:0.8rem;width:100%;background:var(--navy-mid);border:1px solid var(--border);border-radius:4px;padding:0.75rem 1rem;justify-content:space-around}
+.si{display:flex;flex-direction:column;align-items:center;gap:0.15rem}
+.si-val{font-family:'DM Mono',monospace;font-size:1.1rem;font-weight:500;color:var(--gold)}
+.si-lbl{font-family:'DM Mono',monospace;font-size:0.45rem;letter-spacing:0.12em;text-transform:uppercase;color:var(--muted)}
+
+/* Tower arena */
+.tower-arena{
+  width:100%;background:var(--navy-mid);border:1px solid var(--border);border-radius:4px;
+  padding:1.5rem 1rem 1rem;position:relative;
+}
+.arena-inner{display:flex;justify-content:space-around;align-items:flex-end;gap:0.5rem;height:220px}
+.tower-col{
+  flex:1;display:flex;flex-direction:column;align-items:center;justify-content:flex-end;
+  position:relative;cursor:pointer;padding:0 4px;
+  border-radius:3px;transition:background 0.2s;
+}
+.tower-col:hover{background:rgba(201,168,76,0.04)}
+.tower-col.selected{background:rgba(201,168,76,0.08);outline:1px dashed var(--gold-dim)}
+.tower-col.valid-target{background:rgba(34,197,94,0.06);outline:1px dashed rgba(34,197,94,0.4)}
+.tower-label{
+  position:absolute;bottom:-1.6rem;
+  font-family:'DM Mono',monospace;font-size:0.6rem;letter-spacing:0.12em;text-transform:uppercase;color:var(--muted);
+  text-align:center;width:100%;
+}
+.peg{
+  position:absolute;bottom:0;left:50%;transform:translateX(-50%);
+  width:6px;height:100%;
+  background:var(--border);border-radius:3px;z-index:0;
+}
+.base{
+  position:absolute;bottom:-2px;left:50%;transform:translateX(-50%);
+  width:85%;height:6px;
+  background:var(--muted);border-radius:3px;
+}
+.disk{
+  position:relative;z-index:1;
+  height:22px;border-radius:3px;
+  margin-bottom:2px;
+  display:flex;align-items:center;justify-content:center;
+  font-family:'DM Mono',monospace;font-size:0.52rem;font-weight:500;color:rgba(0,0,0,0.6);
+  transition:all 0.2s;cursor:pointer;
+  box-shadow:0 2px 4px rgba(0,0,0,0.3);
+}
+.disk:hover{filter:brightness(1.15)}
+.disk.selected-disk{outline:2px solid white;filter:brightness(1.2);transform:translateY(-3px)}
+.disk[data-size="1"]{width:28%;background:var(--disk1)}
+.disk[data-size="2"]{width:38%;background:var(--disk2)}
+.disk[data-size="3"]{width:48%;background:var(--disk3)}
+.disk[data-size="4"]{width:58%;background:var(--disk4)}
+.disk[data-size="5"]{width:68%;background:var(--disk5)}
+.disk[data-size="6"]{width:78%;background:var(--disk6)}
+.disk[data-size="7"]{width:88%;background:var(--disk7)}
+
+.arena-labels{display:flex;justify-content:space-around;width:100%;margin-top:1.5rem}
+.a-lbl{flex:1;text-align:center;font-family:'DM Mono',monospace;font-size:0.6rem;letter-spacing:0.1em;text-transform:uppercase;color:var(--muted)}
+
+/* Controls */
+.controls{display:flex;gap:0.5rem;width:100%}
+.btn{padding:0.65rem 1rem;font-family:'DM Mono',monospace;font-size:0.6rem;letter-spacing:0.1em;text-transform:uppercase;cursor:pointer;border-radius:3px;border:none;transition:all 0.2s;flex:1}
+.btn-gold{background:var(--gold);color:var(--ink);font-weight:500}
+.btn-gold:hover{background:var(--gold-warm)}
+.btn-ghost{background:transparent;border:1px solid var(--border);color:var(--muted)}
+.btn-ghost:hover{border-color:var(--gold-dim);color:var(--gold)}
+
+/* Difficulty selector */
+.diff-selector{display:flex;gap:0.4rem;width:100%}
+.diff-btn{flex:1;padding:0.5rem;font-family:'DM Mono',monospace;font-size:0.55rem;letter-spacing:0.08em;text-transform:uppercase;cursor:pointer;border-radius:3px;border:1px solid var(--border);background:var(--navy-mid);color:var(--muted);transition:all 0.2s;text-align:center}
+.diff-btn:hover{border-color:var(--gold-dim);color:var(--gold)}
+.diff-btn.active{background:rgba(201,168,76,0.1);border-color:var(--gold-dim);color:var(--gold)}
+
+/* Move efficiency */
+.efficiency-bar{
+  width:100%;background:var(--navy-mid);border:1px solid var(--border);border-radius:4px;padding:0.8rem 1rem;
+}
+.eff-label{font-family:'DM Mono',monospace;font-size:0.52rem;letter-spacing:0.12em;text-transform:uppercase;color:var(--muted);margin-bottom:0.5rem;text-align:center}
+.eff-track{height:8px;background:var(--border);border-radius:4px;overflow:hidden}
+.eff-fill{height:100%;background:var(--success);border-radius:4px;transition:width 0.3s,background 0.3s}
+.eff-labels{display:flex;justify-content:space-between;margin-top:0.3rem;font-family:'DM Mono',monospace;font-size:0.48rem;color:var(--muted)}
+
+.msg{font-family:'DM Mono',monospace;font-size:0.62rem;text-align:center;min-height:1rem;color:var(--danger)}
+.msg.ok{color:var(--success)}
+
+/* LB */
+.lb-section{width:100%;background:var(--navy-mid);border:1px solid var(--border);border-radius:4px;overflow:hidden}
+.lb-header{padding:0.75rem 1rem;border-bottom:1px solid var(--border-dim);display:flex;align-items:center}
+.lb-title{font-family:'DM Mono',monospace;font-size:0.55rem;letter-spacing:0.15em;text-transform:uppercase;color:var(--muted)}
+.lb-body{padding:0.5rem 0}
+.lb-empty{font-family:'DM Mono',monospace;font-size:0.6rem;color:var(--muted);text-align:center;padding:1.2rem;font-style:italic}
+.lb-row{display:grid;grid-template-columns:1.5rem 1fr auto auto auto;gap:0.5rem;align-items:center;padding:0.4rem 1rem;border-bottom:1px solid var(--border-dim);font-family:'DM Mono',monospace;font-size:0.6rem}
+.lb-row:last-child{border-bottom:none}
+.lb-row.hl{background:rgba(201,168,76,0.06)}
+.lb-rank{color:var(--muted)}.lb-name{color:var(--body)}.lb-score{color:var(--gold);text-align:right}.lb-discs{color:var(--muted);font-size:0.52rem;text-align:right}.lb-eff{color:var(--teal);font-size:0.52rem;text-align:right}
+
+/* Modal */
+.modal-overlay{position:fixed;inset:0;background:rgba(7,13,26,0.88);backdrop-filter:blur(8px);z-index:200;display:flex;align-items:center;justify-content:center;padding:1rem}
+.modal-overlay.hidden{display:none}
+.modal{background:var(--navy-mid);border:1px solid var(--border);border-radius:4px;width:100%;max-width:380px;overflow:hidden}
+.modal-header{padding:1.4rem 1.4rem 0;text-align:center}
+.modal-result{font-family:'Bebas Neue',sans-serif;font-size:2rem;letter-spacing:0.1em;color:var(--gold-warm);margin-bottom:0.3rem}
+.modal-score{margin:1rem 1.4rem;background:var(--navy-light);border:1px solid var(--border-dim);border-radius:3px;padding:0.8rem;display:grid;grid-template-columns:1fr 1fr;gap:0.5rem}
+.ms-item{display:flex;flex-direction:column;gap:0.1rem}
+.ms-val{font-family:'DM Mono',monospace;font-size:0.9rem;color:var(--gold)}
+.ms-lbl{font-family:'DM Mono',monospace;font-size:0.45rem;letter-spacing:0.1em;text-transform:uppercase;color:var(--muted)}
+.modal-name{padding:0 1.4rem;display:flex;flex-direction:column;gap:0.4rem}
+.modal-name label{font-family:'DM Mono',monospace;font-size:0.52rem;letter-spacing:0.1em;text-transform:uppercase;color:var(--muted)}
+.name-input{background:var(--navy);border:1px solid var(--border);border-radius:3px;padding:0.6rem 0.8rem;font-family:'DM Mono',monospace;font-size:0.8rem;color:var(--body);outline:none;width:100%}
+.name-input:focus{border-color:var(--gold-dim)}
+.modal-acts{display:flex;gap:0.5rem;padding:1rem 1.4rem 1.4rem}
+.modal-acts .btn{flex:1}
+@keyframes bounce{0%,100%{transform:translateY(0)}50%{transform:translateY(-6px)}}
+.celebrate{animation:bounce 0.4s ease}
+</style>
+</head>
+<body>
+<nav>
+  <a class="nav-logo" href="/">Maffs Games</a>
+  <span style="font-family:'DM Mono',monospace;font-size:0.48rem;letter-spacing:0.1em;text-transform:uppercase;padding:0.2rem 0.6rem;border:1px solid #134e4a;border-radius:2px;color:#2dd4bf">Hosted on QF Network</span>
+  <a class="nav-back" href="../../">← Back</a>
+</nav>
+<div class="page">
+  <div class="game-header">
+    <p class="game-kicker">Recursive Logic · Optimisation</p>
+    <h1 class="game-title">Towers of <strong style="color:var(--teal)">Hanoi</strong></h1>
+    <p class="game-sub">Move all disks to peg C. Optimal score requires the minimum possible moves: 2ⁿ − 1.</p>
+  </div>
+
+  <div class="status-bar">
+    <div class="si"><span class="si-val" id="sv-moves">0</span><span class="si-lbl">Moves</span></div>
+    <div class="si"><span class="si-val" id="sv-optimal">—</span><span class="si-lbl">Optimal</span></div>
+    <div class="si"><span class="si-val" id="sv-eff">—</span><span class="si-lbl">Efficiency</span></div>
+    <div class="si"><span class="si-val" id="sv-score">0</span><span class="si-lbl">Score</span></div>
+  </div>
+
+  <!-- Difficulty selector -->
+  <div class="diff-selector" id="diff-selector">
+    <div class="diff-btn active" onclick="setDiscs(3)" data-n="3">3 Discs<br><span style="font-size:0.45rem;color:var(--muted)">7 moves</span></div>
+    <div class="diff-btn" onclick="setDiscs(4)" data-n="4">4 Discs<br><span style="font-size:0.45rem;color:var(--muted)">15 moves</span></div>
+    <div class="diff-btn" onclick="setDiscs(5)" data-n="5">5 Discs<br><span style="font-size:0.45rem;color:var(--muted)">31 moves</span></div>
+    <div class="diff-btn" onclick="setDiscs(6)" data-n="6">6 Discs<br><span style="font-size:0.45rem;color:var(--muted)">63 moves</span></div>
+    <div class="diff-btn" onclick="setDiscs(7)" data-n="7">7 Discs<br><span style="font-size:0.45rem;color:var(--muted)">127 moves</span></div>
+  </div>
+
+  <div class="tower-arena" id="arena">
+    <div class="arena-inner" id="towers"></div>
+    <div class="arena-labels">
+      <span class="a-lbl">A · Source</span>
+      <span class="a-lbl">B · Spare</span>
+      <span class="a-lbl">C · Target</span>
+    </div>
+  </div>
+
+  <div class="efficiency-bar">
+    <div class="eff-label" id="eff-label">Efficiency — aim for 100%</div>
+    <div class="eff-track"><div class="eff-fill" id="eff-fill" style="width:0%"></div></div>
+    <div class="eff-labels"><span>0%</span><span>Optimal: 100%</span></div>
+  </div>
+
+  <div class="controls">
+    <button class="btn btn-ghost" onclick="undoMove()">↩ Undo</button>
+    <button class="btn btn-ghost" onclick="resetPuzzle()">↺ Reset</button>
+    <button class="btn btn-gold" id="start-btn" onclick="startGame()">Start</button>
+  </div>
+
+  <div class="msg" id="msg-bar"></div>
+
+  <div class="lb-section">
+    <div class="lb-header"><span class="lb-title">Leaderboard (by efficiency × disc count)</span></div>
+    <div class="lb-body" id="lb-out"><div class="lb-empty">No scores yet.</div></div>
+  </div>
+</div>
+
+<div class="modal-overlay hidden" id="modal">
+  <div class="modal">
+    <div class="modal-header"><div class="modal-result" id="modal-result">—</div></div>
+    <div class="modal-score" id="modal-score"></div>
+    <div class="modal-name">
+      <label>Your name for the leaderboard</label>
+      <input class="name-input" id="name-input" type="text" maxlength="20" placeholder="Anonymous">
+    </div>
+    <div class="modal-acts">
+      <button class="btn btn-ghost" onclick="closeModal()">Play Again</button>
+      <button class="btn btn-gold" onclick="submitToLB()">Submit Score</button>
+    </div>
+  </div>
+</div>
+
+<script>
+let numDiscs=3, pegs=[[],[],[]], selectedPeg=null, moveCount=0, gameActive=false, history=[], finalScore=0;
+
+function optimalMoves(n){return Math.pow(2,n)-1}
+
+function setDiscs(n){
+  numDiscs=n;
+  document.querySelectorAll('.diff-btn').forEach(b=>{
+    b.classList.toggle('active',parseInt(b.dataset.n)===n);
+  });
+  if(gameActive)resetPuzzle();
+  else renderTowers();
+}
+
+function startGame(){
+  resetPuzzle(true);
+  gameActive=true;
+  document.getElementById('start-btn').textContent='Restart';
+  document.getElementById('msg-bar').textContent='Click a peg to select, click again to move.';
+}
+
+function resetPuzzle(fresh=false){
+  pegs=[[],[],[]];
+  for(let i=numDiscs;i>=1;i--)pegs[0].push(i);
+  selectedPeg=null;moveCount=0;history=[];finalScore=0;
+  updateStatus();
+  renderTowers();
+  document.getElementById('msg-bar').textContent=fresh?'Click a peg to select, click again to move.':'';
+}
+
+function renderTowers(){
+  const el=document.getElementById('towers');
+  el.innerHTML='';
+  for(let p=0;p<3;p++){
+    const col=document.createElement('div');
+    col.className='tower-col'+(selectedPeg===p?' selected':'');
+    col.onclick=()=>handlePegClick(p);
+    const peg=document.createElement('div');peg.className='peg';col.appendChild(peg);
+    const base=document.createElement('div');base.className='base';col.appendChild(base);
+
+    // Check if valid drop target
+    if(selectedPeg!==null && selectedPeg!==p){
+      const topSrc=pegs[selectedPeg][pegs[selectedPeg].length-1];
+      const topDst=pegs[p][pegs[p].length-1];
+      if(topDst===undefined||topSrc<topDst)col.classList.add('valid-target');
+    }
+
+    // Disks bottom-up
+    [...pegs[p]].reverse().forEach((size,i)=>{
+      const disk=document.createElement('div');
+      disk.className='disk'+(selectedPeg===p&&i===0?' selected-disk':'');
+      disk.dataset.size=size;
+      disk.textContent=size;
+      col.appendChild(disk);
+    });
+    el.appendChild(col);
+  }
+}
+
+function handlePegClick(p){
+  if(!gameActive)return;
+  if(selectedPeg===null){
+    if(pegs[p].length===0){setMsg('Empty peg.');return}
+    selectedPeg=p;
+  } else if(selectedPeg===p){
+    selectedPeg=null;
+  } else {
+    const src=pegs[selectedPeg],dst=pegs[p];
+    if(src.length===0){setMsg('Source is empty.');selectedPeg=null;renderTowers();return}
+    const top=src[src.length-1];
+    const dstTop=dst[dst.length-1];
+    if(dstTop!==undefined&&top>dstTop){setMsg('Cannot place larger disk on smaller.');renderTowers();return}
+    // Valid move
+    history.push({from:selectedPeg,to:p});
+    dst.push(src.pop());
+    moveCount++;
+    selectedPeg=null;
+    setMsg('');
+    updateStatus();
+    renderTowers();
+    checkWin();
+  }
+  renderTowers();
+}
+
+function undoMove(){
+  if(!history.length||!gameActive)return;
+  const last=history.pop();
+  pegs[last.from].push(pegs[last.to].pop());
+  moveCount=Math.max(0,moveCount-1);
+  selectedPeg=null;
+  updateStatus();
+  renderTowers();
+}
+
+function updateStatus(){
+  const opt=optimalMoves(numDiscs);
+  const eff=moveCount===0?100:Math.round(opt/moveCount*100);
+  document.getElementById('sv-moves').textContent=moveCount;
+  document.getElementById('sv-optimal').textContent=opt;
+  document.getElementById('sv-eff').textContent=eff+'%';
+  document.getElementById('sv-score').textContent=calcScore();
+  const fill=document.getElementById('eff-fill');
+  fill.style.width=Math.min(100,eff)+'%';
+  fill.style.background=eff>=100?'var(--success)':eff>=75?'var(--warn)':'var(--danger)';
+}
+
+function calcScore(){
+  const opt=optimalMoves(numDiscs);
+  if(moveCount===0)return 0;
+  const eff=opt/moveCount;
+  const base=numDiscs*100;
+  return Math.round(base*eff*eff); // square efficiency so perfect gets full bonus
+}
+
+function checkWin(){
+  if(pegs[2].length===numDiscs){
+    gameActive=false;
+    finalScore=calcScore();
+    const opt=optimalMoves(numDiscs);
+    const eff=Math.round(opt/moveCount*100);
+    setTimeout(()=>{
+      document.getElementById('modal').classList.remove('hidden');
+      const verdict=moveCount===opt?'Perfect Solution!':eff>=80?'Excellent!':eff>=60?'Well Done':eff>=40?'Solved!':'Brute Forced It.';
+      document.getElementById('modal-result').textContent=verdict;
+      document.getElementById('modal-score').innerHTML=`
+        <div class="ms-item"><span class="ms-val">${finalScore.toLocaleString()}</span><span class="ms-lbl">Score</span></div>
+        <div class="ms-item"><span class="ms-val">${moveCount}</span><span class="ms-lbl">Moves Used</span></div>
+        <div class="ms-item"><span class="ms-val">${opt}</span><span class="ms-lbl">Optimal Moves</span></div>
+        <div class="ms-item"><span class="ms-val">${eff}%</span><span class="ms-lbl">Efficiency</span></div>
+      `;
+    },400);
+  }
+}
+
+function setMsg(txt,ok){
+  const el=document.getElementById('msg-bar');
+  el.textContent=txt;el.className='msg'+(ok?' ok':'');
+}
+
+function closeModal(){
+  document.getElementById('modal').classList.add('hidden');
+  resetPuzzle();
+  gameActive=true;
+}
+
+function dayStr(){const d=new Date();return`${d.getFullYear()}_${d.getMonth()}_${d.getDate()}`}
+const LKEY=()=>'hoi_lb_'+dayStr();
+function loadLB(){try{return JSON.parse(localStorage.getItem(LKEY()))||[];}catch{return[]}}
+function renderLB(hl){
+  const arr=loadLB(),el=document.getElementById('lb-out');
+  if(!arr.length){el.innerHTML='<div class="lb-empty">No scores yet.</div>';return}
+  el.innerHTML=arr.slice(0,10).map((e,i)=>`
+    <div class="lb-row ${e.name===hl?'hl':''}">
+      <span class="lb-rank">${i+1}</span>
+      <span class="lb-name">${escHtml(e.name)}</span>
+      <span class="lb-score">${e.sc.toLocaleString()}</span>
+      <span class="lb-discs">${e.discs}d</span>
+      <span class="lb-eff">${e.eff}%</span>
+    </div>`).join('')
+}
+function escHtml(s){return s.replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;')}
+function submitToLB(){
+  const name=document.getElementById('name-input').value.trim().slice(0,20)||'Anonymous';
+  const opt=optimalMoves(numDiscs);
+  const eff=Math.round(opt/moveCount*100);
+  const arr=loadLB();
+  arr.push({name,sc:finalScore,discs:numDiscs,eff,ts:Date.now()});
+  arr.sort((a,b)=>b.sc-a.sc);
+  localStorage.setItem(LKEY(),JSON.stringify(arr));
+  document.getElementById('modal').classList.add('hidden');
+  renderLB(name);
+  resetPuzzle();
+  gameActive=true;
+}
+
+renderTowers();
+renderLB('');
+</script>
+</body>
+</html>

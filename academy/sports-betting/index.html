@@ -1,0 +1,451 @@
+<!--
+  SPORTS BETTING MATHS — COMPLETE PRODUCT
+  Three tiers: Basic 500 QF, Advanced 1500 QF, Master 3000 QF
+  
+  CC: This is complete — ship as-is or split if needed.
+-->
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<link rel="icon" type="image/svg+xml" href="../../schools/assets/favicon.svg">
+<title>Sports Betting Maths — Maths Always Wins — QF Games</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=DM+Mono:wght@400;500&family=Bebas+Neue&family=Crimson+Pro:ital,wght@0,400;0,700;1,400&family=Outfit:wght@300;400;600;700&display=swap" rel="stylesheet">
+<script async src="https://www.googletagmanager.com/gtag/js?id=G-CLNF7GSB28"></script>
+<script>window.dataLayer=window.dataLayer||[];function gtag(){dataLayer.push(arguments);}gtag('js',new Date());gtag('config','G-CLNF7GSB28',{send_page_view:true,storage:'none',anonymize_ip:true});</script>
+<style>
+*{margin:0;padding:0;box-sizing:border-box}
+:root{--bg:#06080c;--surface:#0c0f16;--surface2:#111620;--border:#1a2030;--border2:#242e40;--accent:#2563eb;--accent-dim:rgba(37,99,235,.08);--green-bright:#2dd4a0;--red-bright:#ef5350;--gold:#d4a847;--text:#d8dce4;--text-bright:#f0f2f6;--muted:#5a6478}
+body{font-family:'Outfit',sans-serif;background:var(--bg);color:var(--text);min-height:100vh;-webkit-font-smoothing:antialiased}
+.outer{max-width:800px;margin:0 auto;padding:0 1rem 2rem}
+.hero{text-align:center;padding:3rem 0 1.5rem;border-bottom:1px solid var(--border)}
+.hero-ey{font-family:'DM Mono',monospace;font-size:.65rem;letter-spacing:.25em;text-transform:uppercase;color:var(--accent);margin-bottom:.6rem}
+.hero h1{font-family:'Bebas Neue',sans-serif;font-size:3rem;letter-spacing:.04em;color:var(--text-bright);line-height:1.1}
+.hero h1 span{color:var(--accent)}
+.hero .tag{font-family:'Crimson Pro',serif;font-style:italic;font-size:1.05rem;color:var(--muted);margin-top:.5rem}
+.stats-bar{display:grid;grid-template-columns:repeat(4,1fr);gap:1px;background:var(--border);border:1px solid var(--border);border-radius:10px;overflow:hidden;margin:1.5rem 0}
+.sc{background:var(--surface);padding:.8rem .4rem;text-align:center}
+.sc .sn{font-family:'DM Mono',monospace;font-size:1.3rem;font-weight:500;color:var(--accent)}
+.sc .sl{font-size:.58rem;color:var(--muted);margin-top:.15rem;line-height:1.3}
+.screen{display:none}.screen.active{display:block}
+.mc{background:var(--surface);border:1px solid var(--border);border-radius:8px;padding:.6rem .8rem;margin-bottom:.3rem;display:flex;justify-content:space-between;align-items:center;cursor:pointer;transition:all .12s}
+.mc:hover{border-color:var(--accent);transform:translateX(3px)}
+.mc .mn{font-size:.82rem;font-weight:600}.mc .md{font-size:.65rem;color:var(--muted)}.mc .mq{font-family:'DM Mono',monospace;font-size:.62rem;color:var(--muted)}
+.tier-hdr{display:flex;align-items:center;gap:.5rem;margin:.6rem 0 .3rem}
+.tb{font-family:'DM Mono',monospace;font-size:.58rem;padding:2px 8px;border-radius:5px;font-weight:500;letter-spacing:.05em;text-transform:uppercase}
+.tb-b{background:rgba(37,99,235,.12);color:var(--accent)}
+.tb-a{background:rgba(212,168,71,.08);color:var(--gold)}
+.tb-m{background:rgba(239,83,80,.1);color:var(--red-bright)}
+.tp{font-family:'DM Mono',monospace;font-size:.65rem;color:var(--muted)}
+.cta{display:block;margin:1rem auto;padding:.55rem 1.5rem;border-radius:8px;font-family:'Outfit',sans-serif;font-size:.82rem;font-weight:600;cursor:pointer;border:2px solid var(--accent);background:var(--accent);color:#fff;text-align:center;max-width:300px}
+.bb{display:inline-block;margin:.4rem 0;padding:.3rem .9rem;border:none;border-radius:6px;background:var(--border);color:var(--text);font-family:'Outfit',sans-serif;font-size:.75rem;font-weight:600;cursor:pointer}
+.nb{display:inline-block;margin-top:.3rem;padding:.3rem .9rem;border:none;border-radius:6px;background:var(--accent);color:#fff;font-family:'Outfit',sans-serif;font-size:.75rem;font-weight:600;cursor:pointer}
+.tut{background:var(--surface);border:1px solid var(--border);border-radius:10px;padding:1.1rem;margin-bottom:.5rem;line-height:1.75;font-size:.85rem}
+.tut h3{color:var(--accent);font-size:.88rem;margin-bottom:.3rem}
+.tut p{margin-bottom:.4rem}
+.tut .pt{padding:.4rem .7rem;margin:.4rem 0;border-radius:6px;border-left:3px solid var(--accent);background:var(--accent-dim)}
+.tut .dg{padding:.4rem .7rem;margin:.4rem 0;border-radius:6px;border-left:3px solid var(--red-bright);background:rgba(239,83,80,.06);color:var(--red-bright)}
+.tut .mb{font-family:'DM Mono',monospace;background:var(--bg);border-radius:6px;padding:.5rem;margin:.4rem 0;font-size:.78rem;line-height:1.8}
+.tut .mb .pos{color:var(--green-bright)}.tut .mb .neg{color:var(--red-bright)}
+.tut .pln{font-family:'Crimson Pro',serif;font-size:.88rem;color:#0e9aa7;font-style:italic;margin:.3rem 0}
+.disc{background:var(--surface);border:1px solid var(--border2);border-radius:10px;padding:1rem;margin:1rem 0}
+.disc p{font-family:'Crimson Pro',serif;font-size:.85rem;color:var(--muted);line-height:1.6;font-style:italic;margin-bottom:.3rem}
+.disc p strong{color:var(--accent);font-style:normal}
+/* CALC TOOL */
+.calc{background:var(--surface);border:1px solid var(--border);border-radius:10px;padding:1rem;margin:.5rem 0}
+.calc h3{color:var(--accent);font-size:.82rem;margin-bottom:.4rem}
+.calc-row{display:flex;gap:.4rem;align-items:center;margin:.3rem 0;flex-wrap:wrap}
+.calc-row label{font-size:.75rem;color:var(--muted);min-width:100px}
+.calc-row input,.calc-row select{background:var(--bg);border:1px solid var(--border2);border-radius:4px;padding:.3rem .5rem;color:var(--gold);font-family:'DM Mono',monospace;font-size:.8rem;width:100px}
+.calc-result{margin-top:.4rem;padding:.5rem;background:var(--bg);border-radius:6px;font-family:'DM Mono',monospace;font-size:.78rem;line-height:1.8}
+@media(max-width:600px){.hero h1{font-size:2.2rem}.stats-bar{grid-template-columns:repeat(2,1fr)}}
+</style>
+</head>
+<body>
+<div class="outer">
+
+<div id="landing" class="screen active">
+<div class="hero">
+<div class="hero-ey">QF Games · Educational Suite</div>
+<h1>SPORTS BETTING <span>MATHS</span></h1>
+<div class="tag">Understand the odds before you place the bet.</div>
+</div>
+
+<div class="stats-bar">
+<div class="sc"><div class="sn">£14.3bn</div><div class="sl">UK gambling<br>industry revenue 2024</div></div>
+<div class="sc"><div class="sn">95-98%</div><div class="sl">Of recreational bettors<br>lose long-term</div></div>
+<div class="sc"><div class="sn">5-20%</div><div class="sl">Typical bookmaker<br>overround (margin)</div></div>
+<div class="sc"><div class="sn">0</div><div class="sl">Accumulators that<br>have +EV</div></div>
+</div>
+
+<div class="disc">
+<p>This isn't a tipping service. We don't pick winners. We teach you the <strong>mathematics that bookmakers use to guarantee their profit</strong> — so you understand exactly what you're paying every time you place a bet.</p>
+<p>If you bet on sport, you owe it to yourself to understand the numbers. <strong>Every successful bettor in history understood this material.</strong> Every unsuccessful one didn't.</p>
+</div>
+
+<div style="margin:1rem 0">
+<div class="tier-hdr"><span class="tb tb-b">Basic</span><span class="tp">500 QF · 7 days</span></div>
+<div class="mc" onclick="loadMod(0)"><div><div class="mn">1. How Odds Work</div><div class="md">Fractional, decimal, American. Converting between them. What they actually mean.</div></div><div class="mq">Tutorial + calc</div></div>
+<div class="mc" onclick="loadMod(1)"><div><div class="mn">2. Implied Probability</div><div class="md">Convert odds to probability. The most important skill in betting.</div></div><div class="mq">Tutorial + 15</div></div>
+<div class="mc" onclick="loadMod(2)"><div><div class="mn">3. The Overround</div><div class="md">How bookmakers build in their profit margin on every market.</div></div><div class="mq">Tutorial + calc</div></div>
+
+<div class="tier-hdr"><span class="tb tb-a">Advanced</span><span class="tp">1500 QF · 14 days</span></div>
+<div class="mc" onclick="loadMod(3)"><div><div class="mn">4. Value Betting</div><div class="md">The ONLY way to win long-term. Identifying +EV opportunities.</div></div><div class="mq">Tutorial + 15</div></div>
+<div class="mc" onclick="loadMod(4)"><div><div class="mn">5. Why Accumulators Are Terrible</div><div class="md">The maths of compounding house edges. Multi-bet destruction.</div></div><div class="mq">Tutorial + sim</div></div>
+<div class="mc" onclick="loadMod(5)"><div><div class="mn">6. Bankroll Management</div><div class="md">Kelly criterion, staking plans, variance. Survive the losing runs.</div></div><div class="mq">Tutorial</div></div>
+
+<div class="tier-hdr"><span class="tb tb-m">Master</span><span class="tp">3000 QF · 30 days</span></div>
+<div class="mc" onclick="loadMod(6)"><div><div class="mn">7. Building a Model</div><div class="md">Rate your own probabilities. Compare to the market. Find edges.</div></div><div class="mq">Tutorial</div></div>
+<div class="mc" onclick="loadMod(7)"><div><div class="mn">8. Market Efficiency & Closing Lines</div><div class="md">The closing line is the most efficient predictor. Can you beat it?</div></div><div class="mq">Tutorial</div></div>
+</div>
+
+<button class="cta" onclick="loadMod(0)">Start Module 1 Free</button>
+</div>
+
+<div id="lesson" class="screen">
+<div id="content"></div>
+<button class="bb" onclick="show('landing')">← Back</button>
+</div>
+</div>
+
+<script>
+function show(id){document.querySelectorAll('.screen').forEach(s=>s.classList.remove('active'));document.getElementById(id).classList.add('active');window.scrollTo(0,0)}
+function loadMod(i){show('lesson');const c=document.getElementById('content');[modOdds,modImplied,modOverround,modValue,modAccas,modBankroll,modModel,modEfficiency][i](c)}
+
+function modOdds(c){c.innerHTML=`
+<div class="tut">
+<h3>Module 1: How Odds Work</h3>
+<p>Odds are just a way of expressing probability and payout. Three formats exist. You need to be fluent in all of them.</p>
+
+<div class="mb">
+<strong>Fractional (UK standard): 5/1</strong><br>
+"Five to one." For every £1 you bet, you win £5 profit (plus your stake back).<br>
+Total return on a £10 bet at 5/1 = £10 × 5 + £10 = <span class="pos">£60</span><br><br>
+
+<strong>Decimal (European/exchange): 6.00</strong><br>
+Your total return per £1 staked. Includes the stake.<br>
+£10 at 6.00 = £10 × 6.00 = <span class="pos">£60</span> (same as 5/1)<br><br>
+
+<strong>American: +500</strong><br>
+Positive (+): how much you win on a $100 bet. +500 = $500 profit on $100.<br>
+Negative (−): how much you must bet to win $100. −200 = bet $200 to win $100.
+</div>
+
+<h3>Converting Between Formats</h3>
+<div class="mb">
+<strong>Fractional → Decimal:</strong> (numerator/denominator) + 1<br>
+5/1 → (5/1) + 1 = <span class="pos">6.00</span><br>
+11/4 → (11/4) + 1 = 2.75 + 1 = <span class="pos">3.75</span><br>
+1/3 → (1/3) + 1 = 0.333 + 1 = <span class="pos">1.333</span><br><br>
+
+<strong>Decimal → Implied probability:</strong> 1 / decimal odds<br>
+6.00 → 1/6.00 = <span class="pos">16.7%</span><br>
+3.75 → 1/3.75 = <span class="pos">26.7%</span><br>
+1.333 → 1/1.333 = <span class="pos">75.0%</span><br><br>
+
+<strong>This is the critical conversion.</strong> Every time you see odds, convert them to implied probability. That number tells you what the bookmaker thinks the chance is (plus their margin).
+</div>
+
+<div class="pln">In plain English: odds of 3.00 (2/1) mean the bookmaker is pricing the event at roughly 33% likely. If you think it's 40% likely, you have an edge. If you think it's 25%, the bookmaker has an even bigger edge than usual. ALWAYS convert to probability.</div>
+</div>
+
+<div class="calc">
+<h3>Odds Converter</h3>
+<div class="calc-row"><label>Fractional:</label><input id="cFrac" value="5/1" oninput="convertFrac()"></div>
+<div class="calc-row"><label>Decimal:</label><input id="cDec" value="6.00" oninput="convertDec()"></div>
+<div class="calc-row"><label>Implied prob:</label><input id="cProb" value="16.7%" readonly style="opacity:.7"></div>
+</div>`;
+
+  window.convertFrac=function(){
+    const v=document.getElementById('cFrac').value;
+    const parts=v.split('/');
+    if(parts.length===2){
+      const num=parseFloat(parts[0]),den=parseFloat(parts[1]);
+      if(den>0){
+        const dec=(num/den)+1;
+        document.getElementById('cDec').value=dec.toFixed(2);
+        document.getElementById('cProb').value=(100/dec).toFixed(1)+'%';
+      }
+    }
+  };
+  window.convertDec=function(){
+    const dec=parseFloat(document.getElementById('cDec').value);
+    if(dec>1){
+      document.getElementById('cProb').value=(100/dec).toFixed(1)+'%';
+      const frac=dec-1;
+      // Simplify fraction approximately
+      document.getElementById('cFrac').value=frac.toFixed(2)+'/1';
+    }
+  };
+}
+
+function modImplied(c){c.innerHTML=`
+<div class="tut">
+<h3>Module 2: Implied Probability</h3>
+<p>Implied probability is the probability a bookmaker's odds suggest for an outcome. It's the single most important number in betting.</p>
+
+<div class="pt">Every bet you place is a statement: "I believe this outcome is MORE likely than the bookmaker's implied probability." If you can't articulate why you believe that, you shouldn't place the bet.</div>
+
+<div class="mb">
+<strong>Converting decimal odds to implied probability:</strong><br><br>
+Implied probability = 1 ÷ decimal odds × 100%<br><br>
+Odds 1.50 → 1/1.50 = <span class="pos">66.7%</span> (heavy favourite)<br>
+Odds 2.00 → 1/2.00 = <span class="pos">50.0%</span> (coin flip price)<br>
+Odds 3.00 → 1/3.00 = <span class="pos">33.3%</span><br>
+Odds 5.00 → 1/5.00 = <span class="pos">20.0%</span><br>
+Odds 10.00 → 1/10.00 = <span class="pos">10.0%</span><br>
+Odds 101.00 → 1/101.00 = <span class="pos">0.99%</span> (longshot)<br>
+</div>
+
+<div class="pln">Memorise this: decimal odds of 2.00 = 50%. Everything above 2.00 is less than 50% likely. Everything below 2.00 is more than 50% likely. This is your mental anchor.</div>
+
+<h3>Why This Matters</h3>
+<div class="mb">
+<strong>Arsenal vs Crystal Palace:</strong><br>
+Arsenal to win: 1.50 (implied 66.7%)<br>
+Draw: 4.00 (implied 25%)<br>
+Crystal Palace to win: 7.00 (implied 14.3%)<br><br>
+
+Sum of implied probabilities: 66.7 + 25 + 14.3 = <span class="neg">106%</span><br><br>
+That extra 6% above 100%? That's the bookmaker's margin (the overround). The "true" probabilities sum to 100%, but the bookmaker inflates them to guarantee profit.
+</div>
+
+<div class="pt">If the implied probabilities of all outcomes sum to MORE than 100%, the bookmaker has an edge. The bigger the overround, the worse the value for the bettor. Typical overround: 5-8% for football, 15-20% for horse racing.</div>
+</div>`}
+
+function modOverround(c){c.innerHTML=`
+<div class="tut">
+<h3>Module 3: The Overround (Bookmaker's Margin)</h3>
+<p>The overround is how bookmakers guarantee profit regardless of the outcome. It's built into every market. Understanding it is the difference between a mug punter and an informed bettor.</p>
+
+<div class="mb">
+<strong>How the overround works:</strong><br><br>
+A fair coin flip: heads 50%, tails 50%. Fair odds: 2.00 each side.<br>
+A bookmaker's coin flip: heads 1.91, tails 1.91.<br><br>
+Implied: 1/1.91 = 52.4% each side. Total: 104.8%.<br>
+Overround: <span class="neg">4.8%</span>.<br><br>
+No matter which side wins, the bookmaker collects 4.8% more than they pay out. On average. Over thousands of bets. Guaranteed.
+</div>
+
+<div class="pln">In plain English: the overround is the bookmaker's tax on every bet. A 5% overround means for every £100 wagered across all outcomes, the bookmaker keeps £5 regardless of what happens. It's mathematically inescapable — unless you can find genuine value.</div>
+
+<h3>Calculating True Probability from Overround</h3>
+<div class="mb">
+<strong>Remove the overround to find "true" odds:</strong><br><br>
+Arsenal 1.50 (66.7%), Draw 4.00 (25%), Palace 7.00 (14.3%)<br>
+Overround: 106%<br><br>
+True probability = Implied / Overround total<br>
+Arsenal: 66.7% / 106% = <span class="pos">62.9%</span><br>
+Draw: 25% / 106% = <span class="pos">23.6%</span><br>
+Palace: 14.3% / 106% = <span class="pos">13.5%</span><br>
+Total: 100% ✓<br><br>
+These are closer to the "true" probabilities the bookmaker's model produces.
+</div>
+
+<div class="pt">Exchanges like Betfair have much lower overrounds (1-3%) because you're betting against other people, not a bookmaker. The exchange takes a small commission instead. If you're serious about value, use exchanges.</div>
+</div>
+
+<div class="calc">
+<h3>Overround Calculator</h3>
+<p style="font-size:.72rem;color:var(--muted)">Enter decimal odds for each outcome. The calculator shows the overround.</p>
+<div class="calc-row"><label>Outcome 1:</label><input id="or1" value="1.50" oninput="calcOR()"></div>
+<div class="calc-row"><label>Outcome 2:</label><input id="or2" value="4.00" oninput="calcOR()"></div>
+<div class="calc-row"><label>Outcome 3:</label><input id="or3" value="7.00" oninput="calcOR()"></div>
+<div class="calc-result" id="orResult"></div>
+</div>`;
+
+  window.calcOR=function(){
+    const o1=parseFloat(document.getElementById('or1').value)||0;
+    const o2=parseFloat(document.getElementById('or2').value)||0;
+    const o3=parseFloat(document.getElementById('or3').value)||0;
+    let sum=0;if(o1>0)sum+=1/o1;if(o2>0)sum+=1/o2;if(o3>0)sum+=1/o3;
+    const or_pct=(sum*100).toFixed(1);
+    const margin=((sum-1)*100).toFixed(1);
+    document.getElementById('orResult').innerHTML=
+      'Sum of implied probabilities: <span style="color:'+(sum>1?'var(--red-bright)':'var(--green-bright)')+'">'+or_pct+'%</span><br>'+
+      'Overround (bookmaker margin): <span style="color:var(--red-bright)">'+margin+'%</span><br>'+
+      (sum>1?'<span style="color:var(--muted)">The bookmaker profits '+margin+'% on this market regardless of outcome.</span>':'<span style="color:var(--green-bright)">Below 100% — value exists (rare, usually an error or arb).</span>');
+  };
+  setTimeout(()=>window.calcOR(),100);
+}
+
+function modValue(c){c.innerHTML=`
+<div class="tut">
+<h3>Module 4: Value Betting — The Only Way to Win</h3>
+<p>A "value bet" is a bet where the true probability of the outcome is HIGHER than the implied probability from the odds. It's the ONLY type of bet that wins long-term.</p>
+
+<div class="pt">Value = Your estimated probability > Bookmaker's implied probability. If you think a team has a 40% chance of winning and the odds imply 30%, that's value. If you think 25%, that's a terrible bet.</div>
+
+<div class="mb">
+<strong>Expected Value formula:</strong><br><br>
+EV = (P(win) × profit) − (P(lose) × stake)<br><br>
+<strong>Example:</strong><br>
+Bet: £10 on Arsenal at odds 3.00 (implied 33.3%)<br>
+Your estimate: Arsenal wins 40% of the time<br><br>
+EV = (0.40 × £20) − (0.60 × £10)<br>
+EV = £8.00 − £6.00 = <span class="pos">+£2.00 per bet</span><br><br>
+Over 100 such bets: expected profit = <span class="pos">+£200</span>
+</div>
+
+<div class="pln">In plain English: if you consistently find bets where your estimated probability is higher than the bookmaker's implied probability, you will profit long-term. Not every bet wins — but the maths guarantees profit over enough bets. This is exactly how professional bettors operate.</div>
+
+<div class="dg">The hard part: being right about the probability. The bookmaker employs teams of statisticians and uses enormous datasets. You're competing against their model. Unless you have specific expertise or information in a niche market, the bookmaker's price is more accurate than your guess.</div>
+
+<h3>Where Value Exists</h3>
+<div class="mb">
+<strong>Bookmakers are most accurate on:</strong><br>
+<span class="neg">Premier League, Champions League, NFL, NBA</span> — extremely efficient markets. Finding value here is nearly impossible.<br><br>
+
+<strong>Bookmakers are least accurate on:</strong><br>
+<span class="pos">Lower leagues, women's sport, niche markets</span> — less data, less attention, more mispricing.<br>
+<span class="pos">In-play markets</span> — prices move fast, bookmakers can be slow to adjust.<br>
+<span class="pos">Prop bets and specials</span> — less modelled, more guesswork from the bookmaker.
+</div>
+
+<div class="pt">Professional bettors specialise. They don't bet on everything — they become experts in one league, one sport, one market type. They know more about Portuguese second division football than the bookmaker does. That's where the edge lives.</div>
+</div>`}
+
+function modAccas(c){c.innerHTML=`
+<div class="tut">
+<h3>Module 5: Why Accumulators Are Terrible</h3>
+<p>The accumulator is the bookmaker's favourite product. It's also mathematically the worst bet you can make.</p>
+
+<div class="pt">An accumulator multiplies the odds of multiple selections together. It also multiplies the bookmaker's margin together. Each leg compounds the house edge.</div>
+
+<div class="mb">
+<strong>Single bet at 2.00 (50% implied):</strong><br>
+Overround per selection: ~5%<br>
+True probability: ~52.5%<br>
+House edge: <span class="neg">5%</span><br><br>
+
+<strong>4-fold accumulator (4 × 2.00 = 16.00):</strong><br>
+Implied probability: 1/16 = 6.25%<br>
+True probability: (0.525)^4 = 7.6%<br>
+House edge: <span class="neg">~18%</span><br><br>
+
+<strong>10-fold accumulator (10 × 2.00 = 1024.00):</strong><br>
+Implied probability: 0.098%<br>
+True probability: (0.525)^10 = 0.17%<br>
+House edge: <span class="neg">~42%</span>
+</div>
+
+<div class="pln">In plain English: a single bet costs you about 5% in margin. A 4-fold costs you 18%. A 10-fold costs you 42%. The bookmaker's edge MULTIPLIES with each leg. The more legs in your acca, the more you're being charged.</div>
+
+<div class="dg">Bookmakers actively promote accumulators with "acca boosts" and "money back if one leg lets you down" offers. They do this because accumulators are their most profitable product. The "boosts" don't come close to offsetting the compounded margins.</div>
+
+<div class="mb">
+<strong>The acca dream vs reality:</strong><br><br>
+"I put £1 on a 10-fold and won £500!"<br>
+Great. How many £1 accas did you lose before that?<br>
+If the true probability was 0.17%, you placed ~588 losing bets first.<br>
+Cost: 588 × £1 = £588. Profit: £500.<br>
+Net: <span class="neg">−£88</span><br><br>
+The big win FELT amazing. The slow drip of losses was invisible.
+</div>
+
+<div class="pt">The mathematically optimal strategy: place single bets only. Each single bet has the lowest possible house edge. If you want entertainment from accumulators, treat them as lottery tickets — budget a fixed amount and accept it's gone.</div>
+</div>`}
+
+function modBankroll(c){c.innerHTML=`
+<div class="tut">
+<h3>Module 6: Bankroll Management for Sports Betting</h3>
+<p>Even if you find genuine value, poor bankroll management will destroy you. Variance in sports betting is enormous.</p>
+
+<div class="pt">The Kelly Criterion tells you the optimal percentage of your bankroll to stake on each bet, based on your edge and the odds.</div>
+
+<div class="mb">
+<strong>Kelly formula:</strong><br>
+f* = (bp − q) / b<br><br>
+Where:<br>
+b = decimal odds − 1 (net payout per unit)<br>
+p = your estimated probability of winning<br>
+q = 1 − p (probability of losing)<br><br>
+
+<strong>Example:</strong><br>
+Odds: 3.00 (b = 2). Your estimate: 40% (p = 0.4, q = 0.6).<br>
+f* = (2 × 0.4 − 0.6) / 2 = (0.8 − 0.6) / 2 = <span class="pos">0.10 = 10%</span><br><br>
+Kelly says bet 10% of your bankroll. Most professionals use <span class="pos">half-Kelly (5%)</span> to reduce variance.
+</div>
+
+<div class="mb">
+<strong>Practical staking rules:</strong><br><br>
+1. <span class="pos">Never bet more than 5% of your bankroll on any single bet</span><br>
+2. <span class="pos">Most bets should be 1-3% of bankroll</span><br>
+3. <span class="neg">Never chase losses with bigger stakes</span><br>
+4. <span class="pos">Increase stakes as bankroll grows, decrease as it shrinks</span><br>
+5. <span class="pos">Track every bet — you need data to know if you have an edge</span>
+</div>
+
+<div class="pln">In plain English: if your bankroll is £1,000, most bets should be £10-30. That feels small. It's correct. Professional bettors who manage millions still stake 1-2% per bet. The variance in sports betting is brutal — a 55% strike rate bettor can easily lose 20 bets in a row. If you're staking 10% per bet, that wipes you out.</div>
+
+<div class="dg">The number one reason profitable strategies fail: the bettor can't survive the drawdowns. You find genuine value. You lose 15 bets in a row (statistically normal at 55% strike rate). You panic, increase stakes, chase losses, and go broke. The edge was real — the bankroll management wasn't.</div>
+</div>`}
+
+function modModel(c){c.innerHTML=`
+<div class="tut">
+<h3>Module 7: Building a Model</h3>
+<p>Professional bettors don't "have feelings" about matches. They build mathematical models that output probabilities, then compare those to the bookmaker's prices.</p>
+
+<div class="pt">A model is a systematic way of estimating the probability of an outcome using data. The simplest model is better than the best gut feeling.</div>
+
+<h3>The Basic Approach</h3>
+<div class="mb">
+<strong>Step 1: Collect data</strong><br>
+Goals scored, goals conceded, xG (expected goals), form, home/away splits, head-to-head, injuries, motivation.<br><br>
+
+<strong>Step 2: Rate each team</strong><br>
+Attack strength: team's goals scored ÷ league average goals scored<br>
+Defence strength: team's goals conceded ÷ league average goals conceded<br><br>
+
+<strong>Step 3: Predict expected goals</strong><br>
+Home xG = home attack × away defence × league avg home goals<br>
+Away xG = away attack × home defence × league avg away goals<br><br>
+
+<strong>Step 4: Use Poisson distribution</strong><br>
+P(X goals) = (λ^X × e^−λ) / X!<br>
+Calculate probability of every scoreline 0-0 through 5-5.<br>
+Sum the probabilities for home win, draw, away win.<br><br>
+
+<strong>Step 5: Compare to bookmaker's odds</strong><br>
+Your model says home win = 55%. Bookmaker's implied probability = 48%. That's a value bet.
+</div>
+
+<div class="pln">This is a simplified Poisson model — the most common starting point for football betting models. More sophisticated models use Dixon-Coles adjustments, bivariate Poisson distributions, and machine learning. But even this basic model, applied consistently, can identify value that casual observation cannot.</div>
+
+<div class="dg">A model is only as good as its data. Garbage in, garbage out. Track your predictions against actual results. If your model doesn't outperform the bookmaker's closing line over 500+ bets, your model doesn't have an edge. Accept it and improve.</div>
+</div>`}
+
+function modEfficiency(c){c.innerHTML=`
+<div class="tut">
+<h3>Module 8: Market Efficiency & Closing Lines</h3>
+<p>The "closing line" is the final odds offered just before an event starts. It's the most accurate prediction the market produces — because it incorporates all available information.</p>
+
+<div class="pt">The single best predictor of a profitable bettor: do they consistently beat the closing line? If you bet at 3.00 and the closing line is 2.80, you got value. If you bet at 3.00 and closing was 3.20, you overpaid.</div>
+
+<div class="mb">
+<strong>CLV (Closing Line Value):</strong><br><br>
+Your odds: 3.00 → implied 33.3%<br>
+Closing odds: 2.80 → implied 35.7%<br>
+CLV = 35.7% − 33.3% = <span class="pos">+2.4%</span><br><br>
+You got 2.4% better odds than the efficient market price. Over thousands of bets, this compounds into significant profit.
+</div>
+
+<div class="pln">Professional bettors and syndicates track CLV obsessively. It's the most reliable indicator of a genuine edge — more reliable than short-term profit (which is heavily influenced by variance). A bettor who consistently achieves +3% CLV will be profitable long-term. One who doesn't, won't — regardless of their current win/loss record.</div>
+
+<h3>Why Bookmakers Limit Winners</h3>
+<div class="mb">
+Bookmakers track which accounts consistently beat the closing line.<br>
+If you do, they'll limit your stakes or close your account.<br>
+This isn't unfair — it's confirmation that you have a genuine edge.<br><br>
+<span class="pos">Being limited is the ultimate compliment.</span> It means the bookmaker's model says you're better than their model in your area of expertise.
+</div>
+
+<div class="pt">The practical reality: if you're good enough to find consistent value, you'll get limited within months. This is why serious bettors use exchanges (Betfair, Smarkets) — they can't limit you because you're betting against other people, not the house.</div>
+
+<div class="dg">If you've been betting for more than a year and no bookmaker has limited you, you don't have an edge. That's not an insult — it's data. The bookmaker's algorithms would have flagged you if you were costing them money. Use this information to either improve your approach or accept that you're betting for entertainment, not profit.</div>
+</div>`}
+</script>
+</body>
+</html>

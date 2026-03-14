@@ -1,0 +1,359 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Maths Wins — Games, Strategy & Mathematical Thinking</title>
+<meta name="description" content="Free maths games, competitive number puzzles, and the Maths Always Wins academy — where probability, expected value, and game theory meet real-world application.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=DM+Mono:wght@400;500&family=Bebas+Neue&family=Crimson+Pro:ital,wght@0,400;0,700;1,400&family=Outfit:wght@300;400;600;700&display=swap" rel="stylesheet">
+<!-- Google Analytics (cookieless) -->
+<script async src="https://www.googletagmanager.com/gtag/js?id=G-CLNF7GSB28"></script>
+<script>window.dataLayer=window.dataLayer||[];function gtag(){dataLayer.push(arguments);}gtag('js',new Date());gtag('config','G-CLNF7GSB28',{send_page_view:true,storage:'none',anonymize_ip:true});</script>
+<style>
+*{margin:0;padding:0;box-sizing:border-box}
+:root{
+  --bg:#050709;--surface:#0a0d14;--surface2:#0f1319;--border:#161c28;--border2:#1e2638;
+  --navy:#1a2744;--gold:#d4a847;--gold-dim:rgba(212,168,71,.06);--gold-glow:rgba(212,168,71,.12);
+  --teal:#0d9488;--teal-bright:#2dd4bf;--teal-dim:rgba(13,148,136,.08);
+  --green:#2dd4a0;--red:#ef5350;--blue:#2563eb;--purple:#7c3aed;
+  --text:#c8cdd8;--text-bright:#e8ecf4;--muted:#4a5568;--muted2:#2d3748;
+}
+body{font-family:'Outfit',sans-serif;background:var(--bg);color:var(--text);min-height:100vh;-webkit-font-smoothing:antialiased;overflow-x:hidden}
+.outer{max-width:900px;margin:0 auto;padding:0 1.25rem}
+
+/* ════════════════════════════════════
+   HERO
+   ════════════════════════════════════ */
+.hero{text-align:center;padding:4rem 0 2.5rem;position:relative}
+.hero::after{content:'';position:absolute;bottom:0;left:10%;right:10%;height:1px;background:linear-gradient(90deg,transparent,var(--border2),transparent)}
+
+.logo-mark{display:inline-flex;align-items:center;gap:.6rem;margin-bottom:1rem}
+.logo-m{font-family:'Bebas Neue',sans-serif;font-size:3rem;color:var(--text-bright);line-height:1;position:relative}
+.logo-plus{color:var(--gold);font-size:1.8rem;position:absolute;left:2px;bottom:6px;font-weight:300}
+.logo-equals{position:absolute;right:-2px;top:8px;display:flex;flex-direction:column;gap:3px}
+.logo-equals span{display:block;width:10px;height:2px;background:var(--teal)}
+.logo-text{font-family:'Bebas Neue',sans-serif;font-size:2.8rem;letter-spacing:.05em;color:var(--text-bright)}
+.logo-text span{color:var(--gold)}
+
+h1.site-title{font-family:'Bebas Neue',sans-serif;font-size:3.8rem;letter-spacing:.03em;color:var(--text-bright);line-height:1;margin-bottom:.3rem}
+h1.site-title span.w{color:var(--gold)}
+
+.tagline{font-family:'Crimson Pro',serif;font-style:italic;font-size:1.1rem;color:var(--muted);max-width:500px;margin:0 auto;line-height:1.5}
+
+.hero-sub{display:flex;justify-content:center;gap:2rem;margin-top:1.5rem;flex-wrap:wrap}
+.hero-stat{text-align:center}
+.hero-stat .hs-num{font-family:'DM Mono',monospace;font-size:1.6rem;font-weight:500;color:var(--gold)}
+.hero-stat .hs-label{font-size:.6rem;color:var(--muted);text-transform:uppercase;letter-spacing:.08em;margin-top:.1rem}
+
+/* ════════════════════════════════════
+   NAV PILLS
+   ════════════════════════════════════ */
+.nav{display:flex;justify-content:center;gap:.4rem;margin:2rem 0 1.5rem;flex-wrap:wrap}
+.nav-pill{padding:.4rem 1.2rem;border-radius:20px;border:1px solid var(--border2);background:transparent;color:var(--muted);font-family:'Outfit',sans-serif;font-size:.78rem;font-weight:600;cursor:pointer;transition:all .15s;letter-spacing:.02em}
+.nav-pill:hover{border-color:var(--gold);color:var(--text)}
+.nav-pill.active{border-color:var(--gold);background:var(--gold-dim);color:var(--gold)}
+
+/* ════════════════════════════════════
+   SECTIONS
+   ════════════════════════════════════ */
+.section{display:none;animation:fadeUp .3s ease-out}
+.section.active{display:block}
+@keyframes fadeUp{from{opacity:0;transform:translateY(12px)}to{opacity:1;transform:translateY(0)}}
+
+.section-header{margin-bottom:1rem}
+.section-header h2{font-family:'Bebas Neue',sans-serif;font-size:1.6rem;letter-spacing:.04em;color:var(--text-bright)}
+.section-header p{font-family:'Crimson Pro',serif;font-size:.88rem;color:var(--muted);font-style:italic;margin-top:.2rem}
+
+/* ════════════════════════════════════
+   GAME CARDS
+   ════════════════════════════════════ */
+.game-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(260px,1fr));gap:.6rem}
+.game-card{background:var(--surface);border:1px solid var(--border);border-radius:10px;padding:.9rem 1rem;transition:all .15s;cursor:pointer;position:relative;overflow:hidden}
+.game-card:hover{border-color:var(--gold);transform:translateY(-2px);box-shadow:0 8px 24px rgba(0,0,0,.3)}
+.game-card::before{content:'';position:absolute;left:0;top:0;bottom:0;width:3px;border-radius:3px 0 0 3px}
+.game-card.cat-puzzle::before{background:var(--gold)}
+.game-card.cat-number::before{background:var(--teal)}
+.game-card.cat-strategy::before{background:var(--blue)}
+.game-card.cat-logic::before{background:var(--purple)}
+.gc-title{font-size:.88rem;font-weight:700;color:var(--text-bright);margin-bottom:.15rem}
+.gc-desc{font-size:.7rem;color:var(--muted);line-height:1.4}
+.gc-tags{display:flex;gap:.3rem;margin-top:.4rem;flex-wrap:wrap}
+.gc-tag{font-family:'DM Mono',monospace;font-size:.5rem;padding:1px 6px;border-radius:4px;background:var(--border);color:var(--muted);letter-spacing:.03em}
+.gc-tag.free{background:rgba(45,212,160,.08);color:var(--green)}
+.gc-tag.competitive{background:rgba(212,168,71,.08);color:var(--gold)}
+
+/* ════════════════════════════════════
+   ACADEMY CARDS
+   ════════════════════════════════════ */
+.academy-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(280px,1fr));gap:.8rem}
+.academy-card{background:var(--surface);border:1px solid var(--border);border-radius:12px;padding:1.2rem;transition:all .15s;cursor:pointer;position:relative;overflow:hidden}
+.academy-card:hover{border-color:var(--gold);transform:translateY(-3px);box-shadow:0 12px 32px rgba(0,0,0,.4)}
+.ac-accent{position:absolute;top:0;left:0;right:0;height:3px}
+.ac-bj .ac-accent{background:var(--gold)}
+.ac-pk .ac-accent{background:var(--green)}
+.ac-rl .ac-accent{background:var(--red)}
+.ac-sb .ac-accent{background:var(--blue)}
+.ac-cr .ac-accent{background:var(--gold)}
+
+.ac-eyebrow{font-family:'DM Mono',monospace;font-size:.55rem;text-transform:uppercase;letter-spacing:.1em;margin-bottom:.4rem}
+.ac-bj .ac-eyebrow{color:var(--gold)}
+.ac-pk .ac-eyebrow{color:var(--green)}
+.ac-rl .ac-eyebrow{color:var(--red)}
+.ac-sb .ac-eyebrow{color:var(--blue)}
+.ac-cr .ac-eyebrow{color:var(--gold)}
+
+.ac-title{font-family:'Bebas Neue',sans-serif;font-size:1.4rem;color:var(--text-bright);letter-spacing:.03em;line-height:1.1;margin-bottom:.3rem}
+.ac-desc{font-size:.75rem;color:var(--muted);line-height:1.5;margin-bottom:.5rem}
+.ac-stats{display:flex;gap:.8rem;flex-wrap:wrap}
+.ac-stat{text-align:center}
+.ac-stat .as-num{font-family:'DM Mono',monospace;font-size:.82rem;font-weight:500}
+.ac-stat .as-label{font-size:.5rem;color:var(--muted);text-transform:uppercase}
+.ac-price{margin-top:.5rem;font-family:'DM Mono',monospace;font-size:.68rem;color:var(--muted)}
+
+/* ════════════════════════════════════
+   ABOUT SECTION
+   ════════════════════════════════════ */
+.about-content{max-width:600px;margin:0 auto}
+.about-content p{font-family:'Crimson Pro',serif;font-size:.92rem;color:var(--muted);line-height:1.7;margin-bottom:.8rem}
+.about-content p strong{color:var(--text-bright);font-style:normal}
+.about-content a{color:var(--gold);text-decoration:none}
+.about-content a:hover{text-decoration:underline}
+
+/* ════════════════════════════════════
+   FOOTER
+   ════════════════════════════════════ */
+.footer{text-align:center;padding:2rem 0;margin-top:2rem;border-top:1px solid var(--border)}
+.footer p{font-size:.68rem;color:var(--muted2);line-height:1.6}
+.footer a{color:var(--muted);text-decoration:none}
+.footer a:hover{color:var(--gold)}
+
+@media(max-width:600px){
+  h1.site-title{font-size:2.6rem}
+  .hero-sub{gap:1rem}
+  .game-grid{grid-template-columns:1fr}
+  .academy-grid{grid-template-columns:1fr}
+}
+</style>
+</head>
+<body>
+<div class="outer">
+
+<!-- ═══════════════════════════════════ HERO ═══════════════════════════════════ -->
+<div class="hero">
+<h1 class="site-title">MATHS<span class="w">WINS</span></h1>
+<div class="tagline">Games of skill, mathematical thinking, and the numbers behind every game of chance.</div>
+
+<div class="hero-sub">
+<div class="hero-stat"><div class="hs-num">13</div><div class="hs-label">Free games</div></div>
+<div class="hero-stat"><div class="hs-num">5</div><div class="hs-label">Academy courses</div></div>
+<div class="hero-stat"><div class="hs-num">0%</div><div class="hs-label">Guesswork</div></div>
+</div>
+</div>
+
+<!-- ═══════════════════════════════════ NAV ═══════════════════════════════════ -->
+<div class="nav">
+<button class="nav-pill active" onclick="showSection('games')">Games</button>
+<button class="nav-pill" onclick="showSection('academy')">Academy</button>
+<button class="nav-pill" onclick="showSection('about')">About</button>
+</div>
+
+<!-- ═══════════════════════════════════ GAMES ═══════════════════════════════════ -->
+<div id="sec-games" class="section active">
+<div class="section-header">
+<h2>GAMES</h2>
+<p>Skill-based. No luck. No guessing. Pure mathematical thinking.</p>
+</div>
+
+<div class="game-grid">
+<div class="game-card cat-puzzle" onclick="go('games/countdown-numbers/')">
+<div class="gc-title">Countdown Numbers</div>
+<div class="gc-desc">Six cards. One target. Make it using +, −, ×, ÷. Same cards for everyone — pure arithmetic skill.</div>
+<div class="gc-tags"><span class="gc-tag free">Free</span><span class="gc-tag competitive">Competitive</span><span class="gc-tag">Arithmetic</span></div>
+</div>
+
+<div class="game-card cat-puzzle" onclick="go('games/52dle/')">
+<div class="gc-title">52-dle</div>
+<div class="gc-desc">Daily word puzzle. Crypto edition. One word per day — share your score on-chain.</div>
+<div class="gc-tags"><span class="gc-tag free">Free</span><span class="gc-tag">Daily</span><span class="gc-tag">Words</span></div>
+</div>
+
+<div class="game-card cat-number" onclick="go('games/equatle/')">
+<div class="gc-title">Equatle</div>
+<div class="gc-desc">Build the equation. Like Wordle, but with numbers and operators.</div>
+<div class="gc-tags"><span class="gc-tag free">Free</span><span class="gc-tag">Daily</span><span class="gc-tag">Equations</span></div>
+</div>
+
+<div class="game-card cat-strategy" onclick="go('games/sudoku-duel/')">
+<div class="gc-title">Sudoku Duel</div>
+<div class="gc-desc">Head-to-head Sudoku. Same puzzle, race to finish. Speed + logic.</div>
+<div class="gc-tags"><span class="gc-tag free">Free</span><span class="gc-tag competitive">VS</span><span class="gc-tag">Logic</span></div>
+</div>
+
+<div class="game-card cat-number" onclick="go('games/higher-or-lower/')">
+<div class="gc-title">Higher or Lower</div>
+<div class="gc-desc">Predict the next number. Build a streak. How far can your intuition carry you?</div>
+<div class="gc-tags"><span class="gc-tag free">Free</span><span class="gc-tag">Number Sense</span></div>
+</div>
+
+<div class="game-card cat-number" onclick="go('games/prime-or-composite/')">
+<div class="gc-title">Prime or Composite</div>
+<div class="gc-desc">Rapid classification. Is this number prime? Five seconds to decide.</div>
+<div class="gc-tags"><span class="gc-tag free">Free</span><span class="gc-tag">Primes</span></div>
+</div>
+
+<div class="game-card cat-number" onclick="go('games/estimation-engine/')">
+<div class="gc-title">Estimation Engine</div>
+<div class="gc-desc">Mental arithmetic with a tolerance. Close enough counts.</div>
+<div class="gc-tags"><span class="gc-tag free">Free</span><span class="gc-tag">Mental Maths</span></div>
+</div>
+
+<div class="game-card cat-puzzle" onclick="go('games/sequence-solver/')">
+<div class="gc-title">Sequence Solver</div>
+<div class="gc-desc">Spot the pattern. Complete the sequence. Escalates from obvious to evil.</div>
+<div class="gc-tags"><span class="gc-tag free">Free</span><span class="gc-tag">Patterns</span></div>
+</div>
+
+<div class="game-card cat-logic" onclick="go('games/towers-of-hanoi/')">
+<div class="gc-title">Towers of Hanoi</div>
+<div class="gc-desc">The classic recursion puzzle. Move the stack. Minimum moves = 2ⁿ − 1.</div>
+<div class="gc-tags"><span class="gc-tag free">Free</span><span class="gc-tag">Logic</span></div>
+</div>
+
+<div class="game-card cat-puzzle" onclick="go('games/cryptarithmetic-club/')">
+<div class="gc-title">Cryptarithmetic Club</div>
+<div class="gc-desc">SEND + MORE = MONEY. Replace letters with digits. Pure deduction.</div>
+<div class="gc-tags"><span class="gc-tag free">Free</span><span class="gc-tag">Deduction</span></div>
+</div>
+
+<div class="game-card cat-logic" onclick="go('games/memory-matrix/')">
+<div class="gc-title">Memory Matrix</div>
+<div class="gc-desc">Remember the grid pattern. Reproduce it. Scales until your brain melts.</div>
+<div class="gc-tags"><span class="gc-tag free">Free</span><span class="gc-tag">Memory</span></div>
+</div>
+
+<div class="game-card cat-strategy" onclick="go('games/dont-press-it/')">
+<div class="gc-title">Don't Press It</div>
+<div class="gc-desc">The button multiplies your score. But press too many times and you lose everything. When do you stop?</div>
+<div class="gc-tags"><span class="gc-tag free">Free</span><span class="gc-tag">Risk</span><span class="gc-tag">Expected Value</span></div>
+</div>
+
+<div class="game-card cat-strategy" onclick="go('games/rps-vs-machine/')">
+<div class="gc-title">RPS vs Machine</div>
+<div class="gc-desc">Rock Paper Scissors against a pattern-learning AI. Can you be random enough to beat it?</div>
+<div class="gc-tags"><span class="gc-tag free">Free</span><span class="gc-tag">Game Theory</span></div>
+</div>
+</div>
+</div>
+
+<!-- ═══════════════════════════════════ ACADEMY ═══════════════════════════════════ -->
+<div id="sec-academy" class="section">
+<div class="section-header">
+<h2>MATHS ALWAYS WINS — ACADEMY</h2>
+<p>Understand the mathematics before you play. Not gambling — education.</p>
+</div>
+
+<div class="academy-grid">
+<div class="academy-card ac-bj" onclick="go('academy/blackjack/')">
+<div class="ac-accent"></div>
+<div class="ac-eyebrow">11 Modules · 3 Tiers</div>
+<div class="ac-title">BLACKJACK ACADEMY</div>
+<div class="ac-desc">Basic strategy, splitting, insurance maths, card counting theory, 10,000-hand simulations, session replay with EV analysis. Every decision has a mathematically correct answer — learn them all.</div>
+<div class="ac-stats">
+<div class="ac-stat"><div class="as-num">78+</div><div class="as-label">Scenarios</div></div>
+<div class="ac-stat"><div class="as-num" style="color:var(--gold)">−0.5%</div><div class="as-label">Optimal edge</div></div>
+<div class="ac-stat"><div class="as-num">5</div><div class="as-label">Interactive tools</div></div>
+</div>
+<div class="ac-price">From 500 QF</div>
+</div>
+
+<div class="academy-card ac-pk" onclick="go('academy/poker/')">
+<div class="ac-accent"></div>
+<div class="ac-eyebrow">11 Modules · 3 Tiers</div>
+<div class="ac-title">POKER SCHOOL</div>
+<div class="ac-desc">Pot odds, equity vs range, GTO fundamentals, ICM tournament theory. The only casino game where the house doesn't have an edge — your opponents do.</div>
+<div class="ac-stats">
+<div class="ac-stat"><div class="as-num">75+</div><div class="as-label">Scenarios</div></div>
+<div class="ac-stat"><div class="as-num" style="color:var(--green)">+5 BB/hr</div><div class="as-label">Winning rate</div></div>
+<div class="ac-stat"><div class="as-num">10</div><div class="as-label">Tutorials</div></div>
+</div>
+<div class="ac-price">From 500 QF</div>
+</div>
+
+<div class="academy-card ac-sb" onclick="go('academy/sports-betting/')">
+<div class="ac-accent"></div>
+<div class="ac-eyebrow">8 Modules · 3 Tiers</div>
+<div class="ac-title">SPORTS BETTING MATHS</div>
+<div class="ac-desc">How odds work, implied probability, overround calculation, value betting, why accumulators are terrible, bankroll management. The maths every bettor should know.</div>
+<div class="ac-stats">
+<div class="ac-stat"><div class="as-num">95%</div><div class="as-label">Of bettors lose</div></div>
+<div class="ac-stat"><div class="as-num" style="color:var(--blue)">5-20%</div><div class="as-label">Bookie margin</div></div>
+<div class="ac-stat"><div class="as-num">2</div><div class="as-label">Live calculators</div></div>
+</div>
+<div class="ac-price">From 500 QF</div>
+</div>
+
+<div class="academy-card ac-rl" onclick="go('academy/roulette/')">
+<div class="ac-accent"></div>
+<div class="ac-eyebrow">5 Modules · Single Tier</div>
+<div class="ac-title">ROULETTE REALITY CHECK</div>
+<div class="ac-desc">Every system fails. We prove it with 100,000-spin simulations. Martingale, Fibonacci, D'Alembert — all demolished with pure mathematics.</div>
+<div class="ac-stats">
+<div class="ac-stat"><div class="as-num" style="color:var(--red)">2.70%</div><div class="as-label">House edge</div></div>
+<div class="ac-stat"><div class="as-num">0</div><div class="as-label">Systems that work</div></div>
+<div class="ac-stat"><div class="as-num">100k</div><div class="as-label">Simulated spins</div></div>
+</div>
+<div class="ac-price">250 QF</div>
+</div>
+
+<div class="academy-card ac-cr" onclick="go('academy/craps/')">
+<div class="ac-accent"></div>
+<div class="ac-eyebrow">5 Modules · Single Tier</div>
+<div class="ac-title">CRAPS DECODED</div>
+<div class="ac-desc">The most intimidating game in the casino has the best AND worst bets, inches apart. The odds bet has 0% house edge — the only fair bet in any casino.</div>
+<div class="ac-stats">
+<div class="ac-stat"><div class="as-num" style="color:var(--green)">0%</div><div class="as-label">Odds bet edge</div></div>
+<div class="ac-stat"><div class="as-num" style="color:var(--red)">16.67%</div><div class="as-label">"Any 7" edge</div></div>
+<div class="ac-stat"><div class="as-num">36</div><div class="as-label">Dice outcomes</div></div>
+</div>
+<div class="ac-price">250 QF</div>
+</div>
+</div>
+</div>
+
+<!-- ═══════════════════════════════════ ABOUT ═══════════════════════════════════ -->
+<div id="sec-about" class="section">
+<div class="section-header">
+<h2>ABOUT</h2>
+</div>
+<div class="about-content">
+<p><strong>MathsWins</strong> is built on a simple premise: in every game of skill, chance, or strategy, the person who understands the mathematics has the advantage.</p>
+<p>Our free games test mental arithmetic, pattern recognition, logic, and strategic thinking. No luck required — just your brain.</p>
+<p>Our <strong>Maths Always Wins</strong> academy teaches the probability, expected value, and decision theory behind casino games and sports betting. Not to help you gamble — to help you <strong>understand the numbers before you do</strong>.</p>
+<p>We also build <strong>free maths games for UK schools</strong> at <a href="https://maffsgames.co.uk/schools/" target="_blank">maffsgames.co.uk</a> — curriculum-aligned, no sign-up, no data collected, used in classrooms across the country.</p>
+<p>Built on the <strong>QF Network</strong>. Payments in QF tokens. Soulbound NFTs as course credentials.</p>
+<p style="font-size:.8rem;margin-top:1.5rem"><strong>Contact:</strong> <a href="mailto:contact@maffsgames.co.uk">contact@maffsgames.co.uk</a></p>
+</div>
+</div>
+
+<!-- ═══════════════════════════════════ FOOTER ═══════════════════════════════════ -->
+<div class="footer">
+<p>
+MathsWins · Built on <a href="#">QF Network</a> · Schools: <a href="https://maffsgames.co.uk/schools/">maffsgames.co.uk</a><br>
+No personal data collected · Cookieless analytics · <a href="mailto:contact@maffsgames.co.uk">Contact</a>
+</p>
+</div>
+
+</div>
+
+<script>
+function showSection(id){
+  document.querySelectorAll('.section').forEach(s=>s.classList.remove('active'));
+  document.getElementById('sec-'+id).classList.add('active');
+  document.querySelectorAll('.nav-pill').forEach(p=>p.classList.remove('active'));
+  event.target.classList.add('active');
+}
+function go(path){window.location.href=path}
+</script>
+</body>
+</html>
