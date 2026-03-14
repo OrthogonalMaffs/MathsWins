@@ -1,0 +1,324 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Trading Maths — Maths Always Wins</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=DM+Mono:wght@400;500&family=Bebas+Neue&family=Crimson+Pro:ital,wght@0,400;0,700;1,400&family=Outfit:wght@300;400;600;700&display=swap" rel="stylesheet">
+<script async src="https://www.googletagmanager.com/gtag/js?id=G-CLNF7GSB28"></script>
+<script>window.dataLayer=window.dataLayer||[];function gtag(){dataLayer.push(arguments);}gtag('js',new Date());gtag('config','G-CLNF7GSB28',{send_page_view:true,storage:'none',anonymize_ip:true});</script>
+<style>
+*{margin:0;padding:0;box-sizing:border-box}
+:root{--bg:#06080c;--surface:#0c0f16;--surface2:#111620;--border:#1a2030;--border2:#242e40;--accent:#10b981;--accent-dim:rgba(16,185,129,.06);--green-bright:#2dd4a0;--red-bright:#ef5350;--gold:#d4a847;--text:#d8dce4;--text-bright:#f0f2f6;--muted:#5a6478}
+body{font-family:'Outfit',sans-serif;background:var(--bg);color:var(--text);min-height:100vh;-webkit-font-smoothing:antialiased}
+.outer{max-width:800px;margin:0 auto;padding:0 1rem 2rem}
+.hero{text-align:center;padding:3rem 0 1.5rem;border-bottom:1px solid var(--border)}
+.hero-ey{font-family:'DM Mono',monospace;font-size:.65rem;letter-spacing:.25em;text-transform:uppercase;color:var(--accent);margin-bottom:.6rem}
+.hero h1{font-family:'Bebas Neue',sans-serif;font-size:3rem;letter-spacing:.04em;color:var(--text-bright);line-height:1.1}
+.hero h1 span{color:var(--accent)}
+.hero .tag{font-family:'Crimson Pro',serif;font-style:italic;font-size:1.05rem;color:var(--muted);margin-top:.5rem}
+.stats-bar{display:grid;grid-template-columns:repeat(4,1fr);gap:1px;background:var(--border);border:1px solid var(--border);border-radius:10px;overflow:hidden;margin:1.5rem 0}
+.sc{background:var(--surface);padding:.8rem .4rem;text-align:center}
+.sc .sn{font-family:'DM Mono',monospace;font-size:1.3rem;font-weight:500;color:var(--accent)}
+.sc .sl{font-size:.58rem;color:var(--muted);margin-top:.15rem;line-height:1.3}
+.screen{display:none}.screen.active{display:block}
+.mc{background:var(--surface);border:1px solid var(--border);border-radius:8px;padding:.6rem .8rem;margin-bottom:.3rem;display:flex;justify-content:space-between;align-items:center;cursor:pointer;transition:all .12s}
+.mc:hover{border-color:var(--accent);transform:translateX(3px)}
+.mc .mn{font-size:.82rem;font-weight:600}.mc .md{font-size:.65rem;color:var(--muted)}
+.tier-hdr{display:flex;align-items:center;gap:.5rem;margin:.6rem 0 .3rem}
+.tb{font-family:'DM Mono',monospace;font-size:.58rem;padding:2px 8px;border-radius:5px;font-weight:500;letter-spacing:.05em;text-transform:uppercase}
+.tb-b{background:rgba(16,185,129,.12);color:var(--accent)}
+.tb-a{background:rgba(212,168,71,.08);color:var(--gold)}
+.tp{font-family:'DM Mono',monospace;font-size:.65rem;color:var(--muted)}
+.cta{display:block;margin:1rem auto;padding:.55rem 1.5rem;border-radius:8px;font-family:'Outfit',sans-serif;font-size:.82rem;font-weight:600;cursor:pointer;border:2px solid var(--accent);background:var(--accent);color:#000;text-align:center;max-width:300px}
+.bb{display:inline-block;margin:.4rem 0;padding:.3rem .9rem;border:none;border-radius:6px;background:var(--border);color:var(--text);font-family:'Outfit',sans-serif;font-size:.75rem;font-weight:600;cursor:pointer}
+.tut{background:var(--surface);border:1px solid var(--border);border-radius:10px;padding:1.1rem;margin-bottom:.5rem;line-height:1.75;font-size:.85rem}
+.tut h3{color:var(--accent);font-size:.88rem;margin-bottom:.3rem}
+.tut p{margin-bottom:.4rem}
+.tut .pt{padding:.4rem .7rem;margin:.4rem 0;border-radius:6px;border-left:3px solid var(--accent);background:var(--accent-dim)}
+.tut .dg{padding:.4rem .7rem;margin:.4rem 0;border-radius:6px;border-left:3px solid var(--red-bright);background:rgba(239,83,80,.06);color:var(--red-bright)}
+.tut .mb{font-family:'DM Mono',monospace;background:var(--bg);border-radius:6px;padding:.5rem;margin:.4rem 0;font-size:.78rem;line-height:1.8}
+.tut .mb .pos{color:var(--green-bright)}.tut .mb .neg{color:var(--red-bright)}
+.tut .pln{font-family:'Crimson Pro',serif;font-size:.88rem;color:#0e9aa7;font-style:italic;margin:.3rem 0}
+.disc{background:var(--surface);border:1px solid var(--border2);border-radius:10px;padding:1rem;margin:1rem 0}
+.disc p{font-family:'Crimson Pro',serif;font-size:.85rem;color:var(--muted);line-height:1.6;font-style:italic;margin-bottom:.3rem}
+.disc p strong{color:var(--accent);font-style:normal}
+@media(max-width:600px){.hero h1{font-size:2.2rem}.stats-bar{grid-template-columns:repeat(2,1fr)}}
+</style>
+</head>
+<body>
+<div class="outer">
+
+<div id="landing" class="screen active">
+<div class="hero">
+<div class="hero-ey">Maths Always Wins</div>
+<h1>TRADING <span>MATHS</span></h1>
+<div class="tag">Not financial advice. The mathematical framework that separates professionals from the 90% who lose.</div>
+</div>
+
+<div class="stats-bar">
+<div class="sc"><div class="sn">70-90%</div><div class="sl">Retail traders<br>who lose money</div></div>
+<div class="sc"><div class="sn">£0</div><div class="sl">Cost of the spread<br>most traders ignore</div></div>
+<div class="sc"><div class="sn">2:1</div><div class="sl">Minimum risk/reward<br>for profitability</div></div>
+<div class="sc"><div class="sn">1-2%</div><div class="sl">Max risk per trade<br>(professional standard)</div></div>
+</div>
+
+<div class="disc">
+<p>This is NOT financial advice. We don't recommend trades, assets, or strategies. We teach the <strong>mathematical principles</strong> that every professional trader uses: expected value, position sizing, risk management, and the statistical reality of why most retail traders lose.</p>
+<p>If you're going to trade, understand the maths first. If the maths puts you off — good. That's the point.</p>
+</div>
+
+<div style="margin:1rem 0">
+<div class="tier-hdr"><span class="tb tb-b">Basic</span><span class="tp">500 QF · 7 days</span></div>
+<div class="mc" onclick="loadMod(0)"><div><div class="mn">1. Why Most Traders Lose</div><div class="md">The spread, overtrading, leverage, and the maths of a negative-sum game.</div></div></div>
+<div class="mc" onclick="loadMod(1)"><div><div class="mn">2. Risk/Reward Ratios</div><div class="md">Why a 50% win rate can be profitable — or catastrophic — depending on R:R.</div></div></div>
+<div class="mc" onclick="loadMod(2)"><div><div class="mn">3. Position Sizing</div><div class="md">The 1-2% rule. Kelly criterion for traders. Why size matters more than direction.</div></div></div>
+
+<div class="tier-hdr"><span class="tb tb-a">Advanced</span><span class="tp">1500 QF · 14 days</span></div>
+<div class="mc" onclick="loadMod(3)"><div><div class="mn">4. Expected Value of a Trading Strategy</div><div class="md">Win rate × average win − loss rate × average loss. The number that matters.</div></div></div>
+<div class="mc" onclick="loadMod(4)"><div><div class="mn">5. Survivorship Bias</div><div class="md">Why trading "gurus" appear successful. The graveyard of accounts you never see.</div></div></div>
+<div class="mc" onclick="loadMod(5)"><div><div class="mn">6. Variance & Drawdowns</div><div class="md">Even profitable strategies have losing streaks. Can you survive them?</div></div></div>
+</div>
+
+<button class="cta" onclick="loadMod(0)">Start Module 1</button>
+</div>
+
+<div id="lesson" class="screen">
+<div id="content"></div>
+<button class="bb" onclick="show('landing')">← Back</button>
+</div>
+</div>
+
+<script>
+function show(id){document.querySelectorAll('.screen').forEach(s=>s.classList.remove('active'));document.getElementById(id).classList.add('active');window.scrollTo(0,0)}
+function loadMod(i){show('lesson');const c=document.getElementById('content');[modWhy,modRR,modSize,modEV,modSurv,modVar][i](c)}
+
+function modWhy(c){c.innerHTML=`
+<div class="tut">
+<h3>Why 70-90% of Retail Traders Lose Money</h3>
+<p>This isn't opinion. EU regulations require brokers to publish the percentage of retail accounts that lose money. The numbers are consistent: 70-90% lose.</p>
+
+<div class="pt">Trading is a NEGATIVE-SUM game for retail participants. Before anyone makes a profit, costs must be covered: spreads, commissions, overnight financing, and slippage. These costs mean the average retail trader starts at a mathematical disadvantage.</div>
+
+<h3>The Spread — Your Invisible Tax</h3>
+<div class="mb">
+<strong>Every trade costs you the spread before you can profit:</strong><br><br>
+EUR/USD spread: typically 1 pip = <span class="neg">£10 per standard lot</span><br>
+If you make 5 trades per day, 20 trading days per month:<br>
+100 trades × £10 spread = <span class="neg">£1,000/month in spreads alone</span><br><br>
+To BREAK EVEN, your trading must generate <span class="pos">£1,000/month</span> before you see any profit.
+</div>
+
+<div class="pln">In plain English: the spread is like a casino's house edge. Every time you open a trade, you start at a loss equal to the spread. You must be right by MORE than the spread just to break even. The more you trade, the more you pay.</div>
+
+<h3>Leverage — The Accelerant</h3>
+<div class="mb">
+<strong>50:1 leverage on a £1,000 account:</strong><br>
+You control £50,000 of currency.<br>
+A 1% move in your favour: <span class="pos">+£500 (50% return)</span><br>
+A 1% move against you: <span class="neg">−£500 (50% loss)</span><br>
+A 2% move against you: <span class="neg">−£1,000 (account wiped)</span><br><br>
+Currency pairs routinely move 1-2% in a day.<br>
+At 50:1 leverage, a normal day's movement can destroy your account.
+</div>
+
+<div class="dg">Leverage doesn't increase your edge — it increases your VARIANCE. A profitable strategy at 1:1 leverage might be profitable at 10:1. At 50:1, the same strategy becomes a coin flip between doubling your account and losing it, because the position size relative to your capital is too large to survive normal drawdowns.</div>
+
+<h3>Overtrading — The Behavioural Trap</h3>
+<div class="mb">
+<strong>The maths of overtrading:</strong><br><br>
+Each trade costs ~1 pip in spread.<br>
+A strategy with 55% win rate and 1:1 R:R has EV of +0.10 per unit per trade.<br>
+After spread (assume 1 pip = 0.1 units): net EV = +0.10 − 0.10 = <span class="neg">0.00</span><br><br>
+<strong>The spread alone can turn a winning strategy into a breakeven one.</strong><br>
+Trade more frequently? The spread cost compounds. Your 55% win rate stays the same but your costs multiply.
+</div>
+
+<div class="pt">Professional traders make fewer, higher-quality trades. Retail traders make more, lower-quality trades. The maths rewards patience and punishes activity. This is counterintuitive — "doing more" feels productive but costs money.</div>
+</div>`}
+
+function modRR(c){c.innerHTML=`
+<div class="tut">
+<h3>Risk/Reward Ratios</h3>
+<p>Your win rate means nothing without knowing your risk/reward ratio. A 30% win rate can be profitable. A 70% win rate can be catastrophic.</p>
+
+<div class="mb">
+<strong>Strategy A: 70% win rate, 1:3 R:R (risk 3 to win 1)</strong><br>
+100 trades: 70 wins × £1 = <span class="pos">+£70</span><br>
+30 losses × £3 = <span class="neg">−£90</span><br>
+Net: <span class="neg">−£20</span> (LOSING despite 70% win rate)<br><br>
+
+<strong>Strategy B: 35% win rate, 1:3 R:R (risk 1 to win 3)</strong><br>
+100 trades: 35 wins × £3 = <span class="pos">+£105</span><br>
+65 losses × £1 = <span class="neg">−£65</span><br>
+Net: <span class="pos">+£40</span> (WINNING despite only 35% win rate)
+</div>
+
+<div class="pt">Strategy A wins 70% of the time and loses money. Strategy B wins 35% of the time and makes money. The R:R ratio matters more than the win rate. This is the most important concept in trading mathematics.</div>
+
+<div class="pln">In plain English: it doesn't matter how often you're right. It matters how much you make when you're right versus how much you lose when you're wrong. Professional traders are often wrong more than they're right — but their wins are 2-3× bigger than their losses.</div>
+
+<div class="mb">
+<strong>The breakeven win rate for each R:R:</strong><br><br>
+1:1 R:R → need <span class="neg">50%+ win rate</span> to profit<br>
+1:2 R:R → need <span class="pos">33%+ win rate</span> to profit<br>
+1:3 R:R → need <span class="pos">25%+ win rate</span> to profit<br>
+2:1 R:R → need <span class="neg">67%+ win rate</span> to profit<br>
+3:1 R:R → need <span class="neg">75%+ win rate</span> to profit<br><br>
+<strong>At 1:2 R:R, you can be wrong 2 out of 3 times and still profit.</strong>
+</div>
+
+<div class="dg">Most retail traders have the R:R backwards: they take profits quickly (small wins) and let losses run (big losses). This gives them a high win rate that FEELS good but is mathematically catastrophic. It's 70% win rate with 1:3 R:R — a guaranteed loser.</div>
+</div>`}
+
+function modSize(c){c.innerHTML=`
+<div class="tut">
+<h3>Position Sizing: The 1-2% Rule</h3>
+<p>Position sizing determines how much of your capital you risk on each trade. It's the difference between surviving a losing streak and blowing up your account.</p>
+
+<div class="pt">Professional standard: never risk more than 1-2% of your total capital on any single trade. This isn't conservative — it's mathematically necessary to survive the variance inherent in any trading strategy.</div>
+
+<div class="mb">
+<strong>The maths of ruin at different risk levels:</strong><br><br>
+Account: £10,000. Strategy: 55% win rate, 1:2 R:R (positive expectancy).<br><br>
+Risk 10% per trade (£1,000):<br>
+P(losing 5 in a row) = 0.45^5 = 1.8%<br>
+After 5 losses: account at £5,000 (need 100% gain to recover)<br>
+<span class="neg">~15% probability of ruin over 1000 trades</span><br><br>
+
+Risk 2% per trade (£200):<br>
+P(losing 5 in a row) = 0.45^5 = 1.8% (same probability)<br>
+After 5 losses: account at £9,000 (need 11% gain to recover)<br>
+<span class="pos">~0.1% probability of ruin over 1000 trades</span><br><br>
+
+<strong>Same strategy. Same losing streak probability. Dramatically different outcomes.</strong>
+</div>
+
+<h3>Kelly Criterion for Trading</h3>
+<div class="mb">
+<strong>f* = (W × R − L) / R</strong><br>
+Where W = win rate, L = loss rate, R = reward/risk ratio<br><br>
+Example: 55% win rate, 1:2 R:R<br>
+f* = (0.55 × 2 − 0.45) / 2 = (1.10 − 0.45) / 2 = 0.325 = <span class="pos">32.5%</span><br><br>
+Kelly says risk 32.5%? That seems insane.<br>
+That's because full Kelly is extremely aggressive.<br><br>
+<strong>Half-Kelly: 16.25%</strong> — still aggressive<br>
+<strong>Quarter-Kelly: 8.1%</strong> — more reasonable<br>
+<strong>Professional norm: 1-2%</strong> — far below Kelly, but accounts for model uncertainty
+</div>
+
+<div class="pln">Professionals risk far below the Kelly criterion because they don't trust their edge estimate. Kelly assumes you know your exact win rate and R:R — in reality, these are estimates that could be wrong. Risking 1-2% provides a massive safety margin for estimation error.</div>
+</div>`}
+
+function modEV(c){c.innerHTML=`
+<div class="tut">
+<h3>Expected Value of a Trading Strategy</h3>
+<p>Before risking real money, calculate the expected value of your strategy. If EV is negative, no amount of discipline or position sizing will save you.</p>
+
+<div class="mb">
+<strong>Expectancy formula:</strong><br><br>
+E = (W × Avg Win) − (L × Avg Loss)<br><br>
+Where W = win rate, L = loss rate = 1 − W<br><br>
+<strong>Example:</strong><br>
+Win rate: 45%, Average win: £200, Average loss: £100<br>
+E = (0.45 × 200) − (0.55 × 100)<br>
+E = 90 − 55 = <span class="pos">+£35 per trade</span><br><br>
+Over 100 trades: expected profit = <span class="pos">£3,500</span><br>
+After spreads (~£10/trade): net = <span class="pos">£2,500</span>
+</div>
+
+<div class="pt">Expectancy must be calculated AFTER costs (spreads, commissions, financing). A strategy with +£35 expectancy before costs and −£10 in costs per trade has true expectancy of +£25. If costs exceed expectancy, the strategy is a loser regardless of win rate.</div>
+
+<div class="mb">
+<strong>How many trades before you KNOW your strategy works?</strong><br><br>
+Statistical significance requires a LARGE sample.<br>
+Rule of thumb: minimum <span class="pos">200-500 trades</span> before drawing conclusions.<br><br>
+At 45% win rate, there's a 5% chance of a 10-trade losing streak.<br>
+In 500 trades, you'll almost certainly experience one.<br>
+If your position sizing can't survive it, you'll blow up before proving the strategy works.
+</div>
+
+<div class="dg">Most retail traders evaluate strategies on 20-50 trades. This is statistically meaningless. A random strategy (coin flip) can easily show a "profit" over 50 trades due to variance. You need hundreds of trades in varying market conditions to distinguish skill from luck.</div>
+</div>`}
+
+function modSurv(c){c.innerHTML=`
+<div class="tut">
+<h3>Survivorship Bias: Why "Gurus" Look Successful</h3>
+<p>For every trading guru showing their winning track record, there are 100 failed traders who tried the same thing and blew up. You never see the failures.</p>
+
+<div class="pt">Survivorship bias is the logical error of focusing on people who succeeded and ignoring those who failed, then concluding that success is more common or easier than it actually is.</div>
+
+<div class="mb">
+<strong>The maths of apparent success:</strong><br><br>
+1,000 people start trading with random strategies (no edge).<br>
+After year 1 (~50% should profit by chance): ~500 remain "profitable."<br>
+After year 2: ~250 remain.<br>
+After year 3: ~125 remain.<br>
+After year 5: ~31 remain.<br><br>
+These 31 people have 5-year track records of profitable trading.<br>
+They write books. They sell courses. They appear on YouTube.<br>
+<span class="neg">They have no edge. They had luck. And 969 people lost money.</span>
+</div>
+
+<div class="pln">In plain English: if enough people flip coins and call it "trading," some will have impressive winning streaks. Those people will genuinely believe they have a skill. They'll teach others their "method." The method is noise. The track record is survivorship bias.</div>
+
+<div class="mb">
+<strong>How to identify survivorship bias:</strong><br><br>
+<span class="neg">Red flag:</span> "My method has a 90% success rate" (over how many trades? In what conditions?)<br>
+<span class="neg">Red flag:</span> "I turned £1,000 into £100,000" (with what drawdowns? How many accounts did you blow up first?)<br>
+<span class="neg">Red flag:</span> "Follow my signals for guaranteed returns" (if it worked, why sell it for £99/month?)<br>
+<span class="neg">Red flag:</span> Only shows winning trades (what about the losers?)<br><br>
+<span class="pos">Green flag:</span> Shows complete track record including losses<br>
+<span class="pos">Green flag:</span> Discusses drawdowns and losing periods openly<br>
+<span class="pos">Green flag:</span> Talks about edge in probabilistic terms, not certainties<br>
+<span class="pos">Green flag:</span> Emphasises risk management over entry signals
+</div>
+
+<div class="dg">The most profitable person in a trading guru's business model is the guru, not the student. Course fees are risk-free income. Trading is not. If someone's "edge" were real and significant, they'd be trading with it, not selling it for £49/month.</div>
+</div>`}
+
+function modVar(c){c.innerHTML=`
+<div class="tut">
+<h3>Variance & Drawdowns: The Survival Game</h3>
+<p>Even a genuinely profitable strategy will have significant losing periods. The question isn't "will I have a drawdown?" — it's "can I survive it?"</p>
+
+<div class="mb">
+<strong>Maximum expected drawdown by win rate (1:2 R:R, 1% risk per trade):</strong><br><br>
+60% win rate: max drawdown ~8-12% (over 1000 trades)<br>
+55% win rate: max drawdown ~12-18%<br>
+50% win rate: max drawdown ~20-30%<br>
+45% win rate: max drawdown ~25-40%<br><br>
+At 2% risk per trade, double these numbers.
+</div>
+
+<div class="pt">A strategy with a 55% win rate and 1:2 R:R is solidly profitable long-term. But it WILL experience a 15-20% drawdown at some point. If you can't psychologically handle watching your account drop 20% — and most people can't — you'll abandon the strategy during the drawdown. This is how profitable strategies produce losses: the trader quits during the inevitable hard patch.</div>
+
+<div class="mb">
+<strong>The recovery problem:</strong><br><br>
+10% drawdown: need <span class="pos">11%</span> gain to recover<br>
+20% drawdown: need <span class="pos">25%</span> gain to recover<br>
+30% drawdown: need <span class="neg">43%</span> gain to recover<br>
+50% drawdown: need <span class="neg">100%</span> gain to recover<br>
+70% drawdown: need <span class="neg">233%</span> gain to recover<br><br>
+<strong>Drawdowns are asymmetric.</strong> The deeper you go, the harder it is to climb back. This is why position sizing is more important than entry signals.
+</div>
+
+<div class="pln">In plain English: if you lose 50% of your account, you need to DOUBLE your remaining money just to get back to where you started. A 50% loss requires a 100% gain to recover. This asymmetry is why professional traders obsess over limiting drawdowns.</div>
+
+<div class="mb">
+<strong>The emotional cycle of a drawdown:</strong><br><br>
+Trade 1-10: Strategy working. Confidence high.<br>
+Trade 11-20: Small losing streak. "Normal variance."<br>
+Trade 21-30: Larger drawdown. Doubt creeps in.<br>
+Trade 31-40: Account down 15%. "Is this strategy broken?"<br>
+Trade 41-45: Panic. Abandon strategy. Switch to something else.<br>
+Trade 46-60: Original strategy recovers (without you in it).<br><br>
+<strong>This is the most common path to failure.</strong> The strategy was fine. The trader's risk tolerance wasn't.
+</div>
+
+<div class="pt">The solution: size your positions so that the maximum expected drawdown is psychologically tolerable BEFORE you start trading. If you can't handle a 20% drawdown, risk 0.5% per trade instead of 2%. The expected return drops but so does the emotional torture. A strategy you can actually follow through drawdowns beats a "better" strategy you'll abandon.</div>
+</div>`}
+</script>
+</body>
+</html>

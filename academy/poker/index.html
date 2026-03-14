@@ -1,0 +1,1475 @@
+<!--
+  POKER SCHOOL — CHUNK 1: CORE ENGINE
+  Contains: Landing page, all CSS, card/hand engine, equity calculator,
+  pot odds engine, scenario player, module loader framework.
+  
+  CC: This is the main file. All other chunks provide module data
+  that gets merged into SCENARIOS and TUTORIALS objects.
+-->
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Poker School — Maths Always Wins — QF Games</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=DM+Mono:wght@400;500&family=Bebas+Neue&family=Crimson+Pro:ital,wght@0,400;0,700;1,400&family=Outfit:wght@300;400;600;700&display=swap" rel="stylesheet">
+<script async src="https://www.googletagmanager.com/gtag/js?id=G-CLNF7GSB28"></script>
+<script>window.dataLayer=window.dataLayer||[];function gtag(){dataLayer.push(arguments);}gtag('js',new Date());gtag('config','G-CLNF7GSB28',{send_page_view:true,storage:'none',anonymize_ip:true});</script>
+<style>
+*{margin:0;padding:0;box-sizing:border-box}
+:root{
+  --bg:#06080c;--surface:#0c0f16;--surface2:#111620;--border:#1a2030;--border2:#242e40;
+  --gold:#d4a847;--gold-dim:rgba(212,168,71,.08);--gold-glow:rgba(212,168,71,.15);
+  --green:#1a8a5c;--green-bright:#2dd4a0;--red:#c0392b;--red-bright:#ef5350;
+  --blue:#2c6fbb;--cyan:#0e9aa7;--purple:#7c3aed;
+  --text:#d8dce4;--text-bright:#f0f2f6;--muted:#5a6478;
+  --felt:#0a2e1c;--felt-border:#145a38;
+  --card-face:#f2efe6;--card-red:#b71c1c;
+}
+body{font-family:'Outfit',sans-serif;background:var(--bg);color:var(--text);min-height:100vh;-webkit-font-smoothing:antialiased}
+.outer{max-width:800px;margin:0 auto;padding:0 1rem 2rem}
+a{color:var(--gold);text-decoration:none}a:hover{text-decoration:underline}
+
+/* HERO */
+.hero{text-align:center;padding:3rem 0 1.5rem;border-bottom:1px solid var(--border)}
+.hero-ey{font-family:'DM Mono',monospace;font-size:.65rem;letter-spacing:.25em;text-transform:uppercase;color:var(--green-bright);margin-bottom:.6rem}
+.hero h1{font-family:'Bebas Neue',sans-serif;font-size:3.2rem;letter-spacing:.04em;color:var(--text-bright);line-height:1.1}
+.hero h1 span{color:var(--green-bright)}
+.hero .tag{font-family:'Crimson Pro',serif;font-style:italic;font-size:1.05rem;color:var(--muted);margin-top:.5rem}
+
+/* STATS */
+.stats-bar{display:grid;grid-template-columns:repeat(4,1fr);gap:1px;background:var(--border);border:1px solid var(--border);border-radius:10px;overflow:hidden;margin:1.5rem 0}
+.sc{background:var(--surface);padding:.8rem .4rem;text-align:center}
+.sc .sn{font-family:'DM Mono',monospace;font-size:1.4rem;font-weight:500;color:var(--green-bright)}
+.sc .sl{font-size:.6rem;color:var(--muted);margin-top:.15rem;line-height:1.3}
+
+/* PROOF */
+.proof{background:var(--surface);border:1px solid var(--border);border-radius:12px;padding:1.3rem;margin:1.2rem 0}
+.proof h2{font-family:'Bebas Neue',sans-serif;font-size:1.2rem;letter-spacing:.04em;color:var(--text-bright);margin-bottom:.6rem}
+.proof-note{font-family:'Crimson Pro',serif;font-size:.85rem;color:var(--muted);line-height:1.6;font-style:italic}
+.proof-note strong{color:var(--green-bright);font-style:normal}
+.proof-grid{display:grid;grid-template-columns:1fr 1fr;gap:.8rem;margin:.5rem 0}
+.proof-col h3{font-size:.72rem;color:var(--muted);text-transform:uppercase;letter-spacing:.08em;margin-bottom:.4rem}
+.proof-row{display:flex;justify-content:space-between;padding:.25rem 0;border-bottom:1px solid var(--border);font-size:.78rem}
+.proof-row .v{font-family:'DM Mono',monospace;font-size:.75rem}
+.proof-row .v.bad{color:var(--red-bright)}.proof-row .v.good{color:var(--green-bright)}
+
+/* MODULE CARDS */
+.mod-section{margin:1.2rem 0}
+.mod-section>h2{font-family:'Bebas Neue',sans-serif;font-size:1.2rem;letter-spacing:.04em;color:var(--text-bright);margin-bottom:.4rem}
+.tier-group{margin-bottom:.8rem}
+.tier-hdr{display:flex;align-items:center;gap:.5rem;margin-bottom:.3rem}
+.tb{font-family:'DM Mono',monospace;font-size:.58rem;padding:2px 8px;border-radius:5px;font-weight:500;letter-spacing:.05em;text-transform:uppercase}
+.tb-b{background:rgba(44,111,187,.12);color:var(--blue)}
+.tb-a{background:var(--gold-dim);color:var(--gold)}
+.tb-m{background:rgba(124,58,237,.1);color:var(--purple)}
+.tp{font-family:'DM Mono',monospace;font-size:.65rem;color:var(--muted)}
+.mc{background:var(--surface);border:1px solid var(--border);border-radius:8px;padding:.6rem .8rem;margin-bottom:.3rem;display:flex;justify-content:space-between;align-items:center;cursor:pointer;transition:all .12s}
+.mc:hover{border-color:var(--green-bright);transform:translateX(3px)}
+.mc .mn{font-size:.82rem;font-weight:600}.mc .md{font-size:.65rem;color:var(--muted)}.mc .mq{font-family:'DM Mono',monospace;font-size:.62rem;color:var(--muted)}
+
+.cta-row{display:flex;gap:.5rem;justify-content:center;margin:1.2rem 0;flex-wrap:wrap}
+.cta{padding:.55rem 1.3rem;border-radius:8px;font-family:'Outfit',sans-serif;font-size:.82rem;font-weight:600;cursor:pointer;border:2px solid var(--border);transition:all .15s}
+.cta-p{background:var(--green-bright);color:#000;border-color:var(--green-bright)}
+.cta-g{background:transparent;color:var(--green-bright);border-color:var(--green-bright)}
+
+.disc{background:var(--surface);border:1px solid var(--border2);border-radius:10px;padding:1rem;margin:1rem 0}
+.disc h2{font-family:'Bebas Neue',sans-serif;font-size:1rem;color:var(--text-bright);margin-bottom:.4rem}
+.disc p{font-family:'Crimson Pro',serif;font-size:.85rem;color:var(--muted);line-height:1.6;font-style:italic;margin-bottom:.3rem}
+.disc p strong{color:var(--green-bright);font-style:normal}
+
+.screen{display:none}.screen.active{display:block}
+
+/* LESSON SCREEN */
+.les-top{display:flex;justify-content:space-between;align-items:center;padding:.5rem 0;border-bottom:1px solid var(--border);margin-bottom:.5rem}
+.les-title{font-size:.9rem;font-weight:600}.les-prog{font-family:'DM Mono',monospace;font-size:.72rem;color:var(--muted)}
+.pbar{background:var(--border);border-radius:3px;height:4px;margin-bottom:.5rem;overflow:hidden}
+.pfill{height:100%;background:var(--green-bright);border-radius:3px;transition:width .3s}
+.hud{display:flex;gap:1rem;justify-content:center;padding:.3rem 0;margin-bottom:.4rem}
+.hud-b{text-align:center}.hud-b .hn{font-family:'DM Mono',monospace;font-size:.95rem;font-weight:500}.hud-b .hl{font-size:.5rem;color:var(--muted);text-transform:uppercase;letter-spacing:.05em}
+
+/* TUTORIAL */
+.tut{background:var(--surface);border:1px solid var(--border);border-radius:10px;padding:1.1rem;margin-bottom:.5rem;line-height:1.75;font-size:.85rem}
+.tut h3{color:var(--green-bright);font-size:.88rem;margin-bottom:.3rem}
+.tut p{margin-bottom:.4rem}
+.tut .pt{padding:.4rem .7rem;margin:.4rem 0;border-radius:6px;border-left:3px solid var(--green-bright);background:rgba(45,212,160,.06)}
+.tut .dg{padding:.4rem .7rem;margin:.4rem 0;border-radius:6px;border-left:3px solid var(--red-bright);background:rgba(239,83,80,.06);color:var(--red-bright)}
+.tut .mb{font-family:'DM Mono',monospace;background:var(--bg);border-radius:6px;padding:.5rem;margin:.4rem 0;font-size:.78rem;line-height:1.8}
+.tut .mb .pos{color:var(--green-bright)}.tut .mb .neg{color:var(--red-bright)}
+.tut .pln{font-family:'Crimson Pro',serif;font-size:.88rem;color:var(--cyan);font-style:italic;margin:.3rem 0}
+
+/* POKER TABLE */
+.felt{background:linear-gradient(180deg,#0a2e1c,#082618);border-radius:14px;padding:1rem;margin-bottom:.5rem;border:2px solid var(--felt-border)}
+.board-area{text-align:center;margin:.5rem 0}
+.board-label{font-size:.5rem;color:rgba(255,255,255,.3);text-transform:uppercase;letter-spacing:.1em;margin-bottom:.3rem}
+.cr{display:flex;gap:.3rem;justify-content:center;flex-wrap:wrap;margin:.2rem 0}
+.your-hand{text-align:center;margin:.5rem 0}
+.fdiv{height:1px;background:rgba(255,255,255,.06);margin:.4rem 0}
+
+/* POT & INFO */
+.pot-info{display:flex;justify-content:center;gap:1rem;margin:.4rem 0}
+.pi-box{text-align:center;background:rgba(0,0,0,.2);border-radius:6px;padding:.3rem .6rem}
+.pi-box .pi-lbl{font-size:.5rem;color:rgba(255,255,255,.35);text-transform:uppercase}
+.pi-box .pi-val{font-family:'DM Mono',monospace;font-size:.9rem;color:var(--gold)}
+
+/* CARDS — same as blackjack */
+.c{width:46px;height:64px;background:var(--card-face);border-radius:5px;display:inline-flex;flex-direction:column;align-items:center;justify-content:center;font-family:'DM Mono',monospace;font-weight:500;box-shadow:0 2px 5px rgba(0,0,0,.4);line-height:1}
+.c .r{font-size:.85rem}.c .s{font-size:.75rem}
+.c.rd{color:var(--card-red)}.c.bk{color:#1a1a1a}
+.c.fd{background:linear-gradient(135deg,#14305a,#0c2040);border:1.5px solid #1e4070}
+.c.fd .r,.c.fd .s{visibility:hidden}
+
+/* ACTIONS */
+.ar{display:flex;gap:.3rem;justify-content:center;margin:.4rem 0;flex-wrap:wrap}
+.ab{padding:.4rem .9rem;border-radius:7px;border:1.5px solid var(--border2);background:var(--surface2);color:var(--text);font-family:'Outfit',sans-serif;font-size:.8rem;font-weight:600;cursor:pointer;transition:all .1s}
+.ab:hover{border-color:var(--green-bright)}.ab.dis{opacity:.2;pointer-events:none}
+
+/* ANALYSIS */
+.an{display:none;background:var(--surface);border:1px solid var(--border2);border-radius:10px;padding:.9rem;margin-bottom:.4rem;font-size:.8rem;line-height:1.6}
+.an.show{display:block;animation:su .25s ease-out}
+@keyframes su{from{opacity:0;transform:translateY(8px)}to{opacity:1;transform:translateY(0)}}
+.an h3{color:var(--green-bright);font-size:.8rem;margin-bottom:.2rem;font-weight:600}
+.ag{display:grid;grid-template-columns:1fr 1fr;gap:.25rem;margin:.3rem 0}
+.ac{background:var(--bg);border-radius:5px;padding:.3rem .4rem;text-align:center}
+.ac .al{font-size:.5rem;color:var(--muted);text-transform:uppercase;letter-spacing:.04em}
+.ac .av{font-family:'DM Mono',monospace;font-size:.82rem}
+.ac .av.pos{color:var(--green-bright)}.ac .av.neg{color:var(--red-bright)}
+.rsn{margin:.3rem 0;padding:.4rem .6rem;border-left:2px solid var(--green-bright);color:var(--muted);font-size:.75rem;line-height:1.6}
+.rsn strong{color:var(--text)}
+.pln{font-family:'Crimson Pro',serif;font-size:.82rem;color:var(--cyan);margin:.3rem 0;font-style:italic}
+.vrd{padding:.35rem;border-radius:6px;text-align:center;font-weight:600;font-size:.8rem;margin:.3rem 0}
+.vrd.ok{background:rgba(45,212,160,.08);color:var(--green-bright)}
+.vrd.no{background:rgba(239,83,80,.08);color:var(--red-bright)}
+.vrd.nu{background:rgba(212,168,71,.06);color:var(--gold)}
+.nb{display:inline-block;margin-top:.3rem;padding:.3rem .9rem;border:none;border-radius:6px;background:var(--green-bright);color:#000;font-family:'Outfit',sans-serif;font-size:.75rem;font-weight:600;cursor:pointer}
+.bb{display:inline-block;margin:.4rem 0;padding:.3rem .9rem;border:none;border-radius:6px;background:var(--border);color:var(--text);font-family:'Outfit',sans-serif;font-size:.75rem;font-weight:600;cursor:pointer}
+
+/* RANGE GRID */
+.range-grid{display:grid;grid-template-columns:repeat(13,1fr);gap:1px;margin:.5rem 0;font-size:.5rem;font-family:'DM Mono',monospace}
+.rg-cell{aspect-ratio:1;display:flex;align-items:center;justify-content:center;border-radius:2px;cursor:default;font-size:.48rem;line-height:1}
+.rg-cell.suited{background:rgba(45,212,160,.15);color:var(--green-bright)}
+.rg-cell.offsuit{background:rgba(212,168,71,.1);color:var(--gold)}
+.rg-cell.pair{background:rgba(44,111,187,.15);color:var(--blue)}
+.rg-cell.fold{background:var(--border);color:var(--muted)}
+.rg-cell.play{border:1px solid var(--green-bright)}
+
+/* RESULTS */
+.res{text-align:center;padding:2rem 0}
+.res h2{font-family:'Bebas Neue',sans-serif;font-size:1.6rem;color:var(--text-bright)}
+.res .big{font-family:'DM Mono',monospace;font-size:2.8rem;color:var(--green-bright);margin:.4rem 0}
+.res .det{color:var(--muted);line-height:1.8;font-size:.8rem;margin-bottom:.8rem}
+
+@media(max-width:600px){
+  .stats-bar{grid-template-columns:repeat(2,1fr)}
+  .proof-grid{grid-template-columns:1fr}
+  .hero h1{font-size:2.2rem}
+  .range-grid{font-size:.4rem}
+}
+</style>
+</head>
+<body>
+<div class="outer">
+
+<!-- ═══════════════════════════════════
+     LANDING PAGE
+     ═══════════════════════════════════ -->
+<div id="landing" class="screen active">
+<div class="hero">
+<div class="hero-ey">QF Games · Educational Suite</div>
+<h1>POKER <span>SCHOOL</span></h1>
+<div class="tag">The maths behind every decision at the table.</div>
+</div>
+
+<div class="stats-bar">
+<div class="sc"><div class="sn">−4 BB/hr</div><div class="sl">Average recreational<br>player loss rate</div></div>
+<div class="sc"><div class="sn">0 BB/hr</div><div class="sl">Breakeven player<br>(understands pot odds)</div></div>
+<div class="sc"><div class="sn">+5 BB/hr</div><div class="sl">Winning regular<br>(applies range theory)</div></div>
+<div class="sc"><div class="sn">+10 BB/hr</div><div class="sl">Strong player<br>(GTO + exploitation)</div></div>
+</div>
+
+<div class="proof">
+<h2>WHY MATHS WINS AT POKER</h2>
+<div class="proof-grid">
+<div class="proof-col">
+<h3>The recreational player</h3>
+<div class="proof-row"><span>Plays too many hands</span><span class="v bad">40%+ VPIP</span></div>
+<div class="proof-row"><span>Calls without pot odds</span><span class="v bad">−EV calls</span></div>
+<div class="proof-row"><span>Ignores position</span><span class="v bad">Blind to advantage</span></div>
+<div class="proof-row"><span>Doesn't count outs</span><span class="v bad">Guessing</span></div>
+<div class="proof-row"><span>Chases flushes/straights</span><span class="v bad">Overvalues draws</span></div>
+</div>
+<div class="proof-col">
+<h3>The Poker School graduate</h3>
+<div class="proof-row"><span>Plays 18-22% of hands</span><span class="v good">Disciplined</span></div>
+<div class="proof-row"><span>Calculates pot odds</span><span class="v good">+EV only</span></div>
+<div class="proof-row"><span>Adjusts by position</span><span class="v good">Positional edge</span></div>
+<div class="proof-row"><span>Counts outs precisely</span><span class="v good">Rule of 2 and 4</span></div>
+<div class="proof-row"><span>Folds when odds say fold</span><span class="v good">Discipline = profit</span></div>
+</div>
+</div>
+<div class="proof-note">Poker is the only common casino/card game where <strong>the house doesn't have an edge against you</strong> — you're playing against other humans. The house takes a small rake, but your opponent's mistakes are your profit. The maths isn't about beating the casino. It's about <strong>being better than the other players at the table</strong>.</div>
+</div>
+
+<div class="disc">
+<h2>POKER VS BLACKJACK: THE KEY DIFFERENCE</h2>
+<p>In blackjack, perfect play reduces the house edge to 0.5% — but you still lose long-term. In poker, <strong>there is no house edge</strong>. You play against other people. If you make better mathematical decisions than your opponents, you win their money. The rake is the cost of playing — typically 2.5-5% of each pot, capped.</p>
+<p>This school teaches you to make <strong>better mathematical decisions</strong> than 90% of recreational players. That's the edge. That's the profit.</p>
+</div>
+
+<div class="mod-section">
+<h2>CURRICULUM — 11 MODULES</h2>
+
+<div class="tier-group">
+<div class="tier-hdr"><span class="tb tb-b">Basic</span><span class="tp">500 QF · 7 days</span></div>
+<div class="mc" onclick="loadMod('p1')"><div><div class="mn">1. Hand Rankings & Starting Hands</div><div class="md">Which hands to play. The 13×13 range grid. Why A♠K♠ ≠ A♣K♦</div></div><div class="mq">Tutorial + 20</div></div>
+<div class="mc" onclick="loadMod('p2')"><div><div class="mn">2. Pot Odds & Outs</div><div class="md">Counting outs, calculating pot odds, the Rule of 2 and 4</div></div><div class="mq">Tutorial + 20</div></div>
+<div class="mc" onclick="loadMod('p3')"><div><div class="mn">3. Position & Pre-flop Strategy</div><div class="md">UTG through Button. Why position is worth two extra cards</div></div><div class="mq">Tutorial + 15</div></div>
+<div class="mc" onclick="loadMod('p4')"><div><div class="mn">4. Post-flop Fundamentals</div><div class="md">Board texture, continuation betting, when top pair isn't enough</div></div><div class="mq">Tutorial + 20</div></div>
+</div>
+
+<div class="tier-group">
+<div class="tier-hdr"><span class="tb tb-a">Advanced</span><span class="tp">1500 QF · 14 days</span></div>
+<div class="mc" onclick="loadMod('p5')"><div><div class="mn">5. Equity vs Range</div><div class="md">Stop thinking about single hands. Think about ranges.</div></div><div class="mq">Tutorial + 20</div></div>
+<div class="mc" onclick="loadMod('p6')"><div><div class="mn">6. Implied Odds & Reverse Implied</div><div class="md">When pot odds say fold but you should call — and vice versa</div></div><div class="mq">Tutorial + 15</div></div>
+<div class="mc" onclick="loadMod('p7')"><div><div class="mn">7. Bet Sizing Theory</div><div class="md">Why you bet ⅔ pot. Polarised vs merged. Value vs bluff ratios</div></div><div class="mq">Tutorial + 15</div></div>
+<div class="mc" onclick="loadMod('p8')"><div><div class="mn">8. Opponent Profiling</div><div class="md">TAG, LAG, calling station, nit. How to exploit each type</div></div><div class="mq">Tutorial + 15</div></div>
+</div>
+
+<div class="tier-group">
+<div class="tier-hdr"><span class="tb tb-m">Master</span><span class="tp">3000 QF · 30 days</span></div>
+<div class="mc" onclick="loadMod('p9')"><div><div class="mn">9. GTO Fundamentals</div><div class="md">Game Theory Optimal play. Balanced ranges. Nash equilibrium</div></div><div class="mq">Tutorial + 15</div></div>
+<div class="mc" onclick="loadMod('p10')"><div><div class="mn">10. Tournament Strategy & ICM</div><div class="md">Chip EV ≠ money EV. Bubble dynamics. Final table theory</div></div><div class="mq">Tutorial + 15</div></div>
+<div class="mc" onclick="loadMod('p11')"><div><div class="mn">11. Full Table Simulator</div><div class="md">6-player table. AI opponents. Every decision graded. Session report</div></div><div class="mq">Session + report</div></div>
+</div>
+</div>
+
+<div class="cta-row">
+<button class="cta cta-p" onclick="loadMod('p1')">Try Module 1 Free</button>
+</div>
+</div>
+
+<!-- ═══════════════════════════════════
+     LESSON SCREEN
+     ═══════════════════════════════════ -->
+<div id="lesson" class="screen">
+<div class="les-top"><div class="les-title" id="lTitle"></div><div class="les-prog" id="lProg"></div></div>
+<div class="pbar"><div class="pfill" id="pFill"></div></div>
+<div class="hud" id="hudArea">
+<div class="hud-b"><div class="hn" id="hOpt">0/0</div><div class="hl">Optimal</div></div>
+<div class="hud-b"><div class="hn" id="hAcc">—</div><div class="hl">Accuracy</div></div>
+<div class="hud-b"><div class="hn" id="hStrk">0</div><div class="hl">Streak</div></div>
+</div>
+<div id="tutArea"></div>
+<div class="felt" id="feltArea" style="display:none">
+<div class="board-area"><div class="board-label">Community Cards</div><div class="cr" id="boardCards"></div></div>
+<div class="pot-info">
+<div class="pi-box"><div class="pi-lbl">Pot</div><div class="pi-val" id="potSize">0</div></div>
+<div class="pi-box"><div class="pi-lbl">To Call</div><div class="pi-val" id="toCall">0</div></div>
+<div class="pi-box"><div class="pi-lbl">Pot Odds</div><div class="pi-val" id="potOdds">—</div></div>
+</div>
+<div class="fdiv"></div>
+<div class="your-hand"><div class="board-label">Your Hand</div><div class="cr" id="holeCards"></div></div>
+</div>
+<div class="ar" id="actR" style="display:none"></div>
+<div class="an" id="anl"></div>
+<button class="bb" onclick="back()">← Back to Poker School</button>
+</div>
+
+<!-- RESULTS -->
+<div id="results" class="screen"><div class="res"><h2 id="rT"></h2><div class="big" id="rB">0%</div><div class="det" id="rD"></div><button class="cta cta-p" onclick="back()">Back to School</button></div></div>
+
+</div>
+<script>
+// ════════════════════════════════════════
+//  NAVIGATION
+// ════════════════════════════════════════
+function show(id){document.querySelectorAll('.screen').forEach(s=>s.classList.remove('active'));document.getElementById(id).classList.add('active');window.scrollTo(0,0)}
+function back(){show('landing')}
+
+// ════════════════════════════════════════
+//  CARD ENGINE
+// ════════════════════════════════════════
+const ST=['♠','♥','♦','♣'],RK=['A','K','Q','J','10','9','8','7','6','5','4','3','2'];
+const RV={A:14,K:13,Q:12,J:11,'10':10,'9':9,'8':8,'7':7,'6':6,'5':5,'4':4,'3':3,'2':2};
+let deck=[];
+
+function mkDeck(){deck=[];ST.forEach(s=>RK.forEach(r=>deck.push({rank:r,suit:s})));shuf(deck)}
+function shuf(a){for(let i=a.length-1;i>0;i--){const j=Math.floor(Math.random()*(i+1));[a[i],a[j]]=[a[j],a[i]]}return a}
+function dl(){return deck.pop()}
+function mk(r,s){return{rank:r,suit:s||'♠'}}
+
+function rc(c,down){
+  if(down)return '<div class="c fd" style="position:relative"><span class="r"></span><span class="s"></span></div>';
+  const red=c.suit==='♥'||c.suit==='♦';
+  return `<div class="c ${red?'rd':'bk'}"><span class="r">${c.rank}</span><span class="s">${c.suit}</span></div>`;
+}
+
+// ════════════════════════════════════════
+//  POT ODDS CALCULATOR
+// ════════════════════════════════════════
+function calcPotOdds(pot, toCall){
+  if(toCall<=0)return{pct:0,ratio:'free'};
+  const pct=Math.round(toCall/(pot+toCall)*100);
+  const r=Math.round(pot/toCall*10)/10;
+  return{pct,ratio:r+':1'};
+}
+
+function outsToEquity(outs,street){
+  // Rule of 2 and 4
+  if(street==='flop')return Math.min(outs*4,100); // 2 cards to come
+  return Math.min(outs*2,100); // 1 card to come (turn)
+}
+
+// ════════════════════════════════════════
+//  SCENARIO/TUTORIAL DATA — MERGED FROM CHUNKS
+// ════════════════════════════════════════
+const SCENARIOS={
+  p1:[],p2:[],p3:[],p4:[],p5:[],p6:[],p7:[],p8:[],p9:[],p10:[]
+};
+const TUTORIALS={
+  p1:null,p2:null,p3:null,p4:null,p5:null,p6:null,p7:null,p8:null,p9:null,p10:null
+};
+
+
+// ═══ CHUNK 02 ═══
+TUTORIALS.p1 = `
+<div class="tut">
+<h3>Starting Hands: The Foundation of Winning Poker</h3>
+<p>The single biggest mistake recreational players make is playing too many hands. A winning player plays 18-22% of hands dealt to them. A losing player plays 35-50%. That gap — the hands you DON'T play — is where most of your profit comes from.</p>
+
+<div class="pt">Poker is a game of folding. You fold most hands. The hands you choose to play must have a mathematical reason to be played.</div>
+
+<h3>Hand Rankings (Best to Worst)</h3>
+<div class="mb">
+1. <span class="pos">Royal Flush</span> — A K Q J 10 same suit (1 in 649,740)<br>
+2. <span class="pos">Straight Flush</span> — Five consecutive, same suit (1 in 72,193)<br>
+3. <span class="pos">Four of a Kind</span> — Four cards same rank (1 in 4,165)<br>
+4. <span class="pos">Full House</span> — Three of a kind + pair (1 in 694)<br>
+5. <span class="pos">Flush</span> — Five cards same suit (1 in 509)<br>
+6. <span class="pos">Straight</span> — Five consecutive cards (1 in 255)<br>
+7. Three of a Kind — Three same rank (1 in 47)<br>
+8. Two Pair — Two different pairs (1 in 21)<br>
+9. One Pair — One pair (1 in 2.4)<br>
+10. <span class="neg">High Card</span> — Nothing (1 in 2)
+</div>
+
+<div class="pln">You'll make a pair or better about 50% of the time with five cards. But you'll make two pair or better only about 24% of the time. A flush? About 0.2% with five random cards. Don't chase flushes without pot odds (Module 2).</div>
+
+<h3>Suited vs Offsuit — Why It Matters</h3>
+<div class="mb">
+<strong>A♠K♠ (suited) vs A♣K♦ (offsuit):</strong><br><br>
+AKs wins ~67% vs a random hand<br>
+AKo wins ~65% vs a random hand<br><br>
+That 2% difference seems small. But over 10,000 hands, suited connectors make flushes and flush draws that offsuit hands simply cannot. <span class="pos">Suited adds approximately 3-4% equity</span> to any hand.
+</div>
+
+<h3>The 13×13 Range Grid</h3>
+<p>Every possible starting hand fits on a 13×13 grid. Pairs run down the diagonal. Suited hands are above the diagonal. Offsuit hands are below. Learning to "see" this grid is essential.</p>
+
+<div class="mb">
+<strong>Reading the grid:</strong><br>
+• <span style="color:var(--blue)">Blue diagonal = pairs</span> (AA, KK, QQ...)<br>
+• <span style="color:var(--green-bright)">Green above = suited</span> (AKs, AQs, KJs...)<br>
+• <span style="color:var(--gold)">Gold below = offsuit</span> (AKo, AQo, KJo...)<br>
+• Bordered = playable from any position (the tightest range)<br>
+• Unbordered = fold from most positions
+</div>
+
+<h3>Starting Hand Tiers</h3>
+<div class="mb">
+<strong>Tier 1 — Premium (always raise):</strong><br>
+<span class="pos">AA, KK, QQ, JJ, AKs, AKo</span><br>
+About 3% of hands. Raise from any position, every time.<br><br>
+
+<strong>Tier 2 — Strong (raise from most positions):</strong><br>
+<span class="pos">TT, 99, AQs, AQo, AJs, KQs</span><br>
+About 5% of hands. Raise from middle position onward.<br><br>
+
+<strong>Tier 3 — Playable (raise from late position):</strong><br>
+88, 77, ATs, AJo, KJs, QJs, JTs, KQo<br>
+About 7% of hands. Play from hijack, cutoff, button only.<br><br>
+
+<strong>Tier 4 — Speculative (button/blinds only):</strong><br>
+66, 55, 44, 33, 22, suited connectors (T9s-54s), suited Aces (A9s-A2s)<br>
+About 8% of hands. Only with position and the right price.<br><br>
+
+<strong>Everything else: FOLD.</strong>
+</div>
+
+<div class="pt">The top 20% of hands win roughly 80% of the money at a full table. Playing outside that top 20% without a specific mathematical reason is donating chips.</div>
+
+<div class="pln">The hardest part isn't knowing WHAT to play — it's having the discipline to fold everything else. You'll be dealt rubbish 80% of the time. Folding is boring. Folding is profitable. Get comfortable with boredom.</div>
+</div>
+`;
+
+// SCENARIOS — 20 pre-flop decisions
+// Format: {hole, board, street, pot, bet, options, correct, why, plain, equity, potOddsNeeded, setup}
+
+SCENARIOS.p1 = [
+  {hole:[mk('A','♠'),mk('A','♥')],street:'preflop',pot:15,bet:0,options:['Fold','Call','Raise'],correct:'raise',setup:'You\'re dealt A♠A♥ in middle position. No one has raised yet.',why:'AA is the best starting hand in poker. You raise 100% of the time from every position. Limping (just calling) wastes the value of the best hand dealt.',plain:'You have pocket Aces — the absolute best hand. Raise to build the pot and thin the field. Never just call with Aces.'},
+
+  {hole:[mk('7','♦'),mk('2','♣')],street:'preflop',pot:15,bet:10,options:['Fold','Call','Raise'],correct:'fold',setup:'You\'re dealt 7♦2♣ under the gun. Someone has raised to 10.',why:'72o is the worst hand in poker. No straight potential, no flush potential, two low unconnected cards. Fold 100% of the time from every position.',plain:'This is the worst possible hand. Fold immediately. No question.'},
+
+  {hole:[mk('A','♠'),mk('K','♠')],street:'preflop',pot:15,bet:10,options:['Fold','Call','Raise'],correct:'raise',setup:'You hold A♠K♠ on the button. One player has raised to 10.',why:'AKs is a premium hand — the best non-pair starting hand. It has ~67% equity vs a random hand and ~46% vs a typical raising range. 3-bet (re-raise) for value.',plain:'Ace-King suited is a monster. Re-raise to build the pot and take control.'},
+
+  {hole:[mk('J','♥'),mk('10','♥')],street:'preflop',pot:15,bet:0,options:['Fold','Call','Raise'],correct:'raise',setup:'You have J♥10♥ on the cutoff (one before the button). Everyone has folded to you.',why:'JTs is a strong suited connector in late position. With everyone folding to you, raise to steal the blinds or play in position if called.',plain:'Jack-Ten suited is a great hand when you have position. Raise — you might win the blinds outright, and if called, you have a hand that makes lots of straights and flushes.'},
+
+  {hole:[mk('K','♦'),mk('9','♣')],street:'preflop',pot:15,bet:10,options:['Fold','Call','Raise'],correct:'fold',setup:'K♦9♣ in early position. A tight player has raised.',why:'K9o is a trap hand. It looks decent but plays poorly against a raising range. The K is often dominated by AK, KQ, KJ. Fold.',plain:'King-Nine offsuit looks tempting but it\'s a losing hand against a raise. Your King is usually outmatched. Fold and wait for something better.'},
+
+  {hole:[mk('Q','♠'),mk('Q','♥')],street:'preflop',pot:15,bet:10,options:['Fold','Call','Raise'],correct:'raise',setup:'You hold Q♠Q♥ in the hijack. A loose player has raised to 10.',why:'QQ is a premium hand — the third-best starting hand. 3-bet for value. Against a loose raiser, QQ has ~57% equity vs their range.',plain:'Pocket Queens are strong. Re-raise. You\'re ahead of almost everything a loose player raises with.'},
+
+  {hole:[mk('A','♣'),mk('5','♣')],street:'preflop',pot:15,bet:0,options:['Fold','Call','Raise'],correct:'raise',setup:'A♣5♣ on the button. Folded to you.',why:'A5s on the button with folds to you — raise. The Ace gives you high card strength, the suited 5 gives flush potential, and you have position.',plain:'Suited Ace on the button with everyone folding? Raise to steal the blinds. If called, you can make the nut flush.'},
+
+  {hole:[mk('8','♠'),mk('8','♦')],street:'preflop',pot:15,bet:30,options:['Fold','Call','Raise'],correct:'fold',setup:'8♠8♦ under the gun. A tight player has raised to 10 and another tight player has re-raised to 30.',why:'88 is a decent pair but against TWO raises from tight players, you\'re likely against QQ+ and AK. Your equity is only about 18% against that range. Fold and save your money.',plain:'Pocket 8s are fine normally, but two tight players raising and re-raising screams big hands. You\'re probably crushed. Fold.'},
+
+  {hole:[mk('A','♥'),mk('J','♥')],street:'preflop',pot:15,bet:10,options:['Fold','Call','Raise'],correct:'raise',setup:'A♥J♥ in the cutoff. One player has raised to 10.',why:'AJs is a strong hand in position. You have nut flush potential, top pair potential, and position. 3-bet or call are both reasonable; 3-bet is slightly better for value and initiative.',plain:'Ace-Jack suited with position is strong. Re-raise to take control of the hand.'},
+
+  {hole:[mk('9','♠'),mk('8','♠')],street:'preflop',pot:15,bet:0,options:['Fold','Call','Raise'],correct:'raise',setup:'9♠8♠ on the button. Two limpers.',why:'98s on the button with limpers — raise. Suited connectors play well in position, and your raise may thin the field or win it outright. Limping behind gives up initiative.',plain:'Suited connectors with position are gold. Raise to take control. If you hit a straight or flush draw, you\'ll have position to play it perfectly.'},
+
+  {hole:[mk('K','♠'),mk('Q','♠')],street:'preflop',pot:15,bet:10,options:['Fold','Call','Raise'],correct:'raise',setup:'K♠Q♠ in the hijack. A player has raised to 10.',why:'KQs has strong equity (~48%) against a typical opening range. In position, this is a 3-bet for value. You can make top pair, straights, and flushes.',plain:'King-Queen suited is a premium hand. Re-raise and play aggressively.'},
+
+  {hole:[mk('10','♦'),mk('3','♥')],street:'preflop',pot:15,bet:0,options:['Fold','Call','Raise'],correct:'fold',setup:'T♦3♥ in early position. No one has acted.',why:'T3o is unplayable from any position. Unconnected, unsuited, low card drags down the high card. Fold.',plain:'Ten-Three offsuit has no redeeming features. Fold without a second thought.'},
+
+  {hole:[mk('A','♦'),mk('K','♦')],street:'preflop',pot:15,bet:30,options:['Fold','Call','Raise'],correct:'raise',setup:'A♦K♦ in the big blind. A player raised to 10, another re-raised to 30.',why:'AKs is a premium hand even against 3-bet ranges. You have ~40% equity against QQ and ~46% against JJ. 4-bet (re-re-raise) or call are both correct; 4-betting is higher EV.',plain:'Ace-King suited stands up even against strong re-raises. Go to war with this hand.'},
+
+  {hole:[mk('6','♠'),mk('6','♣')],street:'preflop',pot:15,bet:10,options:['Fold','Call','Raise'],correct:'call',setup:'6♠6♣ on the button. One player raised to 10. The pot is 25 (including blinds).',why:'Small pairs are "set mining" hands. You call hoping to hit a set (three of a kind) on the flop — which happens about 12% of the time. You need implied odds of roughly 8:1 to profit. If the raiser has a deep stack (80+ big blinds), calling is profitable.',plain:'Small pairs are about one thing: hitting three-of-a-kind on the flop. That happens about 1 in 8 times. If you can win a big pot when you hit, calling is worth it. If stacks are short, fold.'},
+
+  {hole:[mk('J','♣'),mk('8','♦')],street:'preflop',pot:15,bet:10,options:['Fold','Call','Raise'],correct:'fold',setup:'J♣8♦ under the gun. A player has raised.',why:'J8o is a weak hand. Unconnected enough to miss most straights, offsuit so no flush potential, and easily dominated by AJ, KJ, QJ. Fold.',plain:'Jack-Eight offsuit is a losing hand against a raise. You\'ll be outmatched too often. Fold.'},
+
+  {hole:[mk('5','♥'),mk('4','♥')],street:'preflop',pot:15,bet:10,options:['Fold','Call','Raise'],correct:'fold',setup:'5♥4♥ in middle position. A tight player raised.',why:'54s is a speculative hand that needs specific conditions: deep stacks, multiway pot, position. Against a single tight raiser from middle position, you have none of these. Fold.',plain:'Small suited connectors can be great in the right spot — this isn\'t it. No position, one raiser, probably against big cards. Fold.'},
+
+  {hole:[mk('A','♣'),mk('A','♦')],street:'preflop',pot:15,bet:30,options:['Fold','Call','Raise'],correct:'raise',setup:'A♣A♦ in the small blind. A player raised to 10, another re-raised to 30.',why:'AA is always a raise. Against a raise and a re-raise, you\'re almost certainly ahead. 4-bet and try to get all the money in pre-flop. AA has ~82% equity against any single hand.',plain:'You have the nuts pre-flop. Raise as much as you can. You want all the money in the middle.'},
+
+  {hole:[mk('K','♥'),mk('J','♦')],street:'preflop',pot:15,bet:0,options:['Fold','Call','Raise'],correct:'raise',setup:'K♥J♦ on the cutoff. Folded to you.',why:'KJo on the cutoff with folds to you is a clear raise. You have position, a decent hand, and only the button and blinds left to act.',plain:'King-Jack with position and folds to you — raise. You might take the blinds, and if called you have a reasonable hand to continue.'},
+
+  {hole:[mk('10','♠'),mk('10','♥')],street:'preflop',pot:15,bet:10,options:['Fold','Call','Raise'],correct:'raise',setup:'T♠T♥ in middle position. A player raised to 10.',why:'TT is a strong hand — the 5th best starting hand. Against a single raise, you should 3-bet. You\'re ahead of most of their range (AJs, ATs, 99, 88, KQs etc.) and only behind AA, KK, QQ, JJ, AKs.',plain:'Pocket Tens are strong. Re-raise. You\'re ahead of most hands that would raise.'},
+
+  {hole:[mk('Q','♣'),mk('7','♠')],street:'preflop',pot:15,bet:10,options:['Fold','Call','Raise'],correct:'fold',setup:'Q♣7♠ in the big blind. A player raised to 10 from early position.',why:'Q7o vs an early position raise is a clear fold. Even though you\'re getting a discount in the big blind, Q7o has terrible equity against an EP range (maybe 32%). The pot odds are ~3:1 requiring 25% equity — close, but Q7o plays so badly post-flop that it\'s not worth it.',plain:'Queen-Seven offsuit is junk against an early position raiser. Their range is strong, your hand is weak. Fold and save your blind.'},
+];
+
+// ═══ CHUNK 03 ═══
+TUTORIALS.p2 = `
+<div class="tut">
+<h3>Pot Odds & Outs: The Mathematical Core of Poker</h3>
+<p>This is the single most important concept in poker. If you learn nothing else from this course, learn this. Pot odds determine whether calling a bet is mathematically profitable — regardless of whether you win <em>this particular hand</em>.</p>
+
+<div class="pt">The question is never "will I win?" — it's "am I getting the right price to call?" If the pot odds are better than your probability of winning, you call. If not, you fold. It's arithmetic, not intuition.</div>
+
+<h3>What Are Outs?</h3>
+<p>An "out" is any unseen card that will complete your hand. The more outs you have, the more likely you are to win.</p>
+
+<div class="mb">
+<strong>Common draws and their outs:</strong><br><br>
+Flush draw (4 to a flush): <span class="pos">9 outs</span> (13 of each suit, minus the 4 you can see)<br>
+Open-ended straight draw (e.g. 6789): <span class="pos">8 outs</span> (4 fives + 4 tens)<br>
+Gutshot straight draw (e.g. 679T): <span class="neg">4 outs</span> (4 eights only)<br>
+Two overcards (e.g. AK on a low board): <span class="pos">6 outs</span> (3 Aces + 3 Kings)<br>
+One pair → two pair or trips: <span class="neg">5 outs</span> (2 for trips + 3 for two pair)<br>
+Flush draw + overcards: <span class="pos">15 outs</span> (9 flush + 6 overcards)<br>
+Flush draw + open-ended straight: <span class="pos">15 outs</span> (9 flush + 8 straight, minus 2 overlap)
+</div>
+
+<h3>The Rule of 2 and 4</h3>
+<p>The quick way to convert outs to equity (probability of completing your hand):</p>
+
+<div class="mb">
+<strong>On the flop (two cards to come):</strong><br>
+Equity ≈ Outs × 4<br><br>
+<strong>On the turn (one card to come):</strong><br>
+Equity ≈ Outs × 2<br><br>
+<strong>Examples:</strong><br>
+Flush draw on the flop: 9 × 4 = <span class="pos">~36%</span> (actual: 35%)<br>
+Flush draw on the turn: 9 × 2 = <span class="pos">~18%</span> (actual: 19.6%)<br>
+Open-ended straight on flop: 8 × 4 = <span class="pos">~32%</span> (actual: 31.5%)<br>
+Gutshot on turn: 4 × 2 = <span class="neg">~8%</span> (actual: 8.7%)
+</div>
+
+<div class="pln">In plain English: if you have a flush draw on the flop, you'll complete it roughly 1 in 3 times by the river. That's not a guess — it's probability. The question is whether the pot is offering you the right price to chase it.</div>
+
+<h3>Pot Odds</h3>
+<p>Pot odds are the ratio of the current pot to the cost of calling.</p>
+
+<div class="mb">
+<strong>Formula:</strong><br>
+Pot odds (%) = Bet to call ÷ (Pot + Bet to call) × 100<br><br>
+
+<strong>Example:</strong><br>
+Pot = 100. Opponent bets 50. You must call 50 to continue.<br>
+Pot odds = 50 ÷ (100 + 50) = 50/150 = <span class="pos">33%</span><br><br>
+
+This means you need at least 33% equity (chance of winning) to call profitably.<br><br>
+
+<strong>As a ratio:</strong><br>
+Pot odds = (Pot + Bet) : Bet = 150:50 = <span class="pos">3:1</span><br>
+You're risking 50 to win 150. You need to win 1 in 4 times (25%) just to break even.
+</div>
+
+<div class="pt">THE KEY RULE: If your equity (from outs) is GREATER than the pot odds requirement, CALL. If your equity is LESS, FOLD. That's the entire decision.</div>
+
+<h3>Putting It Together</h3>
+
+<div class="mb">
+<strong>Scenario:</strong><br>
+You have 8♠7♠. Board: 6♦9♣K♠2♠<br>
+You have: flush draw (9 outs) + open-ended straight draw (8 outs, minus 2 overlap with flush = 6 extra outs)<br>
+Total outs: <span class="pos">15</span><br>
+Turn to river equity: 15 × 2 = <span class="pos">~30%</span><br><br>
+Pot is 200. Opponent bets 100. You must call 100.<br>
+Pot odds: 100 / (200+100) = <span class="pos">33%</span><br><br>
+You need 33% equity. You have ~30%. <span class="neg">FOLD.</span><br>
+Close — but the maths says fold. If the bet were 75 instead (pot odds = 27%), you'd call.
+</div>
+
+<div class="pln">This is the discipline that separates winners from losers. The recreational player thinks "but I might hit my flush!" The mathematical player thinks "I need 33% equity, I have 30%, that's a losing call over 1000 hands." The recreational player is right occasionally and loses slowly. The mathematical player is right systematically and wins consistently.</div>
+
+<div class="dg">Never chase a draw without checking the pot odds first. A flush draw is NOT an automatic call. A gutshot is almost NEVER a call. The maths tells you when to chase and when to fold. Listen to it.</div>
+</div>
+`;
+
+SCENARIOS.p2 = [
+  // FLUSH DRAWS
+  {hole:[mk('A','♠'),mk('8','♠')],board:[mk('K','♠'),mk('5','♠'),mk('J','♦')],street:'flop',pot:120,bet:60,options:['Fold','Call','Raise'],correct:'call',
+    outs:'9 flush outs',outsEquity:'36',equity:36,potOddsNeeded:33,
+    setup:'You have A♠8♠. Board: K♠5♠J♦. Flush draw with the nut flush (Ace high). Pot is 120, opponent bets 60.',
+    why:'9 outs × 4 = 36% equity on the flop. Pot odds: 60/(120+60) = 33%. Your equity (36%) exceeds the pot odds needed (33%). Call.',
+    plain:'You\'ll hit your flush about 1 in 3 times by the river. The pot is giving you better than 3:1, so calling makes money long-term.'},
+
+  {hole:[mk('Q','♥'),mk('J','♥')],board:[mk('9','♥'),mk('3','♥'),mk('A','♣')],street:'flop',pot:80,bet:80,options:['Fold','Call','Raise'],correct:'call',
+    outs:'9 flush outs',outsEquity:'36',equity:36,potOddsNeeded:50,
+    setup:'Q♥J♥ on 9♥3♥A♣. Flush draw. Pot is 80, opponent bets 80 (pot-sized bet).',
+    why:'Wait — pot odds: 80/(80+80) = 50%. You only have 36% equity. The maths says FOLD... but this is the nut flush draw with two overcards. Adding overcard outs (Q and J, ~3 more clean outs) brings equity to ~46%. Still below 50%. Technically a fold — but raise might be better as a semi-bluff.',
+    plain:'A pot-sized bet needs 50% equity to call. Your flush draw alone isn\'t enough. But this is close enough with overcards that some players call or raise as a semi-bluff.',
+    correct:'fold'},
+
+  {hole:[mk('7','♣'),mk('6','♣')],board:[mk('9','♣'),mk('2','♣'),mk('K','♠')],street:'turn',pot:200,bet:100,options:['Fold','Call','Raise'],correct:'call',
+    outs:'9 flush outs',outsEquity:'18',equity:18,potOddsNeeded:33,
+    setup:'7♣6♣ on 9♣2♣K♠ — turn card is a blank. Flush draw. Pot 200, bet 100. ONE card to come.',
+    why:'On the turn, only 1 card to come. 9 × 2 = 18% equity. Pot odds: 100/300 = 33%. 18% < 33%. FOLD. This is the critical difference between flop and turn decisions — on the turn you only multiply by 2, not 4.',
+    plain:'On the turn, you only have one shot at your flush. 9 outs × 2 = 18%. You need 33%. That\'s not close. Fold.',
+    correct:'fold'},
+
+  // STRAIGHT DRAWS
+  {hole:[mk('8','♦'),mk('7','♠')],board:[mk('9','♣'),mk('6','♥'),mk('K','♦')],street:'flop',pot:100,bet:50,options:['Fold','Call','Raise'],correct:'call',
+    outs:'8 straight outs (any 5 or T)',outsEquity:'32',equity:32,potOddsNeeded:33,
+    setup:'8♦7♠ on 9♣6♥K♦. Open-ended straight draw. Pot 100, bet 50.',
+    why:'8 outs × 4 = 32%. Pot odds: 50/150 = 33%. 32% ≈ 33%. This is borderline — just about a fold, but very close. In practice, implied odds (money you\'ll win when you hit) make this a call.',
+    plain:'Open-ended straight draws are strong — 8 outs, about 32% to complete. This call is right on the edge. Implied odds (winning more when you hit) tip it to a call.'},
+
+  {hole:[mk('J','♠'),mk('10','♠')],board:[mk('Q','♥'),mk('8','♣'),mk('3','♦')],street:'flop',pot:100,bet:25,options:['Fold','Call','Raise'],correct:'call',
+    outs:'4 gutshot outs (any 9) + 6 overcard outs',outsEquity:'40',equity:40,potOddsNeeded:20,
+    setup:'J♠T♠ on Q♥8♣3♦. Gutshot straight draw (need a 9) plus two overcards. Pot 100, small bet of 25.',
+    why:'4 gutshot outs + 6 overcard outs = 10 outs. 10 × 4 = 40%. Pot odds: 25/125 = 20%. 40% >> 20%. Easy call.',
+    plain:'A small bet into a big pot means you need very little equity to call. You have plenty. Snap call.'},
+
+  {hole:[mk('5','♥'),mk('4','♣')],board:[mk('6','♠'),mk('7','♦'),mk('K','♣')],street:'turn',pot:150,bet:100,options:['Fold','Call','Raise'],correct:'fold',
+    outs:'4 gutshot outs (any 3 or 8... wait, open-ended: any 3 or 8)',outsEquity:'16',equity:16,potOddsNeeded:40,
+    setup:'5♥4♣ on 6♠7♦K♣ — turn blank. Open-ended straight draw. Pot 150, bet 100.',
+    why:'Actually this is open-ended (any 3 or 8 = 8 outs). 8 × 2 = 16% on the turn. Pot odds: 100/250 = 40%. 16% << 40%. Clear fold.',
+    plain:'On the turn, 8 outs gives you only 16%. You need 40%. Not remotely close. Fold.',
+    outs:'8 open-ended outs',outsEquity:'16'},
+
+  // OVERCARDS
+  {hole:[mk('A','♦'),mk('K','♣')],board:[mk('8','♥'),mk('5','♠'),mk('3','♣')],street:'flop',pot:60,bet:30,options:['Fold','Call','Raise'],correct:'raise',
+    outs:'6 overcard outs (3 Aces + 3 Kings)',outsEquity:'24',equity:24,potOddsNeeded:33,
+    setup:'A♦K♣ on 8♥5♠3♣. You missed the flop completely. Pot 60, opponent bets 30.',
+    why:'6 outs × 4 = 24%. Pot odds: 30/90 = 33%. Your pure equity (24%) is below the 33% needed... but AK on a low board has fold equity if you raise. A raise as a semi-bluff is often correct here — you might win immediately, and if called you still have 6 outs.',
+    plain:'You missed the flop with AK — this happens a lot (you only pair the flop about 1 in 3 times). But raising can win the pot immediately if your opponent folds, and you still have outs if called.'},
+
+  // COMBO DRAWS
+  {hole:[mk('J','♥'),mk('10','♥')],board:[mk('Q','♥'),mk('9','♣'),mk('3','♥')],street:'flop',pot:100,bet:50,options:['Fold','Call','Raise'],correct:'raise',
+    outs:'9 flush + 6 straight (minus 2 overlap) = 13 outs',outsEquity:'52',equity:52,potOddsNeeded:33,
+    setup:'J♥T♥ on Q♥9♣3♥. Flush draw + open-ended straight draw. Massive combo draw. Pot 100, bet 50.',
+    why:'13+ outs × 4 = ~52% equity. You\'re actually a FAVOURITE to win this hand! With >50% equity, raising is mandatory — you\'re not drawing, you\'re the favourite.',
+    plain:'A flush draw plus a straight draw is a monster. You actually have BETTER than even odds of winning. Raise aggressively — you\'re not chasing, you\'re the favourite.'},
+
+  // POT-SIZED BETS
+  {hole:[mk('9','♠'),mk('8','♠')],board:[mk('7','♣'),mk('6','♦'),mk('A','♠')],street:'flop',pot:200,bet:200,options:['Fold','Call','Raise'],correct:'fold',
+    outs:'8 straight outs',outsEquity:'32',equity:32,potOddsNeeded:50,
+    setup:'9♠8♠ on 7♣6♦A♠. Open-ended straight draw. Pot 200, opponent bets 200 (full pot).',
+    why:'8 outs × 4 = 32%. Pot-sized bet requires 50% equity. 32% << 50%. Fold. A pot-sized bet makes draws unprofitable unless you have a monster combo draw.',
+    plain:'A pot-sized bet is designed to make draws fold. And it works — you need 50% equity and only have 32%. Fold and respect the bet sizing.'},
+
+  // SMALL BETS
+  {hole:[mk('4','♦'),mk('3','♦')],board:[mk('5','♣'),mk('6','♥'),mk('K','♠')],street:'flop',pot:100,bet:15,options:['Fold','Call','Raise'],correct:'call',
+    outs:'8 open-ended (any 2 or 7)',outsEquity:'32',equity:32,potOddsNeeded:13,
+    setup:'4♦3♦ on 5♣6♥K♠. Open-ended straight draw. Tiny bet of 15 into pot of 100.',
+    why:'8 × 4 = 32%. Pot odds: 15/115 = 13%. 32% >> 13%. Trivial call. Small bets make almost every draw profitable.',
+    plain:'The bet is tiny compared to the pot. You only need 13% equity and you have 32%. Easy call.'},
+
+  {hole:[mk('K','♠'),mk('Q','♠')],board:[mk('J','♦'),mk('10','♣'),mk('2','♥')],street:'flop',pot:80,bet:40,options:['Fold','Call','Raise'],correct:'raise',
+    outs:'8 straight outs + 6 overcards = 14',outsEquity:'56',equity:48,potOddsNeeded:33,
+    setup:'K♠Q♠ on J♦T♣2♥. Open-ended straight draw (any 9 or A) plus two overcards (K or Q could be good). Pot 80, bet 40.',
+    why:'14 outs × 4 = ~56% (adjusted down to ~48% for overcard uncertainty). Pot odds: 33%. You crush the pot odds. Raise for value — this is a semi-bluff with massive equity.',
+    plain:'You have a straight draw, overcards, and probably the best hand a lot of the time. Raise — you\'re in great shape.'},
+
+  // TURN DECISIONS
+  {hole:[mk('A','♥'),mk('5','♥')],board:[mk('K','♥'),mk('8','♥'),mk('3','♣'),mk('J','♠')],street:'turn',pot:180,bet:90,options:['Fold','Call','Raise'],correct:'call',
+    outs:'9 flush outs',outsEquity:'18',equity:18,potOddsNeeded:33,
+    setup:'A♥5♥ on K♥8♥3♣J♠ — turn blank. Nut flush draw. Pot 180, bet 90.',
+    why:'Turn: 9 × 2 = 18%. Pot odds: 90/270 = 33%. 18% < 33%. The maths says fold... but this is the NUT flush draw. When you hit, you have the best possible flush. Implied odds (extra money you win on the river when you hit) justify a call here.',
+    plain:'Normally you\'d fold — 18% vs 33% needed. But the nut flush draw has huge implied odds. When you hit, your opponent will often pay you off. Call.'},
+
+  // MADE HANDS — knowing when you DON'T need to draw
+  {hole:[mk('A','♣'),mk('A','♦')],board:[mk('K','♠'),mk('7','♥'),mk('3','♦')],street:'flop',pot:80,bet:40,options:['Fold','Call','Raise'],correct:'raise',
+    outs:'N/A — you have a made hand',outsEquity:'92',equity:92,potOddsNeeded:33,
+    setup:'A♣A♦ on K♠7♥3♦. You have an overpair (Aces over Kings). Pot 80, bet 40.',
+    why:'You have the best hand right now (~92% equity). Raise for value. You WANT to be called. This isn\'t a draw situation — you\'re raising because your hand is strong, not because you might improve.',
+    plain:'You have pocket Aces on a safe board. Raise. You want your opponent to put more money in the pot.'},
+
+  {hole:[mk('Q','♣'),mk('J','♦')],board:[mk('Q','♠'),mk('9','♥'),mk('5','♣')],street:'flop',pot:60,bet:45,options:['Fold','Call','Raise'],correct:'call',
+    outs:'N/A — made hand (top pair)',outsEquity:'65',equity:65,potOddsNeeded:43,
+    setup:'Q♣J♦ on Q♠9♥5♣. Top pair, Jack kicker. Pot 60, decent-sized bet of 45.',
+    why:'You have top pair good kicker. About 65% equity against a typical betting range. Pot odds: 43%. Call comfortably. Raising is also fine for value.',
+    plain:'Top pair with a good kicker is a strong hand on this board. Call or raise — you\'re probably ahead.'},
+
+  // MARGINAL DECISIONS
+  {hole:[mk('10','♣'),mk('9','♣')],board:[mk('J','♦'),mk('3','♠'),mk('7','♣')],street:'flop',pot:100,bet:75,options:['Fold','Call','Raise'],correct:'fold',
+    outs:'4 gutshot (any 8)',outsEquity:'16',equity:16,potOddsNeeded:43,
+    setup:'T♣9♣ on J♦3♠7♣. Gutshot straight draw (need an 8). Pot 100, big bet of 75.',
+    why:'4 × 4 = 16%. Pot odds: 75/175 = 43%. 16% << 43%. Clear fold. Gutshots are almost never worth calling large bets.',
+    plain:'A gutshot has only 4 outs — about 16% to hit by the river. The bet is too big. Fold. Don\'t chase gutshots.'},
+
+  {hole:[mk('K','♠'),mk('J','♠')],board:[mk('A','♣'),mk('10','♠'),mk('4','♠')],street:'flop',pot:150,bet:50,options:['Fold','Call','Raise'],correct:'call',
+    outs:'9 flush + 4 straight (Q for broadway) - 1 overlap = 12',outsEquity:'48',equity:45,potOddsNeeded:25,
+    setup:'K♠J♠ on A♣T♠4♠. Flush draw + gutshot to broadway (need a Q). Small bet of 50 into 150.',
+    why:'12 outs × 4 = ~48%. Pot odds: 50/200 = 25%. 48% >> 25%. Easy call with this much equity.',
+    plain:'Flush draw plus a gutshot to the best possible straight? With a small bet to call? Snap call.'},
+
+  {hole:[mk('6','♥'),mk('5','♥')],board:[mk('7','♦'),mk('8','♣'),mk('A','♠')],street:'flop',pot:60,bet:60,options:['Fold','Call','Raise'],correct:'fold',
+    outs:'8 straight outs (any 4 or 9)',outsEquity:'32',equity:32,potOddsNeeded:50,
+    setup:'6♥5♥ on 7♦8♣A♠. Open-ended straight. Pot 60, pot-sized bet of 60.',
+    why:'8 × 4 = 32%. Pot-sized bet: 50% needed. 32% < 50%. Fold. A pot-sized bet kills straight draws.',
+    plain:'The bet is too big for your draw. You need to win 1 in 2 times, but you\'ll only hit 1 in 3. Fold.'},
+
+  // THE CRITICAL LESSON
+  {hole:[mk('A','♠'),mk('2','♠')],board:[mk('K','♠'),mk('9','♦'),mk('5','♠')],street:'turn',pot:300,bet:300,options:['Fold','Call','Raise'],correct:'fold',
+    outs:'9 flush outs',outsEquity:'18',equity:18,potOddsNeeded:50,
+    setup:'A♠2♠ on K♠9♦5♠ — blank turn. Nut flush draw. Pot 300, MASSIVE bet of 300.',
+    why:'Nut flush draw looks amazing — but on the turn, 9 × 2 = 18%. The pot-sized bet requires 50% equity. 18% is not close to 50%. Even the nut flush draw doesn\'t justify calling a pot-sized bet on the turn.',
+    plain:'This is the hardest fold in poker. You have the nut flush draw — if you hit, you have the best hand. But the maths is brutal: 18% chance of hitting, and you need 50%. Even the best draws must fold to big bets on the turn. Discipline wins.'},
+];
+
+// ═══ CHUNK 04 ═══
+TUTORIALS.p3 = `
+<div class="tut">
+<h3>Position: The Most Underrated Edge in Poker</h3>
+<p>If you could choose between being dealt slightly better cards OR having position on your opponent, you should choose position every time. That's how powerful it is.</p>
+
+<div class="pt">Position means acting AFTER your opponent. You see what they do before you decide. This single advantage is worth approximately 2-3 big blinds per 100 hands more than playing out of position.</div>
+
+<h3>The Positions (6-max table)</h3>
+<div class="mb">
+<strong>Earliest to latest:</strong><br><br>
+<span class="neg">UTG (Under the Gun)</span> — First to act. Worst position. Play TIGHT.<br>
+<span class="neg">HJ (Hijack)</span> — Second. Still early. Slightly wider range.<br>
+CO (Cutoff) — Third. Getting better. Open wider.<br>
+<span class="pos">BTN (Button)</span> — Best seat. Last to act post-flop. Play WIDEST here.<br>
+<span class="neg">SB (Small Blind)</span> — Worst post-flop position. Already invested half a blind.<br>
+BB (Big Blind) — Already invested 1 blind. Get a discount on calls.
+</div>
+
+<div class="pln">In plain English: the Button is the best seat because you ALWAYS act last after the flop. You see everyone else's decisions before making yours. It's like taking an exam with the answer key.</div>
+
+<h3>Why Position Matters — Mathematically</h3>
+<div class="mb">
+<strong>Win rates by position (typical winning player, per 100 hands):</strong><br><br>
+UTG: <span class="neg">−2 BB/100</span><br>
+HJ: <span class="neg">−0.5 BB/100</span><br>
+CO: <span class="pos">+3 BB/100</span><br>
+BTN: <span class="pos">+8 BB/100</span><br>
+SB: <span class="neg">−6 BB/100</span><br>
+BB: <span class="neg">−3 BB/100</span><br><br>
+Even winning players LOSE money from early position and the blinds. All their profit comes from the Cutoff and Button.
+</div>
+
+<div class="pt">A winning player makes roughly +8 BB per 100 hands on the Button and loses roughly −6 BB from the Small Blind. That's a 14 BB/100 swing — purely from position. No other factor in poker has this much impact.</div>
+
+<h3>Opening Ranges by Position</h3>
+<div class="mb">
+<strong>UTG (play ~13% of hands):</strong><br>
+Pairs: 77+<br>
+Suited: ATs+, KQs<br>
+Offsuit: AQo+<br><br>
+
+<strong>HJ (play ~17% of hands):</strong><br>
+Pairs: 66+<br>
+Suited: A9s+, KJs+, QJs, JTs<br>
+Offsuit: AJo+, KQo<br><br>
+
+<strong>CO (play ~24% of hands):</strong><br>
+Pairs: 55+<br>
+Suited: A2s+, K9s+, Q9s+, J9s+, T9s, 98s<br>
+Offsuit: ATo+, KJo+, QJo<br><br>
+
+<strong>BTN (play ~35% of hands):</strong><br>
+Pairs: 22+<br>
+Suited: A2s+, K5s+, Q7s+, J8s+, T8s+, 97s+, 87s, 76s, 65s<br>
+Offsuit: A8o+, K9o+, QTo+, JTo<br><br>
+
+<strong>SB (play ~30% of hands, but 3-bet or fold — don't limp):</strong><br>
+Similar to CO range but more aggressive sizing (you'll be out of position post-flop)
+</div>
+
+<div class="pln">Notice how the Button plays 35% of hands while UTG plays only 13%. That's not recklessness — it's mathematics. From the Button, you have position AND fewer opponents left to act.</div>
+
+<div class="dg">The #1 leak for recreational players: they play the SAME hands from every position. If you're playing K♠J♦ from UTG, you're lighting money on fire. Save it for the Cutoff or Button.</div>
+
+<h3>The 3-Bet (Re-Raise)</h3>
+<div class="mb">
+<strong>When someone raises before you, you have three choices:</strong><br><br>
+Fold — the default for most hands<br>
+Call — when you have a playable hand but don't want to inflate the pot<br>
+3-bet (re-raise) — for your best hands AND some bluffs<br><br>
+
+<strong>3-bet range (vs a typical open):</strong><br>
+Value: QQ+, AKs, AKo (hands that want to build the pot)<br>
+Bluffs: A5s, A4s, K9s, Q9s (hands with blockers and playability)<br><br>
+A balanced 3-bet range is roughly 8-10% of hands from most positions.
+</div>
+
+<div class="pt">The bluffs in your 3-bet range aren't random — they're selected because they "block" your opponent's strong hands (having an Ace means they're less likely to have AA or AK) and they have decent post-flop playability if called.</div>
+</div>
+`;
+
+SCENARIOS.p3 = [
+  {hole:[mk('K','♠'),mk('J','♦')],street:'preflop',pot:15,bet:0,options:['Fold','Raise'],correct:'fold',
+    setup:'K♠J♦ Under the Gun (first to act). No one has acted yet.',
+    why:'KJo is outside the UTG opening range. From UTG, you need AQo+ or premium pairs. KJo is a losing hand from this position because you\'ll be out of position against 5 other players.',
+    plain:'King-Jack offsuit looks playable but from the worst position at the table, it\'s a fold. Save it for the Cutoff or Button.'},
+
+  {hole:[mk('K','♠'),mk('J','♦')],street:'preflop',pot:15,bet:0,options:['Fold','Raise'],correct:'raise',
+    setup:'K♠J♦ on the Button. Everyone has folded to you.',
+    why:'The SAME hand — KJo — is a raise on the Button. Position changes everything. You\'ll act last on every street, and only the blinds remain. Raise.',
+    plain:'Same hand, different position, different decision. On the Button with folds to you, KJ is a clear raise.'},
+
+  {hole:[mk('9','♥'),mk('8','♥')],street:'preflop',pot:15,bet:0,options:['Fold','Raise'],correct:'fold',
+    setup:'9♥8♥ in the Hijack. No one has acted.',
+    why:'98s is a speculative hand that needs late position to be profitable. From the Hijack, there are still 4 players to act. Too risky.',
+    plain:'Suited connectors need position. The Hijack isn\'t late enough. Fold.'},
+
+  {hole:[mk('9','♥'),mk('8','♥')],street:'preflop',pot:15,bet:0,options:['Fold','Raise'],correct:'raise',
+    setup:'9♥8♥ on the Button. Folded to you.',
+    why:'98s on the Button is a standard raise. You have position, fold equity against the blinds, and a hand that makes straights and flushes.',
+    plain:'Suited connectors on the Button? Raise all day. Perfect spot.'},
+
+  {hole:[mk('A','♣'),mk('5','♣')],street:'preflop',pot:15,bet:0,options:['Fold','Raise'],correct:'fold',
+    setup:'A♣5♣ Under the Gun.',
+    why:'A5s is a good hand — but not from UTG. You\'ll be first to act on every street with a marginal holding. The suited Ace is profitable from the CO/BTN, not from early position.',
+    plain:'Suited Aces need position. UTG is the wrong spot. Fold and wait.'},
+
+  {hole:[mk('Q','♠'),mk('Q','♥')],street:'preflop',pot:15,bet:10,options:['Fold','Call','Raise'],correct:'raise',
+    setup:'Q♠Q♥ on the Cutoff. UTG has raised to 10.',
+    why:'QQ is a premium hand. 3-bet from the Cutoff for value. You\'re ahead of most of UTG\'s range (they open ~13% of hands; QQ beats most of that).',
+    plain:'Pocket Queens in position against a raise — re-raise. You\'re almost certainly ahead.'},
+
+  {hole:[mk('A','♦'),mk('5','♦')],street:'preflop',pot:25,bet:10,options:['Fold','Call','Raise'],correct:'raise',
+    setup:'A♦5♦ on the Button. Hijack has raised to 10.',
+    why:'A5s on the Button vs a single raise — 3-bet as a bluff. The Ace blocks AA and AK in their range, the suited 5 gives you playability if called, and the 3-bet may win the pot outright.',
+    plain:'This is a 3-bet bluff. Your Ace blocks their strongest hands, and if called, you have a suited Ace that can make the nut flush. Raise.'},
+
+  {hole:[mk('J','♣'),mk('10','♣')],street:'preflop',pot:15,bet:10,options:['Fold','Call','Raise'],correct:'call',
+    setup:'J♣T♣ on the Button. Cutoff has raised to 10.',
+    why:'JTs is a premium suited connector. Calling in position is ideal — you don\'t need to 3-bet because you play beautifully post-flop with straights, flushes, and strong pairs.',
+    plain:'Jack-Ten suited in position is a great calling hand. You\'ll see a flop with a hand that has huge potential.'},
+
+  {hole:[mk('7','♠'),mk('2','♦')],street:'preflop',pot:15,bet:0,options:['Fold','Raise'],correct:'fold',
+    setup:'7♠2♦ on the Button. Folded to you.',
+    why:'Even on the Button, 72o is unplayable. It\'s the worst hand in poker — no straight potential, no flush, two low unconnected cards. The Button is powerful but it can\'t make 72o profitable.',
+    plain:'Some hands are so bad that even the Button can\'t save them. 72o is one of them. Fold.'},
+
+  {hole:[mk('A','♠'),mk('A','♥')],street:'preflop',pot:15,bet:10,options:['Fold','Call','Raise'],correct:'raise',
+    setup:'A♠A♥ in the Small Blind. Button has raised to 10.',
+    why:'AA in the Small Blind — 3-bet. You\'re out of position, so you want to build the pot pre-flop rather than seeing a flop in the worst post-flop position with a disguised hand.',
+    plain:'Aces in the Small Blind. Re-raise to build the pot. You don\'t want to play a small pot out of position with the best hand.'},
+
+  {hole:[mk('6','♣'),mk('5','♣')],street:'preflop',pot:25,bet:10,options:['Fold','Call','Raise'],correct:'call',
+    setup:'6♣5♣ in the Big Blind. Button raised to 10. Pot is 25 including your blind. You need to call 5 more (already posted 5 as BB).',
+    why:'65s in the BB getting 5:1 odds. You need ~17% equity. 65s has about 37% equity against a Button opening range. Trivial call — you\'re getting a massive discount thanks to the blind.',
+    plain:'You\'ve already put in half a bet as the Big Blind. Suited connectors with a 5:1 price? Easy call. The blind discount makes loads of hands profitable.'},
+
+  {hole:[mk('K','♥'),mk('Q','♥')],street:'preflop',pot:15,bet:10,options:['Fold','Call','Raise'],correct:'raise',
+    setup:'K♥Q♥ in the Cutoff. Hijack has raised to 10.',
+    why:'KQs in the Cutoff vs a HJ open — 3-bet for value. KQs has ~48% equity vs HJ range and you have position. Build the pot.',
+    plain:'King-Queen suited with position against a single raise. Re-raise — you have a premium hand in a great spot.'},
+
+  {hole:[mk('10','♠'),mk('9','♠')],street:'preflop',pot:30,bet:30,options:['Fold','Call','Raise'],correct:'fold',
+    setup:'T♠9♠ on the Button. UTG raised to 10, Hijack 3-bet to 30.',
+    why:'T9s is a nice hand but facing a raise AND a re-raise, you\'re almost certainly against premiums (QQ+, AKs at minimum). Your equity is only ~32% against that range, and the price is too high.',
+    plain:'When there\'s been a raise and a re-raise before you, it means very strong hands. Suited connectors can\'t compete. Fold.'},
+
+  {hole:[mk('A','♣'),mk('K','♣')],street:'preflop',pot:15,bet:0,options:['Fold','Raise'],correct:'raise',
+    setup:'A♣K♣ Under the Gun.',
+    why:'AKs is premium from every position including UTG. Raise. It\'s one of the ~3% of hands you play from the earliest position.',
+    plain:'Ace-King suited is always a raise, no matter where you sit.'},
+
+  {hole:[mk('4','♦'),mk('4','♠')],street:'preflop',pot:25,bet:10,options:['Fold','Call','Raise'],correct:'call',
+    setup:'4♦4♠ on the Cutoff. UTG raised to 10. Deep stacks (100+ big blinds).',
+    why:'Small pair in position vs a single raise with deep stacks. Call to set mine — you\'ll hit a set ~12% of the time, and when you do, you can win a big pot. You need implied odds of ~8:1, which deep stacks provide.',
+    plain:'Small pairs are set-mining hands. You call, hoping to hit three-of-a-kind on the flop. It happens about 1 in 8 times, but when it does, you often win a huge pot.'},
+];
+
+// ═══ CHUNK 05 ═══
+TUTORIALS.p4 = `
+<div class="tut">
+<h3>Post-flop: Where Money Is Won and Lost</h3>
+<p>Pre-flop decisions account for about 30% of your edge. Post-flop decisions account for 70%. This is where you either exploit weaker players or get exploited yourself.</p>
+
+<div class="pt">The flop changes everything. Before the flop, AA is the best hand. After the flop, AA on a board of 7♠8♠9♠ when you don't have a spade is terrifying. Learning to read the board is essential.</div>
+
+<h3>Board Texture</h3>
+<div class="mb">
+<strong>Dry board:</strong> K♦7♣2♠<br>
+Few draws possible. Top pair is usually good. Bet small for value.<br><br>
+
+<strong>Wet board:</strong> J♥T♠9♥<br>
+Straight draws, flush draws everywhere. Top pair is vulnerable. Bet big to charge draws or check to control pot size.<br><br>
+
+<strong>Paired board:</strong> K♦K♠5♣<br>
+Anyone with a King has trips. Unlikely you both have a King. Often checks through.
+</div>
+
+<h3>Continuation Betting (C-Bet)</h3>
+<p>A c-bet is when the pre-flop raiser bets again on the flop. This is powerful because:</p>
+
+<div class="mb">
+1. You showed strength pre-flop — opponents respect that<br>
+2. You often have the best hand (you raised with strong cards)<br>
+3. Your opponent missed the flop ~66% of the time<br>
+4. Even when you miss, the bet wins the pot often enough<br><br>
+
+<strong>C-bet sizing:</strong><br>
+Dry board (K72 rainbow): Bet <span class="pos">25-33% of pot</span> — small bet works because there are few draws to charge<br>
+Wet board (JT9 two-tone): Bet <span class="pos">50-75% of pot</span> — big bet to charge draws and protect your hand<br>
+Very wet board (QJT two-tone): Consider <span class="neg">checking</span> — this board hits your opponent's calling range hard
+</div>
+
+<div class="pln">The key principle: bet when you have a reason to bet (value or bluff), check when you don't. "I always c-bet" is a leak. "I c-bet on dry boards and check wet boards that hit my opponent" is a strategy.</div>
+
+<h3>When Top Pair Isn't Enough</h3>
+<div class="mb">
+<strong>Signs your top pair is in trouble:</strong><br><br>
+• Board is very wet (lots of straights/flushes possible)<br>
+• Opponent raises your bet (they almost never bluff-raise beginners)<br>
+• Multiple opponents are still in the hand<br>
+• The turn or river completes an obvious draw<br>
+• A tight player suddenly wakes up with aggression<br><br>
+
+<strong>The discipline test:</strong><br>
+You raised with A♠K♣. Board: K♥8♦5♣. You bet. Opponent calls.<br>
+Turn: 7♠. You bet. Opponent raises.<br>
+You have top pair top kicker. It feels strong. But what hands does a typical player raise with here? KK (unlikely), 88, 55, 77, 96 (straight), maybe K8 for two pair.<br>
+<span class="neg">Almost all of those beat you.</span> Folding top pair is painful but often correct.
+</div>
+
+<div class="dg">The #1 post-flop leak: falling in love with top pair. Top pair is a one-pair hand. When the action tells you someone has two pair or better, believe them and fold. The money you save on folds is worth more than the pots you lose by calling.</div>
+
+<h3>Pot Control</h3>
+<div class="mb">
+<strong>Not every hand needs to build a big pot.</strong><br><br>
+With a monster (set, flush, full house): Bet for value on every street<br>
+With a strong hand (top pair good kicker): Bet flop, reassess turn<br>
+With a medium hand (second pair, weak top pair): Check at least one street<br>
+With a draw: Bet as a semi-bluff OR call if pot odds are right<br>
+With nothing: Give up or bluff (but pick your spots)
+</div>
+
+<div class="pt">Pot control means keeping the pot small with medium-strength hands and building it with strong hands. If you bet every street with top pair weak kicker, you're building a pot you'll often lose.</div>
+</div>
+`;
+
+SCENARIOS.p4 = [
+  // C-BET DECISIONS
+  {hole:[mk('A','♠'),mk('K','♣')],board:[mk('K','♥'),mk('7','♦'),mk('2','♠')],street:'flop',pot:60,bet:0,options:['Check','Bet small (20)','Bet big (45)'],correct:'bet small (20)',
+    setup:'You raised pre-flop with A♠K♣ and got one caller. Board: K♥7♦2♠ (dry, rainbow). Pot is 60. You act first.',
+    why:'You have top pair top kicker on a dry board. C-bet small (⅓ pot). On this board texture, a small bet gets the same information and value as a big bet — there are no draws to charge.',
+    plain:'You have the best likely hand on a safe board. Bet small — your opponent will either fold (good, you win) or call with worse (good, you build the pot). A small bet does the job on a dry board.'},
+
+  {hole:[mk('A','♥'),mk('Q','♥')],board:[mk('J','♠'),mk('10','♥'),mk('9','♣')],street:'flop',pot:60,bet:0,options:['Check','Bet small (20)','Bet big (45)'],correct:'check',
+    setup:'You raised pre-flop with A♥Q♥. Board: J♠T♥9♣ (extremely wet). You completely missed.',
+    why:'This board CRUSHES your opponent\'s calling range — they called your raise with hands like JT, QJ, J9, T9, KQ, 87. You have nothing. Betting into this board is lighting money on fire. Check and give up.',
+    plain:'You missed the flop and the board is terrible for you. Every card your opponent could have pairs this board or makes a straight. Check and save your chips.'},
+
+  {hole:[mk('Q','♦'),mk('Q','♣')],board:[mk('A','♠'),mk('8','♥'),mk('3','♦')],street:'flop',pot:60,bet:0,options:['Check','Bet small (20)','Bet big (45)'],correct:'bet small (20)',
+    setup:'You raised pre-flop with Q♦Q♣. Board: A♠8♥3♦. One caller.',
+    why:'You have an overpair below the Ace. Bet small for value — you beat all pairs below AA, and many opponents will fold unpaired hands. If raised, you have a tough decision (they might have an Ace).',
+    plain:'QQ under an Ace is tricky. Bet small — you beat a lot of hands. If your opponent raises, they probably have an Ace, and you should consider folding.'},
+
+  // FACING BETS
+  {hole:[mk('A','♣'),mk('K','♦')],board:[mk('A','♥'),mk('9','♠'),mk('5','♣')],street:'flop',pot:80,bet:40,options:['Fold','Call','Raise'],correct:'raise',
+    setup:'You have A♣K♦ on A♥9♠5♣. Opponent bets 40 into 80.',
+    why:'Top pair top kicker on a dry board. Raise for value. You\'re ahead of almost everything that bets here — A9, A5, 99, 55, and worse Aces.',
+    plain:'You have the best likely hand. Raise to build the pot. Your opponent probably has a weaker Ace or a pair.'},
+
+  {hole:[mk('J','♥'),mk('10','♥')],board:[mk('A','♠'),mk('K','♦'),mk('3','♣')],street:'flop',pot:60,bet:40,options:['Fold','Call','Raise'],correct:'fold',
+    setup:'J♥T♥ on A♠K♦3♣. You missed. Opponent bets 40 into 60.',
+    why:'You have a gutshot (any Q for a straight = 4 outs). 4 × 4 = 16% equity. Pot odds: 40/100 = 40%. 16% << 40%. Fold.',
+    plain:'You missed the flop completely with just a gutshot draw. The bet is too big for 4 outs. Fold.'},
+
+  {hole:[mk('K','♠'),mk('Q','♠')],board:[mk('K','♦'),mk('8','♣'),mk('3','♠')],street:'flop',pot:80,bet:60,options:['Fold','Call','Raise'],correct:'call',
+    setup:'K♠Q♠ on K♦8♣3♠. Top pair Queen kicker. Opponent bets 60 into 80.',
+    why:'Top pair good kicker. You\'re ahead of most one-pair hands. The bet is large but you have a strong hand. Call and reassess the turn. Raising risks only being called by better.',
+    plain:'You have top pair with a good kicker. Call. If they have AK, you\'re in trouble, but most of the time you\'re ahead.'},
+
+  // TURN DECISIONS
+  {hole:[mk('A','♠'),mk('K','♠')],board:[mk('K','♥'),mk('8','♦'),mk('5','♣'),mk('8','♠')],street:'turn',pot:120,bet:80,options:['Fold','Call','Raise'],correct:'call',
+    setup:'A♠K♠ on K♥8♦5♣8♠. You bet the flop with top pair, opponent called. Turn pairs the 8. Opponent now bets 80 into 120.',
+    why:'The paired 8 is concerning — they might have trip 8s. But your AK is still strong. Against their range (Kx, 99, 77, flush draws), you\'re ahead often enough. Call and evaluate the river.',
+    plain:'The paired board is scary but you have top pair top kicker. Call. If the river gets even scarier and they bet big again, then consider folding.'},
+
+  {hole:[mk('10','♣'),mk('10','♦')],board:[mk('J','♥'),mk('5','♠'),mk('3','♣'),mk('J','♣')],street:'turn',pot:100,bet:75,options:['Fold','Call','Raise'],correct:'fold',
+    setup:'T♣T♦ on J♥5♠3♣J♣. You c-bet the flop, got called. Turn pairs the Jack. Opponent bets 75 into 100.',
+    why:'When an opponent calls your flop bet and then leads out when the board pairs (especially with a card THEY\'re likely to have), they often have the Jack. You have pocket Tens — a one-pair hand that loses to any Jack. Fold.',
+    plain:'Your opponent called the flop and now bets when the Jack pairs? They very likely have a Jack. Your Tens can\'t beat trips. Fold — this is the discipline that saves money.'},
+
+  // RIVER DECISIONS
+  {hole:[mk('A','♥'),mk('Q','♠')],board:[mk('A','♣'),mk('9','♦'),mk('4','♣'),mk('2','♣'),mk('7','♣')],street:'river',pot:200,bet:150,options:['Fold','Call','Raise'],correct:'fold',
+    setup:'A♥Q♠ on A♣9♦4♣2♣7♣. Four clubs on the board. You have top pair but no club. Opponent makes a big river bet of 150 into 200.',
+    why:'Four clubs on board and you don\'t have one. Any player with a single club has a flush. The big river bet from an opponent who was passive before screams "I have a club." Top pair is irrelevant against a flush.',
+    plain:'Four cards of the same suit on the board and your opponent bets big. They have a flush. Your top pair means nothing. Fold.'},
+
+  {hole:[mk('K','♠'),mk('K','♥')],board:[mk('A','♦'),mk('Q','♣'),mk('7','♠'),mk('3','♥'),mk('2','♦')],street:'river',pot:180,bet:120,options:['Fold','Call','Raise'],correct:'call',
+    setup:'K♠K♥ on A♦Q♣7♠3♥2♦. Board has an Ace. You checked the turn. Opponent bets 120 into 180 on the river.',
+    why:'KK under an Ace is a bluff catcher. The question: does opponent bluff enough here? At pot odds of 120/300 = 40%, you need to be right 40% of the time. Against most opponents at low-mid stakes, they bluff often enough with missed draws and lower pairs. Call.',
+    plain:'You have Kings under an Ace. It\'s a tough spot. But the pot is giving you 2.5:1, and opponents bluff enough in this spot that calling is profitable.'},
+
+  // SEMI-BLUFFS
+  {hole:[mk('9','♥'),mk('8','♥')],board:[mk('7','♣'),mk('6','♦'),mk('K','♠')],street:'flop',pot:60,bet:0,options:['Check','Bet small (20)','Bet big (45)'],correct:'bet big (45)',
+    setup:'You raised pre-flop with 9♥8♥ and got called. Board: 7♣6♦K♠. You have an open-ended straight draw (any 5 or 10 = 8 outs).',
+    why:'Bet big as a semi-bluff. You have 8 outs (~32% equity) and fold equity — your opponent will fold many hands that can\'t beat a King. If they call, you still have outs. If they fold, you win immediately.',
+    plain:'You missed the flop but have a strong draw. Bet big — you might win the pot now, and if called, you have a 1 in 3 chance of completing your straight.'},
+
+  {hole:[mk('A','♠'),mk('5','♠')],board:[mk('K','♠'),mk('8','♠'),mk('3','♦')],street:'flop',pot:80,bet:0,options:['Check','Bet small (25)','Bet big (60)'],correct:'bet big (60)',
+    setup:'A♠5♠ on K♠8♠3♦. Nut flush draw. You\'re in position. Pot 80.',
+    why:'Nut flush draw = 9 outs, ~36% equity on the flop. Bet big as a semi-bluff. You have fold equity PLUS outs. This is one of the most profitable spots in poker — aggressive semi-bluffing with the nut flush draw.',
+    plain:'You have the best possible flush draw. Bet aggressively — you might win now, and if called, you\'ll make the nut flush about 1 in 3 times.'},
+
+  // MULTIWAY POTS
+  {hole:[mk('A','♣'),mk('J','♣')],board:[mk('J','♠'),mk('8','♦'),mk('4','♣')],street:'flop',pot:90,bet:0,options:['Check','Bet small (30)','Bet big (65)'],correct:'bet big (65)',
+    setup:'A♣J♣ on J♠8♦4♣. THREE players in the pot (pot is 90). You have top pair top kicker.',
+    why:'In multiway pots, bet bigger with your strong hands. More opponents = more likely someone has a draw or a piece of the board. Top pair in a 3-way pot needs protection. Bet ⅔ pot to charge draws.',
+    plain:'With three players in the pot, someone probably has a draw. Bet big to make them pay for it. Top pair is strong but vulnerable in multiway pots.'},
+
+  {hole:[mk('6','♠'),mk('6','♦')],board:[mk('A','♣'),mk('K','♥'),mk('Q','♠')],street:'flop',pot:90,bet:45,options:['Fold','Call','Raise'],correct:'fold',
+    setup:'6♠6♦ on A♣K♥Q♠. Three players, one bets 45 into 90. You have pocket Sixes.',
+    why:'Pocket 6s on AKQ in a multiway pot? You have the worst hand at the table. Any Ace, King, Queen, Jack (for a straight), or 10 (for a straight draw) beats you or is drawing well. Fold immediately.',
+    plain:'Your pocket Sixes are nearly worthless on this board. Three broadway cards in a multiway pot — fold without hesitation.'},
+
+  // THIN VALUE
+  {hole:[mk('A','♦'),mk('9','♦')],board:[mk('A','♠'),mk('8','♣'),mk('5','♥'),mk('3','♦'),mk('2','♣')],street:'river',pot:140,bet:0,options:['Check','Bet small (40)','Bet big (100)'],correct:'bet small (40)',
+    setup:'A♦9♦ on A♠8♣5♥3♦2♣. River is a blank. You have top pair with a mediocre kicker. Pot is 140.',
+    why:'Thin value bet — bet small. You beat A2-A8 and any pair below Aces. But you lose to AT+. A small bet gets called by worse (A2-A7, stubborn 8x) and doesn\'t risk much when you\'re behind.',
+    plain:'You have top pair but your kicker is weak. Bet small — you\'ll get called by worse hands more often than better hands, and the small size limits your loss when beat.'},
+
+  // CHECKING BACK
+  {hole:[mk('A','♥'),mk('J','♣')],board:[mk('Q','♠'),mk('10','♥'),mk('8','♣'),mk('5','♦')],street:'turn',pot:100,bet:0,options:['Check','Bet small (30)','Bet big (70)'],correct:'check',
+    setup:'A♥J♣ on Q♠T♥8♣5♦. You c-bet the flop, got called. Turn is a blank. You have Ace high and a gutshot (need a K or 9... actually just a K for the straight).',
+    why:'You have Ace high on a wet board against a player who called your flop bet. They likely have a pair or a draw. Your hand isn\'t strong enough to bet for value, and you have some showdown value (might win at showdown if checked through). Check.',
+    plain:'You missed. The board is scary. Your opponent has something. Check and hope to see a free card. Sometimes the best play is to stop putting money in.'},
+
+  // READING RAISES
+  {hole:[mk('K','♠'),mk('Q','♠')],board:[mk('K','♦'),mk('9','♣'),mk('4','♥')],street:'flop',pot:80,bet:0,options:['Fold','Call','Raise'],correct:'fold',
+    setup:'K♠Q♠ on K♦9♣4♥. You bet 30 into 80. Your opponent RAISES to 90. What do you do with top pair Queen kicker?',
+    pot:190,bet:60,
+    why:'When a typical low-stakes player raises on the flop, they almost always have a strong hand — usually two pair (K9, 94) or a set (99, 44, KK). Top pair Queen kicker loses to all of those. Fold.',
+    plain:'Your opponent raised your bet. At low stakes, this almost always means they have you beat. Top pair is only one pair. Fold and save your stack.',
+    correct:'fold'},
+
+  {hole:[mk('J','♦'),mk('10','♦')],board:[mk('Q','♥'),mk('9','♣'),mk('3','♠'),mk('8','♦')],street:'turn',pot:120,bet:60,options:['Fold','Call','Raise'],correct:'raise',
+    setup:'J♦T♦ on Q♥9♣3♠8♦. You made your straight! (Q-J-T-9-8). Opponent bets 60 into 120.',
+    why:'You have the second-nut straight (only KJ beats you). Raise for value. You want to build the pot with a very strong hand.',
+    plain:'You hit your straight! Raise — you have a near-unbeatable hand. Build the pot and get paid.'},
+
+  {hole:[mk('A','♣'),mk('A','♦')],board:[mk('7','♠'),mk('7','♣'),mk('7','♦'),mk('5','♥'),mk('2','♣')],street:'river',pot:200,bet:100,options:['Fold','Call','Raise'],correct:'call',
+    setup:'A♣A♦ on 7♠7♣7♦5♥2♣. Three Sevens on the board. Opponent bets 100 into 200.',
+    why:'Three of a kind on the board means your kicker matters — AA gives you 7-7-7-A-A. The only hands that beat you are pocket 7s (quad 7s, extremely unlikely — there\'s only one 7 left and they\'d need two), or... they can\'t have quads. You have the best full house. Call or raise.',
+    plain:'Three Sevens on the board plus your two Aces gives you the best possible full house. Call or raise — you\'re almost certainly ahead.'},
+];
+
+// ═══ CHUNK 06 ═══
+TUTORIALS.p5 = `
+<div class="tut">
+<h3>Module 5: Equity vs Range — Stop Thinking About Single Hands</h3>
+<p>Beginners think: "Does my opponent have Ace-King?" Advanced players think: "What is my opponent's <em>range</em> of hands, and how does my hand perform against that entire range?"</p>
+
+<div class="pt">A range is the set of all hands your opponent could have based on their actions. Every bet, call, raise, and check narrows their range. Your job is to figure out that range and calculate your equity against it.</div>
+
+<h3>Building a Range</h3>
+<div class="mb">
+<strong>Example: UTG opens, you're on the Button.</strong><br><br>
+UTG's range (approximately 13% of hands):<br>
+Pairs: 77+<br>
+Suited: ATs+, KQs<br>
+Offsuit: AQo+<br><br>
+
+Now UTG raises and a <em>tight</em> player in the Cutoff 3-bets.<br>
+Cutoff's 3-bet range (approximately 4-5% of hands):<br>
+QQ+, AKs, AKo — maybe JJ<br><br>
+
+See how the range <em>narrows</em> with each aggressive action?
+</div>
+
+<h3>Equity Against a Range</h3>
+<div class="mb">
+<strong>Your hand: JJ. Your opponent's range: {QQ+, AKs, AKo}</strong><br><br>
+vs QQ: you lose ~81% of the time<br>
+vs KK: you lose ~81%<br>
+vs AA: you lose ~81%<br>
+vs AKs: you win ~54%<br>
+vs AKo: you win ~57%<br><br>
+
+Weighted equity (considering how often each hand appears):<br>
+QQ+ = 18 combos. AK = 16 combos. Total = 34 combos.<br>
+JJ wins vs AK (47% of range) ~55% and loses vs QQ+ (53%) ~19%.<br>
+<strong>Total equity ≈ 47% × 55% + 53% × 19% ≈ 36%</strong><br><br>
+JJ has only 36% equity against this 3-bet range. That's why JJ is often a fold facing a 4-bet.
+</div>
+
+<div class="pln">In plain English: instead of wondering "does he have Aces?", you think "given his actions, he could have these 34 hand combinations. Against those 34 combos, I win 36% of the time. Is the pot giving me better than 36%?"</div>
+
+<h3>Combinatorics — Counting Combos</h3>
+<div class="mb">
+<strong>How many ways can each hand be dealt?</strong><br><br>
+Pocket pair (e.g. AA): <span class="pos">6 combos</span> (4 choose 2)<br>
+Suited hand (e.g. AKs): <span class="pos">4 combos</span> (one per suit)<br>
+Offsuit hand (e.g. AKo): <span class="pos">12 combos</span> (4×4 minus 4 suited)<br><br>
+
+<strong>Card removal ("blockers"):</strong><br>
+If you hold A♠K♣, there are only 3 remaining Aces and 3 remaining Kings.<br>
+Combos of AA drop from 6 to 3 (your Ace blocks half).<br>
+Combos of AK drop from 16 to 6.<br>
+<span class="pos">This matters enormously</span> when calculating range equity.
+</div>
+
+<div class="pt">Blockers are why suited Aces (A5s, A4s) are good 3-bet bluff candidates — holding an Ace reduces the chance your opponent has AA or AK by ~50%.</div>
+</div>
+`;
+
+TUTORIALS.p6 = `
+<div class="tut">
+<h3>Module 6: Implied Odds & Reverse Implied Odds</h3>
+<p>Pot odds tell you whether a call is profitable based on the current pot. Implied odds factor in the <em>future money</em> you'll win when you hit your hand.</p>
+
+<div class="pt">Implied odds = money you'll win on later streets when you complete your draw. Reverse implied odds = money you'll LOSE on later streets when you complete your draw but your opponent has you beat.</div>
+
+<h3>When Implied Odds Matter</h3>
+<div class="mb">
+<strong>Scenario: Set mining with 44</strong><br><br>
+You call a raise with pocket 4s. You'll flop a set ~12% of the time.<br>
+If the raise is 10 into a pot of 15, you need to call 10 to win 25.<br>
+Pot odds: 10/35 = 29%. Your equity of hitting a set: 12%.<br>
+Pot odds alone say FOLD.<br><br>
+But when you hit a set, you often win your opponent's entire stack.<br>
+If stacks are 100 big blinds deep, you stand to win ~200 total.<br>
+Implied odds: 10 to win potentially 200 = 5% breakeven.<br>
+12% > 5%. <span class="pos">CALL</span> — implied odds make it profitable.
+</div>
+
+<h3>Reverse Implied Odds — The Trap</h3>
+<div class="mb">
+<strong>Scenario: You have K♠Q♠ on A♠5♣2♦</strong><br><br>
+You have a gutshot (need a J) and a backdoor flush draw.<br>
+If a Jack comes, you make a straight — but your opponent with AJ makes two pair or a better straight with KT.<br>
+If a spade runner-runner comes, great — but it's very unlikely.<br><br>
+The problem: when you "hit," you often lose to a better hand.<br>
+<span class="neg">These are reverse implied odds</span> — the future money flows AWAY from you.
+</div>
+
+<div class="mb">
+<strong>Hands with GOOD implied odds:</strong><br>
+<span class="pos">Sets</span> — hidden, opponents pay off big<br>
+<span class="pos">Nut flush draws</span> — when you hit, you have the best flush<br>
+<span class="pos">Open-ended straight draws on rainbow boards</span> — obvious when you hit, but opponents still call<br><br>
+
+<strong>Hands with BAD (reverse) implied odds:</strong><br>
+<span class="neg">Non-nut flush draws</span> — you make a flush, they have a bigger one<br>
+<span class="neg">Bottom end of a straight</span> — you have 56 on a 789 board; if a T comes, anyone with J has a higher straight<br>
+<span class="neg">Dominated hands</span> — KJ vs AK; when you hit a King, you lose to a better kicker
+</div>
+
+<div class="pln">In plain English: implied odds are about whether you get PAID when you hit. Nut draws get paid. Non-nut draws get stacked. Always ask: "If I hit, am I drawing to the BEST hand, or could I be drawing to the SECOND-best hand?" Second-best hands are the most expensive hands in poker.</div>
+</div>
+`;
+
+TUTORIALS.p7 = `
+<div class="tut">
+<h3>Module 7: Bet Sizing Theory</h3>
+<p>The SIZE of your bet communicates information and controls the mathematics of the pot. Wrong sizing leaves money on the table or bleeds chips unnecessarily.</p>
+
+<div class="pt">Your bet size should be determined by what you're trying to achieve, not by habit. Different goals require different sizes.</div>
+
+<h3>The Three Reasons to Bet</h3>
+<div class="mb">
+1. <span class="pos">Value</span> — you have the best hand and want worse hands to call<br>
+2. <span class="pos">Bluff</span> — you have a weak hand and want better hands to fold<br>
+3. <span class="neg">Protection</span> — you have a vulnerable hand and want to charge draws<br><br>
+There is NO fourth reason. "I want to see where I'm at" is not a valid reason to bet — that's called a "feeler bet" and it's a leak.
+</div>
+
+<h3>Common Bet Sizes and Their Purpose</h3>
+<div class="mb">
+<strong>25-33% pot (small):</strong><br>
+Used on dry boards (K72 rainbow). Gets folds from nothing and calls from worse. Efficient — risks little.<br><br>
+
+<strong>50-66% pot (standard):</strong><br>
+The default on most boards. Charges draws correctly. Builds the pot at a reasonable rate.<br><br>
+
+<strong>75-100% pot (large):</strong><br>
+Used on wet boards to charge flush/straight draws. Also used for polarised ranges (very strong hands OR bluffs).<br><br>
+
+<strong>125%+ pot (overbet):</strong><br>
+Polarised — either the nuts or air. Used when your range has more strong hands than your opponent's range can contain. Advanced concept.
+</div>
+
+<h3>The Maths of Bet Sizing</h3>
+<div class="mb">
+<strong>When you bet, you set the price for your opponent:</strong><br><br>
+You bet ⅓ pot: they need <span class="pos">25%</span> equity to call<br>
+You bet ½ pot: they need <span class="pos">33%</span> equity to call<br>
+You bet ⅔ pot: they need <span class="pos">40%</span> equity to call<br>
+You bet pot: they need <span class="pos">50%</span> equity to call<br>
+You bet 2× pot: they need <span class="pos">67%</span> equity to call<br><br>
+
+<strong>For your BLUFFS, you want to bet the minimum that achieves the desired fold frequency.</strong><br>
+<strong>For your VALUE bets, you want to bet the maximum your opponent will call with worse.</strong>
+</div>
+
+<div class="pln">In plain English: if you have a monster, bet as big as your opponent will pay. If you're bluffing, bet as small as you need to make them fold. The art is making both sizes look identical — that's what "balanced" means.</div>
+
+<div class="pt">The key insight: your bluffs and value bets should use the SAME sizing in the same spot. If you always bet big with strong hands and small with bluffs, observant opponents will exploit you immediately.</div>
+</div>
+`;
+
+TUTORIALS.p8 = `
+<div class="tut">
+<h3>Module 8: Opponent Profiling</h3>
+<p>GTO (Game Theory Optimal) play is unexploitable but doesn't maximise profit against weak opponents. The real money comes from identifying opponent types and adjusting.</p>
+
+<div class="pt">Against good players, play GTO. Against bad players, play exploitatively — identify their mistakes and punish them.</div>
+
+<h3>The Four Player Types</h3>
+<div class="mb">
+<strong>1. TAG (Tight-Aggressive) — "The Rock"</strong><br>
+Plays few hands, bets aggressively. Solid, predictable. When they bet big, respect it — they have it.<br>
+<span class="pos">Exploit: fold more to their big bets. Steal their blinds more. They fold too much pre-flop.</span><br><br>
+
+<strong>2. LAG (Loose-Aggressive) — "The Maniac"</strong><br>
+Plays many hands, bets aggressively. Unpredictable, creates big pots. Can be brilliant or suicidal.<br>
+<span class="pos">Exploit: tighten up and let them bluff into your strong hands. Don't try to outbluff a LAG.</span><br><br>
+
+<strong>3. Calling Station — "The ATM"</strong><br>
+Calls too much, rarely raises or folds. Hates folding. Will call bets with bottom pair, gutshots, Ace-high.<br>
+<span class="pos">Exploit: NEVER bluff. Value bet relentlessly — they'll call with worse. Bet your medium hands that you'd normally check.</span><br><br>
+
+<strong>4. Nit — "The Statue"</strong><br>
+Plays extremely few hands (8-10%). Only enters pots with premiums. Extremely predictable.<br>
+<span class="pos">Exploit: steal their blinds constantly. When they 3-bet, fold everything but your best hands. They literally only have AA-QQ and AK.</span>
+</div>
+
+<div class="pln">In plain English: watch how your opponents play for 20-30 minutes. Count how many hands they play. Do they bet or call? Do they fold to raises? Within 30 minutes, you should be able to classify every player at the table into one of these four types.</div>
+
+<h3>Key Stats to Track</h3>
+<div class="mb">
+<strong>VPIP (Voluntarily Put $ In Pot):</strong><br>
+How many hands they play. TAG: 15-22%. LAG: 28-35%. Station: 35-50%. Nit: 8-12%.<br><br>
+
+<strong>PFR (Pre-Flop Raise):</strong><br>
+How often they raise vs limp. TAG: PFR close to VPIP. Station: VPIP >> PFR (they call but don't raise).<br><br>
+
+<strong>AF (Aggression Factor):</strong><br>
+Bets+Raises / Calls. TAG: 2-3. LAG: 3-5. Station: 0.5-1. Nit: 2-4.<br><br>
+
+<strong>The exploitable player has a gap between VPIP and PFR.</strong> A player with VPIP 40 and PFR 8 is calling WAY too much. They're a calling station. Extract maximum value.
+</div>
+
+<div class="dg">The #1 mistake at low stakes: trying to bluff calling stations. They don't fold. Stop bluffing them. Just bet your good hands and let them pay you off. It's boring. It's incredibly profitable.</div>
+</div>
+`;
+
+// ═══ CHUNK 07 ═══
+TUTORIALS.p9 = `
+<div class="tut">
+<h3>Module 9: GTO Fundamentals — Game Theory Optimal Play</h3>
+<p>GTO is a strategy that cannot be exploited. If you play GTO perfectly, no opponent can find a counter-strategy that profits against you in the long run. It's the Nash equilibrium of poker.</p>
+
+<div class="pt">GTO doesn't maximise profit against bad players — exploitative play does that. GTO is your baseline: the strategy you default to against unknowns and strong opponents. Against weak opponents, deviate from GTO to exploit their specific leaks.</div>
+
+<h3>The Core Concept: Indifference</h3>
+<div class="mb">
+<strong>When you play GTO, your opponent is mathematically indifferent between calling and folding.</strong><br><br>
+If you bet pot on the river:<br>
+Your opponent needs 33% equity to call (pot odds).<br>
+GTO says: bluff exactly 33% of the time, value bet 67%.<br>
+If you bluff 33%, your opponent wins 33% when calling (from your bluffs) — exactly what they need.<br><br>
+<span class="pos">If you bluff MORE than 33%: your opponent profits by always calling.</span><br>
+<span class="pos">If you bluff LESS than 33%: your opponent profits by always folding.</span><br>
+<span class="pos">At exactly 33%: it doesn't matter what they do. You've made them indifferent.</span>
+</div>
+
+<div class="pln">In plain English: GTO balances your bluffs and value bets so that your opponent can't figure out whether you're strong or weak. If they call too much, your value bets profit. If they fold too much, your bluffs profit. Either way, you win.</div>
+
+<h3>Balanced Ranges</h3>
+<div class="mb">
+<strong>A balanced range contains the right ratio of value hands to bluffs.</strong><br><br>
+On the river, if you bet pot (giving opponent 2:1):<br>
+Value:Bluff ratio = 2:1<br>
+For every 2 value combos, include 1 bluff combo.<br><br>
+
+If you bet ⅔ pot (giving opponent ~2.5:1):<br>
+Value:Bluff ratio = 2.5:1<br>
+For every 5 value combos, include 2 bluff combos.<br><br>
+
+<strong>This is pure mathematics.</strong> The ratio comes directly from the pot odds you're offering.
+</div>
+
+<h3>Minimum Defence Frequency (MDF)</h3>
+<div class="mb">
+<strong>When facing a bet, GTO tells you the minimum % of your range you must continue with:</strong><br><br>
+MDF = Pot / (Pot + Bet)<br><br>
+vs ⅓ pot bet: MDF = 75% (fold at most 25%)<br>
+vs ½ pot bet: MDF = 67% (fold at most 33%)<br>
+vs ⅔ pot bet: MDF = 60% (fold at most 40%)<br>
+vs pot bet: MDF = 50% (fold at most 50%)<br>
+vs 2× pot bet: MDF = 33% (fold at most 67%)<br><br>
+If you fold MORE than MDF allows, your opponent can profitably bluff you.
+</div>
+
+<div class="dg">MDF is a ceiling, not a target. Against opponents who never bluff, fold more. Against maniacs, fold less. MDF only applies against balanced opponents — which is rare at low stakes.</div>
+
+<h3>When to Play GTO vs Exploitative</h3>
+<div class="mb">
+<strong>Play GTO when:</strong><br>
+• You don't know your opponent<br>
+• Your opponent is skilled and observant<br>
+• You're in a tough spot and unsure what to do<br>
+• Tournament play against competent regulars<br><br>
+
+<strong>Play exploitatively when:</strong><br>
+• You've identified a clear leak (calling station, nit, maniac)<br>
+• You're at a soft table with recreational players<br>
+• The opponent has a massive imbalance you can target<br>
+• Low-stakes cash games where most players are unbalanced
+</div>
+
+<div class="pt">The practical reality: at low and mid stakes, most opponents are wildly unbalanced. Pure GTO leaves money on the table. Use GTO as your framework, but deviate aggressively when you spot a leak.</div>
+</div>
+`;
+
+TUTORIALS.p10 = `
+<div class="tut">
+<h3>Module 10: Tournament Strategy & ICM</h3>
+<p>Tournaments are fundamentally different from cash games. In a cash game, chips have a fixed monetary value. In a tournament, chip value is non-linear — and understanding this changes every decision.</p>
+
+<div class="pt">The single most important concept in tournament poker: your chips are worth LESS than face value because doubling your stack does NOT double your equity in the prize pool. This is the Independent Chip Model (ICM).</div>
+
+<h3>ICM — The Independent Chip Model</h3>
+<div class="mb">
+<strong>Example: 3 players left, prize pool £1000</strong><br>
+1st: £500 | 2nd: £300 | 3rd: £200<br><br>
+
+Starting stacks: A = 5000, B = 3000, C = 2000 (10000 total)<br><br>
+
+<strong>Chip equity (cEV):</strong><br>
+A: 5000/10000 = 50% of chips → £500<br>
+B: 3000/10000 = 30% → £300<br>
+C: 2000/10000 = 20% → £200<br><br>
+
+<strong>ICM equity (actual $EV):</strong><br>
+A: <span class="pos">£433</span> (NOT £500 — chips at the top are worth less)<br>
+B: <span class="pos">£317</span><br>
+C: <span class="pos">£250</span> (worth MORE than chip equity — survival has value)<br><br>
+
+<strong>Notice: A has 50% of chips but only 43% of the prize pool. C has 20% of chips but 25% of the money.</strong>
+</div>
+
+<div class="pln">In plain English: in a tournament, your first chip is worth more than your last chip. Going from 2000 to 4000 chips doesn't double your prize equity — because the difference between 2nd and 3rd place money matters more than the difference between 1st and 2nd. This means survival has intrinsic value.</div>
+
+<h3>Bubble Dynamics</h3>
+<div class="mb">
+<strong>The bubble is the most ICM-intensive phase of any tournament.</strong><br><br>
+10 players left, 9 get paid. The difference between 10th (£0) and 9th (£min cash) is massive.<br><br>
+
+<strong>On the bubble:</strong><br>
+• Short stacks should play EXTREMELY tight — survival = money<br>
+• Big stacks should play EXTREMELY aggressive — they can't be eliminated and can bully<br>
+• Medium stacks are in the worst spot — too much to lose, not enough to dominate<br><br>
+
+<strong>The big stack's edge:</strong><br>
+The big stack can shove on every hand because eliminating a short stack earns EVERYONE else a pay jump. Medium stacks can't call without a premium because busting costs them more than winning gains.
+</div>
+
+<h3>Push/Fold Strategy</h3>
+<div class="mb">
+<strong>When your stack drops below 10 big blinds, you have two options:</strong><br>
+All-in or fold. No calling, no limping, no small raises.<br><br>
+
+<strong>Push ranges depend on:</strong><br>
+• Your stack size (in big blinds)<br>
+• Your position (later = wider)<br>
+• Number of players still to act<br>
+• ICM pressure (are you near the money?)<br><br>
+
+<strong>Approximate push ranges (no ICM, 10BB stack):</strong><br>
+UTG (6-max): ~15% — 66+, ATs+, AJo+, KQs<br>
+Cutoff: ~30% — 22+, A2s+, A8o+, K9s+, KTo+, suited connectors<br>
+Button: ~45% — almost any two with an Ace, King, pair, or connector<br>
+Small Blind: ~55% — very wide; only one player to beat
+</div>
+
+<div class="pt">At 10BB or less, every hand is a mathematical formula: "Does this hand have enough equity against the calling range, given the pot odds and ICM considerations?" There's a correct answer for every spot. This is pure applied mathematics — no "feel" required.</div>
+
+<h3>Final Table Adjustments</h3>
+<div class="mb">
+<strong>At the final table, every elimination means a pay jump for everyone else.</strong><br><br>
+This creates bizarre incentives:<br>
+• You should fold AK in some spots because busting out costs more than winning gains<br>
+• The shortest stack at the table has massive "fold equity" because everyone wants someone ELSE to bust<br>
+• Chip leaders can exploit this by raising relentlessly — no one wants to play a big pot and risk their tournament life<br><br>
+
+<strong>ICM calculators are essential tools</strong> for final table preparation. They show you the exact equity of every possible outcome and help you make mathematically correct decisions in spots where intuition fails.
+</div>
+
+<div class="dg">The biggest tournament mistake: playing for 1st when you should be playing for survival. Yes, 1st place pays the most. But the EV of surviving one more pay jump often exceeds the EV of gambling for a bigger stack. Do the maths, not the ego.</div>
+</div>
+`;
+
+
+// ════════════════════════════════════════
+//  MODULE LOADER
+// ════════════════════════════════════════
+let curMod,scIdx,optP,totD,strk,scList;
+const MOD_NAMES={p1:'1: Hand Rankings',p2:'2: Pot Odds & Outs',p3:'3: Position & Pre-flop',p4:'4: Post-flop Fundamentals',p5:'5: Equity vs Range',p6:'6: Implied Odds',p7:'7: Bet Sizing',p8:'8: Opponent Profiling',p9:'9: GTO Fundamentals',p10:'10: Tournaments & ICM',p11:'11: Full Table Simulator'};
+
+function loadMod(id){
+  curMod=id;scIdx=0;optP=0;totD=0;strk=0;
+  document.getElementById('lTitle').textContent=MOD_NAMES[id]||id;
+  document.getElementById('hOpt').textContent='0/0';
+  document.getElementById('hAcc').textContent='—';
+  document.getElementById('hStrk').textContent='0';
+  document.getElementById('anl').className='an';
+  show('lesson');
+
+  // Tutorial-first modules: show tutorial, then scenarios
+  if(TUTORIALS[id]){
+    document.getElementById('feltArea').style.display='none';
+    document.getElementById('actR').style.display='none';
+    document.getElementById('tutArea').innerHTML=TUTORIALS[id];
+    document.getElementById('lProg').textContent='Tutorial';
+    document.getElementById('pFill').style.width='0%';
+    // Add "Start Practice" button if scenarios exist
+    if(SCENARIOS[id]&&SCENARIOS[id].length>0){
+      document.getElementById('tutArea').innerHTML+=
+        '<div style="text-align:center;margin:.5rem 0"><button class="nb" onclick="startScenarios()">Start Practice Scenarios →</button></div>';
+    }
+    return;
+  }
+  // Scenario-only or special modules
+  if(SCENARIOS[id]&&SCENARIOS[id].length>0){
+    startScenarios();return;
+  }
+  // Fallback
+  document.getElementById('feltArea').style.display='none';
+  document.getElementById('actR').style.display='none';
+  document.getElementById('hudArea').style.display='none';
+  document.getElementById('tutArea').innerHTML='<div class="tut"><h3>Coming Soon</h3><p>This module is under development.</p></div>';
+}
+
+function startScenarios(){
+  scList=[...SCENARIOS[curMod]];
+  document.getElementById('hudArea').style.display='flex';
+  document.getElementById('feltArea').style.display='block';
+  mkDeck();loadSc();
+}
+
+// ════════════════════════════════════════
+//  SCENARIO PLAYER
+//  Poker scenarios have: hole cards, board, pot, bet, 
+//  correct action, analysis text
+// ════════════════════════════════════════
+function loadSc(){
+  if(scIdx>=scList.length){showRes();return}
+  const s=scList[scIdx];
+  document.getElementById('lProg').textContent=(scIdx+1)+'/'+scList.length;
+  document.getElementById('pFill').style.width=Math.round(scIdx/scList.length*100)+'%';
+  document.getElementById('anl').className='an';
+
+  // Render board
+  document.getElementById('boardCards').innerHTML=(s.board||[]).map(c=>rc(c)).join('')||(s.street==='preflop'?'<span style="font-size:.7rem;color:rgba(255,255,255,.2)">Pre-flop</span>':'');
+  document.getElementById('holeCards').innerHTML=s.hole.map(c=>rc(c)).join('');
+  document.getElementById('potSize').textContent=s.pot||0;
+  document.getElementById('toCall').textContent=s.bet||0;
+  const po=calcPotOdds(s.pot||0,s.bet||0);
+  document.getElementById('potOdds').textContent=s.bet>0?po.pct+'% ('+po.ratio+')':'—';
+
+  // Tutorial text
+  document.getElementById('tutArea').innerHTML=s.setup?'<div class="tut"><div class="pt">'+s.setup+'</div></div>':'';
+
+  // Actions
+  const el=document.getElementById('actR');el.style.display='flex';el.innerHTML='';
+  (s.options||['Fold','Call','Raise']).forEach(a=>{
+    const b=document.createElement('button');b.className='ab';
+    b.textContent=a;b.addEventListener('click',()=>handlePokerAct(a,s));
+    el.appendChild(b);
+  });
+}
+
+function handlePokerAct(action,s){
+  document.getElementById('actR').style.display='none';
+  totD++;
+  const correct=action.toLowerCase()===s.correct.toLowerCase();
+  if(correct){optP++;strk++}else strk=0;
+  document.getElementById('hOpt').textContent=optP+'/'+totD;
+  document.getElementById('hAcc').textContent=Math.round(optP/totD*100)+'%';
+  document.getElementById('hStrk').textContent=strk;
+
+  const a=document.getElementById('anl');
+  let h='<h3>Analysis</h3>';
+  if(s.equity)h+='<div class="ag"><div class="ac"><div class="al">Your equity</div><div class="av pos">'+s.equity+'%</div></div>'+(s.potOddsNeeded?'<div class="ac"><div class="al">Pot odds needed</div><div class="av '+(s.equity>=s.potOddsNeeded?'pos':'neg')+'">'+s.potOddsNeeded+'%</div></div>':'')+'</div>';
+  if(s.outs)h+='<div class="ag"><div class="ac"><div class="al">Outs</div><div class="av">'+s.outs+'</div></div><div class="ac"><div class="al">Equity (Rule of 2&4)</div><div class="av">~'+s.outsEquity+'%</div></div></div>';
+  h+='<div class="rsn"><strong>Correct play: '+s.correct.toUpperCase()+'</strong><br>'+s.why+'</div>';
+  if(s.plain)h+='<div class="pln">'+s.plain+'</div>';
+  h+='<div class="vrd '+(correct?'ok':'no')+'">'+(correct?'✓ Optimal play.':'✗ Not optimal. The correct play is '+s.correct.toUpperCase()+'.')+'</div>';
+  h+='<button class="nb" onclick="advSc()">Next Scenario →</button>';
+  a.innerHTML=h;a.className='an show';
+}
+
+function advSc(){document.getElementById('anl').className='an';scIdx++;loadSc()}
+
+// ════════════════════════════════════════
+//  RESULTS
+// ════════════════════════════════════════
+function showRes(){
+  const pct=totD>0?Math.round(optP/totD*100):0;
+  let t='Keep Practising';
+  if(pct>=90)t='Shark!';else if(pct>=75)t='Solid Regular';else if(pct>=60)t='Getting There';
+  document.getElementById('rT').textContent=t;
+  document.getElementById('rB').textContent=pct+'%';
+  document.getElementById('rD').innerHTML=(MOD_NAMES[curMod]||'')+'<br>Optimal: '+optP+'/'+totD+' ('+pct+'%)<br>Streak: '+strk;
+  show('results');
+}
+
+// ════════════════════════════════════════
+//  RANGE GRID BUILDER (used by multiple modules)
+// ════════════════════════════════════════
+function buildRangeGrid(containerId, playHands){
+  // playHands = Set of hand strings like 'AKs','AKo','AA' etc
+  const ranks='AKQJT98765432';
+  const el=document.getElementById(containerId);
+  if(!el)return;
+  let html='';
+  for(let r=0;r<13;r++){
+    for(let c=0;c<13;c++){
+      let hand='';
+      if(r===c)hand=ranks[r]+ranks[c]; // pair
+      else if(r<c)hand=ranks[r]+ranks[c]+'s'; // suited (above diagonal)
+      else hand=ranks[c]+ranks[r]+'o'; // offsuit (below diagonal)
+      const type=r===c?'pair':r<c?'suited':'offsuit';
+      const play=playHands&&playHands.has(hand);
+      html+=`<div class="rg-cell ${type} ${play?'play':'fold'}" title="${hand}">${hand}</div>`;
+    }
+  }
+  el.innerHTML=html;
+}
+</script>
+</body>
+</html>

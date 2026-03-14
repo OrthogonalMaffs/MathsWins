@@ -1,0 +1,427 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Slots: The Ugly Truth — Maths Always Wins</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=DM+Mono:wght@400;500&family=Bebas+Neue&family=Crimson+Pro:ital,wght@0,400;0,700;1,400&family=Outfit:wght@300;400;600;700&display=swap" rel="stylesheet">
+<script async src="https://www.googletagmanager.com/gtag/js?id=G-CLNF7GSB28"></script>
+<script>window.dataLayer=window.dataLayer||[];function gtag(){dataLayer.push(arguments);}gtag('js',new Date());gtag('config','G-CLNF7GSB28',{send_page_view:true,storage:'none',anonymize_ip:true});</script>
+<style>
+*{margin:0;padding:0;box-sizing:border-box}
+:root{--bg:#06080c;--surface:#0c0f16;--surface2:#111620;--border:#1a2030;--border2:#242e40;--accent:#e040fb;--accent-dim:rgba(224,64,251,.08);--green-bright:#2dd4a0;--red-bright:#ef5350;--gold:#d4a847;--text:#d8dce4;--text-bright:#f0f2f6;--muted:#5a6478}
+body{font-family:'Outfit',sans-serif;background:var(--bg);color:var(--text);min-height:100vh;-webkit-font-smoothing:antialiased}
+.outer{max-width:800px;margin:0 auto;padding:0 1rem 2rem}
+.hero{text-align:center;padding:3rem 0 1.5rem;border-bottom:1px solid var(--border)}
+.hero-ey{font-family:'DM Mono',monospace;font-size:.65rem;letter-spacing:.25em;text-transform:uppercase;color:var(--accent);margin-bottom:.6rem}
+.hero h1{font-family:'Bebas Neue',sans-serif;font-size:3rem;letter-spacing:.04em;color:var(--text-bright);line-height:1.1}
+.hero h1 span{color:var(--accent)}
+.hero .tag{font-family:'Crimson Pro',serif;font-style:italic;font-size:1.05rem;color:var(--muted);margin-top:.5rem;max-width:500px;margin-left:auto;margin-right:auto}
+.stats-bar{display:grid;grid-template-columns:repeat(4,1fr);gap:1px;background:var(--border);border:1px solid var(--border);border-radius:10px;overflow:hidden;margin:1.5rem 0}
+.sc{background:var(--surface);padding:.8rem .4rem;text-align:center}
+.sc .sn{font-family:'DM Mono',monospace;font-size:1.3rem;font-weight:500;color:var(--accent)}
+.sc .sl{font-size:.58rem;color:var(--muted);margin-top:.15rem;line-height:1.3}
+.screen{display:none}.screen.active{display:block}
+.mc{background:var(--surface);border:1px solid var(--border);border-radius:8px;padding:.6rem .8rem;margin-bottom:.3rem;display:flex;justify-content:space-between;align-items:center;cursor:pointer;transition:all .12s}
+.mc:hover{border-color:var(--accent);transform:translateX(3px)}
+.mc .mn{font-size:.82rem;font-weight:600}.mc .md{font-size:.65rem;color:var(--muted)}
+.cta{display:block;margin:1rem auto;padding:.55rem 1.5rem;border-radius:8px;font-family:'Outfit',sans-serif;font-size:.82rem;font-weight:600;cursor:pointer;border:2px solid var(--accent);background:var(--accent);color:#fff;text-align:center;max-width:300px}
+.bb{display:inline-block;margin:.4rem 0;padding:.3rem .9rem;border:none;border-radius:6px;background:var(--border);color:var(--text);font-family:'Outfit',sans-serif;font-size:.75rem;font-weight:600;cursor:pointer}
+.nb{display:inline-block;margin-top:.3rem;padding:.3rem .9rem;border:none;border-radius:6px;background:var(--accent);color:#fff;font-family:'Outfit',sans-serif;font-size:.75rem;font-weight:600;cursor:pointer}
+.tut{background:var(--surface);border:1px solid var(--border);border-radius:10px;padding:1.1rem;margin-bottom:.5rem;line-height:1.75;font-size:.85rem}
+.tut h3{color:var(--accent);font-size:.88rem;margin-bottom:.3rem}
+.tut p{margin-bottom:.4rem}
+.tut .pt{padding:.4rem .7rem;margin:.4rem 0;border-radius:6px;border-left:3px solid var(--accent);background:var(--accent-dim)}
+.tut .dg{padding:.4rem .7rem;margin:.4rem 0;border-radius:6px;border-left:3px solid var(--red-bright);background:rgba(239,83,80,.06);color:var(--red-bright)}
+.tut .gd{padding:.4rem .7rem;margin:.4rem 0;border-radius:6px;border-left:3px solid var(--green-bright);background:rgba(45,212,160,.06);color:var(--green-bright)}
+.tut .mb{font-family:'DM Mono',monospace;background:var(--bg);border-radius:6px;padding:.5rem;margin:.4rem 0;font-size:.78rem;line-height:1.8}
+.tut .mb .pos{color:var(--green-bright)}.tut .mb .neg{color:var(--red-bright)}.tut .mb .hl{color:var(--accent)}
+.tut .pln{font-family:'Crimson Pro',serif;font-size:.88rem;color:#0e9aa7;font-style:italic;margin:.3rem 0}
+.sim{background:var(--surface);border:1px solid var(--border);border-radius:10px;padding:.9rem;margin-bottom:.5rem;text-align:center}
+.sim h3{color:var(--accent);font-size:.82rem;margin-bottom:.3rem}
+.sim canvas{display:block;width:100%;height:auto;margin:.3rem auto}
+.sim-status{font-family:'DM Mono',monospace;font-size:.72rem;color:var(--muted);margin:.3rem 0}
+.disc{background:var(--surface);border:1px solid var(--border2);border-radius:10px;padding:1rem;margin:1rem 0}
+.disc p{font-family:'Crimson Pro',serif;font-size:.85rem;color:var(--muted);line-height:1.6;font-style:italic;margin-bottom:.3rem}
+.disc p strong{color:var(--accent);font-style:normal}
+@media(max-width:600px){.hero h1{font-size:2.2rem}.stats-bar{grid-template-columns:repeat(2,1fr)}}
+</style>
+</head>
+<body>
+<div class="outer">
+
+<div id="landing" class="screen active">
+<div class="hero">
+<div class="hero-ey">Maths Always Wins · Start Here</div>
+<h1>SLOTS: THE <span>UGLY TRUTH</span></h1>
+<div class="tag">The most played, least understood, and most profitable game in every casino. Here's what they don't want you to know.</div>
+</div>
+
+<div class="stats-bar">
+<div class="sc"><div class="sn">2-10%</div><div class="sl">House edge<br>on slot machines</div></div>
+<div class="sc"><div class="sn">£0</div><div class="sl">Skill required<br>to play</div></div>
+<div class="sc"><div class="sn">£0</div><div class="sl">Skill that can<br>change the outcome</div></div>
+<div class="sc"><div class="sn">33%</div><div class="sl">Of UK gambling<br>revenue from slots</div></div>
+</div>
+
+<div class="disc">
+<p>This is the most important product in our academy. Every other course teaches you to play a game with more skill. This one teaches you why <strong>no amount of skill matters</strong>.</p>
+<p>Slots are pure mathematics — and the mathematics is entirely, immovably against you. <strong>100 QF · 7-day access.</strong></p>
+</div>
+
+<div style="margin:1rem 0">
+<div class="mc" onclick="loadMod(0)"><div><div class="mn">1. What RTP Actually Means</div><div class="md">Return to Player sounds generous. It isn't. Here's what the number really tells you.</div></div></div>
+<div class="mc" onclick="loadMod(1)"><div><div class="mn">2. Volatility: The Invisible Lever</div><div class="md">Why some machines drain you slowly and others bankrupt you fast — by design.</div></div></div>
+<div class="mc" onclick="loadMod(2)"><div><div class="mn">3. Near Misses Are Programmed</div><div class="md">That symbol one position above the payline? It's not bad luck. It's software.</div></div></div>
+<div class="mc" onclick="loadMod(3)"><div><div class="mn">4. Bonus Features Don't Help</div><div class="md">Free spins, multipliers, pick-a-box. They're all factored into the RTP. You gain nothing.</div></div></div>
+<div class="mc" onclick="loadMod(4)"><div><div class="mn">5. Progressive Jackpots — The Lottery Tax</div><div class="md">The jackpot grows because YOU fund it. The maths of when (if ever) they become +EV.</div></div></div>
+<div class="mc" onclick="loadMod(5)"><div><div class="mn">6. The 1,000-Spin Simulation</div><div class="md">Watch £500 evaporate in real time. This is what RTP looks like in practice.</div></div></div>
+<div class="mc" onclick="loadMod(6)"><div><div class="mn">7. Why You Keep Playing</div><div class="md">Variable ratio reinforcement. Dopamine. Loss disguised as wins. The psychology they exploit.</div></div></div>
+</div>
+
+<button class="cta" onclick="loadMod(0)">Start — This Might Save You Money</button>
+</div>
+
+<div id="lesson" class="screen">
+<div id="content"></div>
+<button class="bb" onclick="show('landing')">← Back</button>
+</div>
+</div>
+
+<script>
+function show(id){document.querySelectorAll('.screen').forEach(s=>s.classList.remove('active'));document.getElementById(id).classList.add('active');window.scrollTo(0,0)}
+function loadMod(i){show('lesson');const c=document.getElementById('content');[modRTP,modVol,modNear,modBonus,modProg,modSim,modPsych][i](c)}
+
+function modRTP(c){c.innerHTML=`
+<div class="tut">
+<h3>What RTP Actually Means</h3>
+<p>Every slot machine has an RTP — Return to Player — typically between 90% and 98%. Sounds like you get most of your money back. You don't.</p>
+
+<div class="pt">RTP is a LONG-TERM AVERAGE calculated over millions of spins. It does NOT mean you get 96p back for every £1 you bet. It means the machine is programmed to return 96% of ALL money ever wagered on it, distributed unevenly across all players.</div>
+
+<div class="mb">
+<strong>What 96% RTP actually looks like:</strong><br><br>
+You put £100 into a 96% RTP slot.<br>
+After 100 spins at £1: you have approximately <span class="neg">£96</span><br>
+You keep playing with that £96.<br>
+After another 96 spins: you have approximately <span class="neg">£92.16</span><br>
+Keep playing...<br>
+After another 92 spins: <span class="neg">£88.47</span><br>
+After another 88 spins: <span class="neg">£84.93</span><br><br>
+<strong>This is the "churn" effect.</strong> Every time you recycle your balance through the machine, it takes 4%. The machine doesn't care that it's "your money" — it sees every spin as a fresh 4% extraction.
+</div>
+
+<div class="pln">In plain English: RTP doesn't mean you lose 4% of your deposit. It means you lose 4% of every pound you BET. If you deposit £100 and spin 500 times at £1, you've wagered £500. 4% of £500 = £20 expected loss. You deposited £100, you'll leave with about £80.</div>
+
+<div class="mb">
+<strong>The churn calculation:</strong><br><br>
+Deposit: £100<br>
+Spins per hour: 600 (online slots are FAST)<br>
+Bet per spin: £0.50<br>
+Total wagered per hour: £300<br>
+RTP: 96%<br>
+Expected loss per hour: £300 × 4% = <span class="neg">£12/hour</span><br><br>
+In 4 hours: <span class="neg">£48 expected loss</span> from a £100 deposit.<br>
+The RTP is 96% but you've lost nearly half your money.
+</div>
+
+<div class="dg">The deception: "96% RTP" sounds like you keep most of your money. In reality, the speed of modern slots means your money churns through the machine hundreds of times. Each churn extracts 4%. Over a session, you can easily lose 40-60% of your deposit on a "96% RTP" game.</div>
+
+<div class="mb">
+<strong>Compare to other games:</strong><br><br>
+Slots (96% RTP): <span class="neg">−£12/hour</span> at £0.50/spin, 600 spins/hr<br>
+Roulette: <span class="neg">−£3.38/hour</span> at £5/spin, 25 spins/hr<br>
+Blackjack (basic strategy): <span class="neg">−£1/hour</span> at £25/hand, 80 hands/hr<br>
+Craps (pass + odds): <span class="neg">−£0.35/hour</span> at £5 pass + £15 odds<br><br>
+<strong>Slots are the most expensive game in the casino per hour of play.</strong> Not because the house edge is higher (it's comparable to roulette), but because the SPEED is 20× faster.
+</div>
+
+<div class="pt">Speed is the weapon. A roulette spin takes 2-3 minutes. A slot spin takes 3-6 seconds. The house edge per bet might be similar, but the house edge per HOUR is dramatically higher on slots because you're placing 10-20× more bets.</div>
+</div>`}
+
+function modVol(c){c.innerHTML=`
+<div class="tut">
+<h3>Volatility: The Invisible Lever</h3>
+<p>Two slots can have identical RTP (96%) but play completely differently. The difference is volatility — and it's designed to exploit you.</p>
+
+<div class="mb">
+<strong>Low volatility (e.g. Starburst):</strong><br>
+Frequent small wins. You feel like you're "winning" constantly.<br>
+Your balance drains slowly — death by a thousand cuts.<br>
+Designed to keep you playing longer (more spins = more churn = more profit for the casino).<br><br>
+
+<strong>High volatility (e.g. Dead or Alive, Bonanza):</strong><br>
+Long dry spells with nothing. Then a massive win.<br>
+You can lose 200 spins in a row, then win 500× your bet.<br>
+Designed to create the dopamine hit of a "big win" — which keeps you chasing the next one.<br><br>
+
+<strong>Both have the same RTP. Both extract the same percentage long-term.</strong>
+</div>
+
+<div class="pln">In plain English: low volatility bleeds you dry slowly. High volatility bankrupts you quickly but gives you occasional thrills. Neither is "better" — they're different psychological traps targeting different personality types.</div>
+
+<div class="pt">Casinos offer high-volatility slots because the big wins create stories. "I won £5,000 on Bonanza!" Nobody tells the story of the £8,000 they lost getting there. The memorable wins mask the unmemorable, steady losses. This is selection bias weaponised.</div>
+
+<div class="mb">
+<strong>The maths of high volatility:</strong><br><br>
+1000 spins at £1, 96% RTP, high volatility:<br>
+You might win £0 on 940 spins<br>
+Win small (1-5×) on 50 spins: ~£100<br>
+Win medium (10-50×) on 9 spins: ~£200<br>
+Win big (100×+) on 1 spin: ~£660<br><br>
+Total returned: ~£960 (96% of £1000 wagered)<br>
+But your EXPERIENCE was: "I lost for ages, then won £660!"<br>
+The £660 win felt like a gift. It was your own money being returned, minus 4%.
+</div>
+</div>`}
+
+function modNear(c){c.innerHTML=`
+<div class="tut">
+<h3>Near Misses Are Programmed</h3>
+<p>You spin. Two jackpot symbols land on the payline. The third stops one position above. "So close!" You spin again.</p>
+
+<div class="dg">That near miss was not bad luck. It was deliberately programmed into the machine's algorithm to make you feel like you almost won, even though you were never close.</div>
+
+<div class="mb">
+<strong>How modern slots work:</strong><br><br>
+Physical reels had fixed symbols — what you saw was what was there.<br>
+Modern slots use a <span class="hl">Random Number Generator (RNG)</span>.<br><br>
+1. The RNG determines the outcome BEFORE the reels spin<br>
+2. The animation is just a display — it doesn't affect the result<br>
+3. The "near miss" where the jackpot symbol stops one above the line is a VISUAL EFFECT mapped to an already-determined loss<br>
+4. The machine shows more near-misses than random chance would produce
+</div>
+
+<div class="pln">In plain English: the slot machine decides you've lost, then SHOWS you a near-miss to make you think you were close. You were never close. The outcome was decided before the reels started spinning. The animation is theatre.</div>
+
+<div class="mb">
+<strong>The psychological effect:</strong><br><br>
+Near-misses activate the same brain regions as actual wins.<br>
+Your brain releases dopamine — the reward chemical — on a near-miss.<br>
+This creates the sensation of "almost winning" which motivates continued play.<br>
+Studies show near-misses increase the urge to play by <span class="neg">30-40%</span>.<br><br>
+<strong>This is not an accident. It is engineered.</strong>
+</div>
+
+<div class="pt">In the UK, the Gambling Commission requires RNG certification but does NOT regulate the visual presentation of outcomes. A machine can show you near-misses all day long as long as the underlying RNG is fair. The RNG is fair — the display is manipulative. Both are legal.</div>
+</div>`}
+
+function modBonus(c){c.innerHTML=`
+<div class="tut">
+<h3>Bonus Features Don't Help You</h3>
+<p>"Free spins!" "Pick a treasure chest!" "Wheel of fortune!" These features feel like gifts. They're not — they're part of the machine's RTP calculation.</p>
+
+<div class="pt">Every bonus feature, free spin round, multiplier, and gamble option is mathematically factored into the overall RTP. They don't give you extra value — they redistribute where the returns come from.</div>
+
+<div class="mb">
+<strong>How bonuses are costed:</strong><br><br>
+A slot with 96% RTP might break down as:<br>
+Base game returns: <span class="neg">60% of total RTP</span> (small frequent wins)<br>
+Free spin bonus returns: <span class="neg">30% of total RTP</span> (medium wins, less frequent)<br>
+Jackpot/feature returns: <span class="neg">6% of total RTP</span> (rare big wins)<br>
+Total: 96%<br><br>
+The bonus round feels generous because it pays out more per spin.<br>
+But you "earn" the bonus by losing during 50-200 base game spins.<br>
+<strong>The total return including both base game and bonuses is still 96%.</strong>
+</div>
+
+<div class="pln">In plain English: the bonus round isn't free. You paid for it with 200 losing spins. The "free" spins are pre-funded by your losses. The machine isn't giving you a gift — it's returning a fraction of what it already took.</div>
+
+<div class="mb">
+<strong>"Buy bonus" features (paying to trigger a bonus instantly):</strong><br><br>
+Some modern slots let you buy the bonus round for 80-100× your bet.<br>
+Example: £1 spin, buy bonus for £80.<br><br>
+The expected value of the bonus round is LESS than £80.<br>
+Otherwise the casino wouldn't offer it.<br>
+You're paying a premium for the dopamine hit of instant access.<br>
+<span class="neg">Buy bonus features have WORSE RTP than just playing normally.</span>
+</div>
+
+<div class="dg">The "gamble" feature (double or nothing on a win) has 50/50 odds — it's the only fair part of a slot machine. But it doesn't change your long-term RTP. It just increases volatility — bigger wins and bigger losses, same average return.</div>
+</div>`}
+
+function modProg(c){c.innerHTML=`
+<div class="tut">
+<h3>Progressive Jackpots: You Fund Them</h3>
+<p>The jackpot counter ticking up feels like free money accumulating. It isn't. Every penny of that jackpot came from players' bets — including yours.</p>
+
+<div class="mb">
+<strong>How progressive jackpots work:</strong><br><br>
+A standard slot might have 96% RTP.<br>
+A progressive version might have 88% RTP in the base game + 8% contributed to the jackpot pool.<br>
+Total RTP: still 96% — IF you include the jackpot.<br><br>
+But you almost certainly won't win the jackpot.<br>
+P(hitting a typical progressive) ≈ <span class="neg">1 in 10,000,000 to 1 in 50,000,000</span><br><br>
+So YOUR personal RTP is closer to <span class="neg">88%</span> — because the 8% jackpot contribution is going to someone else (probably).
+</div>
+
+<div class="pln">In plain English: progressive jackpots reduce YOUR returns to fund a prize that will almost certainly go to someone else. You're voluntarily accepting a worse game for a lottery ticket you'll never win. The maths is identical to buying a lottery ticket — except at least lottery tickets don't pretend to be a game.</div>
+
+<div class="mb">
+<strong>Can progressive jackpots ever be +EV?</strong><br><br>
+Theoretically, yes — when the jackpot grows large enough.<br>
+If base RTP is 88% and the jackpot contribution is 8%,<br>
+the jackpot adds EV when it exceeds its "must hit by" amount<br>
+divided by the probability of hitting it.<br><br>
+In practice: the jackpot would need to be <span class="pos">10-50× its seed value</span> before the game becomes +EV, AND you'd need an infinite bankroll to survive long enough to hit it. This is theoretical, not practical.
+</div>
+
+<div class="pt">The Mega Moolah jackpot (famous for multi-million payouts) has a base RTP of approximately 88.12%. Without hitting the jackpot — which happens roughly once every 3-4 months across millions of players worldwide — you're playing an 88% RTP game. That's 12% house edge. Worse than American roulette.</div>
+</div>`}
+
+function modSim(c){c.innerHTML=`
+<div class="tut">
+<h3>The 1,000-Spin Simulation</h3>
+<p>Theory is one thing. Watching your money disappear is another. This simulation runs 1,000 spins on a 96% RTP slot and shows you what actually happens.</p>
+</div>
+
+<div class="sim">
+<h3>1,000 Spins · £0.50/spin · 96% RTP · Medium Volatility</h3>
+<canvas id="slotCanvas" width="700" height="300"></canvas>
+<div class="sim-status" id="slotStatus">Click to start</div>
+<button class="nb" id="slotBtn" onclick="runSlotSim()">Run 1,000 Spins</button>
+</div>`;
+
+  window.runSlotSim=function(){
+    document.getElementById('slotBtn').style.display='none';
+    const canvas=document.getElementById('slotCanvas');
+    const ctx=canvas.getContext('2d');
+    const W=700,H=300;
+    let balance=500,bet=0.50,totalWagered=0,spins=0,maxBal=500,wins=0;
+    const history=[500];
+    const N=1000;
+    let i=0;
+
+    function spin(){
+      const r=Math.random();
+      let payout=0;
+      // Simplified slot payout distribution (96% RTP, medium vol)
+      if(r<0.55)payout=0; // 55% lose
+      else if(r<0.75)payout=bet*0.5; // 20% win half back
+      else if(r<0.88)payout=bet*1; // 13% win 1x
+      else if(r<0.94)payout=bet*2; // 6% win 2x
+      else if(r<0.97)payout=bet*5; // 3% win 5x
+      else if(r<0.99)payout=bet*15; // 2% win 15x
+      else if(r<0.998)payout=bet*50; // 0.8% win 50x
+      else payout=bet*200; // 0.2% win 200x
+      // Average payout = ~0.48 per 0.50 bet = 96% RTP
+
+      if(payout>0)wins++;
+      balance-=bet;balance+=payout;totalWagered+=bet;
+      if(balance>maxBal)maxBal=balance;
+      if(balance<0)balance=0;
+      history.push(balance);
+      spins++;
+      return balance>0;
+    }
+
+    function draw(){
+      ctx.fillStyle='#0c0f16';ctx.fillRect(0,0,W,H);
+      // Grid
+      ctx.strokeStyle='#1a2030';ctx.lineWidth=0.5;
+      for(let y=50;y<H-30;y+=50){ctx.beginPath();ctx.moveTo(40,y);ctx.lineTo(W-10,y);ctx.stroke()}
+      // Starting line
+      ctx.strokeStyle='rgba(45,212,160,.2)';ctx.setLineDash([4,4]);
+      const startY=H-30-((500/Math.max(maxBal,500))*(H-80));
+      ctx.beginPath();ctx.moveTo(40,startY);ctx.lineTo(W-10,startY);ctx.stroke();
+      ctx.setLineDash([]);
+      // Balance line
+      ctx.strokeStyle='var(--accent)';ctx.lineWidth=1.5;ctx.beginPath();
+      const xStep=(W-50)/Math.max(history.length-1,1);
+      const yScale=(H-80)/Math.max(maxBal,500);
+      history.forEach((b,idx)=>{
+        const x=40+idx*xStep,y=H-30-(b*yScale);
+        idx===0?ctx.moveTo(x,y):ctx.lineTo(x,y);
+      });
+      ctx.stroke();
+      // Labels
+      ctx.fillStyle='var(--muted)';ctx.font='10px DM Mono';ctx.textAlign='left';
+      ctx.fillText('£'+balance.toFixed(0),W-60,H-30-(balance*yScale)-8);
+      ctx.fillText('£500 start',W-80,startY-5);
+    }
+
+    function batch(){
+      for(let j=0;j<10&&i<N;j++,i++){
+        if(!spin())break;
+      }
+      draw();
+      const lossAmt=(500-balance).toFixed(2);
+      const lossPct=((500-balance)/500*100).toFixed(1);
+      document.getElementById('slotStatus').textContent=
+        'Spin '+spins+'/'+N+' | Balance: £'+balance.toFixed(2)+' | Wagered: £'+totalWagered.toFixed(2)+' | Wins: '+wins+'/'+spins;
+
+      if(i<N&&balance>0)requestAnimationFrame(batch);
+      else{
+        draw();
+        document.getElementById('slotStatus').innerHTML=
+          '<strong>Final result after '+(balance<=0?spins:N)+' spins:</strong><br>'+
+          'Starting balance: £500 | Final: <span style="color:var(--red-bright)">£'+balance.toFixed(2)+'</span><br>'+
+          'Total wagered: £'+totalWagered.toFixed(2)+' | Expected loss (4%): £'+(totalWagered*0.04).toFixed(2)+' | Actual loss: <span style="color:var(--red-bright)">£'+lossAmt+'</span><br>'+
+          'Win rate: '+wins+'/'+spins+' ('+Math.round(wins/spins*100)+'% of spins had a payout)<br>'+
+          (balance<=0?'<span style="color:var(--red-bright);font-weight:700">BANKRUPT before reaching 1,000 spins.</span>':'')+
+          '<br><span style="color:var(--gold)">This is what 96% RTP looks like. The green line is the £500 you started with. The purple line is your balance.</span>';
+      }
+    }
+    requestAnimationFrame(batch);
+  };
+}
+
+function modPsych(c){c.innerHTML=`
+<div class="tut">
+<h3>Why You Keep Playing: The Psychology</h3>
+<p>Slot machines are not just mathematical extraction devices. They are precision-engineered psychological tools. Understanding how they target your brain is the best defence.</p>
+
+<h3>Variable Ratio Reinforcement</h3>
+<div class="mb">
+<strong>The most addictive reward schedule known to psychology.</strong><br><br>
+Fixed reward: "You win every 10th spin." Predictable. Boring. You'd stop between rewards.<br>
+Variable reward: "You might win on any spin." Unpredictable. Compelling. You can't stop because the NEXT spin might be the one.<br><br>
+This is the same mechanism that makes social media addictive (variable likes/notifications), and it was understood and exploited by slot designers decades before Silicon Valley discovered it.
+</div>
+
+<h3>Losses Disguised as Wins (LDWs)</h3>
+<div class="mb">
+You bet £1 across 20 paylines (£0.05 each).<br>
+You win £0.20 on one payline.<br>
+The machine plays a WIN SOUND. Lights flash. Graphics celebrate.<br><br>
+You bet £1. You got back £0.20. <span class="neg">You lost £0.80.</span><br>
+But the machine told your brain you WON.<br><br>
+Studies show LDWs are <span class="neg">misinterpreted as wins by 30-40% of players</span>.
+</div>
+
+<div class="pln">In plain English: the machine celebrates when you lose less than your full bet. You bet £1, get back 40p, and the machine plays victory music. Your conscious brain knows you lost 60p. Your subconscious brain heard celebration sounds and felt a reward. The subconscious wins.</div>
+
+<h3>The Sunk Cost Fallacy</h3>
+<div class="mb">
+"I've already put £200 in. I can't stop now — I need to win it back."<br><br>
+The £200 is gone. It does not come back by continuing to play.<br>
+Every new spin is a fresh −4% EV decision.<br>
+The machine doesn't know or care how much you've put in.<br>
+The next 100 spins have the same expected loss as the first 100.
+</div>
+
+<h3>Designed Session Length</h3>
+<div class="mb">
+Online slots spin every 3-6 seconds.<br>
+That's 600-1200 spins per hour.<br>
+At £0.50/spin: £300-600 wagered per hour.<br>
+At 4% house edge: <span class="neg">£12-24 lost per hour.</span><br><br>
+The speed isn't accidental. Faster spins = more churn = more revenue.<br>
+"Turbo" and "auto-spin" features exist to REMOVE the friction of pressing a button.<br>
+Every barrier between you and the next spin has been systematically eliminated.
+</div>
+
+<div class="pt">The entire experience — sounds, lights, near-misses, LDWs, bonus anticipation, progressive jackpots, auto-spin — is engineered to keep you in the chair. Not because you're weak. Because you're human, and these systems exploit universal cognitive biases that every human shares.</div>
+
+<div class="gd">
+<strong>If this resonates and you're worried about your relationship with gambling:</strong><br><br>
+National Gambling Helpline: <strong>0808 8020 133</strong> (free, 24/7, UK)<br>
+GamCare: <strong>www.gamcare.org.uk</strong><br>
+BeGambleAware: <strong>www.begambleaware.org</strong><br><br>
+Understanding the maths is the first defence. But it's not the only one. These organisations can help.
+</div>
+</div>`}
+</script>
+</body>
+</html>
