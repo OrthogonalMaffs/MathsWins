@@ -174,4 +174,4 @@ GA4 cookieless mode (G-CLNF7GSB28) — same property as maffsgames.co.uk. No per
 - 10% burn on every QF payment is non-negotiable
 
 ## Contact
-- contact@maffsgames.co.uk
+- TBC — mathswins.co.uk email to be set up
