@@ -95,6 +95,10 @@ h1.site-title span.w{color:var(--gold)}
 .ac-rl .ac-accent{background:var(--red)}
 .ac-sb .ac-accent{background:var(--blue)}
 .ac-cr .ac-accent{background:var(--gold)}
+.ac-sl .ac-accent{background:#e040fb}
+.ac-lt .ac-accent{background:#facc15}
+.ac-bc .ac-accent{background:#b8860b}
+.ac-tr .ac-accent{background:#10b981}
 
 .ac-eyebrow{font-family:'DM Mono',monospace;font-size:.55rem;text-transform:uppercase;letter-spacing:.1em;margin-bottom:.4rem}
 .ac-bj .ac-eyebrow{color:var(--gold)}
@@ -102,6 +106,10 @@ h1.site-title span.w{color:var(--gold)}
 .ac-rl .ac-eyebrow{color:var(--red)}
 .ac-sb .ac-eyebrow{color:var(--blue)}
 .ac-cr .ac-eyebrow{color:var(--gold)}
+.ac-sl .ac-eyebrow{color:#e040fb}
+.ac-lt .ac-eyebrow{color:#facc15}
+.ac-bc .ac-eyebrow{color:#b8860b}
+.ac-tr .ac-eyebrow{color:#10b981}
 
 .ac-title{font-family:'Bebas Neue',sans-serif;font-size:1.4rem;color:var(--text-bright);letter-spacing:.03em;line-height:1.1;margin-bottom:.3rem}
 .ac-desc{font-size:.75rem;color:var(--muted);line-height:1.5;margin-bottom:.5rem}
@@ -146,7 +154,7 @@ h1.site-title span.w{color:var(--gold)}
 
 <div class="hero-sub">
 <div class="hero-stat"><div class="hs-num">13</div><div class="hs-label">Free games</div></div>
-<div class="hero-stat"><div class="hs-num">5</div><div class="hs-label">Academy courses</div></div>
+<div class="hero-stat"><div class="hs-num">9</div><div class="hs-label">Academy courses</div></div>
 <div class="hero-stat"><div class="hs-num">0%</div><div class="hs-label">Guesswork</div></div>
 </div>
 </div>
@@ -315,6 +323,58 @@ h1.site-title span.w{color:var(--gold)}
 <div class="ac-stat"><div class="as-num" style="color:var(--green)">0%</div><div class="as-label">Odds bet edge</div></div>
 <div class="ac-stat"><div class="as-num" style="color:var(--red)">16.67%</div><div class="as-label">"Any 7" edge</div></div>
 <div class="ac-stat"><div class="as-num">36</div><div class="as-label">Dice outcomes</div></div>
+</div>
+<div class="ac-price">250 QF</div>
+</div>
+
+<div class="academy-card ac-sl" onclick="go('academy/slots/')">
+<div class="ac-accent"></div>
+<div class="ac-eyebrow">7 Modules · Single Tier</div>
+<div class="ac-title">SLOTS: THE UGLY TRUTH</div>
+<div class="ac-desc">RTP doesn't mean what you think. Near misses are programmed. Bonus features are priced in. We run 1,000 spins live and watch the maths do its thing.</div>
+<div class="ac-stats">
+<div class="ac-stat"><div class="as-num" style="color:#e040fb">2-15%</div><div class="as-label">House edge</div></div>
+<div class="ac-stat"><div class="as-num">0</div><div class="as-label">Strategies</div></div>
+<div class="ac-stat"><div class="as-num">1k</div><div class="as-label">Live sim spins</div></div>
+</div>
+<div class="ac-price">250 QF</div>
+</div>
+
+<div class="academy-card ac-lt" onclick="go('academy/lottery/')">
+<div class="ac-accent"></div>
+<div class="ac-eyebrow">5 Modules · Single Tier</div>
+<div class="ac-title">LOTTERY MATHS</div>
+<div class="ac-desc">6 from 59. The combinatorics, the expected value of a ticket, why "lucky numbers" are nonsense, and what £2/week actually costs you over a lifetime.</div>
+<div class="ac-stats">
+<div class="ac-stat"><div class="as-num" style="color:#facc15">1 in 45m</div><div class="as-label">Jackpot odds</div></div>
+<div class="ac-stat"><div class="as-num" style="color:var(--red)">−53%</div><div class="as-label">Expected return</div></div>
+<div class="ac-stat"><div class="as-num">£5,200</div><div class="as-label">Lifetime cost</div></div>
+</div>
+<div class="ac-price">250 QF</div>
+</div>
+
+<div class="academy-card ac-bc" onclick="go('academy/baccarat/')">
+<div class="ac-accent"></div>
+<div class="ac-eyebrow">4 Modules · Single Tier</div>
+<div class="ac-title">BACCARAT BREAKDOWN</div>
+<div class="ac-desc">The game with no decisions to make — and the casino still wins. Player, Banker, Tie: the full probability breakdown. Why the scorecard is a trap.</div>
+<div class="ac-stats">
+<div class="ac-stat"><div class="as-num" style="color:#b8860b">1.06%</div><div class="as-label">Banker edge</div></div>
+<div class="ac-stat"><div class="as-num" style="color:var(--red)">14.36%</div><div class="as-label">Tie edge</div></div>
+<div class="ac-stat"><div class="as-num">0</div><div class="as-label">Decisions</div></div>
+</div>
+<div class="ac-price">250 QF</div>
+</div>
+
+<div class="academy-card ac-tr" onclick="go('academy/trading/')">
+<div class="ac-accent"></div>
+<div class="ac-eyebrow">6 Modules · Single Tier</div>
+<div class="ac-title">TRADING MATHS</div>
+<div class="ac-desc">Why most traders lose, risk/reward ratios, position sizing, Kelly criterion, survivorship bias, and the variance that kills accounts. The maths behind the charts.</div>
+<div class="ac-stats">
+<div class="ac-stat"><div class="as-num" style="color:var(--red)">80%</div><div class="as-label">Of traders lose</div></div>
+<div class="ac-stat"><div class="as-num" style="color:#10b981">1-2%</div><div class="as-label">Risk per trade</div></div>
+<div class="ac-stat"><div class="as-num">6</div><div class="as-label">Core concepts</div></div>
 </div>
 <div class="ac-price">250 QF</div>
 </div>
