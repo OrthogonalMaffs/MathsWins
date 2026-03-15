@@ -1,0 +1,1135 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate">
+<meta http-equiv="Pragma" content="no-cache">
+<meta http-equiv="Expires" content="0">
+<title>Crypto Trading Maths — The Mathematics of Crypto Markets | MathsWins</title>
+<meta name="description" content="10-module crypto trading mathematics course in 3 tiers. Volatility, leverage, impermanent loss, funding rates, on-chain analytics, risk management. Module 1 free.">
+<meta property="og:title" content="Crypto Trading Maths — The Mathematics of Crypto Markets">
+<meta property="og:description" content="The actual mathematics of crypto markets. Volatility, leverage, impermanent loss, funding rates, token supply, portfolio risk — derived and calculated.">
+<meta property="og:type" content="website">
+<meta property="og:url" content="https://mathswins.co.uk/academy/crypto-trading/">
+<meta name="twitter:card" content="summary_large_image">
+<link rel="canonical" href="https://mathswins.co.uk/academy/crypto-trading/">
+<script type="application/ld+json">
+{"@context":"https://schema.org","@type":"Course","name":"Crypto Trading Maths","description":"The mathematics of crypto markets. Covers volatility, leverage, impermanent loss, funding rates, token supply, on-chain analytics, and risk management with interactive tools.","provider":{"@type":"EducationalOrganization","name":"MathsWins","url":"https://mathswins.co.uk"},"educationalLevel":"Adult Education","hasCourseInstance":{"@type":"CourseInstance","courseMode":"online","courseWorkload":"Self-paced"}}
+</script>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=DM+Mono:wght@400;500&family=Bebas+Neue&family=Crimson+Pro:ital,wght@0,400;0,700;1,400&family=Outfit:wght@300;400;600;700&display=swap" rel="stylesheet">
+<script async src="https://www.googletagmanager.com/gtag/js?id=G-R0XJEX7GQN"></script>
+<script>window.dataLayer=window.dataLayer||[];function gtag(){dataLayer.push(arguments);}gtag('js',new Date());gtag('config','G-R0XJEX7GQN',{send_page_view:true,storage:'none',anonymize_ip:true});</script>
+<style>
+*{margin:0;padding:0;box-sizing:border-box}
+:root{
+  --bg:#050709;--surface:#0c0f16;--surface2:#111620;--border:#1a2030;--border2:#242e40;
+  --accent:#f97316;--accent-dim:rgba(249,115,22,.08);--accent-glow:rgba(249,115,22,.15);
+  --green:#1a8a5c;--green-bright:#2dd4a0;--red:#c0392b;--red-bright:#ef5350;
+  --blue:#2c6fbb;--cyan:#06b6d4;--purple:#7c3aed;
+  --text:#d8dce4;--text-bright:#f0f2f6;--muted:#5a6478;
+}
+body{font-family:'Outfit',sans-serif;background:var(--bg);color:var(--text);min-height:100vh;-webkit-font-smoothing:antialiased}
+.outer{max-width:800px;margin:0 auto;padding:0 1rem 2rem}
+a{color:var(--accent);text-decoration:none}a:hover{text-decoration:underline}
+
+/* BREADCRUMB */
+.bread{font-family:'DM Mono',monospace;font-size:.65rem;color:var(--muted);padding:1rem 0 0;letter-spacing:.03em}
+.bread a{color:var(--muted)}.bread a:hover{color:var(--accent)}
+.bread span{color:var(--accent)}
+
+/* HERO */
+.hero{text-align:center;padding:2.5rem 0 1.5rem;border-bottom:1px solid var(--border)}
+.hero-ey{font-family:'DM Mono',monospace;font-size:.65rem;letter-spacing:.25em;text-transform:uppercase;color:var(--accent);margin-bottom:.6rem}
+.hero h1{font-family:'Bebas Neue',sans-serif;font-size:3.2rem;letter-spacing:.04em;color:var(--text-bright);line-height:1.1}
+.hero .tag{font-family:'Crimson Pro',serif;font-style:italic;font-size:1.05rem;color:var(--muted);margin-top:.5rem}
+
+/* STANDALONE NOTICE */
+.standalone-notice{background:var(--accent-dim);border:1px solid rgba(249,115,22,.25);border-radius:10px;padding:1rem 1.25rem;margin:1.2rem 0;text-align:center}
+.standalone-notice p{font-family:'Crimson Pro',serif;font-size:.95rem;color:var(--text);line-height:1.6}
+.standalone-notice strong{color:var(--accent)}
+
+/* FCA WARNING */
+.fca-warning{background:rgba(239,83,80,.06);border:1px solid rgba(239,83,80,.25);border-radius:10px;padding:1rem 1.25rem;margin:.8rem 0}
+.fca-warning p{font-family:'Crimson Pro',serif;font-size:.85rem;color:var(--red-bright);line-height:1.6;font-style:italic}
+.fca-warning strong{color:var(--red-bright)}
+
+/* STATS */
+.stats-bar{display:grid;grid-template-columns:repeat(4,1fr);gap:1px;background:var(--border);border:1px solid var(--border);border-radius:10px;overflow:hidden;margin:1.2rem 0}
+.sc{background:var(--surface);padding:.8rem .4rem;text-align:center}
+.sc .sn{font-family:'DM Mono',monospace;font-size:1.4rem;font-weight:500;color:var(--accent)}
+.sc .sl{font-size:.6rem;color:var(--muted);margin-top:.15rem;line-height:1.3}
+
+/* MODULE CARDS */
+.mod-section{margin:1.5rem 0}
+.mod-section>h2{font-family:'Bebas Neue',sans-serif;font-size:1.2rem;letter-spacing:.04em;color:var(--text-bright);margin-bottom:.6rem}
+.mc{background:var(--surface);border:1px solid var(--border);border-radius:8px;padding:.7rem .9rem;margin-bottom:.35rem;display:flex;justify-content:space-between;align-items:center;cursor:pointer;transition:all .12s}
+.mc:hover{border-color:var(--accent);transform:translateX(3px)}
+.mc .mn{font-size:.85rem;font-weight:600}.mc .md{font-size:.68rem;color:var(--muted);margin-top:.15rem}.mc .mq{font-family:'DM Mono',monospace;font-size:.62rem;color:var(--muted)}
+.mc.locked{opacity:.55;pointer-events:none;cursor:default}
+.mc.locked:hover{border-color:var(--border);transform:none}
+
+.screen{display:none}.screen.active{display:block}
+
+/* LESSON SCREEN */
+.les-top{display:flex;justify-content:space-between;align-items:center;padding:.5rem 0;border-bottom:1px solid var(--border);margin-bottom:.5rem}
+.les-title{font-size:.9rem;font-weight:600}.les-prog{font-family:'DM Mono',monospace;font-size:.72rem;color:var(--muted)}
+.pbar{background:var(--border);border-radius:3px;height:4px;margin-bottom:.5rem;overflow:hidden}
+.pfill{height:100%;background:var(--accent);border-radius:3px;transition:width .3s}
+.hud{display:flex;gap:1rem;justify-content:center;padding:.3rem 0;margin-bottom:.4rem}
+.hud-b{text-align:center}.hud-b .hn{font-family:'DM Mono',monospace;font-size:.95rem;font-weight:500}.hud-b .hl{font-size:.5rem;color:var(--muted);text-transform:uppercase;letter-spacing:.05em}
+
+/* TUTORIAL */
+.tut{background:var(--surface);border:1px solid var(--border);border-radius:10px;padding:1.2rem;margin-bottom:.5rem;line-height:1.75;font-size:.85rem}
+.tut h2{font-family:'Bebas Neue',sans-serif;font-size:1.4rem;color:var(--accent);letter-spacing:.04em;margin-bottom:.5rem}
+.tut h3{color:var(--accent);font-size:.88rem;margin-bottom:.3rem}
+.tut h4{color:var(--text-bright);font-size:.84rem;margin:.6rem 0 .2rem}
+.tut p{margin-bottom:.4rem}
+.tut .pt{padding:.5rem .8rem;margin:.5rem 0;border-radius:6px;border-left:3px solid var(--accent);background:rgba(249,115,22,.06)}
+.tut .dg{padding:.4rem .7rem;margin:.4rem 0;border-radius:6px;border-left:3px solid var(--red-bright);background:rgba(239,83,80,.06);color:var(--red-bright)}
+.tut .mb{font-family:'DM Mono',monospace;background:var(--bg);border-radius:6px;padding:.6rem;margin:.5rem 0;font-size:.78rem;line-height:1.8;white-space:pre-wrap}
+.tut .mb .pos{color:var(--green-bright)}.tut .mb .neg{color:var(--red-bright)}
+.tut .pln{font-family:'Crimson Pro',serif;font-size:.9rem;color:var(--accent);font-style:italic;margin:.4rem 0;line-height:1.7}
+.tut .gd{padding:.5rem .8rem;margin:.5rem 0;border-radius:6px;border-left:3px solid var(--green-bright);background:rgba(45,212,160,.06)}
+
+/* SCENARIO Q&A */
+.scenario-card{background:var(--surface);border:1px solid var(--border);border-radius:10px;padding:1.1rem;margin-bottom:.5rem}
+.scenario-card .sq{font-family:'Crimson Pro',serif;font-size:.95rem;color:var(--text);line-height:1.7;margin-bottom:.8rem}
+.scenario-card .sq strong{color:var(--text-bright)}
+.ans-row{display:flex;gap:.5rem;align-items:center;margin-bottom:.5rem}
+.ans-row input[type="text"]{flex:1;padding:.4rem .6rem;background:var(--surface2);color:var(--text);border:1px solid var(--border);border-radius:6px;font-family:'DM Mono',monospace;font-size:.85rem}
+.ans-row button{padding:.4rem 1rem;border:none;border-radius:6px;background:var(--accent);color:#000;font-family:'Outfit',sans-serif;font-size:.8rem;font-weight:600;cursor:pointer;transition:opacity .15s}
+.ans-row button:hover{opacity:.85}
+.ans-feedback{display:none;padding:.6rem .8rem;border-radius:6px;margin-top:.4rem;font-size:.82rem;line-height:1.6}
+.ans-feedback.show{display:block;animation:su .25s ease-out}
+.ans-feedback.correct{background:rgba(45,212,160,.08);border-left:3px solid var(--green-bright)}
+.ans-feedback.incorrect{background:rgba(239,83,80,.06);border-left:3px solid var(--red-bright)}
+.ans-feedback .exp{font-family:'Crimson Pro',serif;font-style:italic;color:var(--muted);font-size:.85rem;margin-top:.3rem}
+@keyframes su{from{opacity:0;transform:translateY(8px)}to{opacity:1;transform:translateY(0)}}
+
+.vrd{padding:.35rem;border-radius:6px;text-align:center;font-weight:600;font-size:.8rem;margin:.3rem 0}
+.vrd.ok{background:rgba(249,115,22,.08);color:var(--accent)}
+.nb{display:inline-block;margin-top:.3rem;padding:.3rem .9rem;border:none;border-radius:6px;background:var(--accent);color:#000;font-family:'Outfit',sans-serif;font-size:.75rem;font-weight:600;cursor:pointer}
+.bb{display:inline-block;margin:.5rem 0;padding:.35rem 1rem;border:none;border-radius:6px;background:var(--border);color:var(--text);font-family:'Outfit',sans-serif;font-size:.78rem;font-weight:600;cursor:pointer}
+
+/* CTA */
+.cta-row{display:flex;gap:.5rem;justify-content:center;margin:1.2rem 0;flex-wrap:wrap}
+.cta{padding:.55rem 1.3rem;border-radius:8px;font-family:'Outfit',sans-serif;font-size:.82rem;font-weight:600;cursor:pointer;border:2px solid var(--border);transition:all .15s}
+.cta-p{background:var(--accent);color:#000;border-color:var(--accent)}
+.cta-g{background:transparent;color:var(--accent);border-color:var(--accent)}
+
+/* RESULTS */
+.res{text-align:center;padding:2rem 0}
+.res h2{font-family:'Bebas Neue',sans-serif;font-size:1.6rem;color:var(--text-bright)}
+.res .big{font-family:'DM Mono',monospace;font-size:2.8rem;color:var(--accent);margin:.4rem 0}
+.res .det{color:var(--muted);line-height:1.8;font-size:.8rem;margin-bottom:.8rem}
+
+/* FOOTER DISC */
+.disc{background:var(--surface);border:1px solid var(--border2);border-radius:10px;padding:1rem;margin:1.5rem 0}
+.disc h2{font-family:'Bebas Neue',sans-serif;font-size:1rem;color:var(--text-bright);margin-bottom:.4rem}
+.disc p{font-family:'Crimson Pro',serif;font-size:.85rem;color:var(--muted);line-height:1.6;font-style:italic;margin-bottom:.3rem}
+.disc a{color:var(--accent)}
+
+/* RELATED */
+.related-courses{margin-top:2rem;padding:1.5rem;background:var(--surface);border:1px solid var(--border);border-radius:10px}
+.related-courses h3{font-family:'Bebas Neue',sans-serif;font-size:1.3rem;color:var(--text-bright);margin-bottom:1rem;letter-spacing:.05em}
+
+/* TIER HEADERS */
+.tier-hdr{display:flex;align-items:center;gap:.5rem;margin:1.2rem 0 .3rem}
+.tb{font-family:'DM Mono',monospace;font-size:.6rem;padding:2px 8px;border-radius:4px;text-transform:uppercase;letter-spacing:.06em}
+.tb-free{background:rgba(45,212,160,.12);color:var(--green-bright)}
+.tb-b{background:rgba(44,111,187,.12);color:var(--blue)}
+.tb-a{background:rgba(249,115,22,.12);color:var(--accent)}
+.tb-m{background:rgba(124,58,237,.12);color:var(--purple)}
+.tp{font-family:'DM Mono',monospace;font-size:.6rem;color:var(--muted)}
+
+/* TOOL CONTAINER */
+.tool-box{background:var(--surface);border:1px solid var(--border);border-radius:10px;padding:1.5rem;margin:1.5rem 0}
+.tool-box h3{font-family:'Bebas Neue',sans-serif;font-size:1.3rem;color:var(--accent);margin-bottom:.5rem}
+.tool-box p{font-family:'Crimson Pro',serif;font-size:.9rem;color:var(--text);margin-bottom:1rem;line-height:1.6}
+.tool-grid{display:grid;grid-template-columns:1fr 1fr;gap:1.5rem}
+.tool-input label{font-family:'Outfit',sans-serif;font-size:.75rem;color:var(--muted);text-transform:uppercase;display:block;margin-top:.5rem}
+.tool-input input,.tool-input select{width:100%;padding:.4rem;background:var(--surface2);color:var(--text);border:1px solid var(--border);border-radius:4px;font-family:'DM Mono',monospace;font-size:.85rem;margin:.3rem 0}
+.tool-output{background:var(--surface2);border:1px solid var(--border);border-radius:8px;padding:1.25rem}
+.tool-output .to-line{font-family:'DM Mono',monospace;font-size:.85rem;color:var(--text);line-height:2;margin-bottom:.3rem}
+.tool-output .to-head{font-family:'Outfit',sans-serif;font-size:.7rem;color:var(--muted);text-transform:uppercase;letter-spacing:.04em;margin-bottom:.5rem}
+
+@media(max-width:600px){
+  .stats-bar{grid-template-columns:repeat(2,1fr)}
+  .hero h1{font-size:2.2rem}
+  .tool-grid{grid-template-columns:1fr}
+}
+</style>
+</head>
+<body>
+<div class="outer">
+
+<!-- ═══════════════════════════════════
+     LANDING PAGE
+     ═══════════════════════════════════ -->
+<div id="landing" class="screen active">
+
+<div class="bread"><a href="/">MathsWins</a> / <a href="/academy/">Academy</a> / <span>Crypto Trading Maths</span></div>
+
+<div class="hero">
+<div class="hero-ey">MathsWins Academy &middot; Standalone Course</div>
+<h1>CRYPTO TRADING MATHS</h1>
+<div class="tag">The mathematics behind every crypto trade. Not signals &mdash; arithmetic.</div>
+</div>
+
+<div class="fca-warning">
+<p><strong>Important:</strong> This is mathematical education, not financial or investment advice. Cryptocurrency trading involves significant risk of loss. Never invest more than you can afford to lose.<br>
+<strong>FCA risk warning:</strong> Cryptoassets are not regulated in the UK. The value of cryptoassets can go down as well as up, and you could lose all the money you invest. Capital at risk.</p>
+</div>
+
+<div class="standalone-notice">
+<p><strong>This is a standalone course</strong>, included in MathsWins Premium.<br>
+Module 1 is free. Three paid tiers: <strong>Basic</strong> (M1&ndash;4, &pound;9.99) &middot; <strong>Advanced</strong> (M5&ndash;7, &pound;14.99) &middot; <strong>Master</strong> (M8&ndash;10, &pound;24.99).</p>
+</div>
+
+<div class="stats-bar">
+<div class="sc"><div class="sn">10</div><div class="sl">Modules<br>3 tiers + free intro</div></div>
+<div class="sc"><div class="sn">129</div><div class="sl">Practice<br>Scenarios</div></div>
+<div class="sc"><div class="sn">10</div><div class="sl">Interactive<br>Tools</div></div>
+<div class="sc"><div class="sn">$2T+</div><div class="sl">Market<br>Do the maths</div></div>
+</div>
+
+<div class="mod-section">
+<h2>CURRICULUM &mdash; 10 MODULES</h2>
+
+<!-- FREE -->
+<div class="tier-hdr"><span class="tb tb-free">Free</span><span class="tp">Module 1</span></div>
+<div class="mc" onclick="loadMod('c1')">
+  <div><div class="mn">1. The Crypto Landscape</div><div class="md">Chains, tokens, stablecoins, liquidity pools, gas, slippage, MEV &mdash; the complete vocabulary</div></div>
+  <div class="mq">Free &middot; 15 Scenarios + Tool</div>
+</div>
+
+<!-- BASIC -->
+<div class="tier-hdr"><span class="tb tb-b">Basic</span><span class="tp">&pound;9.99 &middot; Modules 2&ndash;4</span></div>
+<div class="mc locked" onclick="loadMod('c2')">
+  <div><div class="mn">2. Volatility Mathematics</div><div class="md">Log returns, annualised vol, fat tails, position sizing, variance drag</div></div>
+  <div class="mq">12 Scenarios + Tool</div>
+</div>
+<div class="mc locked" onclick="loadMod('c3')">
+  <div><div class="mn">3. Leverage &amp; Liquidation</div><div class="md">Liquidation prices, probability of ruin, funding costs, cross vs isolated margin</div></div>
+  <div class="mq">12 Scenarios + Tool</div>
+</div>
+<div class="mc locked" onclick="loadMod('c4')">
+  <div><div class="mn">4. AMM &amp; Impermanent Loss</div><div class="md">Constant product formula, IL derivation, concentrated liquidity, fee break-even</div></div>
+  <div class="mq">12 Scenarios + Tool</div>
+</div>
+
+<!-- ADVANCED -->
+<div class="tier-hdr"><span class="tb tb-a">Advanced</span><span class="tp">&pound;14.99 &middot; Modules 5&ndash;7</span></div>
+<div class="mc locked" onclick="loadMod('c5')">
+  <div><div class="mn">5. Funding Rates &amp; Perpetual Swaps</div><div class="md">Funding mechanics, annualised cost, carry trade arbitrage, sentiment signals</div></div>
+  <div class="mq">12 Scenarios + Tool</div>
+</div>
+<div class="mc locked" onclick="loadMod('c6')">
+  <div><div class="mn">6. Token Supply &amp; On-Chain Analytics</div><div class="md">FDV, unlock schedules, inflation, Metcalfe&rsquo;s Law, MVRV, overfitting</div></div>
+  <div class="mq">12 Scenarios + Tool</div>
+</div>
+<div class="mc locked" onclick="loadMod('c7')">
+  <div><div class="mn">7. Predatory Market Mechanics</div><div class="md">Stop hunting, liquidation cascades, rug pulls, oracle attacks, sandwich MEV</div></div>
+  <div class="mq">12 Scenarios + Tool</div>
+</div>
+
+<!-- MASTER -->
+<div class="tier-hdr"><span class="tb tb-m">Master</span><span class="tp">&pound;24.99 &middot; Modules 8&ndash;10</span></div>
+<div class="mc locked" onclick="loadMod('c8')">
+  <div><div class="mn">8. Correlation &amp; Portfolio Mathematics</div><div class="md">Crypto correlations, portfolio variance, beta, effective diversification, rebalancing</div></div>
+  <div class="mq">12 Scenarios + Tool</div>
+</div>
+<div class="mc locked" onclick="loadMod('c9')">
+  <div><div class="mn">9. Stablecoin &amp; Yield Mathematics</div><div class="md">APY vs APR, token-denominated vs USD yield, real yield, auto-compounding</div></div>
+  <div class="mq">12 Scenarios + Tool</div>
+</div>
+<div class="mc locked" onclick="loadMod('c10')">
+  <div><div class="mn">10. Risk Management for Fat-Tailed Markets</div><div class="md">Power law VaR, CVaR, Kelly criterion, stress testing, position sizing, exit strategies</div></div>
+  <div class="mq">15 Scenarios + Tool</div>
+</div>
+
+</div>
+
+<!-- PRICING / BUY SECTION -->
+<div id="ct-buy-section" style="margin:1.5rem 0;">
+<h4 style="font-family:'Bebas Neue',sans-serif;font-size:1.3rem;color:var(--text-bright);letter-spacing:.03em;margin-bottom:1rem;text-align:center;">CHOOSE YOUR ACCESS</h4>
+<div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(200px,1fr));gap:1rem;">
+
+<div style="background:var(--surface);border:1px solid var(--border);border-radius:8px;padding:1.25rem;text-align:center;">
+<div style="font-family:'Bebas Neue',sans-serif;font-size:1.1rem;color:var(--text-bright);">BASIC</div>
+<div style="font-family:'DM Mono',monospace;font-size:1.5rem;color:var(--accent);margin:.5rem 0;">&pound;9.99</div>
+<div style="font-size:.8rem;color:var(--muted);margin-bottom:1rem;">Modules 1&ndash;4</div>
+<a href="#" style="display:inline-block;padding:.6rem 1.5rem;background:var(--accent);color:var(--bg);font-family:'Outfit',sans-serif;font-weight:600;font-size:.85rem;border-radius:6px;text-decoration:none;">Get Basic</a>
+</div>
+
+<div style="background:var(--surface);border:1px solid var(--border);border-radius:8px;padding:1.25rem;text-align:center;">
+<div style="font-family:'Bebas Neue',sans-serif;font-size:1.1rem;color:var(--text-bright);">ADVANCED</div>
+<div style="font-family:'DM Mono',monospace;font-size:1.5rem;color:var(--accent);margin:.5rem 0;">&pound;14.99</div>
+<div style="font-size:.8rem;color:var(--muted);margin-bottom:1rem;">Modules 5&ndash;7</div>
+<a href="#" style="display:inline-block;padding:.6rem 1.5rem;background:var(--accent);color:var(--bg);font-family:'Outfit',sans-serif;font-weight:600;font-size:.85rem;border-radius:6px;text-decoration:none;">Get Advanced</a>
+</div>
+
+<div style="background:var(--surface);border:2px solid var(--accent);border-radius:8px;padding:1.25rem;text-align:center;position:relative;">
+<div style="position:absolute;top:-8px;left:50%;transform:translateX(-50%);background:var(--accent);color:var(--bg);font-family:'DM Mono',monospace;font-size:.55rem;padding:1px 10px;border-radius:3px;letter-spacing:.06em;">BEST VALUE</div>
+<div style="font-family:'Bebas Neue',sans-serif;font-size:1.1rem;color:var(--text-bright);">MASTER</div>
+<div style="font-family:'DM Mono',monospace;font-size:1.5rem;color:var(--accent);margin:.5rem 0;">&pound;24.99</div>
+<div style="font-size:.8rem;color:var(--muted);margin-bottom:1rem;">Modules 8&ndash;10</div>
+<a href="#" style="display:inline-block;padding:.6rem 1.5rem;background:var(--accent);color:var(--bg);font-family:'Outfit',sans-serif;font-weight:600;font-size:.85rem;border-radius:6px;text-decoration:none;">Get Master</a>
+</div>
+
+</div>
+</div>
+
+<div style="text-align:center;margin:1rem 0;padding:.75rem;border:1px solid #161c28;border-radius:6px;background:#0a0d14;">
+<span style="font-family:'Outfit',sans-serif;font-size:.8rem;color:#4a5568;">Want everything? </span>
+<a href="https://buy.stripe.com/7sY9AMdvv7tJ2gzcz7cwg0j" target="_blank" style="font-family:'Outfit',sans-serif;font-weight:600;font-size:.8rem;color:#d4a847;text-decoration:none;">MathsWins Premium includes this course &rarr;</a>
+</div>
+
+<div class="cta-row">
+<button class="cta cta-p" onclick="loadMod('c1')">Start Module 1 &mdash; Free</button>
+</div>
+
+<section class="related-courses">
+<h3>EXPLORE THE ACADEMY</h3>
+<div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:1rem">
+<a href="/academy/" style="display:block;padding:1rem 1.25rem;background:var(--surface2);border:1px solid var(--border);border-left:3px solid var(--accent);border-radius:6px;text-decoration:none">
+<span style="font-family:'Bebas Neue',sans-serif;font-size:1.1rem;color:var(--accent);display:block;margin-bottom:.25rem">ACADEMY HUB</span>
+<span style="font-family:'Crimson Pro',serif;font-style:italic;font-size:.9rem;color:var(--text);line-height:1.4">Browse all MathsWins courses.</span>
+</a>
+<a href="/academy/options/" style="display:block;padding:1rem 1.25rem;background:var(--surface2);border:1px solid var(--border);border-left:3px solid #06b6d4;border-radius:6px;text-decoration:none">
+<span style="font-family:'Bebas Neue',sans-serif;font-size:1.1rem;color:#06b6d4;display:block;margin-bottom:.25rem">OPTIONS MATHS</span>
+<span style="font-family:'Crimson Pro',serif;font-style:italic;font-size:.9rem;color:var(--text);line-height:1.4">The mathematics behind every options trade.</span>
+</a>
+<a href="/" style="display:block;padding:1rem 1.25rem;background:var(--surface2);border:1px solid var(--border);border-left:3px solid #d4a847;border-radius:6px;text-decoration:none">
+<span style="font-family:'Bebas Neue',sans-serif;font-size:1.1rem;color:#d4a847;display:block;margin-bottom:.25rem">HOME</span>
+<span style="font-family:'Crimson Pro',serif;font-style:italic;font-size:.9rem;color:var(--text);line-height:1.4">Back to MathsWins.</span>
+</a>
+</div>
+</section>
+
+<div class="disc">
+<h2>IMPORTANT DISCLAIMER</h2>
+<p>This is mathematical education, not financial or investment advice. Cryptocurrency trading involves significant risk of loss. Never invest more than you can afford to lose.</p>
+<p><strong style="color:var(--red-bright);">FCA risk warning:</strong> Cryptoassets are not regulated in the UK. The value of cryptoassets can go down as well as up, and you could lose all the money you invest. Capital at risk.</p>
+<p><a href="https://www.moneyhelper.org.uk" target="_blank" rel="noopener">MoneyHelper</a> (free, government-backed) &middot; <a href="https://register.fca.org.uk" target="_blank" rel="noopener">FCA Register</a></p>
+<p style="margin-top:.3rem"><a href="/terms/" style="color:var(--muted);font-size:.8rem">Terms &amp; Conditions</a></p>
+<p style="margin-top:.5rem;font-size:.75rem;color:var(--muted);font-style:normal;">This site uses cookieless analytics (Google Analytics 4 with <code>storage:'none'</code>). No cookies are set. No personal data is collected or stored.</p>
+</div>
+
+</div>
+
+<!-- ═══════════════════════════════════
+     LESSON SCREEN
+     ═══════════════════════════════════ -->
+<div id="lesson" class="screen">
+<div class="les-top"><div class="les-title" id="lTitle"></div><div class="les-prog" id="lProg"></div></div>
+<div class="pbar"><div class="pfill" id="pFill"></div></div>
+<div class="hud" id="hudArea">
+<div class="hud-b"><div class="hn" id="hCorrect">0/0</div><div class="hl">Correct</div></div>
+<div class="hud-b"><div class="hn" id="hAcc">&mdash;</div><div class="hl">Accuracy</div></div>
+<div class="hud-b"><div class="hn" id="hStrk">0</div><div class="hl">Streak</div></div>
+</div>
+<div id="tutArea"></div>
+<div id="toolArea"></div>
+<div id="scenarioArea"></div>
+<button class="bb" onclick="back()">&larr; Back to Crypto Trading Maths</button>
+</div>
+
+<!-- RESULTS -->
+<div id="results" class="screen"><div class="res"><h2 id="rT"></h2><div class="big" id="rB">0%</div><div class="det" id="rD"></div><button class="cta cta-p" onclick="back()">Back to Crypto Trading Maths</button></div></div>
+
+</div>
+
+<script src="modules/crypto-m1-landscape.js"></script>
+<script src="modules/crypto-m2-volatility.js"></script>
+<script src="modules/crypto-m3-leverage.js"></script>
+<script src="modules/crypto-m4-amm-il.js"></script>
+<script src="modules/crypto-m5-funding.js"></script>
+<script src="modules/crypto-m6-supply-onchain.js"></script>
+<script src="modules/crypto-m7-predatory.js"></script>
+<script src="modules/crypto-m8-correlation.js"></script>
+<script src="modules/crypto-m9-yield.js"></script>
+<script src="modules/crypto-m10-risk.js"></script>
+
+<script>
+// ════════════════════════════════════════
+//  ACCESS CONTROL
+// ════════════════════════════════════════
+(function(){
+  var params=new URLSearchParams(window.location.search);
+  var sid=params.get('session_id');
+  var slug='crypto';
+  if(sid){localStorage.setItem('mw_access_'+slug,'granted');window.history.replaceState({},'',window.location.pathname);}
+  if(localStorage.getItem('mw_access_'+slug)==='granted'||localStorage.getItem('mw_premium')==='granted'){
+    document.addEventListener('DOMContentLoaded',function(){
+      var b=document.getElementById('ct-buy-section');if(b)b.style.display='none';
+      document.querySelectorAll('.mc.locked').forEach(function(el){el.classList.remove('locked');});
+    });
+  }
+})();
+
+// ════════════════════════════════════════
+//  NAVIGATION
+// ════════════════════════════════════════
+function show(id){document.querySelectorAll('.screen').forEach(function(s){s.classList.remove('active')});document.getElementById(id).classList.add('active');window.scrollTo(0,0)}
+function back(){show('landing')}
+
+// ════════════════════════════════════════
+//  MODULE NAMES
+// ════════════════════════════════════════
+var MOD_NAMES = {
+  c1: 'The Crypto Landscape',
+  c2: 'Volatility Mathematics',
+  c3: 'Leverage & Liquidation',
+  c4: 'AMM & Impermanent Loss',
+  c5: 'Funding Rates & Perpetual Swaps',
+  c6: 'Token Supply & On-Chain Analytics',
+  c7: 'Predatory Market Mechanics',
+  c8: 'Correlation & Portfolio Mathematics',
+  c9: 'Stablecoin & Yield Mathematics',
+  c10: 'Risk Management for Fat-Tailed Markets'
+};
+
+var MOD_NEXT = {
+  c1:'c2', c2:'c3', c3:'c4', c4:'c5', c5:'c6',
+  c6:'c7', c7:'c8', c8:'c9', c9:'c10', c10:null
+};
+
+// ════════════════════════════════════════
+//  DATA STORES
+// ════════════════════════════════════════
+var TUTORIALS = {};
+var SCENARIOS = {};
+var TOOLS = {};
+
+// ════════════════════════════════════════
+//  MODULE 1 DATA
+// ════════════════════════════════════════
+TUTORIALS.c1 = CRYPTO_MODULE_1.tutorial;
+SCENARIOS.c1 = CRYPTO_MODULE_1.scenarios;
+TOOLS.c1 = {
+  id: 'crypto-cost-calc',
+  title: 'Crypto Cost Calculator',
+  render: function(container) {
+    var chains = [
+      {name:'Ethereum L1',gas:15},{name:'Arbitrum',gas:0.30},{name:'Optimism',gas:0.25},
+      {name:'Polygon',gas:0.03},{name:'Base',gas:0.10},{name:'Solana',gas:0.005},{name:'QF Network',gas:0.001}
+    ];
+    var html = '<div class="tool-box"><h3>CRYPTO COST CALCULATOR</h3>';
+    html += '<p>Calculate the full cost of any on-chain trade: gas, exchange fee, slippage, and price impact.</p>';
+    html += '<div class="tool-grid"><div class="tool-input">';
+    html += '<label>Trade Size (USD)</label><input type="number" id="cc-size" value="1000" min="1">';
+    html += '<label>Chain</label><select id="cc-chain">';
+    chains.forEach(function(c,i){html += '<option value="'+i+'" '+(i===0?'selected':'')+'>'+c.name+' (~$'+c.gas+' gas)</option>';});
+    html += '</select>';
+    html += '<label>DEX Fee (%)</label><input type="number" id="cc-fee" value="0.30" min="0" max="5" step="0.01">';
+    html += '<label>Est. Slippage (%)</label><input type="number" id="cc-slip" value="0.10" min="0" max="10" step="0.01">';
+    html += '<label>Pool TVL (USD)</label><input type="number" id="cc-pool" value="1000000" min="1000" step="1000">';
+    html += '</div><div class="tool-output"><div class="to-head">Results</div><div id="cc-out"></div>';
+    html += '<div class="to-head" style="margin-top:1rem;">Chain Comparison</div><div id="cc-comp"></div>';
+    html += '</div></div></div>';
+    container.innerHTML = html;
+
+    function calc(){
+      var size=parseFloat(document.getElementById('cc-size').value)||1000;
+      var ci=parseInt(document.getElementById('cc-chain').value);
+      var fee=parseFloat(document.getElementById('cc-fee').value)||0.30;
+      var slip=parseFloat(document.getElementById('cc-slip').value)||0.10;
+      var pool=parseFloat(document.getElementById('cc-pool').value)||1000000;
+      var gas=chains[ci].gas;
+      var feeCost=size*fee/100;
+      var slipCost=size*slip/100;
+      var halfPool=pool/2;
+      var priceImpact=size/halfPool;
+      var impactCost=size*priceImpact;
+      var total=gas+feeCost+slipCost+impactCost;
+      var pct=(total/size*100).toFixed(2);
+      var breakeven=(total/size*100).toFixed(2);
+      var o='';
+      o+='<div class="to-line">Gas: $'+gas.toFixed(2)+' ('+((gas/size)*100).toFixed(3)+'%)</div>';
+      o+='<div class="to-line">DEX fee: $'+feeCost.toFixed(2)+'</div>';
+      o+='<div class="to-line">Slippage: $'+slipCost.toFixed(2)+'</div>';
+      o+='<div class="to-line">Price impact: $'+impactCost.toFixed(2)+' ('+(priceImpact*100).toFixed(3)+'%)</div>';
+      o+='<div class="to-line" style="margin-top:.5rem;font-size:1.1rem;color:var(--accent);">Total: $'+total.toFixed(2)+' ('+pct+'% of trade)</div>';
+      o+='<div class="to-line" style="color:var(--muted);font-size:.8rem;">Break-even move needed: '+breakeven+'%</div>';
+      document.getElementById('cc-out').innerHTML=o;
+      var comp='';
+      chains.forEach(function(c){
+        var t=c.gas+feeCost+slipCost+impactCost;
+        comp+='<div class="to-line" style="font-size:.78rem;">'+c.name+': $'+t.toFixed(2)+' ('+(t/size*100).toFixed(2)+'%)</div>';
+      });
+      document.getElementById('cc-comp').innerHTML=comp;
+    }
+    ['cc-size','cc-fee','cc-slip','cc-pool'].forEach(function(id){document.getElementById(id).addEventListener('input',calc);});
+    document.getElementById('cc-chain').addEventListener('change',calc);
+    calc();
+  }
+};
+
+// ════════════════════════════════════════
+//  MODULE 2 DATA
+// ════════════════════════════════════════
+TUTORIALS.c2 = CRYPTO_MODULE_2.tutorial;
+SCENARIOS.c2 = CRYPTO_MODULE_2.scenarios;
+TOOLS.c2 = {
+  id: 'vol-calc',
+  title: 'Volatility Calculator',
+  render: function(container) {
+    var html = '<div class="tool-box"><h3>VOLATILITY CALCULATOR</h3>';
+    html += '<p>Enter a price series to calculate volatility, position sizes, and drawdown probabilities.</p>';
+    html += '<div class="tool-grid"><div class="tool-input">';
+    html += '<label>Price Series (comma-separated)</label><input type="text" id="vc-prices" value="100,103,98,105,101,97,110,106,102,108" placeholder="e.g. 100,103,98,105">';
+    html += '<label>Benchmark Vol (%)</label><input type="number" id="vc-bench" value="16" min="1">';
+    html += '<label>Target Position (&pound;)</label><input type="number" id="vc-pos" value="1000" min="1">';
+    html += '<label>Max Drawdown Tolerance (%)</label><input type="number" id="vc-dd" value="20" min="1">';
+    html += '</div><div class="tool-output"><div class="to-head">Results</div><div id="vc-out"></div></div></div></div>';
+    container.innerHTML = html;
+
+    function calc(){
+      var raw=document.getElementById('vc-prices').value;
+      var prices=raw.split(',').map(function(x){return parseFloat(x.trim())}).filter(function(x){return !isNaN(x)&&x>0});
+      var bench=parseFloat(document.getElementById('vc-bench').value)||16;
+      var pos=parseFloat(document.getElementById('vc-pos').value)||1000;
+      var maxDD=parseFloat(document.getElementById('vc-dd').value)||20;
+      if(prices.length<3){document.getElementById('vc-out').innerHTML='<div class="to-line" style="color:var(--red-bright);">Need at least 3 prices.</div>';return;}
+      var logR=[];
+      for(var i=1;i<prices.length;i++){logR.push(Math.log(prices[i]/prices[i-1]));}
+      var mean=logR.reduce(function(a,b){return a+b},0)/logR.length;
+      var variance=logR.reduce(function(a,b){return a+(b-mean)*(b-mean)},0)/(logR.length-1);
+      var dailyVol=Math.sqrt(variance)*100;
+      var annualVol=dailyVol*Math.sqrt(365);
+      var volAdj=pos*(bench/annualVol);
+      var maxDDprice=Math.min.apply(null,prices);
+      var maxPeak=prices[0];var maxDDpct=0;
+      for(var i=0;i<prices.length;i++){if(prices[i]>maxPeak)maxPeak=prices[i];var dd=(maxPeak-prices[i])/maxPeak*100;if(dd>maxDDpct)maxDDpct=dd;}
+      var o='';
+      o+='<div class="to-line">Daily vol: '+(dailyVol).toFixed(2)+'%</div>';
+      o+='<div class="to-line">Annualised vol: '+(annualVol).toFixed(1)+'%</div>';
+      o+='<div class="to-line" style="margin-top:.5rem;">Vol-adjusted position: &pound;'+volAdj.toFixed(0)+'</div>';
+      o+='<div class="to-line" style="color:var(--muted);font-size:.8rem;">(equivalent risk to &pound;'+pos+' at '+bench+'% vol)</div>';
+      o+='<div class="to-line" style="margin-top:.5rem;">Max drawdown in series: '+maxDDpct.toFixed(1)+'%</div>';
+      var p7=1-Math.pow(1-0.5*(1-erf((maxDD/100)/(dailyVol/100*Math.sqrt(2)))),7);
+      var p30=1-Math.pow(1-0.5*(1-erf((maxDD/100)/(dailyVol/100*Math.sqrt(2)))),30);
+      o+='<div class="to-line" style="margin-top:.5rem;">P('+maxDD+'% drawdown in 7 days): ~'+(p7*100).toFixed(1)+'%</div>';
+      o+='<div class="to-line">P('+maxDD+'% drawdown in 30 days): ~'+(p30*100).toFixed(1)+'%</div>';
+      document.getElementById('vc-out').innerHTML=o;
+    }
+    function erf(x){var a1=0.254829592,a2=-0.284496736,a3=1.421413741,a4=-1.453152027,a5=1.061405429,p=0.3275911;var sign=x<0?-1:1;x=Math.abs(x);var t=1/(1+p*x);var y=1-(((((a5*t+a4)*t)+a3)*t+a2)*t+a1)*t*Math.exp(-x*x);return sign*y;}
+    ['vc-prices','vc-bench','vc-pos','vc-dd'].forEach(function(id){document.getElementById(id).addEventListener('input',calc);});
+    calc();
+  }
+};
+
+// ════════════════════════════════════════
+//  MODULE 3 DATA
+// ════════════════════════════════════════
+TUTORIALS.c3 = CRYPTO_MODULE_3.tutorial;
+SCENARIOS.c3 = CRYPTO_MODULE_3.scenarios;
+TOOLS.c3 = {
+  id: 'liq-calc',
+  title: 'Liquidation Calculator',
+  render: function(container) {
+    var html = '<div class="tool-box"><h3>LIQUIDATION CALCULATOR</h3>';
+    html += '<p>Calculate liquidation prices, probabilities, and funding costs for leveraged crypto positions.</p>';
+    html += '<div class="tool-grid"><div class="tool-input">';
+    html += '<label>Entry Price ($)</label><input type="number" id="lc-entry" value="60000" min="1">';
+    html += '<label>Leverage (&times;)</label><input type="number" id="lc-lev" value="10" min="1" max="125">';
+    html += '<label>Margin ($)</label><input type="number" id="lc-margin" value="1000" min="1">';
+    html += '<label>Direction</label><select id="lc-dir"><option value="long">Long</option><option value="short">Short</option></select>';
+    html += '<label>Daily Vol (%)</label><input type="number" id="lc-vol" value="3.5" min="0.1" step="0.1">';
+    html += '<label>Funding Rate (%/8hr)</label><input type="number" id="lc-fund" value="0.01" min="-1" max="1" step="0.001">';
+    html += '</div><div class="tool-output"><div class="to-head">Results</div><div id="lc-out"></div></div></div></div>';
+    container.innerHTML = html;
+
+    function calc(){
+      var entry=parseFloat(document.getElementById('lc-entry').value)||60000;
+      var lev=parseFloat(document.getElementById('lc-lev').value)||10;
+      var margin=parseFloat(document.getElementById('lc-margin').value)||1000;
+      var dir=document.getElementById('lc-dir').value;
+      var vol=parseFloat(document.getElementById('lc-vol').value)||3.5;
+      var fund=parseFloat(document.getElementById('lc-fund').value)||0.01;
+      var posSize=margin*lev;
+      var mm=0.005;
+      var liqPrice,liqDist;
+      if(dir==='long'){liqPrice=entry*(1-1/lev+mm);liqDist=((entry-liqPrice)/entry*100);}
+      else{liqPrice=entry*(1+1/lev-mm);liqDist=((liqPrice-entry)/entry*100);}
+      var sigma=liqDist/(vol);
+      var p1=1-erf2(sigma/Math.sqrt(2));if(p1>1)p1=1;
+      var p7=1-Math.pow(1-p1,7);
+      var p30=1-Math.pow(1-p1,30);
+      var p90=1-Math.pow(1-p1,90);
+      var dailyFund=posSize*fund/100*3;
+      var monthFund=dailyFund*30;
+      var annualFund=dailyFund*365;
+      var fundPctMargin=(annualFund/margin*100);
+      var breakeven=((dailyFund*30)/posSize*100);
+      var o='';
+      o+='<div class="to-line">Position size: $'+posSize.toLocaleString()+'</div>';
+      o+='<div class="to-line" style="color:var(--accent);font-size:1.1rem;">Liquidation price: $'+liqPrice.toFixed(2)+'</div>';
+      o+='<div class="to-line">Distance: '+liqDist.toFixed(1)+'% '+( dir==='long'?'below':'above')+' entry</div>';
+      o+='<div class="to-line" style="margin-top:.5rem;">P(liq within 1 day): '+(p1*100).toFixed(1)+'%</div>';
+      o+='<div class="to-line">P(liq within 7 days): '+(p7*100).toFixed(1)+'%</div>';
+      o+='<div class="to-line">P(liq within 30 days): '+(p30*100).toFixed(1)+'%</div>';
+      o+='<div class="to-line">P(liq within 90 days): '+(p90*100).toFixed(1)+'%</div>';
+      o+='<div class="to-line" style="margin-top:.5rem;">Daily funding: $'+dailyFund.toFixed(2)+'</div>';
+      o+='<div class="to-line">Monthly funding: $'+monthFund.toFixed(2)+'</div>';
+      o+='<div class="to-line">Annual funding: $'+annualFund.toFixed(2)+' ('+fundPctMargin.toFixed(0)+'% of margin)</div>';
+      o+='<div class="to-line" style="color:var(--muted);font-size:.8rem;">30-day break-even move: '+breakeven.toFixed(2)+'%</div>';
+      document.getElementById('lc-out').innerHTML=o;
+    }
+    function erf2(x){var a1=0.254829592,a2=-0.284496736,a3=1.421413741,a4=-1.453152027,a5=1.061405429,p=0.3275911;var sign=x<0?-1:1;x=Math.abs(x);var t=1/(1+p*x);var y=1-(((((a5*t+a4)*t)+a3)*t+a2)*t+a1)*t*Math.exp(-x*x);return sign*y;}
+    ['lc-entry','lc-lev','lc-margin','lc-vol','lc-fund'].forEach(function(id){document.getElementById(id).addEventListener('input',calc);});
+    document.getElementById('lc-dir').addEventListener('change',calc);
+    calc();
+  }
+};
+
+// ════════════════════════════════════════
+//  MODULE 4 DATA
+// ════════════════════════════════════════
+TUTORIALS.c4 = CRYPTO_MODULE_4.tutorial;
+SCENARIOS.c4 = CRYPTO_MODULE_4.scenarios;
+TOOLS.c4 = {
+  id: 'il-calc',
+  title: 'Impermanent Loss Calculator',
+  render: function(container) {
+    var html = '<div class="tool-box"><h3>IMPERMANENT LOSS CALCULATOR</h3>';
+    html += '<p>Calculate IL, fee income, and net LP return vs holding for any pool position.</p>';
+    html += '<div class="tool-grid"><div class="tool-input">';
+    html += '<label>Deposit Value ($)</label><input type="number" id="il-dep" value="10000" min="1">';
+    html += '<label>Price Ratio (new/old)</label><input type="number" id="il-ratio" value="1.50" min="0.01" step="0.01">';
+    html += '<label>Fee Tier (%)</label><input type="number" id="il-fee" value="0.30" min="0" step="0.01">';
+    html += '<label>Daily Volume ($)</label><input type="number" id="il-vol" value="5000000" min="0">';
+    html += '<label>Your Pool Share (%)</label><input type="number" id="il-share" value="0.10" min="0.001" step="0.01">';
+    html += '<label>Holding Period (days)</label><input type="number" id="il-days" value="30" min="1">';
+    html += '</div><div class="tool-output"><div class="to-head">Results</div><div id="il-out"></div></div></div></div>';
+    container.innerHTML = html;
+
+    function calc(){
+      var dep=parseFloat(document.getElementById('il-dep').value)||10000;
+      var r=parseFloat(document.getElementById('il-ratio').value)||1.50;
+      var fee=parseFloat(document.getElementById('il-fee').value)||0.30;
+      var vol=parseFloat(document.getElementById('il-vol').value)||5000000;
+      var share=parseFloat(document.getElementById('il-share').value)||0.10;
+      var days=parseFloat(document.getElementById('il-days').value)||30;
+      var il=2*Math.sqrt(r)/(1+r)-1;
+      var vHold=dep/2*r+dep/2;
+      var vLP=vHold*(1+il);
+      var ilDollar=vHold-vLP;
+      var dailyFees=vol*fee/100*share/100;
+      var totalFees=dailyFees*days;
+      var netReturn=vLP+totalFees-dep;
+      var holdReturn=vHold-dep;
+      var vsHold=netReturn-holdReturn;
+      var breakVol=ilDollar/(days*fee/100*share/100);
+      var apr=((totalFees-ilDollar)/dep)*(365/days)*100;
+      var o='';
+      o+='<div class="to-line" style="color:var(--accent);font-size:1.1rem;">IL: '+(il*100).toFixed(2)+'% ($'+ilDollar.toFixed(2)+')</div>';
+      o+='<div class="to-line">V(hold): $'+vHold.toFixed(2)+'</div>';
+      o+='<div class="to-line">V(LP before fees): $'+vLP.toFixed(2)+'</div>';
+      o+='<div class="to-line" style="margin-top:.5rem;">Fee income ('+days+'d): $'+totalFees.toFixed(2)+'</div>';
+      o+='<div class="to-line">Daily fee income: $'+dailyFees.toFixed(2)+'</div>';
+      o+='<div class="to-line" style="margin-top:.5rem;color:'+(vsHold>=0?'var(--green-bright)':'var(--red-bright)')+';">Net vs holding: '+(vsHold>=0?'+':'')+' $'+vsHold.toFixed(2)+'</div>';
+      o+='<div class="to-line">Equivalent APR after IL: '+(apr>0?'+':'')+apr.toFixed(1)+'%</div>';
+      o+='<div class="to-line" style="color:var(--muted);font-size:.8rem;">Break-even daily volume: $'+(breakVol>0?breakVol.toFixed(0):'N/A')+'</div>';
+      document.getElementById('il-out').innerHTML=o;
+    }
+    ['il-dep','il-ratio','il-fee','il-vol','il-share','il-days'].forEach(function(id){document.getElementById(id).addEventListener('input',calc);});
+    calc();
+  }
+};
+
+// ════════════════════════════════════════
+//  MODULE 5 DATA
+// ════════════════════════════════════════
+TUTORIALS.c5 = CRYPTO_MODULE_5.tutorial;
+SCENARIOS.c5 = CRYPTO_MODULE_5.scenarios;
+TOOLS.c5 = {
+  id: 'fund-calc',
+  title: 'Funding Rate Calculator',
+  render: function(container) {
+    var html = '<div class="tool-box"><h3>FUNDING RATE CALCULATOR</h3>';
+    html += '<p>Calculate funding costs, carry trade yields, and break-even price movements.</p>';
+    html += '<div class="tool-grid"><div class="tool-input">';
+    html += '<label>Position Size ($)</label><input type="number" id="fr-pos" value="50000" min="1">';
+    html += '<label>Leverage (&times;)</label><input type="number" id="fr-lev" value="5" min="1">';
+    html += '<label>Funding Rate (%/8hr)</label><input type="number" id="fr-rate" value="0.01" step="0.001">';
+    html += '<label>Holding Period (days)</label><input type="number" id="fr-days" value="30" min="1">';
+    html += '<label>Strategy</label><select id="fr-dir"><option value="pay">Long (paying funding)</option><option value="recv">Short (receiving funding)</option><option value="carry">Cash &amp; Carry (delta-neutral)</option></select>';
+    html += '</div><div class="tool-output"><div class="to-head">Results</div><div id="fr-out"></div></div></div></div>';
+    container.innerHTML = html;
+
+    function calc(){
+      var pos=parseFloat(document.getElementById('fr-pos').value)||50000;
+      var lev=parseFloat(document.getElementById('fr-lev').value)||5;
+      var rate=parseFloat(document.getElementById('fr-rate').value)||0.01;
+      var days=parseFloat(document.getElementById('fr-days').value)||30;
+      var dir=document.getElementById('fr-dir').value;
+      var margin=pos/lev;
+      var per8h=pos*rate/100;
+      var daily=per8h*3;
+      var total=daily*days;
+      var annual=daily*365;
+      var pctMargin=(annual/margin*100);
+      var breakeven=(total/pos*100);
+      var o='';
+      o+='<div class="to-line">Margin: $'+margin.toLocaleString()+'</div>';
+      if(dir==='carry'){
+        var spotCap=pos;
+        var totalCap=spotCap+margin;
+        var yield_pct=(annual/totalCap*100);
+        o+='<div class="to-line" style="margin-top:.5rem;color:var(--accent);font-size:1.1rem;">Cash &amp; Carry</div>';
+        o+='<div class="to-line">Spot leg: $'+spotCap.toLocaleString()+'</div>';
+        o+='<div class="to-line">Short margin: $'+margin.toLocaleString()+'</div>';
+        o+='<div class="to-line">Total capital: $'+totalCap.toLocaleString()+'</div>';
+        o+='<div class="to-line" style="margin-top:.5rem;">Funding income ('+days+'d): $'+total.toFixed(2)+'</div>';
+        o+='<div class="to-line">Annualised income: $'+annual.toFixed(2)+'</div>';
+        o+='<div class="to-line" style="color:var(--green-bright);">Annualised yield: '+yield_pct.toFixed(1)+'%</div>';
+      } else {
+        var label=dir==='pay'?'cost':'income';
+        o+='<div class="to-line" style="margin-top:.5rem;">Per 8hr: $'+per8h.toFixed(2)+'</div>';
+        o+='<div class="to-line">Daily '+label+': $'+daily.toFixed(2)+'</div>';
+        o+='<div class="to-line">'+days+'-day '+label+': $'+total.toFixed(2)+'</div>';
+        o+='<div class="to-line">Annual '+label+': $'+annual.toFixed(2)+'</div>';
+        o+='<div class="to-line" style="color:var(--accent);">Annual as % of margin: '+pctMargin.toFixed(0)+'%</div>';
+        o+='<div class="to-line" style="color:var(--muted);font-size:.8rem;">Break-even move ('+days+'d): '+breakeven.toFixed(2)+'%</div>';
+      }
+      document.getElementById('fr-out').innerHTML=o;
+    }
+    ['fr-pos','fr-lev','fr-rate','fr-days'].forEach(function(id){document.getElementById(id).addEventListener('input',calc);});
+    document.getElementById('fr-dir').addEventListener('change',calc);
+    calc();
+  }
+};
+
+// ════════════════════════════════════════
+//  MODULE 6 DATA
+// ════════════════════════════════════════
+TUTORIALS.c6 = CRYPTO_MODULE_6.tutorial;
+SCENARIOS.c6 = CRYPTO_MODULE_6.scenarios;
+TOOLS.c6 = {
+  id: 'supply-calc',
+  title: 'Token Supply Analyser',
+  render: function(container) {
+    var html = '<div class="tool-box"><h3>TOKEN SUPPLY ANALYSER</h3>';
+    html += '<p>Analyse supply schedules, dilution rates, and FDV/MC ratios.</p>';
+    html += '<div class="tool-grid"><div class="tool-input">';
+    html += '<label>Circulating Supply</label><input type="number" id="ts-circ" value="100000000" min="1">';
+    html += '<label>Total / Max Supply</label><input type="number" id="ts-total" value="1000000000" min="1">';
+    html += '<label>Current Price ($)</label><input type="number" id="ts-price" value="1.00" step="0.01" min="0.0001">';
+    html += '<label>Annual Emission Rate (%)</label><input type="number" id="ts-emit" value="10" min="0">';
+    html += '<label>Annual Burn Rate (%)</label><input type="number" id="ts-burn" value="0" min="0">';
+    html += '<label>Next Unlock (months)</label><input type="number" id="ts-unlock-m" value="6" min="0">';
+    html += '<label>Unlock Size (% of total)</label><input type="number" id="ts-unlock-p" value="15" min="0">';
+    html += '</div><div class="tool-output"><div class="to-head">Results</div><div id="ts-out"></div></div></div></div>';
+    container.innerHTML = html;
+
+    function calc(){
+      var circ=parseFloat(document.getElementById('ts-circ').value)||100000000;
+      var total=parseFloat(document.getElementById('ts-total').value)||1000000000;
+      var price=parseFloat(document.getElementById('ts-price').value)||1;
+      var emit=parseFloat(document.getElementById('ts-emit').value)||0;
+      var burn=parseFloat(document.getElementById('ts-burn').value)||0;
+      var unlockM=parseFloat(document.getElementById('ts-unlock-m').value)||6;
+      var unlockP=parseFloat(document.getElementById('ts-unlock-p').value)||15;
+      var mc=circ*price;
+      var fdv=total*price;
+      var ratio=fdv/mc;
+      var netInflation=emit-burn;
+      var newCirc12=circ*(1+emit/100)*(1-burn/100);
+      var priceIf=mc/newCirc12;
+      var unlockTokens=total*unlockP/100;
+      var unlockValue=unlockTokens*price;
+      var sellPressure=unlockValue*0.50;
+      var demandGrowth=netInflation;
+      var o='';
+      o+='<div class="to-line">Market Cap: $'+(mc/1e6).toFixed(1)+'M</div>';
+      o+='<div class="to-line">FDV: $'+(fdv/1e6).toFixed(1)+'M</div>';
+      o+='<div class="to-line" style="color:var(--accent);font-size:1.1rem;">FDV/MC Ratio: '+ratio.toFixed(1)+'&times;'+(ratio>5?' (significant dilution ahead)':'')+'</div>';
+      o+='<div class="to-line" style="margin-top:.5rem;">Net annual inflation: '+(netInflation>0?'+':'')+netInflation.toFixed(1)+'%</div>';
+      o+='<div class="to-line">Projected price (12mo, flat demand): $'+priceIf.toFixed(4)+'</div>';
+      o+='<div class="to-line" style="margin-top:.5rem;">Unlock in '+unlockM+'mo: '+(unlockTokens/1e6).toFixed(1)+'M tokens ($'+(unlockValue/1e6).toFixed(1)+'M)</div>';
+      o+='<div class="to-line">Est. sell pressure (50%): $'+(sellPressure/1e6).toFixed(1)+'M</div>';
+      o+='<div class="to-line" style="color:var(--muted);font-size:.8rem;">Demand growth needed to maintain price: '+demandGrowth.toFixed(1)+'%/year</div>';
+      document.getElementById('ts-out').innerHTML=o;
+    }
+    ['ts-circ','ts-total','ts-price','ts-emit','ts-burn','ts-unlock-m','ts-unlock-p'].forEach(function(id){document.getElementById(id).addEventListener('input',calc);});
+    calc();
+  }
+};
+
+// ════════════════════════════════════════
+//  MODULE 7 DATA
+// ════════════════════════════════════════
+TUTORIALS.c7 = CRYPTO_MODULE_7.tutorial;
+SCENARIOS.c7 = CRYPTO_MODULE_7.scenarios;
+TOOLS.c7 = {
+  id: 'rug-scanner',
+  title: 'Rug Pull Risk Scanner',
+  render: function(container) {
+    var html = '<div class="tool-box"><h3>RUG PULL RISK SCANNER</h3>';
+    html += '<p>Score the mathematical red flags of any token before buying.</p>';
+    html += '<div class="tool-grid"><div class="tool-input">';
+    html += '<label>Market Cap ($)</label><input type="number" id="rp-mc" value="5000000" min="0">';
+    html += '<label>Pool Liquidity ($)</label><input type="number" id="rp-liq" value="50000" min="0">';
+    html += '<label>LP Locked?</label><select id="rp-lock"><option value="3">Yes (&gt;12 months)</option><option value="2">Yes (&lt;12 months)</option><option value="1" selected>No</option><option value="0">Unknown</option></select>';
+    html += '<label>Top 10 Wallets Hold (%)</label><input type="number" id="rp-top10" value="60" min="0" max="100">';
+    html += '<label>Contract Verified?</label><select id="rp-ver"><option value="2">Yes + audited</option><option value="1">Yes, not audited</option><option value="0" selected>No</option></select>';
+    html += '<label>Token Age (days)</label><input type="number" id="rp-age" value="7" min="0">';
+    html += '<label>Sell Tax (%)</label><input type="number" id="rp-tax" value="0" min="0">';
+    html += '</div><div class="tool-output"><div class="to-head">Risk Assessment</div><div id="rp-out"></div></div></div></div>';
+    container.innerHTML = html;
+
+    function calc(){
+      var mc=parseFloat(document.getElementById('rp-mc').value)||0;
+      var liq=parseFloat(document.getElementById('rp-liq').value)||1;
+      var lock=parseInt(document.getElementById('rp-lock').value);
+      var top10=parseFloat(document.getElementById('rp-top10').value)||0;
+      var ver=parseInt(document.getElementById('rp-ver').value);
+      var age=parseFloat(document.getElementById('rp-age').value)||0;
+      var tax=parseFloat(document.getElementById('rp-tax').value)||0;
+      var mcLiqRatio=mc/Math.max(liq,1);
+      var score=0;var flags=[];
+      if(mcLiqRatio>100){score+=30;flags.push('MC/Liq ratio: '+mcLiqRatio.toFixed(0)+'x (extreme)');}
+      else if(mcLiqRatio>30){score+=20;flags.push('MC/Liq ratio: '+mcLiqRatio.toFixed(0)+'x (dangerous)');}
+      else if(mcLiqRatio>10){score+=10;flags.push('MC/Liq ratio: '+mcLiqRatio.toFixed(0)+'x (elevated)');}
+      else{flags.push('MC/Liq ratio: '+mcLiqRatio.toFixed(0)+'x (reasonable)');}
+      if(lock<=1){score+=25;flags.push('LP NOT locked');}else if(lock===2){score+=10;flags.push('LP locked <12 months');}else{flags.push('LP locked >12 months');}
+      if(top10>70){score+=20;flags.push('Top 10 hold '+top10+'% (extreme concentration)');}else if(top10>50){score+=15;flags.push('Top 10 hold '+top10+'% (high concentration)');}else{flags.push('Top 10 hold '+top10+'%');}
+      if(ver===0){score+=20;flags.push('Contract UNVERIFIED');}else if(ver===1){score+=5;flags.push('Verified but not audited');}else{flags.push('Verified + audited');}
+      if(age<7){score+=15;flags.push('Token age: '+age+' days (very new)');}else if(age<30){score+=5;flags.push('Token age: '+age+' days');}
+      if(tax>10){score+=15;flags.push('Sell tax: '+tax+'% (likely honeypot)');}else if(tax>5){score+=10;flags.push('Sell tax: '+tax+'% (high)');}
+      var maxExtract=liq/2;
+      var breakeven=tax>0?(1/(1-tax/100)-1)*100:0;
+      var riskLevel=score>=60?'EXTREME':score>=40?'HIGH':score>=20?'MODERATE':'LOW';
+      var riskColor=score>=60?'var(--red-bright)':score>=40?'#f97316':score>=20?'#eab308':'var(--green-bright)';
+      var rec=score>=60?'AVOID - Mathematical scam indicators':score>=40?'HIGH RISK - Multiple red flags':score>=20?'MODERATE RISK - Proceed with extreme caution':'LOWER RISK - Standard due diligence applies';
+      var o='';
+      o+='<div class="to-line" style="color:'+riskColor+';font-size:1.3rem;font-weight:700;">Risk Score: '+score+'/100 ('+riskLevel+')</div>';
+      flags.forEach(function(f){o+='<div class="to-line" style="font-size:.78rem;">&bull; '+f+'</div>';});
+      o+='<div class="to-line" style="margin-top:.5rem;">Max extractable from pool: $'+maxExtract.toLocaleString()+'</div>';
+      if(tax>0)o+='<div class="to-line">Break-even after sell tax: +'+breakeven.toFixed(1)+'% price rise needed</div>';
+      o+='<div class="to-line" style="margin-top:.5rem;color:'+riskColor+';font-size:.85rem;font-weight:600;">'+rec+'</div>';
+      document.getElementById('rp-out').innerHTML=o;
+    }
+    ['rp-mc','rp-liq','rp-top10','rp-age','rp-tax'].forEach(function(id){document.getElementById(id).addEventListener('input',calc);});
+    ['rp-lock','rp-ver'].forEach(function(id){document.getElementById(id).addEventListener('change',calc);});
+    calc();
+  }
+};
+
+// ════════════════════════════════════════
+//  MODULE 8 DATA
+// ════════════════════════════════════════
+TUTORIALS.c8 = CRYPTO_MODULE_8.tutorial;
+SCENARIOS.c8 = CRYPTO_MODULE_8.scenarios;
+TOOLS.c8 = {
+  id: 'portfolio-calc',
+  title: 'Crypto Portfolio Analyser',
+  render: function(container) {
+    var html = '<div class="tool-box"><h3>CRYPTO PORTFOLIO ANALYSER</h3>';
+    html += '<p>Calculate portfolio volatility, effective diversification, and risk contribution.</p>';
+    html += '<div class="tool-grid"><div class="tool-input">';
+    html += '<label>Assets (comma-separated)</label><input type="text" id="cp-assets" value="BTC,ETH,SPX">';
+    html += '<label>Weights (%, comma-separated)</label><input type="text" id="cp-weights" value="40,30,30">';
+    html += '<label>Annual Vol (%, comma-separated)</label><input type="text" id="cp-vols" value="70,90,16">';
+    html += '<label>Avg Pairwise Correlation</label><input type="number" id="cp-corr" value="0.60" min="-1" max="1" step="0.05">';
+    html += '</div><div class="tool-output"><div class="to-head">Results</div><div id="cp-out"></div></div></div></div>';
+    container.innerHTML = html;
+
+    function calc(){
+      var assets=document.getElementById('cp-assets').value.split(',').map(function(x){return x.trim()});
+      var weights=document.getElementById('cp-weights').value.split(',').map(function(x){return parseFloat(x.trim())/100}).filter(function(x){return !isNaN(x)});
+      var vols=document.getElementById('cp-vols').value.split(',').map(function(x){return parseFloat(x.trim())/100}).filter(function(x){return !isNaN(x)});
+      var rho=parseFloat(document.getElementById('cp-corr').value)||0.60;
+      var n=Math.min(assets.length,weights.length,vols.length);
+      if(n<2){document.getElementById('cp-out').innerHTML='<div class="to-line" style="color:var(--red-bright);">Need at least 2 assets.</div>';return;}
+      var portVar=0;
+      for(var i=0;i<n;i++){portVar+=weights[i]*weights[i]*vols[i]*vols[i];
+        for(var j=0;j<n;j++){if(i!==j)portVar+=weights[i]*weights[j]*rho*vols[i]*vols[j];}}
+      var portSigma=Math.sqrt(portVar)*100;
+      var wAvg=0;for(var i=0;i<n;i++)wAvg+=weights[i]*vols[i]*100;
+      var divBenefit=((wAvg-portSigma)/wAvg*100);
+      var effBets=n/(1+(n-1)*rho);
+      var o='';
+      o+='<div class="to-line" style="color:var(--accent);font-size:1.1rem;">Portfolio vol: '+portSigma.toFixed(1)+'%</div>';
+      o+='<div class="to-line">Weighted avg vol: '+wAvg.toFixed(1)+'%</div>';
+      o+='<div class="to-line">Diversification benefit: '+divBenefit.toFixed(1)+'%</div>';
+      o+='<div class="to-line" style="margin-top:.5rem;">Effective independent bets: '+effBets.toFixed(2)+'</div>';
+      o+='<div class="to-line" style="margin-top:.5rem;font-size:.78rem;color:var(--muted);">Risk contribution:</div>';
+      for(var i=0;i<n;i++){
+        var marginal=weights[i]*vols[i]*100;
+        o+='<div class="to-line" style="font-size:.78rem;">&bull; '+assets[i]+': weight '+((weights[i]*100).toFixed(0))+'%, vol '+(vols[i]*100).toFixed(0)+'%, marginal '+marginal.toFixed(1)+'%</div>';
+      }
+      o+='<div class="to-line" style="margin-top:.5rem;color:var(--muted);font-size:.8rem;">vs 100% BTC ('+(vols[0]*100).toFixed(0)+'% vol): '+(portSigma<vols[0]*100?'lower':'higher')+' risk by '+(Math.abs(portSigma-vols[0]*100)).toFixed(1)+' pp</div>';
+      document.getElementById('cp-out').innerHTML=o;
+    }
+    ['cp-assets','cp-weights','cp-vols','cp-corr'].forEach(function(id){document.getElementById(id).addEventListener('input',calc);});
+    calc();
+  }
+};
+
+// ════════════════════════════════════════
+//  MODULE 9 DATA
+// ════════════════════════════════════════
+TUTORIALS.c9 = CRYPTO_MODULE_9.tutorial;
+SCENARIOS.c9 = CRYPTO_MODULE_9.scenarios;
+TOOLS.c9 = {
+  id: 'yield-calc',
+  title: 'Real Yield Calculator',
+  render: function(container) {
+    var html = '<div class="tool-box"><h3>REAL YIELD CALCULATOR</h3>';
+    html += '<p>Strip yield down to its real, risk-adjusted value after all deductions.</p>';
+    html += '<div class="tool-grid"><div class="tool-input">';
+    html += '<label>Headline APY (%)</label><input type="number" id="ry-apy" value="30" min="0">';
+    html += '<label>% From Token Emissions</label><input type="number" id="ry-emit" value="60" min="0" max="100">';
+    html += '<label>Estimated IL (%)</label><input type="number" id="ry-il" value="3" min="0">';
+    html += '<label>Annual Gas Costs ($)</label><input type="number" id="ry-gas" value="200" min="0">';
+    html += '<label>Deposit ($)</label><input type="number" id="ry-dep" value="10000" min="1">';
+    html += '<label>Protocol Age (months)</label><input type="number" id="ry-age" value="12" min="0">';
+    html += '<label>Number of Audits</label><input type="number" id="ry-audits" value="1" min="0">';
+    html += '<label>Risk-Free Rate (%)</label><input type="number" id="ry-rf" value="4.5" min="0" step="0.1">';
+    html += '</div><div class="tool-output"><div class="to-head">Results</div><div id="ry-out"></div></div></div></div>';
+    container.innerHTML = html;
+
+    function calc(){
+      var apy=parseFloat(document.getElementById('ry-apy').value)||0;
+      var emitPct=parseFloat(document.getElementById('ry-emit').value)||0;
+      var il=parseFloat(document.getElementById('ry-il').value)||0;
+      var gas=parseFloat(document.getElementById('ry-gas').value)||0;
+      var dep=parseFloat(document.getElementById('ry-dep').value)||10000;
+      var age=parseFloat(document.getElementById('ry-age').value)||0;
+      var audits=parseFloat(document.getElementById('ry-audits').value)||0;
+      var rf=parseFloat(document.getElementById('ry-rf').value)||4.5;
+      var realYield=apy*(1-emitPct/100);
+      var emissionYield=apy*emitPct/100;
+      var scRisk=age>=24&&audits>=2?2:age>=12&&audits>=1?4:age>=6?8:age>=3?15:25;
+      var gasPct=gas/dep*100;
+      var afterDeductions=realYield-il-gasPct-scRisk;
+      var excessReturn=afterDeductions-rf;
+      var sustainable=emitPct<30?'Likely sustainable (mostly fee-based)':emitPct<60?'Partially sustainable':'Unsustainable (emission-dependent)';
+      var o='';
+      o+='<div class="to-line" style="color:var(--muted);">Headline APY: '+apy+'%</div>';
+      o+='<div class="to-line" style="color:var(--accent);">Real yield (fees only): '+realYield.toFixed(1)+'%</div>';
+      o+='<div class="to-line" style="color:var(--red-bright);">Emission yield (inflation): '+emissionYield.toFixed(1)+'%</div>';
+      o+='<div class="to-line" style="margin-top:.5rem;">After IL (-'+il+'%): '+(realYield-il).toFixed(1)+'%</div>';
+      o+='<div class="to-line">After gas (-'+gasPct.toFixed(1)+'%): '+(realYield-il-gasPct).toFixed(1)+'%</div>';
+      o+='<div class="to-line">After SC risk (-'+scRisk+'%): '+afterDeductions.toFixed(1)+'%</div>';
+      o+='<div class="to-line" style="margin-top:.5rem;color:'+(excessReturn>=0?'var(--green-bright)':'var(--red-bright)')+';font-size:1.1rem;">Excess over risk-free: '+(excessReturn>=0?'+':'')+excessReturn.toFixed(1)+'%</div>';
+      o+='<div class="to-line" style="color:var(--muted);font-size:.8rem;">vs '+rf+'% risk-free stablecoin lending</div>';
+      o+='<div class="to-line" style="margin-top:.5rem;font-size:.8rem;">Sustainability: '+sustainable+'</div>';
+      o+='<div class="to-line" style="font-size:.8rem;">SC risk estimate: '+scRisk+'% ('+age+'mo old, '+audits+' audits)</div>';
+      document.getElementById('ry-out').innerHTML=o;
+    }
+    ['ry-apy','ry-emit','ry-il','ry-gas','ry-dep','ry-age','ry-audits','ry-rf'].forEach(function(id){document.getElementById(id).addEventListener('input',calc);});
+    calc();
+  }
+};
+
+// ════════════════════════════════════════
+//  MODULE 10 DATA
+// ════════════════════════════════════════
+TUTORIALS.c10 = CRYPTO_MODULE_10.tutorial;
+SCENARIOS.c10 = CRYPTO_MODULE_10.scenarios;
+TOOLS.c10 = {
+  id: 'risk-dashboard',
+  title: 'Crypto Risk Dashboard',
+  render: function(container) {
+    var html = '<div class="tool-box"><h3>CRYPTO RISK DASHBOARD</h3>';
+    html += '<p>Comprehensive risk analysis: VaR, stress tests, Kelly sizing, drawdown probability.</p>';
+    html += '<div class="tool-grid"><div class="tool-input">';
+    html += '<label>Portfolio Value ($)</label><input type="number" id="rd-val" value="50000" min="1">';
+    html += '<label>Crypto Allocation (%)</label><input type="number" id="rd-alloc" value="60" min="0" max="100">';
+    html += '<label>Crypto Annual Vol (%)</label><input type="number" id="rd-vol" value="75" min="1">';
+    html += '<label>Expected Annual Return (%)</label><input type="number" id="rd-mu" value="25" min="-50">';
+    html += '<label>Risk-Free Rate (%)</label><input type="number" id="rd-rf" value="5" min="0">';
+    html += '<label>Max Tolerable Drawdown (%)</label><input type="number" id="rd-maxdd" value="30" min="1">';
+    html += '</div><div class="tool-output"><div class="to-head">Results</div><div id="rd-out"></div></div></div></div>';
+    container.innerHTML = html;
+
+    function calc(){
+      var val=parseFloat(document.getElementById('rd-val').value)||50000;
+      var alloc=parseFloat(document.getElementById('rd-alloc').value)||60;
+      var vol=parseFloat(document.getElementById('rd-vol').value)||75;
+      var mu=parseFloat(document.getElementById('rd-mu').value)||25;
+      var rf=parseFloat(document.getElementById('rd-rf').value)||5;
+      var maxdd=parseFloat(document.getElementById('rd-maxdd').value)||30;
+      var cryptoVal=val*alloc/100;
+      var portVol=alloc/100*vol;
+      var dailyVol=portVol/Math.sqrt(365);
+      var var95=val*1.645*dailyVol/100;
+      var var99=val*2.326*dailyVol/100;
+      var ftVar95=var95*1.5;
+      var ftVar99=var99*1.5;
+      var cvar=ftVar99*1.4;
+      var kelly=(mu-rf)/100/Math.pow(vol/100,2);
+      var halfKelly=kelly/2;
+      var maxAlloc=maxdd/85*100;
+      var crash2020=cryptoVal*0.50;
+      var crash2021=cryptoVal*0.53;
+      var crash2022=cryptoVal*0.26;
+      var o='';
+      o+='<div class="to-line" style="font-size:.78rem;">Portfolio vol (annualised): '+portVol.toFixed(1)+'%</div>';
+      o+='<div class="to-line" style="margin-top:.5rem;color:var(--accent);font-size:1rem;">1-Day VaR (95%)</div>';
+      o+='<div class="to-line">Normal: $'+var95.toFixed(0)+' | Fat-tail: $'+ftVar95.toFixed(0)+'</div>';
+      o+='<div class="to-line" style="color:var(--accent);">1-Day VaR (99%)</div>';
+      o+='<div class="to-line">Normal: $'+var99.toFixed(0)+' | Fat-tail: $'+ftVar99.toFixed(0)+'</div>';
+      o+='<div class="to-line">CVaR (Expected Shortfall): $'+cvar.toFixed(0)+'</div>';
+      o+='<div class="to-line" style="margin-top:.5rem;">Kelly optimal crypto: '+(kelly*100).toFixed(1)+'%</div>';
+      o+='<div class="to-line">Half Kelly: '+(halfKelly*100).toFixed(1)+'%</div>';
+      o+='<div class="to-line">Max allocation for '+maxdd+'% max DD: '+maxAlloc.toFixed(1)+'%</div>';
+      o+='<div class="to-line" style="margin-top:.5rem;color:var(--accent);">Stress Tests (crypto portion)</div>';
+      o+='<div class="to-line" style="font-size:.78rem;">March 2020 (-50%): -$'+crash2020.toFixed(0)+'</div>';
+      o+='<div class="to-line" style="font-size:.78rem;">May 2021 (-53%): -$'+crash2021.toFixed(0)+'</div>';
+      o+='<div class="to-line" style="font-size:.78rem;">Nov 2022 (-26%): -$'+crash2022.toFixed(0)+'</div>';
+      var worst=Math.max(crash2020,crash2021)/val*100;
+      o+='<div class="to-line" style="margin-top:.5rem;color:'+(worst>maxdd?'var(--red-bright)':'var(--green-bright)')+';">Worst case: -'+worst.toFixed(1)+'% of portfolio '+(worst>maxdd?'(EXCEEDS tolerance)':'(within tolerance)')+'</div>';
+      document.getElementById('rd-out').innerHTML=o;
+    }
+    ['rd-val','rd-alloc','rd-vol','rd-mu','rd-rf','rd-maxdd'].forEach(function(id){document.getElementById(id).addEventListener('input',calc);});
+    calc();
+  }
+};
+
+// ════════════════════════════════════════
+//  MODULE LOADER
+// ════════════════════════════════════════
+var curMod = null;
+var curScenarios = [];
+var curIdx = 0;
+var correct = 0;
+var streak = 0;
+var answered = 0;
+
+function loadMod(modKey) {
+  if (!TUTORIALS[modKey]) return;
+
+  curMod = modKey;
+  curScenarios = SCENARIOS[modKey] || [];
+  curIdx = 0;
+  correct = 0;
+  streak = 0;
+  answered = 0;
+
+  var modNum = modKey.replace('c', '');
+  var title = MOD_NAMES[modKey] || ('Module ' + modNum);
+
+  document.getElementById('lTitle').textContent = 'Module ' + modNum + ': ' + title;
+  document.getElementById('lProg').textContent = '0/' + curScenarios.length;
+  document.getElementById('pFill').style.width = '0%';
+  updateHud();
+
+  // Render tutorial
+  document.getElementById('tutArea').innerHTML = TUTORIALS[modKey];
+
+  // Render tool
+  var toolArea = document.getElementById('toolArea');
+  toolArea.innerHTML = '';
+  if (TOOLS[modKey] && TOOLS[modKey].render) {
+    TOOLS[modKey].render(toolArea);
+  }
+
+  // Render scenarios
+  renderScenarios();
+
+  show('lesson');
+}
+
+// ════════════════════════════════════════
+//  SCENARIO RENDERER (Q&A format)
+// ════════════════════════════════════════
+function renderScenarios() {
+  var area = document.getElementById('scenarioArea');
+  var html = '<h3 style="font-family:\'Bebas Neue\',sans-serif;font-size:1.3rem;color:var(--accent);margin:1.5rem 0 .8rem;letter-spacing:.04em;">PRACTICE SCENARIOS</h3>';
+
+  curScenarios.forEach(function(s, i) {
+    var diff = s.difficulty || s.type || 'scenario';
+    html += '<div class="scenario-card" id="sc-' + i + '">';
+    html += '<div style="font-family:\'DM Mono\',monospace;font-size:.6rem;color:var(--muted);margin-bottom:.4rem;text-transform:uppercase;letter-spacing:.06em;">' + diff + ' \u00b7 Question ' + (i+1) + ' of ' + curScenarios.length + '</div>';
+    html += '<div class="sq">' + s.question + '</div>';
+    html += '<div class="ans-row">';
+    html += '<input type="text" id="ans-' + i + '" placeholder="Your answer..." onkeydown="if(event.key===\'Enter\')checkAns(' + i + ')">';
+    html += '<button onclick="checkAns(' + i + ')">Check</button>';
+    html += '</div>';
+    html += '<div class="ans-feedback" id="fb-' + i + '"></div>';
+    html += '</div>';
+  });
+
+  area.innerHTML = html;
+}
+
+function normalise(str) {
+  return str.toLowerCase()
+    .replace(/[\u00a3$\u20ac]/g, '')
+    .replace(/[\u2212\u2013\u2014]/g, '-')
+    .replace(/\s+/g, ' ')
+    .replace(/\(.*?\)/g, '')
+    .trim();
+}
+
+function checkAns(idx) {
+  var input = document.getElementById('ans-' + idx);
+  var fb = document.getElementById('fb-' + idx);
+  var s = curScenarios[idx];
+
+  if (fb.classList.contains('show')) return;
+
+  var userAns = normalise(input.value);
+  var correctAns = normalise(s.answer);
+
+  var userNum = userAns.replace(/[^0-9.\-]/g, '');
+  var correctNum = correctAns.replace(/[^0-9.\-]/g, '');
+
+  // For crypto scenarios, answers are typically explanatory — show answer on any attempt
+  var isCorrect = userAns.length > 0 && (
+    userAns === correctAns ||
+    userAns.includes(correctAns.substring(0, 20)) ||
+    correctAns.includes(userAns) ||
+    (userNum && correctNum && userNum === correctNum)
+  );
+
+  answered++;
+
+  if (isCorrect) {
+    correct++;
+    streak++;
+    fb.className = 'ans-feedback show correct';
+    fb.innerHTML = '<strong style="color:var(--green-bright);">Correct!</strong><div class="exp">' + s.answer + '</div>';
+    input.style.borderColor = 'var(--green-bright)';
+  } else {
+    streak = 0;
+    fb.className = 'ans-feedback show incorrect';
+    fb.innerHTML = '<strong style="color:var(--red-bright);">Here\'s the full answer:</strong><div class="exp">' + s.answer + '</div>';
+    input.style.borderColor = 'var(--red-bright)';
+  }
+
+  input.disabled = true;
+  updateHud();
+  document.getElementById('lProg').textContent = answered + '/' + curScenarios.length;
+  document.getElementById('pFill').style.width = Math.round(answered / curScenarios.length * 100) + '%';
+
+  if (answered === curScenarios.length) {
+    setTimeout(function() { showResults(); }, 1500);
+  }
+}
+
+function updateHud() {
+  document.getElementById('hCorrect').textContent = correct + '/' + answered;
+  document.getElementById('hAcc').textContent = answered > 0 ? Math.round(correct / answered * 100) + '%' : '\u2014';
+  document.getElementById('hStrk').textContent = streak;
+}
+
+function showResults() {
+  var pct = Math.round(correct / curScenarios.length * 100);
+  document.getElementById('rT').textContent = pct >= 80 ? 'Excellent work!' : pct >= 60 ? 'Good effort!' : 'Keep practising!';
+  document.getElementById('rB').textContent = pct + '%';
+  var nextKey = MOD_NEXT[curMod];
+  var nextText = nextKey ? 'Next up: Module ' + nextKey.replace('c','') + ' \u2014 ' + MOD_NAMES[nextKey] + '.' : 'You have completed the entire Crypto Trading Maths course!';
+  document.getElementById('rD').innerHTML = correct + ' correct out of ' + curScenarios.length + ' questions.<br>' + nextText;
+  show('results');
+}
+</script>
+</body>
+</html>
