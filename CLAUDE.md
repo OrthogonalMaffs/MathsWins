@@ -45,7 +45,6 @@ QF holders get cheaper access AND contribute to token deflation. Games are free.
 - DNS configured at IONOS with A records pointing to GitHub Pages
 
 ### Not Yet Built
-- `games/countdown-numbers/` — listed on landing page, not built
 - Payment integration (Stripe + on-chain)
 - Content gating / access control (Module 1 free, rest locked — partially implemented)
 - Academy.sol subscription contract
@@ -69,7 +68,7 @@ games/                              # Free games (single-file HTML each)
 academy/                            # Paid courses (single-file HTML each)
   index.html                        # Academy hub page with All Access Pass (£39.99)
   blackjack/index.html              # 11 modules, 3 tiers, 78+ scenarios
-  poker/index.html                  # 10 modules, 3 tiers, 75 scenarios
+  poker/index.html                  # 20 modules, 4 tiers, 350+ scenarios, 10 tools
   sports-betting/index.html         # 8 modules, 3 tiers, live calculators
   roulette/index.html               # 5 modules, single tier, 100k-spin sims
   craps/index.html                  # 5 modules, single tier
@@ -77,6 +76,8 @@ academy/                            # Paid courses (single-file HTML each)
   lottery/index.html                # 5 modules, single tier
   baccarat/index.html               # 4 modules, single tier
   trading/index.html                # 6 modules, single tier
+  options/index.html                # Standalone (NOT All Access). 10 modules planned, M1 free live, M2-6 coming soon
+  options/modules/                  # JS module files (M1-M6 received, M7-M10 TBC)
 everyday/                           # Free everyday maths courses
   index.html                        # Everyday Maths hub page
   tax/index.html                    # 5 modules, UK income tax calculators
@@ -98,7 +99,7 @@ contracts/                          # Solidity smart contracts (Foundry)
 ## Games Roster (13)
 | Game | Slug | Description |
 |------|------|-------------|
-| Countdown Numbers | `countdown-numbers` | NOT BUILT — listed on landing page |
+| Countdown Numbers | `countdown-numbers` | Classic 6-number target challenge with solver |
 | 52-dle | `52dle` | Daily number deduction puzzle |
 | Equatle | `equatle` | Wordle-style equation guessing |
 | Sudoku Duel | `sudoku-duel` | Speed Sudoku with hints and scoring |
@@ -120,7 +121,7 @@ contracts/                          # Solidity smart contracts (Foundry)
 | Course | Slug | Modules | Scenarios | Key features |
 |--------|------|---------|-----------|--------------|
 | Blackjack Academy | `blackjack` | 11 | 78+ | Monte Carlo sims, card counting drills, 50-hand session replay with EV analysis |
-| Poker School | `poker` | 10 (+1 placeholder) | 75 | Pot odds calculator, range grid builder, GTO fundamentals, ICM tournament theory |
+| Poker School | `poker` | 20 | 350+ | 4 tiers (Basic/Advanced/Master/Pro), 10 interactive tools, combinatorics, Kelly, bluffing frequency, exploitative maths |
 | Sports Betting Maths | `sports-betting` | 8 | — | Implied probability, overround calculation, value betting, live calculators |
 
 ### Single-tier courses
@@ -132,6 +133,11 @@ contracts/                          # Solidity smart contracts (Foundry)
 | Lottery Maths | `lottery` | 5 | Combinatorics, expected value per ticket, lifetime opportunity cost |
 | Baccarat Breakdown | `baccarat` | 4 | Three-bet analysis, commission maths, pattern-tracking debunking |
 | Trading Maths | `trading` | 6 | R:R ratios, position sizing, Kelly criterion, survivorship bias, drawdown variance |
+
+### Standalone courses (NOT in All Access Pass)
+| Course | Slug | Modules | Key features |
+|--------|------|---------|--------------|
+| Options Maths | `options` | 10 (planned), M1 live, M2-6 coming soon | Black-Scholes, Greeks, implied volatility, multi-leg strategies. Cyan #06b6d4 accent |
 
 ### Course accent colours
 | Course | Accent |

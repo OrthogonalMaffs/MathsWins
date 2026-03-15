@@ -1,0 +1,515 @@
+<!DOCTYPE html>
+<html lang="en-GB">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Countdown Numbers — Reach the Target | MathsWins</title>
+<meta name="description" content="The classic Countdown numbers game. Six numbers, one target, 30 seconds. Use addition, subtraction, multiplication and division to hit the target. Free to play.">
+<meta property="og:title" content="Countdown Numbers — Can You Reach the Target?">
+<meta property="og:description" content="Six numbers. One target. Thirty seconds. The classic arithmetic challenge from the UK's longest-running game show. Free, no sign-up.">
+<meta property="og:url" content="https://mathswins.co.uk/games/countdown-numbers/">
+<link rel="canonical" href="https://mathswins.co.uk/games/countdown-numbers/">
+<link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=DM+Mono:wght@400;500&family=Outfit:wght@300;400;600;700&display=swap" rel="stylesheet">
+<script async src="https://www.googletagmanager.com/gtag/js?id=G-CLNF7GSB28"></script>
+<script>window.dataLayer=window.dataLayer||[];function gtag(){dataLayer.push(arguments);}gtag('js',new Date());gtag('config','G-CLNF7GSB28',{send_page_view:true,storage:'none',anonymize_ip:true});</script>
+<style>
+:root{--bg:#050709;--surface:#0a0d14;--surface2:#0f1319;--border:#161c28;--border2:#1e2638;--gold:#d4a847;--teal:#0d9488;--teal-bright:#2dd4bf;--green-bright:#2dd4a0;--red-bright:#ef5350;--sky:#0ea5e9;--text:#c8cdd8;--text-bright:#e8ecf4;--muted:#4a5568}
+*{margin:0;padding:0;box-sizing:border-box}
+body{background:var(--bg);color:var(--text);font-family:'Outfit',sans-serif;-webkit-font-smoothing:antialiased;min-height:100vh;display:flex;flex-direction:column;align-items:center;justify-content:center;padding:1.5rem}
+.game-container{max-width:600px;width:100%}
+header{text-align:center;margin-bottom:2rem}
+.back-link{font-size:.8rem;color:var(--muted);text-decoration:none;display:block;margin-bottom:1rem}.back-link:hover{color:var(--teal-bright)}
+h1{font-family:'Bebas Neue',sans-serif;font-size:2.5rem;color:var(--text-bright);letter-spacing:.04em}
+.tagline{font-size:.85rem;color:var(--muted);margin-top:.25rem}
+
+/* Target display */
+.target-display{text-align:center;margin:1.5rem 0}
+.target-label{font-family:'Outfit',sans-serif;font-size:.7rem;text-transform:uppercase;letter-spacing:.15em;color:var(--muted)}
+.target-num{font-family:'DM Mono',monospace;font-size:4rem;font-weight:500;color:var(--gold);line-height:1.1}
+
+/* Timer */
+.timer-bar{width:100%;height:8px;background:var(--border2);border-radius:4px;margin:1rem 0;overflow:hidden}
+.timer-fill{height:100%;background:var(--teal-bright);border-radius:4px;transition:width .1s linear}
+.timer-fill.warning{background:var(--gold)}
+.timer-fill.danger{background:var(--red-bright)}
+.timer-text{font-family:'DM Mono',monospace;font-size:1.2rem;text-align:center;color:var(--text-bright)}
+
+/* Number tiles */
+.tiles{display:flex;gap:.5rem;justify-content:center;flex-wrap:wrap;margin:1.5rem 0}
+.tile{font-family:'DM Mono',monospace;font-size:1.4rem;font-weight:500;width:70px;height:56px;display:flex;align-items:center;justify-content:center;background:var(--surface);border:2px solid var(--border2);border-radius:8px;color:var(--text-bright);cursor:pointer;transition:all .15s;user-select:none}
+.tile:hover:not(.used):not(.disabled){border-color:var(--teal-bright);transform:translateY(-2px)}
+.tile.used{opacity:.25;pointer-events:none;border-color:var(--border)}
+.tile.disabled{opacity:.3;pointer-events:none}
+.tile.selected{border-color:var(--gold);background:rgba(212,168,71,.1);color:var(--gold)}
+
+/* Operator buttons */
+.operators{display:flex;gap:.5rem;justify-content:center;margin:1rem 0}
+.op-btn{font-family:'DM Mono',monospace;font-size:1.5rem;width:56px;height:48px;display:flex;align-items:center;justify-content:center;background:var(--surface2);border:2px solid var(--border2);border-radius:8px;color:var(--teal-bright);cursor:pointer;transition:all .15s;user-select:none}
+.op-btn:hover:not(.disabled){border-color:var(--teal-bright)}
+.op-btn.selected{border-color:var(--teal-bright);background:rgba(45,212,191,.1)}
+.op-btn.disabled{opacity:.3;pointer-events:none}
+
+/* Working area */
+.working{background:var(--surface);border:1px solid var(--border);border-radius:10px;padding:1.25rem;margin:1.5rem 0;min-height:120px}
+.working-title{font-family:'Outfit',sans-serif;font-size:.7rem;text-transform:uppercase;letter-spacing:.12em;color:var(--muted);margin-bottom:.75rem}
+.step{font-family:'DM Mono',monospace;font-size:1rem;padding:.35rem 0;color:var(--text-bright);display:flex;align-items:center;gap:.5rem}
+.step .step-result{color:var(--teal-bright)}
+.step .undo-step{font-size:.7rem;color:var(--red-bright);cursor:pointer;opacity:.5;margin-left:auto}.step .undo-step:hover{opacity:1}
+
+/* Result display */
+.result-display{text-align:center;padding:1rem;margin:1rem 0;border-radius:8px;display:none}
+.result-display.exact{background:rgba(45,212,160,.1);border:1px solid rgba(45,212,160,.3)}
+.result-display.close{background:rgba(212,168,71,.1);border:1px solid rgba(212,168,71,.3)}
+.result-display.miss{background:rgba(239,83,80,.08);border:1px solid rgba(239,83,80,.2)}
+.result-label{font-family:'Bebas Neue',sans-serif;font-size:1.5rem;letter-spacing:.03em}
+.result-score{font-family:'DM Mono',monospace;font-size:1.1rem;margin-top:.25rem}
+
+/* Controls */
+.controls{display:flex;gap:.75rem;justify-content:center;flex-wrap:wrap;margin:1.5rem 0}
+.btn{font-family:'Outfit',sans-serif;font-weight:600;font-size:.85rem;padding:.65rem 1.5rem;border:none;border-radius:6px;cursor:pointer;transition:all .15s}
+.btn-primary{background:var(--teal-bright);color:var(--bg)}.btn-primary:hover{opacity:.85}
+.btn-secondary{background:var(--surface);border:1px solid var(--border);color:var(--text)}.btn-secondary:hover{border-color:var(--teal-bright)}
+.btn-danger{background:var(--surface);border:1px solid var(--red-bright);color:var(--red-bright)}.btn-danger:hover{background:rgba(239,83,80,.1)}
+
+/* Setup screen */
+.setup{text-align:center}
+.setup h2{font-family:'Bebas Neue',sans-serif;font-size:1.5rem;color:var(--text-bright);margin-bottom:1rem}
+.large-select{display:flex;gap:.5rem;justify-content:center;margin:1rem 0}
+.large-opt{font-family:'DM Mono',monospace;font-size:1.2rem;width:48px;height:44px;display:flex;align-items:center;justify-content:center;background:var(--surface);border:2px solid var(--border2);border-radius:8px;color:var(--text);cursor:pointer;transition:all .15s}
+.large-opt:hover{border-color:var(--teal-bright)}
+.large-opt.selected{border-color:var(--gold);color:var(--gold);background:rgba(212,168,71,.1)}
+
+/* Solution display */
+.solution{background:var(--surface2);border:1px solid var(--border2);border-radius:8px;padding:1.25rem;margin:1rem 0}
+.solution-title{font-family:'Outfit',sans-serif;font-size:.7rem;text-transform:uppercase;letter-spacing:.12em;color:var(--muted);margin-bottom:.5rem}
+.solution-step{font-family:'DM Mono',monospace;font-size:.95rem;padding:.25rem 0;color:var(--teal-bright)}
+.no-solution{font-family:'Outfit',sans-serif;font-size:.9rem;color:var(--muted);font-style:italic}
+
+/* Stats */
+.stats{display:flex;gap:1.5rem;justify-content:center;margin:1rem 0;font-size:.8rem;color:var(--muted)}
+.stat-item{text-align:center}
+.stat-val{font-family:'DM Mono',monospace;font-size:1.1rem;color:var(--text-bright);display:block}
+
+footer{margin-top:2rem;text-align:center;font-size:.7rem;color:var(--muted)}
+footer a{color:var(--muted);text-decoration:none}footer a:hover{color:var(--teal-bright)}
+</style>
+</head>
+<body>
+<div class="game-container">
+
+<header>
+  <a href="/" class="back-link">← MathsWins</a>
+  <h1>COUNTDOWN NUMBERS</h1>
+  <p class="tagline">Six numbers. One target. Thirty seconds. Pure arithmetic.</p>
+</header>
+
+<!-- SETUP SCREEN -->
+<div id="setupScreen" class="setup">
+  <h2>HOW MANY LARGE NUMBERS?</h2>
+  <p style="font-size:.85rem;color:var(--muted);margin-bottom:1rem">Large: 25, 50, 75, 100 — Small: 1–10 (two of each)</p>
+  <div class="large-select">
+    <div class="large-opt" data-large="0" onclick="setLarge(0)">0</div>
+    <div class="large-opt selected" data-large="1" onclick="setLarge(1)">1</div>
+    <div class="large-opt" data-large="2" onclick="setLarge(2)">2</div>
+    <div class="large-opt" data-large="3" onclick="setLarge(3)">3</div>
+    <div class="large-opt" data-large="4" onclick="setLarge(4)">4</div>
+  </div>
+  <button class="btn btn-primary" onclick="startGame()" style="margin-top:1rem;font-size:1rem;padding:.8rem 2.5rem">START GAME</button>
+  
+  <div class="stats" id="lifetimeStats" style="margin-top:2rem">
+    <div class="stat-item"><span class="stat-val" id="sGames">0</span>Games</div>
+    <div class="stat-item"><span class="stat-val" id="sExact">0</span>Exact</div>
+    <div class="stat-item"><span class="stat-val" id="sClose">0</span>Close</div>
+    <div class="stat-item"><span class="stat-val" id="sPoints">0</span>Points</div>
+  </div>
+</div>
+
+<!-- GAME SCREEN -->
+<div id="gameScreen" style="display:none">
+  <div class="target-display">
+    <div class="target-label">TARGET</div>
+    <div class="target-num" id="targetNum">---</div>
+  </div>
+
+  <div class="timer-bar"><div class="timer-fill" id="timerFill"></div></div>
+  <div class="timer-text" id="timerText">30</div>
+
+  <div class="tiles" id="tilesContainer"></div>
+  <div class="operators" id="opsContainer">
+    <div class="op-btn disabled" data-op="+" onclick="selectOp('+')">+</div>
+    <div class="op-btn disabled" data-op="-" onclick="selectOp('−')">−</div>
+    <div class="op-btn disabled" data-op="*" onclick="selectOp('×')">×</div>
+    <div class="op-btn disabled" data-op="/" onclick="selectOp('÷')">÷</div>
+  </div>
+
+  <div class="working" id="working">
+    <div class="working-title">YOUR WORKING</div>
+    <div id="steps"></div>
+  </div>
+
+  <div class="result-display" id="resultDisplay">
+    <div class="result-label" id="resultLabel"></div>
+    <div class="result-score" id="resultScore"></div>
+  </div>
+
+  <div id="solutionArea"></div>
+
+  <div class="controls">
+    <button class="btn btn-danger" id="undoBtn" onclick="undoStep()" style="display:none">Undo</button>
+    <button class="btn btn-secondary" id="clearBtn" onclick="clearAll()" style="display:none">Clear</button>
+    <button class="btn btn-primary" id="submitBtn" onclick="submitAnswer()" style="display:none">Submit</button>
+    <button class="btn btn-primary" id="newGameBtn" onclick="showSetup()" style="display:none">New Game</button>
+  </div>
+</div>
+
+</div>
+
+<footer>
+  <p><a href="/">MathsWins</a> · <a href="/games/">Games</a> · Free · No data collected</p>
+</footer>
+
+<script>
+// Game state
+let G = {
+  numbers: [], target: 0, largeCount: 1,
+  available: [], results: [], steps: [],
+  selectedNum: null, selectedOp: null,
+  timer: null, timeLeft: 30, gameOver: false,
+  stats: JSON.parse(localStorage.getItem('mw_countdown_stats') || '{"games":0,"exact":0,"close":0,"points":0}')
+};
+
+function updateStatsDisplay() {
+  document.getElementById('sGames').textContent = G.stats.games;
+  document.getElementById('sExact').textContent = G.stats.exact;
+  document.getElementById('sClose').textContent = G.stats.close;
+  document.getElementById('sPoints').textContent = G.stats.points;
+}
+
+function setLarge(n) {
+  G.largeCount = n;
+  document.querySelectorAll('.large-opt').forEach(o => o.classList.toggle('selected', parseInt(o.dataset.large) === n));
+}
+
+function generateNumbers(largeCount) {
+  const large = [25, 50, 75, 100];
+  const small = [1,1,2,2,3,3,4,4,5,5,6,6,7,7,8,8,9,9,10,10];
+  
+  // Shuffle
+  for (let i = large.length - 1; i > 0; i--) { const j = Math.floor(Math.random() * (i+1)); [large[i],large[j]] = [large[j],large[i]]; }
+  for (let i = small.length - 1; i > 0; i--) { const j = Math.floor(Math.random() * (i+1)); [small[i],small[j]] = [small[j],small[i]]; }
+  
+  const nums = [];
+  for (let i = 0; i < largeCount; i++) nums.push(large[i]);
+  for (let i = 0; i < 6 - largeCount; i++) nums.push(small[i]);
+  return nums;
+}
+
+function generateTarget() {
+  return Math.floor(Math.random() * 899) + 101; // 101-999
+}
+
+function showSetup() {
+  document.getElementById('setupScreen').style.display = '';
+  document.getElementById('gameScreen').style.display = 'none';
+  updateStatsDisplay();
+}
+
+function startGame() {
+  G.numbers = generateNumbers(G.largeCount);
+  G.target = generateTarget();
+  G.available = G.numbers.map((n, i) => ({ value: n, id: 'orig_' + i, used: false }));
+  G.results = [];
+  G.steps = [];
+  G.selectedNum = null;
+  G.selectedOp = null;
+  G.gameOver = false;
+  G.timeLeft = 30;
+
+  document.getElementById('setupScreen').style.display = 'none';
+  document.getElementById('gameScreen').style.display = '';
+  document.getElementById('targetNum').textContent = G.target;
+  document.getElementById('resultDisplay').style.display = 'none';
+  document.getElementById('solutionArea').innerHTML = '';
+  document.getElementById('newGameBtn').style.display = 'none';
+  document.getElementById('submitBtn').style.display = '';
+  document.getElementById('undoBtn').style.display = '';
+  document.getElementById('clearBtn').style.display = '';
+
+  renderTiles();
+  renderSteps();
+  setOpsState(false);
+  startTimer();
+}
+
+function renderTiles() {
+  const container = document.getElementById('tilesContainer');
+  container.innerHTML = '';
+  const allNums = [...G.available, ...G.results];
+  allNums.forEach(n => {
+    if (n.used) return; // hidden
+    const div = document.createElement('div');
+    div.className = 'tile' + (G.gameOver ? ' disabled' : '') + (G.selectedNum === n.id ? ' selected' : '');
+    div.textContent = n.value;
+    div.onclick = () => selectNumber(n.id);
+    container.appendChild(div);
+  });
+}
+
+function selectNumber(id) {
+  if (G.gameOver) return;
+  const num = [...G.available, ...G.results].find(n => n.id === id && !n.used);
+  if (!num) return;
+
+  if (G.selectedNum === null) {
+    // First number selected
+    G.selectedNum = id;
+    setOpsState(true);
+    renderTiles();
+  } else if (G.selectedOp !== null && G.selectedNum !== id) {
+    // Second number selected — perform operation
+    const first = [...G.available, ...G.results].find(n => n.id === G.selectedNum);
+    const second = num;
+    const op = G.selectedOp;
+    
+    let result;
+    if (op === '+') result = first.value + second.value;
+    else if (op === '-') result = first.value - second.value;
+    else if (op === '*') result = first.value * second.value;
+    else if (op === '/') result = first.value / second.value;
+
+    // Validate
+    if (result <= 0 || !Number.isInteger(result)) {
+      // Invalid — flash and reset
+      G.selectedNum = null; G.selectedOp = null;
+      setOpsState(false);
+      renderTiles();
+      clearOpSelection();
+      return;
+    }
+
+    // Mark both as used
+    first.used = true;
+    second.used = true;
+
+    // Create result tile
+    const resultId = 'res_' + G.results.length;
+    G.results.push({ value: result, id: resultId, used: false, fromA: first.id, fromB: second.id });
+
+    const opSymbol = op === '*' ? '×' : op === '/' ? '÷' : op === '-' ? '−' : '+';
+    G.steps.push({
+      text: `${first.value} ${opSymbol} ${second.value} = ${result}`,
+      resultId: resultId, aId: first.id, bId: second.id
+    });
+
+    G.selectedNum = null; G.selectedOp = null;
+    setOpsState(false);
+    clearOpSelection();
+    renderTiles();
+    renderSteps();
+  } else {
+    // Deselect or reselect
+    G.selectedNum = id;
+    G.selectedOp = null;
+    setOpsState(true);
+    clearOpSelection();
+    renderTiles();
+  }
+}
+
+function selectOp(op) {
+  if (G.gameOver || G.selectedNum === null) return;
+  const realOp = op === '−' ? '-' : op === '×' ? '*' : op === '÷' ? '/' : '+';
+  G.selectedOp = realOp;
+  document.querySelectorAll('.op-btn').forEach(b => b.classList.toggle('selected', b.dataset.op === realOp));
+}
+
+function clearOpSelection() {
+  document.querySelectorAll('.op-btn').forEach(b => b.classList.remove('selected'));
+}
+
+function setOpsState(enabled) {
+  document.querySelectorAll('.op-btn').forEach(b => {
+    b.classList.toggle('disabled', !enabled);
+  });
+}
+
+function renderSteps() {
+  const container = document.getElementById('steps');
+  if (G.steps.length === 0) {
+    container.innerHTML = '<span style="color:var(--muted);font-size:.85rem">Select a number, then an operator, then another number.</span>';
+    return;
+  }
+  container.innerHTML = G.steps.map((s, i) =>
+    `<div class="step"><span>${s.text.replace(/=\s*(\d+)/, '= <span class="step-result">$1</span>')}</span>${!G.gameOver ? '<span class="undo-step" onclick="undoStep()">✕</span>' : ''}</div>`
+  ).join('');
+}
+
+function undoStep() {
+  if (G.steps.length === 0 || G.gameOver) return;
+  const last = G.steps.pop();
+  // Remove the result
+  const resIdx = G.results.findIndex(r => r.id === last.resultId);
+  if (resIdx >= 0) G.results.splice(resIdx, 1);
+  // Restore the used numbers
+  const allNums = [...G.available, ...G.results];
+  const a = allNums.find(n => n.id === last.aId);
+  const b = allNums.find(n => n.id === last.bId);
+  if (a) a.used = false;
+  if (b) b.used = false;
+  G.selectedNum = null; G.selectedOp = null;
+  setOpsState(false);
+  clearOpSelection();
+  renderTiles();
+  renderSteps();
+}
+
+function clearAll() {
+  if (G.gameOver) return;
+  G.available.forEach(n => n.used = false);
+  G.results = [];
+  G.steps = [];
+  G.selectedNum = null; G.selectedOp = null;
+  setOpsState(false);
+  clearOpSelection();
+  renderTiles();
+  renderSteps();
+}
+
+// Timer
+function startTimer() {
+  const fill = document.getElementById('timerFill');
+  const text = document.getElementById('timerText');
+  G.timeLeft = 30;
+
+  if (G.timer) clearInterval(G.timer);
+  G.timer = setInterval(() => {
+    G.timeLeft -= 0.1;
+    if (G.timeLeft <= 0) {
+      G.timeLeft = 0;
+      clearInterval(G.timer);
+      endGame();
+    }
+    const pct = (G.timeLeft / 30) * 100;
+    fill.style.width = pct + '%';
+    fill.className = 'timer-fill' + (G.timeLeft <= 5 ? ' danger' : G.timeLeft <= 10 ? ' warning' : '');
+    text.textContent = Math.ceil(G.timeLeft);
+  }, 100);
+}
+
+function submitAnswer() {
+  if (G.gameOver) return;
+  clearInterval(G.timer);
+  endGame();
+}
+
+function endGame() {
+  G.gameOver = true;
+  document.getElementById('submitBtn').style.display = 'none';
+  document.getElementById('undoBtn').style.display = 'none';
+  document.getElementById('clearBtn').style.display = 'none';
+  document.getElementById('newGameBtn').style.display = '';
+
+  // Find the closest result
+  const allValues = [...G.available.filter(n => !n.used).map(n => n.value), ...G.results.filter(n => !n.used).map(n => n.value)];
+  if (G.steps.length > 0) {
+    // The last result is the answer
+    const lastResult = G.results[G.results.length - 1];
+    if (lastResult) allValues.push(lastResult.value);
+  }
+
+  let closest = null;
+  let closestDiff = Infinity;
+  allValues.forEach(v => {
+    const diff = Math.abs(v - G.target);
+    if (diff < closestDiff) { closestDiff = diff; closest = v; }
+  });
+
+  // Also check all intermediate results
+  G.results.forEach(r => {
+    const diff = Math.abs(r.value - G.target);
+    if (diff < closestDiff) { closestDiff = diff; closest = r.value; }
+  });
+
+  // Score
+  let points = 0, cls = 'miss', label = '';
+  if (closestDiff === 0) { points = 10; cls = 'exact'; label = 'EXACT!'; }
+  else if (closestDiff <= 5) { points = 7; cls = 'close'; label = closestDiff + ' AWAY'; }
+  else if (closestDiff <= 10) { points = 5; cls = 'close'; label = closestDiff + ' AWAY'; }
+  else { label = closest !== null ? closestDiff + ' AWAY' : 'NO ANSWER'; }
+
+  const disp = document.getElementById('resultDisplay');
+  disp.className = 'result-display ' + cls;
+  disp.style.display = '';
+  document.getElementById('resultLabel').textContent = label;
+  document.getElementById('resultLabel').style.color = cls === 'exact' ? 'var(--green-bright)' : cls === 'close' ? 'var(--gold)' : 'var(--red-bright)';
+  document.getElementById('resultScore').textContent = points > 0 ? points + ' points' + (closest !== null ? ' (your answer: ' + closest + ')' : '') : (closest !== null ? 'Your answer: ' + closest : '');
+
+  // Update stats
+  G.stats.games++;
+  if (cls === 'exact') G.stats.exact++;
+  else if (cls === 'close') G.stats.close++;
+  G.stats.points += points;
+  localStorage.setItem('mw_countdown_stats', JSON.stringify(G.stats));
+
+  // Show solution
+  showSolution();
+  renderTiles();
+  renderSteps();
+}
+
+// Solver (brute force, finds one solution)
+function solve(numbers, target) {
+  if (numbers.length === 0) return null;
+  
+  for (let i = 0; i < numbers.length; i++) {
+    if (numbers[i].value === target) return [];
+  }
+
+  for (let i = 0; i < numbers.length; i++) {
+    for (let j = 0; j < numbers.length; j++) {
+      if (i === j) continue;
+      const a = numbers[i].value, b = numbers[j].value;
+      const remaining = numbers.filter((_, k) => k !== i && k !== j);
+      
+      const ops = [
+        { symbol: '+', result: a + b },
+        { symbol: '−', result: a - b },
+        { symbol: '×', result: a * b },
+      ];
+      if (b !== 0 && a % b === 0) ops.push({ symbol: '÷', result: a / b });
+
+      for (const op of ops) {
+        if (op.result <= 0) continue;
+        const newNums = [...remaining, { value: op.result }];
+        const sub = solve(newNums, target);
+        if (sub !== null) {
+          return [{ a, op: op.symbol, b, result: op.result }, ...sub];
+        }
+      }
+    }
+  }
+  return null;
+}
+
+function showSolution() {
+  const nums = G.numbers.map(v => ({ value: v }));
+  const solution = solve(nums, G.target);
+  const area = document.getElementById('solutionArea');
+  
+  if (solution && solution.length > 0) {
+    area.innerHTML = `<div class="solution"><div class="solution-title">ONE POSSIBLE SOLUTION</div>${
+      solution.map(s => `<div class="solution-step">${s.a} ${s.op} ${s.b} = ${s.result}</div>`).join('')
+    }</div>`;
+  } else if (solution && solution.length === 0) {
+    area.innerHTML = `<div class="solution"><div class="solution-title">SOLUTION</div><div class="solution-step">${G.target} is one of your numbers!</div></div>`;
+  } else {
+    // Try to find closest
+    area.innerHTML = `<div class="solution"><div class="no-solution">No exact solution exists for this combination. This happens in about 9% of games.</div></div>`;
+  }
+}
+
+// Init
+updateStatsDisplay();
+</script>
+</body>
+</html>
