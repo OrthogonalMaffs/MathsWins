@@ -9,50 +9,84 @@ MathsWins started as the crypto/commercial half of the MaffsGames project. Maffs
 The separation was a clean migration — games were moved (not rebuilt), git history for the originals lives in the maffsgames repo. The two brands must have zero crossover — separate domains, separate email, separate branding.
 
 ## What MathsWins Is
-A platform with two pillars:
+A platform with four pillars:
 
-### 1. Games — Free skill-based maths games
+### 1. Games — Free skill-based maths games (13, all live)
 Pure logic, reasoning, and number sense. No luck, no gambling. These are the "QF originals" — games built for the QF Network community but enjoyable by anyone.
 
-### 2. Academy — "Maths Always Wins" courses
-Educational deep-dives into the mathematics behind games of chance, betting, and trading. Not gambling tools — mathematical education. The thesis: understand the maths BEFORE you play. 9 courses covering casino games, sports betting, lottery, slots, and trading psychology.
+### 2. Academy — "Maths Always Wins" courses (9 courses, All Access £39.99)
+Educational deep-dives into the mathematics behind games of chance, betting, and trading. Not gambling tools — mathematical education. The thesis: understand the maths BEFORE you play.
+
+### 3. Everyday Maths — Free financial literacy courses (6 courses, all live)
+The mathematics behind everyday financial decisions. Tax, mortgages, pensions, compound interest, inflation, probability. Free forever.
+
+### 4. Tools — Free standalone calculators (1 live)
+Focused single-purpose tools. Currently: UK Student Loan Calculator.
 
 ## Business Model
 **Dual payment — card or QF tokens:**
 - Stripe (card) — full price, accessible to anyone without crypto
 - QF tokens — discounted via badge tier system + 10% burn
 
-QF holders get cheaper access AND contribute to token deflation. Games are free. Academy courses are the revenue product. This model is decided but NOT yet implemented — currently all content is freely accessible with no payment gate.
+**Stripe payment integration (Phase 1 — LIVE):**
+- 10 products, 19 prices, 18 Payment Links created
+- localStorage-based access: `mw_access_SLUG` per course, `mw_access_all` for All Access
+- Buy buttons on all 9 academy course pages + Academy hub
+- Redirect URL pattern: `?session_id={CHECKOUT_SESSION_ID}` (deferred — not yet set in Stripe dashboard)
+- Phase 1 is client-side only — any payment unlocks all content for that course
 
-**Badge discounts (QF payments only):**
+**Confirmed pricing:**
+- Slots, Lottery, Baccarat: £1.99 (single tier)
+- Roulette, Craps: £3.99 (single tier)
+- Trading: Basic £6.99, Advanced £12.99
+- Blackjack, Sports Betting: Basic £6.99, Advanced £12.99, Master £17.99
+- Poker School: Basic £6.99 (M1-7), Advanced £12.99 (M1-14), Master £17.99 (M1-17), Pro £24.99 (M1-20)
+- All Access Pass: £39.99 (all 9 academy courses, lifetime)
+- Options Maths: TBC (standalone, NOT in All Access)
+- FREE: Games, Everyday Maths, Module 1 of all academy courses, Tools
+
+**Badge discounts (QF payments only — Phase 3):**
 - Alpha Badge: 10% discount
 - Beta Badge: 15% discount
 - Lambda Badge: 20% discount
 - Delta Badge: 25% discount
 
-**Content gating approach (planned):**
-- Full content committed to public repo currently — needs gating before monetisation
-- Options under consideration: locked-state module cards, separate private repo for full content, or client-side access control with soulbound NFT verification
-- At current price points and niche audience, threat model from git history exposure is minimal
+**Payment phases:**
+- Phase 1: Stripe Payment Links + localStorage (LIVE)
+- Phase 2: Cloudflare Workers (api.mathswins.co.uk/verify, signed JWT, tier-specific unlocking)
+- Phase 3: QF token payments via Academy.sol + soulbound access NFTs
 
 ## Current State
 
-### Deployed
-- Landing page with game cards and academy cards
-- 13 free games (all playable, listed on landing page)
-- 9 academy courses (all playable, no paywall yet)
+### Deployed & Live
+- Landing page with game cards, academy cards, everyday cards
+- 13 free games (all built and playable)
+- 9 academy courses with Stripe payment integration (Module 1 free on each)
+- Academy hub page with All Access Pass (£39.99)
+- Options Maths standalone course page (Module 1 free, M2-10 coming soon)
+- 6 Everyday Maths courses (all live, free forever)
+- UK Student Loan Calculator tool
+- Terms of Use page (17 sections, UK law, noindex)
 - GitHub Pages enabled, CNAME set to mathswins.co.uk
 - DNS configured at IONOS with A records pointing to GitHub Pages
+- HTTPS enforced
 
-### Not Yet Built
-- Payment integration (Stripe + on-chain)
-- Content gating / access control (Module 1 free, rest locked — partially implemented)
-- Academy.sol subscription contract
+### Not Yet Built / In Progress
+- Stripe redirect URLs (need to set `?session_id=` on all 18 Payment Links in Stripe dashboard)
+- Options Maths M2-10 (M2-6 content received, M7-10 TBC)
+- Options Maths pricing (TBC)
+- Card Counter Tool (£4.99/month or £29.99/year, requires BJ Master — build after Phase 1 verified)
+- FPL Maths (build April 2026, launch August 2026)
+- Phase 2: Cloudflare Workers for payment verification
+- Phase 3: QF token payments + Academy.sol
+- Content gating hardening (currently localStorage, not secure)
+
 ## Directory Structure
 ```
 index.html                          # Landing page (dark theme, nav pills)
 CNAME                               # mathswins.co.uk
 games/                              # Free games (single-file HTML each)
+  countdown-numbers/index.html      # Classic 6-number target challenge with solver
   52dle/index.html                  # Also on maffsgames.co.uk
   equatle/index.html                # Also on maffsgames.co.uk
   sudoku-duel/index.html
@@ -68,7 +102,7 @@ games/                              # Free games (single-file HTML each)
 academy/                            # Paid courses (single-file HTML each)
   index.html                        # Academy hub page with All Access Pass (£39.99)
   blackjack/index.html              # 11 modules, 3 tiers, 78+ scenarios
-  poker/index.html                  # 20 modules, 4 tiers, 350+ scenarios, 10 tools
+  poker/index.html                  # 20 modules, 4 tiers, 350+ scenarios, 10 interactive tools
   sports-betting/index.html         # 8 modules, 3 tiers, live calculators
   roulette/index.html               # 5 modules, single tier, 100k-spin sims
   craps/index.html                  # 5 modules, single tier
@@ -76,7 +110,7 @@ academy/                            # Paid courses (single-file HTML each)
   lottery/index.html                # 5 modules, single tier
   baccarat/index.html               # 4 modules, single tier
   trading/index.html                # 6 modules, single tier
-  options/index.html                # Standalone (NOT All Access). 10 modules planned, M1 free live, M2-6 coming soon
+  options/index.html                # STANDALONE (NOT All Access). 10 modules planned, M1 free live
   options/modules/                  # JS module files (M1-M6 received, M7-M10 TBC)
 everyday/                           # Free everyday maths courses
   index.html                        # Everyday Maths hub page
@@ -96,7 +130,7 @@ contracts/                          # Solidity smart contracts (Foundry)
   lib/
 ```
 
-## Games Roster (13)
+## Games Roster (13 — all built and live)
 | Game | Slug | Description |
 |------|------|-------------|
 | Countdown Numbers | `countdown-numbers` | Classic 6-number target challenge with solver |
@@ -115,29 +149,53 @@ contracts/                          # Solidity smart contracts (Foundry)
 
 **Shared with maffsgames.co.uk:** 52dle, equatle, prime-or-composite, estimation-engine, sequence-solver. These exist in both repos independently.
 
-## Academy Courses (9)
+## Academy Courses — All Access Pass (9 courses, £39.99)
 
-### Multi-tier courses (3 tiers: Basic → Advanced → Master)
-| Course | Slug | Modules | Scenarios | Key features |
-|--------|------|---------|-----------|--------------|
-| Blackjack Academy | `blackjack` | 11 | 78+ | Monte Carlo sims, card counting drills, 50-hand session replay with EV analysis |
-| Poker School | `poker` | 20 | 350+ | 4 tiers (Basic/Advanced/Master/Pro), 10 interactive tools, combinatorics, Kelly, bluffing frequency, exploitative maths |
-| Sports Betting Maths | `sports-betting` | 8 | — | Implied probability, overround calculation, value betting, live calculators |
+### Multi-tier courses
+| Course | Slug | Modules | Tiers | Scenarios | Key features |
+|--------|------|---------|-------|-----------|--------------|
+| Blackjack Academy | `blackjack` | 11 | 3 (Basic/Advanced/Master) | 78+ | Monte Carlo sims, card counting drills, 50-hand session replay with EV analysis |
+| Poker School | `poker` | 20 | 4 (Basic/Advanced/Master/Pro) | 350+ | 10 interactive tools per module, combinatorics, Kelly criterion, bluffing frequency, exploitative maths, variance simulation |
+| Sports Betting Maths | `sports-betting` | 8 | 3 (Basic/Advanced/Master) | — | Implied probability, overround calculation, value betting, live calculators |
+| Trading Maths | `trading` | 6 | 2 (Basic/Advanced) | — | R:R ratios, position sizing, Kelly criterion, survivorship bias, drawdown variance |
 
 ### Single-tier courses
-| Course | Slug | Modules | Key features |
-|--------|------|---------|--------------|
-| Roulette Reality Check | `roulette` | 5 | 100k-spin simulations demolishing Martingale, Fibonacci, D'Alembert |
-| Craps Decoded | `craps` | 5 | 36 dice outcomes, odds bet (0% edge) vs proposition bets (16.67% edge) |
-| Slots: The Ugly Truth | `slots` | 7 | RTP maths, volatility, near-miss programming, 1,000-spin live sim |
-| Lottery Maths | `lottery` | 5 | Combinatorics, expected value per ticket, lifetime opportunity cost |
-| Baccarat Breakdown | `baccarat` | 4 | Three-bet analysis, commission maths, pattern-tracking debunking |
-| Trading Maths | `trading` | 6 | R:R ratios, position sizing, Kelly criterion, survivorship bias, drawdown variance |
+| Course | Slug | Modules | Price | Key features |
+|--------|------|---------|-------|--------------|
+| Roulette Reality Check | `roulette` | 5 | £3.99 | 100k-spin simulations demolishing Martingale, Fibonacci, D'Alembert |
+| Craps Decoded | `craps` | 5 | £3.99 | 36 dice outcomes, odds bet (0% edge) vs proposition bets (16.67% edge) |
+| Slots: The Ugly Truth | `slots` | 7 | £1.99 | RTP maths, volatility, near-miss programming, 1,000-spin live sim |
+| Lottery Maths | `lottery` | 5 | £1.99 | Combinatorics, expected value per ticket, lifetime opportunity cost |
+| Baccarat Breakdown | `baccarat` | 4 | £1.99 | Three-bet analysis, commission maths, pattern-tracking debunking |
 
-### Standalone courses (NOT in All Access Pass)
-| Course | Slug | Modules | Key features |
-|--------|------|---------|--------------|
-| Options Maths | `options` | 10 (planned), M1 live, M2-6 coming soon | Black-Scholes, Greeks, implied volatility, multi-leg strategies. Cyan #06b6d4 accent |
+### Poker School — Module Breakdown (20 modules)
+| Tier | Modules | Price | Content |
+|------|---------|-------|---------|
+| Basic | M1-7 | £6.99 | Hand rankings, pot odds, position, post-flop, equity vs range, implied odds, bet sizing |
+| Advanced | M8-14 | £12.99 | Opponent profiling, GTO, tournaments/ICM, combinatorics, short stack, deal maths, chip leader |
+| Master | M15-17 | £17.99 | Optimal bluffing frequency, advanced bet sizing, exploitative mathematics |
+| Pro | M18-20 | £24.99 | Bankroll/Kelly, variance/downswings, tilt/psychology/EV of discipline |
+
+Each module M11-20 includes an interactive tool (combo counter, push/fold advisor, deal calculator, bubble factor calculator, bluff frequency calculator, geometric sizing calculator, Bayesian bluff detector, Kelly calculator, variance simulator, tilt cost calculator).
+
+### Standalone Courses (NOT in All Access Pass)
+| Course | Slug | Modules | Status | Key features |
+|--------|------|---------|--------|--------------|
+| Options Maths | `options` | 10 planned | M1 free live, M2-6 stored, M7-10 TBC | Black-Scholes, Greeks, implied volatility, multi-leg strategies |
+
+**Options Maths module status:**
+| # | Title | Tier | Status |
+|---|-------|------|--------|
+| 1 | What Options Actually Are | Free | LIVE |
+| 2 | Probability & Expected Value | Basic | Content received, not yet integrated |
+| 3 | The Binomial Model | Basic | Content received, not yet integrated |
+| 4 | Black-Scholes | Basic | Content received, not yet integrated |
+| 5 | Delta | Basic | Content received, not yet integrated |
+| 6 | The Greeks | Basic | Content received, not yet integrated |
+| 7 | Implied Volatility | TBC | Not yet written |
+| 8 | Multi-leg Strategies | TBC | Not yet written |
+| 9 | TBA | TBC | Not yet written |
+| 10 | Real-world Scenarios | TBC | Not yet written |
 
 ### Course accent colours
 | Course | Accent |
@@ -151,11 +209,11 @@ contracts/                          # Solidity smart contracts (Foundry)
 | Lottery | Yellow #facc15 |
 | Baccarat | Dark Gold #b8860b |
 | Trading | Emerald #10b981 |
+| Options | Cyan #06b6d4 |
 
-## Everyday Maths (Free section — 3rd pillar)
+## Everyday Maths (Free — 3rd pillar, 6 courses, all live)
 Free courses teaching the mathematics behind everyday financial decisions. No gating, no payment — free forever. Accent colour: Sky Blue #0ea5e9.
 
-### Deployed
 | Course | Slug | Modules | Key features |
 |--------|------|---------|--------------|
 | UK Tax Maths | `everyday/tax` | 5 | Marginal vs effective rates, £100k trap, Scotland comparison, deductions, fiscal drag. Live calculators. |
@@ -164,6 +222,11 @@ Free courses teaching the mathematics behind everyday financial decisions. No ga
 | Pension Maths | `everyday/pensions` | 4 | Tax relief by band, compound growth, 25% lump sum, annuity vs drawdown, pension calculator. |
 | Inflation & Real Returns | `everyday/inflation` | 3 | Purchasing power erosion, real vs nominal returns, shrinkflation maths. Live calculators. |
 | Everyday Probability | `everyday/probability` | 4 | Base rate neglect, Bayes' theorem, Monty Hall (interactive game), birthday problem. Live calculators. |
+
+## Tools (Free)
+| Tool | Slug | Key features |
+|------|------|--------------|
+| UK Student Loan Calculator | `tools/student-loan` | All 5 plans (1, 2, 4, 5, Postgraduate), 2025/26 thresholds, year-by-year amortisation, write-off vs payoff verdict, combined marginal rate analysis |
 
 ## Smart Contracts
 
@@ -234,7 +297,7 @@ GA4 cookieless mode (G-CLNF7GSB28) — same property as maffsgames.co.uk. No per
 - KaTeX CDN for math rendering where needed
 - Foundry for smart contracts
 - GitHub Pages for hosting
-- Stripe for card payments (planned, not implemented)
+- Stripe for card payments (Phase 1 live — Payment Links + localStorage)
 
 ## Safety Rules
 - Never expose private keys or API keys
@@ -244,4 +307,4 @@ GA4 cookieless mode (G-CLNF7GSB28) — same property as maffsgames.co.uk. No per
 - No crossover with maffsgames.co.uk branding or contact details
 
 ## Contact
-- TBC — mathswins.co.uk email to be set up
+- contact@mathswins.co.uk
