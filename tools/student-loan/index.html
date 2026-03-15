@@ -1,0 +1,384 @@
+<!DOCTYPE html>
+<html lang="en-GB">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Student Loan Repayment Calculator UK — Will You Ever Pay It Off? | MathsWins</title>
+<meta name="description" content="Free UK student loan calculator for all plans (1, 2, 4, 5, Postgraduate). See your monthly repayments, total cost, years to repay, and whether your loan gets written off first. 2025/26 thresholds.">
+<meta property="og:title" content="Student Loan Calculator — The Maths Your University Never Taught You">
+<meta property="og:description" content="Enter your salary and loan balance. See exactly what you repay, how long it takes, and whether the write-off date arrives before you clear the debt. Free, for all UK plans.">
+<meta property="og:url" content="https://mathswins.co.uk/tools/student-loan/">
+<meta property="og:type" content="website">
+<link rel="canonical" href="https://mathswins.co.uk/tools/student-loan/">
+<link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Crimson+Pro:ital,wght@0,400;0,700;1,400&family=DM+Mono:wght@400;500&family=Outfit:wght@300;400;600;700&display=swap" rel="stylesheet">
+<script type="application/ld+json">
+{"@context":"https://schema.org","@type":"WebApplication","name":"UK Student Loan Repayment Calculator","description":"Calculate your UK student loan repayments across all plans with 2025/26 thresholds.","provider":{"@type":"EducationalOrganization","name":"MathsWins","url":"https://mathswins.co.uk"},"applicationCategory":"FinanceApplication","offers":{"@type":"Offer","price":"0","priceCurrency":"GBP"},"operatingSystem":"Web Browser"}
+</script>
+<script async src="https://www.googletagmanager.com/gtag/js?id=G-CLNF7GSB28"></script>
+<script>window.dataLayer=window.dataLayer||[];function gtag(){dataLayer.push(arguments);}gtag('js',new Date());gtag('config','G-CLNF7GSB28',{send_page_view:true,storage:'none',anonymize_ip:true});</script>
+<style>
+:root{--bg:#050709;--surface:#0a0d14;--surface2:#0f1319;--border:#161c28;--border2:#1e2638;--sky:#0ea5e9;--sky-dim:rgba(14,165,233,0.1);--green-bright:#2dd4a0;--red-bright:#ef5350;--gold:#d4a847;--purple:#7c3aed;--text:#c8cdd8;--text-bright:#e8ecf4;--muted:#4a5568;--accent:var(--sky);--accent-dim:var(--sky-dim)}
+*{margin:0;padding:0;box-sizing:border-box}body{background:var(--bg);color:var(--text);font-family:'Outfit',sans-serif;font-weight:400;line-height:1.7;-webkit-font-smoothing:antialiased}.container{max-width:860px;margin:0 auto;padding:0 1.5rem}
+header{padding:2rem 0 1rem;border-bottom:1px solid var(--border)}
+.breadcrumb{font-size:.8rem;color:var(--muted);margin-bottom:1rem}.breadcrumb a{color:var(--muted);text-decoration:none}.breadcrumb a:hover{color:var(--accent)}
+.section-label{font-family:'Outfit',sans-serif;font-weight:600;font-size:.75rem;text-transform:uppercase;letter-spacing:.15em;color:var(--accent);margin-bottom:.5rem}
+h1{font-family:'Bebas Neue',sans-serif;font-size:clamp(2.5rem,6vw,3.5rem);color:var(--text-bright);letter-spacing:.03em;line-height:1.1;margin-bottom:.5rem}
+.subtitle{font-family:'Crimson Pro',serif;font-style:italic;font-size:1.15rem;color:var(--accent);margin-bottom:1.5rem}
+.stats-bar{display:grid;grid-template-columns:repeat(auto-fit,minmax(130px,1fr));gap:1px;background:var(--border);border:1px solid var(--border);border-radius:8px;overflow:hidden;margin-bottom:2rem}
+.stat-cell{background:var(--surface);padding:1rem;text-align:center}.stat-num{font-family:'DM Mono',monospace;font-weight:500;font-size:1.4rem;color:var(--accent);display:block}.stat-label{font-family:'Outfit',sans-serif;font-size:.65rem;text-transform:uppercase;letter-spacing:.1em;color:var(--muted);margin-top:.25rem}
+.tut{background:var(--surface);border:1px solid var(--border);border-radius:10px;padding:2rem;margin-bottom:2rem}
+.tut h3{font-family:'Bebas Neue',sans-serif;font-size:1.3rem;color:var(--text-bright);letter-spacing:.03em;margin-bottom:1rem}
+.tut p{margin-bottom:1rem;line-height:1.8}.tut p:last-child{margin-bottom:0}
+.pt{border-left:3px solid var(--accent);background:var(--accent-dim);padding:1rem 1.25rem;border-radius:0 6px 6px 0;margin:1.5rem 0}
+.dg{border-left:3px solid var(--red-bright);background:rgba(239,83,80,.08);padding:1rem 1.25rem;border-radius:0 6px 6px 0;margin:1.5rem 0}
+.gd{border-left:3px solid var(--green-bright);background:rgba(45,212,160,.08);padding:1rem 1.25rem;border-radius:0 6px 6px 0;margin:1.5rem 0}
+.mb{font-family:'DM Mono',monospace;font-size:.9rem;background:var(--bg);border:1px solid var(--border2);border-radius:6px;padding:1.25rem 1.5rem;margin:1.5rem 0;line-height:1.9;overflow-x:auto;color:var(--text-bright)}
+.mb .highlight{color:var(--accent);font-weight:500}.mb .result{color:var(--green-bright);font-weight:500}.mb .negative{color:var(--red-bright);font-weight:500}
+.pln{font-family:'Crimson Pro',serif;font-style:italic;color:var(--accent);background:rgba(14,165,233,.05);border-left:2px solid rgba(14,165,233,.3);padding:1rem 1.25rem;border-radius:0 6px 6px 0;margin:1.5rem 0;font-size:1.05rem;line-height:1.7}
+.calc-container{background:var(--surface2);border:1px solid var(--border2);border-radius:10px;padding:2rem;margin:2rem 0}
+.calc-container h3{font-family:'Bebas Neue',sans-serif;font-size:1.3rem;color:var(--text-bright);letter-spacing:.03em;margin-bottom:.5rem}
+.calc-subtitle{font-family:'Crimson Pro',serif;font-style:italic;color:var(--muted);font-size:.95rem;margin-bottom:1.5rem}
+.input-row{display:flex;align-items:center;gap:1rem;margin-bottom:1rem;flex-wrap:wrap}
+.input-row label{font-family:'Outfit',sans-serif;font-weight:600;font-size:.85rem;color:var(--text);white-space:nowrap;min-width:170px}
+.calc-input{font-family:'DM Mono',monospace;font-size:1.1rem;font-weight:500;color:var(--accent);background:var(--bg);border:1px solid var(--border2);border-radius:6px;padding:.6rem .8rem;width:130px;outline:none}.calc-input:focus{border-color:var(--accent)}
+.calc-slider{flex:1;min-width:120px;-webkit-appearance:none;appearance:none;height:6px;background:var(--border2);border-radius:3px;outline:none}
+.calc-slider::-webkit-slider-thumb{-webkit-appearance:none;width:20px;height:20px;border-radius:50%;background:var(--accent);cursor:pointer;border:2px solid var(--bg)}
+.calc-slider::-moz-range-thumb{width:20px;height:20px;border-radius:50%;background:var(--accent);cursor:pointer;border:2px solid var(--bg)}
+select.calc-select{font-family:'Outfit',sans-serif;font-size:.9rem;padding:.6rem .8rem;background:var(--bg);color:var(--accent);border:1px solid var(--border2);border-radius:6px;outline:none}
+.calc-results{display:grid;grid-template-columns:repeat(auto-fit,minmax(150px,1fr));gap:1px;background:var(--border);border:1px solid var(--border);border-radius:8px;overflow:hidden;margin-top:1.5rem}
+.calc-result-cell{background:var(--surface);padding:1rem;text-align:center}
+.calc-result-num{font-family:'DM Mono',monospace;font-weight:500;font-size:1.15rem;display:block}
+.calc-result-label{font-family:'Outfit',sans-serif;font-size:.65rem;text-transform:uppercase;letter-spacing:.1em;color:var(--muted);margin-top:.25rem}
+.verdict{margin-top:1.5rem;padding:1.5rem;border-radius:8px;text-align:center}
+.verdict h4{font-family:'Bebas Neue',sans-serif;font-size:1.4rem;letter-spacing:.03em;margin-bottom:.5rem}
+.verdict p{font-family:'Crimson Pro',serif;font-style:italic;font-size:1rem;line-height:1.6}
+.verdict.written-off{background:rgba(14,165,233,.08);border:1px solid rgba(14,165,233,.2)}
+.verdict.written-off h4{color:var(--accent)}
+.verdict.paid-off{background:rgba(45,212,160,.08);border:1px solid rgba(45,212,160,.2)}
+.verdict.paid-off h4{color:var(--green-bright)}
+.plan-cards{display:grid;grid-template-columns:repeat(auto-fit,minmax(250px,1fr));gap:1rem;margin:1.5rem 0}
+.plan-card{background:var(--bg);border:1px solid var(--border);border-radius:8px;padding:1.25rem;cursor:pointer;transition:all .2s}
+.plan-card:hover{border-color:var(--accent)}.plan-card.selected{border-color:var(--accent);background:var(--accent-dim)}
+.plan-card h4{font-family:'Bebas Neue',sans-serif;font-size:1.1rem;color:var(--text-bright);margin-bottom:.5rem}
+.plan-card p{font-size:.8rem;color:var(--muted);line-height:1.5;margin:0}
+.plan-card .plan-detail{font-family:'DM Mono',monospace;font-size:.8rem;color:var(--accent);margin-top:.5rem}
+.year-table{width:100%;border-collapse:collapse;margin:1.5rem 0;font-size:.75rem;max-height:300px;overflow-y:auto;display:block}
+.year-table thead{position:sticky;top:0}
+.year-table th{font-family:'Outfit',sans-serif;font-weight:600;font-size:.65rem;text-transform:uppercase;letter-spacing:.06em;color:var(--muted);text-align:right;padding:.4rem;border-bottom:1px solid var(--border2);background:var(--surface2)}
+.year-table th:first-child{text-align:left}
+.year-table td{font-family:'DM Mono',monospace;padding:.35rem .4rem;border-bottom:1px solid var(--border);text-align:right;font-size:.7rem}
+.year-table td:first-child{text-align:left;font-family:'Outfit',sans-serif;color:var(--text-bright)}
+.year-table .interest-col{color:var(--red-bright)}.year-table .repay-col{color:var(--green-bright)}.year-table .balance-col{color:var(--text)}
+.disclaimer{background:var(--surface);border:1px solid var(--border);border-radius:8px;padding:1.5rem;margin:3rem 0 2rem;font-size:.85rem;color:var(--muted);line-height:1.7}
+.disclaimer a{color:var(--accent);text-decoration:none}.disclaimer a:hover{text-decoration:underline}
+.related-courses{margin-top:3rem;padding:2rem;background:var(--surface);border:1px solid var(--border);border-radius:10px}
+.related-courses h3{font-family:'Bebas Neue',sans-serif;font-size:1.3rem;color:var(--text-bright);letter-spacing:.05em;margin-bottom:1.5rem}
+.related-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(250px,1fr));gap:1rem}
+.related-card{display:block;padding:1rem 1.25rem;background:var(--surface2);border:1px solid var(--border);border-left:3px solid var(--accent);border-radius:6px;text-decoration:none;transition:border-color .2s}
+.related-card:hover{border-left-color:#2dd4bf}
+.related-card-title{font-family:'Bebas Neue',sans-serif;font-size:1.05rem;color:var(--accent);display:block;margin-bottom:.25rem}
+.related-card-hook{font-family:'Crimson Pro',serif;font-style:italic;font-size:.85rem;color:var(--text);line-height:1.4}
+footer{text-align:center;padding:2rem 0;margin-top:2rem;border-top:1px solid var(--border);font-size:.75rem;color:var(--muted)}
+footer a{color:var(--muted);text-decoration:none}footer a:hover{color:var(--accent)}
+</style>
+</head>
+<body>
+<div class="container">
+
+<header>
+  <div class="breadcrumb"><a href="/">MathsWins</a> → <a href="/tools/">Tools</a> → Student Loan Calculator</div>
+  <div class="section-label">Free Tool — No sign-up</div>
+  <h1>UK STUDENT LOAN CALCULATOR</h1>
+  <p class="subtitle">Will you ever actually pay it off? The maths tells you — and the answer might surprise you.</p>
+  <div class="stats-bar">
+    <div class="stat-cell"><span class="stat-num">5</span><span class="stat-label">Active UK plans</span></div>
+    <div class="stat-cell"><span class="stat-num">83%</span><span class="stat-label">Plan 2 borrowers won't repay in full</span></div>
+    <div class="stat-cell"><span class="stat-num">40 yrs</span><span class="stat-label">Plan 5 write-off period</span></div>
+    <div class="stat-cell"><span class="stat-num">£0</span><span class="stat-label">Cost — Always free</span></div>
+  </div>
+</header>
+
+<!-- PLAN SELECTION -->
+<div class="tut">
+  <h3>STEP 1: SELECT YOUR PLAN</h3>
+  <p>Your plan depends on when and where you started studying — not where you live now. If you're unsure, check your payslip (codes 01, 02, 04, 05, or PGL) or log into your <a href="https://www.gov.uk/sign-in-to-manage-your-student-loan-balance" style="color:var(--accent)" target="_blank" rel="noopener">Student Loans Company account</a>.</p>
+
+  <div class="plan-cards" id="planCards">
+    <div class="plan-card selected" data-plan="plan2" onclick="selectPlan('plan2')">
+      <h4>PLAN 2</h4>
+      <p>England/Wales, started Sept 2012 – July 2023. Most common plan.</p>
+      <div class="plan-detail">Threshold: £28,470 | Rate: 9% | Write-off: 30 years</div>
+    </div>
+    <div class="plan-card" data-plan="plan1" onclick="selectPlan('plan1')">
+      <h4>PLAN 1</h4>
+      <p>England/Wales, started before Sept 2012. Also NI students.</p>
+      <div class="plan-detail">Threshold: £26,065 | Rate: 9% | Write-off: 25 years</div>
+    </div>
+    <div class="plan-card" data-plan="plan5" onclick="selectPlan('plan5')">
+      <h4>PLAN 5</h4>
+      <p>England, started from Aug 2023. The newest plan.</p>
+      <div class="plan-detail">Threshold: £25,000 | Rate: 9% | Write-off: 40 years</div>
+    </div>
+    <div class="plan-card" data-plan="plan4" onclick="selectPlan('plan4')">
+      <h4>PLAN 4 (SCOTLAND)</h4>
+      <p>Scotland, started from 1998.</p>
+      <div class="plan-detail">Threshold: £32,745 | Rate: 9% | Write-off: 30 years</div>
+    </div>
+    <div class="plan-card" data-plan="postgrad" onclick="selectPlan('postgrad')">
+      <h4>POSTGRADUATE</h4>
+      <p>Master's/PhD from 2016+, England/Wales.</p>
+      <div class="plan-detail">Threshold: £21,000 | Rate: 6% | Write-off: 30 years</div>
+    </div>
+  </div>
+</div>
+
+<!-- CALCULATOR -->
+<div class="calc-container" id="mainCalc">
+  <h3>STEP 2: ENTER YOUR DETAILS</h3>
+  <p class="calc-subtitle">We calculate everything — monthly repayment, total cost, and whether you'll clear the balance or hit the write-off date first.</p>
+
+  <div class="input-row">
+    <label>Current salary: £</label>
+    <input type="text" class="calc-input" id="sl_salary" value="35,000">
+    <input type="range" class="calc-slider" id="sl_salary_s" min="15000" max="150000" value="35000" step="500">
+  </div>
+  <div class="input-row">
+    <label>Loan balance: £</label>
+    <input type="text" class="calc-input" id="sl_balance" value="45,000">
+    <input type="range" class="calc-slider" id="sl_balance_s" min="5000" max="120000" value="45000" step="1000">
+  </div>
+  <div class="input-row">
+    <label>Expected annual pay rise: %</label>
+    <input type="text" class="calc-input" id="sl_payrise" value="3" style="width:70px">
+  </div>
+  <div class="input-row">
+    <label>Interest rate: %</label>
+    <input type="text" class="calc-input" id="sl_interest" value="5.5" style="width:70px">
+    <span style="font-size:.75rem;color:var(--muted)">(Plan 2: currently RPI to RPI+3%, approx 3.2%–6.2%)</span>
+  </div>
+
+  <div class="calc-results" id="sl_results"></div>
+
+  <!-- Verdict -->
+  <div id="sl_verdict"></div>
+
+  <!-- Year by year -->
+  <div id="sl_schedule" style="margin-top:1.5rem;"></div>
+</div>
+
+<!-- HOW IT WORKS -->
+<div class="tut">
+  <h3>HOW STUDENT LOAN REPAYMENT ACTUALLY WORKS</h3>
+  <p>Your student loan is not like a mortgage or a credit card. It behaves like a graduate tax with an expiry date. Understanding this changes how you think about it.</p>
+
+  <div class="pt">
+    <strong>You only repay above the threshold.</strong> On Plan 2, you repay 9% of earnings above £28,470 — not 9% of your whole salary. Earning £30,000 means repaying 9% of £1,530 = £137.70/year = £11.48/month. That's it.
+  </div>
+
+  <div class="gd">
+    <strong>It gets written off.</strong> Plan 2 loans are written off 30 years after you become eligible to repay (usually the April after you graduate). If you graduated in 2022, your loan is written off in April 2053 regardless of the remaining balance. You owe nothing after that date.
+  </div>
+
+  <div class="dg">
+    <strong>Interest accrues from day one.</strong> While you're studying, Plan 2 charges RPI + 3%. After graduating, the rate scales from RPI (at the threshold) to RPI + 3% (at £52,885+). At current RPI of 3.2%, that's 3.2% to 6.2% depending on your income. For many borrowers, the balance grows faster than they repay it — and that's by design. The write-off is the intended exit for most.
+  </div>
+</div>
+
+<div class="tut">
+  <h3>THE KEY QUESTION: SHOULD YOU OVERPAY?</h3>
+  <p>This depends entirely on whether you'll clear the balance before the write-off date. Use the calculator above to find out.</p>
+
+  <div class="mb">
+    <span class="highlight">If your loan will be written off:</span><br>
+    Every pound you overpay is a pound you would have never had to repay anyway.<br>
+    Overpaying is literally giving money away.<br>
+    → <span class="negative">Do NOT overpay.</span><br><br>
+    <span class="highlight">If you'll clear the balance before write-off:</span><br>
+    Overpaying reduces the total interest you pay.<br>
+    But compare the interest rate to your alternatives.<br>
+    → <span class="result">Overpay only if the loan interest exceeds your savings/investment returns.</span>
+  </div>
+
+  <div class="pln">
+    For the estimated 83% of Plan 2 borrowers who will never repay in full, overpaying is mathematically equivalent to burning money. The write-off date is your friend. Treat the repayment as a tax — 9% on earnings above the threshold — and forget about the balance. The balance is a number on a screen that will eventually be set to zero regardless of how big it is.
+  </div>
+
+  <div class="pt">
+    <strong>The exception:</strong> If you're close to clearing the balance and the remaining amount is modest relative to your income, paying it off early saves interest. The calculator shows you whether you're in this position.
+  </div>
+</div>
+
+<div class="tut">
+  <h3>COMBINED MARGINAL RATES</h3>
+  <p>A student loan repayment stacks on top of income tax and NI. Your actual marginal rate on each extra pound earned:</p>
+
+  <div class="mb">
+    Basic rate taxpayer + Plan 2:<br>
+    20% IT + 8% NI + 9% student loan = <span class="negative">37%</span><br><br>
+    Higher rate taxpayer + Plan 2:<br>
+    40% IT + 2% NI + 9% student loan = <span class="negative">51%</span><br><br>
+    Higher rate + Plan 2 + Postgraduate:<br>
+    40% IT + 2% NI + 9% UG + 6% PG = <span class="negative">57%</span><br><br>
+    £100k–£125k band + Plan 2:<br>
+    62% effective IT/NI + 9% student loan = <span class="negative">71%</span>
+  </div>
+
+  <div class="pln">
+    A higher-rate taxpayer with both an undergraduate and postgraduate loan keeps just 43p of every extra pound they earn. In the £100k–£125k band with a student loan, you keep 29p. These are real marginal rates that affect real take-home pay — and they link directly to the tax analysis in our <a href="/everyday/tax/" style="color:var(--accent)">UK Tax Maths</a> course.
+  </div>
+</div>
+
+<!-- DISCLAIMER -->
+<div class="disclaimer">
+  <strong>This is mathematical education, not financial advice.</strong> Student loan terms are complex and subject to change — always verify your plan details with the <a href="https://www.gov.uk/repaying-your-student-loan" target="_blank" rel="noopener">Student Loans Company</a>. Interest rates update annually in September. Thresholds update in April. This calculator uses 2025/26 figures and makes simplifying assumptions about future salary growth and interest rates.<br><br>
+  For personalised advice about student loan repayment, visit <a href="https://www.moneyhelper.org.uk/en/money-troubles/student-finance" target="_blank" rel="noopener">MoneyHelper</a>.
+</div>
+
+<!-- RELATED -->
+<section class="related-courses">
+  <h3>EXPLORE EVERYDAY MATHS</h3>
+  <div class="related-grid">
+    <a class="related-card" href="/everyday/tax/">
+      <span class="related-card-title">UK TAX MATHS</span>
+      <span class="related-card-hook">Student loan repayments stack on top of income tax and NI. Understanding all three together shows your real marginal rate.</span>
+    </a>
+    <a class="related-card" href="/everyday/compound-interest/">
+      <span class="related-card-title">COMPOUND INTEREST & DEBT</span>
+      <span class="related-card-hook">Student loan interest compounds — but unlike credit card debt, there's a write-off date. Same maths, different outcome.</span>
+    </a>
+    <a class="related-card" href="/everyday/pensions/">
+      <span class="related-card-title">PENSION MATHS</span>
+      <span class="related-card-hook">Pension contributions reduce your taxable income — and can reduce your student loan repayments too. The maths of salary sacrifice applies to both.</span>
+    </a>
+  </div>
+</section>
+
+<footer>
+  <p>MathsWins · <a href="/">Home</a> · <a href="/everyday/">Everyday Maths</a> · <a href="/academy/">Academy</a> · <a href="/about/">About</a></p>
+  <p style="margin-top:.5rem">Built by a mathematician. No personal data collected. Cookieless analytics.</p>
+</footer>
+
+</div>
+
+<script>
+function fmt(n){return Math.round(n).toLocaleString('en-GB');}
+function fmt2(n){return n.toLocaleString('en-GB',{minimumFractionDigits:2,maximumFractionDigits:2});}
+function parseNum(s){return parseFloat(String(s).replace(/[^0-9.]/g,''))||0;}
+
+const PLANS={
+  plan1:{name:'Plan 1',threshold:26065,rate:0.09,writeOff:25,defaultInterest:4.3},
+  plan2:{name:'Plan 2',threshold:28470,rate:0.09,writeOff:30,defaultInterest:5.5},
+  plan4:{name:'Plan 4 (Scotland)',threshold:32745,rate:0.09,writeOff:30,defaultInterest:4.3},
+  plan5:{name:'Plan 5',threshold:25000,rate:0.09,writeOff:40,defaultInterest:5.5},
+  postgrad:{name:'Postgraduate',threshold:21000,rate:0.06,writeOff:30,defaultInterest:6.2}
+};
+
+let currentPlan='plan2';
+
+function selectPlan(plan){
+  currentPlan=plan;
+  document.querySelectorAll('.plan-card').forEach(c=>c.classList.remove('selected'));
+  document.querySelector(`.plan-card[data-plan="${plan}"]`).classList.add('selected');
+  document.getElementById('sl_interest').value=PLANS[plan].defaultInterest;
+  calculate();
+}
+
+function calculate(){
+  const plan=PLANS[currentPlan];
+  const startSalary=parseNum(document.getElementById('sl_salary').value);
+  const startBalance=parseNum(document.getElementById('sl_balance').value);
+  const payRise=parseNum(document.getElementById('sl_payrise').value)/100;
+  const interestRate=parseNum(document.getElementById('sl_interest').value)/100;
+
+  if(startSalary<=0||startBalance<=0)return;
+
+  let balance=startBalance;
+  let salary=startSalary;
+  let totalRepaid=0;
+  let totalInterest=0;
+  const years=[];
+  let clearedYear=null;
+
+  for(let y=1;y<=plan.writeOff;y++){
+    const aboveThreshold=Math.max(0,salary-plan.threshold);
+    const annualRepayment=aboveThreshold*plan.rate;
+    const annualInterest=balance*interestRate;
+
+    const repaymentApplied=Math.min(annualRepayment,balance+annualInterest);
+    balance=balance+annualInterest-repaymentApplied;
+    totalRepaid+=repaymentApplied;
+    totalInterest+=annualInterest;
+
+    years.push({
+      year:y,
+      salary:salary,
+      repayment:repaymentApplied,
+      interest:annualInterest,
+      balance:Math.max(0,balance)
+    });
+
+    if(balance<=0&&!clearedYear){
+      clearedYear=y;
+      balance=0;
+      break;
+    }
+
+    salary=salary*(1+payRise);
+  }
+
+  const writtenOff=!clearedYear;
+  const monthlyRepayment=Math.max(0,startSalary-plan.threshold)*plan.rate/12;
+  const amountWrittenOff=writtenOff?balance:0;
+
+  // Results
+  const resHTML=`
+    <div class="calc-result-cell"><span class="calc-result-num" style="color:var(--accent)">£${fmt(monthlyRepayment)}</span><span class="calc-result-label">Monthly repayment (current)</span></div>
+    <div class="calc-result-cell"><span class="calc-result-num" style="color:var(--accent)">£${fmt(Math.max(0,startSalary-plan.threshold)*plan.rate)}</span><span class="calc-result-label">Annual repayment (current)</span></div>
+    <div class="calc-result-cell"><span class="calc-result-num" style="color:${writtenOff?'var(--gold)':'var(--green-bright)'}">£${fmt(totalRepaid)}</span><span class="calc-result-label">Total you'll repay</span></div>
+    <div class="calc-result-cell"><span class="calc-result-num" style="color:var(--red-bright)">£${fmt(totalInterest)}</span><span class="calc-result-label">Total interest charged</span></div>
+    <div class="calc-result-cell"><span class="calc-result-num" style="color:var(--text-bright)">${clearedYear?clearedYear+' years':'Written off'}</span><span class="calc-result-label">${clearedYear?'Time to clear':'After '+plan.writeOff+' years'}</span></div>
+    ${writtenOff?`<div class="calc-result-cell"><span class="calc-result-num" style="color:var(--accent)">£${fmt(amountWrittenOff)}</span><span class="calc-result-label">Amount written off</span></div>`:''}`;
+  document.getElementById('sl_results').innerHTML=resHTML;
+
+  // Verdict
+  let verdictHTML;
+  if(writtenOff){
+    verdictHTML=`<div class="verdict written-off">
+      <h4>YOUR LOAN WILL BE WRITTEN OFF</h4>
+      <p>Based on these assumptions, you won't clear the balance before the ${plan.writeOff}-year write-off. You'll repay £${fmt(totalRepaid)} of the original £${fmt(startBalance)} balance. The remaining £${fmt(amountWrittenOff)} is cancelled. <strong>Do not overpay</strong> — any extra payments are money you would never have had to repay.</p>
+    </div>`;
+  } else {
+    verdictHTML=`<div class="verdict paid-off">
+      <h4>YOU'LL CLEAR THIS IN ${clearedYear} YEARS</h4>
+      <p>Based on these assumptions, you'll repay the full balance in ${clearedYear} years — ${plan.writeOff-clearedYear} years before the write-off date. Total repaid: £${fmt(totalRepaid)}, of which £${fmt(totalInterest)} was interest. Overpaying could reduce the interest portion if the rate exceeds your savings rate.</p>
+    </div>`;
+  }
+  document.getElementById('sl_verdict').innerHTML=verdictHTML;
+
+  // Year-by-year schedule
+  let schedHTML='<table class="year-table"><thead><tr><th>Year</th><th>Salary</th><th>Repayment</th><th>Interest</th><th>Balance</th></tr></thead><tbody>';
+  years.forEach(y=>{
+    schedHTML+=`<tr>
+      <td>${y.year}</td>
+      <td>£${fmt(y.salary)}</td>
+      <td class="repay-col">£${fmt(y.repayment)}</td>
+      <td class="interest-col">£${fmt(y.interest)}</td>
+      <td class="balance-col">£${fmt(y.balance)}</td>
+    </tr>`;
+  });
+  schedHTML+='</tbody></table>';
+  document.getElementById('sl_schedule').innerHTML=schedHTML;
+}
+
+// Wire up inputs
+['sl_salary','sl_balance','sl_payrise','sl_interest'].forEach(id=>{
+  document.getElementById(id).addEventListener('input',calculate);
+});
+document.getElementById('sl_salary_s').addEventListener('input',e=>{document.getElementById('sl_salary').value=fmt(parseInt(e.target.value));calculate();});
+document.getElementById('sl_balance_s').addEventListener('input',e=>{document.getElementById('sl_balance').value=fmt(parseInt(e.target.value));calculate();});
+
+// Init
+calculate();
+</script>
+</body>
+</html>
