@@ -1,0 +1,124 @@
+<!DOCTYPE html>
+<html lang="en-GB">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Inflation & Real Returns — What Your Money Is Actually Worth | MathsWins</title>
+<meta name="description" content="Your 4% savings account at 3% inflation grows at 1% in real terms. What inflation actually means over decades, nominal vs real returns, shrinkflation maths, and why cash loses purchasing power. Free.">
+<meta property="og:title" content="Inflation — The Silent Tax on Your Savings">
+<meta property="og:description" content="Prices in the UK rose over 20% between 2021 and 2024. What does that mean for your money? The maths of purchasing power, real returns, and shrinkflation.">
+<meta property="og:url" content="https://mathswins.co.uk/everyday/inflation/">
+<meta property="og:type" content="website">
+<link rel="canonical" href="https://mathswins.co.uk/everyday/inflation/">
+<link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Crimson+Pro:ital,wght@0,400;0,700;1,400&family=DM+Mono:wght@400;500&family=Outfit:wght@300;400;600;700&display=swap" rel="stylesheet">
+<script type="application/ld+json">{"@context":"https://schema.org","@type":"Course","name":"Inflation & Real Returns","description":"What inflation means for your savings, investments, and purchasing power.","provider":{"@type":"EducationalOrganization","name":"MathsWins","url":"https://mathswins.co.uk"},"educationalLevel":"Adult Education","isAccessibleForFree":true}</script>
+<script async src="https://www.googletagmanager.com/gtag/js?id=G-CLNF7GSB28"></script>
+<script>window.dataLayer=window.dataLayer||[];function gtag(){dataLayer.push(arguments);}gtag('js',new Date());gtag('config','G-CLNF7GSB28',{send_page_view:true,storage:'none',anonymize_ip:true});</script>
+<style>:root{--bg:#050709;--surface:#0a0d14;--surface2:#0f1319;--border:#161c28;--border2:#1e2638;--sky:#0ea5e9;--sky-dim:rgba(14,165,233,0.1);--green-bright:#2dd4a0;--red-bright:#ef5350;--gold:#d4a847;--text:#c8cdd8;--text-bright:#e8ecf4;--muted:#4a5568;--accent:var(--sky);--accent-dim:var(--sky-dim)}*{margin:0;padding:0;box-sizing:border-box}body{background:var(--bg);color:var(--text);font-family:'Outfit',sans-serif;font-weight:400;line-height:1.7;-webkit-font-smoothing:antialiased}.container{max-width:860px;margin:0 auto;padding:0 1.5rem}header{padding:2rem 0 1rem;border-bottom:1px solid var(--border)}.breadcrumb{font-size:.8rem;color:var(--muted);margin-bottom:1rem}.breadcrumb a{color:var(--muted);text-decoration:none}.breadcrumb a:hover{color:var(--accent)}.section-label{font-family:'Outfit',sans-serif;font-weight:600;font-size:.75rem;text-transform:uppercase;letter-spacing:.15em;color:var(--accent);margin-bottom:.5rem}h1{font-family:'Bebas Neue',sans-serif;font-size:clamp(2.5rem,6vw,3.5rem);color:var(--text-bright);letter-spacing:.03em;line-height:1.1;margin-bottom:.5rem}.subtitle{font-family:'Crimson Pro',serif;font-style:italic;font-size:1.15rem;color:var(--accent);margin-bottom:1.5rem}.stats-bar{display:grid;grid-template-columns:repeat(auto-fit,minmax(140px,1fr));gap:1px;background:var(--border);border:1px solid var(--border);border-radius:8px;overflow:hidden;margin-bottom:2rem}.stat-cell{background:var(--surface);padding:1rem;text-align:center}.stat-num{font-family:'DM Mono',monospace;font-weight:500;font-size:1.5rem;color:var(--accent);display:block}.stat-label{font-family:'Outfit',sans-serif;font-size:.7rem;text-transform:uppercase;letter-spacing:.1em;color:var(--muted);margin-top:.25rem}.module-nav{display:flex;flex-wrap:wrap;gap:.5rem;margin-bottom:2.5rem}.module-pill{font-family:'Outfit',sans-serif;font-weight:600;font-size:.8rem;padding:.5rem 1rem;background:var(--surface);border:1px solid var(--border);border-radius:6px;color:var(--muted);cursor:pointer;transition:all .2s;white-space:nowrap}.module-pill:hover{border-color:var(--accent);color:var(--text)}.module-pill.active{background:var(--accent-dim);border-color:var(--accent);color:var(--accent)}.module-content{display:none}.module-content.active{display:block}.module-header{margin-bottom:2rem}.module-header h2{font-family:'Bebas Neue',sans-serif;font-size:1.8rem;color:var(--text-bright);letter-spacing:.03em;margin-bottom:.5rem}.module-header p{font-family:'Crimson Pro',serif;font-style:italic;color:var(--accent);font-size:1.05rem}.tut{background:var(--surface);border:1px solid var(--border);border-radius:10px;padding:2rem;margin-bottom:2rem}.tut h3{font-family:'Bebas Neue',sans-serif;font-size:1.3rem;color:var(--text-bright);letter-spacing:.03em;margin-bottom:1rem}.tut p{margin-bottom:1rem;line-height:1.8}.tut p:last-child{margin-bottom:0}.pt{border-left:3px solid var(--accent);background:var(--accent-dim);padding:1rem 1.25rem;border-radius:0 6px 6px 0;margin:1.5rem 0}.dg{border-left:3px solid var(--red-bright);background:rgba(239,83,80,.08);padding:1rem 1.25rem;border-radius:0 6px 6px 0;margin:1.5rem 0}.gd{border-left:3px solid var(--green-bright);background:rgba(45,212,160,.08);padding:1rem 1.25rem;border-radius:0 6px 6px 0;margin:1.5rem 0}.mb{font-family:'DM Mono',monospace;font-size:.9rem;background:var(--bg);border:1px solid var(--border2);border-radius:6px;padding:1.25rem 1.5rem;margin:1.5rem 0;line-height:1.9;overflow-x:auto;color:var(--text-bright)}.mb .highlight{color:var(--accent);font-weight:500}.mb .result{color:var(--green-bright);font-weight:500}.mb .negative{color:var(--red-bright);font-weight:500}.pln{font-family:'Crimson Pro',serif;font-style:italic;color:var(--accent);background:rgba(14,165,233,.05);border-left:2px solid rgba(14,165,233,.3);padding:1rem 1.25rem;border-radius:0 6px 6px 0;margin:1.5rem 0;font-size:1.05rem;line-height:1.7}.calc-container{background:var(--surface2);border:1px solid var(--border2);border-radius:10px;padding:2rem;margin:2rem 0}.calc-container h3{font-family:'Bebas Neue',sans-serif;font-size:1.3rem;color:var(--text-bright);letter-spacing:.03em;margin-bottom:.5rem}.calc-subtitle{font-family:'Crimson Pro',serif;font-style:italic;color:var(--muted);font-size:.95rem;margin-bottom:1.5rem}.input-row{display:flex;align-items:center;gap:1rem;margin-bottom:1rem;flex-wrap:wrap}.input-row label{font-family:'Outfit',sans-serif;font-weight:600;font-size:.85rem;color:var(--text);white-space:nowrap;min-width:180px}.calc-input{font-family:'DM Mono',monospace;font-size:1.1rem;font-weight:500;color:var(--accent);background:var(--bg);border:1px solid var(--border2);border-radius:6px;padding:.6rem .8rem;width:120px;outline:none}.calc-input:focus{border-color:var(--accent)}.calc-slider{flex:1;min-width:150px;-webkit-appearance:none;height:6px;background:var(--border2);border-radius:3px;outline:none}.calc-slider::-webkit-slider-thumb{-webkit-appearance:none;width:20px;height:20px;border-radius:50%;background:var(--accent);cursor:pointer;border:2px solid var(--bg)}.calc-slider::-moz-range-thumb{width:20px;height:20px;border-radius:50%;background:var(--accent);cursor:pointer;border:2px solid var(--bg)}.calc-results{display:grid;grid-template-columns:repeat(auto-fit,minmax(160px,1fr));gap:1px;background:var(--border);border:1px solid var(--border);border-radius:8px;overflow:hidden;margin-top:1.5rem}.calc-result-cell{background:var(--surface);padding:1rem;text-align:center}.calc-result-num{font-family:'DM Mono',monospace;font-weight:500;font-size:1.2rem;display:block}.calc-result-label{font-family:'Outfit',sans-serif;font-size:.7rem;text-transform:uppercase;letter-spacing:.1em;color:var(--muted);margin-top:.25rem}.disclaimer{background:var(--surface);border:1px solid var(--border);border-radius:8px;padding:1.5rem;margin:3rem 0 2rem;font-size:.85rem;color:var(--muted);line-height:1.7}.disclaimer a{color:var(--accent);text-decoration:none}.disclaimer a:hover{text-decoration:underline}.related-courses{margin-top:3rem;padding:2rem;background:var(--surface);border:1px solid var(--border);border-radius:10px}.related-courses h3{font-family:'Bebas Neue',sans-serif;font-size:1.3rem;color:var(--text-bright);letter-spacing:.05em;margin-bottom:1.5rem}.related-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(250px,1fr));gap:1rem}.related-card{display:block;padding:1rem 1.25rem;background:var(--surface2);border:1px solid var(--border);border-left:3px solid var(--accent);border-radius:6px;text-decoration:none;transition:border-color .2s}.related-card:hover{border-left-color:#2dd4bf}.related-card-title{font-family:'Bebas Neue',sans-serif;font-size:1.05rem;color:var(--accent);display:block;margin-bottom:.25rem}.related-card-hook{font-family:'Crimson Pro',serif;font-style:italic;font-size:.85rem;color:var(--text);line-height:1.4}footer{text-align:center;padding:2rem 0;margin-top:2rem;border-top:1px solid var(--border);font-size:.75rem;color:var(--muted)}footer a{color:var(--muted);text-decoration:none}footer a:hover{color:var(--accent)}</style>
+</head>
+<body>
+<div class="container">
+<header>
+<div class="breadcrumb"><a href="/">MathsWins</a> → <a href="/everyday/">Everyday Maths</a> → Inflation</div>
+<div class="section-label">Everyday Maths — Free</div>
+<h1>INFLATION & REAL RETURNS</h1>
+<p class="subtitle">Your money is worth less every year. The maths tells you exactly how much less.</p>
+<div class="stats-bar"><div class="stat-cell"><span class="stat-num">20%+</span><span class="stat-label">UK prices rose 2021–2024</span></div><div class="stat-cell"><span class="stat-num">~20 yrs</span><span class="stat-label">Prices double at 3.5%</span></div><div class="stat-cell"><span class="stat-num">3.0%</span><span class="stat-label">CPI January 2026</span></div><div class="stat-cell"><span class="stat-num">£0</span><span class="stat-label">Cost — Always free</span></div></div>
+</header>
+
+<nav class="module-nav" id="moduleNav">
+<div class="module-pill active" data-module="1">1 · Purchasing Power</div>
+<div class="module-pill" data-module="2">2 · Real vs Nominal</div>
+<div class="module-pill" data-module="3">3 · Shrinkflation</div>
+</nav>
+
+<div class="module-content active" id="module1">
+<div class="module-header"><h2>MODULE 1: WHAT INFLATION DOES TO YOUR MONEY</h2><p>£100 today is not £100 in ten years. Here's the maths of purchasing power.</p></div>
+
+<div class="tut"><h3>THE PURCHASING POWER FORMULA</h3>
+<p>Inflation means prices rise over time. If prices rise 3% per year, something that costs £100 today will cost £103 next year. Your £100 buys less. This erosion compounds, just like interest.</p>
+<div class="mb">Future price = Today's price × (1 + inflation)^years<br><br>At <span class="highlight">3% inflation</span>:<br>After 10 years: £100 → <span class="negative">£134</span> (your £100 buys £74 worth)<br>After 20 years: £100 → <span class="negative">£181</span> (your £100 buys £55 worth)<br>After 30 years: £100 → <span class="negative">£243</span> (your £100 buys £41 worth)</div>
+<div class="pln">At 3% inflation, cash loses a quarter of its purchasing power in a decade and over half in 20 years. This isn't a catastrophe — it's the normal, designed operation of a healthy economy. The Bank of England targets 2%. The maths is slow but relentless.</div>
+<div class="pt"><strong>Rule of 72:</strong> 72 ÷ inflation rate ≈ years for prices to double. At 3%: 24 years. At 2%: 36 years. See our <a href="/everyday/compound-interest/" style="color:var(--accent)">Compound Interest</a> course for more.</div>
+</div>
+
+<div class="tut"><h3>THE RECENT UK EXPERIENCE</h3>
+<p>Between 2021 and 2024, UK consumer prices rose by over 20%. CPI peaked at 11.1% in October 2022. Even though inflation has fallen back towards 3%, those price increases are permanent.</p>
+<div class="dg"><strong>Common misunderstanding:</strong> "Inflation is falling, so prices are coming down." No. Falling inflation means prices are still rising — just less quickly. CPI at 3% means prices rose 3% in the last year. They didn't fall.</div>
+<div class="mb">Something that cost £100 in January 2021:<br>Jan 2022: <span class="negative">£105.50</span><br>Jan 2023: <span class="negative">£116.15</span><br>Jan 2024: <span class="negative">£120.80</span><br>Jan 2025: <span class="negative">£124.42</span><br>Jan 2026: <span class="negative">£128.15</span><br><br>Total increase: <span class="negative">28%</span> in 5 years</div>
+</div>
+
+<div class="calc-container"><h3>PURCHASING POWER CALCULATOR</h3><p class="calc-subtitle">See what your money will be worth in the future.</p>
+<div class="input-row"><label>Amount: £</label><input type="text" class="calc-input" id="pp_amount" value="1,000"></div>
+<div class="input-row"><label>Inflation rate: %</label><input type="text" class="calc-input" id="pp_rate" value="3" style="width:80px"><input type="range" class="calc-slider" id="pp_rate_slider" min="1" max="10" value="3" step="0.5"></div>
+<div class="input-row"><label>Years:</label><input type="text" class="calc-input" id="pp_years" value="20" style="width:80px"><input type="range" class="calc-slider" id="pp_years_slider" min="1" max="50" value="20"></div>
+<div class="calc-results" id="pp_results"></div>
+</div>
+</div>
+
+<div class="module-content" id="module2">
+<div class="module-header"><h2>MODULE 2: REAL VS NOMINAL RETURNS</h2><p>Your savings account says 4%. Inflation says 3%. The maths says you're growing at 1%.</p></div>
+
+<div class="tut"><h3>THE REAL RETURN</h3>
+<p><strong>Nominal return</strong> = the number your bank advertises. <strong>Real return</strong> = what's left after inflation. The real return is what actually grows your purchasing power.</p>
+<div class="mb">Approximate: Real return = nominal − inflation<br>Exact (Fisher): Real = (1 + nominal) / (1 + inflation) − 1<br><br>Savings at 4%, inflation 3%:<br>Real return = 1.04 / 1.03 − 1 = <span class="result">0.97%</span></div>
+<div class="pln">Your bank pays 4%. Inflation runs at 3%. Your real return — the growth in what your money can actually buy — is less than 1%. The headline rate tells you how much more money you'll have. The real rate tells you how much more stuff you can buy.</div>
+</div>
+
+<div class="tut"><h3>NEGATIVE REAL RETURNS</h3>
+<div class="mb">2022: Savings ~1.5%, CPI ~9%<br>Real return: <span class="negative">−7.5%</span><br><br>£10,000 in savings:<br>Nominal end value: £10,150<br>Purchasing power: £10,150 ÷ 1.09 = <span class="negative">£9,312</span><br>Real loss: <span class="negative">£688</span></div>
+<div class="pln">You nominally gained £150 but your money's purchasing power fell by £688. This is the invisible tax of negative real returns.</div>
+<div class="gd"><strong>What to do:</strong> If your return is below inflation, you're losing purchasing power. Cash ISAs, index-linked products, and diversified investments all offer different trade-offs. The maths says: below inflation = losing ground.</div>
+</div>
+
+<div class="tut"><h3>LONG-TERM IMPACT</h3>
+<div class="mb">£10,000 saved for 20 years:<br><br>Nominal 4%, inflation 3% (real 1%):<br>Purchasing power: <span class="result">£12,124</span> — real growth: <span class="result">£2,124</span><br><br>Nominal 7%, inflation 3% (real 4%):<br>Purchasing power: <span class="result">£21,423</span> — real growth: <span class="result">£11,423</span></div>
+<div class="pln">At 1% real, your money barely grows in 20 years. At 4% real, it more than doubles. The gap between a cash account and a diversified portfolio is the difference between treading water and building wealth. But higher returns come with higher risk — no free lunch.</div>
+</div>
+</div>
+
+<div class="module-content" id="module3">
+<div class="module-header"><h2>MODULE 3: SHRINKFLATION</h2><p>When the price stays the same but the product gets smaller.</p></div>
+
+<div class="tut"><h3>THE SHRINKFLATION FORMULA</h3>
+<p>Shrinkflation = smaller product, same price. The unit price rises but the shelf price doesn't change — so most people don't notice.</p>
+<div class="mb">Effective price increase = (old size / new size) − 1<br><br>Crisps: 150g → 130g at £1.50<br>Old: £10.00/kg → New: £11.54/kg<br>Effective increase: <span class="negative">15.4%</span><br><br>Chocolate: 200g → 180g at £2.00<br>Old: £10.00/kg → New: £11.11/kg<br>Effective increase: <span class="negative">11.1%</span></div>
+<div class="pln">A 20g reduction in 200g sounds small. But it's an 11% price increase disguised as a slightly smaller packet. At 3% headline inflation, this product's real price rose nearly four times faster than the official rate.</div>
+<div class="pt"><strong>How to spot it:</strong> Always check the unit price (per kg, per litre). UK supermarkets are legally required to display it. The shelf price tells you what you're paying. The unit price tells you what you're getting.</div>
+<div class="dg"><strong>The psychological trick:</strong> You're anchored to the shelf price — "it's still £2." The manufacturer knows you won't process a quantity change. They'd rather give you 180g at £2 than 200g at £2.22. Same cost to you. Different perception.</div>
+</div>
+
+<div class="calc-container"><h3>SHRINKFLATION CALCULATOR</h3><p class="calc-subtitle">Enter old and new sizes to see the true price increase.</p>
+<div class="input-row"><label>Original size (g/ml):</label><input type="text" class="calc-input" id="sf_old" value="200"></div>
+<div class="input-row"><label>New size (g/ml):</label><input type="text" class="calc-input" id="sf_new" value="180"></div>
+<div class="input-row"><label>Price: £</label><input type="text" class="calc-input" id="sf_price" value="2.00"></div>
+<div class="calc-results" id="sf_results"></div>
+</div>
+</div>
+
+<div class="disclaimer"><strong>This is mathematical education, not financial advice.</strong> Inflation figures from the ONS Consumer Prices Index. For personalised advice, consult a qualified financial adviser.<br><br><a href="https://www.ons.gov.uk/economy/inflationandpriceindices" target="_blank" rel="noopener">ONS Inflation Data</a> · <a href="https://www.moneyhelper.org.uk" target="_blank" rel="noopener">MoneyHelper</a></div>
+
+<section class="related-courses"><h3>EXPLORE EVERYDAY MATHS</h3><div class="related-grid">
+<a class="related-card" href="/everyday/pensions/"><span class="related-card-title">PENSION MATHS</span><span class="related-card-hook">Inflation erodes your pension pot's purchasing power over decades. Understanding real returns is essential for retirement planning.</span></a>
+<a class="related-card" href="/everyday/compound-interest/"><span class="related-card-title">COMPOUND INTEREST & DEBT</span><span class="related-card-hook">Inflation compounds the same way interest does — the Rule of 72 works for price doubling too.</span></a>
+<a class="related-card" href="/academy/roulette/" style="border-left-color:#ef5350;"><span class="related-card-title" style="color:#ef5350;">ROULETTE REALITY CHECK</span><span class="related-card-hook">The house edge erodes your bankroll exactly like inflation erodes your savings — slowly, invisibly, mathematically.</span></a>
+</div></section>
+
+<footer><p>MathsWins · <a href="/">Home</a> · <a href="/everyday/">Everyday Maths</a> · <a href="/academy/">Academy</a> · <a href="/about/">About</a></p><p style="margin-top:.5rem">Built by a mathematician. No personal data collected. Cookieless analytics.</p></footer>
+</div>
+<script>
+const pills=document.querySelectorAll('.module-pill'),mods=document.querySelectorAll('.module-content');
+pills.forEach(p=>{p.addEventListener('click',()=>{const t=p.getAttribute('data-module');pills.forEach(x=>x.classList.remove('active'));mods.forEach(x=>x.classList.remove('active'));p.classList.add('active');document.getElementById('module'+t).classList.add('active');window.scrollTo({top:document.getElementById('moduleNav').offsetTop-20,behavior:'smooth'});});});
+function fmt(n){return Math.round(n).toLocaleString('en-GB');}function pn(s){return parseFloat(String(s).replace(/[^0-9.]/g,''))||0;}
+
+function updatePP(){const a=pn(document.getElementById('pp_amount').value),r=pn(document.getElementById('pp_rate').value)/100,y=pn(document.getElementById('pp_years').value);if(!a||!r||!y)return;const fp=a*Math.pow(1+r,y),pw=a/Math.pow(1+r,y),lost=a-pw,dbl=72/(r*100);document.getElementById('pp_results').innerHTML='<div class="calc-result-cell"><span class="calc-result-num" style="color:var(--red-bright)">£'+fmt(fp)+'</span><span class="calc-result-label">£'+fmt(a)+' item costs in '+y+' years</span></div><div class="calc-result-cell"><span class="calc-result-num" style="color:var(--red-bright)">£'+fmt(pw)+'</span><span class="calc-result-label">£'+fmt(a)+' cash buys this much</span></div><div class="calc-result-cell"><span class="calc-result-num" style="color:var(--red-bright)">£'+fmt(lost)+'</span><span class="calc-result-label">Purchasing power lost</span></div><div class="calc-result-cell"><span class="calc-result-num" style="color:var(--accent)">'+dbl.toFixed(1)+' yrs</span><span class="calc-result-label">Prices double</span></div>';}
+['pp_amount','pp_rate','pp_years'].forEach(id=>{document.getElementById(id).addEventListener('input',updatePP);});
+document.getElementById('pp_rate_slider').addEventListener('input',e=>{document.getElementById('pp_rate').value=e.target.value;updatePP();});
+document.getElementById('pp_years_slider').addEventListener('input',e=>{document.getElementById('pp_years').value=e.target.value;updatePP();});
+
+function updateSF(){const o=pn(document.getElementById('sf_old').value),n=pn(document.getElementById('sf_new').value),p=pn(document.getElementById('sf_price').value);if(!o||!n||!p)return;const ou=p/o*1000,nu=p/n*1000,inc=(o/n-1)*100,red=(o-n)/o*100;document.getElementById('sf_results').innerHTML='<div class="calc-result-cell"><span class="calc-result-num" style="color:var(--red-bright)">'+inc.toFixed(1)+'%</span><span class="calc-result-label">Effective price increase</span></div><div class="calc-result-cell"><span class="calc-result-num" style="color:var(--red-bright)">'+red.toFixed(1)+'%</span><span class="calc-result-label">Size reduction</span></div><div class="calc-result-cell"><span class="calc-result-num" style="color:var(--accent)">£'+ou.toFixed(2)+'/kg</span><span class="calc-result-label">Old unit price</span></div><div class="calc-result-cell"><span class="calc-result-num" style="color:var(--red-bright)">£'+nu.toFixed(2)+'/kg</span><span class="calc-result-label">New unit price</span></div>';}
+['sf_old','sf_new','sf_price'].forEach(id=>{document.getElementById(id).addEventListener('input',updateSF);});
+updatePP();updateSF();
+</script>
+</body>
+</html>

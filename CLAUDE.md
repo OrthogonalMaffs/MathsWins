@@ -82,6 +82,8 @@ everyday/                           # Free everyday maths courses
   compound-interest/index.html      # 4 modules, compound interest & debt calculators
   mortgages/index.html              # 5 modules, mortgage amortisation & overpayment calculator
   pensions/index.html               # 4 modules, tax relief, compound growth, lump sum, calculator
+  inflation/index.html              # 3 modules, purchasing power, real vs nominal, shrinkflation
+  probability/index.html            # 4 modules, base rates, Bayes, Monty Hall, birthday problem
 contracts/                          # Solidity smart contracts (Foundry)
   src/
   test/
@@ -150,13 +152,8 @@ Free courses teaching the mathematics behind everyday financial decisions. No ga
 | Compound Interest & Debt | `everyday/compound-interest` | 4 | Simple vs compound, credit card trap, APR decoded, Rule of 72. Live calculators. |
 | Mortgage Maths | `everyday/mortgages` | 5 | Amortisation, term length cost, overpayments, fixed vs variable, full calculator. |
 | Pension Maths | `everyday/pensions` | 4 | Tax relief by band, compound growth, 25% lump sum, annuity vs drawdown, pension calculator. |
-
-### Planned (not built)
-- Compound Interest — savings, debt, pension growth
-- Mortgages — amortisation, fixed vs variable, overpayments
-- Pensions — workplace, SIPP, state pension, tax relief
-- Inflation — purchasing power, real vs nominal returns
-- Everyday Probability — weather, medical tests, risk perception
+| Inflation & Real Returns | `everyday/inflation` | 3 | Purchasing power erosion, real vs nominal returns, shrinkflation maths. Live calculators. |
+| Everyday Probability | `everyday/probability` | 4 | Base rate neglect, Bayes' theorem, Monty Hall (interactive game), birthday problem. Live calculators. |
 
 ## Smart Contracts
 
