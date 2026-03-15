@@ -81,6 +81,7 @@ everyday/                           # Free everyday maths courses
   tax/index.html                    # 5 modules, UK income tax calculators
   compound-interest/index.html      # 4 modules, compound interest & debt calculators
   mortgages/index.html              # 5 modules, mortgage amortisation & overpayment calculator
+  pensions/index.html               # 4 modules, tax relief, compound growth, lump sum, calculator
 contracts/                          # Solidity smart contracts (Foundry)
   src/
   test/
@@ -148,6 +149,7 @@ Free courses teaching the mathematics behind everyday financial decisions. No ga
 | UK Tax Maths | `everyday/tax` | 5 | Marginal vs effective rates, £100k trap, Scotland comparison, deductions, fiscal drag. Live calculators. |
 | Compound Interest & Debt | `everyday/compound-interest` | 4 | Simple vs compound, credit card trap, APR decoded, Rule of 72. Live calculators. |
 | Mortgage Maths | `everyday/mortgages` | 5 | Amortisation, term length cost, overpayments, fixed vs variable, full calculator. |
+| Pension Maths | `everyday/pensions` | 4 | Tax relief by band, compound growth, 25% lump sum, annuity vs drawdown, pension calculator. |
 
 ### Planned (not built)
 - Compound Interest — savings, debt, pension growth
