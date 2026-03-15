@@ -67,6 +67,7 @@ games/                              # Free games (single-file HTML each)
   dont-press-it/index.html
   rps-vs-machine/index.html
 academy/                            # Paid courses (single-file HTML each)
+  index.html                        # Academy hub page with All Access Pass (£39.99)
   blackjack/index.html              # 11 modules, 3 tiers, 78+ scenarios
   poker/index.html                  # 10 modules, 3 tiers, 75 scenarios
   sports-betting/index.html         # 8 modules, 3 tiers, live calculators
