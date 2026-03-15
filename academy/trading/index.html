@@ -118,7 +118,7 @@ body{font-family:'Outfit',sans-serif;background:var(--bg);color:var(--text);min-
 
 <div style="text-align:center;margin:1rem 0;padding:.75rem;border:1px solid #161c28;border-radius:6px;background:#0a0d14;">
 <span style="font-family:'Outfit',sans-serif;font-size:.8rem;color:#4a5568;">Want everything? </span>
-<a href="https://buy.stripe.com/4gM4gs0IJ29paN56aJcwg00" target="_blank" style="font-family:'Outfit',sans-serif;font-weight:600;font-size:.8rem;color:#d4a847;text-decoration:none;">All 9 courses — £39.99 →</a>
+<a href="https://buy.stripe.com/7sY9AMdvv7tJ2gzcz7cwg0j" target="_blank" style="font-family:'Outfit',sans-serif;font-weight:600;font-size:.8rem;color:#d4a847;text-decoration:none;">MathsWins Premium →</a>
 </div>
 
 <div class="mc locked" onclick="loadMod(1)"><div><div class="mn">2. Risk/Reward Ratios</div><div class="md">Why a 50% win rate can be profitable — or catastrophic — depending on R:R.</div></div></div>
@@ -164,7 +164,7 @@ body{font-family:'Outfit',sans-serif;background:var(--bg);color:var(--text);min-
   var sid=params.get('session_id');
   var slug='trading';
   if(sid){localStorage.setItem('mw_access_'+slug,'granted');window.history.replaceState({},'',window.location.pathname);}
-  if(localStorage.getItem('mw_access_'+slug)==='granted'||localStorage.getItem('mw_access_all')==='granted'){
+  if(localStorage.getItem('mw_access_'+slug)==='granted'||localStorage.getItem('mw_access_all')==='granted'||localStorage.getItem('mw_premium')==='granted'){
     document.addEventListener('DOMContentLoaded',function(){
       var b=document.getElementById('mw-buy-section');if(b)b.style.display='none';
       document.querySelectorAll('.mc.locked').forEach(function(el){el.classList.remove('locked');});

@@ -68,14 +68,25 @@ footer a{color:var(--muted);text-decoration:none}footer a:hover{color:var(--gold
 <p class="subtitle">Understand the mathematics before you play. Not gambling — education.</p>
 </header>
 
-<!-- ALL ACCESS PASS -->
-<div class="all-access" id="mw-all-access">
-<h2>ALL ACCESS PASS</h2>
-<p>Every course. Every tier. Every module. Lifetime access.</p>
-<div class="price">£39.99</div>
-<div class="save">9 courses · 60+ modules · Save over £50 vs buying individually</div>
-<a href="https://buy.stripe.com/4gM4gs0IJ29paN56aJcwg00" target="_blank" class="buy-btn">Get All Access — £39.99</a>
-<div class="detail">Lifetime access · Instant delivery · No subscription</div>
+<!-- MATHSWINS PREMIUM -->
+<div class="all-access" id="mw-premium-section">
+<h2>MATHSWINS PREMIUM</h2>
+<p>Every academy course. Every standalone course. Every tool. Every future release.</p>
+<div style="display:flex;gap:1.5rem;justify-content:center;flex-wrap:wrap;margin:1.5rem 0 1rem">
+<div style="flex:1;min-width:220px;max-width:300px;border:1px solid var(--border);border-radius:8px;padding:1.2rem;text-align:center">
+<div style="font-size:.75rem;color:var(--muted);text-transform:uppercase;letter-spacing:.1em;margin-bottom:.5rem">Annual</div>
+<div class="price" style="margin:0">£99.99<span style="font-size:.7rem;color:var(--muted)">/year</span></div>
+<a href="https://buy.stripe.com/3cIeV6crr8xN6wPgPncwg0k" target="_blank" class="buy-btn" style="margin-top:.8rem;font-size:.85rem">Get Annual — £99.99/yr</a>
+</div>
+<div style="flex:1;min-width:220px;max-width:300px;border:2px solid var(--gold);border-radius:8px;padding:1.2rem;text-align:center;position:relative">
+<div style="position:absolute;top:-10px;left:50%;transform:translateX(-50%);background:var(--gold);color:#050709;font-size:.6rem;font-weight:700;padding:2px 10px;border-radius:4px;text-transform:uppercase;letter-spacing:.08em">Best Value</div>
+<div style="font-size:.75rem;color:var(--muted);text-transform:uppercase;letter-spacing:.1em;margin-bottom:.5rem">Lifetime</div>
+<div class="price" style="margin:0">£149.99</div>
+<a href="https://buy.stripe.com/7sY9AMdvv7tJ2gzcz7cwg0j" target="_blank" class="buy-btn" style="margin-top:.8rem;font-size:.85rem">Get Lifetime — £149.99</a>
+</div>
+</div>
+<div class="save">All courses · All tools · All future releases</div>
+<div style="font-size:.75rem;color:var(--muted);margin-top:.5rem;">Not sure yet? Individual courses available from £1.99</div>
 </div>
 
 <!-- COURSES -->
@@ -104,9 +115,9 @@ footer a{color:var(--muted);text-decoration:none}footer a:hover{color:var(--gold
 <!-- Sports Betting -->
 <a href="/academy/sports-betting/" class="course-card">
 <div class="card-accent" style="background:#2563eb;"></div>
-<div class="card-eyebrow" style="color:#2563eb;">8 Modules · 3 Tiers</div>
+<div class="card-eyebrow" style="color:#2563eb;">16 Modules · 3 Tiers</div>
 <div class="card-title">SPORTS BETTING MATHS</div>
-<div class="card-desc">How odds work, implied probability, overround calculation, value betting, why accumulators are terrible. Live calculators.</div>
+<div class="card-desc">Odds, implied probability, value betting, Asian handicaps, Poisson modelling, exchange maths, in-play mathematics. 5 interactive tools.</div>
 <div class="card-price" style="color:#2563eb;">From £6.99</div>
 <div class="card-free">Module 1 free — try before you buy</div>
 </a>
@@ -178,9 +189,9 @@ footer a{color:var(--muted);text-decoration:none}footer a:hover{color:var(--gold
 <div style="position:absolute;top:-10px;left:50%;transform:translateX(-50%);background:#06b6d4;color:#050709;font-family:'Outfit',sans-serif;font-weight:600;font-size:.6rem;padding:2px 12px;border-radius:4px;text-transform:uppercase;letter-spacing:.08em;">Standalone Course</div>
 <div style="font-family:'Bebas Neue',sans-serif;font-size:1.5rem;color:#06b6d4;letter-spacing:.03em;margin-bottom:.5rem;">OPTIONS MATHS</div>
 <p style="font-family:'Crimson Pro',serif;font-style:italic;color:var(--text);font-size:.95rem;margin-bottom:.75rem;max-width:500px;margin-left:auto;margin-right:auto;">The mathematics behind every options trade. Black-Scholes, the Greeks, implied volatility — explained from first principles.</p>
-<div style="font-family:'DM Mono',monospace;font-size:.75rem;color:var(--muted);margin-bottom:1rem;">10 Modules · Module 1 free now · Coming 2026</div>
+<div style="font-family:'DM Mono',monospace;font-size:.75rem;color:var(--muted);margin-bottom:1rem;">10 Modules · 3 Tiers · Module 1 free · From £9.99</div>
 <a href="/academy/options/" style="display:inline-block;padding:.65rem 2rem;background:#06b6d4;color:#050709;font-family:'Outfit',sans-serif;font-weight:600;font-size:.85rem;border-radius:6px;text-decoration:none;letter-spacing:.03em;">Try Module 1 Free →</a>
-<div style="font-size:.7rem;color:var(--muted);margin-top:.75rem;">Not included in All Access Pass — sold separately</div>
+<div style="font-size:.7rem;color:var(--muted);margin-top:.75rem;">Included in MathsWins Premium</div>
 </div>
 
 <!-- EVERYDAY LINK -->
@@ -204,15 +215,15 @@ footer a{color:var(--muted);text-decoration:none}footer a:hover{color:var(--gold
 </div>
 
 <script>
-// All Access check
+// Premium check
 (function(){
   var params=new URLSearchParams(window.location.search);
   var sid=params.get('session_id');
-  if(sid){localStorage.setItem('mw_access_all','granted');window.history.replaceState({},'',window.location.pathname);}
-  if(localStorage.getItem('mw_access_all')==='granted'){
+  if(sid){localStorage.setItem('mw_access_all','granted');localStorage.setItem('mw_premium','granted');window.history.replaceState({},'',window.location.pathname);}
+  if(localStorage.getItem('mw_access_all')==='granted'||localStorage.getItem('mw_premium')==='granted'){
     document.addEventListener('DOMContentLoaded',function(){
-      var a=document.getElementById('mw-all-access');
-      if(a){a.innerHTML='<h2>ALL ACCESS — ACTIVE</h2><p style="color:#2dd4a0;font-family:Crimson Pro,serif;font-style:italic;">You have lifetime access to all courses and modules.</p>';}
+      var a=document.getElementById('mw-premium-section');
+      if(a){a.innerHTML='<h2>MATHSWINS PREMIUM — ACTIVE</h2><p style="color:#2dd4a0;font-family:Crimson Pro,serif;font-style:italic;">You have access to all courses, tools, and future releases.</p>';}
     });
   }
 })();

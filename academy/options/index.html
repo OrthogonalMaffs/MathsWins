@@ -158,7 +158,7 @@ a{color:var(--accent);text-decoration:none}a:hover{text-decoration:underline}
 </div>
 
 <div class="standalone-notice">
-<p><strong>This is a standalone course</strong>, sold separately from the Academy All Access Pass.<br>
+<p><strong>This is a standalone course</strong>, included in MathsWins Premium.<br>
 Module 1 is free. Three paid tiers: <strong>Basic</strong> (M2&ndash;4, &pound;9.99) &middot; <strong>Advanced</strong> (M5&ndash;7, &pound;17.99) &middot; <strong>Master</strong> (M8&ndash;10, &pound;29.99).</p>
 </div>
 
@@ -256,6 +256,11 @@ Module 1 is free. Three paid tiers: <strong>Basic</strong> (M2&ndash;4, &pound;9
 </div>
 
 </div>
+</div>
+
+<div style="text-align:center;margin:1rem 0;padding:.75rem;border:1px solid #161c28;border-radius:6px;background:#0a0d14;">
+<span style="font-family:'Outfit',sans-serif;font-size:.8rem;color:#4a5568;">Want everything? </span>
+<a href="https://buy.stripe.com/7sY9AMdvv7tJ2gzcz7cwg0j" target="_blank" style="font-family:'Outfit',sans-serif;font-weight:600;font-size:.8rem;color:#d4a847;text-decoration:none;">MathsWins Premium includes this course →</a>
 </div>
 
 <div class="cta-row">
@@ -4672,6 +4677,19 @@ if(typeof window!=='undefined'){window.OPTIONS_MODULE_10=OPTIONS_MODULE_10;}
 </script>
 
 <script>
+// Access check — Premium only (standalone course, not unlocked by mw_access_all)
+(function(){
+  var params=new URLSearchParams(window.location.search);
+  var sid=params.get('session_id');
+  var slug='options';
+  if(sid){localStorage.setItem('mw_access_'+slug,'granted');window.history.replaceState({},'',window.location.pathname);}
+  if(localStorage.getItem('mw_access_'+slug)==='granted'||localStorage.getItem('mw_premium')==='granted'){
+    document.addEventListener('DOMContentLoaded',function(){
+      var b=document.getElementById('om-buy-section');if(b)b.style.display='none';
+      document.querySelectorAll('.mc.locked').forEach(function(el){el.classList.remove('locked');});
+    });
+  }
+})();
 // ════════════════════════════════════════
 //  NAVIGATION
 // ════════════════════════════════════════
