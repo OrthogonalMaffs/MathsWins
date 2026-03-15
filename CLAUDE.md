@@ -84,6 +84,7 @@ everyday/                           # Free everyday maths courses
   pensions/index.html               # 4 modules, tax relief, compound growth, lump sum, calculator
   inflation/index.html              # 3 modules, purchasing power, real vs nominal, shrinkflation
   probability/index.html            # 4 modules, base rates, Bayes, Monty Hall, birthday problem
+terms/index.html                    # Terms of Use (noindex, 17 sections, UK law)
 tools/                              # Free standalone tools
   student-loan/index.html           # UK student loan calculator, all 5 plans, year-by-year schedule
 contracts/                          # Solidity smart contracts (Foundry)
