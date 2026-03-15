@@ -1,6 +1,6 @@
 <!--
   CRAPS DECODED — COMPLETE PRODUCT
-  Single tier: 250 QF, 7-day access
+  Single tier: £3.99, lifetime access
   The most intimidating casino game explained mathematically.
 -->
 <!DOCTYPE html>
@@ -20,6 +20,7 @@
 <script type="application/ld+json">
 {"@context":"https://schema.org","@type":"Course","name":"Craps Decoded","description":"5 modules analysing every craps bet mathematically","provider":{"@type":"EducationalOrganization","name":"MathsWins","url":"https://mathswins.co.uk"},"educationalLevel":"Adult Education","hasCourseInstance":{"@type":"CourseInstance","courseMode":"online","courseWorkload":"Self-paced"}}
 </script>
+<script async src="https://js.stripe.com/v3/buy-button.js"></script>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link href="https://fonts.googleapis.com/css2?family=DM+Mono:wght@400;500&family=Bebas+Neue&family=Crimson+Pro:ital,wght@0,400;0,700;1,400&family=Outfit:wght@300;400;600;700&display=swap" rel="stylesheet">
 <script async src="https://www.googletagmanager.com/gtag/js?id=G-CLNF7GSB28"></script>
@@ -85,17 +86,22 @@ body{font-family:'Outfit',sans-serif;background:var(--bg);color:var(--text);min-
 
 <div class="disc">
 <p>Craps has the <strong>best bets AND the worst bets</strong> in the entire casino, sitting right next to each other on the same table. This course teaches you which is which — and why the odds bet is the only zero-edge bet in any casino game.</p>
-<p><strong>250 QF · 7-day access</strong></p>
+<p><strong>£3.99 · Lifetime access</strong></p>
 </div>
 
 <div style="margin:1rem 0">
 <div class="mc" onclick="loadMod(0)"><div><div class="mn">1. Two Dice Probability</div><div class="md">36 outcomes. The probability of every total. The foundation.</div></div><div class="mq">Tutorial</div></div>
 
-<div class="unlock-banner">
-<h4>Unlock Full Course</h4>
-<p>You've seen the free module. Ready for the rest?</p>
-<div class="unlock-btn" onclick="alert('Payment coming soon — Stripe or QF tokens')">Unlock Now</div>
-<div class="unlock-price">250 QF · or pay with card</div>
+<div class="unlock-banner" id="mw-buy-section">
+<h4>Get Full Access — £3.99</h4>
+<p>Lifetime access to all 5 modules. Pay once. Learn forever.</p>
+<a href="https://buy.stripe.com/cNifZaajj8xN4oH6aJcwg09" target="_blank" class="unlock-btn" style="display:inline-block;padding:.75rem 2rem;background:#d4a847;color:#050709;font-family:'Outfit',sans-serif;font-weight:600;font-size:1rem;border-radius:6px;text-decoration:none;letter-spacing:.03em;cursor:pointer;">Get Full Access — £3.99</a>
+<div class="unlock-price" style="margin-top:.75rem;font-size:.85rem;color:#4a5568;">Lifetime access · Instant delivery · No subscription</div>
+</div>
+
+<div style="text-align:center;margin:1rem 0;padding:.75rem;border:1px solid #161c28;border-radius:6px;background:#0a0d14;">
+<span style="font-family:'Outfit',sans-serif;font-size:.8rem;color:#4a5568;">Want everything? </span>
+<a href="https://buy.stripe.com/4gM4gs0IJ29paN56aJcwg00" target="_blank" style="font-family:'Outfit',sans-serif;font-weight:600;font-size:.8rem;color:#d4a847;text-decoration:none;">All 9 courses — £39.99 →</a>
 </div>
 
 <div class="mc locked" onclick="loadMod(1)"><div><div class="mn">2. The Pass Line — The Core Bet</div><div class="md">How the game actually works. Come-out roll, point, resolution.</div></div><div class="mq">Tutorial</div></div>
@@ -132,6 +138,19 @@ body{font-family:'Outfit',sans-serif;background:var(--bg);color:var(--text);min-
 </div>
 
 <script>
+// Access check
+(function(){
+  var params=new URLSearchParams(window.location.search);
+  var sid=params.get('session_id');
+  var slug='craps';
+  if(sid){localStorage.setItem('mw_access_'+slug,'granted');window.history.replaceState({},'',window.location.pathname);}
+  if(localStorage.getItem('mw_access_'+slug)==='granted'||localStorage.getItem('mw_access_all')==='granted'){
+    document.addEventListener('DOMContentLoaded',function(){
+      var b=document.getElementById('mw-buy-section');if(b)b.style.display='none';
+      document.querySelectorAll('.mc.locked').forEach(function(el){el.classList.remove('locked');});
+    });
+  }
+})();
 function show(id){document.querySelectorAll('.screen').forEach(s=>s.classList.remove('active'));document.getElementById(id).classList.add('active');window.scrollTo(0,0)}
 function loadMod(i){show('lesson');const c=document.getElementById('content');[modDice,modPass,modOdds,modAllBets,modOptimal][i](c)}
 

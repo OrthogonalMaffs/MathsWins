@@ -186,6 +186,7 @@ a{color:var(--gold);text-decoration:none}a:hover{text-decoration:underline}
   .range-grid{font-size:.4rem}
 }
 </style>
+<script async src="https://js.stripe.com/v3/buy-button.js"></script>
 </head>
 <body>
 <div class="outer">
@@ -241,14 +242,49 @@ a{color:var(--gold);text-decoration:none}a:hover{text-decoration:underline}
 <h2>CURRICULUM — 11 MODULES</h2>
 
 <div class="tier-group">
-<div class="tier-hdr"><span class="tb tb-b">Basic</span><span class="tp">500 QF · 7 days</span></div>
+<div class="tier-hdr"><span class="tb tb-b">Basic</span><span class="tp">£6.99</span></div>
 <div class="mc" onclick="loadMod('p1')"><div><div class="mn">1. Hand Rankings & Starting Hands</div><div class="md">Which hands to play. The 13×13 range grid. Why A♠K♠ ≠ A♣K♦</div></div><div class="mq">Tutorial + 20</div></div>
 
-<div class="unlock-banner">
-<h4>Unlock Full Course</h4>
-<p>You've seen the free module. Ready for the rest?</p>
-<div class="unlock-btn" onclick="alert('Payment coming soon — Stripe or QF tokens')">Unlock Now</div>
-<div class="unlock-price">500 QF · or pay with card</div>
+<div id="mw-buy-section" style="margin:1.5rem 0;">
+<h4 style="font-family:'Bebas Neue',sans-serif;font-size:1.3rem;color:#e8ecf4;letter-spacing:.03em;margin-bottom:1rem;text-align:center;">CHOOSE YOUR ACCESS</h4>
+<div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(200px,1fr));gap:1rem;">
+
+<div style="background:#0a0d14;border:1px solid #161c28;border-radius:8px;padding:1.25rem;text-align:center;">
+<div style="font-family:'Bebas Neue',sans-serif;font-size:1.1rem;color:#e8ecf4;">BASIC</div>
+<div style="font-family:'DM Mono',monospace;font-size:1.5rem;color:#2dd4a0;margin:.5rem 0;">£6.99</div>
+<div style="font-size:.8rem;color:#4a5568;margin-bottom:1rem;">Modules 1–7</div>
+<a href="https://buy.stripe.com/5kQ7sE8bb8xN5sLaqZcwg01" target="_blank" style="display:inline-block;padding:.6rem 1.5rem;background:#2dd4a0;color:#050709;font-family:'Outfit',sans-serif;font-weight:600;font-size:.85rem;border-radius:6px;text-decoration:none;">Get Basic</a>
+</div>
+
+<div style="background:#0a0d14;border:1px solid #161c28;border-radius:8px;padding:1.25rem;text-align:center;">
+<div style="font-family:'Bebas Neue',sans-serif;font-size:1.1rem;color:#e8ecf4;">ADVANCED</div>
+<div style="font-family:'DM Mono',monospace;font-size:1.5rem;color:#2dd4a0;margin:.5rem 0;">£12.99</div>
+<div style="font-size:.8rem;color:#4a5568;margin-bottom:1rem;">Modules 1–14</div>
+<a href="https://buy.stripe.com/6oUdR2gHH29paN5dDbcwg03" target="_blank" style="display:inline-block;padding:.6rem 1.5rem;background:#2dd4a0;color:#050709;font-family:'Outfit',sans-serif;font-weight:600;font-size:.85rem;border-radius:6px;text-decoration:none;">Get Advanced</a>
+</div>
+
+<div style="background:#0a0d14;border:2px solid #2dd4a0;border-radius:8px;padding:1.25rem;text-align:center;position:relative;">
+<div style="position:absolute;top:-10px;left:50%;transform:translateX(-50%);background:#2dd4a0;color:#050709;font-family:'Outfit',sans-serif;font-weight:600;font-size:.6rem;padding:2px 10px;border-radius:4px;text-transform:uppercase;letter-spacing:.08em;">Most Popular</div>
+<div style="font-family:'Bebas Neue',sans-serif;font-size:1.1rem;color:#e8ecf4;">MASTER</div>
+<div style="font-family:'DM Mono',monospace;font-size:1.5rem;color:#2dd4a0;margin:.5rem 0;">£17.99</div>
+<div style="font-size:.8rem;color:#4a5568;margin-bottom:1rem;">Modules 1–17</div>
+<a href="https://buy.stripe.com/00w28kcrr6pF5sL8iRcwg05" target="_blank" style="display:inline-block;padding:.6rem 1.5rem;background:#2dd4a0;color:#050709;font-family:'Outfit',sans-serif;font-weight:600;font-size:.85rem;border-radius:6px;text-decoration:none;">Get Master</a>
+</div>
+
+<div style="background:#0a0d14;border:1px solid #161c28;border-radius:8px;padding:1.25rem;text-align:center;">
+<div style="font-family:'Bebas Neue',sans-serif;font-size:1.1rem;color:#e8ecf4;">PRO</div>
+<div style="font-family:'DM Mono',monospace;font-size:1.5rem;color:#2dd4a0;margin:.5rem 0;">£24.99</div>
+<div style="font-size:.8rem;color:#4a5568;margin-bottom:1rem;">Modules 1–20 + 10 tools</div>
+<a href="https://buy.stripe.com/7sYbIU777eWbf3l6aJcwg02" target="_blank" style="display:inline-block;padding:.6rem 1.5rem;background:#2dd4a0;color:#050709;font-family:'Outfit',sans-serif;font-weight:600;font-size:.85rem;border-radius:6px;text-decoration:none;">Get Pro</a>
+</div>
+
+</div>
+<div style="text-align:center;margin-top:.75rem;font-size:.8rem;color:#4a5568;">Lifetime access · Instant delivery · No subscription</div>
+</div>
+
+<div style="text-align:center;margin:1rem 0;padding:.75rem;border:1px solid #161c28;border-radius:6px;background:#0a0d14;">
+<span style="font-family:'Outfit',sans-serif;font-size:.8rem;color:#4a5568;">Want everything? </span>
+<a href="https://buy.stripe.com/4gM4gs0IJ29paN56aJcwg00" target="_blank" style="font-family:'Outfit',sans-serif;font-weight:600;font-size:.8rem;color:#d4a847;text-decoration:none;">All 9 courses — £39.99 →</a>
 </div>
 
 <div class="mc locked" onclick="loadMod('p2')"><div><div class="mn">2. Pot Odds & Outs</div><div class="md">Counting outs, calculating pot odds, the Rule of 2 and 4</div></div><div class="mq">Tutorial + 20</div></div>
@@ -257,7 +293,7 @@ a{color:var(--gold);text-decoration:none}a:hover{text-decoration:underline}
 </div>
 
 <div class="tier-group">
-<div class="tier-hdr"><span class="tb tb-a">Advanced</span><span class="tp">1500 QF · 14 days</span></div>
+<div class="tier-hdr"><span class="tb tb-a">Advanced</span><span class="tp">£12.99</span></div>
 <div class="mc locked" onclick="loadMod('p5')"><div><div class="mn">5. Equity vs Range</div><div class="md">Stop thinking about single hands. Think about ranges.</div></div><div class="mq">Tutorial + 20</div></div>
 <div class="mc locked" onclick="loadMod('p6')"><div><div class="mn">6. Implied Odds & Reverse Implied</div><div class="md">When pot odds say fold but you should call — and vice versa</div></div><div class="mq">Tutorial + 15</div></div>
 <div class="mc locked" onclick="loadMod('p7')"><div><div class="mn">7. Bet Sizing Theory</div><div class="md">Why you bet ⅔ pot. Polarised vs merged. Value vs bluff ratios</div></div><div class="mq">Tutorial + 15</div></div>
@@ -265,7 +301,7 @@ a{color:var(--gold);text-decoration:none}a:hover{text-decoration:underline}
 </div>
 
 <div class="tier-group">
-<div class="tier-hdr"><span class="tb tb-m">Master</span><span class="tp">3000 QF · 30 days</span></div>
+<div class="tier-hdr"><span class="tb tb-m">Master</span><span class="tp">£17.99</span></div>
 <div class="mc locked" onclick="loadMod('p9')"><div><div class="mn">9. GTO Fundamentals</div><div class="md">Game Theory Optimal play. Balanced ranges. Nash equilibrium</div></div><div class="mq">Tutorial + 15</div></div>
 <div class="mc locked" onclick="loadMod('p10')"><div><div class="mn">10. Tournament Strategy & ICM</div><div class="md">Chip EV ≠ money EV. Bubble dynamics. Final table theory</div></div><div class="mq">Tutorial + 15</div></div>
 <div class="mc locked" onclick="loadMod('p11')"><div><div class="mn">11. Full Table Simulator</div><div class="md">6-player table. AI opponents. Every decision graded. Session report</div></div><div class="mq">Session + report</div></div>
@@ -327,6 +363,19 @@ a{color:var(--gold);text-decoration:none}a:hover{text-decoration:underline}
 
 </div>
 <script>
+// Access check
+(function(){
+  var params=new URLSearchParams(window.location.search);
+  var sid=params.get('session_id');
+  var slug='poker';
+  if(sid){localStorage.setItem('mw_access_'+slug,'granted');window.history.replaceState({},'',window.location.pathname);}
+  if(localStorage.getItem('mw_access_'+slug)==='granted'||localStorage.getItem('mw_access_all')==='granted'){
+    document.addEventListener('DOMContentLoaded',function(){
+      var b=document.getElementById('mw-buy-section');if(b)b.style.display='none';
+      document.querySelectorAll('.mc.locked').forEach(function(el){el.classList.remove('locked');});
+    });
+  }
+})();
 // ════════════════════════════════════════
 //  NAVIGATION
 // ════════════════════════════════════════
