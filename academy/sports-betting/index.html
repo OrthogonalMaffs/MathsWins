@@ -9,16 +9,16 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <link rel="icon" type="image/svg+xml" href="../../schools/assets/favicon.svg">
-<title>Sports Betting Maths — Maths Always Wins | MathsWins</title>
-<meta name="description" content="8 modules teaching the mathematics behind sports betting: implied probability, bookmaker overround, value identification, and why 95% of bettors lose. Module 1 free.">
-<meta property="og:title" content="Sports Betting Maths — Why 95% of Bettors Lose">
-<meta property="og:description" content="Learn how bookmakers build profit into every market. Implied probability, overround calculation, and the mathematics of value betting.">
+<title>Sports Betting Maths — 16 Modules | Maths Always Wins | MathsWins</title>
+<meta name="description" content="16 modules teaching the mathematics behind sports betting: implied probability, overround, value betting, Poisson modelling, Asian handicaps, exchange maths, and why 95% of bettors lose. Module 1 free.">
+<meta property="og:title" content="Sports Betting Maths — 16 Modules — Why 95% of Bettors Lose">
+<meta property="og:description" content="16 modules from odds basics to Poisson modelling and exchange mathematics. Learn how bookmakers build profit into every market.">
 <meta property="og:type" content="website">
 <meta property="og:url" content="https://mathswins.co.uk/academy/sports-betting/">
 <meta name="twitter:card" content="summary_large_image">
 <link rel="canonical" href="https://mathswins.co.uk/academy/sports-betting/">
 <script type="application/ld+json">
-{"@context":"https://schema.org","@type":"Course","name":"Sports Betting Maths","description":"8 modules teaching sports betting mathematics","provider":{"@type":"EducationalOrganization","name":"MathsWins","url":"https://mathswins.co.uk"},"educationalLevel":"Adult Education","hasCourseInstance":{"@type":"CourseInstance","courseMode":"online","courseWorkload":"Self-paced"}}
+{"@context":"https://schema.org","@type":"Course","name":"Sports Betting Maths","description":"16 modules teaching sports betting mathematics: odds, probability, overround, value betting, Poisson modelling, Asian handicaps, exchange maths, and more","provider":{"@type":"EducationalOrganization","name":"MathsWins","url":"https://mathswins.co.uk"},"educationalLevel":"Adult Education","hasCourseInstance":{"@type":"CourseInstance","courseMode":"online","courseWorkload":"Self-paced"}}
 </script>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link href="https://fonts.googleapis.com/css2?family=DM+Mono:wght@400;500&family=Bebas+Neue&family=Crimson+Pro:ital,wght@0,400;0,700;1,400&family=Outfit:wght@300;400;600;700&display=swap" rel="stylesheet">
@@ -79,6 +79,25 @@ body{font-family:'Outfit',sans-serif;background:var(--bg);color:var(--text);min-
 .calc-row label{font-size:.75rem;color:var(--muted);min-width:100px}
 .calc-row input,.calc-row select{background:var(--bg);border:1px solid var(--border2);border-radius:4px;padding:.3rem .5rem;color:var(--gold);font-family:'DM Mono',monospace;font-size:.8rem;width:100px}
 .calc-result{margin-top:.4rem;padding:.5rem;background:var(--bg);border-radius:6px;font-family:'DM Mono',monospace;font-size:.78rem;line-height:1.8}
+/* SCENARIO PLAYER */
+.sp-hud{display:flex;gap:1rem;align-items:center;background:var(--surface);border:1px solid var(--border);border-radius:8px;padding:.5rem .8rem;margin-bottom:.5rem;font-family:'DM Mono',monospace;font-size:.7rem;color:var(--muted)}
+.sp-hud .sp-stat{text-align:center}.sp-hud .sp-val{font-size:.95rem;font-weight:500;color:var(--accent)}
+.sp-pbar{height:3px;background:var(--border);border-radius:2px;margin:.3rem 0;overflow:hidden}
+.sp-pfill{height:100%;background:var(--accent);transition:width .3s}
+.sp-q{background:var(--surface);border:1px solid var(--border);border-radius:10px;padding:1.1rem;margin-bottom:.5rem}
+.sp-q .sp-qt{font-size:.88rem;line-height:1.6;margin-bottom:.8rem}
+.sp-q input[type=text]{padding:.5rem 1rem;background:var(--surface2);color:var(--text);border:1px solid var(--border);border-radius:6px;font-family:'DM Mono',monospace;font-size:.85rem;width:70%;text-align:center}
+.sp-analysis{background:var(--surface);border:1px solid var(--border);border-radius:10px;padding:1rem;margin-bottom:.5rem;display:none}
+.sp-analysis.show{display:block}
+.sp-analysis .sp-correct{color:var(--green-bright);font-weight:600}.sp-analysis .sp-wrong{color:var(--red-bright);font-weight:600}
+.sp-analysis .sp-detail{font-size:.8rem;color:var(--muted);margin-top:.4rem;line-height:1.6}
+.sp-result{background:var(--surface);border:1px solid var(--border);border-radius:10px;padding:1.5rem;text-align:center}
+.sp-result .sp-grade{font-family:'Bebas Neue',sans-serif;font-size:2rem;color:var(--accent);letter-spacing:.04em}
+.sp-result .sp-pct{font-family:'DM Mono',monospace;font-size:1.2rem;color:var(--text-bright)}
+.tut .gd{padding:.4rem .7rem;margin:.4rem 0;border-radius:6px;border-left:3px solid var(--green-bright);background:rgba(45,212,160,.06);color:var(--green-bright)}
+.tut h2{color:var(--accent);font-size:1rem;margin-bottom:.5rem}
+.tut ul{margin:.4rem 0 .4rem 1.2rem;color:var(--text)}
+.tut ul li{margin-bottom:.2rem}
 @media(max-width:600px){.hero h1{font-size:2.2rem}.stats-bar{grid-template-columns:repeat(2,1fr)}}
 </style>
 </head>
@@ -95,8 +114,8 @@ body{font-family:'Outfit',sans-serif;background:var(--bg);color:var(--text);min-
 <div class="stats-bar">
 <div class="sc"><div class="sn">£14.3bn</div><div class="sl">UK gambling<br>industry revenue 2024</div></div>
 <div class="sc"><div class="sn">95-98%</div><div class="sl">Of recreational bettors<br>lose long-term</div></div>
-<div class="sc"><div class="sn">5-20%</div><div class="sl">Typical bookmaker<br>overround (margin)</div></div>
-<div class="sc"><div class="sn">0</div><div class="sl">Accumulators that<br>have +EV</div></div>
+<div class="sc"><div class="sn">16</div><div class="sl">Modules from odds<br>to Poisson modelling</div></div>
+<div class="sc"><div class="sn">160+</div><div class="sl">Practice scenarios<br>with worked solutions</div></div>
 </div>
 
 <div class="disc">
@@ -105,7 +124,7 @@ body{font-family:'Outfit',sans-serif;background:var(--bg);color:var(--text);min-
 </div>
 
 <div style="margin:1rem 0">
-<div class="tier-hdr"><span class="tb tb-b">Basic</span><span class="tp">£6.99</span></div>
+<div class="tier-hdr"><span class="tb tb-b">Basic</span><span class="tp">£6.99 — Modules 1-5</span></div>
 <div class="mc" onclick="loadMod(0)"><div><div class="mn">1. How Odds Work</div><div class="md">Fractional, decimal, American. Converting between them. What they actually mean.</div></div><div class="mq">Tutorial + calc</div></div>
 
 <div id="mw-buy-section" style="margin:1.5rem 0;">
@@ -115,7 +134,7 @@ body{font-family:'Outfit',sans-serif;background:var(--bg);color:var(--text);min-
 <div style="background:#0a0d14;border:1px solid #161c28;border-radius:8px;padding:1.25rem;text-align:center;">
 <div style="font-family:'Bebas Neue',sans-serif;font-size:1.1rem;color:#e8ecf4;">BASIC</div>
 <div style="font-family:'DM Mono',monospace;font-size:1.5rem;color:#2563eb;margin:.5rem 0;">£6.99</div>
-<div style="font-size:.8rem;color:#4a5568;margin-bottom:1rem;">Modules 1–3</div>
+<div style="font-size:.8rem;color:#4a5568;margin-bottom:1rem;">Modules 1-5</div>
 <a href="https://buy.stripe.com/00waEQ9ffeWbaN59mVcwg0g" target="_blank" style="display:inline-block;padding:.6rem 1.5rem;background:#2563eb;color:#050709;font-family:'Outfit',sans-serif;font-weight:600;font-size:.85rem;border-radius:6px;text-decoration:none;">Get Basic</a>
 </div>
 
@@ -123,14 +142,14 @@ body{font-family:'Outfit',sans-serif;background:var(--bg);color:var(--text);min-
 <div style="position:absolute;top:-10px;left:50%;transform:translateX(-50%);background:#2563eb;color:#050709;font-family:'Outfit',sans-serif;font-weight:600;font-size:.6rem;padding:2px 10px;border-radius:4px;text-transform:uppercase;letter-spacing:.08em;">Most Popular</div>
 <div style="font-family:'Bebas Neue',sans-serif;font-size:1.1rem;color:#e8ecf4;">ADVANCED</div>
 <div style="font-family:'DM Mono',monospace;font-size:1.5rem;color:#2563eb;margin:.5rem 0;">£12.99</div>
-<div style="font-size:.8rem;color:#4a5568;margin-bottom:1rem;">Modules 1–5</div>
+<div style="font-size:.8rem;color:#4a5568;margin-bottom:1rem;">Modules 1-11</div>
 <a href="https://buy.stripe.com/28E3codvv3dtbR956Fcwg0h" target="_blank" style="display:inline-block;padding:.6rem 1.5rem;background:#2563eb;color:#050709;font-family:'Outfit',sans-serif;font-weight:600;font-size:.85rem;border-radius:6px;text-decoration:none;">Get Advanced</a>
 </div>
 
 <div style="background:#0a0d14;border:1px solid #161c28;border-radius:8px;padding:1.25rem;text-align:center;">
 <div style="font-family:'Bebas Neue',sans-serif;font-size:1.1rem;color:#e8ecf4;">MASTER</div>
 <div style="font-family:'DM Mono',monospace;font-size:1.5rem;color:#2563eb;margin:.5rem 0;">£17.99</div>
-<div style="font-size:.8rem;color:#4a5568;margin-bottom:1rem;">Modules 1–8</div>
+<div style="font-size:.8rem;color:#4a5568;margin-bottom:1rem;">All 16 modules</div>
 <a href="https://buy.stripe.com/aFa00c77729p2gz42Bcwg0i" target="_blank" style="display:inline-block;padding:.6rem 1.5rem;background:#2563eb;color:#050709;font-family:'Outfit',sans-serif;font-weight:600;font-size:.85rem;border-radius:6px;text-decoration:none;">Get Master</a>
 </div>
 
@@ -145,15 +164,23 @@ body{font-family:'Outfit',sans-serif;background:var(--bg);color:var(--text);min-
 
 <div class="mc locked" onclick="loadMod(1)"><div><div class="mn">2. Implied Probability</div><div class="md">Convert odds to probability. The most important skill in betting.</div></div><div class="mq">Tutorial + 15</div></div>
 <div class="mc locked" onclick="loadMod(2)"><div><div class="mn">3. The Overround</div><div class="md">How bookmakers build in their profit margin on every market.</div></div><div class="mq">Tutorial + calc</div></div>
-
-<div class="tier-hdr"><span class="tb tb-a">Advanced</span><span class="tp">£12.99</span></div>
 <div class="mc locked" onclick="loadMod(3)"><div><div class="mn">4. Value Betting</div><div class="md">The ONLY way to win long-term. Identifying +EV opportunities.</div></div><div class="mq">Tutorial + 15</div></div>
 <div class="mc locked" onclick="loadMod(4)"><div><div class="mn">5. Why Accumulators Are Terrible</div><div class="md">The maths of compounding house edges. Multi-bet destruction.</div></div><div class="mq">Tutorial + sim</div></div>
-<div class="mc locked" onclick="loadMod(5)"><div><div class="mn">6. Bankroll Management</div><div class="md">Kelly criterion, staking plans, variance. Survive the losing runs.</div></div><div class="mq">Tutorial</div></div>
 
-<div class="tier-hdr"><span class="tb tb-m">Master</span><span class="tp">£17.99</span></div>
+<div class="tier-hdr"><span class="tb tb-a">Advanced</span><span class="tp">£12.99 — Modules 6-11</span></div>
+<div class="mc locked" onclick="loadMod(5)"><div><div class="mn">6. Bankroll Management</div><div class="md">Kelly criterion, staking plans, variance. Survive the losing runs.</div></div><div class="mq">Tutorial</div></div>
 <div class="mc locked" onclick="loadMod(6)"><div><div class="mn">7. Building a Model</div><div class="md">Rate your own probabilities. Compare to the market. Find edges.</div></div><div class="mq">Tutorial</div></div>
 <div class="mc locked" onclick="loadMod(7)"><div><div class="mn">8. Market Efficiency & Closing Lines</div><div class="md">The closing line is the most efficient predictor. Can you beat it?</div></div><div class="mq">Tutorial</div></div>
+<div class="mc locked" onclick="loadMod(8)"><div><div class="mn">9. Asian Handicap Mathematics</div><div class="md">Eliminate the draw. Lower overround. Quarter-goal lines decoded.</div></div><div class="mq">Tutorial + 20 + calc</div></div>
+<div class="mc locked" onclick="loadMod(9)"><div><div class="mn">10. HT/FT & Conditional Probability</div><div class="md">Why HT/FT markets carry 15-25% overround. BTTS maths. Correct score traps.</div></div><div class="mq">Tutorial + 15</div></div>
+<div class="mc locked" onclick="loadMod(10)"><div><div class="mn">11. The Poisson Distribution</div><div class="md">Model football goals. Price every market from two numbers. Dixon-Coles correction.</div></div><div class="mq">Tutorial + 15</div></div>
+
+<div class="tier-hdr"><span class="tb tb-m">Master</span><span class="tp">£17.99 — Modules 12-16</span></div>
+<div class="mc locked" onclick="loadMod(11)"><div><div class="mn">12. The Mistakes Punters Make</div><div class="md">Quantify every common error in pounds and pence. Favourite-longshot bias. Chasing losses.</div></div><div class="mq">Tutorial + 15</div></div>
+<div class="mc locked" onclick="loadMod(12)"><div><div class="mn">13. Discipline & Selectivity</div><div class="md">Kelly sizing, correlated bets, half-Kelly. Why fewer bets wins more.</div></div><div class="mq">Tutorial + 15</div></div>
+<div class="mc locked" onclick="loadMod(13)"><div><div class="mn">14. Free Bet Mathematics</div><div class="md">SNR vs SR, qualifying bets, lay-off extraction. Maximise every offer.</div></div><div class="mq">Tutorial + 15</div></div>
+<div class="mc locked" onclick="loadMod(14)"><div><div class="mn">15. Exchange Mathematics</div><div class="md">Back, lay, trade. Commission models. Why exchanges beat bookmakers.</div></div><div class="mq">Tutorial + 15</div></div>
+<div class="mc locked" onclick="loadMod(15)"><div><div class="mn">16. In-Play Maths & Live Traps</div><div class="md">Time-adjusted Poisson. Cash-out margins. The speed disadvantage quantified.</div></div><div class="mq">Tutorial + 15</div></div>
 </div>
 
 <button class="cta" onclick="loadMod(0)">Try Module 1 Free</button>
@@ -179,7 +206,19 @@ body{font-family:'Outfit',sans-serif;background:var(--bg);color:var(--text);min-
 
 <div id="lesson" class="screen">
 <div id="content"></div>
-<button class="bb" onclick="show('landing')">← Back</button>
+<div id="scenarioArea" style="display:none">
+<div class="sp-hud" id="spHud">
+<div class="sp-stat"><div class="sp-val" id="spProg">0/0</div><div>Progress</div></div>
+<div class="sp-stat"><div class="sp-val" id="spScore">0/0</div><div>Score</div></div>
+<div class="sp-stat"><div class="sp-val" id="spAcc">0%</div><div>Accuracy</div></div>
+<div class="sp-stat"><div class="sp-val" id="spStrk">0</div><div>Streak</div></div>
+</div>
+<div class="sp-pbar"><div class="sp-pfill" id="spFill"></div></div>
+<div id="spQuestion"></div>
+<div class="sp-analysis" id="spAnalysis"></div>
+</div>
+<div id="resultArea" style="display:none"></div>
+<button class="bb" onclick="backToLanding()">← Back</button>
 </div>
 </div>
 
@@ -198,7 +237,137 @@ body{font-family:'Outfit',sans-serif;background:var(--bg);color:var(--text);min-
   }
 })();
 function show(id){document.querySelectorAll('.screen').forEach(s=>s.classList.remove('active'));document.getElementById(id).classList.add('active');window.scrollTo(0,0)}
-function loadMod(i){show('lesson');const c=document.getElementById('content');[modOdds,modImplied,modOverround,modValue,modAccas,modBankroll,modModel,modEfficiency][i](c)}
+function backToLanding(){document.getElementById('scenarioArea').style.display='none';document.getElementById('resultArea').style.display='none';show('landing')}
+
+var MOD_FUNCS=[modOdds,modImplied,modOverround,modValue,modAccas,modBankroll,modModel,modEfficiency,modAsianHC,modHTFT,modPoisson,modMistakes,modDiscipline,modFreeBets,modExchange,modInPlay];
+var MOD_NAMES=['How Odds Work','Implied Probability','The Overround','Value Betting','Accumulators','Bankroll Management','Building a Model','Market Efficiency','Asian Handicaps','HT/FT & Conditional Probability','Poisson Distribution','Punter Mistakes','Discipline & Selectivity','Free Bet Maths','Exchange Mathematics','In-Play Maths'];
+
+function loadMod(i){show('lesson');document.getElementById('scenarioArea').style.display='none';document.getElementById('resultArea').style.display='none';const c=document.getElementById('content');MOD_FUNCS[i](c)}
+
+// ════════════════════════════════════════
+//  SCENARIO PLAYER (question/answer format)
+// ════════════════════════════════════════
+var spList=[],spIdx=0,spCorrect=0,spTotal=0,spStreak=0,spModName='';
+
+function startScenarios(scenarios,modName){
+  spList=[...scenarios];spIdx=0;spCorrect=0;spTotal=0;spStreak=0;spModName=modName;
+  document.getElementById('scenarioArea').style.display='block';
+  document.getElementById('resultArea').style.display='none';
+  loadScenario();
+}
+
+function loadScenario(){
+  if(spIdx>=spList.length){showScenarioResult();return}
+  var s=spList[spIdx];
+  document.getElementById('spProg').textContent=(spIdx+1)+'/'+spList.length;
+  document.getElementById('spScore').textContent=spCorrect+'/'+spTotal;
+  document.getElementById('spAcc').textContent=spTotal>0?Math.round(spCorrect/spTotal*100)+'%':'0%';
+  document.getElementById('spStrk').textContent=spStreak;
+  document.getElementById('spFill').style.width=Math.round(spIdx/spList.length*100)+'%';
+  document.getElementById('spAnalysis').className='sp-analysis';
+  document.getElementById('spAnalysis').innerHTML='';
+
+  var qText=s.q||s.question||'';
+  var html='<div class="sp-q"><div class="sp-qt">'+qText+'</div>';
+  html+='<div style="text-align:center"><input type="text" id="spInput" placeholder="Your answer..." onkeydown="if(event.key===\'Enter\')checkScenarioAnswer()">';
+  html+='<br><button class="nb" style="margin-top:.5rem" onclick="checkScenarioAnswer()">Submit</button>';
+  html+='<button class="bb" style="margin-left:.5rem;margin-top:.5rem" onclick="revealScenarioAnswer()">Show Answer</button></div></div>';
+  document.getElementById('spQuestion').innerHTML=html;
+  setTimeout(function(){var el=document.getElementById('spInput');if(el)el.focus()},100);
+}
+
+function checkScenarioAnswer(){
+  var s=spList[spIdx];
+  var userAns=(document.getElementById('spInput').value||'').trim().toLowerCase();
+  var correctAns=String(s.a||s.answer||'').toLowerCase();
+
+  spTotal++;
+  var correct=false;
+  if(userAns===correctAns) correct=true;
+  else{
+    var ua=userAns.replace(/[^a-z0-9.%-]/g,'');
+    var ca=correctAns.replace(/[^a-z0-9.%-]/g,'');
+    if(ua===ca) correct=true;
+    else if(ca.indexOf(ua)!==-1&&ua.length>2) correct=true;
+    else if(ua.indexOf(ca)!==-1&&ca.length>2) correct=true;
+  }
+
+  if(correct){spCorrect++;spStreak++}else{spStreak=0}
+  document.getElementById('spScore').textContent=spCorrect+'/'+spTotal;
+  document.getElementById('spAcc').textContent=Math.round(spCorrect/spTotal*100)+'%';
+  document.getElementById('spStrk').textContent=spStreak;
+
+  var detail=s.detail||s.explanation||'';
+  var a=document.getElementById('spAnalysis');
+  a.innerHTML='<div class="'+(correct?'sp-correct':'sp-wrong')+'">'+(correct?'Correct!':'Not quite.')+'</div>'+
+    '<div style="margin:.3rem 0"><strong>Answer:</strong> '+(s.a||s.answer)+'</div>'+
+    '<div class="sp-detail">'+detail+'</div>'+
+    '<button class="nb" onclick="spIdx++;loadScenario()">Next &rarr;</button>';
+  a.className='sp-analysis show';
+}
+
+function revealScenarioAnswer(){
+  var s=spList[spIdx];
+  spTotal++;spStreak=0;
+  document.getElementById('spScore').textContent=spCorrect+'/'+spTotal;
+  document.getElementById('spAcc').textContent=spTotal>0?Math.round(spCorrect/spTotal*100)+'%':'0%';
+  document.getElementById('spStrk').textContent=spStreak;
+
+  var detail=s.detail||s.explanation||'';
+  var a=document.getElementById('spAnalysis');
+  a.innerHTML='<div class="sp-wrong">Revealed</div>'+
+    '<div style="margin:.3rem 0"><strong>Answer:</strong> '+(s.a||s.answer)+'</div>'+
+    '<div class="sp-detail">'+detail+'</div>'+
+    '<button class="nb" onclick="spIdx++;loadScenario()">Next &rarr;</button>';
+  a.className='sp-analysis show';
+}
+
+function showScenarioResult(){
+  document.getElementById('scenarioArea').style.display='none';
+  var pct=spTotal>0?Math.round(spCorrect/spTotal*100):0;
+  var grade='Keep Practising';
+  if(pct>=90)grade='Master!';else if(pct>=75)grade='Strong';else if(pct>=60)grade='Getting There';
+  var r=document.getElementById('resultArea');
+  r.style.display='block';
+  r.innerHTML='<div class="sp-result"><div class="sp-grade">'+grade+'</div><div class="sp-pct">'+pct+'%</div>'+
+    '<div style="margin:.5rem 0;font-size:.82rem;color:var(--muted)">'+spModName+'<br>Score: '+spCorrect+'/'+spTotal+'</div>'+
+    '<button class="nb" onclick="backToLanding()">Back to Modules</button></div>';
+}
+
+// ════════════════════════════════════════
+//  TOOL RENDERER
+// ════════════════════════════════════════
+function renderTool(container,toolConfig,calcFn){
+  if(!toolConfig)return;
+  var html='<div class="calc"><h3>'+toolConfig.name+'</h3>';
+  var inputs=toolConfig.inputs||[];
+  inputs.forEach(function(inp){
+    html+='<div class="calc-row"><label>'+inp.label+':</label>';
+    if(inp.type==='select'){
+      html+='<select id="tool-'+inp.id+'" onchange="runTool()">';
+      (inp.options||[]).forEach(function(o){html+='<option value="'+o+'">'+o+'</option>'});
+      html+='</select>';
+    }else{
+      html+='<input id="tool-'+inp.id+'" type="number" value="'+(inp.default||0)+'" step="'+(inp.step||1)+'" onchange="runTool()">';
+    }
+    html+='</div>';
+  });
+  html+='<div class="calc-result" id="toolResult"></div></div>';
+  container.insertAdjacentHTML('beforeend',html);
+
+  window.runTool=function(){
+    var vals={};
+    inputs.forEach(function(inp){
+      var el=document.getElementById('tool-'+inp.id);
+      vals[inp.id]=inp.type==='select'?el.value:parseFloat(el.value)||0;
+    });
+    var result=calcFn(vals);
+    var out='';
+    for(var k in result){out+='<strong>'+k+':</strong> '+result[k]+'<br>'}
+    document.getElementById('toolResult').innerHTML=out;
+  };
+  setTimeout(function(){if(window.runTool)window.runTool()},150);
+}
 
 function modOdds(c){c.innerHTML=`
 <div class="tut">
@@ -532,6 +701,1057 @@ This isn't unfair — it's confirmation that you have a genuine edge.<br><br>
 
 <div class="dg">If you've been betting for more than a year and no bookmaker has limited you, you don't have an edge. That's not an insult — it's data. The bookmaker's algorithms would have flagged you if you were costing them money. Use this information to either improve your approach or accept that you're betting for entertainment, not profit.</div>
 </div>`}
+
+// ════════════════════════════════════════
+//  MODULE 9: Asian Handicap Mathematics
+// ════════════════════════════════════════
+var SCENARIOS_9=[
+{q:"You bet £20 on Arsenal −1.5 @ 2.10. Arsenal win 3−1. What is your return?",a:"£42.00",detail:"Arsenal won by 2, which is more than 1.5. Full win: £20 × 2.10 = £42.00 (profit £22.00)."},
+{q:"You bet £20 on Arsenal −1.5 @ 2.10. Arsenal win 2−1. What is your return?",a:"£0.00 (full loss)",detail:"Arsenal won by 1. The handicap requires winning by 2+. 1 < 1.5, so you lose your £20 stake."},
+{q:"You bet £30 on Liverpool −1.0 @ 1.90. Liverpool win 1−0. What happens?",a:"£30 returned (void)",detail:"Liverpool won by exactly 1, which equals the handicap line. Whole-goal AH = void/push. Stake returned."},
+{q:"You bet £30 on Liverpool −1.0 @ 1.90. Liverpool win 3−0. What is your profit?",a:"£27.00",detail:"Liverpool won by 3, exceeding the −1 line. Profit = £30 × (1.90 − 1) = £27.00."},
+{q:"You bet £20 on Chelsea +0.5 @ 1.85. The match ends 1−1. What is your return?",a:"£37.00",detail:"Chelsea +0.5 means Chelsea start with a half-goal advantage. A draw = Chelsea 'wins' by 0.5. Return: £20 × 1.85 = £37.00."},
+{q:"You bet £40 on Man City −0.75 @ 1.92. City win 1−0. What is your return?",a:"£58.40",detail:"Split: £20 on −0.5 (wins: £20 × 1.92 = £38.40) + £20 on −1.0 (void: £20 returned). Total: £58.40. Profit: £18.40 (half win)."},
+{q:"You bet £40 on Man City −0.75 @ 1.92. City win 2−0. What is your return?",a:"£76.80",detail:"Both halves win. £40 × 1.92 = £76.80. Full win, profit £36.80."},
+{q:"You bet £40 on Man City −0.75 @ 1.92. Match ends 0−0. What is your return?",a:"£0.00",detail:"City failed to win. Both the −0.5 and −1.0 halves lose. Full loss of £40."},
+{q:"You bet £20 on Everton +0.25 @ 2.05. Match ends 0−0. What is your return?",a:"£30.25",detail:"+0.25 splits to £10 on +0 (void at 0−0: £10 returned) and £10 on +0.5 (win: £10 × 2.05 = £20.50). Total: £30.50. Half win."},
+{q:"Your model says P(Arsenal win by 2+) = 48%. Arsenal −1.5 is priced at 2.15. Is this +EV?",a:"Yes, +3.2% edge",detail:"EV = (0.48 × 2.15) − 1 = 1.032 − 1 = +0.032 = +3.2%. Positive expected value."},
+{q:"Your model says P(Home win by 2+) = 30%. Home −1.5 is priced at 3.00. Is this +EV?",a:"No, −10% edge",detail:"EV = (0.30 × 3.00) − 1 = 0.90 − 1 = −0.10 = −10%. Negative expected value."},
+{q:"P(Home win) = 55%. Home −0.5 @ 1.80. Is this +EV?",a:"No, −1% edge",detail:"EV = (0.55 × 1.80) − 1 = 0.99 − 1 = −0.01 = −1%. Marginally negative."},
+{q:"P(Away win or draw) = 48%. Away +0.5 @ 2.15. Is this +EV?",a:"Yes, +3.2% edge",detail:"EV = (0.48 × 2.15) − 1 = +0.032. The +0.5 line wins on a draw or away win."},
+{q:"1X2 home win odds: 1.65. AH −0.5 odds: 1.72. Which has better value?",a:"AH −0.5 at 1.72",detail:"Both bets win in the same scenario (home win). AH pays 1.72 vs 1X2 pays 1.65. The AH is 4.2% better odds for the identical outcome."},
+{q:"AH −1.5 opens at 2.20, moves to 2.05. Your model probability hasn't changed at 45%. Was the opening line value?",a:"Opening: −1% (no). Closing: −8.75% (no)",detail:"Opening: 0.45 × 2.20 − 1 = −0.01. Closing: 0.45 × 2.05 − 1 = −0.0875. Neither had value."},
+{q:"AH −1 opens at 2.00, moves to AH −1.25 at 1.95. What does the movement tell you?",a:"Money has come in on the home team",detail:"The line widened from −1 to −1.25, meaning bookmakers need to attract money on the away team."},
+{q:"AH 0 opens at 1.90/1.90 and moves to AH −0.25 at 1.95/1.85. Who has the money been on?",a:"The home team",detail:"The handicap moved from 0 to −0.25, meaning the home team is now given a quarter-goal disadvantage."},
+{q:"1X2 market overround: 5.2%. AH market overround: 2.8%. You want to back the away team. How much do you save per £100 in expected terms by using AH?",a:"£2.40 per £100 staked",detail:"Overround difference: 5.2% − 2.8% = 2.4%. Per £100: £2.40 less lost to margin."},
+{q:"Home team 1X2 odds: 2.10. Home −0.5 AH odds: 2.05. Draw probability is 28%. Which market is better value for backing the home team?",a:"1X2 at 2.10 is better here",detail:"Both pay on home win only (AH −0.5 = same as 1X2 home win). 1X2 pays 2.10 vs AH 2.05. Despite higher overround, the 1X2 price is better for this specific outcome."},
+{q:"You bet £20 on Everton +0.25 @ 2.05. Everton lose 0−1. What is your return?",a:"£0.00",detail:"+0.25 splits to +0 and +0.5. At 0−1: +0 loses (Everton lost), +0.5 loses (still behind). Both lose. Return: £0."}
+];
+
+function modAsianHC(c){
+c.innerHTML=`
+<div class="tut">
+  <h2>Module 9: Asian Handicap Mathematics</h2>
+
+  <div class="pt" style="border-left:3px solid var(--accent);background:var(--accent-dim);padding:1rem;border-radius:0 6px 6px 0;margin-bottom:1.5rem;">
+    Asian handicaps eliminate the draw. That single change reduces the bookmaker's overround from 5-8% to 2-4%. Over hundreds of bets, this difference is worth real money.
+  </div>
+
+  <h3>Why Asian Handicaps Exist</h3>
+  <p>A traditional 1X2 market has three outcomes. Three outcomes give the bookmaker three places to hide margin. Asian handicaps reduce this to two outcomes — and the maths improves immediately.</p>
+
+  <div class="mb">Traditional 1X2: Arsenal vs Crystal Palace
+  Arsenal win: 1.50 (implied 66.7%)
+  Draw: 4.20 (implied 23.8%)
+  Palace win: 7.00 (implied 14.3%)
+  Total implied: 104.8% → Overround: 4.8%
+
+Asian Handicap -1.5:
+  Arsenal -1.5: 2.10 (implied 47.6%)
+  Palace +1.5: 1.80 (implied 55.6%)
+  Total implied: 103.2% → Overround: 3.2%
+
+Saving: 1.6 percentage points per bet.
+Over 100 × £10 bets: £16 less lost to margin.</div>
+
+  <div class="pln">Asian handicaps give the bookmaker a smaller margin on every bet. With only two outcomes instead of three, there's less room to inflate the prices.</div>
+
+  <h3>Whole-Goal Handicaps (0, −1, −2)</h3>
+  <p>Whole-goal Asian handicaps include a <strong>void/push</strong> condition. If the result lands exactly on the handicap line, your stake is returned.</p>
+
+  <div class="mb">Arsenal −1 Asian Handicap @ 1.95
+
+Arsenal win by 2+: WIN (paid at 1.95)
+Arsenal win by exactly 1: VOID (stake returned)
+Draw or Palace win: LOSE
+
+Compare to European Handicap −1 @ 2.20:
+  Arsenal win by exactly 1 = DRAW on EH → you lose
+  AH gives you a safety net at slightly lower odds.</div>
+
+  <h3>Half-Goal Handicaps (−0.5, −1.5, −2.5)</h3>
+  <p>No void possible. Clean win or loss. Mathematically simplest.</p>
+
+  <div class="mb">Arsenal −1.5 @ 2.10
+
+Win: Arsenal win by 2+ goals
+Lose: Arsenal win by 0 or 1, draw, or lose
+
+Identical to "Arsenal to win by 2+" in a correct score market
+but at better odds because:
+  AH overround ≈ 3%
+  Correct score overround ≈ 15-25%
+
+Same bet. Better price.</div>
+
+  <h3>Quarter-Goal Handicaps — The Split Stake</h3>
+  <p>This is where most punters get confused. A −0.75 line means your stake splits equally across TWO bets: half on −0.5 and half on −1.0.</p>
+
+  <div class="mb">Arsenal −0.75 @ 1.95, stake £20
+
+Your £20 splits:
+  £10 on Arsenal −0.5 @ 1.95
+  £10 on Arsenal −1.0 @ 1.95
+
+Arsenal win by 2+:
+  Both bets win → return £39.00 (profit £19.00) → FULL WIN
+
+Arsenal win by exactly 1:
+  −0.5 wins: £10 × 1.95 = £19.50
+  −1.0 voided: £10 returned
+  Return: £29.50 (profit £9.50) → HALF WIN
+
+Draw or Palace win:
+  Both lose → return £0 → FULL LOSS</div>
+
+  <div class="pln">Quarter-goal lines are two bets in one. Your stake splits down the middle. If the result lands between the two lines, you win one half and push the other.</div>
+
+  <h3>Line Movement and Value</h3>
+  <p>When money flows onto one side, bookmakers move the handicap line to balance their book.</p>
+
+  <div class="mb">Opening: Arsenal −1.5 @ 2.10
+Your model: P(Arsenal win by 2+) = 52%
+EV = (0.52 × 2.10) − 1 = +0.092 = +9.2% ✓ VALUE
+
+Line moves to: Arsenal −1.75 @ 2.05
+P(full win) = P(win by 3+) = 37%
+P(half win) = P(win by exactly 2) = 15%
+
+EV = (0.37 × 1.05) + (0.15 × 0.525) − (0.48 × 1)
+   = 0.389 + 0.079 − 0.48 = −0.012 = −1.2% ✗ NO VALUE
+
+A quarter-goal move killed a 9% edge.</div>
+
+  <div class="dg">Line movements in Asian handicap markets happen fast. The value is in the opening line. By the time most punters see the odds, the sharp money has already moved the price.</div>
+
+  <h3>AH vs 1X2: When to Use Each</h3>
+  <p>The mathematical rule: if the draw probability exceeds 20%, Asian handicap markets offer better value because the overround is distributed across fewer outcomes.</p>
+
+  <div class="gd">Always compare the AH price against the equivalent 1X2 price. If Arsenal are 1.50 to win (1X2) and Arsenal −0.5 is 1.55 (AH), the AH gives you the same bet at 3% better odds.</div>
+</div>`;
+
+  // Tool: Asian Handicap Calculator
+  function calcHalfResult(gd,line,stake,odds){var adj=gd+line;if(adj>0)return stake*odds;if(adj===0)return stake;return 0}
+  renderTool(c,{
+    name:'Asian Handicap Calculator',
+    inputs:[
+      {id:'ah-line',label:'Handicap Line',type:'select',options:['+2','+1.75','+1.5','+1.25','+1','+0.75','+0.5','+0.25','0','-0.25','-0.5','-0.75','-1','-1.25','-1.5','-1.75','-2','-2.25','-2.5']},
+      {id:'ah-odds',label:'Odds (decimal)',type:'number',default:1.95,step:0.01},
+      {id:'ah-stake',label:'Stake (£)',type:'number',default:20,step:1},
+      {id:'ah-gd',label:'Goal Diff (Home−Away)',type:'number',default:1,step:1}
+    ]
+  },function(v){
+    var line=parseFloat(v['ah-line']),odds=v['ah-odds'],stake=v['ah-stake'],gd=v['ah-gd'];
+    var isQuarter=Math.abs(line%0.5)===0.25;
+    var returnAmt,result;
+    if(isQuarter){
+      var line1=line>0?Math.floor(line*2)/2:Math.ceil(line*2)/2;
+      var line2=line>0?Math.ceil(line*2)/2:Math.floor(line*2)/2;
+      var hs=stake/2;
+      var r1=calcHalfResult(gd,line1,hs,odds);
+      var r2=calcHalfResult(gd,line2,hs,odds);
+      returnAmt=r1+r2;
+      result=returnAmt>stake?'WIN':returnAmt===stake?'VOID':returnAmt>0?'HALF WIN/LOSS':'LOSS';
+    }else{
+      var adj=gd+line;
+      if(adj>0){returnAmt=stake*odds;result='WIN'}
+      else if(adj===0){returnAmt=stake;result='VOID'}
+      else{returnAmt=0;result='LOSS'}
+    }
+    return{Result:result,Return:'£'+returnAmt.toFixed(2),Profit:'£'+(returnAmt-stake).toFixed(2),ROI:((returnAmt-stake)/stake*100).toFixed(1)+'%'};
+  });
+
+  c.insertAdjacentHTML('beforeend','<button class="nb" style="margin-top:.5rem" onclick="startScenarios(SCENARIOS_9,\'Asian Handicaps\')">Start Practice (20 scenarios)</button>');
+}
+
+// ════════════════════════════════════════
+//  MODULE 10: HT/FT & Conditional Probability
+// ════════════════════════════════════════
+var SCENARIOS_10=[
+{q:"λ_home = 1.6, λ_away = 1.0. Calculate P(0-0 at half time).",a:"0.273 (27.3%)",detail:"Per half: λ_h = 0.8, λ_a = 0.5. P(0-0) = e^(-0.8) × e^(-0.5) = 0.449 × 0.607 = 0.273."},
+{q:"λ_home = 1.4, λ_away = 0.8. What is P(BTTS Yes)?",a:"0.415 (41.5%)",detail:"P(Home ≥1) = 1 - e^(-1.4) = 0.753. P(Away ≥1) = 1 - e^(-0.8) = 0.551. BTTS = 0.753 × 0.551 = 0.415."},
+{q:"P(BTTS Yes) = 52%. Bookmaker offers BTTS Yes @ 1.78. Is this +EV?",a:"No, −7.4%",detail:"EV = 0.52 × 1.78 − 1 = 0.926 − 1 = −0.074. Negative expected value."},
+{q:"P(BTTS Yes) = 55%. Bookmaker offers 1.90. Is this +EV?",a:"Yes, +4.5%",detail:"EV = 0.55 × 1.90 − 1 = 1.045 − 1 = +0.045."},
+{q:"Your model says P(Home/Home HT/FT) = 26%. Bookmaker offers 2.60. Is this +EV?",a:"No, −32.4%",detail:"EV = 0.26 × 2.60 − 1 = 0.676 − 1 = −0.324. Massive negative EV."},
+{q:"P(Draw/Home) = 9%. Bookmaker offers 12.0. Is this +EV?",a:"Yes, +8%",detail:"EV = 0.09 × 12.0 − 1 = 1.08 − 1 = +0.08. Rare value in HT/FT."},
+{q:"HT/FT market total implied probability sums to 118%. What is the overround?",a:"18%",detail:"Overround = 118% − 100% = 18%."},
+{q:"Match result overround: 4.5%. HT/FT overround: 22%. Over 200 bets at £10 average, how much more do you lose on HT/FT?",a:"£350 more",detail:"1X2 loss: 200 × £10 × 4.5% = £90. HT/FT loss: 200 × £10 × 22% = £440. Difference: £350."},
+{q:"Correct score 1-0 is priced at 7.00. Your Poisson model gives P(1-0) = 11%. What's the edge?",a:"−23%",detail:"EV = 0.11 × 7.00 − 1 = 0.77 − 1 = −0.23. Fair odds should be 9.09."},
+{q:"BTTS No fair probability = 48%. Bookmaker offers 2.10. Edge?",a:"+0.8%",detail:"EV = 0.48 × 2.10 − 1 = 1.008 − 1 = +0.008. Marginal positive EV."},
+{q:"Team A scores 60% of their goals in the second half. How does this affect the Draw/Home HT/FT probability?",a:"It increases Draw/Home probability",detail:"If Team A loads goals into the second half, P(0-0 at HT) is higher and P(scoring in 2nd half) is higher. Both factors increase P(Draw at HT, Home Win at FT)."},
+{q:"λ_home = 2.0, λ_away = 0.6. Calculate P(Home/Home) approximately.",a:"≈ 33%",detail:"P(home leading HT) ≈ 0.468. P(still leading FT | leading HT) ≈ 0.70+. P(H/H) ≈ 0.33."},
+{q:"A 5-fold BTTS accumulator at average odds 1.80 per leg. What's the expected return per £1?",a:"£0.60",detail:"With compounded overround on BTTS legs, expected return ≈ £0.60 per £1."},
+{q:"Bookmaker offers correct score 0-0 at 9.00. Poisson model says P(0-0) = 8.5%. Is this value?",a:"No, −23.5%",detail:"EV = 0.085 × 9.00 − 1 = 0.765 − 1 = −0.235. Fair odds: 11.76."},
+{q:"You calculate true HT/FT probabilities summing to 100%. The bookmaker's prices sum to 122%. What percentage of every £1 bet goes to the bookmaker on average?",a:"18%",detail:"Average margin = 1 − (100/122) = 1 − 0.820 = 0.180 = 18%."}
+];
+
+function modHTFT(c){
+c.innerHTML=`
+<div class="tut">
+  <h2>Module 10: Half-Time/Full-Time & Conditional Probability</h2>
+
+  <div class="pt" style="border-left:3px solid var(--accent);background:var(--accent-dim);padding:1rem;border-radius:0 6px 6px 0;margin-bottom:1.5rem;">
+    HT/FT markets carry 15-25% overround — three to five times worse than the match result market. The maths explains exactly why, and when (rarely) they can still offer value.
+  </div>
+
+  <h3>Conditional Probability — The Foundation</h3>
+  <p>The probability of two events both happening is NOT simply the product of their individual probabilities — unless they're independent. In football, the half-time and full-time results are deeply connected.</p>
+
+  <div class="mb">P(Draw at HT AND Home Win at FT)
+  ≠ P(Draw) × P(Home Win)
+
+Correct: P(HT Draw) × P(Home Win | HT was a Draw)
+
+Using Poisson (λ_home = 1.5, λ_away = 1.1):
+  Per half: λ_home_half ≈ 0.75, λ_away_half ≈ 0.55
+
+  P(0-0 at HT) = e^(−0.75) × e^(−0.55) = 0.472 × 0.577 = 0.272
+
+  P(Home scores ≥1, Away scores 0 in 2nd half):
+    = (1 − e^(−0.75)) × e^(−0.55) = 0.528 × 0.577 = 0.305
+
+  P(Draw/Home) = 0.272 × 0.305 = 0.083 (8.3%)
+
+  Typical bookmaker odds: 5.50 → implied 18.2%
+  Overround on this outcome alone: 18.2% − 8.3% = 9.9%</div>
+
+  <div class="pln">The Draw/Home Win bet looks tempting at 5.50. But the maths says it should be closer to 12.0. The bookmaker is charging nearly 10 percentage points of margin.</div>
+
+  <h3>The Full HT/FT Grid — 9 Outcomes, 9 Overrounds</h3>
+  <p>With 9 possible outcomes (3 HT results × 3 FT results), the bookmaker has 9 places to hide margin instead of 3.</p>
+
+  <div class="mb">Approximate true probabilities (λ_home=1.5, λ_away=1.1):
+
+                    FT: Home    FT: Draw    FT: Away
+HT: Home leading |  25.1%    |   3.2%    |   1.4%
+HT: Drawing      |   8.3%    |  12.8%    |   5.6%
+HT: Away leading |   1.8%    |   3.4%    |  10.2%
+
+Typical HT/FT market overround: 15-25%
+Match result overround: 4-8%
+Asian handicap overround: 2-4%</div>
+
+  <div class="dg">HT/FT is one of the worst-value markets in football betting. 9 outcomes give the bookmaker 3-5 times more room to extract margin.</div>
+
+  <h3>Both Teams to Score (BTTS)</h3>
+  <p>BTTS has only 2 outcomes, making it one of the fairer derivative markets.</p>
+
+  <div class="mb">P(BTTS Yes) = P(Home ≥1) × P(Away ≥1)
+  = (1 − e^(−1.5)) × (1 − e^(−1.1))
+  = 0.777 × 0.667 = 0.518 (51.8%)
+
+Fair odds: 1/0.518 = 1.93
+Typical bookmaker: 1.80 → overround ≈ 3.8%
+
+Much more reasonable than HT/FT.</div>
+
+  <div class="pln">BTTS markets have two outcomes, so the overround is similar to Asian handicaps — around 3-5%. Mathematically kinder than HT/FT or correct score.</div>
+
+  <h3>Correct Score — The Worst Overround</h3>
+  <p>With 20+ possible outcomes, correct score markets carry 20-40% overround.</p>
+
+  <div class="mb">Most likely correct score (λ_home=1.5, λ_away=1.1):
+  1-0: 12.1% → fair odds 8.26 → typical bookie: 6.50
+  1-1: 10.9% → fair odds 9.17 → typical bookie: 7.00
+  0-0:  6.7% → fair odds 14.9 → typical bookie: 10.00
+  2-1:  9.8% → fair odds 10.2 → typical bookie: 8.00
+
+Overround per outcome: 10-40%.
+Total market overround: 25-35%.</div>
+
+  <div class="gd">If you must bet on HT/FT or correct score, always calculate the true probability first. Most of the time the margin is too large. But occasionally a bookmaker misprices a specific outcome within the grid.</div>
+</div>`;
+
+  c.insertAdjacentHTML('beforeend','<button class="nb" style="margin-top:.5rem" onclick="startScenarios(SCENARIOS_10,\'HT/FT & Conditional Probability\')">Start Practice (15 scenarios)</button>');
+}
+
+// ════════════════════════════════════════
+//  MODULE 11: The Poisson Distribution
+// ════════════════════════════════════════
+var SCENARIOS_11=[
+{q:"λ = 1.5. Calculate P(exactly 2 goals) using Poisson.",a:"0.251 (25.1%)",detail:"P(2) = (1.5² × e^(−1.5)) / 2! = (2.25 × 0.2231) / 2 = 0.2510."},
+{q:"λ = 2.0. Calculate P(0 goals).",a:"0.135 (13.5%)",detail:"P(0) = e^(−2.0) = 0.1353."},
+{q:"λ_home = 1.6, λ_away = 1.2. What is P(0-0)?",a:"0.061 (6.1%)",detail:"P(0-0) = e^(−1.6) × e^(−1.2) = 0.2019 × 0.3012 = 0.0608."},
+{q:"λ_home = 1.6, λ_away = 1.2. What is P(1-1)?",a:"0.117 (11.7%)",detail:"P(H=1) = 1.6 × e^(−1.6) = 0.3230. P(A=1) = 1.2 × e^(−1.2) = 0.3614. P(1-1) = 0.3230 × 0.3614 = 0.1168."},
+{q:"Total expected goals = 3.0. Calculate P(Over 2.5) using Poisson.",a:"≈ 0.577 (57.7%)",detail:"P(Under 2.5) = P(0)+P(1)+P(2) for Poisson(3.0) = 0.0498 + 0.1494 + 0.2240 = 0.4232. P(Over 2.5) = 0.5768."},
+{q:"λ_H=1.8, λ_A=0.9. Model gives P(Home win)=58.5%. Bookmaker offers 1.65. Edge?",a:"−3.5%",detail:"EV = 0.585 × 1.65 − 1 = 0.965 − 1 = −0.035. Negative."},
+{q:"λ_H=1.8, λ_A=0.9. Model gives P(Draw)=23.2%. Bookmaker offers 4.80. Edge?",a:"+11.4%",detail:"EV = 0.232 × 4.80 − 1 = 1.114 − 1 = +0.114. Significant value on the draw."},
+{q:"λ_H=1.3, λ_A=1.3. Symmetrical match. What are the fair odds for Home/Draw/Away?",a:"Home ≈ 2.89, Draw ≈ 3.25, Away ≈ 2.89",detail:"With equal λ, P(Home)=P(Away)≈0.346, P(Draw)≈0.308. Fair odds: ~2.89/3.25/2.89."},
+{q:"Arsenal score 2.2 at home, Palace concede 1.5 away. League average 1.35. Calculate λ_Arsenal.",a:"2.44",detail:"λ = 2.2 × 1.5 / 1.35 = 3.30 / 1.35 = 2.44."},
+{q:"Using Dixon-Coles with ρ=−0.13, λ_H=1.5, λ_A=1.0. What is the adjusted P(0-0)?",a:"Higher than basic Poisson",detail:"Basic: 0.0821. DC adjustment: τ = 1 − 1.5 × 1.0 × (−0.13) = 1.195. Adjusted: 0.0821 × 1.195 = 0.0981 (9.8% vs 8.2% basic)."},
+{q:"With Dixon-Coles ρ=−0.13, λ_H=1.5, λ_A=1.0. How does P(1-1) change?",a:"Increases",detail:"τ for 1-1 = 1 − ρ. With ρ=−0.13: τ = 1 − (−0.13) = 1.13. P(1-1) increases by 13%."},
+{q:"A model shows Over 2.5 at 53% probability. Three bookmakers offer 1.85, 1.90, 1.95. Which (if any) are +EV?",a:"Only 1.95 is +EV",detail:"At 1.85: −2%. At 1.90: +0.7% (marginal). At 1.95: +3.4% (meaningful edge)."},
+{q:"Why is xG better than raw goals scored for estimating λ?",a:"xG measures quality of chances, not results",detail:"xG measures the quality of chances created, which is more predictive of future performance than actual goals, which include random variation."},
+{q:"League average is 2.7 total goals/match. A match has λ_H=0.8, λ_A=0.7. What does this tell you about the O/U 2.5 market?",a:"Under 2.5 is very likely (~72%)",detail:"For bivariate Poisson with total λ=1.5: sum of P(h,a) where h+a ≤ 2 ≈ 0.72."},
+{q:"You fit a Poisson model and it says P(Home)=45%. The bookmaker offers 2.30 (implied 43.5%). Edge?",a:"+3.5%",detail:"EV = 0.45 × 2.30 − 1 = 1.035 − 1 = +0.035. Modest value at 3.5%."}
+];
+
+function modPoisson(c){
+c.innerHTML=`
+<div class="tut">
+  <h2>Module 11: The Poisson Distribution</h2>
+
+  <div class="pt" style="border-left:3px solid var(--accent);background:var(--accent-dim);padding:1rem;border-radius:0 6px 6px 0;margin-bottom:1.5rem;">
+    The Poisson distribution is the foundation of every serious football betting model. With two numbers — each team's expected goals — you can price every market on the match.
+  </div>
+
+  <h3>Why Goals Follow the Poisson Distribution</h3>
+  <p>Poisson models the number of events occurring in a fixed interval at a known average rate. Goals in a football match fit this well: they're relatively rare, occur at a roughly constant average rate, and (approximately) independently of each other.</p>
+
+  <div class="mb">P(X = k) = (λ^k × e^(−λ)) / k!
+
+λ = expected goals for a team in a match
+k = actual number of goals scored
+
+Arsenal expected goals = 1.8:
+  P(0 goals) = e^(−1.8)                = 0.165 (16.5%)
+  P(1 goal)  = 1.8 × e^(−1.8) / 1     = 0.298 (29.8%)
+  P(2 goals) = 1.8² × e^(−1.8) / 2    = 0.268 (26.8%)
+  P(3 goals) = 1.8³ × e^(−1.8) / 6    = 0.161 (16.1%)
+  P(4 goals) = 1.8⁴ × e^(−1.8) / 24   = 0.072 (7.2%)
+  P(5+)      = 1 − sum of above        = 0.036 (3.6%)</div>
+
+  <div class="pln">If Arsenal average 1.8 goals per match, they'll score exactly 1 about 30% of the time, exactly 2 about 27% of the time, and blank entirely about 16.5% of the time.</div>
+
+  <h3>Building a Match Model</h3>
+  <p>Two independent Poisson distributions — one per team — give you a complete score probability matrix.</p>
+
+  <div class="mb">Arsenal (home) λ = 1.8, Crystal Palace (away) λ = 0.9
+
+P(Arsenal 2, Palace 0) = P(Ars=2) × P(Pal=0)
+  = 0.268 × 0.407 = 0.109 (10.9%)
+
+From the full matrix:
+  P(Home win)  = sum where Ars > Pal = 58.5%
+  P(Draw)      = sum of diagonal      = 23.2%
+  P(Away win)  = sum where Pal > Ars  = 18.3%
+
+Fair odds: Home 1.71 | Draw 4.31 | Away 5.46</div>
+
+  <div class="pln">With just two numbers you can price every market on the match. Home win, draw, away win, over/under, correct score, BTTS — they all come from the same model.</div>
+
+  <h3>Over/Under from Poisson</h3>
+
+  <div class="mb">Total expected goals = 1.8 + 0.9 = 2.7
+
+P(Under 2.5) = P(total ≤ 2)
+  = P(0,0)+P(1,0)+P(0,1)+P(2,0)+P(1,1)+P(0,2)
+  = 0.067+0.121+0.060+0.109+0.109+0.027 = 0.493
+
+P(Over 2.5) = 1 − 0.493 = 0.507
+
+Fair odds: Over 2.5 @ 1.97 | Under 2.5 @ 2.03
+
+Bookmaker offers Over 2.5 @ 2.10:
+  Implied: 47.6% | Model: 50.7%
+  Edge: (0.507 × 2.10) − 1 = +6.5%</div>
+
+  <h3>Where λ Comes From</h3>
+
+  <div class="mb">Simple λ estimation:
+
+λ_home = (Home team's avg goals scored at home)
+       × (Away team's avg goals conceded away)
+       / (League average goals per match)
+
+Example:
+  Arsenal score 2.1/match at home
+  Palace concede 1.6/match away
+  League average: 1.4 goals per team per match
+
+  λ_Arsenal = 2.1 × 1.6 / 1.4 = 2.40</div>
+
+  <h3>Dixon-Coles Correction</h3>
+  <p>Basic Poisson assumes home and away goals are independent. They're not. The Dixon-Coles (1997) model adds a correlation parameter τ (tau) that adjusts probabilities for low-scoring outcomes.</p>
+
+  <div class="mb">Dixon-Coles correction factor τ(x, y, λ_H, λ_A, ρ):
+
+  For 0-0: τ = 1 − λ_H × λ_A × ρ
+  For 0-1: τ = 1 + λ_H × ρ
+  For 1-0: τ = 1 + λ_A × ρ
+  For 1-1: τ = 1 − ρ
+  All other scores: τ = 1 (no adjustment)
+
+ρ ≈ −0.13 (empirical estimate)
+
+This means:
+  0-0 is MORE likely than Poisson predicts
+  1-0 and 0-1 are MORE likely than Poisson predicts</div>
+
+  <div class="dg"><strong>Limitation:</strong> Poisson assumes goals are time-homogeneous. In reality, teams change tactics after a goal. More advanced models address this, but basic Dixon-Coles gets you 85% of the way there.</div>
+</div>`;
+
+  // Poisson calculator tool
+  renderTool(c,{
+    name:'Poisson Match Modeller',
+    inputs:[
+      {id:'pm-lh',label:'Home xG (λ)',type:'number',default:1.80,step:0.05},
+      {id:'pm-la',label:'Away xG (λ)',type:'number',default:0.90,step:0.05}
+    ]
+  },function(v){
+    var lh=v['pm-lh'],la=v['pm-la'];
+    function poisson(l,k){return Math.pow(l,k)*Math.exp(-l)/([1,1,2,6,24,120,720][k]||1)}
+    var pH=0,pD=0,pA=0;
+    for(var i=0;i<=6;i++)for(var j=0;j<=6;j++){var p=poisson(lh,i)*poisson(la,j);if(i>j)pH+=p;else if(i===j)pD+=p;else pA+=p}
+    var pU25=0;for(var i=0;i<=6;i++)for(var j=0;j<=6;j++){if(i+j<=2)pU25+=poisson(lh,i)*poisson(la,j)}
+    return{
+      'Home Win':((pH*100).toFixed(1))+'% (fair odds: '+(1/pH).toFixed(2)+')',
+      'Draw':((pD*100).toFixed(1))+'% (fair odds: '+(1/pD).toFixed(2)+')',
+      'Away Win':((pA*100).toFixed(1))+'% (fair odds: '+(1/pA).toFixed(2)+')',
+      'Over 2.5':(((1-pU25)*100).toFixed(1))+'% (fair odds: '+(1/(1-pU25)).toFixed(2)+')',
+      'Under 2.5':((pU25*100).toFixed(1))+'% (fair odds: '+(1/pU25).toFixed(2)+')'
+    };
+  });
+
+  c.insertAdjacentHTML('beforeend','<button class="nb" style="margin-top:.5rem" onclick="startScenarios(SCENARIOS_11,\'Poisson Distribution\')">Start Practice (15 scenarios)</button>');
+}
+
+// ════════════════════════════════════════
+//  MODULE 12: The Mistakes Punters Make
+// ════════════════════════════════════════
+var SCENARIOS_12=[
+{q:"A 4-fold accumulator with 5% overround per leg. What is the effective overround on the acca?",a:"≈ 18.5%",detail:"Effective return = (1-0.05)^4 = 0.815. Effective overround = 1 - 0.815 = 0.185 = 18.5%."},
+{q:"A 7-fold acca at average odds of 1.80 per leg. What is the expected return per £1?",a:"≈ £0.52",detail:"Assuming ~5% overround: true prob per leg ≈ 0.529. Acca prob: 0.529^7 = 0.0062. Payout: 1.80^7 = 61.2. EV: 0.0062 × 61.2 ≈ £0.38."},
+{q:"You bet £10 every Saturday on a 5-fold acca. Over a year, what is your expected loss if average overround per leg is 5%?",a:"≈ £203",detail:"Per bet expected loss rate ≈ 39%. Annual: 52 × £10 × 0.39 = £203."},
+{q:"A horse is priced at 33.00 (implied 3%). Historical data shows horses at this price win 1.8% of the time. What is the real overround?",a:"40%",detail:"Margin on implied: (3 - 1.8) / 3 = 40%. The bookmaker claims 3% but the true probability is only 1.8%."},
+{q:"You've lost 8 bets in a row on 50/50 propositions. What's the probability of winning the 9th?",a:"50%",detail:"Each bet is independent. Previous results have zero effect on future probability."},
+{q:"A punter starts with £1,000 and doubles their stake after every loss, starting at £50. How many consecutive losses until they're bust?",a:"5 losses",detail:"Loss 1: £50. Loss 2: £100. Loss 3: £200. Loss 4: £400. Loss 5: can't place £800, goes all-in with £250."},
+{q:"Flat staking £50 from a £1,000 bankroll. How many consecutive losses to bust?",a:"20 losses",detail:"£1,000 / £50 = 20 bets. Bankroll survives 20 consecutive losses."},
+{q:"Market A overround: 3.2%. Market B overround: 7.8%. You plan to place 200 bets on each at £20/bet. How much more do you lose on Market B?",a:"£184 more",detail:"Market A: £128. Market B: £312. Difference: £184."},
+{q:"You bet on 30 matches per weekend across 6 leagues. Your edge is +3% on 5 matches (your specialist league) and −5% on the other 25. Net EV per weekend at £10/bet?",a:"−£11.00",detail:"+EV: 5 × £10 × 0.03 = +£1.50. −EV: 25 × £10 × 0.05 = −£12.50. Net: −£11.00."},
+{q:"Same scenario but you only bet on your 5 specialist matches. Net EV?",a:"+£1.50",detail:"5 × £10 × 0.03 = +£1.50 per weekend. Selectivity turns a loss into a profit."},
+{q:"Bookmaker offers 'Acca Insurance: money back as free bet if one leg loses'. Does this change the maths significantly?",a:"No — the free bet is worth ~50-70% of face value",detail:"The insurance adds ~£0.60 in expected value to a bet that already loses £3.90 in expectation. Doesn't fix the compounding problem."},
+{q:"Odds of 1.20 imply 83.3% probability. Actual win rate is 81%. Is this good or bad value?",a:"Bad value (−2.8% edge)",detail:"EV = 0.81 × 1.20 − 1 = 0.972 − 1 = −0.028."},
+{q:"You track 100 bets at average odds of 3.50. You win 22 times. Is this above or below the break-even rate?",a:"Below (need 28.6%)",detail:"Break-even win rate = 1/3.50 = 28.6%. You won 22%."},
+{q:"A punter says 'I won £500 on a 10-fold this weekend!' Their annual spend on accas is £2,000. Are they profitable?",a:"Almost certainly not",detail:"Expected annual loss on £2,000 of 10-folds: ~£1,260. One £500 win reduces this to £760 loss."},
+{q:"A BTTS acca (4 legs, each 1.80). Expected return per £1?",a:"≈ £0.77",detail:"With ~4% overround per BTTS leg: varies by exact margin but approximately £0.77."}
+];
+
+function modMistakes(c){
+c.innerHTML=`
+<div class="tut">
+  <h2>Module 12: The Mistakes the Average Punter Makes</h2>
+
+  <div class="pt" style="border-left:3px solid var(--red-bright);background:rgba(239,83,80,.06);padding:1rem;border-radius:0 6px 6px 0;margin-bottom:1.5rem;">
+    Every common betting behaviour has a mathematical cost. This module quantifies each one in pounds and pence. No judgement — just numbers.
+  </div>
+
+  <h3>Mistake 1: The Accumulator Addiction</h3>
+
+  <div class="mb">5-fold acca, each selection @ 2.00, overround 5% per leg:
+
+Perceived probability: (0.50)^5 = 3.1%
+Actual probability: (0.50/1.05)^5 = (0.476)^5 = 2.44%
+Expected return per £1: 0.0244 × 25.0 = £0.61
+Expected loss: 39p per £1 staked
+
+Year of £10 accas every Saturday (5-fold):
+  52 × £10 × 0.39 = £203 expected loss.</div>
+
+  <div class="pln">Every leg multiplies the bookmaker's edge. A single bet costs 5p per pound. A 5-fold costs 39p. A 10-fold costs 63p.</div>
+
+  <h3>Mistake 2: The Favourite-Longshot Bias</h3>
+
+  <div class="mb">Research across millions of bets:
+
+Odds range    | Implied prob | Actual win % | Overround
+1.10-1.30     | 77-91%       | 79-89%       | 2-5%
+1.50-2.00     | 50-67%       | 48-64%       | 3-6%
+3.00-5.00     | 20-33%       | 18-29%       | 4-8%
+10.00-20.00   | 5-10%        | 3-7%         | 6-15%
+50.00+        | <2%          | <1%          | 10-40%
+
+Pattern: the bigger the price, the worse the value.
+Longshots are systematically overpriced.</div>
+
+  <h3>Mistake 3: The Gambler's Fallacy</h3>
+
+  <div class="mb">You've lost 10 bets in a row. Each had a 50% win probability.
+
+P(losing the 11th bet) = 50%
+
+Not 40%. Not 30%. Exactly 50%.
+The sequence LLLLLLLLLL has the same probability as WLWLWLWLWL.</div>
+
+  <h3>Mistake 4: Chasing Losses</h3>
+
+  <div class="mb">Bankroll: £500. Flat stake: £50.
+
+Chasing (doubling after each loss):
+  Loss 1: £50 → balance £450
+  Loss 2: £100 → balance £350
+  Loss 3: £200 → balance £150
+  Loss 4: £150 (all-in) → balance £0
+  Total time to ruin: 4 bets
+
+Flat staking:
+  4 losses: £200 lost → balance £300
+  Bankroll survives. Continue tomorrow.</div>
+
+  <h3>Mistake 5: Betting Everything on TV</h3>
+
+  <div class="mb">Your edge estimate accuracy by knowledge level:
+
+League you follow closely: ±3% probability error
+League you watch occasionally: ±8% probability error
+League you never watch: ±15% probability error
+
+With 5% overround to overcome:
+  Close knowledge: your ±3% error can find +2% edges
+  Occasional: your ±8% error drowns the 5% signal
+  No knowledge: pure noise, guaranteed −5%+</div>
+
+  <div class="pln">If you know League One inside out, your probability estimates for League One are far more accurate than for La Liga. Better estimates = better value identification.</div>
+
+  <h3>Mistake 6: Ignoring the Overround</h3>
+
+  <div class="mb">Three bookmakers on the same match:
+
+Bookie A: 2.10 / 3.40 / 3.60  → overround 4.2%
+Bookie B: 2.05 / 3.30 / 3.50  → overround 5.8%
+Bookie C: 2.00 / 3.20 / 3.80  → overround 5.1%
+
+Difference between best and worst: 1.6p per £1.
+Over 500 bets: £8 difference. Not huge — but it compounds.</div>
+
+  <div class="gd">The single best habit: before placing any bet, calculate the market overround. If it's above 6%, the bookmaker is taking too much.</div>
+</div>`;
+
+  c.insertAdjacentHTML('beforeend','<button class="nb" style="margin-top:.5rem" onclick="startScenarios(SCENARIOS_12,\'Punter Mistakes\')">Start Practice (15 scenarios)</button>');
+}
+
+// ════════════════════════════════════════
+//  MODULE 13: Discipline & Selectivity
+// ════════════════════════════════════════
+var SCENARIOS_13=[
+{q:"P(win) = 58%. Odds: 1.85 (b=0.85). What does Kelly say to stake?",a:"8.6% of bankroll",detail:"f* = (0.85 × 0.58 − 0.42) / 0.85 = 0.073 / 0.85 = 0.0859 = 8.6%."},
+{q:"P(win) = 35%. Odds: 3.20 (b=2.20). Kelly stake?",a:"5.5% of bankroll",detail:"f* = (2.20 × 0.35 − 0.65) / 2.20 = 0.12 / 2.20 = 0.0545 = 5.5%."},
+{q:"P(win) = 40%. Odds: 2.40 (b=1.40). Kelly stake?",a:"Don't bet (negative)",detail:"f* = (1.40 × 0.40 − 0.60) / 1.40 = −0.04 / 1.40 = −0.029. NEGATIVE. No edge."},
+{q:"Bankroll: £2,000. Kelly says 8% stake. What's the half-Kelly bet?",a:"£80",detail:"Full Kelly: £2,000 × 0.08 = £160. Half-Kelly: £80."},
+{q:"You have 3 bets with 6% edge and 12 bets with 1% edge. All at £20. What's the net weekly EV?",a:"+£6.00",detail:"+EV from strong bets: 3 × £20 × 0.06 = £3.60. +EV from weak bets: 12 × £20 × 0.01 = £2.40. Net: +£6.00."},
+{q:"You eliminate the 12 weak bets and increase stake on the 3 strong bets to £80 each. New EV?",a:"+£14.40",detail:"3 × £80 × 0.06 = £14.40. Same total outlay but 2.4× more expected profit."},
+{q:"5 bets on Saturday PL matches, 20% correlated. How many effective independent bets?",a:"2.8",detail:"n²/(n + n(n−1)ρ) = 25/(5 + 5×4×0.2) = 25/9 = 2.78."},
+{q:"8 bets across 4 different sports. Assumed correlation?",a:"Near zero — effectively 8 independent bets",detail:"Different sports have minimal correlation. Cross-sport bets are close to independent."},
+{q:"Full Kelly bankroll growth: 15% per month. What's half-Kelly?",a:"≈ 11.25% per month",detail:"Half-Kelly gives approximately 75% of full Kelly's growth rate."},
+{q:"You estimate your edge at 3% but you're only 70% confident. What should you do?",a:"Use quarter-Kelly or smaller",detail:"Uncertain probability estimates mean your true edge could be 0% or 6%. Conservative approach: fractional Kelly."},
+{q:"A punter bets £50 on every selection regardless of confidence. They average 3 bets/day, 360 days/year. Their edge averages +1%. Annual expected profit?",a:"+£540",detail:"1,080 bets × £50 × 0.01 = +£540. But Kelly-optimal staking would generate significantly more."},
+{q:"20 potential bets, 5 have +3% edge, 15 have −5% edge. At £20/bet, what's the annual cost of betting all 20 vs just the 5? (50 weekends)",a:"£750 per year",detail:"Bet all 20: −£12/weekend. Bet only 5: +£3/weekend. Difference: £15/weekend × 50 = £750."},
+{q:"Risk of ruin: edge 2%, bankroll 50 units. RoR ≈ e^(−2 × edge × bankroll). What's RoR?",a:"≈ 13.5%",detail:"RoR = e^(−2 × 0.02 × 50) = e^(−2) = 0.135 = 13.5%."},
+{q:"Same scenario but bankroll is 100 units. New RoR?",a:"≈ 1.8%",detail:"RoR = e^(−2 × 0.02 × 100) = e^(−4) = 0.018 = 1.8%. Doubling bankroll dramatically reduces ruin probability."},
+{q:"You have £1,000 bankroll and a verified 3% edge at average odds of 2.00. Half-Kelly stake?",a:"≈ £30",detail:"f* = (1.00 × 0.53 − 0.47) / 1.00 = 0.06 (6%). Half-Kelly: 3%. Stake: £1,000 × 0.03 = £30."}
+];
+
+function modDiscipline(c){
+c.innerHTML=`
+<div class="tut">
+  <h2>Module 13: Discipline, Focus & the Mathematics of Selectivity</h2>
+
+  <div class="pt" style="border-left:3px solid var(--accent);background:var(--accent-dim);padding:1rem;border-radius:0 6px 6px 0;margin-bottom:1.5rem;">
+    The single most important mathematical principle in profitable betting is selectivity. Betting less, not more. 3 bets at 5% edge beats 30 bets at 0.5% edge.
+  </div>
+
+  <h3>The Kelly Criterion for Betting</h3>
+
+  <div class="mb">f* = (b × p − q) / b
+
+f* = fraction of bankroll to stake
+b  = decimal odds − 1 (net odds)
+p  = your true probability estimate
+q  = 1 − p
+
+Example: P(Arsenal win) = 60%. Odds: 1.90 (b = 0.90).
+  f* = (0.90 × 0.60 − 0.40) / 0.90
+     = 0.156 (15.6% of bankroll)
+
+Smaller edge — P(Arsenal) = 53%:
+  f* = (0.90 × 0.53 − 0.47) / 0.90
+     = 0.008 (0.8% of bankroll)
+
+No edge — P(Arsenal) = 47.6% (= implied prob):
+  f* = NEGATIVE → don't bet</div>
+
+  <div class="pln">Kelly says something profound: bet size should be proportional to your edge. Big edge, bigger bet. Small edge, tiny bet. No edge, don't bet at all.</div>
+
+  <h3>Why Fewer Bets With Bigger Edges Wins</h3>
+
+  <div class="mb">Strategy A: 3 bets/weekend, each 5% edge
+  Kelly stake: ~5% of bankroll per bet
+  Weekly EV: 3 × £50 × 0.05 = +£7.50
+  Annual: +£390
+
+Strategy B: 30 bets/weekend, each 0.5% edge
+  Kelly stake: ~0.5% of bankroll per bet
+  Weekly EV: 30 × £5 × 0.005 = +£0.75
+  Annual: +£39
+
+Strategy A earns 10× more with LESS variance.</div>
+
+  <div class="gd">The maths is unambiguous: betting on 3 things you understand is worth more than betting on 30 things you half-understand.</div>
+
+  <h3>Correlated Bets — The Hidden Variance Multiplier</h3>
+
+  <div class="mb">5 Premier League bets on the same Saturday:
+
+If bets are 20% correlated (ρ = 0.2):
+  Effective independent bets: n²/(n + n(n−1)ρ) = 25/9 = 2.8
+
+You think you have 5 independent bets.
+You actually have ~2.8. Risk is 78% higher than calculated.</div>
+
+  <div class="pln">Five bets on the same Saturday's football aren't five independent bets. They share conditions and they share your biases.</div>
+
+  <h3>Half-Kelly: The Practical Compromise</h3>
+
+  <div class="mb">Full Kelly: maximum growth, brutal drawdowns
+  1/3 chance of halving bankroll before doubling
+
+Half Kelly: 75% of maximum growth, much safer
+  1/9 chance of halving before doubling
+
+Quarter Kelly: slowest but safest
+  1/81 chance of halving before doubling
+
+For betting (where probability estimates are uncertain):
+  Half-Kelly is the standard professional approach.</div>
+
+  <h3>The Mathematics of Saying No</h3>
+
+  <div class="mb">Scenario: You're tempted by 20 bets this weekend.
+5 have genuine edge (avg +3%)
+15 have no edge (avg −5% after overround)
+
+If you bet all 20 at £20:
+  Net: −£12
+If you bet only the 5 with edge:
+  Net: +£3
+
+The value of saying "no" to 15 bets: £15 saved.
+Annual value of discipline (50 weekends): £750.</div>
+
+  <div class="gd">Discipline isn't about willpower — it's about mathematics. Every bet you don't place on a −EV market is money saved.</div>
+</div>`;
+
+  c.insertAdjacentHTML('beforeend','<button class="nb" style="margin-top:.5rem" onclick="startScenarios(SCENARIOS_13,\'Discipline & Selectivity\')">Start Practice (15 scenarios)</button>');
+}
+
+// ════════════════════════════════════════
+//  MODULE 14: Free Bet Mathematics
+// ════════════════════════════════════════
+var SCENARIOS_14=[
+{q:"£30 SNR free bet at odds 3.00. Expected value?",a:"£20.00",detail:"EV = £30 × (3−1)/3 = £30 × 2/3 = £20.00. Retention: 66.7%."},
+{q:"£50 SNR free bet at odds 8.00. Expected value?",a:"£43.75",detail:"EV = £50 × 7/8 = £43.75. Retention: 87.5%."},
+{q:"£25 SR free bet at odds 1.50. Expected value?",a:"£25.00",detail:"SR free bets are worth face value at any odds. EV = £25.00."},
+{q:"Qualifying bet: £20 at 1.80, 4% overround. Free bet: £20 SNR at 4.00. Net expected profit?",a:"£14.20",detail:"Qualifier cost: £20 × 0.04 = £0.80. Free bet EV: £20 × 3/4 = £15.00. Net: £14.20."},
+{q:"Qualifying bet: £10 at 2.50, 6% overround. Free bet: £10 SNR at 2.00. Net expected profit?",a:"£4.40",detail:"Qualifier cost: £0.60. Free bet EV: £5.00. Net: £4.40."},
+{q:"You use a £20 SNR free bet on a 10-fold accumulator at combined odds of 500. Is this smart?",a:"No — expected value is the same as a single bet at 500",detail:"EV = £20 × (500−1)/500 = £19.96. But P(winning) = ~0.2%. A single bet at 5.00 gives EV = £16 with 20% chance of collecting."},
+{q:"£20 SNR free bet. Back @ 4.00, Lay @ 4.10, 5% commission. Calculate the guaranteed profit.",a:"≈ £14.08",detail:"Lay stake = 20 × 3 / (3.10 + 0.95) = 60 / 4.05 = £14.81. Guaranteed ≈ £14.08."},
+{q:"£50 SNR free bet. Back @ 6.00, Lay @ 6.40, 2% commission. Guaranteed profit?",a:"≈ £38",detail:"Lay stake = 50 × 5 / (5.40 + 0.98) = 250 / 6.38 = £39.18. Guaranteed ≈ £38.41."},
+{q:"The back-lay spread is 4.00/4.50. Is this good for a lay-off?",a:"Poor — the spread is too wide",detail:"Ideal spreads are 0.02-0.10. At 0.50 you're losing substantial value to the spread."},
+{q:"You have 5 different bookmaker sign-up offers, each 'bet £20 get £20 free'. Total expected profit if done optimally?",a:"≈ £75",detail:"5 × ~£15 per offer = £75."},
+{q:"A bookmaker offers 'enhanced odds: Arsenal to win at 6.00 (was 1.80), max £10'. What is this worth?",a:"Up to £42 in extra expected value",detail:"Enhanced EV far exceeds normal EV. Best enhanced odds offers can exceed 100% retention."},
+{q:"'Money back as free bet if your team loses by exactly 1 goal.' How often does the insurance trigger?",a:"≈ 15-20% of the time",detail:"Losing by exactly 1 goal happens roughly 15-20% of the time. Net insurance value: ~12% of stake."},
+{q:"You can do 20 sign-up offers across different bookmakers over a month. Average free bet: £25, average retention 70%. Monthly income?",a:"£350",detail:"20 × £25 × 0.70 = £350."},
+{q:"After completing all sign-up offers, reload offers average £5 free bet, 3 per week. Annual value?",a:"≈ £546",detail:"3 × £5 × 0.70 × 52 = £546."},
+{q:"Should you use free bets on accumulators?",a:"Never (for SNR free bets)",detail:"An SNR free bet has the same expected value whether used as a single or an acca. But singles give a reasonable chance of collecting. Use free bets as singles on the longest odds available."}
+];
+
+function modFreeBets(c){
+c.innerHTML=`
+<div class="tut">
+  <h2>Module 14: Free Bet Mathematics</h2>
+
+  <div class="pt" style="border-left:3px solid var(--accent);background:var(--accent-dim);padding:1rem;border-radius:0 6px 6px 0;margin-bottom:1.5rem;">
+    Bookmakers give away millions in free bets. Most punters waste them on accumulators. The maths of free bet extraction is precise — and the optimal strategy maximises every penny.
+  </div>
+
+  <h3>What a Free Bet Is Actually Worth</h3>
+
+  <div class="mb">A "free £20 bet" is NOT worth £20.
+
+SNR (Stake Not Returned) — the standard type:
+  Value = Face Value × (Odds − 1) / Odds
+
+  At 2.00: £20 × 1/2     = £10.00 (50%)
+  At 3.00: £20 × 2/3     = £13.33 (67%)
+  At 5.00: £20 × 4/5     = £16.00 (80%)
+  At 10.00: £20 × 9/10   = £18.00 (90%)
+
+Higher odds → higher free bet value.
+
+SR (Stake Returned) — rare:
+  Value = Face Value (at any odds) = 100%
+  Use on shortest odds to minimise variance.</div>
+
+  <div class="pln">SNR free bets: back the longshot. SR free bets: back the favourite. The optimal strategy for each is the exact opposite.</div>
+
+  <h3>Qualifying Bets — The Cost of Unlocking</h3>
+
+  <div class="mb">"Bet £20 get £20 free" offer:
+
+Step 1: Qualifying bet
+  £20 at odds 2.00, ~5% overround
+  Expected loss: £20 × 0.05 = £1.00
+
+Step 2: Free bet (SNR)
+  £20 at odds 5.00
+  Expected value: £20 × 4/5 = £16.00
+
+Net profit: £16.00 − £1.00 = £15.00
+Retention: £15 / £20 = 75%
+
+Most sign-up offers yield 60-80% of face value.</div>
+
+  <h3>Lay-Off for Guaranteed Profit</h3>
+
+  <div class="mb">£20 SNR free bet. Back @ 5.00, Lay @ 5.20, 2% commission.
+
+Lay stake = £20 × (5.00−1) / [(5.20−1) + (1−0.02)]
+         = 80 / [4.20 + 0.98] = 80 / 5.18 = £15.44
+
+If selection wins:
+  Bookmaker: +£80 (profit, no stake return)
+  Exchange: −£15.44 × 4.20 = −£64.85
+  Net: +£15.15
+
+If selection loses:
+  Bookmaker: £0
+  Exchange: +£15.44 × 0.98 = +£15.13
+  Net: +£15.13
+
+Guaranteed: ~£15.14 regardless of result.</div>
+
+  <div class="pln">By laying off, you turn a probabilistic free bet into guaranteed cash. This is arithmetic, not gambling.</div>
+
+  <h3>Offer Types Ranked by Value</h3>
+
+  <div class="mb">Expected retention rate by offer type:
+
+1. "Bet X get X free" (SNR):     60-80%
+2. Enhanced odds (e.g. 30/1):     Variable, sometimes 100%+
+3. "Bet X get X in small bets":   50-70%
+4. "Money back if you lose":      30-50%
+5. "Acca insurance":              5-15% ← Worst.</div>
+
+  <div class="dg">If you find yourself spending excessive time or money chasing offers, please contact the National Gambling Helpline: 0808 8020 133 (free, 24/7).</div>
+</div>`;
+
+  // Free bet calculator
+  renderTool(c,{
+    name:'Free Bet Calculator',
+    inputs:[
+      {id:'fb-face',label:'Free Bet Face Value (£)',type:'number',default:20,step:1},
+      {id:'fb-odds',label:'Odds (decimal)',type:'number',default:5.00,step:0.1},
+      {id:'fb-type',label:'Type',type:'select',options:['SNR','SR']}
+    ]
+  },function(v){
+    var face=v['fb-face'],odds=v['fb-odds'],type=v['fb-type'];
+    if(type==='SR')return{Value:'£'+face.toFixed(2),Retention:'100%',Strategy:'Use on short odds to minimise variance'};
+    var val=face*(odds-1)/odds;
+    return{Value:'£'+val.toFixed(2),Retention:(val/face*100).toFixed(1)+'%',Strategy:odds>=4?'Good odds for SNR':'Use higher odds (4.00+) for better retention'};
+  });
+
+  c.insertAdjacentHTML('beforeend','<button class="nb" style="margin-top:.5rem" onclick="startScenarios(SCENARIOS_14,\'Free Bet Maths\')">Start Practice (15 scenarios)</button>');
+}
+
+// ════════════════════════════════════════
+//  MODULE 15: Exchange Mathematics
+// ════════════════════════════════════════
+var SCENARIOS_15=[
+{q:"You lay Arsenal @ 2.20 for £50. Arsenal win. How much do you pay?",a:"£60",detail:"Liability = £50 × (2.20 − 1) = £50 × 1.20 = £60."},
+{q:"You lay a draw @ 3.50 for £30. The match is a draw. Your loss?",a:"£75",detail:"Liability = £30 × (3.50 − 1) = £30 × 2.50 = £75."},
+{q:"You back at 2.40, £100. Win. Betfair 5% commission. Net profit?",a:"£133",detail:"Gross profit: £140. Commission: £140 × 0.05 = £7. Net: £133."},
+{q:"Same bet on Smarkets (2% commission). Net profit?",a:"£137.20",detail:"Commission: £140 × 0.02 = £2.80. Net: £137.20."},
+{q:"Exchange back price: 3.00. What are the effective odds after 5% Betfair commission?",a:"2.90",detail:"Effective = 1 + (odds − 1) × (1 − commission) = 1 + 2.00 × 0.95 = 2.90."},
+{q:"Bookmaker offers 1.85 on a selection. Exchange back price is 1.92, 2% commission. Effective exchange odds?",a:"1.902",detail:"Effective = 1 + 0.92 × 0.98 = 1.9016. Exchange is better than the bookmaker's 1.85."},
+{q:"Pre-match: Back @ 3.00, £30. In-play: Lay @ 1.80, £?. What lay stake for equal profit?",a:"£50",detail:"Lay stake = (30 × 3.00) / 1.80 = 90 / 1.80 = £50."},
+{q:"From the previous scenario, what is the guaranteed profit (before commission)?",a:"£20",detail:"Win: back returns £90, lay costs £50×0.80=£40. Profit: £90−£30−£40=£20. Lose: lay profit £50, back loss £30. Net £20."},
+{q:"Exchange market: Back 2.10 / Lay 2.14. What is the effective overround?",a:"≈ 1.9%",detail:"Effective spread contributes ~1.9% margin."},
+{q:"You place 300 bets per year at £25. Bookmaker overround 4%, exchange effective overround 1.5%. Annual saving by using the exchange?",a:"£187.50",detail:"Bookmaker: £300. Exchange: £112.50. Saving: £187.50."},
+{q:"You want to lay a 10/1 shot (11.00) for £10. What's your liability?",a:"£100",detail:"Liability = £10 × (11.00 − 1) = £100."},
+{q:"Cash-out offer from bookmaker: £42. True value by laying on exchange: £57. Bookmaker's margin on the cash-out?",a:"26.3%",detail:"(57 − 42) / 57 = 0.263 = 26.3%."},
+{q:"You backed at 4.00, £20. Price shortens to 2.50. Approximate guaranteed profit by laying?",a:"≈ £11.50",detail:"Back profit £60, lay cost ~£48.50, commission ~£0.60. Net ≈ £11.50."},
+{q:"Why don't exchanges restrict winning accounts like bookmakers do?",a:"Exchanges profit from commission regardless of who wins",detail:"The exchange takes commission from the winner. More active, successful traders = more commission revenue."},
+{q:"Bookmaker 1X2: 2.10/3.40/3.60 (overround 4.2%). Exchange midpoints: 2.18/3.55/3.75. Overround?",a:"≈ 1.5%",detail:"1/2.18 + 1/3.55 + 1/3.75 = 0.459 + 0.282 + 0.267 = 1.008. Overround: 0.8%. Plus commission ≈ 1.5%."}
+];
+
+function modExchange(c){
+c.innerHTML=`
+<div class="tut">
+  <h2>Module 15: Exchange Mathematics</h2>
+
+  <div class="pt" style="border-left:3px solid var(--accent);background:var(--accent-dim);padding:1rem;border-radius:0 6px 6px 0;margin-bottom:1.5rem;">
+    On an exchange, you bet against other punters, not the bookmaker. The margin drops from 4-8% to 1-3%. That's the single biggest mathematical improvement available to any bettor.
+  </div>
+
+  <h3>Back vs Lay</h3>
+
+  <div class="mb">BACK = bet on something to happen (traditional bet)
+LAY  = bet against something (be the bookmaker)
+
+You LAY Arsenal to win @ 2.00 for £20:
+  Arsenal win: you pay £20 to the backer
+  Arsenal don't win: you keep £20 (the backer's stake)
+
+  Liability = stake × (odds − 1) = £20 × 1.0 = £20
+  Potential profit = £20</div>
+
+  <h3>Commission — How Exchanges Make Money</h3>
+
+  <div class="mb">Betfair: 5% on net winning profit per market
+Smarkets: 2% on net winning profit per market
+
+Back Arsenal @ 2.10, £100. Arsenal win.
+  Gross profit: £110
+  Betfair: £110 × 5% = £5.50 → Net: £104.50
+  Smarkets: £110 × 2% = £2.20 → Net: £107.80
+
+Effective odds after commission:
+  Betfair: 2.045 (from 2.10)
+  Smarkets: 2.078 (from 2.10)
+
+Still better than the bookmaker's 0.15+ margin.</div>
+
+  <h3>True Overround: Exchange vs Bookmaker</h3>
+
+  <div class="mb">Man Utd vs Liverpool
+
+Bookmaker:
+  Utd 2.80 | Draw 3.40 | Liverpool 2.60
+  Overround: 3.6%
+
+Exchange (back prices):
+  Utd 2.92 | Draw 3.55 | Liverpool 2.72
+  Effective overround ≈ 1.0%
+
+Per 500 bets at £20: exchange saves £260/year.</div>
+
+  <h3>Trading — Backing and Laying for Locked Profit</h3>
+
+  <div class="mb">Pre-match: Back Arsenal @ 2.50, £40
+Arsenal score early.
+In-play: Lay Arsenal @ 1.50, £66.67
+
+If Arsenal win:
+  Back profit: £60, Lay loss: −£33.33
+  Net: +£26.67
+
+If Arsenal don't win:
+  Back loss: −£40, Lay profit: +£66.67
+  Net: +£26.67
+
+Guaranteed profit: £26.67 (before commission)
+
+Lay stake formula for equal profit:
+  Lay stake = (Back stake × Back odds) / Lay odds</div>
+
+  <div class="pln">Trading isn't gambling — it's locking in profit when odds move in your favour.</div>
+
+  <h3>When to Use Bookmaker vs Exchange</h3>
+  <div class="mb">Bookmaker advantages:
+  Enhanced odds offers / free bets
+  Best Odds Guaranteed (horse racing)
+  No commission on winnings
+
+Exchange advantages:
+  Lower margin (1% vs 4%+)
+  Lay betting
+  Trading in-play
+  No account restrictions for winning
+  The closest thing to "true" odds</div>
+
+  <div class="gd">Use bookmakers for: offers, promos, enhanced odds. Use exchanges for: every regular bet where you're paying your own money.</div>
+</div>`;
+
+  // Exchange calculator
+  renderTool(c,{
+    name:'Exchange Calculator',
+    inputs:[
+      {id:'ex-type',label:'Action',type:'select',options:['Back','Lay']},
+      {id:'ex-odds',label:'Odds',type:'number',default:2.50,step:0.01},
+      {id:'ex-stake',label:'Stake (£)',type:'number',default:20,step:1},
+      {id:'ex-comm',label:'Commission (%)',type:'number',default:5,step:0.5}
+    ]
+  },function(v){
+    var type=v['ex-type'],odds=v['ex-odds'],stake=v['ex-stake'],comm=v['ex-comm']/100;
+    if(type==='Back'){
+      var gross=(odds-1)*stake;
+      var net=gross*(1-comm);
+      return{'Gross Profit (if win)':'£'+gross.toFixed(2),'Commission':'£'+(gross*comm).toFixed(2),'Net Profit (if win)':'£'+net.toFixed(2),'Loss (if lose)':'£'+stake.toFixed(2),'Effective Odds':(1+(odds-1)*(1-comm)).toFixed(3)};
+    }else{
+      var liability=stake*(odds-1);
+      var profit=stake*(1-comm);
+      return{'Liability (if lose)':'£'+liability.toFixed(2),'Profit (if win)':'£'+profit.toFixed(2),'Commission (on win)':'£'+(stake*comm).toFixed(2)};
+    }
+  });
+
+  c.insertAdjacentHTML('beforeend','<button class="nb" style="margin-top:.5rem" onclick="startScenarios(SCENARIOS_15,\'Exchange Mathematics\')">Start Practice (15 scenarios)</button>');
+}
+
+// ════════════════════════════════════════
+//  MODULE 16: In-Play Mathematics
+// ════════════════════════════════════════
+var SCENARIOS_16=[
+{q:"Arsenal vs Palace. Pre-match: λ_home=1.80, λ_away=0.90. It's 0-0 at 60 minutes. What is Arsenal's updated win probability?",a:"≈ 38.5%",detail:"Remaining: 30/90=0.333. λ_home_remaining=0.60, λ_away_remaining=0.30. P(0-0 remaining)=0.407 (draw most likely). Arsenal win ≈38.5%."},
+{q:"Same match. Arsenal score to make it 1-0 at 70 min. 20 min remain. λ_away_remaining=0.20. Probability Palace equalise?",a:"18.1%",detail:"P(Palace ≥1) = 1 - e^(-0.20) = 0.181. Arsenal win probability ≈85-87%."},
+{q:"It's 75 minutes, 1-1. Home team dominating — 72% possession last 15 min. Home Win at 2.40. Is this likely value?",a:"Almost certainly not",detail:"Short-term possession correlation with goals: r≈0.08. The bookmaker's model uses season-long xG rates. At 2.40 (implied 41.7%) you're likely overpaying."},
+{q:"Match has total xG of 2.80 pre-match. At half-time it's 0-0. P(Over 2.5 total)?",a:"≈ 16.6%",detail:"λ_total_2nd_half = 1.40. P(≥3 goals in 2nd half) = 1 - P(≤2) ≈ 16.6%. Fair odds: ~6.00."},
+{q:"You backed Over 2.5 at 2.10, £15. It's 2-0 at 55 min (λ_remaining ≈ 0.95). Cash-out offered: £19.50. True value?",a:"≈ £19.30",detail:"P(Over wins) = 1 - e^(-0.95) = 61.3%. EV = 0.613 × £31.50 = £19.30. Cash-out is approximately fair."},
+{q:"You backed Man City to win the league at 5.00, £50. Current odds 1.60. Bookmaker cash-out: £120. Cash-out margin?",a:"23.2%",detail:"True value: 0.625 × £250 = £156.25. Cash-out: £120. Margin: (156.25-120)/156.25 = 23.2%."},
+{q:"Pre-match overround: 4%. In-play overround: 10%. Per £100 wagered, how much more do you lose in-play?",a:"£6 more",detail:"Pre-match: £4. In-play: £10. Difference: £6. You lose 2.5× faster in-play."},
+{q:"A PL match in-play. Market suspends for 8 seconds during a corner, then reopens at the same odds. What does this tell you?",a:"Nothing — the corner didn't result in a goal",detail:"96.5% of corners don't produce goals. The suspension is precautionary. The unchanged odds mean nothing happened."},
+{q:"Market suspends and reopens with Home Win shortened from 2.50 to 1.80, no goal scored. What happened?",a:"Most likely a red card for the away team",detail:"A sending-off dramatically changes expected goal rates. The model reprices instantly."},
+{q:"You're watching on a 30-second delay. You see a goal. Can you profit by betting before the bookie suspends?",a:"No — the bookie's data feed is faster than TV",detail:"The bookmaker receives data via low-latency feeds (1-3s delay). Your stream is 15-60s behind."},
+{q:"Time from event to odds update: Bookie algorithm 0.5-2s, You 15-45s. What advantage do you have?",a:"None — the value window closed 30 seconds ago",detail:"By the time you place an in-play bet, the odds have already adjusted 10-20 times."},
+{q:"Over a season (40 weekends, £50/weekend), in-play at 10% overround vs pre-match at 4%. Annual cost of in-play?",a:"£120 more per year",detail:"In-play: 40×£50×10% = £200. Pre-match: 40×£50×4% = £80. Difference: £120."},
+{q:"Bookmaker offers partial cash-out at same margin as full cash-out. When does this make mathematical sense?",a:"Rarely — use an exchange to hedge instead",detail:"Partial cash-out applies the same 15-30% margin. The exchange is almost always better."},
+{q:"You identify pre-match value at 3.20. Don't take it. At 0-0 at HT, same team is now 3.80, edge slightly higher. Was waiting correct?",a:"No — pre-match was the correct time to bet",detail:"In-play overround is higher (7-10% vs 4-5%). Waiting introduced execution risk. Take genuine pre-match value when you see it."},
+{q:"Liverpool vs Everton. λ_home=2.10, λ_away=0.80. Everton score first — 0-1 at 25 min. Approximate P(Liverpool win)?",a:"≈ 42-45%",detail:"Liverpool need ≥2 more than Everton in remaining 65 min. λ_home_rem=1.517, λ_away_rem=0.578. P(Liverpool win from 0-1) ≈ 42-45%."}
+];
+
+function modInPlay(c){
+c.innerHTML=`
+<div class="tut">
+  <h2>Module 16: In-Play Mathematics & Live Betting Traps</h2>
+
+  <div class="pt" style="border-left-color:var(--red-bright);background:rgba(239,83,80,0.08);">
+    In-play betting is the fastest-growing segment of the betting industry — and the segment where the bookmaker's mathematical advantage is largest. You are betting against algorithms that reprice faster than you can think.
+  </div>
+
+  <h3>How In-Play Odds Are Calculated</h3>
+  <p>The core model is a time-adjusted Poisson process — the same Dixon-Coles framework from Module 11, recalculated for remaining match time.</p>
+
+  <div class="mb">Pre-match: Arsenal vs Crystal Palace
+  λ_home = 1.80, λ_away = 0.90
+
+Pre-match: Arsenal win 58.5% | Draw 23.2% | Palace 18.3%
+
+10 min played, 0-0:
+  Remaining: 80/90 = 88.9%
+  λ_home_remaining = 1.80 × 0.889 = 1.60
+  Updated: Arsenal win ~56% | Draw ~27% | Palace ~17%
+
+35 min played, Arsenal 1-0:
+  Remaining: 55/90 = 61.1%
+  λ_away_remaining = 0.90 × 0.611 = 0.55
+  P(Palace score 0) = e^(-0.55) = 0.577
+  Arsenal win probability jumps to ~78%</div>
+
+  <div class="pln">In-play odds aren't guesses — they're calculated by algorithms using Poisson mathematics adjusted for time and score. The model repriced instantly. By the time you see the odds, it may have updated again.</div>
+
+  <h3>The Suspension Trap</h3>
+
+  <div class="mb">Why bookmakers suspend at key moments:
+
+A penalty is awarded.
+  P(goal from penalty) ≈ 76%
+  If the bookmaker doesn't suspend:
+  A bettor backing at pre-penalty odds has +17.8% edge
+
+A corner kick:
+  P(goal from corner) ≈ 3.5%
+  Smaller edge, but exploitable over thousands.</div>
+
+  <h3>The Increased In-Play Overround</h3>
+
+  <div class="mb">Typical overround comparison:
+
+Pre-match 1X2 market:      3-5%
+In-play 1X2 market:        6-12%
+In-play next goal market:   8-15%
+In-play correct score:      20-40%
+
+At 10% in-play overround vs 4% pre-match:
+  Per £100 wagered: £10 expected loss vs £4
+  You lose 2.5× faster betting in-play.</div>
+
+  <div class="dg">The bookmaker charges double the margin for in-play bets. If you can identify value pre-match, bet pre-match.</div>
+
+  <h3>Cash-Out: The Hidden Margin</h3>
+
+  <div class="mb">You backed Arsenal to win the league at 10.00, £20 stake.
+Current odds: 3.50.
+
+Your bet's mathematical value:
+  P(Arsenal win) = 1/3.50 = 28.6%
+  EV = 0.286 × £200 = £57.14
+
+What the bookmaker offers: £42.00
+
+The gap: 26.5% margin.
+
+Alternative: lay on Betfair at 3.60.
+  Even the exchange (with spread) beats cash-out.</div>
+
+  <div class="pln">Cash-out is the bookmaker buying back your bet at a discount. A 26.5% discount. If you want to lock in profit, lay on an exchange.</div>
+
+  <h3>When In-Play Betting Makes Sense</h3>
+
+  <div class="gd">
+    <strong>1. You have information the model doesn't.</strong> Tactical substitution the model won't see for minutes.<br><br>
+    <strong>2. You're trading on an exchange.</strong> Back pre-match, lay in-play. This is arbitrage, not gambling.<br><br>
+    <strong>3. You're closing a losing position</strong> via exchange lay-off (not bookmaker cash-out).
+  </div>
+
+  <h3>The Speed Disadvantage</h3>
+
+  <div class="mb">Time from event to odds update:
+
+Bookmaker algorithm: 0.5-2 seconds
+Exchange market makers: 1-5 seconds
+You (watching TV + opening app): 15-45 seconds
+
+By the time you place an in-play bet:
+  The value window (if it existed) closed 30 seconds ago.</div>
+
+  <div class="pt">The mathematical reality of in-play betting for retail punters: higher overround, slower execution, emotional decision-making, and algorithmic opponents. Use in-play for exchange trading and position management — not for new speculative bets.</div>
+
+  <p style="margin-top:1.5rem;padding:1rem;background:rgba(37,99,235,0.08);border-left:3px solid #2563eb;border-radius:0 6px 6px 0;">
+    <strong style="color:#2563eb;">This completes Sports Betting Maths.</strong> Across 16 modules, you've learned: how odds work, implied probability, bookmaker overround, value identification, accumulator traps, market analysis, bankroll management, Asian handicaps, conditional probability, Poisson/Dixon-Coles modelling, common mistakes, discipline and selectivity, free bet extraction, exchange mathematics, and in-play pricing.
+  </p>
+
+  <div class="dg" style="margin-top:1rem;">
+    <strong>National Gambling Helpline:</strong> 0808 8020 133 (free, 24/7)<br>
+    <strong>GamCare:</strong> www.gamcare.org.uk<br>
+    <strong>BeGambleAware:</strong> www.begambleaware.org<br><br>
+    This is mathematical education, not betting advice.
+  </div>
+</div>`;
+
+  // In-Play Odds Modeller
+  renderTool(c,{
+    name:'In-Play Odds Modeller',
+    inputs:[
+      {id:'ip-lh',label:'Home xG (per 90)',type:'number',default:1.50,step:0.05},
+      {id:'ip-la',label:'Away xG (per 90)',type:'number',default:1.10,step:0.05},
+      {id:'ip-min',label:'Current minute',type:'number',default:45,step:1},
+      {id:'ip-hg',label:'Home goals scored',type:'number',default:1,step:1},
+      {id:'ip-ag',label:'Away goals scored',type:'number',default:0,step:1}
+    ]
+  },function(v){
+    var lh=v['ip-lh'],la=v['ip-la'],min=v['ip-min'],hg=v['ip-hg'],ag=v['ip-ag'];
+    var rem=(90-min)/90;
+    var lhR=lh*rem,laR=la*rem;
+    function poisson(l,k){return Math.pow(l,k)*Math.exp(-l)/([1,1,2,6,24,120,720][k]||1)}
+    var pH=0,pD=0,pA=0;
+    for(var i=0;i<=6;i++)for(var j=0;j<=6;j++){
+      var p=poisson(lhR,i)*poisson(laR,j);
+      var fh=hg+i,fa=ag+j;
+      if(fh>fa)pH+=p;else if(fh===fa)pD+=p;else pA+=p;
+    }
+    var pU25=0;
+    for(var i=0;i<=6;i++)for(var j=0;j<=6;j++){if(hg+i+ag+j<=2)pU25+=poisson(lhR,i)*poisson(laR,j)}
+    return{
+      'Score':hg+'-'+ag+' at '+min+' min',
+      'Remaining xG':'Home '+lhR.toFixed(2)+' / Away '+laR.toFixed(2),
+      'Home Win':((pH*100).toFixed(1))+'% (fair: '+(pH>0?(1/pH).toFixed(2):'n/a')+')',
+      'Draw':((pD*100).toFixed(1))+'% (fair: '+(pD>0?(1/pD).toFixed(2):'n/a')+')',
+      'Away Win':((pA*100).toFixed(1))+'% (fair: '+(pA>0?(1/pA).toFixed(2):'n/a')+')',
+      'Over 2.5 total':(((1-pU25)*100).toFixed(1))+'%'
+    };
+  });
+
+  c.insertAdjacentHTML('beforeend','<button class="nb" style="margin-top:.5rem" onclick="startScenarios(SCENARIOS_16,\'In-Play Maths\')">Start Practice (15 scenarios)</button>');
+}
 </script>
 </body>
 </html>
