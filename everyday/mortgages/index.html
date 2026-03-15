@@ -1,0 +1,542 @@
+<!DOCTYPE html>
+<html lang="en-GB">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Mortgage Maths — How Your Biggest Debt Actually Works | MathsWins</title>
+<meta name="description" content="See exactly how your mortgage payment splits between interest and principal. Interactive amortisation calculator, overpayment savings, 25 vs 30 year comparison, and the maths behind every monthly payment. Free.">
+<meta property="og:title" content="Mortgage Maths — 67% of Your First Payment is Interest">
+<meta property="og:description" content="Most homeowners don't understand their own mortgage. We show you every payment, every month, split into interest and principal — with live calculators.">
+<meta property="og:url" content="https://mathswins.co.uk/everyday/mortgages/">
+<meta property="og:type" content="website">
+<link rel="canonical" href="https://mathswins.co.uk/everyday/mortgages/">
+<link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Crimson+Pro:ital,wght@0,400;0,700;1,400&family=DM+Mono:wght@400;500&family=Outfit:wght@300;400;600;700&display=swap" rel="stylesheet">
+<script type="application/ld+json">
+{"@context":"https://schema.org","@type":"Course","name":"Mortgage Maths","description":"How mortgage amortisation works, overpayment savings, and the real cost of term length.","provider":{"@type":"EducationalOrganization","name":"MathsWins","url":"https://mathswins.co.uk"},"educationalLevel":"Adult Education","isAccessibleForFree":true,"hasCourseInstance":{"@type":"CourseInstance","courseMode":"online","courseWorkload":"Self-paced"}}
+</script>
+<script async src="https://www.googletagmanager.com/gtag/js?id=G-CLNF7GSB28"></script>
+<script>window.dataLayer=window.dataLayer||[];function gtag(){dataLayer.push(arguments);}gtag('js',new Date());gtag('config','G-CLNF7GSB28',{send_page_view:true,storage:'none',anonymize_ip:true});</script>
+<style>
+:root{--bg:#050709;--surface:#0a0d14;--surface2:#0f1319;--border:#161c28;--border2:#1e2638;--sky:#0ea5e9;--sky-dim:rgba(14,165,233,0.1);--green-bright:#2dd4a0;--red-bright:#ef5350;--gold:#d4a847;--text:#c8cdd8;--text-bright:#e8ecf4;--muted:#4a5568;--accent:var(--sky);--accent-dim:var(--sky-dim)}
+*{margin:0;padding:0;box-sizing:border-box}
+body{background:var(--bg);color:var(--text);font-family:'Outfit',sans-serif;font-weight:400;line-height:1.7;-webkit-font-smoothing:antialiased}
+.container{max-width:860px;margin:0 auto;padding:0 1.5rem}
+header{padding:2rem 0 1rem;border-bottom:1px solid var(--border)}
+.breadcrumb{font-size:.8rem;color:var(--muted);margin-bottom:1rem}.breadcrumb a{color:var(--muted);text-decoration:none}.breadcrumb a:hover{color:var(--accent)}
+.section-label{font-family:'Outfit',sans-serif;font-weight:600;font-size:.75rem;text-transform:uppercase;letter-spacing:.15em;color:var(--accent);margin-bottom:.5rem}
+h1{font-family:'Bebas Neue',sans-serif;font-size:clamp(2.5rem,6vw,3.5rem);color:var(--text-bright);letter-spacing:.03em;line-height:1.1;margin-bottom:.5rem}
+.subtitle{font-family:'Crimson Pro',serif;font-style:italic;font-size:1.15rem;color:var(--accent);margin-bottom:1.5rem}
+.stats-bar{display:grid;grid-template-columns:repeat(auto-fit,minmax(140px,1fr));gap:1px;background:var(--border);border:1px solid var(--border);border-radius:8px;overflow:hidden;margin-bottom:2rem}
+.stat-cell{background:var(--surface);padding:1rem;text-align:center}
+.stat-num{font-family:'DM Mono',monospace;font-weight:500;font-size:1.5rem;color:var(--accent);display:block}
+.stat-label{font-family:'Outfit',sans-serif;font-size:.7rem;text-transform:uppercase;letter-spacing:.1em;color:var(--muted);margin-top:.25rem}
+.module-nav{display:flex;flex-wrap:wrap;gap:.5rem;margin-bottom:2.5rem}
+.module-pill{font-family:'Outfit',sans-serif;font-weight:600;font-size:.8rem;padding:.5rem 1rem;background:var(--surface);border:1px solid var(--border);border-radius:6px;color:var(--muted);cursor:pointer;transition:all .2s;white-space:nowrap}
+.module-pill:hover{border-color:var(--accent);color:var(--text)}
+.module-pill.active{background:var(--accent-dim);border-color:var(--accent);color:var(--accent)}
+.module-content{display:none}.module-content.active{display:block}
+.module-header{margin-bottom:2rem}
+.module-header h2{font-family:'Bebas Neue',sans-serif;font-size:1.8rem;color:var(--text-bright);letter-spacing:.03em;margin-bottom:.5rem}
+.module-header p{font-family:'Crimson Pro',serif;font-style:italic;color:var(--accent);font-size:1.05rem}
+.tut{background:var(--surface);border:1px solid var(--border);border-radius:10px;padding:2rem;margin-bottom:2rem}
+.tut h3{font-family:'Bebas Neue',sans-serif;font-size:1.3rem;color:var(--text-bright);letter-spacing:.03em;margin-bottom:1rem}
+.tut p{margin-bottom:1rem;line-height:1.8}.tut p:last-child{margin-bottom:0}
+.pt{border-left:3px solid var(--accent);background:var(--accent-dim);padding:1rem 1.25rem;border-radius:0 6px 6px 0;margin:1.5rem 0}
+.dg{border-left:3px solid var(--red-bright);background:rgba(239,83,80,.08);padding:1rem 1.25rem;border-radius:0 6px 6px 0;margin:1.5rem 0}
+.gd{border-left:3px solid var(--green-bright);background:rgba(45,212,160,.08);padding:1rem 1.25rem;border-radius:0 6px 6px 0;margin:1.5rem 0}
+.mb{font-family:'DM Mono',monospace;font-size:.9rem;background:var(--bg);border:1px solid var(--border2);border-radius:6px;padding:1.25rem 1.5rem;margin:1.5rem 0;line-height:1.9;overflow-x:auto;color:var(--text-bright)}
+.mb .highlight{color:var(--accent);font-weight:500}.mb .result{color:var(--green-bright);font-weight:500}.mb .negative{color:var(--red-bright);font-weight:500}
+.pln{font-family:'Crimson Pro',serif;font-style:italic;color:var(--accent);background:rgba(14,165,233,.05);border-left:2px solid rgba(14,165,233,.3);padding:1rem 1.25rem;border-radius:0 6px 6px 0;margin:1.5rem 0;font-size:1.05rem;line-height:1.7}
+.calc-container{background:var(--surface2);border:1px solid var(--border2);border-radius:10px;padding:2rem;margin:2rem 0}
+.calc-container h3{font-family:'Bebas Neue',sans-serif;font-size:1.3rem;color:var(--text-bright);letter-spacing:.03em;margin-bottom:.5rem}
+.calc-subtitle{font-family:'Crimson Pro',serif;font-style:italic;color:var(--muted);font-size:.95rem;margin-bottom:1.5rem}
+.input-row{display:flex;align-items:center;gap:1rem;margin-bottom:1rem;flex-wrap:wrap}
+.input-row label{font-family:'Outfit',sans-serif;font-weight:600;font-size:.85rem;color:var(--text);white-space:nowrap;min-width:160px}
+.calc-input{font-family:'DM Mono',monospace;font-size:1.1rem;font-weight:500;color:var(--accent);background:var(--bg);border:1px solid var(--border2);border-radius:6px;padding:.6rem .8rem;width:140px;outline:none;transition:border-color .2s}
+.calc-input:focus{border-color:var(--accent)}
+.calc-slider{flex:1;min-width:150px;-webkit-appearance:none;appearance:none;height:6px;background:var(--border2);border-radius:3px;outline:none}
+.calc-slider::-webkit-slider-thumb{-webkit-appearance:none;width:20px;height:20px;border-radius:50%;background:var(--accent);cursor:pointer;border:2px solid var(--bg)}
+.calc-slider::-moz-range-thumb{width:20px;height:20px;border-radius:50%;background:var(--accent);cursor:pointer;border:2px solid var(--bg)}
+.calc-results{display:grid;grid-template-columns:repeat(auto-fit,minmax(160px,1fr));gap:1px;background:var(--border);border:1px solid var(--border);border-radius:8px;overflow:hidden;margin-top:1.5rem}
+.calc-result-cell{background:var(--surface);padding:1rem;text-align:center}
+.calc-result-num{font-family:'DM Mono',monospace;font-weight:500;font-size:1.2rem;display:block}
+.calc-result-label{font-family:'Outfit',sans-serif;font-size:.7rem;text-transform:uppercase;letter-spacing:.1em;color:var(--muted);margin-top:.25rem}
+.schedule-table{width:100%;border-collapse:collapse;margin:1.5rem 0;font-size:.8rem}
+.schedule-table th{font-family:'Outfit',sans-serif;font-weight:600;font-size:.65rem;text-transform:uppercase;letter-spacing:.08em;color:var(--muted);text-align:right;padding:.5rem .4rem;border-bottom:1px solid var(--border2)}
+.schedule-table th:first-child{text-align:left}
+.schedule-table td{font-family:'DM Mono',monospace;padding:.35rem .4rem;border-bottom:1px solid var(--border);text-align:right;font-size:.75rem}
+.schedule-table td:first-child{text-align:left;font-family:'Outfit',sans-serif;color:var(--text-bright)}
+.schedule-table .interest-col{color:var(--red-bright)}.schedule-table .principal-col{color:var(--green-bright)}.schedule-table .balance-col{color:var(--text)}
+.bar-stack{display:flex;height:20px;border-radius:3px;overflow:hidden;margin:.3rem 0}
+.bar-interest{background:var(--red-bright);opacity:.6;transition:width .3s}.bar-principal{background:var(--green-bright);opacity:.6;transition:width .3s}
+.disclaimer{background:var(--surface);border:1px solid var(--border);border-radius:8px;padding:1.5rem;margin:3rem 0 2rem;font-size:.85rem;color:var(--muted);line-height:1.7}
+.disclaimer a{color:var(--accent);text-decoration:none}.disclaimer a:hover{text-decoration:underline}
+.related-courses{margin-top:3rem;padding:2rem;background:var(--surface);border:1px solid var(--border);border-radius:10px}
+.related-courses h3{font-family:'Bebas Neue',sans-serif;font-size:1.3rem;color:var(--text-bright);letter-spacing:.05em;margin-bottom:1.5rem}
+.related-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(250px,1fr));gap:1rem}
+.related-card{display:block;padding:1rem 1.25rem;background:var(--surface2);border:1px solid var(--border);border-left:3px solid var(--accent);border-radius:6px;text-decoration:none;transition:border-color .2s}
+.related-card:hover{border-left-color:#2dd4bf}
+.related-card-title{font-family:'Bebas Neue',sans-serif;font-size:1.05rem;color:var(--accent);display:block;margin-bottom:.25rem}
+.related-card-hook{font-family:'Crimson Pro',serif;font-style:italic;font-size:.85rem;color:var(--text);line-height:1.4}
+footer{text-align:center;padding:2rem 0;margin-top:2rem;border-top:1px solid var(--border);font-size:.75rem;color:var(--muted)}
+footer a{color:var(--muted);text-decoration:none}footer a:hover{color:var(--accent)}
+</style>
+</head>
+<body>
+<div class="container">
+
+<header>
+  <div class="breadcrumb"><a href="/">MathsWins</a> → <a href="/everyday/">Everyday Maths</a> → Mortgages</div>
+  <div class="section-label">Everyday Maths — Free</div>
+  <h1>MORTGAGE MATHS</h1>
+  <p class="subtitle">Your biggest financial commitment, and most people don't understand the first payment.</p>
+  <div class="stats-bar">
+    <div class="stat-cell"><span class="stat-num">67%</span><span class="stat-label">Year 1 — goes to interest</span></div>
+    <div class="stat-cell"><span class="stat-num">£133k</span><span class="stat-label">Interest on £200k / 25yr / 4.5%</span></div>
+    <div class="stat-cell"><span class="stat-num">£23k</span><span class="stat-label">Saved by £200/mo overpayment</span></div>
+    <div class="stat-cell"><span class="stat-num">£0</span><span class="stat-label">Cost — Always free</span></div>
+  </div>
+</header>
+
+<nav class="module-nav" id="moduleNav">
+  <div class="module-pill active" data-module="1">1 · How Amortisation Works</div>
+  <div class="module-pill" data-module="2">2 · The Real Cost of Term Length</div>
+  <div class="module-pill" data-module="3">3 · Overpayments</div>
+  <div class="module-pill" data-module="4">4 · Fixed vs Variable</div>
+  <div class="module-pill" data-module="5">5 · The Full Calculator</div>
+</nav>
+
+<!-- MODULE 1 -->
+<div class="module-content active" id="module1">
+  <div class="module-header">
+    <h2>MODULE 1: HOW AMORTISATION WORKS</h2>
+    <p>Why most of your early payments barely touch the debt.</p>
+  </div>
+
+  <div class="tut">
+    <h3>THE PAYMENT FORMULA</h3>
+    <p>Every repayment mortgage uses the same formula to calculate your monthly payment. It looks intimidating but the principle is simple: you pay the same amount every month, and the split between interest and principal shifts over time.</p>
+
+    <div class="mb">
+      Monthly payment M = P × [r(1+r)ⁿ] / [(1+r)ⁿ − 1]<br><br>
+      Where:<br>
+      P = loan amount (principal)<br>
+      r = monthly interest rate (annual rate ÷ 12)<br>
+      n = total number of monthly payments (years × 12)
+    </div>
+
+    <div class="pln">
+      You don't need to memorise this formula — that's what calculators are for. What matters is understanding what it produces: a fixed monthly payment that starts almost entirely as interest and gradually shifts to almost entirely principal.
+    </div>
+  </div>
+
+  <div class="tut">
+    <h3>WORKED EXAMPLE: £200,000 AT 4.5% OVER 25 YEARS</h3>
+    <p>This is close to a typical UK mortgage. Let's see what the first payment looks like.</p>
+
+    <div class="mb">
+      Loan: <span class="highlight">£200,000</span><br>
+      Rate: <span class="highlight">4.5%</span> annual → 0.375% monthly<br>
+      Term: <span class="highlight">25 years</span> (300 months)<br><br>
+      Monthly payment: <span class="result">£1,111.05</span><br><br>
+      <span class="highlight">Month 1:</span><br>
+      Interest: £200,000 × 0.375% = <span class="negative">£750.00</span><br>
+      Principal: £1,111.05 − £750.00 = <span class="result">£361.05</span><br>
+      Remaining balance: £199,638.95<br><br>
+      Interest share: <span class="negative">67.5%</span> of your payment<br>
+      Principal share: <span class="result">32.5%</span> of your payment
+    </div>
+
+    <div class="pln">
+      You paid £1,111. Only £361 actually reduced your debt. The other £750 — two thirds of your payment — went straight to the lender as the cost of borrowing. And next month's interest is calculated on £199,639, not £200,000, so the shift is glacially slow at first.
+    </div>
+  </div>
+
+  <div class="tut">
+    <h3>HOW THE SPLIT CHANGES OVER TIME</h3>
+    <p>The payment stays the same every month. But the split between interest and principal shifts dramatically:</p>
+
+    <div class="mb">
+      Year 1:  Interest <span class="negative">£8,920</span> | Principal <span class="result">£4,413</span> | Balance <span class="highlight">£195,587</span><br>
+      Year 5:  Interest <span class="negative">£8,394</span> | Principal <span class="result">£4,939</span> | Balance <span class="highlight">£177,016</span><br>
+      Year 10: Interest <span class="negative">£7,487</span> | Principal <span class="result">£5,846</span> | Balance <span class="highlight">£149,832</span><br>
+      Year 15: Interest <span class="negative">£6,170</span> | Principal <span class="result">£7,163</span> | Balance <span class="highlight">£116,252</span><br>
+      Year 20: Interest <span class="negative">£4,289</span> | Principal <span class="result">£9,044</span> | Balance <span class="highlight">£74,133</span><br>
+      Year 25: Interest <span class="negative">£1,560</span> | Principal <span class="result">£11,773</span> | Balance <span class="result">£0</span><br><br>
+      Total paid: <span class="negative">£333,315</span><br>
+      Total interest: <span class="negative">£133,315</span> (66.7% of the loan amount)
+    </div>
+
+    <div class="pln">
+      You borrowed £200,000. You paid back £333,315. The extra £133,315 is the price of borrowing — and most of it was paid in the first half of the mortgage. By year 20, your payments are mostly principal. By year 25, interest is a sliver. This is why overpaying early is so powerful — every pound of extra principal in year 1 saves interest for the next 24 years.
+    </div>
+
+    <div class="dg">
+      <strong>The uncomfortable truth:</strong> For the first 13 years of a 25-year mortgage at 4.5%, more than half of every payment goes to interest. You don't reach the crossover point — where principal exceeds interest — until you're past the halfway mark of the term.
+    </div>
+  </div>
+</div>
+
+<!-- MODULE 2 -->
+<div class="module-content" id="module2">
+  <div class="module-header">
+    <h2>MODULE 2: THE REAL COST OF TERM LENGTH</h2>
+    <p>Lower monthly payments. Much higher total cost. The trade-off nobody explains.</p>
+  </div>
+
+  <div class="tut">
+    <h3>25 YEARS VS 30 YEARS VS 35 YEARS</h3>
+    <p>Extending your mortgage term reduces monthly payments — that's why people do it. But the total cost difference is enormous.</p>
+
+    <div class="mb">
+      £200,000 at 4.5%:<br><br>
+      <span class="highlight">25 years:</span> £1,111/month | Total interest: <span class="negative">£133,315</span><br>
+      <span class="highlight">30 years:</span> £1,013/month | Total interest: <span class="negative">£164,813</span><br>
+      <span class="highlight">35 years:</span>   £949/month | Total interest: <span class="negative">£198,577</span><br><br>
+      25→30: save <span class="result">£98/month</span>, pay <span class="negative">£31,498 more</span> total<br>
+      25→35: save <span class="result">£162/month</span>, pay <span class="negative">£65,262 more</span> total
+    </div>
+
+    <div class="pln">
+      Extending from 25 to 30 years saves you £98 per month but costs an extra £31,498 in total interest. That's paying £31,498 for the privilege of having £98/month in your pocket. Each extra year of mortgage term costs you roughly £6,300 in additional interest at these rates.
+    </div>
+
+    <div class="pt">
+      <strong>The rule of thumb:</strong> Pick the shortest term you can comfortably afford. If cash flow is tight, take the longer term — but overpay when you can. A 30-year term with regular overpayments can end up cheaper than a 25-year term paid at the minimum, because you have flexibility.
+    </div>
+  </div>
+
+  <div class="tut">
+    <h3>THE 40-YEAR MORTGAGE</h3>
+    <p>Increasingly common for first-time buyers in the UK, especially with high property prices. The maths is sobering.</p>
+
+    <div class="mb">
+      £200,000 at 4.5% over 40 years:<br><br>
+      Monthly payment: <span class="result">£906</span><br>
+      Total interest: <span class="negative">£234,784</span><br>
+      Total repaid: <span class="negative">£434,784</span><br><br>
+      Compared to 25 years:<br>
+      Save <span class="result">£205/month</span><br>
+      Pay <span class="negative">£101,469 more</span> in total interest
+    </div>
+
+    <div class="pln">
+      A 40-year mortgage on £200,000 at 4.5% costs you £234,784 in interest — more than the amount you borrowed. You pay for the house, and then you pay for it again in interest. The monthly saving of £205 versus a 25-year term costs you over £100,000 in extra interest.
+    </div>
+  </div>
+</div>
+
+<!-- MODULE 3 -->
+<div class="module-content" id="module3">
+  <div class="module-header">
+    <h2>MODULE 3: THE POWER OF OVERPAYMENTS</h2>
+    <p>Small extra payments create disproportionately large savings. Here's why.</p>
+  </div>
+
+  <div class="tut">
+    <h3>WHY OVERPAYMENTS WORK SO WELL</h3>
+    <p>When you overpay, every extra pound goes directly to reducing the principal. This means next month's interest is calculated on a smaller balance. That saved interest itself reduces the balance further the following month. It compounds — the same exponential effect that makes debt expensive makes overpayments powerful.</p>
+
+    <div class="gd">
+      <strong>The earlier you overpay, the more you save.</strong> £100 extra in year 1 saves more interest than £100 extra in year 20, because the year-1 overpayment prevents interest being charged on that £100 for the remaining 24 years.
+    </div>
+  </div>
+
+  <div class="tut">
+    <h3>WORKED EXAMPLE: £200/MONTH OVERPAYMENT</h3>
+
+    <div class="mb">
+      £200,000 at 4.5% over 25 years:<br><br>
+      <span class="highlight">Without overpayment:</span><br>
+      Monthly: £1,111 | Term: 25 years | Interest: <span class="negative">£133,315</span><br><br>
+      <span class="highlight">With £200/month overpayment:</span><br>
+      Monthly: £1,311 | Term: <span class="result">20 years 7 months</span> | Interest: <span class="result">£110,040</span><br><br>
+      Interest saved: <span class="result">£23,275</span><br>
+      Term reduced by: <span class="result">4 years 5 months</span><br>
+      Total extra paid: £200 × 247 months = £49,400<br>
+      Net benefit: £23,275 saved on £49,400 invested = <span class="result">47% return</span>
+    </div>
+
+    <div class="pln">
+      You put in £49,400 extra over the life of the mortgage. You saved £23,275 in interest and got 4.5 years of your life back. That's effectively a 47% return on your overpayments — guaranteed, tax-free, and risk-free. No investment can promise that.
+    </div>
+
+    <div class="pt">
+      <strong>The 10% rule:</strong> Most UK fixed-rate mortgages allow overpayments of up to 10% of the outstanding balance per year without penalty. On a £200,000 mortgage, that's up to £20,000 in year one — far more than most people can afford. Check your terms, but you're almost certainly within the limit.
+    </div>
+  </div>
+
+  <div class="tut">
+    <h3>EVEN SMALL AMOUNTS MATTER</h3>
+
+    <div class="mb">
+      £200,000 at 4.5% over 25 years — overpayment comparison:<br><br>
+      +£50/month:  saves <span class="result">£6,800</span>, clears <span class="result">1yr 4mo</span> early<br>
+      +£100/month: saves <span class="result">£12,600</span>, clears <span class="result">2yr 7mo</span> early<br>
+      +£200/month: saves <span class="result">£23,275</span>, clears <span class="result">4yr 5mo</span> early<br>
+      +£500/month: saves <span class="result">£44,800</span>, clears <span class="result">8yr 10mo</span> early
+    </div>
+
+    <div class="pln">
+      Even £50 extra per month — roughly the price of two takeaway coffees per week — saves nearly £7,000 in interest and clears your mortgage over a year early. The returns are non-linear: doubling from £100 to £200 doesn't double the saving, it nearly doubles it. Compounding favours consistency.
+    </div>
+  </div>
+</div>
+
+<!-- MODULE 4 -->
+<div class="module-content" id="module4">
+  <div class="module-header">
+    <h2>MODULE 4: FIXED VS VARIABLE — THE MATHS</h2>
+    <p>Certainty has a price. The question is whether you're willing to pay it.</p>
+  </div>
+
+  <div class="tut">
+    <h3>HOW FIXED RATES WORK</h3>
+    <p>A fixed-rate mortgage locks your interest rate for a set period (typically 2 or 5 years in the UK). Your monthly payment is guaranteed not to change during that period, regardless of what happens to the Bank of England base rate.</p>
+    <p>The lender is taking a risk by offering you certainty — if rates rise, they lose; if rates fall, you lose. They price this risk into the fixed rate, which is why fixed rates are almost always higher than the current variable rate at the time you take them out.</p>
+
+    <div class="pt">
+      <strong>The premium for certainty:</strong> A fixed rate is an insurance policy. You're paying slightly more per month in exchange for knowing exactly what your payment will be. Whether this is worth it depends on your tolerance for uncertainty and your belief about where rates are heading.
+    </div>
+  </div>
+
+  <div class="tut">
+    <h3>HOW VARIABLE AND TRACKER RATES WORK</h3>
+    <p><strong>Standard Variable Rate (SVR):</strong> Set by the lender. Can change at any time, for any reason. Usually the most expensive option — this is what you fall onto when your fixed deal expires if you don't remortgage.</p>
+    <p><strong>Tracker rate:</strong> Follows the Bank of England base rate plus a fixed margin. If the base rate is 4.5% and your tracker is base + 0.75%, you pay 5.25%. When the base rate moves, your payment moves by exactly the same amount.</p>
+
+    <div class="mb">
+      Example: £200,000 mortgage, 25 years<br><br>
+      Fixed at 4.5%:      £1,111/month (guaranteed 5 years)<br>
+      Tracker at 4.0%+0.75% = 4.75%: £1,137/month (today)<br><br>
+      If base rate drops 0.5%:<br>
+      Fixed: still <span class="highlight">£1,111</span><br>
+      Tracker: drops to 4.25% → <span class="result">£1,085</span><br><br>
+      If base rate rises 1%:<br>
+      Fixed: still <span class="highlight">£1,111</span><br>
+      Tracker: rises to 5.75% → <span class="negative">£1,246</span>
+    </div>
+
+    <div class="pln">
+      The fixed rate doesn't move. The tracker moves with every base rate change. If rates fall, the tracker wins. If rates rise, the fixed rate wins. Nobody — not your lender, not the Bank of England, not any economist — knows which way rates will go. The decision is about your personal risk tolerance, not a prediction.
+    </div>
+  </div>
+
+  <div class="tut">
+    <h3>THE REMORTGAGE IMPERATIVE</h3>
+    <div class="dg">
+      <strong>Never sit on the SVR.</strong> When your fixed or tracker deal expires, you're typically moved to the lender's Standard Variable Rate — which can be 1–2% higher than the best available deals. On a £200,000 mortgage, that's £100–£200+ extra per month for no benefit. Remortgaging to a new deal when your current one expires is the single most impactful financial decision most homeowners can make.
+    </div>
+
+    <div class="mb">
+      £200,000, 20 years remaining:<br><br>
+      New fixed at 4.5%: <span class="result">£1,265/month</span><br>
+      SVR at 6.5%: <span class="negative">£1,491/month</span><br><br>
+      Difference: <span class="negative">£226/month</span> = <span class="negative">£2,712/year</span> wasted
+    </div>
+  </div>
+</div>
+
+<!-- MODULE 5 -->
+<div class="module-content" id="module5">
+  <div class="module-header">
+    <h2>MODULE 5: THE FULL CALCULATOR</h2>
+    <p>Enter your numbers. See every payment split into interest and principal. Watch what overpayments do.</p>
+  </div>
+
+  <div class="calc-container" id="mortgageCalc">
+    <h3>MORTGAGE AMORTISATION CALCULATOR</h3>
+    <p class="calc-subtitle">Enter your mortgage details to see the full payment breakdown.</p>
+
+    <div class="input-row">
+      <label>Loan amount: £</label>
+      <input type="text" class="calc-input" id="m_loan" value="200,000">
+    </div>
+    <div class="input-row">
+      <label>Annual interest rate: %</label>
+      <input type="text" class="calc-input" id="m_rate" value="4.5" style="width:80px">
+      <input type="range" class="calc-slider" id="m_rate_slider" min="1" max="10" value="4.5" step="0.1">
+    </div>
+    <div class="input-row">
+      <label>Term (years):</label>
+      <input type="text" class="calc-input" id="m_term" value="25" style="width:80px">
+      <input type="range" class="calc-slider" id="m_term_slider" min="5" max="40" value="25">
+    </div>
+    <div class="input-row">
+      <label>Monthly overpayment: £</label>
+      <input type="text" class="calc-input" id="m_over" value="0">
+      <input type="range" class="calc-slider" id="m_over_slider" min="0" max="1000" value="0" step="25">
+    </div>
+
+    <div class="calc-results" id="m_results"></div>
+
+    <!-- Year by year schedule -->
+    <div id="m_schedule" style="margin-top:1.5rem; max-height:400px; overflow-y:auto;"></div>
+  </div>
+</div>
+
+<!-- DISCLAIMER -->
+<div class="disclaimer">
+  <strong>This is mathematical education, not financial advice.</strong> Mortgage terms vary by lender — always check your specific deal. For personalised mortgage advice, consult a qualified mortgage adviser.<br><br>
+  <a href="https://www.moneyhelper.org.uk/en/homes/buying-a-home" target="_blank" rel="noopener">MoneyHelper — Buying a home</a> (free, government-backed)<br><br>
+  YOUR HOME MAY BE REPOSSESSED IF YOU DO NOT KEEP UP REPAYMENTS ON YOUR MORTGAGE.
+</div>
+
+<!-- RELATED COURSES -->
+<section class="related-courses">
+  <h3>EXPLORE EVERYDAY MATHS</h3>
+  <div class="related-grid">
+    <a class="related-card" href="/everyday/compound-interest/">
+      <span class="related-card-title">COMPOUND INTEREST & DEBT</span>
+      <span class="related-card-hook">Your mortgage is compound interest's biggest real-world application. The same exponential works on your credit cards too — in the wrong direction.</span>
+    </a>
+    <a class="related-card" href="/everyday/tax/">
+      <span class="related-card-title">UK TAX MATHS</span>
+      <span class="related-card-hook">Mortgage interest relief is gone, but pension contributions still get tax relief — and the maths of marginal rates determines the real cost of both.</span>
+    </a>
+    <a class="related-card" href="/academy/sports-betting/" style="border-left-color:#2563eb;">
+      <span class="related-card-title" style="color:#2563eb;">SPORTS BETTING MATHS</span>
+      <span class="related-card-hook">Amortisation and odds both rely on the same principle: understanding what you're really paying per unit.</span>
+    </a>
+  </div>
+</section>
+
+<footer>
+  <p>MathsWins · <a href="/">Home</a> · <a href="/everyday/">Everyday Maths</a> · <a href="/academy/">Academy</a> · <a href="/about/">About</a></p>
+  <p style="margin-top:.5rem">Built by a mathematician. No personal data collected. Cookieless analytics.</p>
+</footer>
+
+</div>
+
+<script>
+// Module navigation
+const pills=document.querySelectorAll('.module-pill');
+const mods=document.querySelectorAll('.module-content');
+pills.forEach(p=>{p.addEventListener('click',()=>{
+  const t=p.getAttribute('data-module');
+  pills.forEach(x=>x.classList.remove('active'));
+  mods.forEach(x=>x.classList.remove('active'));
+  p.classList.add('active');
+  document.getElementById('module'+t).classList.add('active');
+  window.scrollTo({top:document.getElementById('moduleNav').offsetTop-20,behavior:'smooth'});
+});});
+
+function fmt(n){return Math.round(n).toLocaleString('en-GB');}
+function parseNum(s){return parseFloat(String(s).replace(/[^0-9.]/g,''))||0;}
+
+// Mortgage calculation engine
+function calcMortgage(loan, annualRate, termYears, monthlyOver){
+  const r = annualRate / 100 / 12;
+  const n = termYears * 12;
+  if(r === 0) return {payment:loan/n, schedule:[], totalInterest:0, totalPaid:loan, months:n};
+
+  const payment = loan * (r * Math.pow(1+r, n)) / (Math.pow(1+r, n) - 1);
+  const totalPayment = payment + monthlyOver;
+
+  let balance = loan;
+  let totalInterest = 0;
+  let months = 0;
+  const yearlyData = [];
+  let yearInterest = 0, yearPrincipal = 0;
+
+  while(balance > 0.01 && months < n + 600) {
+    const interest = balance * r;
+    const principalPay = Math.min(balance, totalPayment - interest);
+    balance = Math.max(0, balance - principalPay);
+    totalInterest += interest;
+    yearInterest += interest;
+    yearPrincipal += principalPay;
+    months++;
+
+    if(months % 12 === 0 || balance <= 0.01) {
+      yearlyData.push({
+        year: Math.ceil(months/12),
+        interest: yearInterest,
+        principal: yearPrincipal,
+        balance: balance,
+        payment: payment
+      });
+      yearInterest = 0;
+      yearPrincipal = 0;
+    }
+  }
+
+  return {
+    payment: payment,
+    totalPayment: totalPayment,
+    schedule: yearlyData,
+    totalInterest: totalInterest,
+    totalPaid: loan + totalInterest,
+    months: months
+  };
+}
+
+function updateMortgage(){
+  const loan = parseNum(document.getElementById('m_loan').value);
+  const rate = parseNum(document.getElementById('m_rate').value);
+  const term = parseNum(document.getElementById('m_term').value);
+  const over = parseNum(document.getElementById('m_over').value);
+
+  if(loan <= 0 || rate <= 0 || term <= 0) return;
+
+  const result = calcMortgage(loan, rate, term, over);
+  const base = over > 0 ? calcMortgage(loan, rate, term, 0) : null;
+
+  const years = Math.floor(result.months/12);
+  const remainMonths = result.months % 12;
+  const termStr = years + 'y ' + remainMonths + 'm';
+
+  let resultsHTML = `
+    <div class="calc-result-cell"><span class="calc-result-num" style="color:var(--accent)">£${fmt(result.payment)}</span><span class="calc-result-label">Base monthly payment</span></div>
+    ${over > 0 ? `<div class="calc-result-cell"><span class="calc-result-num" style="color:var(--green-bright)">£${fmt(result.totalPayment)}</span><span class="calc-result-label">With overpayment</span></div>` : ''}
+    <div class="calc-result-cell"><span class="calc-result-num" style="color:var(--red-bright)">£${fmt(result.totalInterest)}</span><span class="calc-result-label">Total interest</span></div>
+    <div class="calc-result-cell"><span class="calc-result-num" style="color:var(--text-bright)">${termStr}</span><span class="calc-result-label">Actual term</span></div>`;
+
+  if(base && over > 0){
+    const saved = base.totalInterest - result.totalInterest;
+    const monthsSaved = base.months - result.months;
+    const ySaved = Math.floor(monthsSaved/12);
+    const mSaved = monthsSaved % 12;
+    resultsHTML += `
+      <div class="calc-result-cell"><span class="calc-result-num" style="color:var(--green-bright)">£${fmt(saved)}</span><span class="calc-result-label">Interest saved</span></div>
+      <div class="calc-result-cell"><span class="calc-result-num" style="color:var(--green-bright)">${ySaved}y ${mSaved}m</span><span class="calc-result-label">Term reduced</span></div>`;
+  }
+
+  document.getElementById('m_results').innerHTML = resultsHTML;
+
+  // Year-by-year schedule
+  let schedHTML = '<table class="schedule-table"><thead><tr><th>Year</th><th>Interest</th><th>Principal</th><th>Split</th><th>Balance</th></tr></thead><tbody>';
+
+  result.schedule.forEach(y => {
+    const total = y.interest + y.principal;
+    const intPct = total > 0 ? (y.interest / total * 100) : 0;
+    const prinPct = 100 - intPct;
+
+    schedHTML += `<tr>
+      <td>${y.year}</td>
+      <td class="interest-col">£${fmt(y.interest)}</td>
+      <td class="principal-col">£${fmt(y.principal)}</td>
+      <td style="min-width:120px"><div class="bar-stack"><div class="bar-interest" style="width:${intPct}%"></div><div class="bar-principal" style="width:${prinPct}%"></div></div></td>
+      <td class="balance-col">£${fmt(y.balance)}</td>
+    </tr>`;
+  });
+
+  schedHTML += '</tbody></table>';
+  schedHTML += '<div style="display:flex;gap:1.5rem;font-size:.7rem;color:var(--muted);margin-top:.5rem"><span style="display:flex;align-items:center;gap:.3rem"><span style="width:10px;height:10px;background:var(--red-bright);opacity:.6;border-radius:2px"></span>Interest</span><span style="display:flex;align-items:center;gap:.3rem"><span style="width:10px;height:10px;background:var(--green-bright);opacity:.6;border-radius:2px"></span>Principal</span></div>';
+
+  document.getElementById('m_schedule').innerHTML = schedHTML;
+}
+
+// Wire up inputs
+['m_loan','m_rate','m_term','m_over'].forEach(id=>{
+  document.getElementById(id).addEventListener('input', updateMortgage);
+});
+document.getElementById('m_rate_slider').addEventListener('input',e=>{document.getElementById('m_rate').value=e.target.value;updateMortgage();});
+document.getElementById('m_term_slider').addEventListener('input',e=>{document.getElementById('m_term').value=e.target.value;updateMortgage();});
+document.getElementById('m_over_slider').addEventListener('input',e=>{document.getElementById('m_over').value=fmt(parseInt(e.target.value));updateMortgage();});
+
+// Init
+updateMortgage();
+</script>
+</body>
+</html>
