@@ -1,0 +1,3 @@
+User-agent: *
+Allow: /
+Sitemap: https://mathswins.co.uk/sitemap.xml
