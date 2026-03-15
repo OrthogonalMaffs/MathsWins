@@ -67,7 +67,15 @@ a{color:var(--gold);text-decoration:none}a:hover{text-decoration:underline}
 
 .mc{background:var(--surface);border:1px solid var(--border);border-radius:8px;padding:.6rem .8rem;margin-bottom:.3rem;display:flex;justify-content:space-between;align-items:center;cursor:pointer;transition:all .12s}
 .mc:hover{border-color:var(--gold);transform:translateX(3px)}
-.mc.locked{opacity:.3;pointer-events:none}
+.mc.locked{opacity:.5;pointer-events:none;position:relative}
+.mc.locked::after{content:'\1F512';position:absolute;right:.8rem;top:50%;transform:translateY(-50%);font-size:.9rem}
+.mc.locked:hover{border-color:var(--border);transform:none}
+.unlock-banner{background:var(--surface);border:1px solid var(--border2);border-radius:10px;padding:1rem;margin:.8rem 0;text-align:center}
+.unlock-banner h4{font-family:'Bebas Neue',sans-serif;font-size:1.1rem;color:var(--text-bright);letter-spacing:.03em;margin-bottom:.3rem}
+.unlock-banner p{font-size:.75rem;color:var(--muted);margin-bottom:.5rem}
+.unlock-banner .unlock-btn{display:inline-block;padding:.4rem 1.2rem;border:2px solid var(--gold);border-radius:8px;background:transparent;color:var(--gold);font-family:'DM Mono',monospace;font-size:.72rem;font-weight:500;cursor:pointer;transition:all .15s}
+.unlock-banner .unlock-btn:hover{background:var(--gold);color:#fff}
+.unlock-banner .unlock-price{font-family:'DM Mono',monospace;font-size:.68rem;color:var(--muted);margin-top:.3rem}
 .mc .mn{font-size:.82rem;font-weight:600}.mc .md{font-size:.65rem;color:var(--muted)}.mc .mq{font-family:'DM Mono',monospace;font-size:.62rem;color:var(--muted)}
 
 /* CTA */
@@ -238,24 +246,39 @@ a{color:var(--gold);text-decoration:none}a:hover{text-decoration:underline}
 <div class="mc" onclick="loadMod('m4')"><div><div class="mn">4. Insurance & Side Bets</div><div class="md">EV analysis of every side bet. Spoiler: they're all negative</div></div><div class="mq">Tutorial + 10</div></div>
 </div>
 
+<div class="unlock-banner">
+<h4>Unlock Advanced</h4>
+<p>You've seen the free modules. Ready for the rest?</p>
+<div class="unlock-btn" onclick="alert('Payment coming soon — Stripe or QF tokens')">Unlock Now</div>
+<div class="unlock-price">1500 QF · or pay with card</div>
+</div>
+
 <div class="tier-group">
 <div class="tier-hdr"><span class="tier-badge tb-a">Advanced</span><span class="tier-price">1500 QF · 14 days</span></div>
-<div class="mc" onclick="loadMod('m5')"><div><div class="mn">5. Myth Destruction Lab</div><div class="md">10,000-hand simulations demolishing "he took my card" and other fallacies</div></div><div class="mq">5 simulations</div></div>
-<div class="mc" onclick="loadMod('m6')"><div><div class="mn">6. Bankroll & Variance</div><div class="md">Ruin probability, Kelly criterion, session simulation</div></div><div class="mq">Tutorial + sim</div></div>
-<div class="mc" onclick="loadMod('m7')"><div><div class="mn">7. Casino Rules Analyser</div><div class="md">Input your casino's rules. See exactly how each shifts the house edge</div></div><div class="mq">Interactive tool</div></div>
+<div class="mc locked" onclick="loadMod('m5')"><div><div class="mn">5. Myth Destruction Lab</div><div class="md">10,000-hand simulations demolishing "he took my card" and other fallacies</div></div><div class="mq">5 simulations</div></div>
+<div class="mc locked" onclick="loadMod('m6')"><div><div class="mn">6. Bankroll & Variance</div><div class="md">Ruin probability, Kelly criterion, session simulation</div></div><div class="mq">Tutorial + sim</div></div>
+<div class="mc locked" onclick="loadMod('m7')"><div><div class="mn">7. Casino Rules Analyser</div><div class="md">Input your casino's rules. See exactly how each shifts the house edge</div></div><div class="mq">Interactive tool</div></div>
+</div>
+
+<div class="unlock-banner">
+<h4>Unlock Master</h4>
+<p>You've seen the free modules. Ready for the rest?</p>
+<div class="unlock-btn" onclick="alert('Payment coming soon — Stripe or QF tokens')">Unlock Now</div>
+<div class="unlock-price">3000 QF · or pay with card</div>
 </div>
 
 <div class="tier-group">
 <div class="tier-hdr"><span class="tier-badge tb-m">Master</span><span class="tier-price">3000 QF · 30 days</span></div>
-<div class="mc" onclick="loadMod('m8')"><div><div class="mn">8. Card Counting Theory</div><div class="md">Hi-Lo system. Running count, true count, bet spread</div></div><div class="mq">Tutorial</div></div>
-<div class="mc" onclick="loadMod('m9')"><div><div class="mn">9. Counting Speed Drills</div><div class="md">Flash cards at increasing speed. Maintain the count under pressure</div></div><div class="mq">4 speed tiers</div></div>
-<div class="mc" onclick="loadMod('m10')"><div><div class="mn">10. Strategy Deviations</div><div class="md">The "Illustrious 18" — when the count changes the correct play</div></div><div class="mq">18 scenarios</div></div>
-<div class="mc" onclick="loadMod('m11')"><div><div class="mn">11. Full Session Replay</div><div class="md">50-hand session with complete post-analysis and EV impact report</div></div><div class="mq">Session + report</div></div>
+<div class="mc locked" onclick="loadMod('m8')"><div><div class="mn">8. Card Counting Theory</div><div class="md">Hi-Lo system. Running count, true count, bet spread</div></div><div class="mq">Tutorial</div></div>
+<div class="mc locked" onclick="loadMod('m9')"><div><div class="mn">9. Counting Speed Drills</div><div class="md">Flash cards at increasing speed. Maintain the count under pressure</div></div><div class="mq">4 speed tiers</div></div>
+<div class="mc locked" onclick="loadMod('m10')"><div><div class="mn">10. Strategy Deviations</div><div class="md">The "Illustrious 18" — when the count changes the correct play</div></div><div class="mq">18 scenarios</div></div>
+<div class="mc locked" onclick="loadMod('m11')"><div><div class="mn">11. Full Session Replay</div><div class="md">50-hand session with complete post-analysis and EV impact report</div></div><div class="mq">Session + report</div></div>
 </div>
 </div>
 
 <div class="cta-row">
 <button class="cta cta-p" onclick="loadMod('m1')">Try Module 1 Free</button>
+
 </div>
 </div>
 

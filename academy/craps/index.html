@@ -32,6 +32,15 @@ body{font-family:'Outfit',sans-serif;background:var(--bg);color:var(--text);min-
 .mc{background:var(--surface);border:1px solid var(--border);border-radius:8px;padding:.6rem .8rem;margin-bottom:.3rem;display:flex;justify-content:space-between;align-items:center;cursor:pointer;transition:all .12s}
 .mc:hover{border-color:var(--accent);transform:translateX(3px)}
 .mc .mn{font-size:.82rem;font-weight:600}.mc .md{font-size:.65rem;color:var(--muted)}.mc .mq{font-family:'DM Mono',monospace;font-size:.62rem;color:var(--muted)}
+.mc.locked{opacity:.5;pointer-events:none;position:relative}
+.mc.locked::after{content:'\1F512';position:absolute;right:.8rem;top:50%;transform:translateY(-50%);font-size:.9rem}
+.mc.locked:hover{border-color:var(--border);transform:none}
+.unlock-banner{background:var(--surface);border:1px solid var(--border2);border-radius:10px;padding:1rem;margin:.8rem 0;text-align:center}
+.unlock-banner h4{font-family:'Bebas Neue',sans-serif;font-size:1.1rem;color:var(--text-bright);letter-spacing:.03em;margin-bottom:.3rem}
+.unlock-banner p{font-size:.75rem;color:var(--muted);margin-bottom:.5rem}
+.unlock-banner .unlock-btn{display:inline-block;padding:.4rem 1.2rem;border:2px solid var(--accent);border-radius:8px;background:transparent;color:var(--accent);font-family:'DM Mono',monospace;font-size:.72rem;font-weight:500;cursor:pointer;transition:all .15s}
+.unlock-banner .unlock-btn:hover{background:var(--accent);color:#fff}
+.unlock-banner .unlock-price{font-family:'DM Mono',monospace;font-size:.68rem;color:var(--muted);margin-top:.3rem}
 .cta{display:block;margin:1rem auto;padding:.55rem 1.5rem;border-radius:8px;font-family:'Outfit',sans-serif;font-size:.82rem;font-weight:600;cursor:pointer;border:2px solid var(--accent);background:var(--accent);color:#000;text-align:center;max-width:300px}
 .bb{display:inline-block;margin:.4rem 0;padding:.3rem .9rem;border:none;border-radius:6px;background:var(--border);color:var(--text);font-family:'Outfit',sans-serif;font-size:.75rem;font-weight:600;cursor:pointer}
 .tut{background:var(--surface);border:1px solid var(--border);border-radius:10px;padding:1.1rem;margin-bottom:.5rem;line-height:1.75;font-size:.85rem}
@@ -72,12 +81,20 @@ body{font-family:'Outfit',sans-serif;background:var(--bg);color:var(--text);min-
 <div style="margin:1rem 0">
 <div class="mc" onclick="loadMod(0)"><div><div class="mn">1. Two Dice Probability</div><div class="md">36 outcomes. The probability of every total. The foundation.</div></div><div class="mq">Tutorial</div></div>
 <div class="mc" onclick="loadMod(1)"><div><div class="mn">2. The Pass Line — The Core Bet</div><div class="md">How the game actually works. Come-out roll, point, resolution.</div></div><div class="mq">Tutorial</div></div>
-<div class="mc" onclick="loadMod(2)"><div><div class="mn">3. The Odds Bet — Zero House Edge</div><div class="md">The only bet in any casino that pays true odds. And it's hidden.</div></div><div class="mq">Tutorial</div></div>
-<div class="mc" onclick="loadMod(3)"><div><div class="mn">4. Every Other Bet — Ranked by Edge</div><div class="md">From good (1.41%) to terrible (16.67%). Know what you're paying.</div></div><div class="mq">Tutorial</div></div>
-<div class="mc" onclick="loadMod(4)"><div><div class="mn">5. Optimal Strategy</div><div class="md">The mathematically best way to play craps. Spoiler: it's simple.</div></div><div class="mq">Tutorial</div></div>
+
+<div class="unlock-banner">
+<h4>Unlock Full Course</h4>
+<p>You've seen the free modules. Ready for the rest?</p>
+<div class="unlock-btn" onclick="alert('Payment coming soon — Stripe or QF tokens')">Unlock Now</div>
+<div class="unlock-price">250 QF · or pay with card</div>
 </div>
 
-<button class="cta" onclick="loadMod(0)">Start Learning</button>
+<div class="mc locked" onclick="loadMod(2)"><div><div class="mn">3. The Odds Bet — Zero House Edge</div><div class="md">The only bet in any casino that pays true odds. And it's hidden.</div></div><div class="mq">Tutorial</div></div>
+<div class="mc locked" onclick="loadMod(3)"><div><div class="mn">4. Every Other Bet — Ranked by Edge</div><div class="md">From good (1.41%) to terrible (16.67%). Know what you're paying.</div></div><div class="mq">Tutorial</div></div>
+<div class="mc locked" onclick="loadMod(4)"><div><div class="mn">5. Optimal Strategy</div><div class="md">The mathematically best way to play craps. Spoiler: it's simple.</div></div><div class="mq">Tutorial</div></div>
+</div>
+
+<button class="cta" onclick="loadMod(0)">Try Module 1 Free</button>
 </div>
 
 <div id="lesson" class="screen">

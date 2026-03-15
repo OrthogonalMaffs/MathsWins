@@ -26,6 +26,15 @@ body{font-family:'Outfit',sans-serif;background:var(--bg);color:var(--text);min-
 .mc{background:var(--surface);border:1px solid var(--border);border-radius:8px;padding:.6rem .8rem;margin-bottom:.3rem;display:flex;justify-content:space-between;align-items:center;cursor:pointer;transition:all .12s}
 .mc:hover{border-color:var(--accent);transform:translateX(3px)}
 .mc .mn{font-size:.82rem;font-weight:600}.mc .md{font-size:.65rem;color:var(--muted)}
+.mc.locked{opacity:.5;pointer-events:none;position:relative}
+.mc.locked::after{content:'\1F512';position:absolute;right:.8rem;top:50%;transform:translateY(-50%);font-size:.9rem}
+.mc.locked:hover{border-color:var(--border);transform:none}
+.unlock-banner{background:var(--surface);border:1px solid var(--border2);border-radius:10px;padding:1rem;margin:.8rem 0;text-align:center}
+.unlock-banner h4{font-family:'Bebas Neue',sans-serif;font-size:1.1rem;color:var(--text-bright);letter-spacing:.03em;margin-bottom:.3rem}
+.unlock-banner p{font-size:.75rem;color:var(--muted);margin-bottom:.5rem}
+.unlock-banner .unlock-btn{display:inline-block;padding:.4rem 1.2rem;border:2px solid var(--accent);border-radius:8px;background:transparent;color:var(--accent);font-family:'DM Mono',monospace;font-size:.72rem;font-weight:500;cursor:pointer;transition:all .15s}
+.unlock-banner .unlock-btn:hover{background:var(--accent);color:#fff}
+.unlock-banner .unlock-price{font-family:'DM Mono',monospace;font-size:.68rem;color:var(--muted);margin-top:.3rem}
 .cta{display:block;margin:1rem auto;padding:.55rem 1.5rem;border-radius:8px;font-family:'Outfit',sans-serif;font-size:.82rem;font-weight:600;cursor:pointer;border:2px solid var(--accent);background:var(--accent);color:#fff;text-align:center;max-width:300px}
 .bb{display:inline-block;margin:.4rem 0;padding:.3rem .9rem;border:none;border-radius:6px;background:var(--border);color:var(--text);font-family:'Outfit',sans-serif;font-size:.75rem;font-weight:600;cursor:pointer}
 .nb{display:inline-block;margin-top:.3rem;padding:.3rem .9rem;border:none;border-radius:6px;background:var(--accent);color:#fff;font-family:'Outfit',sans-serif;font-size:.75rem;font-weight:600;cursor:pointer}
@@ -73,14 +82,22 @@ body{font-family:'Outfit',sans-serif;background:var(--bg);color:var(--text);min-
 <div style="margin:1rem 0">
 <div class="mc" onclick="loadMod(0)"><div><div class="mn">1. What RTP Actually Means</div><div class="md">Return to Player sounds generous. It isn't. Here's what the number really tells you.</div></div></div>
 <div class="mc" onclick="loadMod(1)"><div><div class="mn">2. Volatility: The Invisible Lever</div><div class="md">Why some machines drain you slowly and others bankrupt you fast — by design.</div></div></div>
-<div class="mc" onclick="loadMod(2)"><div><div class="mn">3. Near Misses Are Programmed</div><div class="md">That symbol one position above the payline? It's not bad luck. It's software.</div></div></div>
-<div class="mc" onclick="loadMod(3)"><div><div class="mn">4. Bonus Features Don't Help</div><div class="md">Free spins, multipliers, pick-a-box. They're all factored into the RTP. You gain nothing.</div></div></div>
-<div class="mc" onclick="loadMod(4)"><div><div class="mn">5. Progressive Jackpots — The Lottery Tax</div><div class="md">The jackpot grows because YOU fund it. The maths of when (if ever) they become +EV.</div></div></div>
-<div class="mc" onclick="loadMod(5)"><div><div class="mn">6. The 1,000-Spin Simulation</div><div class="md">Watch £500 evaporate in real time. This is what RTP looks like in practice.</div></div></div>
-<div class="mc" onclick="loadMod(6)"><div><div class="mn">7. Why You Keep Playing</div><div class="md">Variable ratio reinforcement. Dopamine. Loss disguised as wins. The psychology they exploit.</div></div></div>
+
+<div class="unlock-banner">
+<h4>Unlock Full Course</h4>
+<p>You've seen the free modules. Ready for the rest?</p>
+<div class="unlock-btn" onclick="alert('Payment coming soon — Stripe or QF tokens')">Unlock Now</div>
+<div class="unlock-price">250 QF · or pay with card</div>
 </div>
 
-<button class="cta" onclick="loadMod(0)">Start — This Might Save You Money</button>
+<div class="mc locked" onclick="loadMod(2)"><div><div class="mn">3. Near Misses Are Programmed</div><div class="md">That symbol one position above the payline? It's not bad luck. It's software.</div></div></div>
+<div class="mc locked" onclick="loadMod(3)"><div><div class="mn">4. Bonus Features Don't Help</div><div class="md">Free spins, multipliers, pick-a-box. They're all factored into the RTP. You gain nothing.</div></div></div>
+<div class="mc locked" onclick="loadMod(4)"><div><div class="mn">5. Progressive Jackpots — The Lottery Tax</div><div class="md">The jackpot grows because YOU fund it. The maths of when (if ever) they become +EV.</div></div></div>
+<div class="mc locked" onclick="loadMod(5)"><div><div class="mn">6. The 1,000-Spin Simulation</div><div class="md">Watch £500 evaporate in real time. This is what RTP looks like in practice.</div></div></div>
+<div class="mc locked" onclick="loadMod(6)"><div><div class="mn">7. Why You Keep Playing</div><div class="md">Variable ratio reinforcement. Dopamine. Loss disguised as wins. The psychology they exploit.</div></div></div>
+</div>
+
+<button class="cta" onclick="loadMod(0)">Try Module 1 Free</button>
 </div>
 
 <div id="lesson" class="screen">

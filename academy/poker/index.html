@@ -68,6 +68,15 @@ a{color:var(--gold);text-decoration:none}a:hover{text-decoration:underline}
 .mc{background:var(--surface);border:1px solid var(--border);border-radius:8px;padding:.6rem .8rem;margin-bottom:.3rem;display:flex;justify-content:space-between;align-items:center;cursor:pointer;transition:all .12s}
 .mc:hover{border-color:var(--green-bright);transform:translateX(3px)}
 .mc .mn{font-size:.82rem;font-weight:600}.mc .md{font-size:.65rem;color:var(--muted)}.mc .mq{font-family:'DM Mono',monospace;font-size:.62rem;color:var(--muted)}
+.mc.locked{opacity:.5;pointer-events:none;position:relative}
+.mc.locked::after{content:'\1F512';position:absolute;right:.8rem;top:50%;transform:translateY(-50%);font-size:.9rem}
+.mc.locked:hover{border-color:var(--border);transform:none}
+.unlock-banner{background:var(--surface);border:1px solid var(--border2);border-radius:10px;padding:1rem;margin:.8rem 0;text-align:center}
+.unlock-banner h4{font-family:'Bebas Neue',sans-serif;font-size:1.1rem;color:var(--text-bright);letter-spacing:.03em;margin-bottom:.3rem}
+.unlock-banner p{font-size:.75rem;color:var(--muted);margin-bottom:.5rem}
+.unlock-banner .unlock-btn{display:inline-block;padding:.4rem 1.2rem;border:2px solid var(--green-bright);border-radius:8px;background:transparent;color:var(--green-bright);font-family:'DM Mono',monospace;font-size:.72rem;font-weight:500;cursor:pointer;transition:all .15s}
+.unlock-banner .unlock-btn:hover{background:var(--green-bright);color:#fff}
+.unlock-banner .unlock-price{font-family:'DM Mono',monospace;font-size:.68rem;color:var(--muted);margin-top:.3rem}
 
 .cta-row{display:flex;gap:.5rem;justify-content:center;margin:1.2rem 0;flex-wrap:wrap}
 .cta{padding:.55rem 1.3rem;border-radius:8px;font-family:'Outfit',sans-serif;font-size:.82rem;font-weight:600;cursor:pointer;border:2px solid var(--border);transition:all .15s}
@@ -228,19 +237,33 @@ a{color:var(--gold);text-decoration:none}a:hover{text-decoration:underline}
 <div class="mc" onclick="loadMod('p4')"><div><div class="mn">4. Post-flop Fundamentals</div><div class="md">Board texture, continuation betting, when top pair isn't enough</div></div><div class="mq">Tutorial + 20</div></div>
 </div>
 
+<div class="unlock-banner">
+<h4>Unlock Advanced</h4>
+<p>You've seen the free modules. Ready for the rest?</p>
+<div class="unlock-btn" onclick="alert('Payment coming soon — Stripe or QF tokens')">Unlock Now</div>
+<div class="unlock-price">1500 QF · or pay with card</div>
+</div>
+
 <div class="tier-group">
 <div class="tier-hdr"><span class="tb tb-a">Advanced</span><span class="tp">1500 QF · 14 days</span></div>
-<div class="mc" onclick="loadMod('p5')"><div><div class="mn">5. Equity vs Range</div><div class="md">Stop thinking about single hands. Think about ranges.</div></div><div class="mq">Tutorial + 20</div></div>
-<div class="mc" onclick="loadMod('p6')"><div><div class="mn">6. Implied Odds & Reverse Implied</div><div class="md">When pot odds say fold but you should call — and vice versa</div></div><div class="mq">Tutorial + 15</div></div>
-<div class="mc" onclick="loadMod('p7')"><div><div class="mn">7. Bet Sizing Theory</div><div class="md">Why you bet ⅔ pot. Polarised vs merged. Value vs bluff ratios</div></div><div class="mq">Tutorial + 15</div></div>
-<div class="mc" onclick="loadMod('p8')"><div><div class="mn">8. Opponent Profiling</div><div class="md">TAG, LAG, calling station, nit. How to exploit each type</div></div><div class="mq">Tutorial + 15</div></div>
+<div class="mc locked" onclick="loadMod('p5')"><div><div class="mn">5. Equity vs Range</div><div class="md">Stop thinking about single hands. Think about ranges.</div></div><div class="mq">Tutorial + 20</div></div>
+<div class="mc locked" onclick="loadMod('p6')"><div><div class="mn">6. Implied Odds & Reverse Implied</div><div class="md">When pot odds say fold but you should call — and vice versa</div></div><div class="mq">Tutorial + 15</div></div>
+<div class="mc locked" onclick="loadMod('p7')"><div><div class="mn">7. Bet Sizing Theory</div><div class="md">Why you bet ⅔ pot. Polarised vs merged. Value vs bluff ratios</div></div><div class="mq">Tutorial + 15</div></div>
+<div class="mc locked" onclick="loadMod('p8')"><div><div class="mn">8. Opponent Profiling</div><div class="md">TAG, LAG, calling station, nit. How to exploit each type</div></div><div class="mq">Tutorial + 15</div></div>
+</div>
+
+<div class="unlock-banner">
+<h4>Unlock Master</h4>
+<p>You've seen the free modules. Ready for the rest?</p>
+<div class="unlock-btn" onclick="alert('Payment coming soon — Stripe or QF tokens')">Unlock Now</div>
+<div class="unlock-price">3000 QF · or pay with card</div>
 </div>
 
 <div class="tier-group">
 <div class="tier-hdr"><span class="tb tb-m">Master</span><span class="tp">3000 QF · 30 days</span></div>
-<div class="mc" onclick="loadMod('p9')"><div><div class="mn">9. GTO Fundamentals</div><div class="md">Game Theory Optimal play. Balanced ranges. Nash equilibrium</div></div><div class="mq">Tutorial + 15</div></div>
-<div class="mc" onclick="loadMod('p10')"><div><div class="mn">10. Tournament Strategy & ICM</div><div class="md">Chip EV ≠ money EV. Bubble dynamics. Final table theory</div></div><div class="mq">Tutorial + 15</div></div>
-<div class="mc" onclick="loadMod('p11')"><div><div class="mn">11. Full Table Simulator</div><div class="md">6-player table. AI opponents. Every decision graded. Session report</div></div><div class="mq">Session + report</div></div>
+<div class="mc locked" onclick="loadMod('p9')"><div><div class="mn">9. GTO Fundamentals</div><div class="md">Game Theory Optimal play. Balanced ranges. Nash equilibrium</div></div><div class="mq">Tutorial + 15</div></div>
+<div class="mc locked" onclick="loadMod('p10')"><div><div class="mn">10. Tournament Strategy & ICM</div><div class="md">Chip EV ≠ money EV. Bubble dynamics. Final table theory</div></div><div class="mq">Tutorial + 15</div></div>
+<div class="mc locked" onclick="loadMod('p11')"><div><div class="mn">11. Full Table Simulator</div><div class="md">6-player table. AI opponents. Every decision graded. Session report</div></div><div class="mq">Session + report</div></div>
 </div>
 </div>
 

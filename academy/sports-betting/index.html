@@ -33,6 +33,15 @@ body{font-family:'Outfit',sans-serif;background:var(--bg);color:var(--text);min-
 .mc{background:var(--surface);border:1px solid var(--border);border-radius:8px;padding:.6rem .8rem;margin-bottom:.3rem;display:flex;justify-content:space-between;align-items:center;cursor:pointer;transition:all .12s}
 .mc:hover{border-color:var(--accent);transform:translateX(3px)}
 .mc .mn{font-size:.82rem;font-weight:600}.mc .md{font-size:.65rem;color:var(--muted)}.mc .mq{font-family:'DM Mono',monospace;font-size:.62rem;color:var(--muted)}
+.mc.locked{opacity:.5;pointer-events:none;position:relative}
+.mc.locked::after{content:'\1F512';position:absolute;right:.8rem;top:50%;transform:translateY(-50%);font-size:.9rem}
+.mc.locked:hover{border-color:var(--border);transform:none}
+.unlock-banner{background:var(--surface);border:1px solid var(--border2);border-radius:10px;padding:1rem;margin:.8rem 0;text-align:center}
+.unlock-banner h4{font-family:'Bebas Neue',sans-serif;font-size:1.1rem;color:var(--text-bright);letter-spacing:.03em;margin-bottom:.3rem}
+.unlock-banner p{font-size:.75rem;color:var(--muted);margin-bottom:.5rem}
+.unlock-banner .unlock-btn{display:inline-block;padding:.4rem 1.2rem;border:2px solid var(--accent);border-radius:8px;background:transparent;color:var(--accent);font-family:'DM Mono',monospace;font-size:.72rem;font-weight:500;cursor:pointer;transition:all .15s}
+.unlock-banner .unlock-btn:hover{background:var(--accent);color:#fff}
+.unlock-banner .unlock-price{font-family:'DM Mono',monospace;font-size:.68rem;color:var(--muted);margin-top:.3rem}
 .tier-hdr{display:flex;align-items:center;gap:.5rem;margin:.6rem 0 .3rem}
 .tb{font-family:'DM Mono',monospace;font-size:.58rem;padding:2px 8px;border-radius:5px;font-weight:500;letter-spacing:.05em;text-transform:uppercase}
 .tb-b{background:rgba(37,99,235,.12);color:var(--accent)}
@@ -91,17 +100,31 @@ body{font-family:'Outfit',sans-serif;background:var(--bg);color:var(--text);min-
 <div class="mc" onclick="loadMod(1)"><div><div class="mn">2. Implied Probability</div><div class="md">Convert odds to probability. The most important skill in betting.</div></div><div class="mq">Tutorial + 15</div></div>
 <div class="mc" onclick="loadMod(2)"><div><div class="mn">3. The Overround</div><div class="md">How bookmakers build in their profit margin on every market.</div></div><div class="mq">Tutorial + calc</div></div>
 
-<div class="tier-hdr"><span class="tb tb-a">Advanced</span><span class="tp">1500 QF · 14 days</span></div>
-<div class="mc" onclick="loadMod(3)"><div><div class="mn">4. Value Betting</div><div class="md">The ONLY way to win long-term. Identifying +EV opportunities.</div></div><div class="mq">Tutorial + 15</div></div>
-<div class="mc" onclick="loadMod(4)"><div><div class="mn">5. Why Accumulators Are Terrible</div><div class="md">The maths of compounding house edges. Multi-bet destruction.</div></div><div class="mq">Tutorial + sim</div></div>
-<div class="mc" onclick="loadMod(5)"><div><div class="mn">6. Bankroll Management</div><div class="md">Kelly criterion, staking plans, variance. Survive the losing runs.</div></div><div class="mq">Tutorial</div></div>
-
-<div class="tier-hdr"><span class="tb tb-m">Master</span><span class="tp">3000 QF · 30 days</span></div>
-<div class="mc" onclick="loadMod(6)"><div><div class="mn">7. Building a Model</div><div class="md">Rate your own probabilities. Compare to the market. Find edges.</div></div><div class="mq">Tutorial</div></div>
-<div class="mc" onclick="loadMod(7)"><div><div class="mn">8. Market Efficiency & Closing Lines</div><div class="md">The closing line is the most efficient predictor. Can you beat it?</div></div><div class="mq">Tutorial</div></div>
+<div class="unlock-banner">
+<h4>Unlock Advanced</h4>
+<p>You've seen the free modules. Ready for the rest?</p>
+<div class="unlock-btn" onclick="alert('Payment coming soon — Stripe or QF tokens')">Unlock Now</div>
+<div class="unlock-price">1500 QF · or pay with card</div>
 </div>
 
-<button class="cta" onclick="loadMod(0)">Start Module 1 Free</button>
+<div class="tier-hdr"><span class="tb tb-a">Advanced</span><span class="tp">1500 QF · 14 days</span></div>
+<div class="mc locked" onclick="loadMod(3)"><div><div class="mn">4. Value Betting</div><div class="md">The ONLY way to win long-term. Identifying +EV opportunities.</div></div><div class="mq">Tutorial + 15</div></div>
+<div class="mc locked" onclick="loadMod(4)"><div><div class="mn">5. Why Accumulators Are Terrible</div><div class="md">The maths of compounding house edges. Multi-bet destruction.</div></div><div class="mq">Tutorial + sim</div></div>
+<div class="mc locked" onclick="loadMod(5)"><div><div class="mn">6. Bankroll Management</div><div class="md">Kelly criterion, staking plans, variance. Survive the losing runs.</div></div><div class="mq">Tutorial</div></div>
+
+<div class="unlock-banner">
+<h4>Unlock Master</h4>
+<p>You've seen the free modules. Ready for the rest?</p>
+<div class="unlock-btn" onclick="alert('Payment coming soon — Stripe or QF tokens')">Unlock Now</div>
+<div class="unlock-price">3000 QF · or pay with card</div>
+</div>
+
+<div class="tier-hdr"><span class="tb tb-m">Master</span><span class="tp">3000 QF · 30 days</span></div>
+<div class="mc locked" onclick="loadMod(6)"><div><div class="mn">7. Building a Model</div><div class="md">Rate your own probabilities. Compare to the market. Find edges.</div></div><div class="mq">Tutorial</div></div>
+<div class="mc locked" onclick="loadMod(7)"><div><div class="mn">8. Market Efficiency & Closing Lines</div><div class="md">The closing line is the most efficient predictor. Can you beat it?</div></div><div class="mq">Tutorial</div></div>
+</div>
+
+<button class="cta" onclick="loadMod(0)">Try Module 1 Free</button>
 </div>
 
 <div id="lesson" class="screen">
