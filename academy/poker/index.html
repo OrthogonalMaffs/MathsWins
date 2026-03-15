@@ -204,7 +204,8 @@ a{color:var(--gold);text-decoration:none}a:hover{text-decoration:underline}
 <div class="sc"><div class="sn">−4 BB/hr</div><div class="sl">Average recreational<br>player loss rate</div></div>
 <div class="sc"><div class="sn">0 BB/hr</div><div class="sl">Breakeven player<br>(understands pot odds)</div></div>
 <div class="sc"><div class="sn">+5 BB/hr</div><div class="sl">Winning regular<br>(applies range theory)</div></div>
-<div class="sc"><div class="sn">+10 BB/hr</div><div class="sl">Strong player<br>(GTO + exploitation)</div></div>
+<div class="sc"><div class="sn">+10 BB/hr</div><div class="sl">Strong player<br>(Game Theory Optimal + exploitation)</div></div>
+<div style="grid-column:1/-1;background:var(--surface);padding:.4rem .6rem;text-align:center"><div class="sl" style="font-size:.58rem;color:var(--muted)">BB/hr = Big Blinds won per hour — the standard profit measure in poker</div></div>
 </div>
 
 <div class="proof">
@@ -212,8 +213,8 @@ a{color:var(--gold);text-decoration:none}a:hover{text-decoration:underline}
 <div class="proof-grid">
 <div class="proof-col">
 <h3>The recreational player</h3>
-<div class="proof-row"><span>Plays too many hands</span><span class="v bad">40%+ VPIP</span></div>
-<div class="proof-row"><span>Calls without pot odds</span><span class="v bad">−EV calls</span></div>
+<div class="proof-row"><span>Plays too many hands</span><span class="v bad">Plays 40%+ of hands</span></div>
+<div class="proof-row"><span>Calls without pot odds</span><span class="v bad">−EV (unprofitable) calls</span></div>
 <div class="proof-row"><span>Ignores position</span><span class="v bad">Blind to advantage</span></div>
 <div class="proof-row"><span>Doesn't count outs</span><span class="v bad">Guessing</span></div>
 <div class="proof-row"><span>Chases flushes/straights</span><span class="v bad">Overvalues draws</span></div>
@@ -221,13 +222,13 @@ a{color:var(--gold);text-decoration:none}a:hover{text-decoration:underline}
 <div class="proof-col">
 <h3>The Poker School graduate</h3>
 <div class="proof-row"><span>Plays 18-22% of hands</span><span class="v good">Disciplined</span></div>
-<div class="proof-row"><span>Calculates pot odds</span><span class="v good">+EV only</span></div>
+<div class="proof-row"><span>Calculates pot odds</span><span class="v good">+EV (profitable) only</span></div>
 <div class="proof-row"><span>Adjusts by position</span><span class="v good">Positional edge</span></div>
 <div class="proof-row"><span>Counts outs precisely</span><span class="v good">Rule of 2 and 4</span></div>
 <div class="proof-row"><span>Folds when odds say fold</span><span class="v good">Discipline = profit</span></div>
 </div>
 </div>
-<div class="proof-note">Poker is the only common casino/card game where <strong>the house doesn't have an edge against you</strong> — you're playing against other humans. The house takes a small rake, but your opponent's mistakes are your profit. The maths isn't about beating the casino. It's about <strong>being better than the other players at the table</strong>.</div>
+<div class="proof-note">Poker is the only common casino/card game where <strong>the house doesn't have an edge against you</strong> — you're playing against other humans. The house takes a small <strong>rake</strong> (the small fee the casino takes from each pot), but your opponent's mistakes are your profit. The maths isn't about beating the casino. It's about <strong>being better than the other players at the table</strong>.</div>
 </div>
 
 <div class="disc">
@@ -251,8 +252,8 @@ a{color:var(--gold);text-decoration:none}a:hover{text-decoration:underline}
 </div>
 
 <div class="mc locked" onclick="loadMod('p2')"><div><div class="mn">2. Pot Odds & Outs</div><div class="md">Counting outs, calculating pot odds, the Rule of 2 and 4</div></div><div class="mq">Tutorial + 20</div></div>
-<div class="mc locked" onclick="loadMod('p3')"><div><div class="mn">3. Position & Pre-flop Strategy</div><div class="md">UTG through Button. Why position is worth two extra cards</div></div><div class="mq">Tutorial + 15</div></div>
-<div class="mc locked" onclick="loadMod('p4')"><div><div class="mn">4. Post-flop Fundamentals</div><div class="md">Board texture, continuation betting, when top pair isn't enough</div></div><div class="mq">Tutorial + 20</div></div>
+<div class="mc locked" onclick="loadMod('p3')"><div><div class="mn">3. Position & Pre-flop Strategy</div><div class="md">UTG (first to act) through Button (last to act). Why position is worth two extra cards</div></div><div class="mq">Tutorial + 15</div></div>
+<div class="mc locked" onclick="loadMod('p4')"><div><div class="mn">4. Post-flop Fundamentals</div><div class="md">Board texture (how connected the cards are), continuation betting (betting the flop after raising pre-flop), when top pair isn't enough</div></div><div class="mq">Tutorial + 20</div></div>
 </div>
 
 <div class="tier-group">
@@ -260,7 +261,7 @@ a{color:var(--gold);text-decoration:none}a:hover{text-decoration:underline}
 <div class="mc locked" onclick="loadMod('p5')"><div><div class="mn">5. Equity vs Range</div><div class="md">Stop thinking about single hands. Think about ranges.</div></div><div class="mq">Tutorial + 20</div></div>
 <div class="mc locked" onclick="loadMod('p6')"><div><div class="mn">6. Implied Odds & Reverse Implied</div><div class="md">When pot odds say fold but you should call — and vice versa</div></div><div class="mq">Tutorial + 15</div></div>
 <div class="mc locked" onclick="loadMod('p7')"><div><div class="mn">7. Bet Sizing Theory</div><div class="md">Why you bet ⅔ pot. Polarised vs merged. Value vs bluff ratios</div></div><div class="mq">Tutorial + 15</div></div>
-<div class="mc locked" onclick="loadMod('p8')"><div><div class="mn">8. Opponent Profiling</div><div class="md">TAG, LAG, calling station, nit. How to exploit each type</div></div><div class="mq">Tutorial + 15</div></div>
+<div class="mc locked" onclick="loadMod('p8')"><div><div class="mn">8. Opponent Profiling</div><div class="md">TAG (tight-aggressive), LAG (loose-aggressive), calling station, nit. How to exploit each type</div></div><div class="mq">Tutorial + 15</div></div>
 </div>
 
 <div class="tier-group">
@@ -385,6 +386,14 @@ TUTORIALS.p1 = `
 
 <div class="pt">Poker is a game of folding. You fold most hands. The hands you choose to play must have a mathematical reason to be played.</div>
 
+<div class="pln">New to poker? Here's how a hand works: you're dealt two private cards (your <strong>hole cards</strong>). Five shared cards (the <strong>community cards</strong>) are dealt face-up on the table — three at once (the <strong>flop</strong>), then one more (the <strong>turn</strong>), then one more (the <strong>river</strong>). You make the best five-card hand from any combination of your two cards and the five on the table. Between each deal, there's a round of betting where you can <strong>fold</strong> (give up), <strong>check</strong> (pass without betting), <strong>call</strong> (match the current bet), or <strong>raise</strong> (increase the bet). Go <strong>all-in</strong> to bet everything you have.</div>
+
+<div class="pln"><strong>Blinds</strong> are forced bets placed before any cards are dealt. The <strong>small blind</strong> (SB) sits left of the dealer, the <strong>big blind</strong> (BB) sits two left. They exist to create something worth fighting for. The big blind is also used as a unit — "I won 5 BB" means 5 times the big blind amount. <strong>BB/hr</strong> (big blinds per hour) is how poker players measure their win rate.</div>
+
+<div class="pln">The <strong>pot</strong> is all the money bet so far in the current hand. The winner takes the pot.</div>
+
+<div class="pln"><strong>Pre-flop</strong> means before any community cards are dealt — you've only seen your two hole cards.</div>
+
 <h3>Hand Rankings (Best to Worst)</h3>
 <div class="mb">
 1. <span class="pos">Royal Flush</span> — A K Q J 10 same suit (1 in 649,740)<br>
@@ -409,6 +418,8 @@ AKo wins ~65% vs a random hand<br><br>
 That 2% difference seems small. But over 10,000 hands, suited connectors make flushes and flush draws that offsuit hands simply cannot. <span class="pos">Suited adds approximately 3-4% equity</span> to any hand.
 </div>
 
+<div class="pln">A <strong>pocket pair</strong> means your two hole cards are the same rank — two kings, two sevens, etc. Also called "a pair in the hole."</div>
+
 <h3>The 13×13 Range Grid</h3>
 <p>Every possible starting hand fits on a 13×13 grid. Pairs run down the diagonal. Suited hands are above the diagonal. Offsuit hands are below. Learning to "see" this grid is essential.</p>
 
@@ -422,6 +433,7 @@ That 2% difference seems small. But over 10,000 hands, suited connectors make fl
 </div>
 
 <h3>Starting Hand Tiers</h3>
+<div class="pln"><strong>Premium hands</strong> are the strongest starting cards — hands so strong you'll almost always raise with them regardless of position.</div>
 <div class="mb">
 <strong>Tier 1 — Premium (always raise):</strong><br>
 <span class="pos">AA, KK, QQ, JJ, AKs, AKo</span><br>
@@ -441,6 +453,8 @@ About 8% of hands. Only with position and the right price.<br><br>
 
 <strong>Everything else: FOLD.</strong>
 </div>
+
+<div class="pln">Your <strong>kicker</strong> is your unpaired side card that breaks ties. If you and your opponent both have a pair of aces, whoever has the higher kicker wins.</div>
 
 <div class="pt">The top 20% of hands win roughly 80% of the money at a full table. Playing outside that top 20% without a specific mathematical reason is donating chips.</div>
 
@@ -501,8 +515,12 @@ TUTORIALS.p2 = `
 
 <div class="pt">The question is never "will I win?" — it's "am I getting the right price to call?" If the pot odds are better than your probability of winning, you call. If not, you fold. It's arithmetic, not intuition.</div>
 
+<div class="pln"><strong>EV</strong> stands for Expected Value — the average amount a decision wins or loses over many repetitions. A <strong>+EV</strong> call makes money in the long run. A <strong>−EV</strong> call loses money over time. Every poker decision has an EV.</div>
+
 <h3>What Are Outs?</h3>
 <p>An "out" is any unseen card that will complete your hand. The more outs you have, the more likely you are to win.</p>
+
+<div class="pln"><strong>Drawing</strong> means you need one or more community cards to complete a strong hand. If you have four hearts and need one more for a flush, you're "on a flush draw."</div>
 
 <div class="mb">
 <strong>Common draws and their outs:</strong><br><br>
@@ -703,16 +721,22 @@ TUTORIALS.p3 = `
 
 <div class="pt">Position means acting AFTER your opponent. You see what they do before you decide. This single advantage is worth approximately 2-3 big blinds per 100 hands more than playing out of position.</div>
 
+<div class="pln">Being <strong>in position</strong> means you act after your opponent — you see their decision before making yours. <strong>Out of position</strong> means you act first. Position is a mathematical advantage because more information = better decisions.</div>
+
 <h3>The Positions (6-max table)</h3>
 <div class="mb">
 <strong>Earliest to latest:</strong><br><br>
-<span class="neg">UTG (Under the Gun)</span> — First to act. Worst position. Play TIGHT.<br>
+<span class="neg">UTG (Under the Gun)</span> — First to act. Worst position. Play tight.<br>
 <span class="neg">HJ (Hijack)</span> — Second. Still early. Slightly wider range.<br>
 CO (Cutoff) — Third. Getting better. Open wider.<br>
 <span class="pos">BTN (Button)</span> — Best seat. Last to act post-flop. Play WIDEST here.<br>
 <span class="neg">SB (Small Blind)</span> — Worst post-flop position. Already invested half a blind.<br>
 BB (Big Blind) — Already invested 1 blind. Get a discount on calls.
 </div>
+
+<div class="pln"><strong>Tight</strong> means playing few hands — only entering pots with strong cards. <strong>Loose</strong> means playing many hands with a wide range of cards.</div>
+
+<div class="pln"><strong>Aggressive</strong> means betting and raising frequently. <strong>Passive</strong> means mostly checking and calling. The most profitable style for most players is <strong>TAG</strong> — tight-aggressive: play few hands, but play them aggressively.</div>
 
 <div class="pln">In plain English: the Button is the best seat because you ALWAYS act last after the flop. You see everyone else's decisions before making yours. It's like taking an exam with the answer key.</div>
 
@@ -860,9 +884,14 @@ TUTORIALS.p4 = `
 <h3>Post-flop: Where Money Is Won and Lost</h3>
 <p>Pre-flop decisions account for about 30% of your edge. Post-flop decisions account for 70%. This is where you either exploit weaker players or get exploited yourself.</p>
 
+<div class="pln"><strong>Equity</strong> is your mathematical share of the pot based on your chance of winning. If you have a 40% chance of winning a £100 pot, your equity is £40.</div>
+
+<div class="pln">A <strong>range</strong> is the set of all hands a player could reasonably have, given how they've played so far. A player who raised from early position probably has a narrow range of strong hands.</div>
+
 <div class="pt">The flop changes everything. Before the flop, AA is the best hand. After the flop, AA on a board of 7♠8♠9♠ when you don't have a spade is terrifying. Learning to read the board is essential.</div>
 
 <h3>Board Texture</h3>
+<div class="pln"><strong>Board texture</strong> describes how connected and coordinated the community cards are — whether they create lots of possible draws (a "wet" board) or very few (a "dry" board).</div>
 <div class="mb">
 <strong>Dry board:</strong> K♦7♣2♠<br>
 Few draws possible. Top pair is usually good. Bet small for value.<br><br>
@@ -875,6 +904,7 @@ Anyone with a King has trips. Unlikely you both have a King. Often checks throug
 </div>
 
 <h3>Continuation Betting (C-Bet)</h3>
+<div class="pln">A <strong>continuation bet</strong> (c-bet) is when you raised before the flop and then bet again on the flop, continuing your aggression regardless of whether you hit.</div>
 <p>A c-bet is when the pre-flop raiser bets again on the flop. This is powerful because:</p>
 
 <div class="mb">
@@ -907,7 +937,19 @@ You have top pair top kicker. It feels strong. But what hands does a typical pla
 <span class="neg">Almost all of those beat you.</span> Folding top pair is painful but often correct.
 </div>
 
+<div class="pln">An <strong>overcard</strong> is a card in your hand higher than any card on the board. If the flop is 7-5-2 and you hold AK, both your cards are overcards.</div>
+
 <div class="dg">The #1 post-flop leak: falling in love with top pair. Top pair is a one-pair hand. When the action tells you someone has two pair or better, believe them and fold. The money you save on folds is worth more than the pots you lose by calling.</div>
+
+<div class="pln">A <strong>bluff</strong> is a bet made when you believe you have the worst hand, designed to make your opponent fold a better hand.</div>
+
+<div class="pln">A <strong>semi-bluff</strong> is a bet made when you don't have the best hand right now, but you have outs to improve. You can win by your opponent folding OR by hitting your draw.</div>
+
+<div class="pln">A <strong>value bet</strong> is made when you believe you have the best hand, designed to get called by a worse hand.</div>
+
+<div class="pln"><strong>The nuts</strong> is the absolute best possible hand given the current board. If you hold the ace of hearts with four hearts on the board, you have the nut flush — nobody can beat you.</div>
+
+<div class="pln"><strong>Implied odds</strong> extend pot odds by accounting for money you expect to win on future streets if you hit your draw. Bad pot odds now can still be a good call if you expect a big payoff later.</div>
 
 <h3>Pot Control</h3>
 <div class="mb">
