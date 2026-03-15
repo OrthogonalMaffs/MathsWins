@@ -1,0 +1,552 @@
+<!DOCTYPE html>
+<html lang="en-GB">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Compound Interest & Debt — The Maths Your Bank Hopes You Never Learn | MathsWins</title>
+<meta name="description" content="Why minimum payments on a £3,000 credit card cost over £7,000. How compound interest works for and against you. APR decoded, the Rule of 72, and interactive calculators. Free.">
+<meta property="og:title" content="Compound Interest & Debt — The Exponential You Can't Ignore">
+<meta property="og:description" content="Compound interest builds your savings and destroys your debt — using exactly the same mathematics. We show you both sides, with live calculators.">
+<meta property="og:url" content="https://mathswins.co.uk/everyday/compound-interest/">
+<meta property="og:type" content="website">
+<link rel="canonical" href="https://mathswins.co.uk/everyday/compound-interest/">
+<link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Crimson+Pro:ital,wght@0,400;0,700;1,400&family=DM+Mono:wght@400;500&family=Outfit:wght@300;400;600;700&display=swap" rel="stylesheet">
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "Course",
+  "name": "Compound Interest & Debt",
+  "description": "How compound interest works for savings and against debt. APR, minimum payments, the Rule of 72, and interactive calculators.",
+  "provider": {"@type": "EducationalOrganization", "name": "MathsWins", "url": "https://mathswins.co.uk"},
+  "educationalLevel": "Adult Education",
+  "isAccessibleForFree": true,
+  "hasCourseInstance": {"@type": "CourseInstance", "courseMode": "online", "courseWorkload": "Self-paced"}
+}
+</script>
+<script async src="https://www.googletagmanager.com/gtag/js?id=G-CLNF7GSB28"></script>
+<script>
+window.dataLayer=window.dataLayer||[];function gtag(){dataLayer.push(arguments);}
+gtag('js',new Date());gtag('config','G-CLNF7GSB28',{send_page_view:true,storage:'none',anonymize_ip:true});
+</script>
+<style>
+:root{--bg:#050709;--surface:#0a0d14;--surface2:#0f1319;--border:#161c28;--border2:#1e2638;--sky:#0ea5e9;--sky-dim:rgba(14,165,233,0.1);--green-bright:#2dd4a0;--red-bright:#ef5350;--gold:#d4a847;--text:#c8cdd8;--text-bright:#e8ecf4;--muted:#4a5568;--accent:var(--sky);--accent-dim:var(--sky-dim)}
+*{margin:0;padding:0;box-sizing:border-box}
+body{background:var(--bg);color:var(--text);font-family:'Outfit',sans-serif;font-weight:400;line-height:1.7;-webkit-font-smoothing:antialiased}
+.container{max-width:860px;margin:0 auto;padding:0 1.5rem}
+header{padding:2rem 0 1rem;border-bottom:1px solid var(--border)}
+.breadcrumb{font-size:.8rem;color:var(--muted);margin-bottom:1rem}
+.breadcrumb a{color:var(--muted);text-decoration:none;transition:color .2s}
+.breadcrumb a:hover{color:var(--accent)}
+.section-label{font-family:'Outfit',sans-serif;font-weight:600;font-size:.75rem;text-transform:uppercase;letter-spacing:.15em;color:var(--accent);margin-bottom:.5rem}
+h1{font-family:'Bebas Neue',sans-serif;font-size:clamp(2.5rem,6vw,3.5rem);color:var(--text-bright);letter-spacing:.03em;line-height:1.1;margin-bottom:.5rem}
+.subtitle{font-family:'Crimson Pro',serif;font-style:italic;font-size:1.15rem;color:var(--accent);margin-bottom:1.5rem}
+.stats-bar{display:grid;grid-template-columns:repeat(auto-fit,minmax(140px,1fr));gap:1px;background:var(--border);border:1px solid var(--border);border-radius:8px;overflow:hidden;margin-bottom:2rem}
+.stat-cell{background:var(--surface);padding:1rem;text-align:center}
+.stat-num{font-family:'DM Mono',monospace;font-weight:500;font-size:1.5rem;color:var(--accent);display:block}
+.stat-label{font-family:'Outfit',sans-serif;font-size:.7rem;text-transform:uppercase;letter-spacing:.1em;color:var(--muted);margin-top:.25rem}
+.module-nav{display:flex;flex-wrap:wrap;gap:.5rem;margin-bottom:2.5rem}
+.module-pill{font-family:'Outfit',sans-serif;font-weight:600;font-size:.8rem;padding:.5rem 1rem;background:var(--surface);border:1px solid var(--border);border-radius:6px;color:var(--muted);cursor:pointer;transition:all .2s;white-space:nowrap}
+.module-pill:hover{border-color:var(--accent);color:var(--text)}
+.module-pill.active{background:var(--accent-dim);border-color:var(--accent);color:var(--accent)}
+.module-content{display:none}.module-content.active{display:block}
+.module-header{margin-bottom:2rem}
+.module-header h2{font-family:'Bebas Neue',sans-serif;font-size:1.8rem;color:var(--text-bright);letter-spacing:.03em;margin-bottom:.5rem}
+.module-header p{font-family:'Crimson Pro',serif;font-style:italic;color:var(--accent);font-size:1.05rem}
+.tut{background:var(--surface);border:1px solid var(--border);border-radius:10px;padding:2rem;margin-bottom:2rem}
+.tut h3{font-family:'Bebas Neue',sans-serif;font-size:1.3rem;color:var(--text-bright);letter-spacing:.03em;margin-bottom:1rem}
+.tut p{margin-bottom:1rem;line-height:1.8}.tut p:last-child{margin-bottom:0}
+.pt{border-left:3px solid var(--accent);background:var(--accent-dim);padding:1rem 1.25rem;border-radius:0 6px 6px 0;margin:1.5rem 0}
+.dg{border-left:3px solid var(--red-bright);background:rgba(239,83,80,.08);padding:1rem 1.25rem;border-radius:0 6px 6px 0;margin:1.5rem 0}
+.gd{border-left:3px solid var(--green-bright);background:rgba(45,212,160,.08);padding:1rem 1.25rem;border-radius:0 6px 6px 0;margin:1.5rem 0}
+.mb{font-family:'DM Mono',monospace;font-size:.9rem;background:var(--bg);border:1px solid var(--border2);border-radius:6px;padding:1.25rem 1.5rem;margin:1.5rem 0;line-height:1.9;overflow-x:auto;color:var(--text-bright)}
+.mb .highlight{color:var(--accent);font-weight:500}.mb .result{color:var(--green-bright);font-weight:500}.mb .negative{color:var(--red-bright);font-weight:500}
+.pln{font-family:'Crimson Pro',serif;font-style:italic;color:var(--accent);background:rgba(14,165,233,.05);border-left:2px solid rgba(14,165,233,.3);padding:1rem 1.25rem;border-radius:0 6px 6px 0;margin:1.5rem 0;font-size:1.05rem;line-height:1.7}
+.calc-container{background:var(--surface2);border:1px solid var(--border2);border-radius:10px;padding:2rem;margin:2rem 0}
+.calc-container h3{font-family:'Bebas Neue',sans-serif;font-size:1.3rem;color:var(--text-bright);letter-spacing:.03em;margin-bottom:.5rem}
+.calc-subtitle{font-family:'Crimson Pro',serif;font-style:italic;color:var(--muted);font-size:.95rem;margin-bottom:1.5rem}
+.input-row{display:flex;align-items:center;gap:1rem;margin-bottom:1rem;flex-wrap:wrap}
+.input-row label{font-family:'Outfit',sans-serif;font-weight:600;font-size:.85rem;color:var(--text);white-space:nowrap;min-width:140px}
+.calc-input{font-family:'DM Mono',monospace;font-size:1.1rem;font-weight:500;color:var(--accent);background:var(--bg);border:1px solid var(--border2);border-radius:6px;padding:.6rem .8rem;width:140px;outline:none;transition:border-color .2s}
+.calc-input:focus{border-color:var(--accent)}
+.calc-slider{flex:1;min-width:150px;-webkit-appearance:none;appearance:none;height:6px;background:var(--border2);border-radius:3px;outline:none}
+.calc-slider::-webkit-slider-thumb{-webkit-appearance:none;appearance:none;width:20px;height:20px;border-radius:50%;background:var(--accent);cursor:pointer;border:2px solid var(--bg)}
+.calc-slider::-moz-range-thumb{width:20px;height:20px;border-radius:50%;background:var(--accent);cursor:pointer;border:2px solid var(--bg)}
+.calc-results{display:grid;grid-template-columns:repeat(auto-fit,minmax(160px,1fr));gap:1px;background:var(--border);border:1px solid var(--border);border-radius:8px;overflow:hidden;margin-top:1.5rem}
+.calc-result-cell{background:var(--surface);padding:1rem;text-align:center}
+.calc-result-num{font-family:'DM Mono',monospace;font-weight:500;font-size:1.3rem;display:block}
+.calc-result-label{font-family:'Outfit',sans-serif;font-size:.7rem;text-transform:uppercase;letter-spacing:.1em;color:var(--muted);margin-top:.25rem}
+.amort-table{width:100%;border-collapse:collapse;margin:1.5rem 0;font-size:.8rem}
+.amort-table th{font-family:'Outfit',sans-serif;font-weight:600;font-size:.7rem;text-transform:uppercase;letter-spacing:.08em;color:var(--muted);text-align:left;padding:.5rem;border-bottom:1px solid var(--border2)}
+.amort-table td{font-family:'DM Mono',monospace;padding:.4rem .5rem;border-bottom:1px solid var(--border);font-size:.8rem}
+.amort-table .interest{color:var(--red-bright)}.amort-table .principal{color:var(--green-bright)}
+.disclaimer{background:var(--surface);border:1px solid var(--border);border-radius:8px;padding:1.5rem;margin:3rem 0 2rem;font-size:.85rem;color:var(--muted);line-height:1.7}
+.disclaimer a{color:var(--accent);text-decoration:none}.disclaimer a:hover{text-decoration:underline}
+.related-courses{margin-top:3rem;padding:2rem;background:var(--surface);border:1px solid var(--border);border-radius:10px}
+.related-courses h3{font-family:'Bebas Neue',sans-serif;font-size:1.3rem;color:var(--text-bright);letter-spacing:.05em;margin-bottom:1.5rem}
+.related-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(250px,1fr));gap:1rem}
+.related-card{display:block;padding:1rem 1.25rem;background:var(--surface2);border:1px solid var(--border);border-left:3px solid var(--accent);border-radius:6px;text-decoration:none;transition:border-color .2s}
+.related-card:hover{border-left-color:#2dd4bf}
+.related-card-title{font-family:'Bebas Neue',sans-serif;font-size:1.05rem;color:var(--accent);display:block;margin-bottom:.25rem}
+.related-card-hook{font-family:'Crimson Pro',serif;font-style:italic;font-size:.85rem;color:var(--text);line-height:1.4}
+footer{text-align:center;padding:2rem 0;margin-top:2rem;border-top:1px solid var(--border);font-size:.75rem;color:var(--muted)}
+footer a{color:var(--muted);text-decoration:none}footer a:hover{color:var(--accent)}
+.chart-container{position:relative;margin:1.5rem 0;height:200px;background:var(--bg);border:1px solid var(--border);border-radius:8px;overflow:hidden}
+.chart-bar-group{display:flex;align-items:flex-end;justify-content:center;gap:4px;height:100%;padding:1rem}
+.chart-bar{border-radius:3px 3px 0 0;min-width:8px;transition:height .4s ease;position:relative}
+.chart-bar-label{position:absolute;bottom:-20px;left:50%;transform:translateX(-50%);font-family:'DM Mono',monospace;font-size:.6rem;color:var(--muted);white-space:nowrap}
+</style>
+</head>
+<body>
+<div class="container">
+
+<header>
+  <div class="breadcrumb"><a href="/">MathsWins</a> → <a href="/everyday/">Everyday Maths</a> → Compound Interest</div>
+  <div class="section-label">Everyday Maths — Free</div>
+  <h1>COMPOUND INTEREST & DEBT</h1>
+  <p class="subtitle">The most powerful force in finance — and it works for you or against you. Same maths, opposite outcomes.</p>
+  <div class="stats-bar">
+    <div class="stat-cell"><span class="stat-num">£7,800+</span><span class="stat-label">Total cost of £3k on minimums</span></div>
+    <div class="stat-cell"><span class="stat-num">28 yrs</span><span class="stat-label">To clear on minimum payments</span></div>
+    <div class="stat-cell"><span class="stat-num">72</span><span class="stat-label">The Rule that estimates doubling</span></div>
+    <div class="stat-cell"><span class="stat-num">£0</span><span class="stat-label">Cost — Always free</span></div>
+  </div>
+</header>
+
+<nav class="module-nav" id="moduleNav">
+  <div class="module-pill active" data-module="1">1 · How Compounding Works</div>
+  <div class="module-pill" data-module="2">2 · Credit Card Trap</div>
+  <div class="module-pill" data-module="3">3 · APR Decoded</div>
+  <div class="module-pill" data-module="4">4 · The Rule of 72</div>
+</nav>
+
+<!-- MODULE 1 -->
+<div class="module-content active" id="module1">
+  <div class="module-header">
+    <h2>MODULE 1: HOW COMPOUNDING WORKS</h2>
+    <p>Interest on your interest. The exponential that most people think linearly about.</p>
+  </div>
+
+  <div class="tut">
+    <h3>SIMPLE VS COMPOUND</h3>
+    <p><strong>Simple interest</strong> is calculated only on the original amount. £1,000 at 5% simple interest earns £50 every year, forever. After 10 years you have £1,500.</p>
+    <p><strong>Compound interest</strong> is calculated on the original amount <em>plus all the interest already earned</em>. The interest earns interest. After 10 years at 5% compounded annually, you have £1,628.89 — not £1,500.</p>
+
+    <div class="mb">
+      Simple interest: A = P × (1 + r × t)<br>
+      £1,000 × (1 + 0.05 × 10) = <span class="result">£1,500.00</span><br><br>
+      Compound interest: A = P × (1 + r)^t<br>
+      £1,000 × (1.05)^10 = <span class="result">£1,628.89</span><br><br>
+      Difference: <span class="highlight">£128.89</span> — the interest earned on interest
+    </div>
+
+    <div class="pln">
+      That £128.89 difference is free money — it came from your interest earning its own interest. Over 10 years on £1,000 it's modest. Over 30 years on £100,000 it's transformative. Compounding rewards patience.
+    </div>
+  </div>
+
+  <div class="tut">
+    <h3>TIME IS THE MULTIPLIER</h3>
+    <p>The power of compound interest isn't the rate — it's the time. Watch what happens to £1,000 at 5% over different periods:</p>
+
+    <div class="mb">
+      After 10 years: £1,000 × 1.05^10 = <span class="result">£1,629</span><br>
+      After 20 years: £1,000 × 1.05^20 = <span class="result">£2,653</span><br>
+      After 30 years: £1,000 × 1.05^30 = <span class="result">£4,322</span><br>
+      After 40 years: £1,000 × 1.05^40 = <span class="result">£7,040</span><br>
+      After 50 years: £1,000 × 1.05^50 = <span class="result">£11,467</span>
+    </div>
+
+    <div class="pln">
+      Your money didn't grow by £200 per decade. It grew by £1,024 in decade one, £1,024 more in decade two, £1,669 in decade three, £2,718 in decade four, and £4,427 in decade five. The growth accelerates because each year there's more money earning interest. This is what exponential growth means — and it's why starting early matters so much.
+    </div>
+
+    <div class="pt">
+      <strong>The key insight:</strong> The last 10 years produced more growth than the first 30 combined. Compounding is a patience machine — the reward for waiting is disproportionately large.
+    </div>
+  </div>
+
+  <!-- Compound growth calculator -->
+  <div class="calc-container">
+    <h3>COMPOUND GROWTH CALCULATOR</h3>
+    <p class="calc-subtitle">See how your money grows over time with compound interest.</p>
+    <div class="input-row">
+      <label>Starting amount: £</label>
+      <input type="text" class="calc-input" id="cg_principal" value="1,000">
+    </div>
+    <div class="input-row">
+      <label>Annual rate: %</label>
+      <input type="text" class="calc-input" id="cg_rate" value="5" style="width:80px">
+      <input type="range" class="calc-slider" id="cg_rate_slider" min="1" max="25" value="5" step="0.5">
+    </div>
+    <div class="input-row">
+      <label>Years:</label>
+      <input type="text" class="calc-input" id="cg_years" value="20" style="width:80px">
+      <input type="range" class="calc-slider" id="cg_years_slider" min="1" max="50" value="20">
+    </div>
+    <div class="input-row">
+      <label>Monthly contribution: £</label>
+      <input type="text" class="calc-input" id="cg_monthly" value="0">
+    </div>
+    <div class="calc-results" id="cg_results"></div>
+  </div>
+</div>
+
+<!-- MODULE 2 -->
+<div class="module-content" id="module2">
+  <div class="module-header">
+    <h2>MODULE 2: THE CREDIT CARD TRAP</h2>
+    <p>The same exponential that builds your savings destroys your debt — and minimum payments are designed to keep you in it.</p>
+  </div>
+
+  <div class="tut">
+    <h3>HOW MINIMUM PAYMENTS WORK</h3>
+    <p>Most UK credit cards calculate the minimum payment as the greater of:</p>
+    <p>• A percentage of the balance (typically 2–3%), OR<br>• A fixed floor (typically £5–£25)</p>
+    <p>Here's the trap: as your balance drops, your minimum payment drops too. You pay less each month, which means more of each payment goes to interest and less to actually reducing the debt. The balance shrinks slower and slower.</p>
+
+    <div class="dg">
+      <strong>The design is deliberate.</strong> Minimum payments are set low enough to keep you paying for as long as possible. A £3,000 balance at 21.9% APR with minimum payments of 2.5% (or £5 floor) takes approximately 28 years to clear and costs roughly £4,800 in interest — making the total cost over £7,800 for something you originally borrowed £3,000 for.
+    </div>
+  </div>
+
+  <div class="tut">
+    <h3>WORKED EXAMPLE: £3,000 AT 21.9% APR</h3>
+    <p>Minimum payment = max(2.5% of balance, £5). Let's trace the first few months and see how the interest eats into your payments.</p>
+
+    <div class="mb">
+      <span class="highlight">Month 1:</span><br>
+      Balance: £3,000.00<br>
+      Interest: £3,000 × (21.9% ÷ 12) = <span class="negative">£54.75</span><br>
+      Minimum payment: £3,000 × 2.5% = £75.00<br>
+      Principal paid: £75.00 − £54.75 = <span class="result">£20.25</span><br>
+      New balance: <span class="highlight">£2,979.75</span><br><br>
+      <span class="highlight">Month 2:</span><br>
+      Interest: £2,979.75 × 1.825% = <span class="negative">£54.38</span><br>
+      Minimum: £2,979.75 × 2.5% = £74.49<br>
+      Principal paid: <span class="result">£20.11</span><br>
+      New balance: <span class="highlight">£2,959.64</span>
+    </div>
+
+    <div class="pln">
+      In the first month, you paid £75 but only £20.25 actually reduced your debt. The other £54.75 — nearly 73% of your payment — went straight to interest. And the minimum payment drops next month, so even less goes to the balance. This is why it takes 28 years.
+    </div>
+  </div>
+
+  <div class="tut">
+    <h3>FIXED PAYMENTS CHANGE EVERYTHING</h3>
+    <p>If instead of paying the minimum (which shrinks), you fix your payment at £100/month:</p>
+
+    <div class="mb">
+      £3,000 at 21.9% APR:<br><br>
+      Minimum payments only: <span class="negative">28 years</span>, £4,800 interest, <span class="negative">£7,800 total</span><br>
+      Fixed £100/month:      <span class="result">3 years 2 months</span>, £815 interest, <span class="result">£3,815 total</span><br>
+      Fixed £150/month:      <span class="result">2 years</span>, £510 interest, <span class="result">£3,510 total</span><br><br>
+      Saving (£100 vs min):  <span class="result">25 years and £3,985</span>
+    </div>
+
+    <div class="pln">
+      Paying £100 instead of the minimum saves you £3,985 and 25 years. That's the difference between being debt-free at 30 or still paying at 55. The maths is not subtle.
+    </div>
+
+    <div class="gd">
+      <strong>The rule:</strong> Never pay the minimum if you can afford more. Even £20 extra per month makes a dramatic difference. Fix your payment at the highest amount you can sustain, and don't let it shrink as the balance drops.
+    </div>
+  </div>
+
+  <!-- Credit card calculator -->
+  <div class="calc-container">
+    <h3>CREDIT CARD PAYOFF CALCULATOR</h3>
+    <p class="calc-subtitle">See how long your balance will take to clear — and how much extra payments save.</p>
+    <div class="input-row">
+      <label>Balance: £</label>
+      <input type="text" class="calc-input" id="cc_balance" value="3,000">
+    </div>
+    <div class="input-row">
+      <label>APR: %</label>
+      <input type="text" class="calc-input" id="cc_apr" value="21.9" style="width:80px">
+      <input type="range" class="calc-slider" id="cc_apr_slider" min="5" max="40" value="21.9" step="0.1">
+    </div>
+    <div class="input-row">
+      <label>Monthly payment: £</label>
+      <input type="text" class="calc-input" id="cc_payment" value="75">
+      <input type="range" class="calc-slider" id="cc_payment_slider" min="25" max="500" value="75" step="5">
+    </div>
+    <div class="calc-results" id="cc_results"></div>
+  </div>
+</div>
+
+<!-- MODULE 3 -->
+<div class="module-content" id="module3">
+  <div class="module-header">
+    <h2>MODULE 3: APR DECODED</h2>
+    <p>What the Annual Percentage Rate actually means — and why it's not as simple as it sounds.</p>
+  </div>
+
+  <div class="tut">
+    <h3>APR VS INTEREST RATE</h3>
+    <p>APR (Annual Percentage Rate) is designed to be a standardised way to compare borrowing costs. It includes the interest rate plus any mandatory fees, expressed as a yearly figure.</p>
+    <p>But here's what catches people: credit card interest compounds <em>monthly</em>, not annually. A 21.9% APR doesn't mean you pay 21.9% per year on your balance — it means you pay approximately 1.825% per month, and each month's interest is added to the balance before next month's interest is calculated.</p>
+
+    <div class="mb">
+      APR: <span class="highlight">21.9%</span><br>
+      Monthly rate: 21.9% ÷ 12 = <span class="highlight">1.825%</span><br><br>
+      Effective annual rate (with monthly compounding):<br>
+      (1 + 0.219/12)^12 − 1 = (1.01825)^12 − 1 = <span class="negative">24.2%</span><br><br>
+      The actual annual cost is <span class="negative">24.2%</span>, not 21.9%.
+    </div>
+
+    <div class="pln">
+      A credit card advertising 21.9% APR actually costs you 24.2% per year because of monthly compounding. The APR understates the true cost. This is legal and standard — but it's worth understanding that the number on the tin isn't quite the number in your pocket.
+    </div>
+  </div>
+
+  <div class="tut">
+    <h3>COMPARING LOAN COSTS</h3>
+    <p>APR is most useful for comparing like with like. A personal loan at 6.9% APR is cheaper than a credit card at 21.9% APR — that's clear. But APR doesn't capture everything:</p>
+
+    <div class="pt">
+      <strong>What APR includes:</strong> Interest rate, mandatory fees (arrangement fees on loans, for example).<br>
+      <strong>What APR doesn't include:</strong> Payment protection insurance (if optional), late payment fees, the effect of paying only the minimum, or the cost of flexibility (credit cards let you borrow and repay flexibly; loans have fixed schedules).
+    </div>
+
+    <p>The most honest comparison is <strong>total cost of borrowing</strong> — the total amount you pay back minus the amount you borrowed. That number tells you exactly what the debt cost you in real money.</p>
+
+    <div class="mb">
+      £3,000 borrowed for 3 years:<br><br>
+      Credit card at 21.9% (min payments): total repaid ≈ <span class="negative">£7,800</span> → cost: <span class="negative">£4,800</span><br>
+      Credit card at 21.9% (£100/month):  total repaid ≈ <span class="negative">£3,815</span> → cost: <span class="negative">£815</span><br>
+      Personal loan at 6.9% APR (fixed):  total repaid ≈ <span class="negative">£3,327</span> → cost: <span class="negative">£327</span><br>
+      0% balance transfer (24 months):    total repaid ≈ <span class="result">£3,090</span> → cost: <span class="result">£90 fee</span>
+    </div>
+
+    <div class="pln">
+      Same £3,000, four different approaches, costs ranging from £90 to £4,800. The interest rate matters, but how you repay matters more. A 0% balance transfer with a small fee and disciplined fixed payments is the cheapest option by far.
+    </div>
+  </div>
+</div>
+
+<!-- MODULE 4 -->
+<div class="module-content" id="module4">
+  <div class="module-header">
+    <h2>MODULE 4: THE RULE OF 72</h2>
+    <p>A mental shortcut that estimates how long it takes money to double. Or debt to double.</p>
+  </div>
+
+  <div class="tut">
+    <h3>THE FORMULA</h3>
+    <p>The Rule of 72 is beautifully simple:</p>
+
+    <div class="mb">
+      Years to double ≈ 72 ÷ interest rate<br><br>
+      At 4%: 72 ÷ 4 = <span class="result">18 years</span> to double<br>
+      At 6%: 72 ÷ 6 = <span class="result">12 years</span> to double<br>
+      At 8%: 72 ÷ 8 = <span class="result">9 years</span> to double<br>
+      At 10%: 72 ÷ 10 = <span class="result">7.2 years</span> to double<br>
+      At 24%: 72 ÷ 24 = <span class="negative">3 years</span> to double
+    </div>
+
+    <div class="pln">
+      At a 4% savings rate, your money doubles in about 18 years. At a 24% credit card rate, your debt doubles in about 3 years if you make no payments. Same maths, opposite direction.
+    </div>
+  </div>
+
+  <div class="tut">
+    <h3>WHY IT WORKS</h3>
+    <p>The exact formula for doubling time is:</p>
+
+    <div class="mb">
+      t = ln(2) ÷ ln(1 + r)<br><br>
+      where ln is the natural logarithm and r is the rate as a decimal.<br><br>
+      At 6%: t = 0.6931 ÷ ln(1.06) = 0.6931 ÷ 0.0583 = <span class="result">11.90 years</span><br>
+      Rule of 72 estimate: 72 ÷ 6 = <span class="result">12 years</span><br><br>
+      Close enough for mental arithmetic.
+    </div>
+
+    <div class="pln">
+      The Rule of 72 is an approximation that works because ln(2) ≈ 0.6931 and for small rates, ln(1 + r) ≈ r. The 72 comes from rounding 69.3 to a more divisible number. It's most accurate between 4% and 12% — which conveniently covers most savings and investment rates.
+    </div>
+  </div>
+
+  <div class="tut">
+    <h3>PRACTICAL APPLICATIONS</h3>
+
+    <div class="gd">
+      <strong>For savings:</strong> "If my pension grows at 7% per year, it doubles every 10 years. Starting with £50,000 at age 35, that's £100,000 at 45, £200,000 at 55, £400,000 at 65." Three doublings from one mental calculation.
+    </div>
+
+    <div class="dg">
+      <strong>For debt:</strong> "My credit card charges 22% APR. 72 ÷ 22 ≈ 3.3 years. If I stop paying entirely, my £2,000 debt becomes £4,000 in just over 3 years." This is why ignoring debt is catastrophically expensive.
+    </div>
+
+    <div class="pt">
+      <strong>For inflation:</strong> "Inflation is 3.5%. 72 ÷ 3.5 ≈ 20.6 years. Prices roughly double every 20 years. Something that costs £100 today will cost £200 by 2046." This is why cash savings lose purchasing power over time.
+    </div>
+  </div>
+
+  <!-- Rule of 72 calculator -->
+  <div class="calc-container">
+    <h3>RULE OF 72 CALCULATOR</h3>
+    <p class="calc-subtitle">Enter a rate to see how long it takes to double.</p>
+    <div class="input-row">
+      <label>Rate: %</label>
+      <input type="text" class="calc-input" id="r72_rate" value="6" style="width:80px">
+      <input type="range" class="calc-slider" id="r72_slider" min="1" max="30" value="6" step="0.5">
+    </div>
+    <div class="calc-results" id="r72_results"></div>
+  </div>
+</div>
+
+<!-- DISCLAIMER -->
+<div class="disclaimer">
+  <strong>This is mathematical education, not financial advice.</strong> Interest rates and product terms vary — always check with your provider. For personalised debt advice, contact <a href="https://www.stepchange.org" target="_blank" rel="noopener">StepChange</a> (free, UK) or <a href="https://www.moneyhelper.org.uk" target="_blank" rel="noopener">MoneyHelper</a> (government-backed).<br><br>
+  If you're struggling with debt, you're not alone. Free, confidential help is available: <strong>StepChange: 0800 138 1111</strong>
+</div>
+
+<!-- RELATED COURSES -->
+<section class="related-courses">
+  <h3>EXPLORE EVERYDAY MATHS</h3>
+  <div class="related-grid">
+    <a class="related-card" href="/everyday/tax/">
+      <span class="related-card-title">UK TAX MATHS</span>
+      <span class="related-card-hook">The same marginal thinking applies — understanding which pounds are taxed at which rate is the foundation of smart financial decisions.</span>
+    </a>
+    <a class="related-card" href="/everyday/mortgages/" style="border-left-color:#4a5568;">
+      <span class="related-card-title" style="color:var(--muted);">MORTGAGE MATHS — COMING SOON</span>
+      <span class="related-card-hook">Your mortgage is compound interest's biggest real-world application. Amortisation, overpayments, and the true cost of term length.</span>
+    </a>
+    <a class="related-card" href="/academy/lottery/" style="border-left-color:#facc15;">
+      <span class="related-card-title" style="color:#facc15;">LOTTERY MATHS</span>
+      <span class="related-card-hook">The same exponential growth that makes compound interest powerful makes lottery spending devastatingly expensive over a lifetime.</span>
+    </a>
+  </div>
+</section>
+
+<footer>
+  <p>MathsWins · <a href="/">Home</a> · <a href="/everyday/">Everyday Maths</a> · <a href="/academy/">Academy</a> · <a href="/about/">About</a></p>
+  <p style="margin-top:.5rem">Built by a mathematician. No personal data collected. Cookieless analytics.</p>
+</footer>
+
+</div>
+
+<script>
+// Module navigation
+const pills=document.querySelectorAll('.module-pill');
+const modules=document.querySelectorAll('.module-content');
+pills.forEach(p=>{p.addEventListener('click',()=>{
+  const t=p.getAttribute('data-module');
+  pills.forEach(x=>x.classList.remove('active'));
+  modules.forEach(x=>x.classList.remove('active'));
+  p.classList.add('active');
+  document.getElementById('module'+t).classList.add('active');
+  window.scrollTo({top:document.getElementById('moduleNav').offsetTop-20,behavior:'smooth'});
+});});
+
+function fmt(n){return n.toLocaleString('en-GB',{minimumFractionDigits:0,maximumFractionDigits:0});}
+function fmt2(n){return n.toLocaleString('en-GB',{minimumFractionDigits:2,maximumFractionDigits:2});}
+function parseNum(s){return parseFloat(String(s).replace(/[^0-9.]/g,''))||0;}
+
+// MODULE 1: Compound growth calculator
+function updateCG(){
+  const P=parseNum(document.getElementById('cg_principal').value);
+  const r=parseNum(document.getElementById('cg_rate').value)/100;
+  const t=parseNum(document.getElementById('cg_years').value);
+  const m=parseNum(document.getElementById('cg_monthly').value);
+  
+  let total=P;
+  let totalContributed=P+m*12*t;
+  for(let i=0;i<t*12;i++){
+    total=total*(1+r/12)+m;
+  }
+  const interest=total-totalContributed;
+  const simple=P*(1+r*t)+m*12*t;
+
+  document.getElementById('cg_results').innerHTML=`
+    <div class="calc-result-cell"><span class="calc-result-num" style="color:var(--green-bright)">£${fmt(Math.round(total))}</span><span class="calc-result-label">Final amount</span></div>
+    <div class="calc-result-cell"><span class="calc-result-num" style="color:var(--accent)">£${fmt(Math.round(totalContributed))}</span><span class="calc-result-label">Total contributed</span></div>
+    <div class="calc-result-cell"><span class="calc-result-num" style="color:var(--gold)">£${fmt(Math.round(interest))}</span><span class="calc-result-label">Interest earned</span></div>
+    <div class="calc-result-cell"><span class="calc-result-num" style="color:var(--text-bright)">${(total/totalContributed).toFixed(2)}×</span><span class="calc-result-label">Growth multiple</span></div>`;
+}
+
+['cg_principal','cg_rate','cg_years','cg_monthly'].forEach(id=>{
+  document.getElementById(id).addEventListener('input',updateCG);
+});
+document.getElementById('cg_rate_slider').addEventListener('input',e=>{document.getElementById('cg_rate').value=e.target.value;updateCG();});
+document.getElementById('cg_years_slider').addEventListener('input',e=>{document.getElementById('cg_years').value=e.target.value;updateCG();});
+
+// MODULE 2: Credit card calculator
+function updateCC(){
+  let balance=parseNum(document.getElementById('cc_balance').value);
+  const apr=parseNum(document.getElementById('cc_apr').value)/100;
+  const payment=parseNum(document.getElementById('cc_payment').value);
+  const monthlyRate=apr/12;
+  
+  if(balance<=0||payment<=0){document.getElementById('cc_results').innerHTML='';return;}
+  
+  let months=0;
+  let totalInterest=0;
+  let b=balance;
+  const maxMonths=600; // 50 year cap
+  
+  while(b>0.01 && months<maxMonths){
+    const interest=b*monthlyRate;
+    totalInterest+=interest;
+    b=b+interest-Math.min(payment,b+interest);
+    months++;
+  }
+  
+  const years=Math.floor(months/12);
+  const remainMonths=months%12;
+  const totalPaid=balance+totalInterest;
+  const timeStr=months>=maxMonths?'50+ years':(years>0?years+'y '+remainMonths+'m':remainMonths+'m');
+  const interestColour=totalInterest>balance?'var(--red-bright)':'var(--gold)';
+
+  // Compare with minimum payments
+  let minMonths=0;let minInterest=0;let mb=balance;
+  while(mb>0.01 && minMonths<maxMonths){
+    const mi=mb*monthlyRate;
+    minInterest+=mi;
+    const minPay=Math.max(mb*0.025,5);
+    mb=mb+mi-Math.min(minPay,mb+mi);
+    minMonths++;
+  }
+
+  const saved=minInterest-totalInterest;
+  const monthsSaved=minMonths-months;
+
+  document.getElementById('cc_results').innerHTML=`
+    <div class="calc-result-cell"><span class="calc-result-num" style="color:var(--accent)">${timeStr}</span><span class="calc-result-label">Time to clear</span></div>
+    <div class="calc-result-cell"><span class="calc-result-num" style="color:${interestColour}">£${fmt(Math.round(totalInterest))}</span><span class="calc-result-label">Total interest</span></div>
+    <div class="calc-result-cell"><span class="calc-result-num" style="color:var(--red-bright)">£${fmt(Math.round(totalPaid))}</span><span class="calc-result-label">Total repaid</span></div>
+    ${saved>50?`<div class="calc-result-cell"><span class="calc-result-num" style="color:var(--green-bright)">£${fmt(Math.round(saved))}</span><span class="calc-result-label">Saved vs minimums</span></div>`:''}`;
+}
+
+['cc_balance','cc_apr','cc_payment'].forEach(id=>{
+  document.getElementById(id).addEventListener('input',updateCC);
+});
+document.getElementById('cc_apr_slider').addEventListener('input',e=>{document.getElementById('cc_apr').value=e.target.value;updateCC();});
+document.getElementById('cc_payment_slider').addEventListener('input',e=>{document.getElementById('cc_payment').value=fmt(parseInt(e.target.value));updateCC();});
+
+// MODULE 4: Rule of 72
+function updateR72(){
+  const rate=parseNum(document.getElementById('r72_rate').value);
+  if(rate<=0){document.getElementById('r72_results').innerHTML='';return;}
+  
+  const rule72=72/rate;
+  const exact=Math.log(2)/Math.log(1+rate/100);
+  const error=Math.abs(rule72-exact);
+
+  document.getElementById('r72_results').innerHTML=`
+    <div class="calc-result-cell"><span class="calc-result-num" style="color:var(--accent)">${rule72.toFixed(1)} yrs</span><span class="calc-result-label">Rule of 72 estimate</span></div>
+    <div class="calc-result-cell"><span class="calc-result-num" style="color:var(--green-bright)">${exact.toFixed(2)} yrs</span><span class="calc-result-label">Exact calculation</span></div>
+    <div class="calc-result-cell"><span class="calc-result-num" style="color:var(--muted)">${error.toFixed(2)} yrs</span><span class="calc-result-label">Estimation error</span></div>
+    <div class="calc-result-cell"><span class="calc-result-num" style="color:var(--gold)">${(100-error/exact*100).toFixed(1)}%</span><span class="calc-result-label">Accuracy</span></div>`;
+}
+
+document.getElementById('r72_rate').addEventListener('input',updateR72);
+document.getElementById('r72_slider').addEventListener('input',e=>{document.getElementById('r72_rate').value=e.target.value;updateR72();});
+
+// Init
+updateCG();updateCC();updateR72();
+</script>
+</body>
+</html>

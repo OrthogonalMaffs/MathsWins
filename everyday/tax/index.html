@@ -1,0 +1,1695 @@
+<!DOCTYPE html>
+<html lang="en-GB">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>UK Tax Maths — How Income Tax Actually Works | MathsWins</title>
+<meta name="description" content="Interactive guide to UK income tax mathematics. See exactly how marginal rates work, why earning £50,271 doesn't mean 40% on everything, and the hidden 60% trap between £100k–£125k. Free, with live calculators.">
+<meta property="og:title" content="UK Tax Maths — The Numbers They Should Have Taught You">
+<meta property="og:description" content="Most people don't understand their own tax. We show the actual maths — marginal rates, effective rates, and the calculations behind every pound.">
+<meta property="og:url" content="https://mathswins.co.uk/everyday/tax/">
+<meta property="og:type" content="website">
+<link rel="canonical" href="https://mathswins.co.uk/everyday/tax/">
+<link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Crimson+Pro:ital,wght@0,400;0,700;1,400&family=DM+Mono:wght@400;500&family=Outfit:wght@300;400;600;700&display=swap" rel="stylesheet">
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "Course",
+  "name": "UK Tax Maths",
+  "description": "Interactive guide to UK income tax mathematics. Marginal rates, effective rates, the £100k trap, and live calculators.",
+  "provider": {
+    "@type": "EducationalOrganization",
+    "name": "MathsWins",
+    "url": "https://mathswins.co.uk"
+  },
+  "educationalLevel": "Adult Education",
+  "isAccessibleForFree": true,
+  "about": {
+    "@type": "Thing",
+    "name": "UK Income Tax Mathematics"
+  },
+  "hasCourseInstance": {
+    "@type": "CourseInstance",
+    "courseMode": "online",
+    "courseWorkload": "Self-paced"
+  }
+}
+</script>
+<script async src="https://www.googletagmanager.com/gtag/js?id=G-CLNF7GSB28"></script>
+<script>
+  window.dataLayer = window.dataLayer || [];
+  function gtag(){dataLayer.push(arguments);}
+  gtag('js', new Date());
+  gtag('config', 'G-CLNF7GSB28', {
+    send_page_view: true,
+    storage: 'none',
+    anonymize_ip: true
+  });
+</script>
+<style>
+:root {
+  --bg: #050709;
+  --surface: #0a0d14;
+  --surface2: #0f1319;
+  --border: #161c28;
+  --border2: #1e2638;
+  --navy: #1a2744;
+  --gold: #d4a847;
+  --teal: #0d9488;
+  --teal-bright: #2dd4bf;
+  --sky: #0ea5e9;
+  --sky-dim: rgba(14,165,233,0.1);
+  --sky-mid: rgba(14,165,233,0.25);
+  --green-bright: #2dd4a0;
+  --red-bright: #ef5350;
+  --text: #c8cdd8;
+  --text-bright: #e8ecf4;
+  --muted: #4a5568;
+  --accent: var(--sky);
+  --accent-dim: var(--sky-dim);
+}
+
+* { margin: 0; padding: 0; box-sizing: border-box; }
+
+body {
+  background: var(--bg);
+  color: var(--text);
+  font-family: 'Outfit', sans-serif;
+  font-weight: 400;
+  line-height: 1.7;
+  -webkit-font-smoothing: antialiased;
+}
+
+.container {
+  max-width: 860px;
+  margin: 0 auto;
+  padding: 0 1.5rem;
+}
+
+/* === HEADER === */
+header {
+  padding: 2rem 0 1rem;
+  border-bottom: 1px solid var(--border);
+}
+
+.breadcrumb {
+  font-family: 'Outfit', sans-serif;
+  font-size: 0.8rem;
+  color: var(--muted);
+  margin-bottom: 1rem;
+}
+
+.breadcrumb a {
+  color: var(--muted);
+  text-decoration: none;
+  transition: color 0.2s;
+}
+
+.breadcrumb a:hover { color: var(--accent); }
+
+.section-label {
+  font-family: 'Outfit', sans-serif;
+  font-weight: 600;
+  font-size: 0.75rem;
+  text-transform: uppercase;
+  letter-spacing: 0.15em;
+  color: var(--accent);
+  margin-bottom: 0.5rem;
+}
+
+h1 {
+  font-family: 'Bebas Neue', sans-serif;
+  font-size: clamp(2.5rem, 6vw, 3.5rem);
+  color: var(--text-bright);
+  letter-spacing: 0.03em;
+  line-height: 1.1;
+  margin-bottom: 0.5rem;
+}
+
+.subtitle {
+  font-family: 'Crimson Pro', serif;
+  font-style: italic;
+  font-size: 1.15rem;
+  color: var(--accent);
+  margin-bottom: 1.5rem;
+}
+
+/* === STATS BAR === */
+.stats-bar {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(140px, 1fr));
+  gap: 1px;
+  background: var(--border);
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  overflow: hidden;
+  margin-bottom: 2rem;
+}
+
+.stat-cell {
+  background: var(--surface);
+  padding: 1rem;
+  text-align: center;
+}
+
+.stat-num {
+  font-family: 'DM Mono', monospace;
+  font-weight: 500;
+  font-size: 1.5rem;
+  color: var(--accent);
+  display: block;
+}
+
+.stat-label {
+  font-family: 'Outfit', sans-serif;
+  font-size: 0.7rem;
+  text-transform: uppercase;
+  letter-spacing: 0.1em;
+  color: var(--muted);
+  margin-top: 0.25rem;
+}
+
+/* === MODULE NAV === */
+.module-nav {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.5rem;
+  margin-bottom: 2.5rem;
+}
+
+.module-pill {
+  font-family: 'Outfit', sans-serif;
+  font-weight: 600;
+  font-size: 0.8rem;
+  padding: 0.5rem 1rem;
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: 6px;
+  color: var(--muted);
+  cursor: pointer;
+  transition: all 0.2s;
+  white-space: nowrap;
+}
+
+.module-pill:hover {
+  border-color: var(--accent);
+  color: var(--text);
+}
+
+.module-pill.active {
+  background: var(--accent-dim);
+  border-color: var(--accent);
+  color: var(--accent);
+}
+
+/* === TUTORIAL CONTENT === */
+.module-content {
+  display: none;
+}
+
+.module-content.active {
+  display: block;
+}
+
+.module-header {
+  margin-bottom: 2rem;
+}
+
+.module-header h2 {
+  font-family: 'Bebas Neue', sans-serif;
+  font-size: 1.8rem;
+  color: var(--text-bright);
+  letter-spacing: 0.03em;
+  margin-bottom: 0.5rem;
+}
+
+.module-header p {
+  font-family: 'Crimson Pro', serif;
+  font-style: italic;
+  color: var(--accent);
+  font-size: 1.05rem;
+}
+
+.tut {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: 10px;
+  padding: 2rem;
+  margin-bottom: 2rem;
+}
+
+.tut h3 {
+  font-family: 'Bebas Neue', sans-serif;
+  font-size: 1.3rem;
+  color: var(--text-bright);
+  letter-spacing: 0.03em;
+  margin-bottom: 1rem;
+}
+
+.tut p {
+  margin-bottom: 1rem;
+  line-height: 1.8;
+}
+
+.tut p:last-child { margin-bottom: 0; }
+
+/* Key point */
+.pt {
+  border-left: 3px solid var(--accent);
+  background: var(--accent-dim);
+  padding: 1rem 1.25rem;
+  border-radius: 0 6px 6px 0;
+  margin: 1.5rem 0;
+}
+
+/* Danger / warning */
+.dg {
+  border-left: 3px solid var(--red-bright);
+  background: rgba(239,83,80,0.08);
+  padding: 1rem 1.25rem;
+  border-radius: 0 6px 6px 0;
+  margin: 1.5rem 0;
+}
+
+/* Good / positive */
+.gd {
+  border-left: 3px solid var(--green-bright);
+  background: rgba(45,212,160,0.08);
+  padding: 1rem 1.25rem;
+  border-radius: 0 6px 6px 0;
+  margin: 1.5rem 0;
+}
+
+/* Maths box */
+.mb {
+  font-family: 'DM Mono', monospace;
+  font-size: 0.9rem;
+  background: var(--bg);
+  border: 1px solid var(--border2);
+  border-radius: 6px;
+  padding: 1.25rem 1.5rem;
+  margin: 1.5rem 0;
+  line-height: 1.9;
+  overflow-x: auto;
+  color: var(--text-bright);
+}
+
+.mb .highlight { color: var(--accent); font-weight: 500; }
+.mb .result { color: var(--green-bright); font-weight: 500; }
+.mb .negative { color: var(--red-bright); font-weight: 500; }
+
+/* Plain English */
+.pln {
+  font-family: 'Crimson Pro', serif;
+  font-style: italic;
+  color: var(--accent);
+  background: rgba(14,165,233,0.05);
+  border-left: 2px solid rgba(14,165,233,0.3);
+  padding: 1rem 1.25rem;
+  border-radius: 0 6px 6px 0;
+  margin: 1.5rem 0;
+  font-size: 1.05rem;
+  line-height: 1.7;
+}
+
+/* === INTERACTIVE CALCULATOR === */
+.calc-container {
+  background: var(--surface2);
+  border: 1px solid var(--border2);
+  border-radius: 10px;
+  padding: 2rem;
+  margin: 2rem 0;
+}
+
+.calc-container h3 {
+  font-family: 'Bebas Neue', sans-serif;
+  font-size: 1.3rem;
+  color: var(--text-bright);
+  letter-spacing: 0.03em;
+  margin-bottom: 0.5rem;
+}
+
+.calc-subtitle {
+  font-family: 'Crimson Pro', serif;
+  font-style: italic;
+  color: var(--muted);
+  font-size: 0.95rem;
+  margin-bottom: 1.5rem;
+}
+
+.salary-input-row {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+  margin-bottom: 1.5rem;
+  flex-wrap: wrap;
+}
+
+.salary-input-row label {
+  font-family: 'Outfit', sans-serif;
+  font-weight: 600;
+  font-size: 0.85rem;
+  color: var(--text);
+  white-space: nowrap;
+}
+
+.salary-input {
+  font-family: 'DM Mono', monospace;
+  font-size: 1.4rem;
+  font-weight: 500;
+  color: var(--accent);
+  background: var(--bg);
+  border: 1px solid var(--border2);
+  border-radius: 6px;
+  padding: 0.75rem 1rem;
+  width: 200px;
+  outline: none;
+  transition: border-color 0.2s;
+}
+
+.salary-input:focus {
+  border-color: var(--accent);
+}
+
+.salary-slider {
+  flex: 1;
+  min-width: 200px;
+  -webkit-appearance: none;
+  appearance: none;
+  height: 6px;
+  background: var(--border2);
+  border-radius: 3px;
+  outline: none;
+}
+
+.salary-slider::-webkit-slider-thumb {
+  -webkit-appearance: none;
+  appearance: none;
+  width: 20px;
+  height: 20px;
+  border-radius: 50%;
+  background: var(--accent);
+  cursor: pointer;
+  border: 2px solid var(--bg);
+}
+
+.salary-slider::-moz-range-thumb {
+  width: 20px;
+  height: 20px;
+  border-radius: 50%;
+  background: var(--accent);
+  cursor: pointer;
+  border: 2px solid var(--bg);
+}
+
+/* Tax band visualisation */
+.tax-bands-visual {
+  margin: 1.5rem 0;
+}
+
+.band-row {
+  display: grid;
+  grid-template-columns: 120px 1fr 100px 80px;
+  align-items: center;
+  gap: 0.75rem;
+  margin-bottom: 0.75rem;
+  font-size: 0.85rem;
+}
+
+@media (max-width: 600px) {
+  .band-row {
+    grid-template-columns: 1fr;
+    gap: 0.25rem;
+    padding-bottom: 0.75rem;
+    border-bottom: 1px solid var(--border);
+  }
+}
+
+.band-label {
+  font-family: 'Outfit', sans-serif;
+  font-weight: 600;
+  font-size: 0.75rem;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+}
+
+.band-bar-container {
+  background: var(--bg);
+  border-radius: 4px;
+  height: 28px;
+  position: relative;
+  overflow: hidden;
+}
+
+.band-bar {
+  height: 100%;
+  border-radius: 4px;
+  transition: width 0.4s ease;
+  min-width: 2px;
+}
+
+.band-amount {
+  font-family: 'DM Mono', monospace;
+  font-size: 0.85rem;
+  text-align: right;
+  color: var(--text);
+}
+
+.band-tax {
+  font-family: 'DM Mono', monospace;
+  font-size: 0.85rem;
+  text-align: right;
+  font-weight: 500;
+}
+
+/* Results summary */
+.calc-results {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+  gap: 1px;
+  background: var(--border);
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  overflow: hidden;
+  margin-top: 1.5rem;
+}
+
+.calc-result-cell {
+  background: var(--surface);
+  padding: 1rem;
+  text-align: center;
+}
+
+.calc-result-num {
+  font-family: 'DM Mono', monospace;
+  font-weight: 500;
+  font-size: 1.3rem;
+  display: block;
+}
+
+.calc-result-label {
+  font-family: 'Outfit', sans-serif;
+  font-size: 0.7rem;
+  text-transform: uppercase;
+  letter-spacing: 0.1em;
+  color: var(--muted);
+  margin-top: 0.25rem;
+}
+
+/* Tax band table */
+.band-table {
+  width: 100%;
+  border-collapse: collapse;
+  margin: 1.5rem 0;
+  font-size: 0.9rem;
+}
+
+.band-table th {
+  font-family: 'Outfit', sans-serif;
+  font-weight: 600;
+  font-size: 0.75rem;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  color: var(--muted);
+  text-align: left;
+  padding: 0.75rem;
+  border-bottom: 1px solid var(--border2);
+}
+
+.band-table td {
+  font-family: 'DM Mono', monospace;
+  padding: 0.75rem;
+  border-bottom: 1px solid var(--border);
+  color: var(--text);
+}
+
+.band-table td:first-child {
+  font-family: 'Outfit', sans-serif;
+  font-weight: 600;
+  color: var(--text-bright);
+}
+
+.band-table .rate { color: var(--accent); font-weight: 500; }
+
+/* Region toggle */
+.region-toggle {
+  display: flex;
+  gap: 0;
+  margin-bottom: 1.5rem;
+  border: 1px solid var(--border);
+  border-radius: 6px;
+  overflow: hidden;
+  width: fit-content;
+}
+
+.region-btn {
+  font-family: 'Outfit', sans-serif;
+  font-weight: 600;
+  font-size: 0.8rem;
+  padding: 0.6rem 1.25rem;
+  background: var(--surface);
+  color: var(--muted);
+  border: none;
+  cursor: pointer;
+  transition: all 0.2s;
+}
+
+.region-btn.active {
+  background: var(--accent-dim);
+  color: var(--accent);
+}
+
+.region-btn:hover:not(.active) {
+  color: var(--text);
+}
+
+/* === DISCLAIMER === */
+.disclaimer {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  padding: 1.5rem;
+  margin: 3rem 0 2rem;
+  font-size: 0.85rem;
+  color: var(--muted);
+  line-height: 1.7;
+}
+
+.disclaimer a {
+  color: var(--accent);
+  text-decoration: none;
+}
+
+.disclaimer a:hover { text-decoration: underline; }
+
+/* === RELATED COURSES === */
+.related-courses {
+  margin-top: 3rem;
+  padding: 2rem;
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: 10px;
+}
+
+.related-courses h3 {
+  font-family: 'Bebas Neue', sans-serif;
+  font-size: 1.3rem;
+  color: var(--text-bright);
+  letter-spacing: 0.05em;
+  margin-bottom: 1.5rem;
+}
+
+.related-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+  gap: 1rem;
+}
+
+.related-card {
+  display: block;
+  padding: 1rem 1.25rem;
+  background: var(--surface2);
+  border: 1px solid var(--border);
+  border-left: 3px solid var(--accent);
+  border-radius: 6px;
+  text-decoration: none;
+  transition: border-color 0.2s;
+}
+
+.related-card:hover { border-left-color: var(--teal-bright); }
+
+.related-card-title {
+  font-family: 'Bebas Neue', sans-serif;
+  font-size: 1.05rem;
+  color: var(--accent);
+  display: block;
+  margin-bottom: 0.25rem;
+}
+
+.related-card-hook {
+  font-family: 'Crimson Pro', serif;
+  font-style: italic;
+  font-size: 0.85rem;
+  color: var(--text);
+  line-height: 1.4;
+}
+
+/* === FOOTER === */
+footer {
+  text-align: center;
+  padding: 2rem 0;
+  margin-top: 2rem;
+  border-top: 1px solid var(--border);
+  font-size: 0.75rem;
+  color: var(--muted);
+}
+
+footer a { color: var(--muted); text-decoration: none; }
+footer a:hover { color: var(--accent); }
+
+/* NI toggle */
+.ni-toggle {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  margin: 1rem 0;
+  font-family: 'Outfit', sans-serif;
+  font-size: 0.85rem;
+  color: var(--text);
+}
+
+.toggle-switch {
+  position: relative;
+  width: 44px;
+  height: 24px;
+  background: var(--border2);
+  border-radius: 12px;
+  cursor: pointer;
+  transition: background 0.2s;
+  flex-shrink: 0;
+}
+
+.toggle-switch.on { background: var(--accent); }
+
+.toggle-switch::after {
+  content: '';
+  position: absolute;
+  top: 2px;
+  left: 2px;
+  width: 20px;
+  height: 20px;
+  background: var(--text-bright);
+  border-radius: 50%;
+  transition: transform 0.2s;
+}
+
+.toggle-switch.on::after {
+  transform: translateX(20px);
+}
+
+/* Scotland comparison */
+.comparison-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 1rem;
+  margin: 1.5rem 0;
+}
+
+@media (max-width: 500px) {
+  .comparison-grid { grid-template-columns: 1fr; }
+}
+
+.comparison-col {
+  background: var(--bg);
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  padding: 1.25rem;
+}
+
+.comparison-col h4 {
+  font-family: 'Bebas Neue', sans-serif;
+  font-size: 1.1rem;
+  color: var(--text-bright);
+  margin-bottom: 0.75rem;
+  text-align: center;
+}
+
+.comparison-row {
+  display: flex;
+  justify-content: space-between;
+  padding: 0.4rem 0;
+  border-bottom: 1px solid var(--border);
+  font-size: 0.8rem;
+}
+
+.comparison-row:last-child { border-bottom: none; }
+
+.comparison-label {
+  font-family: 'Outfit', sans-serif;
+  color: var(--muted);
+}
+
+.comparison-value {
+  font-family: 'DM Mono', monospace;
+  font-weight: 500;
+  color: var(--text-bright);
+}
+
+.comparison-value.accent { color: var(--accent); }
+.comparison-value.negative { color: var(--red-bright); }
+
+/* Student loan selector */
+.loan-selector {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.5rem;
+  margin: 1rem 0;
+}
+
+.loan-btn {
+  font-family: 'Outfit', sans-serif;
+  font-weight: 600;
+  font-size: 0.75rem;
+  padding: 0.4rem 0.8rem;
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: 4px;
+  color: var(--muted);
+  cursor: pointer;
+  transition: all 0.2s;
+}
+
+.loan-btn.active {
+  background: var(--accent-dim);
+  border-color: var(--accent);
+  color: var(--accent);
+}
+
+/* Fiscal drag chart */
+.drag-chart {
+  margin: 1.5rem 0;
+  position: relative;
+}
+
+.drag-bar-group {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  margin-bottom: 0.5rem;
+}
+
+.drag-year {
+  font-family: 'DM Mono', monospace;
+  font-size: 0.75rem;
+  color: var(--muted);
+  width: 60px;
+  text-align: right;
+  flex-shrink: 0;
+}
+
+.drag-bar-track {
+  flex: 1;
+  height: 24px;
+  background: var(--bg);
+  border-radius: 4px;
+  position: relative;
+  overflow: hidden;
+}
+
+.drag-bar-basic {
+  height: 100%;
+  background: var(--accent);
+  opacity: 0.6;
+  position: absolute;
+  left: 0;
+  border-radius: 4px 0 0 4px;
+}
+
+.drag-bar-higher {
+  height: 100%;
+  background: var(--red-bright);
+  opacity: 0.7;
+  position: absolute;
+  border-radius: 0 4px 4px 0;
+}
+
+.drag-tax {
+  font-family: 'DM Mono', monospace;
+  font-size: 0.8rem;
+  color: var(--text);
+  width: 65px;
+  text-align: right;
+  flex-shrink: 0;
+}
+
+.drag-legend {
+  display: flex;
+  gap: 1.5rem;
+  margin-top: 1rem;
+  font-size: 0.75rem;
+  color: var(--muted);
+}
+
+.drag-legend-item {
+  display: flex;
+  align-items: center;
+  gap: 0.4rem;
+}
+
+.drag-legend-swatch {
+  width: 12px;
+  height: 12px;
+  border-radius: 2px;
+}
+</style>
+</head>
+<body>
+
+<div class="container">
+
+<!-- HEADER -->
+<header>
+  <div class="breadcrumb">
+    <a href="/">MathsWins</a> → <a href="/everyday/">Everyday Maths</a> → UK Tax
+  </div>
+  <div class="section-label">Everyday Maths — Free</div>
+  <h1>UK TAX MATHS</h1>
+  <p class="subtitle">The numbers they should have taught you in school.</p>
+
+  <div class="stats-bar">
+    <div class="stat-cell">
+      <span class="stat-num">£12,570</span>
+      <span class="stat-label">Personal Allowance</span>
+    </div>
+    <div class="stat-cell">
+      <span class="stat-num">4</span>
+      <span class="stat-label">Tax bands (E&W)</span>
+    </div>
+    <div class="stat-cell">
+      <span class="stat-num">60%</span>
+      <span class="stat-label">Hidden rate £100k–£125k</span>
+    </div>
+    <div class="stat-cell">
+      <span class="stat-num">£0</span>
+      <span class="stat-label">Cost — Always free</span>
+    </div>
+  </div>
+</header>
+
+<!-- MODULE NAV -->
+<nav class="module-nav" id="moduleNav">
+  <div class="module-pill active" data-module="1">1 · Marginal vs Effective</div>
+  <div class="module-pill" data-module="2">2 · The £100k Trap</div>
+  <div class="module-pill" data-module="3">3 · Scotland</div>
+  <div class="module-pill" data-module="4">4 · Deductions</div>
+  <div class="module-pill" data-module="5">5 · Fiscal Drag</div>
+</nav>
+
+<!-- ============================================================ -->
+<!-- MODULE 1: MARGINAL VS EFFECTIVE TAX RATES -->
+<!-- ============================================================ -->
+<div class="module-content active" id="module1">
+  <div class="module-header">
+    <h2>MODULE 1: MARGINAL VS EFFECTIVE TAX RATES</h2>
+    <p>The single biggest misconception in UK tax — and the calculation that fixes it.</p>
+  </div>
+
+  <div class="tut">
+    <h3>THE MYTH</h3>
+    <p>"If I earn over £50,270, all my income gets taxed at 40%."</p>
+    <p>This is wrong. It's the most common misunderstanding in UK tax, and it causes real harm — people turn down pay rises, refuse overtime, and avoid promotions because they believe crossing a threshold means losing money. The maths says otherwise.</p>
+    
+    <div class="dg">
+      <strong>The misconception:</strong> Tax bands are flat rates applied to your entire income.<br>
+      <strong>The reality:</strong> The UK uses progressive taxation. Your income is sliced into bands, and each band is taxed at a different rate. Only the portion <em>within</em> each band gets that band's rate.
+    </div>
+  </div>
+
+  <div class="tut">
+    <h3>HOW PROGRESSIVE TAXATION WORKS</h3>
+    <p>Think of your income as water filling a series of containers, one on top of the other. The first container (£0–£12,570) isn't taxed at all — that's your Personal Allowance. The second container (£12,571–£50,270) is taxed at 20%. The third (£50,271–£125,140) at 40%. Only the water that overflows into each container gets that container's rate.</p>
+
+    <p>The 2025/26 income tax bands for England, Wales, and Northern Ireland:</p>
+
+    <table class="band-table">
+      <thead>
+        <tr>
+          <th>Band</th>
+          <th>Income range</th>
+          <th>Rate</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td>Personal Allowance</td>
+          <td><span class="rate">£0 – £12,570</span></td>
+          <td><span class="rate">0%</span></td>
+        </tr>
+        <tr>
+          <td>Basic rate</td>
+          <td><span class="rate">£12,571 – £50,270</span></td>
+          <td><span class="rate">20%</span></td>
+        </tr>
+        <tr>
+          <td>Higher rate</td>
+          <td><span class="rate">£50,271 – £125,140</span></td>
+          <td><span class="rate">40%</span></td>
+        </tr>
+        <tr>
+          <td>Additional rate</td>
+          <td><span class="rate">£125,141+</span></td>
+          <td><span class="rate">45%</span></td>
+        </tr>
+      </tbody>
+    </table>
+
+    <div class="pt">
+      <strong>Key point:</strong> These bands haven't moved since 2021. The Personal Allowance is frozen at £12,570 until at least 2028. We'll cover why this matters — and how much it costs you — in Module 5.
+    </div>
+  </div>
+
+  <div class="tut">
+    <h3>WORKED EXAMPLE: £55,000 SALARY</h3>
+    <p>Let's calculate the exact tax bill for someone earning £55,000 in 2025/26.</p>
+
+    <div class="mb">
+      <span class="highlight">First £12,570</span>  × 0%  = <span class="result">£0.00</span><br>
+      <span class="highlight">Next £37,700</span>   × 20% = <span class="result">£7,540.00</span><br>
+      <span class="highlight">Next £4,730</span>    × 40% = <span class="result">£1,892.00</span><br>
+      ─────────────────────────────────<br>
+      Total income tax: <span class="result">£9,432.00</span><br>
+      Effective rate: £9,432 ÷ £55,000 = <span class="result">17.1%</span>
+    </div>
+
+    <div class="pln">
+      You earn £55,000. Your tax bill is £9,432. That's 17.1% of your total income — not 40%. The 40% rate only applies to the £4,730 that sits above the higher-rate threshold. You keep £45,568 before National Insurance.
+    </div>
+  </div>
+
+  <div class="tut">
+    <h3>NATIONAL INSURANCE — THE SECOND INCOME TAX</h3>
+    <p>National Insurance is calculated separately on the same income. The government calls it something different, but your pay packet doesn't care about the label — it's money taken from your earnings.</p>
+
+    <p>2025/26 employee NI rates:</p>
+
+    <table class="band-table">
+      <thead>
+        <tr>
+          <th>Earnings</th>
+          <th>Rate</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td>Below £12,570/year</td>
+          <td><span class="rate">0%</span></td>
+        </tr>
+        <tr>
+          <td>£12,571 – £50,270</td>
+          <td><span class="rate">8%</span></td>
+        </tr>
+        <tr>
+          <td>Above £50,270</td>
+          <td><span class="rate">2%</span></td>
+        </tr>
+      </tbody>
+    </table>
+
+    <p>Combined marginal rates (income tax + NI) — the <em>real</em> rate on each pound you earn:</p>
+
+    <div class="mb">
+      £0 – £12,570       → <span class="result">0%</span>   (0% IT + 0% NI)<br>
+      £12,571 – £50,270  → <span class="negative">28%</span>  (20% IT + 8% NI)<br>
+      £50,271 – £125,140 → <span class="negative">42%</span>  (40% IT + 2% NI)<br>
+      £125,141+          → <span class="negative">47%</span>  (45% IT + 2% NI)
+    </div>
+
+    <div class="pln">
+      For most working people, the real rate is 28p in the pound — 20p income tax plus 8p National Insurance. Cross the higher-rate threshold and it jumps to 42p. The government separates these into "income tax" and "National Insurance" but from your perspective, it's all tax on your earnings.
+    </div>
+  </div>
+
+  <!-- INTERACTIVE CALCULATOR -->
+  <div class="calc-container" id="taxCalc">
+    <h3>INTERACTIVE TAX CALCULATOR</h3>
+    <p class="calc-subtitle">Enter your annual salary to see exactly how each pound is taxed.</p>
+
+    <div class="salary-input-row">
+      <label for="salaryInput">Annual salary: £</label>
+      <input type="text" id="salaryInput" class="salary-input" value="55,000" inputmode="numeric">
+      <input type="range" id="salarySlider" class="salary-slider" min="0" max="200000" value="55000" step="500">
+    </div>
+
+    <div class="ni-toggle">
+      <div class="toggle-switch on" id="niToggle"></div>
+      <span>Include National Insurance</span>
+    </div>
+
+    <!-- Band visualisation -->
+    <div class="tax-bands-visual" id="bandsVisual">
+      <!-- Populated by JS -->
+    </div>
+
+    <!-- Results -->
+    <div class="calc-results" id="calcResults">
+      <!-- Populated by JS -->
+    </div>
+  </div>
+
+</div>
+
+<!-- ============================================================ -->
+<!-- MODULE 2: THE £100K TRAP -->
+<!-- ============================================================ -->
+<div class="module-content" id="module2">
+  <div class="module-header">
+    <h2>MODULE 2: THE £100K TRAP</h2>
+    <p>The hidden 60% rate that almost nobody knows exists.</p>
+  </div>
+
+  <div class="tut">
+    <h3>THE PERSONAL ALLOWANCE WITHDRAWAL</h3>
+    <p>The Personal Allowance — that tax-free £12,570 — isn't permanent. Once your income exceeds £100,000, it starts to disappear. For every £2 you earn above £100,000, your Personal Allowance shrinks by £1.</p>
+
+    <div class="dg">
+      <strong>The trap:</strong> Between £100,000 and £125,140, you lose your entire Personal Allowance. This creates an effective marginal tax rate of 60–62% — higher than the 45% "additional rate" that the wealthiest pay on income above £125,140.
+    </div>
+
+    <p>Here's the mechanics. At £100,000 your Personal Allowance is the full £12,570. At £125,140 it's £0. The withdrawal happens at a rate of £1 lost for every £2 earned.</p>
+
+    <div class="mb">
+      Personal Allowance at income X (where X > £100,000):<br><br>
+      Allowance = £12,570 − ((X − £100,000) ÷ 2)<br><br>
+      At £100,000: £12,570 − £0 = <span class="result">£12,570</span><br>
+      At £110,000: £12,570 − £5,000 = <span class="result">£7,570</span><br>
+      At £120,000: £12,570 − £10,000 = <span class="result">£2,570</span><br>
+      At £125,140: £12,570 − £12,570 = <span class="negative">£0</span>
+    </div>
+  </div>
+
+  <div class="tut">
+    <h3>THE REAL MARGINAL RATE</h3>
+    <p>When your Personal Allowance shrinks, income that was previously tax-free becomes taxable. This is an additional tax cost on top of the 40% higher rate.</p>
+
+    <div class="mb">
+      Someone earning £110,000 vs £100,000:<br><br>
+      Extra £10,000 earned:<br>
+        Income tax at 40%:             <span class="negative">£4,000</span><br>
+        NI at 2%:                      <span class="negative">£200</span><br>
+        Lost Personal Allowance: £5,000<br>
+        Tax on that lost £5,000 at 40%: <span class="negative">£2,000</span><br>
+      ─────────────────────────────────<br>
+      Total tax on extra £10,000: <span class="negative">£6,200</span><br>
+      Effective marginal rate: <span class="negative">62%</span>
+    </div>
+
+    <div class="pln">
+      Earn £10,000 more between £100k and £125k, and £6,200 goes to the taxman. You keep £3,800. That's a 62% marginal rate — higher than the 45% "additional rate" that kicks in above £125,140. The £100k–£125k band is the most heavily taxed income in the UK.
+    </div>
+  </div>
+
+  <div class="tut">
+    <h3>WHY THIS MATTERS</h3>
+    <div class="gd">
+      <strong>Salary sacrifice pensions are extremely valuable in this band.</strong> Every pound you put into your pension between £100k and £125k effectively costs you only 38p — because you avoid the 62% marginal rate. This is the single most tax-efficient thing most higher earners can do.
+    </div>
+
+    <p>This is also why some employers offer benefits like additional pension contributions instead of pay rises for employees approaching £100k — the tax efficiency is dramatically better.</p>
+
+    <div class="pt">
+      <strong>The maths is clear:</strong> If you earn between £100,000 and £125,140, pension contributions, charitable donations (via Gift Aid), or salary sacrifice arrangements are worth examining carefully. They can restore your Personal Allowance and effectively give you a 62% "return" on every pound diverted.
+    </div>
+  </div>
+
+  <!-- Interactive £100k slider -->
+  <div class="calc-container">
+    <h3>THE £100K TRAP — VISUALISED</h3>
+    <p class="calc-subtitle">Drag the slider to see how the Personal Allowance disappears.</p>
+
+    <div class="salary-input-row">
+      <label for="trapSlider">Income: £</label>
+      <input type="text" id="trapInput" class="salary-input" value="100,000" inputmode="numeric">
+      <input type="range" id="trapSlider" class="salary-slider" min="90000" max="140000" value="100000" step="500">
+    </div>
+
+    <div class="calc-results" id="trapResults">
+      <!-- Populated by JS -->
+    </div>
+  </div>
+
+</div>
+
+<!-- ============================================================ -->
+<!-- MODULE 3: SCOTLAND -->
+<!-- ============================================================ -->
+<div class="module-content" id="module3">
+  <div class="module-header">
+    <h2>MODULE 3: SCOTLAND — A DIFFERENT SYSTEM</h2>
+    <p>Six bands instead of four. Different thresholds. Same principles.</p>
+  </div>
+
+  <div class="tut">
+    <h3>SCOTTISH INCOME TAX BANDS 2025/26</h3>
+    <p>Scotland has devolved power to set its own income tax rates. The result is a more finely graded system with six bands instead of four. The Personal Allowance remains the same UK-wide (£12,570), and National Insurance is also unchanged.</p>
+
+    <table class="band-table">
+      <thead>
+        <tr>
+          <th>Band</th>
+          <th>Income range</th>
+          <th>Rate</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr><td>Personal Allowance</td><td><span class="rate">£0 – £12,570</span></td><td><span class="rate">0%</span></td></tr>
+        <tr><td>Starter rate</td><td><span class="rate">£12,571 – £15,397</span></td><td><span class="rate">19%</span></td></tr>
+        <tr><td>Basic rate</td><td><span class="rate">£15,398 – £27,491</span></td><td><span class="rate">20%</span></td></tr>
+        <tr><td>Intermediate rate</td><td><span class="rate">£27,492 – £43,662</span></td><td><span class="rate">21%</span></td></tr>
+        <tr><td>Higher rate</td><td><span class="rate">£43,663 – £75,000</span></td><td><span class="rate">42%</span></td></tr>
+        <tr><td>Advanced rate</td><td><span class="rate">£75,001 – £125,140</span></td><td><span class="rate">45%</span></td></tr>
+        <tr><td>Top rate</td><td><span class="rate">£125,141+</span></td><td><span class="rate">48%</span></td></tr>
+      </tbody>
+    </table>
+
+    <div class="pln">
+      Scotland's system is more progressive — lower earners pay slightly less, higher earners pay more. The starter rate of 19% (vs 20% in England) means the first few thousand above the Personal Allowance are taxed less. But the higher rate kicks in earlier (£43,663 vs £50,271) and is steeper (42% vs 40%).
+    </div>
+  </div>
+
+  <div class="tut">
+    <h3>SIDE-BY-SIDE: £55,000 SALARY</h3>
+    <div id="scotlandComparison">
+      <!-- Populated by JS -->
+    </div>
+
+    <div class="pln">
+      At £55,000, the difference is roughly £25 per month. The gap widens at higher incomes. A £100,000 earner pays approximately £1,500 more in Scotland than in England per year.
+    </div>
+
+    <div class="pt">
+      <strong>The crossover:</strong> Below approximately £28,000, Scottish taxpayers pay slightly less income tax than their English counterparts. Above that, they pay more. The more you earn, the bigger the gap.
+    </div>
+  </div>
+</div>
+
+<!-- ============================================================ -->
+<!-- MODULE 4: DEDUCTIONS -->
+<!-- ============================================================ -->
+<div class="module-content" id="module4">
+  <div class="module-header">
+    <h2>MODULE 4: STUDENT LOANS, PENSIONS & MARRIAGE ALLOWANCE</h2>
+    <p>The other deductions on your payslip — and the maths behind each one.</p>
+  </div>
+
+  <div class="tut">
+    <h3>STUDENT LOAN REPAYMENT IS A GRADUATE TAX</h3>
+    <p>Student loan repayment is not like paying off a credit card. It's calculated as a percentage of earnings above a threshold, collected through your payslip, and written off after a set number of years regardless of the balance. In mathematical terms, it behaves exactly like an additional income tax band.</p>
+
+    <table class="band-table">
+      <thead>
+        <tr>
+          <th>Plan</th>
+          <th>Threshold (2025/26)</th>
+          <th>Rate</th>
+          <th>Written off</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr><td>Plan 1 (pre-2012)</td><td><span class="rate">£24,990</span></td><td><span class="rate">9%</span></td><td>25 years</td></tr>
+        <tr><td>Plan 2 (2012–2023)</td><td><span class="rate">£27,295</span></td><td><span class="rate">9%</span></td><td>30 years</td></tr>
+        <tr><td>Plan 5 (post-2023)</td><td><span class="rate">£25,000</span></td><td><span class="rate">9%</span></td><td>40 years</td></tr>
+        <tr><td>Postgraduate loan</td><td><span class="rate">£21,000</span></td><td><span class="rate">6%</span></td><td>30 years</td></tr>
+      </tbody>
+    </table>
+
+    <div class="mb">
+      Plan 2 example — earning £35,000:<br><br>
+      Income above threshold: £35,000 − £27,295 = <span class="highlight">£7,705</span><br>
+      Repayment: £7,705 × 9% = <span class="negative">£693.45/year</span><br>
+      Monthly deduction: <span class="negative">£57.79</span>
+    </div>
+
+    <div class="pln">
+      If you're on Plan 2 earning £35,000, you repay 9% of the £7,705 above the threshold — that's £693 per year, or £58 per month. You don't repay 9% of your whole salary. And if you earn below the threshold, you repay nothing.
+    </div>
+
+    <div class="pt">
+      <strong>The combined marginal rate for a Plan 2 basic-rate taxpayer:</strong> 20% income tax + 8% NI + 9% student loan = <strong>37%</strong> on every pound between £27,295 and £50,270. For a higher-rate taxpayer with a student loan: 40% + 2% + 9% = <strong>51%</strong>.
+    </div>
+  </div>
+
+  <div class="tut">
+    <h3>MARRIAGE ALLOWANCE</h3>
+    <p>If one partner earns less than £12,570 (using none or not all of their Personal Allowance) and the other is a basic-rate taxpayer, you can transfer £1,260 of unused allowance. The receiving partner's tax-free amount increases from £12,570 to £13,830.</p>
+
+    <div class="mb">
+      Tax saving: £1,260 × 20% = <span class="result">£252/year</span>
+    </div>
+
+    <div class="pln">
+      It's worth £252 per year. Simple maths, simple claim, but HMRC estimates millions of eligible couples don't claim it. You can also backdate the claim by up to 4 years — that's up to £1,008 in unclaimed tax relief.
+    </div>
+  </div>
+
+  <div class="tut">
+    <h3>PENSION TAX RELIEF</h3>
+    <p>Pension contributions receive tax relief at your marginal rate. The mechanics differ depending on your scheme:</p>
+
+    <p><strong>Relief at source</strong> (most workplace pensions): You contribute from your net pay, and the pension provider claims 20% basic-rate relief from HMRC automatically. If you're a higher-rate taxpayer, you claim the additional 20% through self-assessment.</p>
+
+    <p><strong>Salary sacrifice:</strong> Your employer reduces your gross salary and pays the difference into your pension. You save income tax AND National Insurance on the sacrificed amount.</p>
+
+    <div class="mb">
+      £100 pension contribution — true cost by tax band:<br><br>
+      Basic rate (relief at source):  £100 − £20 relief  = <span class="result">costs you £80</span><br>
+      Higher rate (claim via SA):     £100 − £40 relief  = <span class="result">costs you £60</span><br>
+      Additional rate:                £100 − £45 relief  = <span class="result">costs you £55</span><br>
+      £100k–£125k band:              £100 − £62 relief  = <span class="result">costs you £38</span><br><br>
+      Salary sacrifice (basic rate):  saves IT + NI      = <span class="result">costs you £72</span>
+    </div>
+
+    <div class="pln">
+      Every £100 your employer puts into your pension in the £100k–£125k band effectively costs you only £38. That's a 62% "return" before your investments even do anything. There is no other legal tax relief this generous.
+    </div>
+  </div>
+</div>
+
+<!-- ============================================================ -->
+<!-- MODULE 5: FISCAL DRAG -->
+<!-- ============================================================ -->
+<div class="module-content" id="module5">
+  <div class="module-header">
+    <h2>MODULE 5: FISCAL DRAG</h2>
+    <p>Why your tax bill goes up even when the rates don't change.</p>
+  </div>
+
+  <div class="tut">
+    <h3>FROZEN THRESHOLDS, RISING WAGES</h3>
+    <p>The Personal Allowance has been frozen at £12,570 since April 2021. The basic-rate threshold has been frozen at £50,270. Both are due to remain frozen until at least 2028.</p>
+    <p>Meanwhile, average wages rise with inflation. When wages go up but thresholds don't, more of your income gets pushed into higher tax bands. This is called <strong>fiscal drag</strong> — a stealth tax increase that requires no legislation, no parliamentary vote, and no headline announcement.</p>
+
+    <div class="mb">
+      Example: Someone earning £50,000 in 2021/22 with 3% annual raises:<br><br>
+      2021/22: £50,000 → all within basic rate (threshold: £50,270)<br>
+      2022/23: £51,500 → <span class="negative">£1,230</span> in higher rate band<br>
+      2023/24: £53,045 → <span class="negative">£2,775</span> in higher rate band<br>
+      2024/25: £54,636 → <span class="negative">£4,366</span> in higher rate band<br>
+      2025/26: £56,275 → <span class="negative">£6,005</span> in higher rate band<br><br>
+      Extra tax from fiscal drag (2025/26 vs 2021/22):<br>
+      £6,005 × (40% − 20%) = <span class="negative">£1,201/year</span>
+    </div>
+
+    <div class="pln">
+      You got a pay rise every year, but the tax thresholds didn't move. Result: you're paying £1,201 more in tax than you would if the thresholds had risen with your wages. The government raised your taxes without changing a single rate.
+    </div>
+  </div>
+
+  <div class="tut">
+    <h3>THE FISCAL DRAG CALCULATOR</h3>
+    <p>See how threshold freezes affect a salary growing at 3% per year.</p>
+
+    <div class="drag-chart" id="dragChart">
+      <!-- Populated by JS -->
+    </div>
+
+    <div class="pln">
+      The red portion of each bar represents income pushed into the higher-rate band by frozen thresholds. The longer the freeze continues, the more income crosses the line — and the more extra tax you pay each year.
+    </div>
+  </div>
+
+  <div class="tut">
+    <h3>WHAT YOU CAN DO ABOUT IT</h3>
+    <div class="gd">
+      <strong>Understanding fiscal drag is the first step to managing it.</strong> Pension contributions reduce your taxable income — they can pull you back below a threshold. ISA income is completely outside the tax system. Salary sacrifice arrangements save NI as well as income tax. None of these are "loopholes" — they're the intended mechanisms for managing your effective tax rate.
+    </div>
+
+    <div class="pt">
+      <strong>The bottom line:</strong> If your gross salary has risen by 15% since 2021 but the thresholds haven't moved, your effective tax rate has increased even though the rates on paper are identical. The maths doesn't lie, and the maths says threshold freezes are the largest tax increase most working people have experienced in a generation.
+    </div>
+  </div>
+</div>
+
+<!-- ============================================================ -->
+<!-- DISCLAIMER -->
+<!-- ============================================================ -->
+<div class="disclaimer">
+  <strong>This is mathematical education, not financial advice.</strong> Tax rules change — always verify current rates at <a href="https://www.gov.uk/income-tax-rates" target="_blank" rel="noopener">gov.uk/income-tax-rates</a>. For personalised advice, consult a qualified financial adviser or accountant.<br><br>
+  <a href="https://www.moneyhelper.org.uk" target="_blank" rel="noopener">MoneyHelper</a> (free, government-backed) · <a href="https://www.gov.uk/income-tax-rates" target="_blank" rel="noopener">HMRC income tax guidance</a><br><br>
+  Tax year: 2025/26 (6 April 2025 – 5 April 2026). Rates shown for England, Wales and Northern Ireland unless stated. Scotland has different bands — see Module 3.
+</div>
+
+<!-- ============================================================ -->
+<!-- RELATED COURSES -->
+<!-- ============================================================ -->
+<section class="related-courses">
+  <h3>EXPLORE EVERYDAY MATHS</h3>
+  <div class="related-grid">
+    <a class="related-card" href="/everyday/compound-interest/" style="border-left-color: #0ea5e9;">
+      <span class="related-card-title" style="color: #0ea5e9;">COMPOUND INTEREST & DEBT</span>
+      <span class="related-card-hook">Minimum payments on a £3,000 credit card cost you over £7,000. The same exponential maths that taxes your income also compounds your debt.</span>
+    </a>
+    <a class="related-card" href="/everyday/pensions/" style="border-left-color: #0ea5e9;">
+      <span class="related-card-title" style="color: #0ea5e9;">PENSION MATHS</span>
+      <span class="related-card-hook">Starting at 25 vs 35 nearly doubles your pot. Combine that with the tax relief from Module 4 and the numbers are extraordinary.</span>
+    </a>
+    <a class="related-card" href="/academy/trading/" style="border-left-color: #10b981;">
+      <span class="related-card-title" style="color: #10b981;">TRADING MATHS</span>
+      <span class="related-card-hook">The same marginal analysis applies — knowing your effective rate vs marginal rate is fundamental to calculating real returns.</span>
+    </a>
+  </div>
+</section>
+
+<!-- FOOTER -->
+<footer>
+  <p>MathsWins · <a href="/">Home</a> · <a href="/everyday/">Everyday Maths</a> · <a href="/academy/">Academy</a> · <a href="/about/">About</a></p>
+  <p style="margin-top: 0.5rem;">Built by a mathematician. No personal data collected. Cookieless analytics.</p>
+</footer>
+
+</div><!-- /container -->
+
+<script>
+// ============================================================
+// MODULE NAVIGATION
+// ============================================================
+const pills = document.querySelectorAll('.module-pill');
+const modules = document.querySelectorAll('.module-content');
+
+pills.forEach(pill => {
+  pill.addEventListener('click', () => {
+    const target = pill.getAttribute('data-module');
+    pills.forEach(p => p.classList.remove('active'));
+    modules.forEach(m => m.classList.remove('active'));
+    pill.classList.add('active');
+    document.getElementById('module' + target).classList.add('active');
+    window.scrollTo({ top: document.getElementById('moduleNav').offsetTop - 20, behavior: 'smooth' });
+  });
+});
+
+// ============================================================
+// TAX CALCULATION ENGINE
+// ============================================================
+const EW_BANDS = [
+  { name: 'Personal Allowance', from: 0, to: 12570, rate: 0, colour: '#1e2638' },
+  { name: 'Basic rate (20%)', from: 12570, to: 50270, rate: 0.20, colour: '#0ea5e9' },
+  { name: 'Higher rate (40%)', from: 50270, to: 125140, rate: 0.40, colour: '#d4a847' },
+  { name: 'Additional rate (45%)', from: 125140, to: Infinity, rate: 0.45, colour: '#ef5350' }
+];
+
+const NI_BANDS = [
+  { from: 0, to: 12570, rate: 0 },
+  { from: 12570, to: 50270, rate: 0.08 },
+  { from: 50270, to: Infinity, rate: 0.02 }
+];
+
+const SCOT_BANDS = [
+  { name: 'Personal Allowance', from: 0, to: 12570, rate: 0 },
+  { name: 'Starter (19%)', from: 12570, to: 15397, rate: 0.19 },
+  { name: 'Basic (20%)', from: 15397, to: 27491, rate: 0.20 },
+  { name: 'Intermediate (21%)', from: 27491, to: 43662, rate: 0.21 },
+  { name: 'Higher (42%)', from: 43662, to: 75000, rate: 0.42 },
+  { name: 'Advanced (45%)', from: 75000, to: 125140, rate: 0.45 },
+  { name: 'Top (48%)', from: 125140, to: Infinity, rate: 0.48 }
+];
+
+function calcTax(salary, bands) {
+  let total = 0;
+  const breakdown = [];
+  // Handle PA withdrawal for income > 100k
+  let pa = 12570;
+  if (salary > 100000) {
+    pa = Math.max(0, 12570 - Math.floor((salary - 100000) / 2));
+  }
+  
+  const adjustedBands = bands.map((b, i) => {
+    if (i === 0) return { ...b, to: pa };
+    if (i === 1) return { ...b, from: pa };
+    return { ...b };
+  });
+
+  adjustedBands.forEach(band => {
+    const taxableInBand = Math.max(0, Math.min(salary, band.to) - band.from);
+    const tax = taxableInBand * band.rate;
+    breakdown.push({ ...band, amount: taxableInBand, tax: tax });
+    total += tax;
+  });
+  return { total, breakdown, personalAllowance: pa };
+}
+
+function calcNI(salary) {
+  let total = 0;
+  NI_BANDS.forEach(band => {
+    const inBand = Math.max(0, Math.min(salary, band.to) - band.from);
+    total += inBand * band.rate;
+  });
+  return total;
+}
+
+function fmt(n) {
+  return n.toLocaleString('en-GB', { minimumFractionDigits: 0, maximumFractionDigits: 0 });
+}
+
+function fmtPct(n) {
+  return (n * 100).toFixed(1) + '%';
+}
+
+// ============================================================
+// MODULE 1: INTERACTIVE CALCULATOR
+// ============================================================
+let includeNI = true;
+
+const salaryInput = document.getElementById('salaryInput');
+const salarySlider = document.getElementById('salarySlider');
+const niToggle = document.getElementById('niToggle');
+
+function updateCalc() {
+  const raw = salaryInput.value.replace(/[^0-9]/g, '');
+  const salary = parseInt(raw) || 0;
+  
+  const result = calcTax(salary, EW_BANDS);
+  const ni = includeNI ? calcNI(salary) : 0;
+  const totalDeductions = result.total + ni;
+  const takeHome = salary - totalDeductions;
+  const effectiveRate = salary > 0 ? totalDeductions / salary : 0;
+  const maxBandAmount = Math.max(...result.breakdown.map(b => b.amount), 1);
+
+  // Build band visualisation
+  let bandsHTML = '';
+  result.breakdown.forEach(b => {
+    if (b.to === 0 && b.from === 0 && b.amount === 0 && result.personalAllowance === 0) {
+      // Skip PA band if fully withdrawn
+    }
+    const pct = (b.amount / maxBandAmount) * 100;
+    bandsHTML += `
+      <div class="band-row">
+        <span class="band-label" style="color: ${b.colour || 'var(--muted)'}">${b.name}</span>
+        <div class="band-bar-container">
+          <div class="band-bar" style="width: ${pct}%; background: ${b.colour || '#1e2638'}; opacity: 0.7;"></div>
+        </div>
+        <span class="band-amount">£${fmt(b.amount)}</span>
+        <span class="band-tax" style="color: ${b.tax > 0 ? 'var(--red-bright)' : 'var(--muted)'}">£${fmt(b.tax)}</span>
+      </div>`;
+  });
+
+  if (includeNI && ni > 0) {
+    const niPct = ((salary - 12570) / maxBandAmount) * 100;
+    bandsHTML += `
+      <div class="band-row">
+        <span class="band-label" style="color: #7c3aed">National Insurance</span>
+        <div class="band-bar-container">
+          <div class="band-bar" style="width: ${Math.min(niPct, 100)}%; background: #7c3aed; opacity: 0.5;"></div>
+        </div>
+        <span class="band-amount">—</span>
+        <span class="band-tax" style="color: var(--red-bright)">£${fmt(ni)}</span>
+      </div>`;
+  }
+
+  document.getElementById('bandsVisual').innerHTML = bandsHTML;
+
+  // Results
+  document.getElementById('calcResults').innerHTML = `
+    <div class="calc-result-cell">
+      <span class="calc-result-num" style="color: var(--red-bright);">£${fmt(result.total)}</span>
+      <span class="calc-result-label">Income Tax</span>
+    </div>
+    ${includeNI ? `<div class="calc-result-cell">
+      <span class="calc-result-num" style="color: #7c3aed;">£${fmt(ni)}</span>
+      <span class="calc-result-label">National Insurance</span>
+    </div>` : ''}
+    <div class="calc-result-cell">
+      <span class="calc-result-num" style="color: var(--green-bright);">£${fmt(takeHome)}</span>
+      <span class="calc-result-label">Take-home pay</span>
+    </div>
+    <div class="calc-result-cell">
+      <span class="calc-result-num" style="color: var(--accent);">${fmtPct(effectiveRate)}</span>
+      <span class="calc-result-label">Effective rate</span>
+    </div>`;
+}
+
+salaryInput.addEventListener('input', () => {
+  const raw = salaryInput.value.replace(/[^0-9]/g, '');
+  salarySlider.value = raw;
+  updateCalc();
+});
+
+salaryInput.addEventListener('blur', () => {
+  const raw = salaryInput.value.replace(/[^0-9]/g, '');
+  salaryInput.value = fmt(parseInt(raw) || 0);
+});
+
+salarySlider.addEventListener('input', () => {
+  salaryInput.value = fmt(parseInt(salarySlider.value));
+  updateCalc();
+});
+
+niToggle.addEventListener('click', () => {
+  includeNI = !includeNI;
+  niToggle.classList.toggle('on', includeNI);
+  updateCalc();
+});
+
+// ============================================================
+// MODULE 2: £100K TRAP CALCULATOR
+// ============================================================
+const trapInput = document.getElementById('trapInput');
+const trapSlider = document.getElementById('trapSlider');
+
+function updateTrap() {
+  const raw = trapInput.value.replace(/[^0-9]/g, '');
+  const salary = parseInt(raw) || 0;
+  
+  const pa = Math.max(0, Math.min(12570, 12570 - Math.floor((salary - 100000) / 2)));
+  const result = calcTax(salary, EW_BANDS);
+  const ni = calcNI(salary);
+  const totalDeductions = result.total + ni;
+  const takeHome = salary - totalDeductions;
+  
+  // Marginal rate calculation
+  let marginalRate;
+  if (salary <= 12570) marginalRate = 0;
+  else if (salary <= 50270) marginalRate = 0.28;
+  else if (salary <= 100000) marginalRate = 0.42;
+  else if (salary <= 125140) marginalRate = 0.62;
+  else marginalRate = 0.47;
+
+  const marginalColour = marginalRate >= 0.6 ? 'var(--red-bright)' : marginalRate >= 0.4 ? 'var(--gold)' : 'var(--accent)';
+
+  document.getElementById('trapResults').innerHTML = `
+    <div class="calc-result-cell">
+      <span class="calc-result-num" style="color: var(--accent);">£${fmt(pa)}</span>
+      <span class="calc-result-label">Personal Allowance</span>
+    </div>
+    <div class="calc-result-cell">
+      <span class="calc-result-num" style="color: ${marginalColour};">${(marginalRate * 100).toFixed(0)}%</span>
+      <span class="calc-result-label">Marginal rate (IT+NI)</span>
+    </div>
+    <div class="calc-result-cell">
+      <span class="calc-result-num" style="color: var(--red-bright);">£${fmt(totalDeductions)}</span>
+      <span class="calc-result-label">Total deductions</span>
+    </div>
+    <div class="calc-result-cell">
+      <span class="calc-result-num" style="color: var(--green-bright);">£${fmt(takeHome)}</span>
+      <span class="calc-result-label">Take-home pay</span>
+    </div>`;
+}
+
+trapInput.addEventListener('input', () => {
+  const raw = trapInput.value.replace(/[^0-9]/g, '');
+  trapSlider.value = raw;
+  updateTrap();
+});
+
+trapInput.addEventListener('blur', () => {
+  const raw = trapInput.value.replace(/[^0-9]/g, '');
+  trapInput.value = fmt(parseInt(raw) || 0);
+});
+
+trapSlider.addEventListener('input', () => {
+  trapInput.value = fmt(parseInt(trapSlider.value));
+  updateTrap();
+});
+
+// ============================================================
+// MODULE 3: SCOTLAND COMPARISON
+// ============================================================
+function buildScotlandComparison() {
+  const salary = 55000;
+  const ewResult = calcTax(salary, EW_BANDS);
+  const scotResult = calcTax(salary, SCOT_BANDS);
+  const ni = calcNI(salary);
+
+  const ewTakeHome = salary - ewResult.total - ni;
+  const scotTakeHome = salary - scotResult.total - ni;
+  const diff = scotResult.total - ewResult.total;
+
+  document.getElementById('scotlandComparison').innerHTML = `
+    <div class="comparison-grid">
+      <div class="comparison-col">
+        <h4 style="color: var(--accent);">ENGLAND & WALES</h4>
+        <div class="comparison-row"><span class="comparison-label">Gross salary</span><span class="comparison-value">£${fmt(salary)}</span></div>
+        <div class="comparison-row"><span class="comparison-label">Income tax</span><span class="comparison-value negative">£${fmt(ewResult.total)}</span></div>
+        <div class="comparison-row"><span class="comparison-label">National Insurance</span><span class="comparison-value negative">£${fmt(ni)}</span></div>
+        <div class="comparison-row"><span class="comparison-label">Take-home</span><span class="comparison-value accent">£${fmt(ewTakeHome)}</span></div>
+        <div class="comparison-row"><span class="comparison-label">Effective IT rate</span><span class="comparison-value">${fmtPct(ewResult.total / salary)}</span></div>
+      </div>
+      <div class="comparison-col">
+        <h4 style="color: #d4a847;">SCOTLAND</h4>
+        <div class="comparison-row"><span class="comparison-label">Gross salary</span><span class="comparison-value">£${fmt(salary)}</span></div>
+        <div class="comparison-row"><span class="comparison-label">Income tax</span><span class="comparison-value negative">£${fmt(scotResult.total)}</span></div>
+        <div class="comparison-row"><span class="comparison-label">National Insurance</span><span class="comparison-value negative">£${fmt(ni)}</span></div>
+        <div class="comparison-row"><span class="comparison-label">Take-home</span><span class="comparison-value accent">£${fmt(scotTakeHome)}</span></div>
+        <div class="comparison-row"><span class="comparison-label">Effective IT rate</span><span class="comparison-value">${fmtPct(scotResult.total / salary)}</span></div>
+      </div>
+    </div>
+    <div class="mb" style="margin-top:1rem; text-align:center;">
+      Difference: Scotland pays <span class="negative">£${fmt(diff)}</span> more income tax per year
+      (<span class="negative">£${fmt(Math.round(diff/12))}/month</span>)
+    </div>`;
+}
+
+// ============================================================
+// MODULE 5: FISCAL DRAG CHART
+// ============================================================
+function buildDragChart() {
+  const startSalary = 50000;
+  const growthRate = 0.03;
+  const threshold = 50270;
+  const years = [
+    { label: '2021/22', salary: startSalary },
+    { label: '2022/23', salary: Math.round(startSalary * Math.pow(1 + growthRate, 1)) },
+    { label: '2023/24', salary: Math.round(startSalary * Math.pow(1 + growthRate, 2)) },
+    { label: '2024/25', salary: Math.round(startSalary * Math.pow(1 + growthRate, 3)) },
+    { label: '2025/26', salary: Math.round(startSalary * Math.pow(1 + growthRate, 4)) },
+    { label: '2026/27', salary: Math.round(startSalary * Math.pow(1 + growthRate, 5)) },
+    { label: '2027/28', salary: Math.round(startSalary * Math.pow(1 + growthRate, 6)) }
+  ];
+
+  const maxSalary = years[years.length - 1].salary;
+  let html = '';
+
+  years.forEach(y => {
+    const basicPortion = Math.min(y.salary, threshold) - 12570;
+    const higherPortion = Math.max(0, y.salary - threshold);
+    const basicPct = (basicPortion / maxSalary) * 100;
+    const higherStart = (threshold / maxSalary) * 100;
+    const higherPct = (higherPortion / maxSalary) * 100;
+    const extraTax = higherPortion * 0.20; // extra tax from being in higher band vs basic
+
+    const result = calcTax(y.salary, EW_BANDS);
+
+    html += `
+      <div class="drag-bar-group">
+        <span class="drag-year">${y.label}</span>
+        <div class="drag-bar-track">
+          <div class="drag-bar-basic" style="width: ${basicPct}%;"></div>
+          ${higherPortion > 0 ? `<div class="drag-bar-higher" style="left: ${higherStart}%; width: ${higherPct}%;"></div>` : ''}
+        </div>
+        <span class="drag-tax" style="color: ${extraTax > 0 ? 'var(--red-bright)' : 'var(--muted)'};">+£${fmt(Math.round(extraTax))}</span>
+      </div>`;
+  });
+
+  html += `
+    <div class="drag-legend">
+      <div class="drag-legend-item">
+        <div class="drag-legend-swatch" style="background: var(--accent); opacity: 0.6;"></div>
+        <span>Basic rate (20%)</span>
+      </div>
+      <div class="drag-legend-item">
+        <div class="drag-legend-swatch" style="background: var(--red-bright); opacity: 0.7;"></div>
+        <span>Higher rate (40%) — extra tax from drag</span>
+      </div>
+    </div>`;
+
+  document.getElementById('dragChart').innerHTML = html;
+}
+
+// ============================================================
+// INITIALISE
+// ============================================================
+updateCalc();
+updateTrap();
+buildScotlandComparison();
+buildDragChart();
+</script>
+
+</body>
+</html>

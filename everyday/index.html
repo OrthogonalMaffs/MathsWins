@@ -1,0 +1,514 @@
+<!DOCTYPE html>
+<html lang="en-GB">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Everyday Maths — The Numbers They Should Have Taught You | MathsWins</title>
+<meta name="description" content="Free mathematical education for real life. Tax, mortgages, pensions, compound interest, inflation — the calculations behind the decisions that matter most. No paywall, no sign-up.">
+<meta property="og:title" content="Everyday Maths — Free Mathematical Education for Real Life">
+<meta property="og:description" content="Interactive courses teaching the real mathematics behind tax, mortgages, pensions, debt, and more. Always free. Built by a qualified mathematician.">
+<meta property="og:url" content="https://mathswins.co.uk/everyday/">
+<meta property="og:type" content="website">
+<link rel="canonical" href="https://mathswins.co.uk/everyday/">
+<link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Crimson+Pro:ital,wght@0,400;0,700;1,400&family=DM+Mono:wght@400;500&family=Outfit:wght@300;400;600;700&display=swap" rel="stylesheet">
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "CollectionPage",
+  "name": "Everyday Maths",
+  "description": "Free mathematical education for real life: tax, mortgages, pensions, compound interest, inflation, and probability.",
+  "provider": {
+    "@type": "EducationalOrganization",
+    "name": "MathsWins",
+    "url": "https://mathswins.co.uk"
+  },
+  "isAccessibleForFree": true
+}
+</script>
+<script async src="https://www.googletagmanager.com/gtag/js?id=G-CLNF7GSB28"></script>
+<script>
+  window.dataLayer = window.dataLayer || [];
+  function gtag(){dataLayer.push(arguments);}
+  gtag('js', new Date());
+  gtag('config', 'G-CLNF7GSB28', {
+    send_page_view: true,
+    storage: 'none',
+    anonymize_ip: true
+  });
+</script>
+<style>
+:root {
+  --bg: #050709;
+  --surface: #0a0d14;
+  --surface2: #0f1319;
+  --border: #161c28;
+  --border2: #1e2638;
+  --sky: #0ea5e9;
+  --sky-dim: rgba(14,165,233,0.1);
+  --green-bright: #2dd4a0;
+  --text: #c8cdd8;
+  --text-bright: #e8ecf4;
+  --muted: #4a5568;
+}
+
+* { margin: 0; padding: 0; box-sizing: border-box; }
+
+body {
+  background: var(--bg);
+  color: var(--text);
+  font-family: 'Outfit', sans-serif;
+  font-weight: 400;
+  line-height: 1.7;
+  -webkit-font-smoothing: antialiased;
+}
+
+.container { max-width: 900px; margin: 0 auto; padding: 0 1.5rem; }
+
+header {
+  padding: 3rem 0 2rem;
+  text-align: center;
+  border-bottom: 1px solid var(--border);
+  margin-bottom: 3rem;
+}
+
+.breadcrumb {
+  font-size: 0.8rem;
+  color: var(--muted);
+  margin-bottom: 1.5rem;
+}
+
+.breadcrumb a { color: var(--muted); text-decoration: none; }
+.breadcrumb a:hover { color: var(--sky); }
+
+.section-label {
+  font-family: 'Outfit', sans-serif;
+  font-weight: 600;
+  font-size: 0.75rem;
+  text-transform: uppercase;
+  letter-spacing: 0.15em;
+  color: var(--sky);
+  margin-bottom: 0.75rem;
+}
+
+h1 {
+  font-family: 'Bebas Neue', sans-serif;
+  font-size: clamp(2.5rem, 7vw, 4rem);
+  color: var(--text-bright);
+  letter-spacing: 0.03em;
+  line-height: 1.05;
+  margin-bottom: 0.75rem;
+}
+
+.subtitle {
+  font-family: 'Crimson Pro', serif;
+  font-style: italic;
+  font-size: 1.2rem;
+  color: var(--sky);
+  max-width: 600px;
+  margin: 0 auto 2rem;
+}
+
+.intro {
+  font-family: 'Outfit', sans-serif;
+  font-size: 0.95rem;
+  color: var(--text);
+  max-width: 650px;
+  margin: 0 auto;
+  line-height: 1.8;
+}
+
+/* Stats bar */
+.stats-bar {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(140px, 1fr));
+  gap: 1px;
+  background: var(--border);
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  overflow: hidden;
+  margin: 2rem 0 3rem;
+}
+
+.stat-cell {
+  background: var(--surface);
+  padding: 1rem;
+  text-align: center;
+}
+
+.stat-num {
+  font-family: 'DM Mono', monospace;
+  font-weight: 500;
+  font-size: 1.4rem;
+  color: var(--sky);
+  display: block;
+}
+
+.stat-label {
+  font-family: 'Outfit', sans-serif;
+  font-size: 0.7rem;
+  text-transform: uppercase;
+  letter-spacing: 0.1em;
+  color: var(--muted);
+  margin-top: 0.25rem;
+}
+
+/* Course cards */
+.courses-grid {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 1.5rem;
+  margin-bottom: 3rem;
+}
+
+.course-card {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-top: 3px solid var(--sky);
+  border-radius: 10px;
+  padding: 2rem;
+  text-decoration: none;
+  transition: border-color 0.2s, transform 0.15s;
+  display: block;
+}
+
+.course-card:hover {
+  border-color: var(--sky);
+  transform: translateY(-2px);
+}
+
+.course-card.coming-soon {
+  opacity: 0.5;
+  pointer-events: none;
+}
+
+.card-eyebrow {
+  font-family: 'Outfit', sans-serif;
+  font-weight: 600;
+  font-size: 0.7rem;
+  text-transform: uppercase;
+  letter-spacing: 0.12em;
+  color: var(--sky);
+  margin-bottom: 0.5rem;
+}
+
+.card-title {
+  font-family: 'Bebas Neue', sans-serif;
+  font-size: 1.6rem;
+  color: var(--text-bright);
+  letter-spacing: 0.03em;
+  margin-bottom: 0.5rem;
+}
+
+.card-description {
+  font-family: 'Outfit', sans-serif;
+  font-size: 0.9rem;
+  color: var(--text);
+  line-height: 1.7;
+  margin-bottom: 1.25rem;
+}
+
+.card-stats {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 1.5rem;
+}
+
+.card-stat {
+  text-align: center;
+}
+
+.card-stat-num {
+  font-family: 'DM Mono', monospace;
+  font-weight: 500;
+  font-size: 1.1rem;
+  color: var(--sky);
+  display: block;
+}
+
+.card-stat-label {
+  font-family: 'Outfit', sans-serif;
+  font-size: 0.65rem;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  color: var(--muted);
+}
+
+.card-tags {
+  display: flex;
+  gap: 0.5rem;
+  margin-top: 1rem;
+}
+
+.tag {
+  font-family: 'Outfit', sans-serif;
+  font-weight: 600;
+  font-size: 0.65rem;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  padding: 0.3rem 0.6rem;
+  border-radius: 4px;
+  background: var(--sky-dim);
+  color: var(--sky);
+}
+
+.tag.soon {
+  background: rgba(74,85,104,0.2);
+  color: var(--muted);
+}
+
+/* Academy link */
+.academy-link {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: 10px;
+  padding: 2rem;
+  text-align: center;
+  margin-bottom: 3rem;
+}
+
+.academy-link h3 {
+  font-family: 'Bebas Neue', sans-serif;
+  font-size: 1.3rem;
+  color: var(--text-bright);
+  margin-bottom: 0.75rem;
+}
+
+.academy-link p {
+  font-family: 'Crimson Pro', serif;
+  font-style: italic;
+  color: var(--text);
+  font-size: 0.95rem;
+  margin-bottom: 1rem;
+  max-width: 500px;
+  margin-left: auto;
+  margin-right: auto;
+}
+
+.academy-btn {
+  display: inline-block;
+  font-family: 'Outfit', sans-serif;
+  font-weight: 600;
+  font-size: 0.85rem;
+  padding: 0.7rem 2rem;
+  background: transparent;
+  border: 1px solid #d4a847;
+  border-radius: 6px;
+  color: #d4a847;
+  text-decoration: none;
+  transition: all 0.2s;
+}
+
+.academy-btn:hover {
+  background: rgba(212,168,71,0.1);
+}
+
+/* Disclaimer */
+.disclaimer {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  padding: 1.5rem;
+  margin-bottom: 2rem;
+  font-size: 0.85rem;
+  color: var(--muted);
+  line-height: 1.7;
+}
+
+.disclaimer a { color: var(--sky); text-decoration: none; }
+.disclaimer a:hover { text-decoration: underline; }
+
+footer {
+  text-align: center;
+  padding: 2rem 0;
+  border-top: 1px solid var(--border);
+  font-size: 0.75rem;
+  color: var(--muted);
+}
+
+footer a { color: var(--muted); text-decoration: none; }
+footer a:hover { color: var(--sky); }
+</style>
+</head>
+<body>
+
+<div class="container">
+
+<header>
+  <div class="breadcrumb">
+    <a href="/">MathsWins</a> → Everyday Maths
+  </div>
+  <div class="section-label">Free · No sign-up · No paywall</div>
+  <h1>THE NUMBERS THEY SHOULD HAVE<br>TAUGHT YOU IN SCHOOL</h1>
+  <p class="subtitle">Free mathematical education for real life. Tax, debt, mortgages, pensions — the calculations behind the decisions that matter most.</p>
+  <p class="intro">Every course is free, forever. Interactive calculators, worked examples, and plain English translations of every formula. Built by a first-class mathematics graduate with Qualified Teacher Status. No financial advice — just the maths.</p>
+
+  <div class="stats-bar">
+    <div class="stat-cell">
+      <span class="stat-num">6</span>
+      <span class="stat-label">Courses planned</span>
+    </div>
+    <div class="stat-cell">
+      <span class="stat-num">£0</span>
+      <span class="stat-label">Always free</span>
+    </div>
+    <div class="stat-cell">
+      <span class="stat-num">0</span>
+      <span class="stat-label">Cookies</span>
+    </div>
+    <div class="stat-cell">
+      <span class="stat-num">100%</span>
+      <span class="stat-label">Maths</span>
+    </div>
+  </div>
+</header>
+
+<!-- COURSES -->
+<div class="courses-grid">
+
+  <!-- UK Tax Maths — LIVE -->
+  <a href="/everyday/tax/" class="course-card">
+    <div class="card-eyebrow">5 Modules · Interactive Calculators</div>
+    <div class="card-title">UK TAX MATHS</div>
+    <div class="card-description">How income tax actually works. Marginal vs effective rates, the hidden 60% trap between £100k and £125k, Scotland's six-band system, student loans, pension relief, and fiscal drag. With live calculators that show exactly how each pound is taxed.</div>
+    <div class="card-stats">
+      <div class="card-stat">
+        <span class="card-stat-num">60%</span>
+        <span class="card-stat-label">Hidden rate £100k–£125k</span>
+      </div>
+      <div class="card-stat">
+        <span class="card-stat-num">£12,570</span>
+        <span class="card-stat-label">Personal Allowance</span>
+      </div>
+      <div class="card-stat">
+        <span class="card-stat-num">4</span>
+        <span class="card-stat-label">Interactive tools</span>
+      </div>
+    </div>
+    <div class="card-tags">
+      <span class="tag">Free</span>
+      <span class="tag">Tax</span>
+      <span class="tag">Calculators</span>
+    </div>
+  </a>
+
+  <!-- Compound Interest — COMING SOON -->
+  <div class="course-card coming-soon">
+    <div class="card-eyebrow">4 Modules · Coming Soon</div>
+    <div class="card-title">COMPOUND INTEREST & DEBT</div>
+    <div class="card-description">Why minimum payments on a £3,000 credit card cost you over £7,000. How APR translates to real cost. The Rule of 72. And why Einstein may or may not have called compound interest the eighth wonder of the world.</div>
+    <div class="card-stats">
+      <div class="card-stat">
+        <span class="card-stat-num">£7,000+</span>
+        <span class="card-stat-label">Cost of minimum payments</span>
+      </div>
+      <div class="card-stat">
+        <span class="card-stat-num">72</span>
+        <span class="card-stat-label">The rule that estimates doubling time</span>
+      </div>
+    </div>
+    <div class="card-tags">
+      <span class="tag">Free</span>
+      <span class="tag soon">Coming Soon</span>
+    </div>
+  </div>
+
+  <!-- Mortgage Maths — COMING SOON -->
+  <div class="course-card coming-soon">
+    <div class="card-eyebrow">5 Modules · Coming Soon</div>
+    <div class="card-title">MORTGAGE MATHS</div>
+    <div class="card-description">In year 1 of a 25-year mortgage, roughly 67% of your payment is interest. How amortisation works, the real cost of term length, why overpayments save disproportionate amounts, and an interactive calculator that shows every single monthly payment.</div>
+    <div class="card-stats">
+      <div class="card-stat">
+        <span class="card-stat-num">67%</span>
+        <span class="card-stat-label">Year 1 interest share</span>
+      </div>
+      <div class="card-stat">
+        <span class="card-stat-num">25 vs 30</span>
+        <span class="card-stat-label">Years — bigger difference than you think</span>
+      </div>
+    </div>
+    <div class="card-tags">
+      <span class="tag">Free</span>
+      <span class="tag soon">Coming Soon</span>
+    </div>
+  </div>
+
+  <!-- Pension Maths — COMING SOON -->
+  <div class="course-card coming-soon">
+    <div class="card-eyebrow">4 Modules · Coming Soon</div>
+    <div class="card-title">PENSION MATHS</div>
+    <div class="card-description">Start at 25 vs 35 and the difference is nearly double. Employer matching as the only guaranteed 100% return. The 4% withdrawal rule. And the maths of drawdown — how long will your pot actually last?</div>
+    <div class="card-stats">
+      <div class="card-stat">
+        <span class="card-stat-num">2×</span>
+        <span class="card-stat-label">Starting 10 years earlier</span>
+      </div>
+      <div class="card-stat">
+        <span class="card-stat-num">4%</span>
+        <span class="card-stat-label">The withdrawal rule</span>
+      </div>
+    </div>
+    <div class="card-tags">
+      <span class="tag">Free</span>
+      <span class="tag soon">Coming Soon</span>
+    </div>
+  </div>
+
+  <!-- Inflation — COMING SOON -->
+  <div class="course-card coming-soon">
+    <div class="card-eyebrow">3 Modules · Coming Soon</div>
+    <div class="card-title">INFLATION & REAL RETURNS</div>
+    <div class="card-description">Your 4% savings account at 3.5% inflation grows at 0.5% in real terms. What inflation actually means over 10, 20, 30 years. Nominal vs real returns. And the shrinkflation maths nobody talks about.</div>
+    <div class="card-stats">
+      <div class="card-stat">
+        <span class="card-stat-num">0.5%</span>
+        <span class="card-stat-label">Real return at 4% − 3.5%</span>
+      </div>
+    </div>
+    <div class="card-tags">
+      <span class="tag">Free</span>
+      <span class="tag soon">Coming Soon</span>
+    </div>
+  </div>
+
+  <!-- Everyday Probability — COMING SOON -->
+  <div class="course-card coming-soon">
+    <div class="card-eyebrow">4 Modules · Coming Soon</div>
+    <div class="card-title">EVERYDAY PROBABILITY</div>
+    <div class="card-description">A 99% accurate medical test doesn't mean a 99% chance you're ill. Conditional probability, base rate neglect, the Monty Hall problem, and why humans are fundamentally terrible at assessing risk.</div>
+    <div class="card-stats">
+      <div class="card-stat">
+        <span class="card-stat-num">~9%</span>
+        <span class="card-stat-label">Actual chance with a 99% test</span>
+      </div>
+    </div>
+    <div class="card-tags">
+      <span class="tag">Free</span>
+      <span class="tag soon">Coming Soon</span>
+    </div>
+  </div>
+
+</div>
+
+<!-- ACADEMY CROSS-LINK -->
+<div class="academy-link">
+  <h3>WANT THE MATHEMATICS OF GAMES?</h3>
+  <p>The Maths Always Wins Academy teaches probability, expected value, and decision theory behind blackjack, poker, roulette, and more.</p>
+  <a href="/academy/" class="academy-btn">Explore the Academy →</a>
+</div>
+
+<!-- DISCLAIMER -->
+<div class="disclaimer">
+  <strong>These courses are mathematical education, not financial advice.</strong> For personalised guidance, consult a qualified financial adviser. Tax rates and thresholds are for the 2025/26 tax year unless stated otherwise — always verify current rates at <a href="https://www.gov.uk/income-tax-rates" target="_blank" rel="noopener">gov.uk</a>.<br><br>
+  <a href="https://www.moneyhelper.org.uk" target="_blank" rel="noopener">MoneyHelper</a> — free, government-backed financial guidance.
+</div>
+
+<footer>
+  <p>MathsWins · <a href="/">Home</a> · <a href="/everyday/">Everyday Maths</a> · <a href="/academy/">Academy</a> · <a href="/about/">About</a></p>
+  <p style="margin-top: 0.5rem;">Built by a mathematician. No personal data collected. Cookieless analytics.</p>
+</footer>
+
+</div>
+
+</body>
+</html>

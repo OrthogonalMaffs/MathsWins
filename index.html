@@ -119,6 +119,8 @@ h1.site-title span.w{color:var(--gold)}
 .ac-lt .ac-eyebrow{color:#facc15}
 .ac-bc .ac-eyebrow{color:#b8860b}
 .ac-tr .ac-eyebrow{color:#10b981}
+.ac-tx .ac-accent{background:#0ea5e9}
+.ac-tx .ac-eyebrow{color:#0ea5e9}
 
 .ac-title{font-family:'Bebas Neue',sans-serif;font-size:1.4rem;color:var(--text-bright);letter-spacing:.03em;line-height:1.1;margin-bottom:.3rem}
 .ac-desc{font-size:.75rem;color:var(--muted);line-height:1.5;margin-bottom:.5rem}
@@ -172,6 +174,7 @@ h1.site-title span.w{color:var(--gold)}
 <div class="nav">
 <button class="nav-pill active" onclick="showSection('games')">Games</button>
 <button class="nav-pill" onclick="showSection('academy')">Academy</button>
+<button class="nav-pill" onclick="showSection('everyday')">Everyday</button>
 <button class="nav-pill" onclick="showSection('about')">About</button>
 </div>
 
@@ -388,6 +391,47 @@ h1.site-title span.w{color:var(--gold)}
 <div class="ac-price">250 QF</div>
 </div>
 </div>
+</div>
+
+<!-- ═══════════════════════════════════ EVERYDAY ═══════════════════════════════════ -->
+<div id="sec-everyday" class="section">
+<div class="section-header">
+<h2>THE NUMBERS THEY SHOULD HAVE TAUGHT YOU — EVERYDAY MATHS</h2>
+<p>Free mathematical education for real life. No paywall. No sign-up. Just the calculations.</p>
+</div>
+
+<div class="academy-grid">
+<div class="academy-card ac-tx" onclick="go('everyday/tax/')">
+<div class="ac-accent"></div>
+<div class="ac-eyebrow">5 Modules · Free</div>
+<div class="ac-title">UK TAX MATHS</div>
+<div class="ac-desc">How income tax actually works. Marginal vs effective rates, why earning £50,271 doesn't mean 40% on everything, the hidden 60% trap between £100k–£125k, and Scotland's different bands. Live calculators included.</div>
+<div class="ac-stats">
+<div class="ac-stat"><div class="as-num" style="color:#0ea5e9">60%</div><div class="as-label">Hidden trap rate</div></div>
+<div class="ac-stat"><div class="as-num">5</div><div class="as-label">Live calculators</div></div>
+<div class="ac-stat"><div class="as-num" style="color:var(--green)">Free</div><div class="as-label">Always</div></div>
+</div>
+</div>
+
+<div class="academy-card ac-tx" onclick="go('everyday/compound-interest/')">
+<div class="ac-accent"></div>
+<div class="ac-eyebrow">4 Modules · Free</div>
+<div class="ac-title">COMPOUND INTEREST & DEBT</div>
+<div class="ac-desc">Why minimum payments on a £3,000 card cost over £7,800. How compound interest builds savings and destroys debt — same maths, opposite outcomes. The Rule of 72, APR decoded, and live calculators.</div>
+<div class="ac-stats">
+<div class="ac-stat"><div class="as-num" style="color:#0ea5e9">£7,800+</div><div class="as-label">Cost of £3k on minimums</div></div>
+<div class="ac-stat"><div class="as-num">4</div><div class="as-label">Live calculators</div></div>
+<div class="ac-stat"><div class="as-num" style="color:var(--green)">Free</div><div class="as-label">Always</div></div>
+</div>
+</div>
+
+<div class="academy-card" style="opacity:.4;pointer-events:none;border-style:dashed">
+<div class="ac-eyebrow" style="color:var(--muted)">Coming Soon</div>
+<div class="ac-title">MORTGAGES</div>
+<div class="ac-desc">The biggest purchase most people make — and they don't understand the maths. Amortisation, fixed vs variable, overpayment impact.</div>
+</div>
+</div>
+<p style="text-align:center;margin-top:1.2rem"><a href="/everyday/" style="color:#0ea5e9;font-family:'Outfit',sans-serif;font-weight:600;font-size:.85rem;text-decoration:none;letter-spacing:.02em">See all Everyday Maths courses →</a></p>
 </div>
 
 <!-- ═══════════════════════════════════ ABOUT ═══════════════════════════════════ -->

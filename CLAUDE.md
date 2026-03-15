@@ -47,10 +47,8 @@ QF holders get cheaper access AND contribute to token deflation. Games are free.
 ### Not Yet Built
 - `games/countdown-numbers/` — listed on landing page, not built
 - Payment integration (Stripe + on-chain)
-- Content gating / access control
+- Content gating / access control (Module 1 free, rest locked — partially implemented)
 - Academy.sol subscription contract
-- Landing page needs updating to reflect all 9 courses (currently shows 5)
-
 ## Directory Structure
 ```
 index.html                          # Landing page (dark theme, nav pills)
@@ -78,6 +76,10 @@ academy/                            # Paid courses (single-file HTML each)
   lottery/index.html                # 5 modules, single tier
   baccarat/index.html               # 4 modules, single tier
   trading/index.html                # 6 modules, single tier
+everyday/                           # Free everyday maths courses
+  index.html                        # Everyday Maths hub page
+  tax/index.html                    # 5 modules, UK income tax calculators
+  compound-interest/index.html      # 4 modules, compound interest & debt calculators
 contracts/                          # Solidity smart contracts (Foundry)
   src/
   test/
@@ -135,6 +137,22 @@ contracts/                          # Solidity smart contracts (Foundry)
 | Lottery | Yellow #facc15 |
 | Baccarat | Dark Gold #b8860b |
 | Trading | Emerald #10b981 |
+
+## Everyday Maths (Free section — 3rd pillar)
+Free courses teaching the mathematics behind everyday financial decisions. No gating, no payment — free forever. Accent colour: Sky Blue #0ea5e9.
+
+### Deployed
+| Course | Slug | Modules | Key features |
+|--------|------|---------|--------------|
+| UK Tax Maths | `everyday/tax` | 5 | Marginal vs effective rates, £100k trap, Scotland comparison, deductions, fiscal drag. Live calculators. |
+| Compound Interest & Debt | `everyday/compound-interest` | 4 | Simple vs compound, credit card trap, APR decoded, Rule of 72. Live calculators. |
+
+### Planned (not built)
+- Compound Interest — savings, debt, pension growth
+- Mortgages — amortisation, fixed vs variable, overpayments
+- Pensions — workplace, SIPP, state pension, tax relief
+- Inflation — purchasing power, real vs nominal returns
+- Everyday Probability — weather, medical tests, risk perception
 
 ## Smart Contracts
 
