@@ -238,76 +238,97 @@ async function stripeGet(path, params, apiKey) {
  * Returns an array of { key, value } localStorage entries.
  */
 async function lookupPurchases(email, stripeKey) {
-  // Find customer(s) by email
-  const customers = await stripeGet('customers', { email, limit: '100' }, stripeKey);
-  if (!customers.data || customers.data.length === 0) {
-    return { products: [], isPremium: false, isAllAccess: false };
-  }
-
   const products = new Map(); // key → value (higher tier wins)
   let isPremium = false;
   let isAllAccess = false;
-
-  // Tier hierarchy for upgrade-only merging
   const tierRank = { basic: 1, advanced: 2, master: 3, pro: 4 };
 
-  for (const customer of customers.data) {
-    // Get all completed checkout sessions for this customer
-    let hasMore = true;
-    let startingAfter = undefined;
+  // Helper to process a checkout session's line items
+  async function processSession(session) {
+    if (session.payment_status !== 'paid') return;
 
-    while (hasMore) {
-      const params = {
-        customer: customer.id,
-        status: 'complete',
-        limit: '100',
-      };
-      if (startingAfter) params.starting_after = startingAfter;
+    const lineItems = await stripeGet(
+      `checkout/sessions/${session.id}/line_items`,
+      { limit: '100' },
+      stripeKey,
+    );
 
-      const sessions = await stripeGet('checkout/sessions', params, stripeKey);
+    for (const item of lineItems.data) {
+      const productName = item.description || (item.price && item.price.product && item.price.product.name);
+      const mapped = mapProduct(productName);
+      if (!mapped) continue;
 
-      for (const session of sessions.data) {
-        // Only count paid sessions
-        if (session.payment_status !== 'paid') continue;
-
-        // Expand line items for this session
-        const lineItems = await stripeGet(
-          `checkout/sessions/${session.id}/line_items`,
-          { limit: '100' },
-          stripeKey,
-        );
-
-        for (const item of lineItems.data) {
-          const productName = item.description || (item.price && item.price.product && item.price.product.name);
-          const mapped = mapProduct(productName);
-          if (!mapped) continue;
-
-          if (mapped.premium) {
-            isPremium = true;
-            continue;
-          }
-          if (mapped.allAccess) {
-            isAllAccess = true;
-            continue;
-          }
-
-          // Merge: keep higher tier
-          const existing = products.get(mapped.key);
-          if (!existing) {
-            products.set(mapped.key, mapped.value);
-          } else {
-            const existingRank = tierRank[existing] || 0;
-            const newRank = tierRank[mapped.value] || 0;
-            if (newRank > existingRank) {
-              products.set(mapped.key, mapped.value);
-            }
-          }
-        }
+      if (mapped.premium) {
+        isPremium = true;
+        continue;
+      }
+      if (mapped.allAccess) {
+        isAllAccess = true;
+        continue;
       }
 
-      hasMore = sessions.has_more;
-      if (hasMore && sessions.data.length > 0) {
-        startingAfter = sessions.data[sessions.data.length - 1].id;
+      const existing = products.get(mapped.key);
+      if (!existing) {
+        products.set(mapped.key, mapped.value);
+      } else {
+        const existingRank = tierRank[existing] || 0;
+        const newRank = tierRank[mapped.value] || 0;
+        if (newRank > existingRank) {
+          products.set(mapped.key, mapped.value);
+        }
+      }
+    }
+  }
+
+  // Strategy 1: Search checkout sessions by customer email (covers guest checkouts)
+  let hasMore = true;
+  let startingAfter = undefined;
+
+  while (hasMore) {
+    const params = {
+      status: 'complete',
+      limit: '100',
+      'customer_details[email]': email,
+    };
+    if (startingAfter) params.starting_after = startingAfter;
+
+    const sessions = await stripeGet('checkout/sessions', params, stripeKey);
+
+    for (const session of sessions.data) {
+      await processSession(session);
+    }
+
+    hasMore = sessions.has_more;
+    if (hasMore && sessions.data.length > 0) {
+      startingAfter = sessions.data[sessions.data.length - 1].id;
+    }
+  }
+
+  // Strategy 2: Also check registered customers (covers non-checkout payments)
+  const customers = await stripeGet('customers', { email, limit: '100' }, stripeKey);
+  if (customers.data && customers.data.length > 0) {
+    for (const customer of customers.data) {
+      hasMore = true;
+      startingAfter = undefined;
+
+      while (hasMore) {
+        const params = {
+          customer: customer.id,
+          status: 'complete',
+          limit: '100',
+        };
+        if (startingAfter) params.starting_after = startingAfter;
+
+        const sessions = await stripeGet('checkout/sessions', params, stripeKey);
+
+        for (const session of sessions.data) {
+          await processSession(session);
+        }
+
+        hasMore = sessions.has_more;
+        if (hasMore && sessions.data.length > 0) {
+          startingAfter = sessions.data[sessions.data.length - 1].id;
+        }
       }
     }
   }
