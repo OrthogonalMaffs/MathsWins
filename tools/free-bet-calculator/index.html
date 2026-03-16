@@ -1,0 +1,934 @@
+<!DOCTYPE html>
+<html lang="en-GB">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate">
+<meta http-equiv="Pragma" content="no-cache">
+<meta http-equiv="Expires" content="0">
+<title>Free Bet Calculator — What's Your Free Bet Actually Worth? | MathsWins</title>
+<meta name="description" content="Calculate the true value of any free bet. SNR and SR valuations, qualifying bet costs, exchange lay-off for guaranteed profit. Free tool.">
+<meta property="og:title" content="Free Bet Calculator — What's Your Free Bet Actually Worth?">
+<meta property="og:description" content="Your £20 free bet isn't worth £20. Calculate its real value, find the optimal odds, and learn the lay-off strategy for guaranteed profit.">
+<meta property="og:url" content="https://mathswins.co.uk/tools/free-bet-calculator/">
+<meta property="og:type" content="website">
+<link rel="canonical" href="https://mathswins.co.uk/tools/free-bet-calculator/">
+<script type="application/ld+json">
+{"@context":"https://schema.org","@type":"WebApplication","name":"Free Bet Calculator","url":"https://mathswins.co.uk/tools/free-bet-calculator/","applicationCategory":"FinanceApplication","description":"Calculate the true value of any free bet. SNR and SR valuations, qualifying bet costs, exchange lay-off for guaranteed profit.","offers":{"@type":"Offer","price":"0","priceCurrency":"GBP"}}
+</script>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Crimson+Pro:ital,wght@0,400;0,700;1,400&family=DM+Mono:wght@400;500&family=Outfit:wght@300;400;600;700&display=swap" rel="stylesheet">
+
+<!-- GA4 Cookieless -->
+<script async src="https://www.googletagmanager.com/gtag/js?id=G-28ZYY6MXKP"></script>
+<script>
+  window.dataLayer = window.dataLayer || [];
+  function gtag(){dataLayer.push(arguments);}
+  gtag('js', new Date());
+  gtag('config', 'G-28ZYY6MXKP', {
+    send_page_view: true,
+    storage: 'none',
+    anonymize_ip: true
+  });
+</script>
+
+<style>
+  :root {
+    --bg: #050709;
+    --surface: #0a0d14;
+    --surface2: #0f1319;
+    --border: #161c28;
+    --border2: #1e2638;
+    --navy: #1a2744;
+    --gold: #d4a847;
+    --teal: #0d9488;
+    --teal-bright: #2dd4bf;
+    --blue: #2563eb;
+    --blue-dim: rgba(37,99,235,0.12);
+    --green-bright: #2dd4a0;
+    --green-dim: rgba(45,212,160,0.12);
+    --red-bright: #ef5350;
+    --red-dim: rgba(239,83,80,0.12);
+    --text: #c8cdd8;
+    --text-bright: #e8ecf4;
+    --muted: #4a5568;
+    --cyan: #22d3ee;
+    --cyan-dim: rgba(34,211,238,0.10);
+  }
+
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+
+  body {
+    font-family: 'Outfit', sans-serif;
+    background: var(--bg);
+    color: var(--text);
+    line-height: 1.6;
+    min-height: 100vh;
+  }
+
+  .container {
+    max-width: 920px;
+    margin: 0 auto;
+    padding: 2rem 1.25rem 4rem;
+  }
+
+  /* Header */
+  .nav-bar {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 1rem 0;
+    border-bottom: 1px solid var(--border);
+    margin-bottom: 2.5rem;
+  }
+  .nav-brand {
+    font-family: 'Bebas Neue', sans-serif;
+    font-size: 1.4rem;
+    color: var(--gold);
+    text-decoration: none;
+    letter-spacing: 0.06em;
+  }
+  .nav-brand span { color: var(--text-bright); }
+  .nav-link {
+    font-family: 'Outfit', sans-serif;
+    font-size: 0.85rem;
+    font-weight: 600;
+    color: var(--blue);
+    text-decoration: none;
+    padding: 0.4rem 1rem;
+    border: 1px solid var(--blue);
+    border-radius: 4px;
+    transition: background 0.2s, color 0.2s;
+  }
+  .nav-link:hover { background: var(--blue); color: var(--bg); }
+
+  /* Hero */
+  .hero {
+    text-align: center;
+    margin-bottom: 2.5rem;
+  }
+  .hero-eyebrow {
+    font-family: 'Outfit', sans-serif;
+    font-size: 0.75rem;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.15em;
+    color: var(--blue);
+    margin-bottom: 0.5rem;
+  }
+  .hero h1 {
+    font-family: 'Bebas Neue', sans-serif;
+    font-size: clamp(2rem, 5vw, 3rem);
+    color: var(--text-bright);
+    letter-spacing: 0.04em;
+    line-height: 1.1;
+    margin-bottom: 0.75rem;
+  }
+  .hero-sub {
+    font-family: 'Crimson Pro', serif;
+    font-style: italic;
+    font-size: 1.1rem;
+    color: var(--cyan);
+    max-width: 600px;
+    margin: 0 auto;
+  }
+
+  /* Stats Bar */
+  .stats-bar {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(140px, 1fr));
+    gap: 1px;
+    background: var(--border);
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    overflow: hidden;
+    margin-bottom: 2.5rem;
+  }
+  .stat-cell {
+    background: var(--surface);
+    padding: 1rem;
+    text-align: center;
+  }
+  .stat-num {
+    font-family: 'DM Mono', monospace;
+    font-size: 1.4rem;
+    font-weight: 500;
+    color: var(--blue);
+    display: block;
+  }
+  .stat-label {
+    font-family: 'Outfit', sans-serif;
+    font-size: 0.7rem;
+    text-transform: uppercase;
+    letter-spacing: 0.08em;
+    color: var(--muted);
+    margin-top: 0.2rem;
+  }
+
+  /* Tabs */
+  .tab-row {
+    display: flex;
+    gap: 0;
+    margin-bottom: 2rem;
+    border-bottom: 2px solid var(--border);
+  }
+  .tab-btn {
+    font-family: 'Outfit', sans-serif;
+    font-size: 0.85rem;
+    font-weight: 600;
+    padding: 0.75rem 1.5rem;
+    background: none;
+    border: none;
+    color: var(--muted);
+    cursor: pointer;
+    border-bottom: 2px solid transparent;
+    margin-bottom: -2px;
+    transition: color 0.2s, border-color 0.2s;
+  }
+  .tab-btn:hover { color: var(--text); }
+  .tab-btn.active {
+    color: var(--blue);
+    border-bottom-color: var(--blue);
+  }
+
+  /* Panels */
+  .panel { display: none; }
+  .panel.active { display: block; }
+
+  /* Form elements */
+  .form-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 1.25rem;
+    margin-bottom: 1.5rem;
+  }
+  @media (max-width: 600px) {
+    .form-grid { grid-template-columns: 1fr; }
+  }
+  .form-group { display: flex; flex-direction: column; gap: 0.35rem; }
+  .form-group.full-width { grid-column: 1 / -1; }
+  .form-label {
+    font-family: 'Outfit', sans-serif;
+    font-size: 0.8rem;
+    font-weight: 600;
+    color: var(--text-bright);
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+  }
+  .form-hint {
+    font-family: 'Crimson Pro', serif;
+    font-style: italic;
+    font-size: 0.82rem;
+    color: var(--muted);
+  }
+  input[type="number"], select {
+    font-family: 'DM Mono', monospace;
+    font-size: 1rem;
+    padding: 0.65rem 0.85rem;
+    background: var(--surface2);
+    border: 1px solid var(--border2);
+    border-radius: 6px;
+    color: var(--text-bright);
+    outline: none;
+    transition: border-color 0.2s;
+    width: 100%;
+  }
+  input[type="number"]:focus, select:focus {
+    border-color: var(--blue);
+  }
+  input[type="number"]::placeholder { color: var(--muted); }
+
+  /* Toggle */
+  .toggle-row {
+    display: flex;
+    gap: 0.5rem;
+    margin-bottom: 1.5rem;
+  }
+  .toggle-opt {
+    font-family: 'Outfit', sans-serif;
+    font-size: 0.85rem;
+    font-weight: 600;
+    padding: 0.5rem 1.25rem;
+    background: var(--surface2);
+    border: 1px solid var(--border2);
+    border-radius: 6px;
+    color: var(--muted);
+    cursor: pointer;
+    transition: all 0.2s;
+  }
+  .toggle-opt.active {
+    background: var(--blue-dim);
+    border-color: var(--blue);
+    color: var(--blue);
+  }
+
+  /* Calculate button */
+  .calc-btn {
+    font-family: 'Outfit', sans-serif;
+    font-weight: 700;
+    font-size: 1rem;
+    letter-spacing: 0.04em;
+    padding: 0.85rem 2.5rem;
+    background: var(--blue);
+    color: #fff;
+    border: none;
+    border-radius: 6px;
+    cursor: pointer;
+    transition: background 0.2s, transform 0.1s;
+    display: block;
+    width: 100%;
+    margin-bottom: 2rem;
+  }
+  .calc-btn:hover { background: #3b82f6; }
+  .calc-btn:active { transform: scale(0.98); }
+
+  /* Results */
+  .results {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 10px;
+    padding: 1.75rem;
+    margin-bottom: 2rem;
+  }
+  .results-title {
+    font-family: 'Bebas Neue', sans-serif;
+    font-size: 1.3rem;
+    color: var(--text-bright);
+    letter-spacing: 0.05em;
+    margin-bottom: 1.25rem;
+  }
+  .result-row {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 0.6rem 0;
+    border-bottom: 1px solid var(--border);
+  }
+  .result-row:last-child { border-bottom: none; }
+  .result-label {
+    font-family: 'Outfit', sans-serif;
+    font-size: 0.9rem;
+    color: var(--text);
+  }
+  .result-value {
+    font-family: 'DM Mono', monospace;
+    font-size: 1.05rem;
+    font-weight: 500;
+  }
+  .result-value.positive { color: var(--green-bright); }
+  .result-value.negative { color: var(--red-bright); }
+  .result-value.neutral { color: var(--text-bright); }
+  .result-value.accent { color: var(--blue); }
+
+  .result-highlight {
+    margin-top: 1.25rem;
+    padding: 1rem 1.25rem;
+    border-radius: 6px;
+    font-family: 'Crimson Pro', serif;
+    font-style: italic;
+    font-size: 0.95rem;
+    line-height: 1.5;
+  }
+  .result-highlight.good {
+    background: var(--green-dim);
+    border-left: 3px solid var(--green-bright);
+    color: var(--green-bright);
+  }
+  .result-highlight.warn {
+    background: var(--red-dim);
+    border-left: 3px solid var(--red-bright);
+    color: var(--red-bright);
+  }
+  .result-highlight.info {
+    background: var(--cyan-dim);
+    border-left: 3px solid var(--cyan);
+    color: var(--cyan);
+  }
+
+  /* Maths box */
+  .mb {
+    background: var(--surface2);
+    border: 1px solid var(--border2);
+    border-radius: 6px;
+    padding: 1rem 1.25rem;
+    font-family: 'DM Mono', monospace;
+    font-size: 0.85rem;
+    color: var(--text-bright);
+    line-height: 1.7;
+    white-space: pre-wrap;
+    margin: 1rem 0;
+    overflow-x: auto;
+  }
+
+  /* How it works section */
+  .how-section {
+    margin-top: 3rem;
+    padding-top: 2rem;
+    border-top: 1px solid var(--border);
+  }
+  .how-section h2 {
+    font-family: 'Bebas Neue', sans-serif;
+    font-size: 1.6rem;
+    color: var(--text-bright);
+    letter-spacing: 0.04em;
+    margin-bottom: 1rem;
+  }
+  .how-section p {
+    font-family: 'Crimson Pro', serif;
+    font-size: 1rem;
+    color: var(--text);
+    line-height: 1.7;
+    margin-bottom: 1rem;
+    max-width: 720px;
+  }
+  .how-section .pln {
+    font-family: 'Crimson Pro', serif;
+    font-style: italic;
+    color: var(--cyan);
+    background: var(--cyan-dim);
+    border-left: 3px solid var(--cyan);
+    padding: 0.85rem 1.15rem;
+    border-radius: 0 6px 6px 0;
+    margin: 1rem 0;
+    line-height: 1.6;
+    font-size: 0.95rem;
+  }
+
+  /* CTA */
+  .cta-card {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-left: 3px solid var(--blue);
+    border-radius: 0 10px 10px 0;
+    padding: 1.5rem 1.75rem;
+    margin-top: 2.5rem;
+  }
+  .cta-card h3 {
+    font-family: 'Bebas Neue', sans-serif;
+    font-size: 1.2rem;
+    color: var(--blue);
+    letter-spacing: 0.04em;
+    margin-bottom: 0.5rem;
+  }
+  .cta-card p {
+    font-family: 'Crimson Pro', serif;
+    font-style: italic;
+    font-size: 0.95rem;
+    color: var(--text);
+    line-height: 1.5;
+    margin-bottom: 1rem;
+  }
+  .cta-link {
+    font-family: 'Outfit', sans-serif;
+    font-weight: 600;
+    font-size: 0.9rem;
+    color: var(--blue);
+    text-decoration: none;
+    border-bottom: 1px solid transparent;
+    transition: border-color 0.2s;
+  }
+  .cta-link:hover { border-bottom-color: var(--blue); }
+
+  /* Footer */
+  .footer {
+    margin-top: 3rem;
+    padding-top: 1.5rem;
+    border-top: 1px solid var(--border);
+    text-align: center;
+  }
+  .footer p {
+    font-family: 'Outfit', sans-serif;
+    font-size: 0.75rem;
+    color: var(--muted);
+    line-height: 1.8;
+  }
+  .footer a {
+    color: var(--muted);
+    text-decoration: underline;
+    text-underline-offset: 2px;
+  }
+
+  /* Responsive */
+  @media (max-width: 600px) {
+    .tab-btn { padding: 0.6rem 0.8rem; font-size: 0.78rem; }
+    .hero h1 { font-size: 2rem; }
+    .stats-bar { grid-template-columns: repeat(2, 1fr); }
+  }
+</style>
+</head>
+<body>
+<div class="container">
+
+  <!-- Nav -->
+  <nav class="nav-bar">
+    <a href="/" class="nav-brand">MATHS<span>WINS</span></a>
+    <a href="/academy/sports-betting/" class="nav-link">Sports Betting Maths Course →</a>
+  </nav>
+
+  <!-- Hero -->
+  <div class="hero">
+    <div class="hero-eyebrow">Free Tool</div>
+    <h1>FREE BET CALCULATOR</h1>
+    <div class="hero-sub">Your £20 free bet isn't worth £20. Calculate its real value — and the optimal strategy for using it.</div>
+  </div>
+
+  <!-- Stats Bar -->
+  <div class="stats-bar">
+    <div class="stat-cell">
+      <span class="stat-num">50%</span>
+      <div class="stat-label">SNR value at evens</div>
+    </div>
+    <div class="stat-cell">
+      <span class="stat-num">80%</span>
+      <div class="stat-label">SNR value at 5.00</div>
+    </div>
+    <div class="stat-cell">
+      <span class="stat-num">100%</span>
+      <div class="stat-label">SR value (any odds)</div>
+    </div>
+    <div class="stat-cell">
+      <span class="stat-num">£0</span>
+      <div class="stat-label">Cost of this tool</div>
+    </div>
+  </div>
+
+  <!-- Tabs -->
+  <div class="tab-row">
+    <button class="tab-btn active" data-tab="value">Free Bet Value</button>
+    <button class="tab-btn" data-tab="qualifying">Qualifying Bet</button>
+    <button class="tab-btn" data-tab="layoff">Lay-Off Calculator</button>
+  </div>
+
+  <!-- Panel 1: Free Bet Value -->
+  <div class="panel active" id="panel-value">
+    <div class="toggle-row">
+      <button class="toggle-opt active" data-type="SNR">SNR (Stake Not Returned)</button>
+      <button class="toggle-opt" data-type="SR">SR (Stake Returned)</button>
+    </div>
+    <div class="form-grid">
+      <div class="form-group">
+        <label class="form-label">Free bet value (£)</label>
+        <input type="number" id="fb-value" value="20" min="0.01" step="0.01" placeholder="20.00">
+      </div>
+      <div class="form-group">
+        <label class="form-label">Odds (decimal)</label>
+        <input type="number" id="fb-odds" value="4.00" min="1.01" step="0.01" placeholder="4.00">
+        <span class="form-hint">Higher odds = higher free bet value (SNR)</span>
+      </div>
+    </div>
+    <button class="calc-btn" id="calc-value">Calculate Value</button>
+    <div class="results" id="results-value" style="display:none;"></div>
+  </div>
+
+  <!-- Panel 2: Qualifying Bet -->
+  <div class="panel" id="panel-qualifying">
+    <div class="form-grid">
+      <div class="form-group">
+        <label class="form-label">Qualifying stake (£)</label>
+        <input type="number" id="q-stake" value="20" min="0.01" step="0.01">
+      </div>
+      <div class="form-group">
+        <label class="form-label">Qualifying odds (decimal)</label>
+        <input type="number" id="q-odds" value="2.00" min="1.01" step="0.01">
+      </div>
+      <div class="form-group">
+        <label class="form-label">Free bet awarded (£)</label>
+        <input type="number" id="q-freebet" value="20" min="0.01" step="0.01">
+      </div>
+      <div class="form-group">
+        <label class="form-label">Free bet type</label>
+        <select id="q-type">
+          <option value="SNR">SNR (Stake Not Returned)</option>
+          <option value="SR">SR (Stake Returned)</option>
+        </select>
+      </div>
+      <div class="form-group">
+        <label class="form-label">Free bet odds (decimal)</label>
+        <input type="number" id="q-fbodds" value="5.00" min="1.01" step="0.01">
+        <span class="form-hint">What odds will you use the free bet on?</span>
+      </div>
+      <div class="form-group">
+        <label class="form-label">Estimated overround (%)</label>
+        <input type="number" id="q-overround" value="5" min="0" max="30" step="0.1">
+        <span class="form-hint">Typical: 4-6% for match result</span>
+      </div>
+    </div>
+    <button class="calc-btn" id="calc-qualifying">Calculate Full Offer Value</button>
+    <div class="results" id="results-qualifying" style="display:none;"></div>
+  </div>
+
+  <!-- Panel 3: Lay-Off -->
+  <div class="panel" id="panel-layoff">
+    <p style="font-family:'Crimson Pro',serif; font-style:italic; color:var(--cyan); margin-bottom:1.5rem; font-size:0.95rem;">
+      Use this to calculate guaranteed profit by laying off your free bet on a betting exchange (Betfair, Smarkets, etc.).
+    </p>
+    <div class="form-grid">
+      <div class="form-group">
+        <label class="form-label">Free bet value (£)</label>
+        <input type="number" id="l-value" value="20" min="0.01" step="0.01">
+      </div>
+      <div class="form-group">
+        <label class="form-label">Free bet type</label>
+        <select id="l-type">
+          <option value="SNR">SNR (Stake Not Returned)</option>
+          <option value="SR">SR (Stake Returned)</option>
+        </select>
+      </div>
+      <div class="form-group">
+        <label class="form-label">Back odds (bookmaker)</label>
+        <input type="number" id="l-back" value="5.00" min="1.01" step="0.01">
+      </div>
+      <div class="form-group">
+        <label class="form-label">Lay odds (exchange)</label>
+        <input type="number" id="l-lay" value="5.20" min="1.01" step="0.01">
+      </div>
+      <div class="form-group">
+        <label class="form-label">Exchange commission (%)</label>
+        <input type="number" id="l-comm" value="2" min="0" max="20" step="0.1">
+        <span class="form-hint">Smarkets 2%, Betfair 5% (or lower with discounts)</span>
+      </div>
+    </div>
+    <button class="calc-btn" id="calc-layoff">Calculate Guaranteed Profit</button>
+    <div class="results" id="results-layoff" style="display:none;"></div>
+  </div>
+
+  <!-- How It Works -->
+  <div class="how-section">
+    <h2>THE MATHS BEHIND FREE BETS</h2>
+
+    <p>A free bet is not free money. Its real value depends on the type of free bet, the odds you use it on, and whether you have access to a betting exchange.</p>
+
+    <h3 style="font-family:'Bebas Neue',sans-serif; font-size:1.2rem; color:var(--blue); margin:1.5rem 0 0.75rem; letter-spacing:0.04em;">SNR FREE BETS (STAKE NOT RETURNED)</h3>
+
+    <p>Most free bets are SNR — if you win, you receive the profit but NOT the stake back. This means the free bet is always worth less than its face value.</p>
+
+    <div class="mb">Value = Face Value × (Odds - 1) / Odds
+
+£20 free bet at 2.00:  £20 × 1/2    = £10.00  (50%)
+£20 free bet at 3.00:  £20 × 2/3    = £13.33  (67%)
+£20 free bet at 5.00:  £20 × 4/5    = £16.00  (80%)
+£20 free bet at 10.00: £20 × 9/10   = £18.00  (90%)</div>
+
+    <div class="pln">Higher odds give you more value from an SNR free bet. This is the opposite of normal betting, where shorter odds have lower overround. For free bets, back the longshot.</div>
+
+    <h3 style="font-family:'Bebas Neue',sans-serif; font-size:1.2rem; color:var(--blue); margin:1.5rem 0 0.75rem; letter-spacing:0.04em;">SR FREE BETS (STAKE RETURNED)</h3>
+
+    <p>Rare but golden. An SR free bet returns the stake with your winnings. Mathematically, it's worth 100% of its face value at any odds.</p>
+
+    <div class="mb">SR free bet EV = Face Value × P(win) × Odds / 1
+                = Face Value (at any odds)
+
+Proof: At odds d, probability of winning ≈ 1/d
+EV = (1/d) × d × Face Value = Face Value ✓</div>
+
+    <div class="pln">SR free bets are worth their full face value. Use them on the shortest odds you can find to minimise variance — you want the guaranteed money, not the excitement.</div>
+
+    <h3 style="font-family:'Bebas Neue',sans-serif; font-size:1.2rem; color:var(--blue); margin:1.5rem 0 0.75rem; letter-spacing:0.04em;">LAY-OFF FOR GUARANTEED PROFIT</h3>
+
+    <p>If you have access to a betting exchange, you can convert expected value into guaranteed profit. Back with the free bet at the bookmaker, lay the same selection on the exchange. The maths guarantees profit regardless of the result.</p>
+
+    <div class="mb">SNR free bet lay-off:
+
+Optimal lay stake = Free Bet × (Back Odds - 1)
+                    / (Lay Odds - Commission)
+
+£20 SNR free bet, back @ 5.00, lay @ 5.20, 2% commission:
+Lay stake = 20 × 4 / (5.20 - 0.02×5.20)
+          = 80 / (5.20 - 0.104)
+          = 80 / 5.096
+          = £15.70
+
+If selection wins:
+  Bookmaker: +£80 (free bet profit, no stake return)
+  Exchange: -£15.70 × (5.20 - 1) = -£65.94
+  Net: +£14.06
+
+If selection loses:
+  Bookmaker: £0
+  Exchange: +£15.70 × (1 - 0.02) = +£15.39
+  Net: +£15.39
+
+Slight difference due to commission — both outcomes profitable.</div>
+
+    <div class="pln">By laying off, you turn a probabilistic free bet into a guaranteed £14–15 in real cash from a £20 free bet. That's a 70-75% retention rate. The mathematics removes all gambling — it's pure arithmetic.</div>
+  </div>
+
+  <!-- CTA -->
+  <div class="cta-card">
+    <h3>SPORTS BETTING MATHS</h3>
+    <p>This calculator is one tool from a 16-module course teaching the complete mathematics behind sports betting — implied probability, Asian handicaps, Poisson goal modelling, exchange mathematics, and why 95% of bettors lose. Module 1 is free.</p>
+    <a href="/academy/sports-betting/" class="cta-link">Explore the full course →</a>
+  </div>
+
+  <!-- Responsible Gambling -->
+  <div style="margin-top:2rem; padding:1.25rem; background:var(--surface); border:1px solid var(--border); border-radius:8px;">
+    <p style="font-family:'Outfit',sans-serif; font-size:0.78rem; color:var(--muted); line-height:1.7;">
+      This is a mathematical education tool, not betting advice. If you or someone you know is affected by problem gambling:<br>
+      <strong style="color:var(--text);">National Gambling Helpline: 0808 8020 133</strong> (free, 24/7)<br>
+      <a href="https://www.gamcare.org.uk" style="color:var(--muted);">GamCare</a> ·
+      <a href="https://www.begambleaware.org" style="color:var(--muted);">BeGambleAware</a>
+    </p>
+  </div>
+
+  <!-- Footer -->
+  <div class="footer">
+    <p>
+      Built by a first-class mathematics graduate with QTS.<br>
+      <a href="/">MathsWins</a> · <a href="/academy/">Academy</a> · <a href="/games/">Games</a> · <a href="/terms/">Terms</a><br>
+      No personal data collected · Cookieless analytics<br>
+      © 2026 MathsWins. Maths Always Wins.
+    </p>
+  </div>
+
+</div>
+
+<script>
+(function() {
+  // --- Tab switching ---
+  const tabs = document.querySelectorAll('.tab-btn');
+  const panels = document.querySelectorAll('.panel');
+  tabs.forEach(t => {
+    t.addEventListener('click', () => {
+      tabs.forEach(b => b.classList.remove('active'));
+      panels.forEach(p => p.classList.remove('active'));
+      t.classList.add('active');
+      document.getElementById('panel-' + t.dataset.tab).classList.add('active');
+    });
+  });
+
+  // --- Toggle SNR/SR ---
+  const toggles = document.querySelectorAll('.toggle-opt');
+  let betType = 'SNR';
+  toggles.forEach(t => {
+    t.addEventListener('click', () => {
+      toggles.forEach(b => b.classList.remove('active'));
+      t.classList.add('active');
+      betType = t.dataset.type;
+    });
+  });
+
+  // --- Helpers ---
+  function £(n) { return '£' + n.toFixed(2); }
+  function pct(n) { return (n * 100).toFixed(1) + '%'; }
+
+  function buildRow(label, value, cls) {
+    return `<div class="result-row">
+      <span class="result-label">${label}</span>
+      <span class="result-value ${cls || 'neutral'}">${value}</span>
+    </div>`;
+  }
+
+  function buildHighlight(text, type) {
+    return `<div class="result-highlight ${type}">${text}</div>`;
+  }
+
+  function buildMaths(text) {
+    return `<div class="mb">${text}</div>`;
+  }
+
+  // --- Panel 1: Free Bet Value ---
+  document.getElementById('calc-value').addEventListener('click', () => {
+    const fv = parseFloat(document.getElementById('fb-value').value);
+    const odds = parseFloat(document.getElementById('fb-odds').value);
+    if (!fv || !odds || odds <= 1) return;
+
+    const r = document.getElementById('results-value');
+    let ev, retPct, formula;
+
+    if (betType === 'SNR') {
+      ev = fv * (odds - 1) / odds;
+      retPct = (odds - 1) / odds;
+      formula = `EV = ${£(fv)} × (${odds.toFixed(2)} - 1) / ${odds.toFixed(2)}\n   = ${£(fv)} × ${(odds-1).toFixed(2)} / ${odds.toFixed(2)}\n   = ${£(ev)}`;
+    } else {
+      ev = fv;
+      retPct = 1;
+      formula = `EV = ${£(fv)} (SR free bets are worth face value at any odds)`;
+    }
+
+    const winProfit = betType === 'SNR' ? fv * (odds - 1) : fv * odds;
+    const winProb = 1 / odds;
+
+    let html = `<div class="results-title">FREE BET VALUE</div>`;
+    html += buildRow('Free bet face value', £(fv), 'neutral');
+    html += buildRow('Type', betType === 'SNR' ? 'Stake Not Returned' : 'Stake Returned', 'accent');
+    html += buildRow('Odds', odds.toFixed(2), 'neutral');
+    html += buildRow('Expected value', £(ev), 'positive');
+    html += buildRow('Retention rate', pct(retPct), retPct >= 0.7 ? 'positive' : 'neutral');
+    html += buildRow('If it wins', £(winProfit) + ' profit', 'positive');
+    html += buildRow('If it loses', '£0.00', 'negative');
+    html += buildRow('Win probability (fair)', pct(winProb), 'neutral');
+
+    html += buildMaths(formula);
+
+    if (betType === 'SNR') {
+      if (odds < 3) {
+        html += buildHighlight(
+          `At odds of ${odds.toFixed(2)}, this free bet is only worth ${pct(retPct)} of its face value. Consider using it on longer odds (4.00+) to capture more value.`,
+          'warn'
+        );
+      } else if (odds >= 5) {
+        html += buildHighlight(
+          `At odds of ${odds.toFixed(2)}, this free bet captures ${pct(retPct)} of its face value — that's close to optimal for an SNR free bet.`,
+          'good'
+        );
+      } else {
+        html += buildHighlight(
+          `Decent retention at ${pct(retPct)}. Odds of 5.00+ would push this above 80%.`,
+          'info'
+        );
+      }
+    } else {
+      html += buildHighlight(
+        `SR free bets are always worth 100% of face value. Use on the shortest odds possible to minimise variance.`,
+        'good'
+      );
+    }
+
+    r.innerHTML = html;
+    r.style.display = 'block';
+  });
+
+  // --- Panel 2: Qualifying Bet ---
+  document.getElementById('calc-qualifying').addEventListener('click', () => {
+    const stake = parseFloat(document.getElementById('q-stake').value);
+    const odds = parseFloat(document.getElementById('q-odds').value);
+    const fbVal = parseFloat(document.getElementById('q-freebet').value);
+    const fbType = document.getElementById('q-type').value;
+    const fbOdds = parseFloat(document.getElementById('q-fbodds').value);
+    const overround = parseFloat(document.getElementById('q-overround').value) / 100;
+
+    if (!stake || !odds || !fbVal || !fbOdds || odds <= 1 || fbOdds <= 1) return;
+
+    const qualCost = stake * overround;
+    const fbEV = fbType === 'SNR'
+      ? fbVal * (fbOdds - 1) / fbOdds
+      : fbVal;
+
+    const netProfit = fbEV - qualCost;
+    const retention = netProfit / fbVal;
+
+    const r = document.getElementById('results-qualifying');
+    let html = `<div class="results-title">FULL OFFER ANALYSIS</div>`;
+
+    html += `<div style="font-family:'Outfit',sans-serif;font-size:0.8rem;color:var(--muted);text-transform:uppercase;letter-spacing:0.06em;margin-bottom:0.75rem;">Qualifying Bet</div>`;
+    html += buildRow('Qualifying stake', £(stake), 'neutral');
+    html += buildRow('Qualifying odds', odds.toFixed(2), 'neutral');
+    html += buildRow('Expected loss on qualifier', £(qualCost), 'negative');
+
+    html += `<div style="font-family:'Outfit',sans-serif;font-size:0.8rem;color:var(--muted);text-transform:uppercase;letter-spacing:0.06em;margin:1rem 0 0.75rem;">Free Bet</div>`;
+    html += buildRow('Free bet value', £(fbVal), 'neutral');
+    html += buildRow('Free bet type', fbType === 'SNR' ? 'Stake Not Returned' : 'Stake Returned', 'accent');
+    html += buildRow('Free bet odds', fbOdds.toFixed(2), 'neutral');
+    html += buildRow('Free bet expected value', £(fbEV), 'positive');
+
+    html += `<div style="font-family:'Outfit',sans-serif;font-size:0.8rem;color:var(--muted);text-transform:uppercase;letter-spacing:0.06em;margin:1rem 0 0.75rem;">Net Result</div>`;
+    html += buildRow('Net expected profit from offer', £(netProfit), netProfit > 0 ? 'positive' : 'negative');
+    html += buildRow('Retention rate', pct(retention), retention >= 0.6 ? 'positive' : 'neutral');
+
+    html += buildMaths(
+      `Qualifying bet cost ≈ Stake × Overround\n= ${£(stake)} × ${(overround*100).toFixed(1)}% = ${£(qualCost)}\n\nFree bet EV = ${£(fbVal)} × ${fbType === 'SNR' ? `(${fbOdds.toFixed(2)} - 1) / ${fbOdds.toFixed(2)}` : '1 (SR)'} = ${£(fbEV)}\n\nNet profit = ${£(fbEV)} - ${£(qualCost)} = ${£(netProfit)}`
+    );
+
+    if (netProfit > 0) {
+      html += buildHighlight(
+        `This offer is worth ${£(netProfit)} in expected value — a ${pct(retention)} retention rate on the free bet face value. ${fbType === 'SNR' && fbOdds < 4 ? 'You could increase this by using the free bet on longer odds.' : ''}`,
+        'good'
+      );
+    } else {
+      html += buildHighlight(
+        `The qualifying bet cost exceeds the free bet value. This offer has negative expected value. Skip it.`,
+        'warn'
+      );
+    }
+
+    r.innerHTML = html;
+    r.style.display = 'block';
+  });
+
+  // --- Panel 3: Lay-Off ---
+  document.getElementById('calc-layoff').addEventListener('click', () => {
+    const fv = parseFloat(document.getElementById('l-value').value);
+    const type = document.getElementById('l-type').value;
+    const backOdds = parseFloat(document.getElementById('l-back').value);
+    const layOdds = parseFloat(document.getElementById('l-lay').value);
+    const commPct = parseFloat(document.getElementById('l-comm').value) / 100;
+
+    if (!fv || !backOdds || !layOdds || backOdds <= 1 || layOdds <= 1) return;
+    if (layOdds < backOdds * 0.5) return; // sanity check
+
+    let layStake, profitWin, profitLose;
+
+    if (type === 'SNR') {
+      layStake = fv * (backOdds - 1) / ((layOdds - 1) + (1 - commPct));
+      profitWin = fv * (backOdds - 1) - layStake * (layOdds - 1);
+      profitLose = layStake * (1 - commPct);
+    } else {
+      layStake = fv * backOdds / ((layOdds - 1) + (1 - commPct));
+      profitWin = fv * backOdds - layStake * (layOdds - 1);
+      profitLose = layStake * (1 - commPct);
+    }
+
+    const layLiability = layStake * (layOdds - 1);
+    const avgProfit = (profitWin + profitLose) / 2;
+    const retention = avgProfit / fv;
+
+    const r = document.getElementById('results-layoff');
+    let html = `<div class="results-title">GUARANTEED PROFIT CALCULATION</div>`;
+
+    html += buildRow('Free bet value', £(fv), 'neutral');
+    html += buildRow('Type', type === 'SNR' ? 'Stake Not Returned' : 'Stake Returned', 'accent');
+    html += buildRow('Back odds (bookmaker)', backOdds.toFixed(2), 'neutral');
+    html += buildRow('Lay odds (exchange)', layOdds.toFixed(2), 'neutral');
+    html += buildRow('Exchange commission', (commPct * 100).toFixed(1) + '%', 'neutral');
+
+    html += `<div style="height:1px;background:var(--border);margin:0.75rem 0;"></div>`;
+
+    html += buildRow('Lay stake required', £(layStake), 'accent');
+    html += buildRow('Lay liability', £(layLiability), 'neutral');
+
+    html += `<div style="height:1px;background:var(--border);margin:0.75rem 0;"></div>`;
+
+    html += buildRow('If selection WINS', £(profitWin), 'positive');
+    html += buildRow('If selection LOSES', £(profitLose), 'positive');
+    html += buildRow('Retention rate', pct(retention), retention >= 0.7 ? 'positive' : 'neutral');
+
+    if (type === 'SNR') {
+      html += buildMaths(
+        `Lay stake = Free Bet × (Back Odds - 1) / [(Lay Odds - 1) + (1 - Commission)]\n= ${£(fv)} × ${(backOdds-1).toFixed(2)} / [${(layOdds-1).toFixed(2)} + ${(1-commPct).toFixed(3)}]\n= ${£(fv * (backOdds-1))} / ${((layOdds-1)+(1-commPct)).toFixed(3)}\n= ${£(layStake)}\n\nIf selection wins:\n  Bookmaker profit: ${£(fv)} × (${backOdds.toFixed(2)} - 1) = ${£(fv*(backOdds-1))}\n  Exchange loss: ${£(layStake)} × (${layOdds.toFixed(2)} - 1) = -${£(layLiability)}\n  Net: ${£(profitWin)}\n\nIf selection loses:\n  Bookmaker: £0.00\n  Exchange profit: ${£(layStake)} × ${(1-commPct).toFixed(3)} = ${£(profitLose)}\n  Net: ${£(profitLose)}`
+      );
+    } else {
+      html += buildMaths(
+        `Lay stake = Free Bet × Back Odds / [(Lay Odds - 1) + (1 - Commission)]\n= ${£(fv)} × ${backOdds.toFixed(2)} / [${(layOdds-1).toFixed(2)} + ${(1-commPct).toFixed(3)}]\n= ${£(fv*backOdds)} / ${((layOdds-1)+(1-commPct)).toFixed(3)}\n= ${£(layStake)}\n\nIf selection wins:\n  Bookmaker return: ${£(fv)} × ${backOdds.toFixed(2)} = ${£(fv*backOdds)}\n  Exchange loss: ${£(layStake)} × (${layOdds.toFixed(2)} - 1) = -${£(layLiability)}\n  Net: ${£(profitWin)}\n\nIf selection loses:\n  Bookmaker: £0.00\n  Exchange profit: ${£(layStake)} × ${(1-commPct).toFixed(3)} = ${£(profitLose)}\n  Net: ${£(profitLose)}`
+      );
+    }
+
+    if (profitWin > 0 && profitLose > 0) {
+      html += buildHighlight(
+        `Guaranteed profit: ${£(Math.min(profitWin, profitLose))} to ${£(Math.max(profitWin, profitLose))} regardless of the result. That's ${pct(retention)} of the free bet face value converted to real cash. No gambling involved — pure mathematics.`,
+        'good'
+      );
+    } else {
+      html += buildHighlight(
+        `The lay odds are too far from the back odds for this to be profitable. Look for a selection where the back/lay spread is tighter.`,
+        'warn'
+      );
+    }
+
+    if (backOdds < 3 && type === 'SNR') {
+      html += buildHighlight(
+        `Tip: SNR free bets are worth more at higher odds. Try using this free bet on a selection at 4.00–6.00 for better retention.`,
+        'info'
+      );
+    }
+
+    r.innerHTML = html;
+    r.style.display = 'block';
+  });
+
+  // Auto-calculate on load for panel 1
+  document.getElementById('calc-value').click();
+})();
+</script>
+</body>
+</html>
