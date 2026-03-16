@@ -1,0 +1,213 @@
+<!DOCTYPE html>
+<html lang="en-GB">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Restore Access | MathsWins</title>
+<meta name="description" content="Already purchased from MathsWins? Restore your access on a new device or browser by entering the email you used at checkout.">
+<meta property="og:title" content="Restore Access — MathsWins">
+<meta property="og:description" content="Restore your MathsWins purchases on a new device or browser.">
+<meta property="og:url" content="https://mathswins.co.uk/restore/">
+<meta property="og:type" content="website">
+<link rel="canonical" href="https://mathswins.co.uk/restore/">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Crimson+Pro:ital,wght@0,400;1,400&family=DM+Mono:wght@400;500&family=Outfit:wght@300;400;600;700&display=swap" rel="stylesheet">
+<script async src="https://www.googletagmanager.com/gtag/js?id=G-28ZYY6MXKP"></script>
+<script>window.dataLayer=window.dataLayer||[];function gtag(){dataLayer.push(arguments);}gtag('js',new Date());gtag('config','G-28ZYY6MXKP',{send_page_view:true,storage:'none',anonymize_ip:true});</script>
+<style>
+:root{--bg:#050709;--surface:#0a0d14;--surface2:#0f1319;--border:#161c28;--border2:#1e2638;--gold:#d4a847;--gold-dim:rgba(212,168,71,0.08);--green:#2dd4a0;--green-dim:rgba(45,212,160,0.08);--red:#ef5350;--red-dim:rgba(239,83,80,0.08);--text:#c8cdd8;--text-bright:#e8ecf4;--muted:#4a5568}
+*{margin:0;padding:0;box-sizing:border-box}
+body{background:var(--bg);color:var(--text);font-family:'Outfit',sans-serif;font-weight:400;line-height:1.6;-webkit-font-smoothing:antialiased;min-height:100vh}
+.container{max-width:620px;margin:0 auto;padding:0 1.5rem}
+header{padding:2rem 0 1.5rem;border-bottom:1px solid var(--border);margin-bottom:2.5rem}
+.breadcrumb{font-size:.8rem;color:var(--muted);margin-bottom:1rem}
+.breadcrumb a{color:var(--muted);text-decoration:none}.breadcrumb a:hover{color:var(--gold)}
+h1{font-family:'Bebas Neue',sans-serif;font-size:2.5rem;color:var(--text-bright);letter-spacing:.03em;margin-bottom:.5rem}
+.subtitle{font-family:'Crimson Pro',serif;font-style:italic;font-size:1.05rem;color:var(--muted);max-width:480px}
+
+/* Form */
+.form-card{background:var(--surface);border:1px solid var(--border);border-radius:10px;padding:2rem;margin-bottom:1.5rem}
+.form-label{display:block;font-size:.85rem;font-weight:600;color:var(--text-bright);margin-bottom:.5rem;letter-spacing:.02em}
+.form-input{width:100%;font-family:'DM Mono',monospace;font-size:.95rem;padding:.75rem 1rem;background:var(--surface2);border:1px solid var(--border2);border-radius:6px;color:var(--text-bright);outline:none;transition:border-color .2s}
+.form-input::placeholder{color:var(--muted)}
+.form-input:focus{border-color:var(--gold)}
+.btn-gold{display:block;width:100%;font-family:'Outfit',sans-serif;font-weight:700;font-size:1rem;padding:.85rem 1.5rem;border:none;border-radius:6px;cursor:pointer;background:var(--gold);color:var(--bg);margin-top:1.25rem;transition:opacity .2s,transform .1s;letter-spacing:.02em}
+.btn-gold:hover{opacity:.9}.btn-gold:active{transform:scale(.98)}
+.btn-gold:disabled{opacity:.4;cursor:not-allowed;transform:none}
+.btn-green{display:inline-block;font-family:'Outfit',sans-serif;font-weight:700;font-size:1rem;padding:.85rem 2rem;border:none;border-radius:6px;cursor:pointer;background:var(--green);color:var(--bg);margin-top:1.25rem;transition:opacity .2s;text-decoration:none;letter-spacing:.02em}
+.btn-green:hover{opacity:.9}
+.btn-link{display:inline-block;font-family:'Outfit',sans-serif;font-weight:600;font-size:.9rem;color:var(--gold);background:none;border:1px solid var(--gold);border-radius:6px;padding:.65rem 1.5rem;cursor:pointer;margin-top:1rem;transition:background .2s,color .2s}
+.btn-link:hover{background:var(--gold);color:var(--bg)}
+
+/* Status boxes */
+.success-box{background:var(--green-dim);border:1px solid var(--green);border-left:3px solid var(--green);border-radius:0 6px 6px 0;padding:1.25rem 1.5rem;margin-top:1.5rem;color:var(--green);line-height:1.7}
+.error-box{background:var(--red-dim);border:1px solid var(--red);border-left:3px solid var(--red);border-radius:0 6px 6px 0;padding:1.25rem 1.5rem;margin-top:1.5rem;color:var(--red);line-height:1.7}
+.product-list{list-style:none;margin:.75rem 0 0;padding:0}
+.product-list li{padding:.35rem 0;font-family:'DM Mono',monospace;font-size:.85rem;color:var(--green)}
+.product-list li::before{content:"+ ";font-weight:700}
+
+/* Spinner */
+.spinner-wrap{display:flex;align-items:center;justify-content:center;padding:3rem 0}
+.spinner{width:36px;height:36px;border:3px solid var(--border2);border-top-color:var(--gold);border-radius:50%;animation:spin .7s linear infinite}
+@keyframes spin{to{transform:rotate(360deg)}}
+.spinner-text{margin-left:1rem;font-size:.9rem;color:var(--muted)}
+
+/* Footer */
+footer{text-align:center;padding:2rem 0;margin-top:3rem;border-top:1px solid var(--border);font-size:.75rem;color:var(--muted)}
+footer a{color:var(--muted);text-decoration:none}footer a:hover{color:var(--gold)}
+
+@media(max-width:480px){
+  h1{font-size:2rem}
+  .form-card{padding:1.25rem}
+  .container{padding:0 1rem}
+}
+</style>
+</head>
+<body>
+<div class="container">
+
+<header>
+  <div class="breadcrumb"><a href="/">MathsWins</a> / Restore Access</div>
+  <h1>RESTORE YOUR ACCESS</h1>
+  <p class="subtitle">Already purchased? Enter the email you used at checkout to get an access link.</p>
+</header>
+
+<!-- State 1: Request form -->
+<div id="request-view">
+  <div class="form-card">
+    <form id="restore-form" autocomplete="on">
+      <label class="form-label" for="email-input">Email address</label>
+      <input class="form-input" id="email-input" type="email" placeholder="you@example.com" required autocomplete="email">
+      <button class="btn-gold" type="submit" id="submit-btn">Send Access Link</button>
+    </form>
+  </div>
+  <div id="request-result"></div>
+</div>
+
+<!-- State 2: Verify token -->
+<div id="verify-view" style="display:none"></div>
+
+<footer>
+  <p>MathsWins · <a href="/">Home</a> · <a href="/everyday/">Everyday Maths</a> · <a href="/academy/">Academy</a> · <a href="/terms/">Terms</a></p>
+  <p style="margin-top:.5rem">&copy; 2026 MathsWins. All rights reserved.</p>
+</footer>
+
+</div>
+
+<script>
+(function(){
+  const params = new URLSearchParams(window.location.search);
+  const token = params.get('token');
+
+  if (token) {
+    startVerify(token);
+  }
+
+  // --- State 1: Request form ---
+  const form = document.getElementById('restore-form');
+  const submitBtn = document.getElementById('submit-btn');
+  const resultEl = document.getElementById('request-result');
+
+  form.addEventListener('submit', async function(e) {
+    e.preventDefault();
+    const email = document.getElementById('email-input').value.trim();
+    if (!email) return;
+
+    submitBtn.disabled = true;
+    submitBtn.textContent = '';
+    resultEl.innerHTML = '';
+
+    // Inline spinner in button
+    const orig = 'Send Access Link';
+    submitBtn.innerHTML = '<span style="display:inline-flex;align-items:center;gap:.5rem;"><span class="spinner" style="width:18px;height:18px;border-width:2px;display:inline-block;vertical-align:middle;"></span> Sending...</span>';
+
+    try {
+      const res = await fetch('https://api.mathswins.co.uk/request', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ email: email })
+      });
+
+      if (!res.ok) throw new Error('Server returned ' + res.status);
+
+      resultEl.innerHTML = '<div class="success-box">If that email has purchases, we\'ve sent an access link. Check your inbox.</div>';
+      submitBtn.textContent = orig;
+      submitBtn.disabled = false;
+    } catch (err) {
+      resultEl.innerHTML = '<div class="error-box">Something went wrong. Please check your connection and try again.</div>';
+      submitBtn.textContent = orig;
+      submitBtn.disabled = false;
+    }
+  });
+
+  // --- State 2: Verify token ---
+  function startVerify(tk) {
+    const requestView = document.getElementById('request-view');
+    const verifyView = document.getElementById('verify-view');
+
+    requestView.style.display = 'none';
+    verifyView.style.display = 'block';
+
+    // Show loading
+    verifyView.innerHTML = '<div class="spinner-wrap"><div class="spinner"></div><span class="spinner-text">Verifying your access link...</span></div>';
+
+    fetch('https://api.mathswins.co.uk/verify?token=' + encodeURIComponent(tk))
+      .then(function(res) {
+        if (!res.ok) throw new Error('invalid');
+        return res.json();
+      })
+      .then(function(data) {
+        // Set localStorage flags
+        // Products come as [{key:'mw_access_poker', value:'master'}, ...] or as plain slugs
+        if (data.premium) {
+          localStorage.setItem('mw_premium', 'true');
+        }
+        var items = [];
+        if (data.premium) items.push('MathsWins Premium');
+        if (data.products && Array.isArray(data.products)) {
+          data.products.forEach(function(p) {
+            if (typeof p === 'object' && p.key) {
+              localStorage.setItem(p.key, p.value || 'true');
+              var name = p.key.replace('mw_access_', '').replace('mw_', '').replace(/-/g, ' ').replace(/\b\w/g, function(c) { return c.toUpperCase(); });
+              if (p.value && p.value !== 'true') name += ' (' + p.value.charAt(0).toUpperCase() + p.value.slice(1) + ')';
+              items.push(name);
+            } else {
+              localStorage.setItem('mw_access_' + p, 'true');
+              items.push(p.replace(/-/g, ' ').replace(/\b\w/g, function(c) { return c.toUpperCase(); }));
+            }
+          });
+        }
+
+        var listHtml = '';
+        if (items.length) {
+          listHtml = '<ul class="product-list">' + items.map(function(p) { return '<li>' + p + '</li>'; }).join('') + '</ul>';
+        }
+
+        verifyView.innerHTML =
+          '<div class="success-box">' +
+            '<strong style="color:var(--text-bright);">Access restored successfully.</strong><br>' +
+            'The following products have been unlocked on this device:' +
+            listHtml +
+          '</div>' +
+          '<a href="/academy/" class="btn-green">Go to Academy &rarr;</a>';
+      })
+      .catch(function() {
+        verifyView.innerHTML =
+          '<div class="error-box">' +
+            'This link has expired or has already been used. Please request a new one.' +
+          '</div>' +
+          '<button class="btn-link" id="new-request-btn">Request New Link</button>';
+
+        document.getElementById('new-request-btn').addEventListener('click', function() {
+          history.replaceState(null, '', '/restore/');
+          verifyView.style.display = 'none';
+          requestView.style.display = 'block';
+          document.getElementById('email-input').focus();
+        });
+      });
+  }
+})();
+</script>
+</body>
+</html>

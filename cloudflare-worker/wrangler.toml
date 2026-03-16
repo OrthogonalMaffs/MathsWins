@@ -1,0 +1,27 @@
+name = "mathswins-restore"
+main = "worker.js"
+compatibility_date = "2024-09-23"
+compatibility_flags = ["nodejs_compat"]
+
+# Custom domain — api.mathswins.co.uk
+# Requires a CNAME or proxied A record in Cloudflare DNS pointing to the worker.
+routes = [
+  { pattern = "api.mathswins.co.uk/*", zone_name = "mathswins.co.uk" }
+]
+
+# KV namespace for rate limiting and single-use token tracking.
+# After creating the namespace, paste the id below:
+#   npx wrangler kv namespace create RESTORE_KV
+[[kv_namespaces]]
+binding = "RESTORE_KV"
+id = ""          # <-- paste production namespace id here
+# preview_id = "" # <-- paste preview namespace id here (for `wrangler dev`)
+
+# Secrets — set via `npx wrangler secret put <NAME>`
+# Do NOT put actual values here. Use:
+#   npx wrangler secret put STRIPE_SECRET_KEY
+#   npx wrangler secret put RESEND_API_KEY
+#   npx wrangler secret put HMAC_SECRET
+#
+# To generate a strong HMAC_SECRET:
+#   node -e "console.log(require('crypto').randomBytes(32).toString('hex'))"
