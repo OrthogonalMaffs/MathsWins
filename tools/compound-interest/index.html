@@ -1,0 +1,188 @@
+<!DOCTYPE html>
+<html lang="en-GB">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Compound Interest Calculator UK — See Your Money Grow | MathsWins</title>
+<meta name="description" content="Calculate compound interest on savings and investments. See how your money grows over time with regular contributions. Compare simple vs compound interest. Free UK calculator.">
+<meta property="og:url" content="https://mathswins.co.uk/tools/compound-interest/">
+<link rel="canonical" href="https://mathswins.co.uk/tools/compound-interest/">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Crimson+Pro:ital,wght@0,400;1,400&family=DM+Mono:wght@400;500&family=Outfit:wght@300;400;600;700&display=swap" rel="stylesheet">
+<style>
+:root{--bg:#050709;--surface:#0a0d14;--surface2:#0f1319;--border:#161c28;--border2:#1e2638;--sky:#0ea5e9;--sky-dim:rgba(14,165,233,0.10);--green:#2dd4a0;--green-dim:rgba(45,212,160,0.10);--red:#ef5350;--gold:#d4a847;--cyan:#22d3ee;--text:#c8cdd8;--text-bright:#e8ecf4;--muted:#4a5568;}
+*{margin:0;padding:0;box-sizing:border-box;}
+body{font-family:'Outfit',sans-serif;background:var(--bg);color:var(--text);min-height:100vh;}
+.container{max-width:900px;margin:0 auto;padding:2rem 1.25rem 4rem;}
+.nav-bar{display:flex;align-items:center;justify-content:space-between;padding:1rem 0;border-bottom:1px solid var(--border);margin-bottom:2rem;}
+.nav-brand{font-family:'Bebas Neue',sans-serif;font-size:1.4rem;color:var(--gold);text-decoration:none;letter-spacing:0.06em;}.nav-brand span{color:var(--text-bright);}
+.nav-link{font-size:0.85rem;font-weight:600;color:var(--sky);text-decoration:none;padding:0.4rem 1rem;border:1px solid var(--sky);border-radius:4px;}
+.hero{text-align:center;margin-bottom:2rem;}
+.hero-eyebrow{font-size:0.75rem;font-weight:600;text-transform:uppercase;letter-spacing:0.15em;color:var(--sky);margin-bottom:0.5rem;}
+.hero h1{font-family:'Bebas Neue',sans-serif;font-size:clamp(1.8rem,5vw,2.8rem);color:var(--text-bright);letter-spacing:0.04em;line-height:1.1;margin-bottom:0.75rem;}
+.hero-sub{font-family:'Crimson Pro',serif;font-style:italic;font-size:1.05rem;color:var(--cyan);max-width:550px;margin:0 auto;}
+.panel{background:var(--surface);border:1px solid var(--border);border-radius:10px;padding:1.5rem;margin-bottom:1.25rem;}
+.panel-title{font-family:'Bebas Neue',sans-serif;font-size:1.1rem;color:var(--text-bright);letter-spacing:0.05em;margin-bottom:1rem;}
+.form-grid{display:grid;grid-template-columns:1fr 1fr;gap:1rem;}
+@media(max-width:600px){.form-grid{grid-template-columns:1fr;}}
+.fg{display:flex;flex-direction:column;gap:0.3rem;}
+.fg label{font-size:0.72rem;font-weight:600;text-transform:uppercase;letter-spacing:0.06em;color:var(--muted);}
+.fg input,.fg select{font-family:'DM Mono',monospace;font-size:1rem;padding:0.6rem 0.8rem;background:var(--surface2);border:1px solid var(--border2);border-radius:6px;color:var(--text-bright);outline:none;}
+.fg input:focus,.fg select:focus{border-color:var(--sky);}
+.calc-btn{font-family:'Outfit',sans-serif;font-weight:700;font-size:1rem;padding:0.85rem;background:var(--sky);color:#fff;border:none;border-radius:6px;cursor:pointer;width:100%;margin:1.25rem 0;}
+.result-box{background:var(--surface);border:1px solid var(--border);border-radius:10px;padding:1.5rem;margin-bottom:1rem;display:none;}
+.result-box.show{display:block;}
+.big-number{font-family:'DM Mono',monospace;font-size:2.2rem;font-weight:500;color:var(--green);text-align:center;margin:0.5rem 0;}
+.big-label{text-align:center;font-size:0.85rem;color:var(--muted);margin-bottom:1rem;}
+.breakdown{display:grid;grid-template-columns:1fr 1fr 1fr;gap:1rem;margin:1rem 0;}
+@media(max-width:600px){.breakdown{grid-template-columns:1fr;}}
+.bd-item{text-align:center;padding:1rem;background:var(--surface2);border-radius:8px;}
+.bd-val{font-family:'DM Mono',monospace;font-size:1.2rem;font-weight:500;display:block;margin-bottom:0.25rem;}
+.bd-label{font-size:0.72rem;text-transform:uppercase;letter-spacing:0.06em;color:var(--muted);}
+.bar-chart{margin:1.5rem 0;}
+.bar-row{display:flex;align-items:center;gap:0.5rem;margin-bottom:6px;}
+.bar-year{font-family:'DM Mono',monospace;font-size:0.72rem;color:var(--muted);min-width:35px;text-align:right;}
+.bar-track{flex:1;height:22px;background:var(--surface2);border-radius:3px;overflow:hidden;display:flex;}
+.bar-principal{background:var(--sky);height:100%;}
+.bar-contributions{background:var(--cyan);height:100%;}
+.bar-interest{background:var(--green);height:100%;}
+.bar-val{font-family:'DM Mono',monospace;font-size:0.72rem;color:var(--muted);min-width:70px;}
+.legend{display:flex;gap:1rem;justify-content:center;margin:0.75rem 0;flex-wrap:wrap;}
+.legend-item{display:flex;align-items:center;gap:4px;font-size:0.72rem;color:var(--muted);}
+.legend-dot{width:10px;height:10px;border-radius:2px;}
+.pln{font-family:'Crimson Pro',serif;font-style:italic;color:var(--cyan);background:rgba(34,211,238,0.08);border-left:3px solid var(--cyan);padding:0.85rem 1rem;border-radius:0 6px 6px 0;margin:1rem 0;font-size:0.92rem;}
+.cta-card{background:var(--surface);border:1px solid var(--border);border-left:3px solid var(--sky);border-radius:0 10px 10px 0;padding:1.5rem;margin-top:2rem;}
+.cta-card h3{font-family:'Bebas Neue',sans-serif;font-size:1.2rem;color:var(--sky);margin-bottom:0.5rem;}
+.cta-card p{font-family:'Crimson Pro',serif;font-style:italic;font-size:0.92rem;color:var(--text);margin-bottom:0.75rem;}
+.cta-link{font-weight:600;font-size:0.9rem;color:var(--sky);text-decoration:none;}
+.footer{margin-top:2.5rem;padding-top:1.25rem;border-top:1px solid var(--border);text-align:center;}
+.footer p{font-size:0.72rem;color:var(--muted);line-height:1.8;}
+.footer a{color:var(--muted);text-decoration:underline;}
+</style>
+<!-- GA4 Cookieless -->
+<script async src="https://www.googletagmanager.com/gtag/js?id=G-28ZYY6MXKP"></script>
+<script>window.dataLayer=window.dataLayer||[];function gtag(){dataLayer.push(arguments);}gtag('js',new Date());gtag('config','G-28ZYY6MXKP',{send_page_view:true,storage:'none',anonymize_ip:true});</script>
+</head>
+<body>
+<div class="container">
+<nav class="nav-bar">
+  <a href="/" class="nav-brand">MATHS<span>WINS</span></a>
+  <a href="/everyday/compound-interest/" class="nav-link">Compound Interest Course (Free) →</a>
+</nav>
+<div class="hero">
+  <div class="hero-eyebrow">Free Tool</div>
+  <h1>COMPOUND INTEREST CALCULATOR</h1>
+  <div class="hero-sub">Einstein reportedly called compound interest "the eighth wonder of the world." See why — enter your numbers and watch the curve bend upward.</div>
+</div>
+
+<div class="panel">
+  <div class="panel-title">YOUR DETAILS</div>
+  <div class="form-grid">
+    <div class="fg"><label>Starting amount (£)</label><input type="number" id="principal" value="5000" min="0" step="100"></div>
+    <div class="fg"><label>Annual interest rate (%)</label><input type="number" id="rate" value="5" min="0" max="50" step="0.1"></div>
+    <div class="fg"><label>Monthly contribution (£)</label><input type="number" id="monthly" value="200" min="0" step="10"></div>
+    <div class="fg"><label>Time period (years)</label><input type="number" id="years" value="20" min="1" max="50" step="1"></div>
+    <div class="fg"><label>Compound frequency</label>
+      <select id="freq"><option value="12">Monthly</option><option value="4">Quarterly</option><option value="1">Annually</option><option value="365">Daily</option></select>
+    </div>
+    <div class="fg"><label>Tax rate on interest (%)</label><input type="number" id="tax" value="0" min="0" max="45" step="1"><div style="font-family:'Crimson Pro',serif;font-style:italic;font-size:0.75rem;color:var(--muted);">0% if within ISA allowance</div></div>
+  </div>
+  <button class="calc-btn" onclick="calculate()">Calculate Growth</button>
+</div>
+
+<div class="result-box" id="results"></div>
+
+<div class="cta-card">
+  <h3>COMPOUND INTEREST & DEBT — FREE COURSE</h3>
+  <p>Understand compound interest from first principles: simple vs compound, the Rule of 72, APR vs APY, and how the same mathematics that grows your savings also traps you in credit card debt. Four modules, completely free.</p>
+  <a href="/everyday/compound-interest/" class="cta-link">Start the free course →</a>
+</div>
+<div class="footer"><p><a href="/">MathsWins</a> · <a href="/tools/">Tools</a> · <a href="/everyday/">Everyday Maths</a><br>© 2026 MathsWins. Not financial advice.</p></div>
+</div>
+
+<script>
+function fmt(n){return '£'+n.toLocaleString('en-GB',{minimumFractionDigits:2,maximumFractionDigits:2});}
+function calculate(){
+  const P=parseFloat(document.getElementById('principal').value)||0;
+  const annualRate=parseFloat(document.getElementById('rate').value)/100;
+  const monthly=parseFloat(document.getElementById('monthly').value)||0;
+  const years=parseInt(document.getElementById('years').value)||1;
+  const freq=parseInt(document.getElementById('freq').value);
+  const taxRate=parseFloat(document.getElementById('tax').value)/100;
+  const effectiveRate=annualRate*(1-taxRate);
+  const rPer=effectiveRate/freq;
+  const monthlyPeriods=12;
+
+  // Year-by-year calculation
+  let balance=P;
+  const data=[{year:0,balance:P,totalContrib:P,totalInterest:0}];
+  let totalInterest=0;
+  let totalContrib=P;
+
+  for(let y=1;y<=years;y++){
+    let yearInterest=0;
+    for(let m=1;m<=12;m++){
+      // Add monthly contribution
+      balance+=monthly;
+      totalContrib+=monthly;
+      // Apply interest (simplified: monthly compounding equivalent)
+      const monthInt=balance*(effectiveRate/12);
+      balance+=monthInt;
+      yearInterest+=monthInt;
+    }
+    totalInterest+=yearInterest;
+    data.push({year:y,balance,totalContrib,totalInterest});
+  }
+
+  // Simple interest comparison
+  const simpleTotal=P+monthly*12*years+((P+monthly*12*years/2)*effectiveRate*years);
+  const compoundAdvantage=balance-simpleTotal;
+
+  // Doubling time (Rule of 72)
+  const doubleTime=effectiveRate>0?(72/(effectiveRate*100)).toFixed(1):'∞';
+
+  const r=document.getElementById('results');
+  r.classList.add('show');
+
+  // Build bar chart (show every year or every 2/5 years for long periods)
+  const step=years<=10?1:years<=20?2:5;
+  let bars='';
+  const maxBal=data[data.length-1].balance;
+  for(let i=0;i<=years;i+=step){
+    const d=data[i];
+    const pW=(P/maxBal*100);
+    const cW=((d.totalContrib-P)/maxBal*100);
+    const iW=(d.totalInterest/maxBal*100);
+    bars+=`<div class="bar-row">
+      <span class="bar-year">Y${d.year}</span>
+      <div class="bar-track">
+        <div class="bar-principal" style="width:${pW}%"></div>
+        <div class="bar-contributions" style="width:${cW}%"></div>
+        <div class="bar-interest" style="width:${iW}%"></div>
+      </div>
+      <span class="bar-val">${fmt(d.balance)}</span>
+    </div>`;
+  }
+
+  r.innerHTML=`
+    <div class="big-number">${fmt(balance)}</div>
+    <div class="big-label">Total value after ${years} years</div>
+    <div class="breakdown">
+      <div class="bd-item"><span class="bd-val" style="color:var(--sky);">${fmt(P)}</span><span class="bd-label">Initial deposit</span></div>
+      <div class="bd-item"><span class="bd-val" style="color:var(--cyan);">${fmt(totalContrib-P)}</span><span class="bd-label">Contributions</span></div>
+      <div class="bd-item"><span class="bd-val" style="color:var(--green);">${fmt(totalInterest)}</span><span class="bd-label">Interest earned</span></div>
+    </div>
+    <div class="legend">
+      <div class="legend-item"><div class="legend-dot" style="background:var(--sky);"></div>Initial</div>
+      <div class="legend-item"><div class="legend-dot" style="background:var(--cyan);"></div>Contributions</div>
+      <div class="legend-item"><div class="legend-dot" style="background:var(--green);"></div>Interest</div>
+    </div>
+    <div class="bar-chart">${bars}</div>
+    <div class="pln">After ${years} years, ${fmt(totalInterest)} of your total came from interest alone — money you didn't earn or deposit. ${totalInterest>totalContrib?'Your interest exceeded your total contributions. That\'s compound interest doing the heavy lifting.':'As you continue, compound interest accelerates — the green bar grows faster each year because interest earns interest.'} The Rule of 72 says your money doubles every ${doubleTime} years at ${(effectiveRate*100).toFixed(1)}%.</div>
+  `;
+}
+calculate();
+</script>
+</body>
+</html>

@@ -3,35 +3,15 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate">
-<meta http-equiv="Pragma" content="no-cache">
-<meta http-equiv="Expires" content="0">
 <title>Free Bet Calculator — What's Your Free Bet Actually Worth? | MathsWins</title>
-<meta name="description" content="Calculate the true value of any free bet. SNR and SR valuations, qualifying bet costs, exchange lay-off for guaranteed profit. Free tool.">
-<meta property="og:title" content="Free Bet Calculator — What's Your Free Bet Actually Worth?">
+<meta name="description" content="Calculate the true value of any free bet. SNR and SR free bets, qualifying bet costs, exchange lay-off for guaranteed profit. Free tool from MathsWins — the mathematics behind every game of chance.">
+<meta property="og:title" content="Free Bet Calculator — MathsWins">
 <meta property="og:description" content="Your £20 free bet isn't worth £20. Calculate its real value, find the optimal odds, and learn the lay-off strategy for guaranteed profit.">
 <meta property="og:url" content="https://mathswins.co.uk/tools/free-bet-calculator/">
 <meta property="og:type" content="website">
-<link rel="canonical" href="https://mathswins.co.uk/tools/free-bet-calculator/">
-<script type="application/ld+json">
-{"@context":"https://schema.org","@type":"WebApplication","name":"Free Bet Calculator","url":"https://mathswins.co.uk/tools/free-bet-calculator/","applicationCategory":"FinanceApplication","description":"Calculate the true value of any free bet. SNR and SR valuations, qualifying bet costs, exchange lay-off for guaranteed profit.","offers":{"@type":"Offer","price":"0","priceCurrency":"GBP"}}
-</script>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Crimson+Pro:ital,wght@0,400;0,700;1,400&family=DM+Mono:wght@400;500&family=Outfit:wght@300;400;600;700&display=swap" rel="stylesheet">
-
-<!-- GA4 Cookieless -->
-<script async src="https://www.googletagmanager.com/gtag/js?id=G-28ZYY6MXKP"></script>
-<script>
-  window.dataLayer = window.dataLayer || [];
-  function gtag(){dataLayer.push(arguments);}
-  gtag('js', new Date());
-  gtag('config', 'G-28ZYY6MXKP', {
-    send_page_view: true,
-    storage: 'none',
-    anonymize_ip: true
-  });
-</script>
 
 <style>
   :root {
@@ -456,6 +436,9 @@
     .stats-bar { grid-template-columns: repeat(2, 1fr); }
   }
 </style>
+<!-- GA4 Cookieless -->
+<script async src="https://www.googletagmanager.com/gtag/js?id=G-28ZYY6MXKP"></script>
+<script>window.dataLayer=window.dataLayer||[];function gtag(){dataLayer.push(arguments);}gtag('js',new Date());gtag('config','G-28ZYY6MXKP',{send_page_view:true,storage:'none',anonymize_ip:true});</script>
 </head>
 <body>
 <div class="container">
@@ -666,7 +649,7 @@ Slight difference due to commission — both outcomes profitable.</div>
     <p style="font-family:'Outfit',sans-serif; font-size:0.78rem; color:var(--muted); line-height:1.7;">
       This is a mathematical education tool, not betting advice. If you or someone you know is affected by problem gambling:<br>
       <strong style="color:var(--text);">National Gambling Helpline: 0808 8020 133</strong> (free, 24/7)<br>
-      <a href="https://www.gamcare.org.uk" style="color:var(--muted);">GamCare</a> ·
+      <a href="https://www.gamcare.org.uk" style="color:var(--muted);">GamCare</a> · 
       <a href="https://www.begambleaware.org" style="color:var(--muted);">BeGambleAware</a>
     </p>
   </div>
@@ -675,8 +658,7 @@ Slight difference due to commission — both outcomes profitable.</div>
   <div class="footer">
     <p>
       Built by a first-class mathematics graduate with QTS.<br>
-      <a href="/">MathsWins</a> · <a href="/academy/">Academy</a> · <a href="/games/">Games</a> · <a href="/terms/">Terms</a><br>
-      No personal data collected · Cookieless analytics<br>
+      <a href="/">MathsWins</a> · <a href="/academy/">Academy</a> · <a href="/games/">Games</a> · <a href="/about/">About</a><br>
       © 2026 MathsWins. Maths Always Wins.
     </p>
   </div>
@@ -709,7 +691,7 @@ Slight difference due to commission — both outcomes profitable.</div>
   });
 
   // --- Helpers ---
-  function £(n) { return '£' + n.toFixed(2); }
+  function fmt(n) { return '£' + n.toFixed(2); }
   function pct(n) { return (n * 100).toFixed(1) + '%'; }
 
   function buildRow(label, value, cls) {
@@ -739,23 +721,23 @@ Slight difference due to commission — both outcomes profitable.</div>
     if (betType === 'SNR') {
       ev = fv * (odds - 1) / odds;
       retPct = (odds - 1) / odds;
-      formula = `EV = ${£(fv)} × (${odds.toFixed(2)} - 1) / ${odds.toFixed(2)}\n   = ${£(fv)} × ${(odds-1).toFixed(2)} / ${odds.toFixed(2)}\n   = ${£(ev)}`;
+      formula = `EV = ${fmt(fv)} × (${odds.toFixed(2)} - 1) / ${odds.toFixed(2)}\n   = ${fmt(fv)} × ${(odds-1).toFixed(2)} / ${odds.toFixed(2)}\n   = ${fmt(ev)}`;
     } else {
       ev = fv;
       retPct = 1;
-      formula = `EV = ${£(fv)} (SR free bets are worth face value at any odds)`;
+      formula = `EV = ${fmt(fv)} (SR free bets are worth face value at any odds)`;
     }
 
     const winProfit = betType === 'SNR' ? fv * (odds - 1) : fv * odds;
     const winProb = 1 / odds;
 
     let html = `<div class="results-title">FREE BET VALUE</div>`;
-    html += buildRow('Free bet face value', £(fv), 'neutral');
+    html += buildRow('Free bet face value', fmt(fv), 'neutral');
     html += buildRow('Type', betType === 'SNR' ? 'Stake Not Returned' : 'Stake Returned', 'accent');
     html += buildRow('Odds', odds.toFixed(2), 'neutral');
-    html += buildRow('Expected value', £(ev), 'positive');
+    html += buildRow('Expected value', fmt(ev), 'positive');
     html += buildRow('Retention rate', pct(retPct), retPct >= 0.7 ? 'positive' : 'neutral');
-    html += buildRow('If it wins', £(winProfit) + ' profit', 'positive');
+    html += buildRow('If it wins', fmt(winProfit) + ' profit', 'positive');
     html += buildRow('If it loses', '£0.00', 'negative');
     html += buildRow('Win probability (fair)', pct(winProb), 'neutral');
 
@@ -812,27 +794,27 @@ Slight difference due to commission — both outcomes profitable.</div>
     let html = `<div class="results-title">FULL OFFER ANALYSIS</div>`;
 
     html += `<div style="font-family:'Outfit',sans-serif;font-size:0.8rem;color:var(--muted);text-transform:uppercase;letter-spacing:0.06em;margin-bottom:0.75rem;">Qualifying Bet</div>`;
-    html += buildRow('Qualifying stake', £(stake), 'neutral');
+    html += buildRow('Qualifying stake', fmt(stake), 'neutral');
     html += buildRow('Qualifying odds', odds.toFixed(2), 'neutral');
-    html += buildRow('Expected loss on qualifier', £(qualCost), 'negative');
+    html += buildRow('Expected loss on qualifier', fmt(qualCost), 'negative');
 
     html += `<div style="font-family:'Outfit',sans-serif;font-size:0.8rem;color:var(--muted);text-transform:uppercase;letter-spacing:0.06em;margin:1rem 0 0.75rem;">Free Bet</div>`;
-    html += buildRow('Free bet value', £(fbVal), 'neutral');
+    html += buildRow('Free bet value', fmt(fbVal), 'neutral');
     html += buildRow('Free bet type', fbType === 'SNR' ? 'Stake Not Returned' : 'Stake Returned', 'accent');
     html += buildRow('Free bet odds', fbOdds.toFixed(2), 'neutral');
-    html += buildRow('Free bet expected value', £(fbEV), 'positive');
+    html += buildRow('Free bet expected value', fmt(fbEV), 'positive');
 
     html += `<div style="font-family:'Outfit',sans-serif;font-size:0.8rem;color:var(--muted);text-transform:uppercase;letter-spacing:0.06em;margin:1rem 0 0.75rem;">Net Result</div>`;
-    html += buildRow('Net expected profit from offer', £(netProfit), netProfit > 0 ? 'positive' : 'negative');
+    html += buildRow('Net expected profit from offer', fmt(netProfit), netProfit > 0 ? 'positive' : 'negative');
     html += buildRow('Retention rate', pct(retention), retention >= 0.6 ? 'positive' : 'neutral');
 
     html += buildMaths(
-      `Qualifying bet cost ≈ Stake × Overround\n= ${£(stake)} × ${(overround*100).toFixed(1)}% = ${£(qualCost)}\n\nFree bet EV = ${£(fbVal)} × ${fbType === 'SNR' ? `(${fbOdds.toFixed(2)} - 1) / ${fbOdds.toFixed(2)}` : '1 (SR)'} = ${£(fbEV)}\n\nNet profit = ${£(fbEV)} - ${£(qualCost)} = ${£(netProfit)}`
+      `Qualifying bet cost ≈ Stake × Overround\n= ${fmt(stake)} × ${(overround*100).toFixed(1)}% = ${fmt(qualCost)}\n\nFree bet EV = ${fmt(fbVal)} × ${fbType === 'SNR' ? `(${fbOdds.toFixed(2)} - 1) / ${fbOdds.toFixed(2)}` : '1 (SR)'} = ${fmt(fbEV)}\n\nNet profit = ${fmt(fbEV)} - ${fmt(qualCost)} = ${fmt(netProfit)}`
     );
 
     if (netProfit > 0) {
       html += buildHighlight(
-        `This offer is worth ${£(netProfit)} in expected value — a ${pct(retention)} retention rate on the free bet face value. ${fbType === 'SNR' && fbOdds < 4 ? 'You could increase this by using the free bet on longer odds.' : ''}`,
+        `This offer is worth ${fmt(netProfit)} in expected value — a ${pct(retention)} retention rate on the free bet face value. ${fbType === 'SNR' && fbOdds < 4 ? 'You could increase this by using the free bet on longer odds.' : ''}`,
         'good'
       );
     } else {
@@ -860,10 +842,19 @@ Slight difference due to commission — both outcomes profitable.</div>
     let layStake, profitWin, profitLose;
 
     if (type === 'SNR') {
+      // Back profit if wins: fv * (backOdds - 1) — no stake return
+      // Lay liability if wins: layStake * (layOdds - 1)
+      // Lay profit if loses: layStake * (1 - commPct)
+      // For equal profit: fv*(backOdds-1) - layStake*(layOdds-1) = layStake*(1-commPct)
+      // fv*(backOdds-1) = layStake * [(layOdds-1) + (1-commPct)]
       layStake = fv * (backOdds - 1) / ((layOdds - 1) + (1 - commPct));
       profitWin = fv * (backOdds - 1) - layStake * (layOdds - 1);
       profitLose = layStake * (1 - commPct);
     } else {
+      // SR: Back return if wins: fv * backOdds (stake + profit)
+      // But we still need to lay to cover. The free bet stake is "free" so if it loses, we get £0 from bookmaker.
+      // Lay stake for equal profit:
+      // fv*backOdds - layStake*(layOdds-1) = layStake*(1-commPct)
       layStake = fv * backOdds / ((layOdds - 1) + (1 - commPct));
       profitWin = fv * backOdds - layStake * (layOdds - 1);
       profitLose = layStake * (1 - commPct);
@@ -876,7 +867,7 @@ Slight difference due to commission — both outcomes profitable.</div>
     const r = document.getElementById('results-layoff');
     let html = `<div class="results-title">GUARANTEED PROFIT CALCULATION</div>`;
 
-    html += buildRow('Free bet value', £(fv), 'neutral');
+    html += buildRow('Free bet value', fmt(fv), 'neutral');
     html += buildRow('Type', type === 'SNR' ? 'Stake Not Returned' : 'Stake Returned', 'accent');
     html += buildRow('Back odds (bookmaker)', backOdds.toFixed(2), 'neutral');
     html += buildRow('Lay odds (exchange)', layOdds.toFixed(2), 'neutral');
@@ -884,28 +875,29 @@ Slight difference due to commission — both outcomes profitable.</div>
 
     html += `<div style="height:1px;background:var(--border);margin:0.75rem 0;"></div>`;
 
-    html += buildRow('Lay stake required', £(layStake), 'accent');
-    html += buildRow('Lay liability', £(layLiability), 'neutral');
+    html += buildRow('Lay stake required', fmt(layStake), 'accent');
+    html += buildRow('Lay liability', fmt(layLiability), 'neutral');
 
     html += `<div style="height:1px;background:var(--border);margin:0.75rem 0;"></div>`;
 
-    html += buildRow('If selection WINS', £(profitWin), 'positive');
-    html += buildRow('If selection LOSES', £(profitLose), 'positive');
+    html += buildRow('If selection WINS', fmt(profitWin), 'positive');
+    html += buildRow('If selection LOSES', fmt(profitLose), 'positive');
     html += buildRow('Retention rate', pct(retention), retention >= 0.7 ? 'positive' : 'neutral');
 
+    // Show the full maths
     if (type === 'SNR') {
       html += buildMaths(
-        `Lay stake = Free Bet × (Back Odds - 1) / [(Lay Odds - 1) + (1 - Commission)]\n= ${£(fv)} × ${(backOdds-1).toFixed(2)} / [${(layOdds-1).toFixed(2)} + ${(1-commPct).toFixed(3)}]\n= ${£(fv * (backOdds-1))} / ${((layOdds-1)+(1-commPct)).toFixed(3)}\n= ${£(layStake)}\n\nIf selection wins:\n  Bookmaker profit: ${£(fv)} × (${backOdds.toFixed(2)} - 1) = ${£(fv*(backOdds-1))}\n  Exchange loss: ${£(layStake)} × (${layOdds.toFixed(2)} - 1) = -${£(layLiability)}\n  Net: ${£(profitWin)}\n\nIf selection loses:\n  Bookmaker: £0.00\n  Exchange profit: ${£(layStake)} × ${(1-commPct).toFixed(3)} = ${£(profitLose)}\n  Net: ${£(profitLose)}`
+        `Lay stake = Free Bet × (Back Odds - 1) / [(Lay Odds - 1) + (1 - Commission)]\n= ${fmt(fv)} × ${(backOdds-1).toFixed(2)} / [${(layOdds-1).toFixed(2)} + ${(1-commPct).toFixed(3)}]\n= ${fmt(fv * (backOdds-1))} / ${((layOdds-1)+(1-commPct)).toFixed(3)}\n= ${fmt(layStake)}\n\nIf selection wins:\n  Bookmaker profit: ${fmt(fv)} × (${backOdds.toFixed(2)} - 1) = ${fmt(fv*(backOdds-1))}\n  Exchange loss: ${fmt(layStake)} × (${layOdds.toFixed(2)} - 1) = -${fmt(layLiability)}\n  Net: ${fmt(profitWin)}\n\nIf selection loses:\n  Bookmaker: £0.00\n  Exchange profit: ${fmt(layStake)} × ${(1-commPct).toFixed(3)} = ${fmt(profitLose)}\n  Net: ${fmt(profitLose)}`
       );
     } else {
       html += buildMaths(
-        `Lay stake = Free Bet × Back Odds / [(Lay Odds - 1) + (1 - Commission)]\n= ${£(fv)} × ${backOdds.toFixed(2)} / [${(layOdds-1).toFixed(2)} + ${(1-commPct).toFixed(3)}]\n= ${£(fv*backOdds)} / ${((layOdds-1)+(1-commPct)).toFixed(3)}\n= ${£(layStake)}\n\nIf selection wins:\n  Bookmaker return: ${£(fv)} × ${backOdds.toFixed(2)} = ${£(fv*backOdds)}\n  Exchange loss: ${£(layStake)} × (${layOdds.toFixed(2)} - 1) = -${£(layLiability)}\n  Net: ${£(profitWin)}\n\nIf selection loses:\n  Bookmaker: £0.00\n  Exchange profit: ${£(layStake)} × ${(1-commPct).toFixed(3)} = ${£(profitLose)}\n  Net: ${£(profitLose)}`
+        `Lay stake = Free Bet × Back Odds / [(Lay Odds - 1) + (1 - Commission)]\n= ${fmt(fv)} × ${backOdds.toFixed(2)} / [${(layOdds-1).toFixed(2)} + ${(1-commPct).toFixed(3)}]\n= ${fmt(fv*backOdds)} / ${((layOdds-1)+(1-commPct)).toFixed(3)}\n= ${fmt(layStake)}\n\nIf selection wins:\n  Bookmaker return: ${fmt(fv)} × ${backOdds.toFixed(2)} = ${fmt(fv*backOdds)}\n  Exchange loss: ${fmt(layStake)} × (${layOdds.toFixed(2)} - 1) = -${fmt(layLiability)}\n  Net: ${fmt(profitWin)}\n\nIf selection loses:\n  Bookmaker: £0.00\n  Exchange profit: ${fmt(layStake)} × ${(1-commPct).toFixed(3)} = ${fmt(profitLose)}\n  Net: ${fmt(profitLose)}`
       );
     }
 
     if (profitWin > 0 && profitLose > 0) {
       html += buildHighlight(
-        `Guaranteed profit: ${£(Math.min(profitWin, profitLose))} to ${£(Math.max(profitWin, profitLose))} regardless of the result. That's ${pct(retention)} of the free bet face value converted to real cash. No gambling involved — pure mathematics.`,
+        `Guaranteed profit: ${fmt(Math.min(profitWin, profitLose))} to ${fmt(Math.max(profitWin, profitLose))} regardless of the result. That's ${pct(retention)} of the free bet face value converted to real cash. No gambling involved — pure mathematics.`,
         'good'
       );
     } else {
@@ -915,6 +907,7 @@ Slight difference due to commission — both outcomes profitable.</div>
       );
     }
 
+    // Tip about odds choice
     if (backOdds < 3 && type === 'SNR') {
       html += buildHighlight(
         `Tip: SNR free bets are worth more at higher odds. Try using this free bet on a selection at 4.00–6.00 for better retention.`,

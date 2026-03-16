@@ -1,0 +1,226 @@
+<!DOCTYPE html>
+<html lang="en-GB">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Impermanent Loss Calculator — DeFi LP Maths | MathsWins</title>
+<meta name="description" content="Calculate impermanent loss for any liquidity pool. See the exact cost of providing liquidity vs holding. Compare fee income against IL. Free DeFi calculator.">
+<meta property="og:url" content="https://mathswins.co.uk/tools/impermanent-loss/">
+<link rel="canonical" href="https://mathswins.co.uk/tools/impermanent-loss/">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Crimson+Pro:ital,wght@0,400;1,400&family=DM+Mono:wght@400;500&family=Outfit:wght@300;400;600;700&display=swap" rel="stylesheet">
+<style>
+:root{--bg:#050709;--surface:#0a0d14;--surface2:#0f1319;--border:#161c28;--border2:#1e2638;--orange:#f97316;--orange-dim:rgba(249,115,22,0.10);--green:#2dd4a0;--green-dim:rgba(45,212,160,0.10);--red:#ef5350;--red-dim:rgba(239,83,80,0.10);--gold:#d4a847;--cyan:#22d3ee;--text:#c8cdd8;--text-bright:#e8ecf4;--muted:#4a5568;}
+*{margin:0;padding:0;box-sizing:border-box;}
+body{font-family:'Outfit',sans-serif;background:var(--bg);color:var(--text);min-height:100vh;}
+.container{max-width:900px;margin:0 auto;padding:2rem 1.25rem 4rem;}
+.nav-bar{display:flex;align-items:center;justify-content:space-between;padding:1rem 0;border-bottom:1px solid var(--border);margin-bottom:2rem;}
+.nav-brand{font-family:'Bebas Neue',sans-serif;font-size:1.4rem;color:var(--gold);text-decoration:none;letter-spacing:0.06em;}.nav-brand span{color:var(--text-bright);}
+.nav-link{font-size:0.85rem;font-weight:600;color:var(--orange);text-decoration:none;padding:0.4rem 1rem;border:1px solid var(--orange);border-radius:4px;}
+.hero{text-align:center;margin-bottom:2rem;}
+.hero-eyebrow{font-size:0.75rem;font-weight:600;text-transform:uppercase;letter-spacing:0.15em;color:var(--orange);margin-bottom:0.5rem;}
+.hero h1{font-family:'Bebas Neue',sans-serif;font-size:clamp(1.8rem,5vw,2.8rem);color:var(--text-bright);letter-spacing:0.04em;line-height:1.1;margin-bottom:0.75rem;}
+.hero-sub{font-family:'Crimson Pro',serif;font-style:italic;font-size:1.05rem;color:var(--cyan);max-width:560px;margin:0 auto;}
+.panel{background:var(--surface);border:1px solid var(--border);border-radius:10px;padding:1.5rem;margin-bottom:1.25rem;}
+.panel-title{font-family:'Bebas Neue',sans-serif;font-size:1.1rem;color:var(--text-bright);letter-spacing:0.05em;margin-bottom:1rem;}
+.form-grid{display:grid;grid-template-columns:1fr 1fr;gap:1rem;}
+@media(max-width:600px){.form-grid{grid-template-columns:1fr;}}
+.fg{display:flex;flex-direction:column;gap:0.3rem;}
+.fg label{font-size:0.72rem;font-weight:600;text-transform:uppercase;letter-spacing:0.06em;color:var(--muted);}
+.fg input{font-family:'DM Mono',monospace;font-size:1rem;padding:0.6rem 0.8rem;background:var(--surface2);border:1px solid var(--border2);border-radius:6px;color:var(--text-bright);outline:none;}
+.fg input:focus{border-color:var(--orange);}
+.fg .hint{font-family:'Crimson Pro',serif;font-style:italic;font-size:0.75rem;color:var(--muted);}
+.calc-btn{font-family:'Outfit',sans-serif;font-weight:700;font-size:1rem;padding:0.85rem;background:var(--orange);color:#fff;border:none;border-radius:6px;cursor:pointer;width:100%;margin:1.25rem 0;}
+.results{display:none;}.results.show{display:block;}
+.il-display{text-align:center;padding:1.5rem;background:var(--surface);border:1px solid var(--border);border-radius:10px;margin-bottom:1rem;}
+.il-pct{font-family:'DM Mono',monospace;font-size:2.5rem;font-weight:500;}
+.il-neg{color:var(--red);}
+.il-label{font-size:0.85rem;color:var(--muted);margin-top:0.25rem;}
+.compare{display:grid;grid-template-columns:1fr 1fr;gap:1rem;margin:1rem 0;}
+@media(max-width:600px){.compare{grid-template-columns:1fr;}}
+.compare-card{background:var(--surface);border:1px solid var(--border);border-radius:10px;padding:1.25rem;}
+.compare-card.hl{border-color:var(--orange);}
+.cc-title{font-family:'Bebas Neue',sans-serif;font-size:1rem;color:var(--muted);letter-spacing:0.05em;margin-bottom:0.75rem;}
+.cc-row{display:flex;justify-content:space-between;padding:0.4rem 0;border-bottom:1px solid var(--border);}
+.cc-row:last-child{border-bottom:none;}
+.cc-val{font-family:'DM Mono',monospace;font-weight:500;font-size:0.95rem;}
+.cc-val.green{color:var(--green);}.cc-val.red{color:var(--red);}.cc-val.bright{color:var(--text-bright);}
+.il-table{width:100%;border-collapse:collapse;margin:1rem 0;font-size:0.8rem;}
+.il-table th{font-size:0.68rem;text-transform:uppercase;letter-spacing:0.05em;color:var(--muted);padding:0.5rem;text-align:left;border-bottom:2px solid var(--border);}
+.il-table td{padding:0.4rem 0.5rem;border-bottom:1px solid var(--border);font-family:'DM Mono',monospace;}
+.il-table .current{background:var(--orange-dim);font-weight:600;}
+.mb{background:var(--surface2);border:1px solid var(--border2);border-radius:6px;padding:1rem;font-family:'DM Mono',monospace;font-size:0.82rem;color:var(--text-bright);line-height:1.7;white-space:pre-wrap;margin:1rem 0;}
+.pln{font-family:'Crimson Pro',serif;font-style:italic;color:var(--cyan);background:rgba(34,211,238,0.08);border-left:3px solid var(--cyan);padding:0.85rem 1rem;border-radius:0 6px 6px 0;margin:1rem 0;font-size:0.92rem;}
+.cta-card{background:var(--surface);border:1px solid var(--border);border-left:3px solid var(--orange);border-radius:0 10px 10px 0;padding:1.5rem;margin-top:2rem;}
+.cta-card h3{font-family:'Bebas Neue',sans-serif;font-size:1.2rem;color:var(--orange);margin-bottom:0.5rem;}
+.cta-card p{font-family:'Crimson Pro',serif;font-style:italic;font-size:0.92rem;color:var(--text);margin-bottom:0.75rem;}
+.cta-link{font-weight:600;font-size:0.9rem;color:var(--orange);text-decoration:none;}
+.footer{margin-top:2.5rem;padding-top:1.25rem;border-top:1px solid var(--border);text-align:center;}
+.footer p{font-size:0.72rem;color:var(--muted);line-height:1.8;}
+.footer a{color:var(--muted);text-decoration:underline;}
+</style>
+<!-- GA4 Cookieless -->
+<script async src="https://www.googletagmanager.com/gtag/js?id=G-28ZYY6MXKP"></script>
+<script>window.dataLayer=window.dataLayer||[];function gtag(){dataLayer.push(arguments);}gtag('js',new Date());gtag('config','G-28ZYY6MXKP',{send_page_view:true,storage:'none',anonymize_ip:true});</script>
+</head>
+<body>
+<div class="container">
+<nav class="nav-bar">
+  <a href="/" class="nav-brand">MATHS<span>WINS</span></a>
+  <a href="/academy/crypto-trading/" class="nav-link">Crypto Trading Maths →</a>
+</nav>
+<div class="hero">
+  <div class="hero-eyebrow">Free Tool</div>
+  <h1>IMPERMANENT LOSS CALCULATOR</h1>
+  <div class="hero-sub">Enter token prices before and after. See exactly how much providing liquidity cost you compared to simply holding — and the fee income needed to break even.</div>
+</div>
+
+<div class="panel">
+  <div class="panel-title">POOL DETAILS</div>
+  <div class="form-grid">
+    <div class="fg"><label>Token A price (entry)</label><input type="number" id="priceA1" value="3000" min="0.0001" step="any"><div class="hint">e.g., ETH at time of deposit</div></div>
+    <div class="fg"><label>Token A price (now)</label><input type="number" id="priceA2" value="4500" min="0.0001" step="any"></div>
+    <div class="fg"><label>Token B price (entry)</label><input type="number" id="priceB1" value="1" min="0.0001" step="any"><div class="hint">e.g., USDC (stablecoin = 1)</div></div>
+    <div class="fg"><label>Token B price (now)</label><input type="number" id="priceB2" value="1" min="0.0001" step="any"></div>
+    <div class="fg"><label>Deposit value ($)</label><input type="number" id="deposit" value="10000" min="1" step="100"></div>
+    <div class="fg"><label>Pool fee tier (%)</label><input type="number" id="feeTier" value="0.30" min="0" max="5" step="0.01"></div>
+    <div class="fg"><label>Est. daily volume through pool ($)</label><input type="number" id="volume" value="5000000" min="0" step="100000"></div>
+    <div class="fg"><label>Your pool share (%)</label><input type="number" id="share" value="0.10" min="0.001" max="100" step="0.01"></div>
+    <div class="fg"><label>Days held</label><input type="number" id="days" value="30" min="1" max="3650" step="1"></div>
+  </div>
+  <button class="calc-btn" onclick="calculate()">Calculate Impermanent Loss</button>
+</div>
+
+<div class="results" id="results"></div>
+
+<div class="panel" style="margin-top:2rem;">
+  <div class="panel-title">THE FORMULA</div>
+  <div class="mb">Impermanent Loss = 2√r / (1 + r) - 1
+
+where r = price_ratio (new relative price / old relative price)
+
+For a pair where one token is stable (USDC):
+  r = (Token A new price / Token A old price)
+
+IL is always ≤ 0 (you always underperform holding).
+IL is symmetrical: 2× up = same IL as 0.5× down.
+IL is "impermanent" only if price returns to entry level.</div>
+  <div class="pln">The pool constantly sells your winner and buys your loser — that's the rebalancing mechanism of the constant product formula. If ETH doubles, the pool sold half your ETH on the way up. If ETH halves, the pool bought more ETH on the way down. Either way, you'd have been better off holding. The question is whether trading fees compensate for this cost.</div>
+</div>
+
+<div class="cta-card">
+  <h3>CRYPTO TRADING MATHS</h3>
+  <p>Module 4 derives impermanent loss from first principles, proves the formula algebraically, and teaches you when LP returns beat holding and when they don't. 10 modules, 126 scenarios. Module 1 free.</p>
+  <a href="/academy/crypto-trading/" class="cta-link">Explore the full course →</a>
+</div>
+<div style="margin-top:1rem;padding:1rem;background:var(--surface);border:1px solid var(--border);border-radius:8px;">
+  <p style="font-size:0.78rem;color:var(--muted);">FCA risk warning: Cryptoassets are not regulated in the UK. Capital at risk. This is mathematical education, not financial advice.</p>
+</div>
+<div class="footer"><p><a href="/">MathsWins</a> · <a href="/tools/">Tools</a> · <a href="/academy/">Academy</a><br>© 2026 MathsWins.</p></div>
+</div>
+
+<script>
+function $(id){return document.getElementById(id);}
+function fmt(n){return '$'+n.toLocaleString('en-GB',{minimumFractionDigits:2,maximumFractionDigits:2});}
+
+function ilCalc(r){return 2*Math.sqrt(r)/(1+r)-1;}
+
+function calculate(){
+  const pA1=parseFloat($('priceA1').value);
+  const pA2=parseFloat($('priceA2').value);
+  const pB1=parseFloat($('priceB1').value);
+  const pB2=parseFloat($('priceB2').value);
+  const dep=parseFloat($('deposit').value);
+  const fee=parseFloat($('feeTier').value)/100;
+  const vol=parseFloat($('volume').value);
+  const share=parseFloat($('share').value)/100;
+  const days=parseInt($('days').value);
+  if(!pA1||!pA2||!pB1||!pB2||!dep) return;
+
+  // Relative price ratio
+  const relativeEntry=pA1/pB1;
+  const relativeNow=pA2/pB2;
+  const r=relativeNow/relativeEntry;
+  const il=ilCalc(r);
+  const ilPct=il*100;
+
+  // Value calculations
+  // At entry: deposit split 50/50 by value
+  const tokenA_qty=dep/2/pA1;
+  const tokenB_qty=dep/2/pB1;
+  const holdValue=tokenA_qty*pA2+tokenB_qty*pB2;
+  const lpValue=holdValue*(1+il);
+  const ilDollar=holdValue-lpValue;
+
+  // Fee income
+  const dailyFees=vol*fee*share;
+  const totalFees=dailyFees*days;
+  const feeAPR=(dailyFees*365/dep)*100;
+
+  // Net
+  const netReturn=lpValue+totalFees-dep;
+  const holdReturn=holdValue-dep;
+  const lpVsHold=(lpValue+totalFees)-holdValue;
+
+  // Break-even volume
+  const breakEvenDailyFee=ilDollar/days;
+  const breakEvenVolume=breakEvenDailyFee/(fee*share);
+
+  // IL reference table
+  const ratios=[0.25,0.50,0.75,0.90,1.00,1.10,1.25,1.50,2.00,3.00,5.00];
+  let tableRows='';
+  ratios.forEach(rr=>{
+    const pctChange=((rr-1)*100);
+    const thisIL=ilCalc(rr)*100;
+    const isCurrent=Math.abs(rr-r)<0.05;
+    tableRows+=`<tr class="${isCurrent?'current':''}"><td>${pctChange>0?'+':''}${pctChange.toFixed(0)}%</td><td>${rr.toFixed(2)}</td><td style="color:${thisIL<-5?'var(--red)':thisIL<-1?'var(--text)':'var(--green)'};">${thisIL.toFixed(2)}%</td></tr>`;
+  });
+
+  const res=$('results');
+  res.classList.add('show');
+  res.innerHTML=`
+    <div class="il-display">
+      <div class="il-pct il-neg">${ilPct.toFixed(2)}%</div>
+      <div class="il-label">Impermanent Loss · Price ratio: ${r.toFixed(3)}</div>
+    </div>
+
+    <div class="compare">
+      <div class="compare-card">
+        <div class="cc-title">IF YOU JUST HELD</div>
+        <div class="cc-row"><span>Token A value</span><span class="cc-val bright">${fmt(tokenA_qty*pA2)}</span></div>
+        <div class="cc-row"><span>Token B value</span><span class="cc-val bright">${fmt(tokenB_qty*pB2)}</span></div>
+        <div class="cc-row"><span>Total value</span><span class="cc-val ${holdReturn>=0?'green':'red'}">${fmt(holdValue)}</span></div>
+        <div class="cc-row"><span>Return</span><span class="cc-val ${holdReturn>=0?'green':'red'}">${fmt(holdReturn)} (${(holdReturn/dep*100).toFixed(1)}%)</span></div>
+      </div>
+      <div class="compare-card hl">
+        <div class="cc-title" style="color:var(--orange);">LP POSITION</div>
+        <div class="cc-row"><span>LP value (after IL)</span><span class="cc-val bright">${fmt(lpValue)}</span></div>
+        <div class="cc-row"><span>IL cost</span><span class="cc-val red">-${fmt(ilDollar)}</span></div>
+        <div class="cc-row"><span>Fee income (${days}d)</span><span class="cc-val green">+${fmt(totalFees)}</span></div>
+        <div class="cc-row"><span>Net LP value</span><span class="cc-val ${lpVsHold>=0?'green':'red'}">${fmt(lpValue+totalFees)}</span></div>
+        <div class="cc-row"><span>LP vs Hold</span><span class="cc-val ${lpVsHold>=0?'green':'red'}">${lpVsHold>=0?'+':''}${fmt(lpVsHold)}</span></div>
+      </div>
+    </div>
+
+    <div class="mb">Fee income: ${fmt(dailyFees)}/day (${feeAPR.toFixed(1)}% APR)
+IL cost: ${fmt(ilDollar)} (${ilPct.toFixed(2)}%)
+Net: ${lpVsHold>=0?'LP wins':'Holding wins'} by ${fmt(Math.abs(lpVsHold))}
+
+Break-even daily volume: ${fmt(breakEvenVolume)}
+(minimum volume needed for fees to cover IL over ${days} days)</div>
+
+    <div class="panel" style="margin-top:1rem;">
+      <div class="panel-title">IL REFERENCE TABLE</div>
+      <table class="il-table">
+        <thead><tr><th>Price Change</th><th>Ratio (r)</th><th>IL</th></tr></thead>
+        <tbody>${tableRows}</tbody>
+      </table>
+      <div class="pln">Your current price ratio is ${r.toFixed(3)} (highlighted). IL grows rapidly beyond 2× price change. At 5× (400% move), IL is -25.5%. At 10× (900% move): -42.5%. For volatile pairs, the question isn't IF IL exceeds fees — it's WHEN.</div>
+    </div>
+  `;
+}
+calculate();
+</script>
+</body>
+</html>

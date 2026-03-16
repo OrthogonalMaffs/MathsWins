@@ -1,0 +1,245 @@
+<!DOCTYPE html>
+<html lang="en-GB">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Salary Sacrifice Calculator UK — See Your Tax Saving | MathsWins</title>
+<meta name="description" content="Calculate the true benefit of salary sacrifice for your pension. See your income tax saving, National Insurance saving, and the total boost to your pension pot. Free UK calculator.">
+<meta property="og:url" content="https://mathswins.co.uk/tools/salary-sacrifice/">
+<link rel="canonical" href="https://mathswins.co.uk/tools/salary-sacrifice/">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Crimson+Pro:ital,wght@0,400;1,400&family=DM+Mono:wght@400;500&family=Outfit:wght@300;400;600;700&display=swap" rel="stylesheet">
+<style>
+:root{--bg:#050709;--surface:#0a0d14;--surface2:#0f1319;--border:#161c28;--border2:#1e2638;--sky:#0ea5e9;--sky-dim:rgba(14,165,233,0.10);--green:#2dd4a0;--green-dim:rgba(45,212,160,0.10);--red:#ef5350;--gold:#d4a847;--cyan:#22d3ee;--text:#c8cdd8;--text-bright:#e8ecf4;--muted:#4a5568;}
+*{margin:0;padding:0;box-sizing:border-box;}
+body{font-family:'Outfit',sans-serif;background:var(--bg);color:var(--text);min-height:100vh;}
+.container{max-width:900px;margin:0 auto;padding:2rem 1.25rem 4rem;}
+.nav-bar{display:flex;align-items:center;justify-content:space-between;padding:1rem 0;border-bottom:1px solid var(--border);margin-bottom:2rem;}
+.nav-brand{font-family:'Bebas Neue',sans-serif;font-size:1.4rem;color:var(--gold);text-decoration:none;letter-spacing:0.06em;}.nav-brand span{color:var(--text-bright);}
+.nav-link{font-size:0.85rem;font-weight:600;color:var(--sky);text-decoration:none;padding:0.4rem 1rem;border:1px solid var(--sky);border-radius:4px;}
+.hero{text-align:center;margin-bottom:2rem;}
+.hero-eyebrow{font-size:0.75rem;font-weight:600;text-transform:uppercase;letter-spacing:0.15em;color:var(--sky);margin-bottom:0.5rem;}
+.hero h1{font-family:'Bebas Neue',sans-serif;font-size:clamp(1.8rem,5vw,2.8rem);color:var(--text-bright);letter-spacing:0.04em;line-height:1.1;margin-bottom:0.75rem;}
+.hero-sub{font-family:'Crimson Pro',serif;font-style:italic;font-size:1.05rem;color:var(--cyan);max-width:560px;margin:0 auto;}
+.panel{background:var(--surface);border:1px solid var(--border);border-radius:10px;padding:1.5rem;margin-bottom:1.25rem;}
+.panel-title{font-family:'Bebas Neue',sans-serif;font-size:1.1rem;color:var(--text-bright);letter-spacing:0.05em;margin-bottom:1rem;}
+.form-grid{display:grid;grid-template-columns:1fr 1fr;gap:1rem;}
+@media(max-width:600px){.form-grid{grid-template-columns:1fr;}}
+.fg{display:flex;flex-direction:column;gap:0.3rem;}
+.fg label{font-size:0.72rem;font-weight:600;text-transform:uppercase;letter-spacing:0.06em;color:var(--muted);}
+.fg input,.fg select{font-family:'DM Mono',monospace;font-size:1rem;padding:0.6rem 0.8rem;background:var(--surface2);border:1px solid var(--border2);border-radius:6px;color:var(--text-bright);outline:none;}
+.fg input:focus,.fg select:focus{border-color:var(--sky);}
+.fg .hint{font-family:'Crimson Pro',serif;font-style:italic;font-size:0.75rem;color:var(--muted);}
+.calc-btn{font-family:'Outfit',sans-serif;font-weight:700;font-size:1rem;padding:0.85rem;background:var(--sky);color:#fff;border:none;border-radius:6px;cursor:pointer;width:100%;margin:1.25rem 0;}
+.results{display:none;}.results.show{display:block;}
+.saving-box{background:var(--green-dim);border:1px solid var(--green);border-radius:10px;padding:1.5rem;text-align:center;margin-bottom:1rem;}
+.saving-box .big{font-family:'DM Mono',monospace;font-size:2.2rem;font-weight:500;color:var(--green);}
+.saving-box .sub{font-size:0.85rem;color:var(--green);margin-top:0.25rem;}
+.compare{display:grid;grid-template-columns:1fr 1fr;gap:1rem;margin:1rem 0;}
+@media(max-width:600px){.compare{grid-template-columns:1fr;}}
+.compare-card{background:var(--surface);border:1px solid var(--border);border-radius:10px;padding:1.25rem;}
+.compare-card.hl{border-color:var(--green);border-width:2px;}
+.cc-title{font-family:'Bebas Neue',sans-serif;font-size:1rem;color:var(--muted);letter-spacing:0.05em;margin-bottom:0.75rem;}
+.cc-title.hl{color:var(--green);}
+.cc-row{display:flex;justify-content:space-between;padding:0.4rem 0;border-bottom:1px solid var(--border);}
+.cc-row:last-child{border-bottom:none;}
+.cc-val{font-family:'DM Mono',monospace;font-weight:500;font-size:0.95rem;}
+.cc-val.green{color:var(--green);}.cc-val.red{color:var(--red);}.cc-val.bright{color:var(--text-bright);}
+.mb{background:var(--surface2);border:1px solid var(--border2);border-radius:6px;padding:1rem;font-family:'DM Mono',monospace;font-size:0.82rem;color:var(--text-bright);line-height:1.7;white-space:pre-wrap;margin:1rem 0;}
+.pln{font-family:'Crimson Pro',serif;font-style:italic;color:var(--cyan);background:rgba(34,211,238,0.08);border-left:3px solid var(--cyan);padding:0.85rem 1rem;border-radius:0 6px 6px 0;margin:1rem 0;font-size:0.92rem;}
+.cta-card{background:var(--surface);border:1px solid var(--border);border-left:3px solid var(--sky);border-radius:0 10px 10px 0;padding:1.5rem;margin-top:2rem;}
+.cta-card h3{font-family:'Bebas Neue',sans-serif;font-size:1.2rem;color:var(--sky);margin-bottom:0.5rem;}
+.cta-card p{font-family:'Crimson Pro',serif;font-style:italic;font-size:0.92rem;color:var(--text);margin-bottom:0.75rem;}
+.cta-link{font-weight:600;font-size:0.9rem;color:var(--sky);text-decoration:none;}
+.footer{margin-top:2.5rem;padding-top:1.25rem;border-top:1px solid var(--border);text-align:center;}
+.footer p{font-size:0.72rem;color:var(--muted);line-height:1.8;}
+.footer a{color:var(--muted);text-decoration:underline;}
+</style>
+<!-- GA4 Cookieless -->
+<script async src="https://www.googletagmanager.com/gtag/js?id=G-28ZYY6MXKP"></script>
+<script>window.dataLayer=window.dataLayer||[];function gtag(){dataLayer.push(arguments);}gtag('js',new Date());gtag('config','G-28ZYY6MXKP',{send_page_view:true,storage:'none',anonymize_ip:true});</script>
+</head>
+<body>
+<div class="container">
+<nav class="nav-bar">
+  <a href="/" class="nav-brand">MATHS<span>WINS</span></a>
+  <a href="/everyday/tax/" class="nav-link">UK Tax Maths (Free) →</a>
+</nav>
+<div class="hero">
+  <div class="hero-eyebrow">Free Tool</div>
+  <h1>SALARY SACRIFICE CALCULATOR</h1>
+  <div class="hero-sub">See the true value of salary sacrifice for your pension. Your take-home drops by less than the amount going into your pot — because you save on both tax and National Insurance.</div>
+</div>
+
+<div class="panel">
+  <div class="panel-title">YOUR DETAILS (2025/26 Tax Year)</div>
+  <div class="form-grid">
+    <div class="fg"><label>Annual gross salary (£)</label><input type="number" id="salary" value="45000" min="1000" step="500"></div>
+    <div class="fg"><label>Monthly sacrifice amount (£)</label><input type="number" id="sacrifice" value="300" min="0" step="10"><div class="hint">Amount redirected from salary to pension</div></div>
+    <div class="fg"><label>Tax code region</label><select id="region"><option value="england">England / Wales / NI</option><option value="scotland">Scotland</option></select></div>
+    <div class="fg"><label>Student loan plan</label><select id="loan"><option value="none">None</option><option value="plan1">Plan 1</option><option value="plan2">Plan 2</option><option value="plan4">Plan 4</option><option value="plan5">Plan 5</option><option value="pg">Postgraduate</option></select></div>
+  </div>
+  <button class="calc-btn" onclick="calculate()">Calculate Benefit</button>
+</div>
+
+<div class="results" id="results"></div>
+
+<div class="cta-card">
+  <h3>UK TAX MATHS — FREE COURSE</h3>
+  <p>Understand marginal vs effective rates, the £100k personal allowance trap, salary sacrifice mathematics, and how the tax system actually works. Five modules, completely free.</p>
+  <a href="/everyday/tax/" class="cta-link">Start the free course →</a>
+</div>
+<div class="footer"><p><a href="/">MathsWins</a> · <a href="/tools/">Tools</a> · <a href="/everyday/">Everyday Maths</a><br>© 2026 MathsWins. Not financial advice.</p></div>
+</div>
+
+<script>
+function fmt(n){return '£'+n.toLocaleString('en-GB',{minimumFractionDigits:2,maximumFractionDigits:2});}
+
+// 2025/26 England/Wales tax bands
+const PA=12570;
+const BANDS_ENG=[{from:0,to:12570,rate:0},{from:12570,to:50270,rate:0.20},{from:50270,to:125140,rate:0.40},{from:125140,to:Infinity,rate:0.45}];
+const BANDS_SCO=[{from:0,to:12570,rate:0},{from:12570,to:14876,rate:0.19},{from:14876,to:26561,rate:0.20},{from:26561,to:43662,rate:0.21},{from:43662,to:75000,rate:0.42},{from:75000,to:125140,rate:0.45},{from:125140,to:Infinity,rate:0.48}];
+
+// NI 2025/26
+const NI_THRESHOLD=12570;
+const NI_UEL=50270;
+const NI_RATE_MAIN=0.08;
+const NI_RATE_UPPER=0.02;
+
+// Student loan thresholds 2025/26
+const LOAN_THRESHOLDS={plan1:{threshold:24990,rate:0.09},plan2:{threshold:27295,rate:0.09},plan4:{threshold:31395,rate:0.09},plan5:{threshold:25000,rate:0.09},pg:{threshold:21000,rate:0.06}};
+
+function calcTax(income,region){
+  const bands=region==='scotland'?BANDS_SCO:BANDS_ENG;
+  // PA taper above £100k
+  let personalAllowance=PA;
+  if(income>100000) personalAllowance=Math.max(0,PA-(income-100000)/2);
+  let adjustedBands=bands.map(b=>({...b}));
+  adjustedBands[0].to=personalAllowance;
+  if(adjustedBands[1]) adjustedBands[1].from=personalAllowance;
+
+  let tax=0;
+  for(const b of adjustedBands){
+    if(income<=b.from) break;
+    const taxable=Math.min(income,b.to)-b.from;
+    if(taxable>0) tax+=taxable*b.rate;
+  }
+  return tax;
+}
+
+function calcNI(income){
+  let ni=0;
+  if(income>NI_THRESHOLD){
+    const mainBand=Math.min(income,NI_UEL)-NI_THRESHOLD;
+    ni+=mainBand*NI_RATE_MAIN;
+    if(income>NI_UEL) ni+=(income-NI_UEL)*NI_RATE_UPPER;
+  }
+  return ni;
+}
+
+function calcLoan(income,plan){
+  if(plan==='none'||!LOAN_THRESHOLDS[plan]) return 0;
+  const{threshold,rate}=LOAN_THRESHOLDS[plan];
+  return income>threshold?(income-threshold)*rate:0;
+}
+
+function calculate(){
+  const salary=parseFloat(document.getElementById('salary').value);
+  const monthSac=parseFloat(document.getElementById('sacrifice').value);
+  const region=document.getElementById('region').value;
+  const loan=document.getElementById('loan').value;
+  const annualSac=monthSac*12;
+  if(!salary||salary<1000) return;
+
+  // Without sacrifice
+  const tax1=calcTax(salary,region);
+  const ni1=calcNI(salary);
+  const loan1=calcLoan(salary,loan);
+  const net1=salary-tax1-ni1-loan1;
+  const monthly1=net1/12;
+
+  // With sacrifice (salary reduced)
+  const reduced=salary-annualSac;
+  const tax2=calcTax(reduced,region);
+  const ni2=calcNI(reduced);
+  const loan2=calcLoan(reduced,loan);
+  const net2=reduced-tax2-ni2-loan2;
+  const monthly2=net2/12;
+
+  // Savings
+  const taxSaved=tax1-tax2;
+  const niSaved=ni1-ni2;
+  const loanSaved=loan1-loan2;
+  const totalSaved=taxSaved+niSaved+loanSaved;
+  const takeHomeDrop=net1-net2;
+  const pensionGain=annualSac; // employer pays this to pension
+  const employerNISaved=annualSac*0.138; // employer also saves NI
+  const totalPensionBenefit=annualSac+employerNISaved; // if employer passes NI saving
+
+  // Effective cost
+  const effectiveCost=takeHomeDrop;
+  const pensionPerPoundCost=annualSac/takeHomeDrop;
+
+  const marginalRate=salary>50270?0.40:salary>12570?0.20:0;
+  const marginalNI=salary>NI_UEL?0.02:salary>NI_THRESHOLD?0.08:0;
+  const combinedMarginal=(marginalRate+marginalNI)*100;
+
+  const r=document.getElementById('results');
+  r.classList.add('show');
+  r.innerHTML=`
+    <div class="saving-box">
+      <div class="big">${fmt(totalSaved)}/year</div>
+      <div class="sub">Total tax + NI saving from salary sacrifice</div>
+    </div>
+
+    <div class="compare">
+      <div class="compare-card">
+        <div class="cc-title">WITHOUT SACRIFICE</div>
+        <div class="cc-row"><span>Gross salary</span><span class="cc-val bright">${fmt(salary)}</span></div>
+        <div class="cc-row"><span>Income tax</span><span class="cc-val red">-${fmt(tax1)}</span></div>
+        <div class="cc-row"><span>Employee NI</span><span class="cc-val red">-${fmt(ni1)}</span></div>
+        ${loan!=='none'?`<div class="cc-row"><span>Student loan</span><span class="cc-val red">-${fmt(loan1)}</span></div>`:''}
+        <div class="cc-row"><span>Annual take-home</span><span class="cc-val bright">${fmt(net1)}</span></div>
+        <div class="cc-row"><span>Monthly take-home</span><span class="cc-val bright">${fmt(monthly1)}</span></div>
+        <div class="cc-row"><span>Pension contribution</span><span class="cc-val bright">£0.00</span></div>
+      </div>
+      <div class="compare-card hl">
+        <div class="cc-title hl">WITH SACRIFICE</div>
+        <div class="cc-row"><span>Gross salary (reduced)</span><span class="cc-val bright">${fmt(reduced)}</span></div>
+        <div class="cc-row"><span>Income tax</span><span class="cc-val green">-${fmt(tax2)}</span></div>
+        <div class="cc-row"><span>Employee NI</span><span class="cc-val green">-${fmt(ni2)}</span></div>
+        ${loan!=='none'?`<div class="cc-row"><span>Student loan</span><span class="cc-val green">-${fmt(loan2)}</span></div>`:''}
+        <div class="cc-row"><span>Annual take-home</span><span class="cc-val bright">${fmt(net2)}</span></div>
+        <div class="cc-row"><span>Monthly take-home</span><span class="cc-val bright">${fmt(monthly2)}</span></div>
+        <div class="cc-row"><span>Going to pension</span><span class="cc-val green">${fmt(annualSac)}/year</span></div>
+      </div>
+    </div>
+
+    <div class="mb">Monthly take-home drops by: ${fmt(takeHomeDrop/12)}
+Monthly pension contribution: ${fmt(monthSac)}
+
+You sacrifice ${fmt(monthSac)}/month but your take-home
+only drops by ${fmt(takeHomeDrop/12)}/month.
+
+The difference (${fmt((annualSac-takeHomeDrop)/12)}/month) is the tax + NI saving.
+
+For every £1 sacrificed, your pension receives £1.00
+but your take-home only drops by ${fmt(takeHomeDrop/annualSac)}.
+
+Tax saved: ${fmt(taxSaved)} (${(taxSaved/annualSac*100).toFixed(1)}% of sacrifice)
+NI saved:  ${fmt(niSaved)} (${(niSaved/annualSac*100).toFixed(1)}% of sacrifice)
+${loan!=='none'?`Loan saved: ${fmt(loanSaved)} (${(loanSaved/annualSac*100).toFixed(1)}% of sacrifice)`:''}
+
+Your marginal combined rate: ${combinedMarginal.toFixed(0)}%
+Every £1 sacrificed costs you only ${fmt(1-combinedMarginal/100)} in take-home.</div>
+
+    <div class="pln">Salary sacrifice is one of the most efficient ways to build a pension because you save both income tax AND National Insurance. A personal pension contribution only saves you income tax — you've already paid NI. Sacrifice saves both. At your marginal rate, every £100 into your pension costs you only ${fmt((1-combinedMarginal/100)*100)} in lost take-home pay. That's a ${(combinedMarginal).toFixed(0)}% instant "return" before your pension even invests a penny.</div>
+
+    ${salary>=100000&&salary<=125140?`<div class="pln" style="border-left-color:var(--green);color:var(--green);background:var(--green-dim);">You're in the £100k-£125,140 personal allowance taper zone. Your effective marginal rate here is 60%+. Salary sacrifice in this band is exceptionally valuable — every £1 sacrificed costs you less than 40p in take-home. This is covered in detail in our UK Tax Maths course.</div>`:''}
+  `;
+}
+calculate();
+</script>
+</body>
+</html>

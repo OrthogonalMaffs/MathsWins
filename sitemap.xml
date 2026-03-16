@@ -13,8 +13,16 @@
   <url><loc>https://mathswins.co.uk/academy/slots/</loc><priority>0.7</priority><changefreq>monthly</changefreq></url>
   <url><loc>https://mathswins.co.uk/academy/lottery/</loc><priority>0.7</priority><changefreq>monthly</changefreq></url>
   <url><loc>https://mathswins.co.uk/academy/baccarat/</loc><priority>0.7</priority><changefreq>monthly</changefreq></url>
+  <url><loc>https://mathswins.co.uk/tools/</loc><priority>0.9</priority><changefreq>weekly</changefreq></url>
   <url><loc>https://mathswins.co.uk/tools/free-bet-calculator/</loc><priority>0.8</priority><changefreq>monthly</changefreq></url>
   <url><loc>https://mathswins.co.uk/tools/student-loan/</loc><priority>0.8</priority><changefreq>monthly</changefreq></url>
+  <url><loc>https://mathswins.co.uk/tools/poker-odds/</loc><priority>0.8</priority><changefreq>monthly</changefreq></url>
+  <url><loc>https://mathswins.co.uk/tools/accumulator-calculator/</loc><priority>0.8</priority><changefreq>monthly</changefreq></url>
+  <url><loc>https://mathswins.co.uk/tools/mortgage-overpayment/</loc><priority>0.8</priority><changefreq>monthly</changefreq></url>
+  <url><loc>https://mathswins.co.uk/tools/compound-interest/</loc><priority>0.8</priority><changefreq>monthly</changefreq></url>
+  <url><loc>https://mathswins.co.uk/tools/salary-sacrifice/</loc><priority>0.8</priority><changefreq>monthly</changefreq></url>
+  <url><loc>https://mathswins.co.uk/tools/impermanent-loss/</loc><priority>0.8</priority><changefreq>monthly</changefreq></url>
+  <url><loc>https://mathswins.co.uk/tools/crypto-liquidation/</loc><priority>0.8</priority><changefreq>monthly</changefreq></url>
   <url><loc>https://mathswins.co.uk/everyday/</loc><priority>0.8</priority><changefreq>monthly</changefreq></url>
   <url><loc>https://mathswins.co.uk/everyday/tax/</loc><priority>0.8</priority><changefreq>yearly</changefreq></url>
   <url><loc>https://mathswins.co.uk/everyday/compound-interest/</loc><priority>0.8</priority><changefreq>yearly</changefreq></url>

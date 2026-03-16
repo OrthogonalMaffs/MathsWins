@@ -1,0 +1,211 @@
+<!DOCTYPE html>
+<html lang="en-GB">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Mortgage Overpayment Calculator — See How Much You'll Save | MathsWins</title>
+<meta name="description" content="Calculate exactly how much you'll save by overpaying your mortgage. See the impact on your term, total interest, and monthly payments. Free UK mortgage calculator.">
+<meta property="og:title" content="Mortgage Overpayment Calculator — MathsWins">
+<meta property="og:description" content="Overpay your mortgage and save thousands. See exactly how much with our free calculator.">
+<meta property="og:url" content="https://mathswins.co.uk/tools/mortgage-overpayment/">
+<link rel="canonical" href="https://mathswins.co.uk/tools/mortgage-overpayment/">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Crimson+Pro:ital,wght@0,400;1,400&family=DM+Mono:wght@400;500&family=Outfit:wght@300;400;600;700&display=swap" rel="stylesheet">
+<style>
+:root{--bg:#050709;--surface:#0a0d14;--surface2:#0f1319;--border:#161c28;--border2:#1e2638;--sky:#0ea5e9;--sky-dim:rgba(14,165,233,0.10);--green:#2dd4a0;--green-dim:rgba(45,212,160,0.10);--red:#ef5350;--gold:#d4a847;--cyan:#22d3ee;--text:#c8cdd8;--text-bright:#e8ecf4;--muted:#4a5568;}
+*{margin:0;padding:0;box-sizing:border-box;}
+body{font-family:'Outfit',sans-serif;background:var(--bg);color:var(--text);min-height:100vh;line-height:1.5;}
+.container{max-width:900px;margin:0 auto;padding:2rem 1.25rem 4rem;}
+.nav-bar{display:flex;align-items:center;justify-content:space-between;padding:1rem 0;border-bottom:1px solid var(--border);margin-bottom:2rem;}
+.nav-brand{font-family:'Bebas Neue',sans-serif;font-size:1.4rem;color:var(--gold);text-decoration:none;letter-spacing:0.06em;}
+.nav-brand span{color:var(--text-bright);}
+.nav-link{font-size:0.85rem;font-weight:600;color:var(--sky);text-decoration:none;padding:0.4rem 1rem;border:1px solid var(--sky);border-radius:4px;transition:background 0.2s,color 0.2s;}
+.nav-link:hover{background:var(--sky);color:var(--bg);}
+.hero{text-align:center;margin-bottom:2rem;}
+.hero-eyebrow{font-size:0.75rem;font-weight:600;text-transform:uppercase;letter-spacing:0.15em;color:var(--sky);margin-bottom:0.5rem;}
+.hero h1{font-family:'Bebas Neue',sans-serif;font-size:clamp(1.8rem,5vw,2.8rem);color:var(--text-bright);letter-spacing:0.04em;line-height:1.1;margin-bottom:0.75rem;}
+.hero-sub{font-family:'Crimson Pro',serif;font-style:italic;font-size:1.05rem;color:var(--cyan);max-width:560px;margin:0 auto;}
+.panel{background:var(--surface);border:1px solid var(--border);border-radius:10px;padding:1.5rem;margin-bottom:1.25rem;}
+.panel-title{font-family:'Bebas Neue',sans-serif;font-size:1.1rem;color:var(--text-bright);letter-spacing:0.05em;margin-bottom:1rem;}
+.form-grid{display:grid;grid-template-columns:1fr 1fr;gap:1rem;}
+@media(max-width:600px){.form-grid{grid-template-columns:1fr;}}
+.fg{display:flex;flex-direction:column;gap:0.3rem;}
+.fg label{font-size:0.72rem;font-weight:600;text-transform:uppercase;letter-spacing:0.06em;color:var(--muted);}
+.fg input{font-family:'DM Mono',monospace;font-size:1rem;padding:0.6rem 0.8rem;background:var(--surface2);border:1px solid var(--border2);border-radius:6px;color:var(--text-bright);outline:none;}
+.fg input:focus{border-color:var(--sky);}
+.fg .hint{font-family:'Crimson Pro',serif;font-style:italic;font-size:0.78rem;color:var(--muted);}
+.calc-btn{font-family:'Outfit',sans-serif;font-weight:700;font-size:1rem;padding:0.85rem;background:var(--sky);color:#fff;border:none;border-radius:6px;cursor:pointer;width:100%;margin:1.25rem 0;transition:background 0.2s;}
+.calc-btn:hover{background:#38bdf8;}
+.results{display:none;}
+.results.show{display:block;}
+.compare{display:grid;grid-template-columns:1fr 1fr;gap:1rem;margin-bottom:1.5rem;}
+@media(max-width:600px){.compare{grid-template-columns:1fr;}}
+.compare-card{background:var(--surface);border:1px solid var(--border);border-radius:10px;padding:1.25rem;}
+.compare-card.highlight{border-color:var(--green);border-width:2px;}
+.cc-title{font-family:'Bebas Neue',sans-serif;font-size:1rem;color:var(--muted);letter-spacing:0.05em;margin-bottom:0.75rem;}
+.cc-title.hl{color:var(--green);}
+.cc-row{display:flex;justify-content:space-between;padding:0.4rem 0;border-bottom:1px solid var(--border);}
+.cc-row:last-child{border-bottom:none;}
+.cc-label{font-size:0.85rem;}
+.cc-val{font-family:'DM Mono',monospace;font-weight:500;font-size:0.95rem;}
+.cc-val.green{color:var(--green);}
+.cc-val.red{color:var(--red);}
+.cc-val.bright{color:var(--text-bright);}
+.saving-box{background:var(--green-dim);border:1px solid var(--green);border-radius:10px;padding:1.25rem;text-align:center;margin-bottom:1.5rem;}
+.saving-box .big{font-family:'DM Mono',monospace;font-size:2rem;font-weight:500;color:var(--green);}
+.saving-box .sub{font-size:0.85rem;color:var(--green);margin-top:0.25rem;}
+.mb{background:var(--surface2);border:1px solid var(--border2);border-radius:6px;padding:1rem;font-family:'DM Mono',monospace;font-size:0.82rem;color:var(--text-bright);line-height:1.7;white-space:pre-wrap;margin:1rem 0;}
+.pln{font-family:'Crimson Pro',serif;font-style:italic;color:var(--cyan);background:rgba(34,211,238,0.08);border-left:3px solid var(--cyan);padding:0.85rem 1rem;border-radius:0 6px 6px 0;margin:1rem 0;font-size:0.92rem;line-height:1.6;}
+.cta-card{background:var(--surface);border:1px solid var(--border);border-left:3px solid var(--sky);border-radius:0 10px 10px 0;padding:1.5rem;margin-top:2rem;}
+.cta-card h3{font-family:'Bebas Neue',sans-serif;font-size:1.2rem;color:var(--sky);letter-spacing:0.04em;margin-bottom:0.5rem;}
+.cta-card p{font-family:'Crimson Pro',serif;font-style:italic;font-size:0.92rem;color:var(--text);line-height:1.5;margin-bottom:0.75rem;}
+.cta-link{font-weight:600;font-size:0.9rem;color:var(--sky);text-decoration:none;}
+.footer{margin-top:2.5rem;padding-top:1.25rem;border-top:1px solid var(--border);text-align:center;}
+.footer p{font-size:0.72rem;color:var(--muted);line-height:1.8;}
+.footer a{color:var(--muted);text-decoration:underline;}
+</style>
+<!-- GA4 Cookieless -->
+<script async src="https://www.googletagmanager.com/gtag/js?id=G-28ZYY6MXKP"></script>
+<script>window.dataLayer=window.dataLayer||[];function gtag(){dataLayer.push(arguments);}gtag('js',new Date());gtag('config','G-28ZYY6MXKP',{send_page_view:true,storage:'none',anonymize_ip:true});</script>
+</head>
+<body>
+<div class="container">
+<nav class="nav-bar">
+  <a href="/" class="nav-brand">MATHS<span>WINS</span></a>
+  <a href="/everyday/mortgages/" class="nav-link">Mortgage Maths Course (Free) →</a>
+</nav>
+<div class="hero">
+  <div class="hero-eyebrow">Free Tool</div>
+  <h1>MORTGAGE OVERPAYMENT CALCULATOR</h1>
+  <div class="hero-sub">See exactly how much you'll save in interest and how many years you'll cut from your mortgage by overpaying. The numbers are always bigger than you think.</div>
+</div>
+
+<div class="panel">
+  <div class="panel-title">YOUR MORTGAGE</div>
+  <div class="form-grid">
+    <div class="fg"><label>Outstanding balance (£)</label><input type="number" id="balance" value="200000" min="1000" step="1000"></div>
+    <div class="fg"><label>Interest rate (%)</label><input type="number" id="rate" value="4.5" min="0.1" max="15" step="0.1"></div>
+    <div class="fg"><label>Remaining term (years)</label><input type="number" id="term" value="25" min="1" max="40" step="1"></div>
+    <div class="fg"><label>Monthly overpayment (£)</label><input type="number" id="overpay" value="200" min="0" step="10"><div class="hint">Extra on top of your normal payment</div></div>
+    <div class="fg"><label>One-off lump sum (£, optional)</label><input type="number" id="lump" value="0" min="0" step="1000"><div class="hint">Applied immediately to the balance</div></div>
+  </div>
+  <button class="calc-btn" onclick="calculate()">Calculate Savings</button>
+</div>
+
+<div class="results" id="results"></div>
+
+<div class="panel" style="margin-top:2rem;">
+  <div class="panel-title">THE MATHEMATICS</div>
+  <div class="mb">Monthly payment formula:
+
+M = P × [r(1+r)^n] / [(1+r)^n - 1]
+
+where:
+  M = monthly payment
+  P = principal (outstanding balance)
+  r = monthly interest rate (annual rate / 12)
+  n = number of monthly payments (years × 12)
+
+Every pound of overpayment reduces P directly.
+Since interest = P × r each month, reducing P means
+less interest next month, more of your payment goes
+to principal, which reduces P further.
+
+This is a positive feedback loop — the more you overpay,
+the faster the balance drops, the less interest accrues,
+the faster the balance drops further.</div>
+  <div class="pln">Overpaying a mortgage is one of the highest guaranteed "returns" available. If your rate is 4.5%, every pound of overpayment saves you 4.5% per year in interest — tax-free, risk-free, guaranteed. No savings account matches that after tax.</div>
+</div>
+
+<div class="cta-card">
+  <h3>MORTGAGE MATHS — FREE COURSE</h3>
+  <p>Understand the full mathematics behind your mortgage: amortisation schedules, the true cost of extending your term, fixed vs variable rate analysis, and how overpayments compound over time. Completely free.</p>
+  <a href="/everyday/mortgages/" class="cta-link">Start the free course →</a>
+</div>
+
+<div class="footer">
+  <p><a href="/">MathsWins</a> · <a href="/tools/">Tools</a> · <a href="/everyday/">Everyday Maths</a><br>© 2026 MathsWins. Not financial advice.</p>
+</div>
+</div>
+
+<script>
+function fmt(n){return '£'+n.toLocaleString('en-GB',{minimumFractionDigits:2,maximumFractionDigits:2});}
+function calculate(){
+  let P = parseFloat(document.getElementById('balance').value);
+  const annualRate = parseFloat(document.getElementById('rate').value)/100;
+  const termYears = parseInt(document.getElementById('term').value);
+  const overpay = parseFloat(document.getElementById('overpay').value)||0;
+  const lump = parseFloat(document.getElementById('lump').value)||0;
+  if(!P||!annualRate||!termYears) return;
+
+  const r = annualRate/12;
+  const n = termYears*12;
+  const M = P*r*Math.pow(1+r,n)/(Math.pow(1+r,n)-1);
+
+  // Without overpayment
+  let bal1=P, totalInt1=0, months1=0;
+  while(bal1>0.01 && months1<n+1){
+    const interest=bal1*r;
+    totalInt1+=interest;
+    bal1-=(M-interest);
+    months1++;
+  }
+
+  // With overpayment
+  let bal2=P-lump, totalInt2=0, months2=0, totalOverpaid=lump;
+  while(bal2>0.01 && months2<600){
+    const interest=bal2*r;
+    totalInt2+=interest;
+    const payment=Math.min(M+overpay, bal2+interest);
+    bal2-=(payment-interest);
+    if(overpay>0) totalOverpaid+=Math.min(overpay, bal2+overpay);
+    months2++;
+  }
+
+  const savedInterest=totalInt1-totalInt2;
+  const savedMonths=months1-months2;
+  const savedYears=Math.floor(savedMonths/12);
+  const savedRemMonths=savedMonths%12;
+  const totalCost1=P+totalInt1;
+  const totalCost2=(P-lump)+totalInt2+lump;
+
+  const years1=Math.floor(months1/12), rem1=months1%12;
+  const years2=Math.floor(months2/12), rem2=months2%12;
+
+  const r_el=document.getElementById('results');
+  r_el.classList.add('show');
+  r_el.innerHTML=`
+    <div class="saving-box">
+      <div class="big">${fmt(savedInterest)}</div>
+      <div class="sub">Total interest saved · ${savedYears>0?savedYears+' years':''}${savedRemMonths>0?(savedYears>0?' ':'')+savedRemMonths+' months':''} off your mortgage</div>
+    </div>
+    <div class="compare">
+      <div class="compare-card">
+        <div class="cc-title">WITHOUT OVERPAYMENT</div>
+        <div class="cc-row"><span class="cc-label">Monthly payment</span><span class="cc-val bright">${fmt(M)}</span></div>
+        <div class="cc-row"><span class="cc-label">Term</span><span class="cc-val bright">${years1}y ${rem1}m</span></div>
+        <div class="cc-row"><span class="cc-label">Total interest</span><span class="cc-val red">${fmt(totalInt1)}</span></div>
+        <div class="cc-row"><span class="cc-label">Total cost</span><span class="cc-val red">${fmt(totalCost1)}</span></div>
+      </div>
+      <div class="compare-card highlight">
+        <div class="cc-title hl">WITH OVERPAYMENT</div>
+        <div class="cc-row"><span class="cc-label">Monthly payment</span><span class="cc-val green">${fmt(M+overpay)}</span></div>
+        <div class="cc-row"><span class="cc-label">Term</span><span class="cc-val green">${years2}y ${rem2}m</span></div>
+        <div class="cc-row"><span class="cc-label">Total interest</span><span class="cc-val green">${fmt(totalInt2)}</span></div>
+        <div class="cc-row"><span class="cc-label">Total cost</span><span class="cc-val green">${fmt(totalCost2)}</span></div>
+        ${lump>0?`<div class="cc-row"><span class="cc-label">Lump sum applied</span><span class="cc-val bright">${fmt(lump)}</span></div>`:''}
+      </div>
+    </div>
+    <div class="mb">Monthly payment: ${fmt(M)}
+Overpayment: ${fmt(overpay)}/month${lump>0?' + '+fmt(lump)+' lump sum':''}
+Interest saved: ${fmt(savedInterest)}
+Term reduced by: ${savedYears>0?savedYears+' years':''}${savedRemMonths>0?(savedYears>0?' ':'') +savedRemMonths+' months':''}
+Effective "return" on overpayments: ${(annualRate*100).toFixed(1)}% guaranteed, tax-free</div>
+    <div class="pln">Every £${overpay.toFixed(0)} you overpay each month saves you ${fmt(savedInterest)} in interest over the life of the mortgage. That is a ${(savedInterest/(overpay*months2)*100).toFixed(0)}% return on your overpayments — guaranteed, tax-free, and risk-free. No investment offers that combination.</div>
+  `;
+}
+calculate();
+</script>
+</body>
+</html>

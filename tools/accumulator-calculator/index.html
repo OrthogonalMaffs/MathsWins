@@ -1,0 +1,204 @@
+<!DOCTYPE html>
+<html lang="en-GB">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Accumulator Calculator — Acca Odds, Probability & True Cost | MathsWins</title>
+<meta name="description" content="Calculate your accumulator odds, true probability, and the mathematical cost of each leg. See why the bookmaker loves your acca. Free calculator from MathsWins.">
+<meta property="og:url" content="https://mathswins.co.uk/tools/accumulator-calculator/">
+<link rel="canonical" href="https://mathswins.co.uk/tools/accumulator-calculator/">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Crimson+Pro:ital,wght@0,400;1,400&family=DM+Mono:wght@400;500&family=Outfit:wght@300;400;600;700&display=swap" rel="stylesheet">
+<style>
+:root{--bg:#050709;--surface:#0a0d14;--surface2:#0f1319;--border:#161c28;--border2:#1e2638;--blue:#2563eb;--blue-dim:rgba(37,99,235,0.12);--green:#2dd4a0;--green-dim:rgba(45,212,160,0.10);--red:#ef5350;--red-dim:rgba(239,83,80,0.10);--gold:#d4a847;--cyan:#22d3ee;--text:#c8cdd8;--text-bright:#e8ecf4;--muted:#4a5568;}
+*{margin:0;padding:0;box-sizing:border-box;}
+body{font-family:'Outfit',sans-serif;background:var(--bg);color:var(--text);min-height:100vh;}
+.container{max-width:900px;margin:0 auto;padding:2rem 1.25rem 4rem;}
+.nav-bar{display:flex;align-items:center;justify-content:space-between;padding:1rem 0;border-bottom:1px solid var(--border);margin-bottom:2rem;}
+.nav-brand{font-family:'Bebas Neue',sans-serif;font-size:1.4rem;color:var(--gold);text-decoration:none;letter-spacing:0.06em;}.nav-brand span{color:var(--text-bright);}
+.nav-link{font-size:0.85rem;font-weight:600;color:var(--blue);text-decoration:none;padding:0.4rem 1rem;border:1px solid var(--blue);border-radius:4px;}
+.hero{text-align:center;margin-bottom:2rem;}
+.hero-eyebrow{font-size:0.75rem;font-weight:600;text-transform:uppercase;letter-spacing:0.15em;color:var(--blue);margin-bottom:0.5rem;}
+.hero h1{font-family:'Bebas Neue',sans-serif;font-size:clamp(1.8rem,5vw,2.8rem);color:var(--text-bright);letter-spacing:0.04em;line-height:1.1;margin-bottom:0.75rem;}
+.hero-sub{font-family:'Crimson Pro',serif;font-style:italic;font-size:1.05rem;color:var(--cyan);max-width:560px;margin:0 auto;}
+.panel{background:var(--surface);border:1px solid var(--border);border-radius:10px;padding:1.5rem;margin-bottom:1.25rem;}
+.panel-title{font-family:'Bebas Neue',sans-serif;font-size:1.1rem;color:var(--text-bright);letter-spacing:0.05em;margin-bottom:1rem;}
+.leg-row{display:flex;gap:0.5rem;align-items:center;margin-bottom:0.5rem;flex-wrap:wrap;}
+.leg-row input{font-family:'DM Mono',monospace;font-size:0.95rem;padding:0.5rem 0.7rem;background:var(--surface2);border:1px solid var(--border2);border-radius:5px;color:var(--text-bright);outline:none;width:160px;}
+.leg-row input:focus{border-color:var(--blue);}
+.leg-row input.odds{width:90px;}
+.leg-num{font-family:'DM Mono',monospace;font-size:0.8rem;color:var(--muted);min-width:24px;}
+.leg-remove{background:none;border:1px solid var(--border2);border-radius:4px;color:var(--red);font-size:0.8rem;padding:0.35rem 0.6rem;cursor:pointer;}
+.leg-remove:hover{border-color:var(--red);}
+.btn-row{display:flex;gap:0.5rem;margin-top:0.75rem;}
+.btn-add{font-size:0.82rem;font-weight:600;padding:0.5rem 1rem;background:var(--surface2);border:1px solid var(--border2);border-radius:5px;color:var(--text);cursor:pointer;}
+.btn-add:hover{border-color:var(--blue);color:var(--blue);}
+.fg{display:flex;flex-direction:column;gap:0.3rem;margin-top:1rem;}
+.fg label{font-size:0.72rem;font-weight:600;text-transform:uppercase;letter-spacing:0.06em;color:var(--muted);}
+.fg input{font-family:'DM Mono',monospace;font-size:1rem;padding:0.6rem 0.8rem;background:var(--surface2);border:1px solid var(--border2);border-radius:6px;color:var(--text-bright);outline:none;width:150px;}
+.calc-btn{font-family:'Outfit',sans-serif;font-weight:700;font-size:1rem;padding:0.85rem;background:var(--blue);color:#fff;border:none;border-radius:6px;cursor:pointer;width:100%;margin:1.25rem 0;}
+.results{display:none;}.results.show{display:block;}
+.result-row{display:flex;justify-content:space-between;padding:0.5rem 0;border-bottom:1px solid var(--border);}
+.result-row:last-child{border-bottom:none;}
+.result-label{font-size:0.9rem;}
+.result-value{font-family:'DM Mono',monospace;font-weight:500;font-size:1rem;}
+.rv-green{color:var(--green);}.rv-red{color:var(--red);}.rv-bright{color:var(--text-bright);}
+.warn-box{background:var(--red-dim);border:1px solid var(--red);border-radius:8px;padding:1rem;margin:1rem 0;font-family:'Crimson Pro',serif;font-style:italic;font-size:0.92rem;color:var(--red);line-height:1.6;}
+.mb{background:var(--surface2);border:1px solid var(--border2);border-radius:6px;padding:1rem;font-family:'DM Mono',monospace;font-size:0.82rem;color:var(--text-bright);line-height:1.7;white-space:pre-wrap;margin:1rem 0;}
+.pln{font-family:'Crimson Pro',serif;font-style:italic;color:var(--cyan);background:rgba(34,211,238,0.08);border-left:3px solid var(--cyan);padding:0.85rem 1rem;border-radius:0 6px 6px 0;margin:1rem 0;font-size:0.92rem;}
+.cta-card{background:var(--surface);border:1px solid var(--border);border-left:3px solid var(--blue);border-radius:0 10px 10px 0;padding:1.5rem;margin-top:2rem;}
+.cta-card h3{font-family:'Bebas Neue',sans-serif;font-size:1.2rem;color:var(--blue);margin-bottom:0.5rem;}
+.cta-card p{font-family:'Crimson Pro',serif;font-style:italic;font-size:0.92rem;color:var(--text);margin-bottom:0.75rem;}
+.cta-link{font-weight:600;font-size:0.9rem;color:var(--blue);text-decoration:none;}
+.rg{margin-top:1.5rem;padding:1rem;background:var(--surface);border:1px solid var(--border);border-radius:8px;}
+.rg p{font-size:0.78rem;color:var(--muted);line-height:1.7;}
+.rg strong{color:var(--text);}
+.footer{margin-top:2.5rem;padding-top:1.25rem;border-top:1px solid var(--border);text-align:center;}
+.footer p{font-size:0.72rem;color:var(--muted);line-height:1.8;}
+.footer a{color:var(--muted);text-decoration:underline;}
+</style>
+<!-- GA4 Cookieless -->
+<script async src="https://www.googletagmanager.com/gtag/js?id=G-28ZYY6MXKP"></script>
+<script>window.dataLayer=window.dataLayer||[];function gtag(){dataLayer.push(arguments);}gtag('js',new Date());gtag('config','G-28ZYY6MXKP',{send_page_view:true,storage:'none',anonymize_ip:true});</script>
+</head>
+<body>
+<div class="container">
+<nav class="nav-bar">
+  <a href="/" class="nav-brand">MATHS<span>WINS</span></a>
+  <a href="/academy/sports-betting/" class="nav-link">Sports Betting Maths →</a>
+</nav>
+<div class="hero">
+  <div class="hero-eyebrow">Free Tool</div>
+  <h1>ACCUMULATOR CALCULATOR</h1>
+  <div class="hero-sub">Enter your selections. See the combined odds, the true probability, the overround cost, and exactly how much the bookmaker makes from your acca.</div>
+</div>
+
+<div class="panel">
+  <div class="panel-title">YOUR SELECTIONS</div>
+  <div id="legs"></div>
+  <div class="btn-row">
+    <button class="btn-add" onclick="addLeg()">+ Add Selection</button>
+    <button class="btn-add" onclick="clearLegs()">Clear All</button>
+  </div>
+  <div class="fg"><label>Stake (£)</label><input type="number" id="stake" value="10" min="0.01" step="0.50"></div>
+  <div class="fg"><label>Estimated overround per leg (%)</label><input type="number" id="overround" value="5" min="0" max="20" step="0.5"><div style="font-family:'Crimson Pro',serif;font-style:italic;font-size:0.75rem;color:var(--muted);">Typical: 4-6% for match result markets</div></div>
+  <button class="calc-btn" onclick="calculate()">Calculate Accumulator</button>
+</div>
+
+<div class="results" id="results"></div>
+
+<div class="rg">
+  <p><strong>National Gambling Helpline:</strong> 0808 8020 133 (free, 24/7)<br>
+  <a href="https://www.gamcare.org.uk" style="color:var(--muted);">GamCare</a> · <a href="https://www.begambleaware.org" style="color:var(--muted);">BeGambleAware</a><br>
+  This is a mathematical education tool, not betting advice.</p>
+</div>
+
+<div class="cta-card">
+  <h3>SPORTS BETTING MATHS — 16 MODULES</h3>
+  <p>This calculator shows you the cost of an accumulator. Module 5 of the Sports Betting course explains WHY accumulators are the bookmaker's favourite bet — and what the mathematics says you should do instead. 165+ scenarios. Module 1 free.</p>
+  <a href="/academy/sports-betting/" class="cta-link">Explore the full course →</a>
+</div>
+
+<div class="footer"><p><a href="/">MathsWins</a> · <a href="/tools/">Tools</a> · <a href="/academy/">Academy</a><br>© 2026 MathsWins. Maths Always Wins.</p></div>
+</div>
+
+<script>
+let legs=[{name:'',odds:2.00},{name:'',odds:2.50},{name:'',odds:1.80}];
+function render(){
+  const el=document.getElementById('legs');
+  el.innerHTML=legs.map((l,i)=>`<div class="leg-row">
+    <span class="leg-num">${i+1}.</span>
+    <input type="text" placeholder="Selection name" value="${l.name}" onchange="legs[${i}].name=this.value">
+    <input type="number" class="odds" placeholder="Odds" value="${l.odds}" min="1.01" step="0.01" onchange="legs[${i}].odds=parseFloat(this.value)">
+    ${legs.length>1?`<button class="leg-remove" onclick="removeLeg(${i})">✕</button>`:''}
+  </div>`).join('');
+}
+function addLeg(){legs.push({name:'',odds:2.00});render();}
+function removeLeg(i){legs.splice(i,1);render();}
+function clearLegs(){legs=[{name:'',odds:2.00}];render();}
+function fmt(n){return '£'+n.toLocaleString('en-GB',{minimumFractionDigits:2,maximumFractionDigits:2});}
+
+function calculate(){
+  const stake=parseFloat(document.getElementById('stake').value)||10;
+  const overroundPct=parseFloat(document.getElementById('overround').value)/100;
+  const validLegs=legs.filter(l=>l.odds>=1.01);
+  if(!validLegs.length) return;
+
+  const combinedOdds=validLegs.reduce((a,l)=>a*l.odds,1);
+  const potentialReturn=stake*combinedOdds;
+  const potentialProfit=potentialReturn-stake;
+
+  // Implied probabilities
+  const impliedProbs=validLegs.map(l=>1/l.odds);
+  const combinedImplied=impliedProbs.reduce((a,p)=>a*p,1);
+  const combinedImpliedPct=combinedImplied*100;
+
+  // True probabilities (removing overround per leg)
+  const trueProbs=impliedProbs.map(p=>p/(1+overroundPct));
+  const combinedTrue=trueProbs.reduce((a,p)=>a*p,1);
+  const combinedTruePct=combinedTrue*100;
+
+  // Fair odds (what the acca SHOULD pay if no overround)
+  const fairOdds=1/combinedTrue;
+
+  // Overround on the acca
+  const accaOverround=((combinedOdds/fairOdds)-1)*(-1);
+  const accaOverroundPct=(1-combinedTrue*combinedOdds)*100;
+
+  // Expected value
+  const ev=combinedTrue*potentialReturn-stake;
+  const evPct=(ev/stake)*100;
+
+  // Expected return per £1
+  const expectedReturn=combinedTrue*combinedOdds;
+
+  // Annual cost (52 weeks × stake)
+  const annualCost=52*stake*(1-expectedReturn);
+
+  const n=validLegs.length;
+  const r=document.getElementById('results');
+  r.classList.add('show');
+
+  r.innerHTML=`
+    <div style="font-family:'Bebas Neue',sans-serif;font-size:1.2rem;color:var(--text-bright);letter-spacing:0.05em;margin-bottom:1rem;">${n}-FOLD ACCUMULATOR</div>
+    <div class="result-row"><span class="result-label">Combined odds</span><span class="result-value rv-bright">${combinedOdds.toFixed(2)}</span></div>
+    <div class="result-row"><span class="result-label">Stake</span><span class="result-value rv-bright">${fmt(stake)}</span></div>
+    <div class="result-row"><span class="result-label">Potential return</span><span class="result-value rv-green">${fmt(potentialReturn)}</span></div>
+    <div class="result-row"><span class="result-label">Potential profit</span><span class="result-value rv-green">${fmt(potentialProfit)}</span></div>
+    <div style="height:1px;background:var(--border);margin:0.75rem 0;"></div>
+    <div class="result-row"><span class="result-label">Implied probability (with overround)</span><span class="result-value rv-bright">${combinedImpliedPct.toFixed(3)}%</span></div>
+    <div class="result-row"><span class="result-label">True probability (overround removed)</span><span class="result-value rv-bright">${combinedTruePct.toFixed(3)}%</span></div>
+    <div class="result-row"><span class="result-label">Fair odds (no margin)</span><span class="result-value rv-bright">${fairOdds.toFixed(2)}</span></div>
+    <div class="result-row"><span class="result-label">Overround on this acca</span><span class="result-value rv-red">${(accaOverroundPct).toFixed(1)}%</span></div>
+    <div style="height:1px;background:var(--border);margin:0.75rem 0;"></div>
+    <div class="result-row"><span class="result-label">Expected return per £1</span><span class="result-value rv-red">${expectedReturn.toFixed(3)}</span></div>
+    <div class="result-row"><span class="result-label">Expected value (EV)</span><span class="result-value rv-red">${fmt(ev)} (${evPct.toFixed(1)}%)</span></div>
+    <div class="result-row"><span class="result-label">Annual cost (1 acca/week)</span><span class="result-value rv-red">${fmt(annualCost)}</span></div>
+
+    <div class="mb">How the overround compounds:
+
+Single bet at ${overroundPct*100}% overround:
+  Expected return per £1: ${(1/(1+overroundPct)).toFixed(3)}
+  Loss rate: ${(overroundPct/(1+overroundPct)*100).toFixed(1)}%
+
+${n}-fold acca — each leg multiplies the overround:
+  Expected return per £1: ${expectedReturn.toFixed(3)}
+  Loss rate: ${((1-expectedReturn)*100).toFixed(1)}%
+
+A single bet costs you ~${(overroundPct/(1+overroundPct)*100).toFixed(0)}p per £1.
+This ${n}-fold acca costs you ~${((1-expectedReturn)*100).toFixed(0)}p per £1.
+
+The acca multiplies the bookmaker's edge ${n} times.
+This is why bookmakers promote accumulators.</div>
+
+    ${n>=5?`<div class="warn-box">A ${n}-fold accumulator has a ${combinedTruePct.toFixed(2)}% chance of winning. That means it loses ${(100-combinedTruePct).toFixed(2)}% of the time. You're expected to lose ${fmt(Math.abs(ev))} per bet. Over a year of weekly £${stake.toFixed(0)} accas, that's ${fmt(annualCost)} in expected losses — paid directly to the bookmaker through compounded overround.</div>`:''}
+
+    <div class="pln">Every leg you add to an accumulator multiplies the bookmaker's margin. A single bet at ${(overroundPct*100).toFixed(0)}% overround costs ${(overroundPct/(1+overroundPct)*100).toFixed(0)}p per pound. Your ${n}-fold costs ${((1-expectedReturn)*100).toFixed(0)}p per pound. The acca isn't a value bet — it's a lottery ticket with mathematically worse odds than the actual lottery relative to what a fair price would be.</div>
+  `;
+}
+render();
+calculate();
+</script>
+</body>
+</html>

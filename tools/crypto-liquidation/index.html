@@ -1,0 +1,215 @@
+<!DOCTYPE html>
+<html lang="en-GB">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Crypto Liquidation Calculator — Leverage Risk Calculator | MathsWins</title>
+<meta name="description" content="Calculate your liquidation price for any leveraged crypto position. See the probability of liquidation within 1, 7, and 30 days. Plus daily funding costs. Free tool.">
+<meta property="og:url" content="https://mathswins.co.uk/tools/crypto-liquidation/">
+<link rel="canonical" href="https://mathswins.co.uk/tools/crypto-liquidation/">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Crimson+Pro:ital,wght@0,400;1,400&family=DM+Mono:wght@400;500&family=Outfit:wght@300;400;600;700&display=swap" rel="stylesheet">
+<style>
+:root{--bg:#050709;--surface:#0a0d14;--surface2:#0f1319;--border:#161c28;--border2:#1e2638;--orange:#f97316;--orange-dim:rgba(249,115,22,0.10);--green:#2dd4a0;--green-dim:rgba(45,212,160,0.10);--red:#ef5350;--red-dim:rgba(239,83,80,0.10);--gold:#d4a847;--cyan:#22d3ee;--text:#c8cdd8;--text-bright:#e8ecf4;--muted:#4a5568;}
+*{margin:0;padding:0;box-sizing:border-box;}
+body{font-family:'Outfit',sans-serif;background:var(--bg);color:var(--text);min-height:100vh;}
+.container{max-width:900px;margin:0 auto;padding:2rem 1.25rem 4rem;}
+.nav-bar{display:flex;align-items:center;justify-content:space-between;padding:1rem 0;border-bottom:1px solid var(--border);margin-bottom:2rem;}
+.nav-brand{font-family:'Bebas Neue',sans-serif;font-size:1.4rem;color:var(--gold);text-decoration:none;letter-spacing:0.06em;}.nav-brand span{color:var(--text-bright);}
+.nav-link{font-size:0.85rem;font-weight:600;color:var(--orange);text-decoration:none;padding:0.4rem 1rem;border:1px solid var(--orange);border-radius:4px;}
+.hero{text-align:center;margin-bottom:2rem;}
+.hero-eyebrow{font-size:0.75rem;font-weight:600;text-transform:uppercase;letter-spacing:0.15em;color:var(--orange);margin-bottom:0.5rem;}
+.hero h1{font-family:'Bebas Neue',sans-serif;font-size:clamp(1.8rem,5vw,2.8rem);color:var(--text-bright);letter-spacing:0.04em;line-height:1.1;margin-bottom:0.75rem;}
+.hero-sub{font-family:'Crimson Pro',serif;font-style:italic;font-size:1.05rem;color:var(--cyan);max-width:560px;margin:0 auto;}
+.panel{background:var(--surface);border:1px solid var(--border);border-radius:10px;padding:1.5rem;margin-bottom:1.25rem;}
+.panel-title{font-family:'Bebas Neue',sans-serif;font-size:1.1rem;color:var(--text-bright);letter-spacing:0.05em;margin-bottom:1rem;}
+.form-grid{display:grid;grid-template-columns:1fr 1fr;gap:1rem;}
+@media(max-width:600px){.form-grid{grid-template-columns:1fr;}}
+.fg{display:flex;flex-direction:column;gap:0.3rem;}
+.fg label{font-size:0.72rem;font-weight:600;text-transform:uppercase;letter-spacing:0.06em;color:var(--muted);}
+.fg input,.fg select{font-family:'DM Mono',monospace;font-size:1rem;padding:0.6rem 0.8rem;background:var(--surface2);border:1px solid var(--border2);border-radius:6px;color:var(--text-bright);outline:none;}
+.fg input:focus{border-color:var(--orange);}
+.calc-btn{font-family:'Outfit',sans-serif;font-weight:700;font-size:1rem;padding:0.85rem;background:var(--orange);color:#fff;border:none;border-radius:6px;cursor:pointer;width:100%;margin:1.25rem 0;}
+.results{display:none;}.results.show{display:block;}
+.liq-display{text-align:center;padding:1.5rem;background:var(--surface);border:1px solid var(--border);border-radius:10px;margin-bottom:1rem;}
+.liq-price{font-family:'DM Mono',monospace;font-size:2.2rem;font-weight:500;color:var(--red);}
+.liq-label{font-size:0.85rem;color:var(--muted);margin-top:0.25rem;}
+.liq-dist{font-family:'DM Mono',monospace;font-size:1.1rem;color:var(--orange);margin-top:0.5rem;}
+.risk-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:1rem;margin:1rem 0;}
+@media(max-width:600px){.risk-grid{grid-template-columns:1fr;}}
+.risk-card{background:var(--surface);border:1px solid var(--border);border-radius:10px;padding:1rem;text-align:center;}
+.risk-val{font-family:'DM Mono',monospace;font-size:1.5rem;font-weight:500;display:block;}
+.risk-label{font-size:0.72rem;text-transform:uppercase;letter-spacing:0.06em;color:var(--muted);margin-top:0.25rem;}
+.result-row{display:flex;justify-content:space-between;padding:0.5rem 0;border-bottom:1px solid var(--border);}
+.result-row:last-child{border-bottom:none;}
+.rv{font-family:'DM Mono',monospace;font-weight:500;}
+.rv-red{color:var(--red);}.rv-green{color:var(--green);}.rv-bright{color:var(--text-bright);}
+.warn-box{background:var(--red-dim);border:1px solid var(--red);border-radius:8px;padding:1rem;margin:1rem 0;font-family:'Crimson Pro',serif;font-style:italic;font-size:0.92rem;color:var(--red);}
+.mb{background:var(--surface2);border:1px solid var(--border2);border-radius:6px;padding:1rem;font-family:'DM Mono',monospace;font-size:0.82rem;color:var(--text-bright);line-height:1.7;white-space:pre-wrap;margin:1rem 0;}
+.pln{font-family:'Crimson Pro',serif;font-style:italic;color:var(--cyan);background:rgba(34,211,238,0.08);border-left:3px solid var(--cyan);padding:0.85rem 1rem;border-radius:0 6px 6px 0;margin:1rem 0;font-size:0.92rem;}
+.lev-table{width:100%;border-collapse:collapse;margin:1rem 0;font-size:0.8rem;}
+.lev-table th{font-size:0.68rem;text-transform:uppercase;letter-spacing:0.05em;color:var(--muted);padding:0.5rem;text-align:left;border-bottom:2px solid var(--border);}
+.lev-table td{padding:0.4rem 0.5rem;border-bottom:1px solid var(--border);font-family:'DM Mono',monospace;}
+.lev-table .current{background:var(--orange-dim);font-weight:600;}
+.cta-card{background:var(--surface);border:1px solid var(--border);border-left:3px solid var(--orange);border-radius:0 10px 10px 0;padding:1.5rem;margin-top:2rem;}
+.cta-card h3{font-family:'Bebas Neue',sans-serif;font-size:1.2rem;color:var(--orange);margin-bottom:0.5rem;}
+.cta-card p{font-family:'Crimson Pro',serif;font-style:italic;font-size:0.92rem;color:var(--text);margin-bottom:0.75rem;}
+.cta-link{font-weight:600;font-size:0.9rem;color:var(--orange);text-decoration:none;}
+.footer{margin-top:2.5rem;padding-top:1.25rem;border-top:1px solid var(--border);text-align:center;}
+.footer p{font-size:0.72rem;color:var(--muted);line-height:1.8;}
+.footer a{color:var(--muted);text-decoration:underline;}
+</style>
+<!-- GA4 Cookieless -->
+<script async src="https://www.googletagmanager.com/gtag/js?id=G-28ZYY6MXKP"></script>
+<script>window.dataLayer=window.dataLayer||[];function gtag(){dataLayer.push(arguments);}gtag('js',new Date());gtag('config','G-28ZYY6MXKP',{send_page_view:true,storage:'none',anonymize_ip:true});</script>
+</head>
+<body>
+<div class="container">
+<nav class="nav-bar">
+  <a href="/" class="nav-brand">MATHS<span>WINS</span></a>
+  <a href="/academy/crypto-trading/" class="nav-link">Crypto Trading Maths →</a>
+</nav>
+<div class="hero">
+  <div class="hero-eyebrow">Free Tool</div>
+  <h1>CRYPTO LIQUIDATION CALCULATOR</h1>
+  <div class="hero-sub">Enter your leverage and entry price. See your exact liquidation price, the probability of getting liquidated, and the daily cost of holding the position.</div>
+</div>
+
+<div class="panel">
+  <div class="panel-title">YOUR POSITION</div>
+  <div class="form-grid">
+    <div class="fg"><label>Entry price ($)</label><input type="number" id="entry" value="60000" min="0.01" step="any"></div>
+    <div class="fg"><label>Leverage (×)</label><input type="number" id="leverage" value="10" min="1" max="200" step="1"></div>
+    <div class="fg"><label>Margin ($)</label><input type="number" id="margin" value="1000" min="1" step="any"></div>
+    <div class="fg"><label>Direction</label><select id="direction"><option value="long">Long</option><option value="short">Short</option></select></div>
+    <div class="fg"><label>Daily volatility (%)</label><input type="number" id="vol" value="3.5" min="0.1" max="50" step="0.1"><div style="font-family:'Crimson Pro',serif;font-style:italic;font-size:0.75rem;color:var(--muted);">BTC: ~3.5%, ETH: ~4.5%, alts: 5-10%</div></div>
+    <div class="fg"><label>Funding rate (%/8hr)</label><input type="number" id="funding" value="0.01" min="-0.5" max="0.5" step="0.001"></div>
+  </div>
+  <button class="calc-btn" onclick="calculate()">Calculate Risk</button>
+</div>
+
+<div class="results" id="results"></div>
+
+<div class="cta-card">
+  <h3>CRYPTO TRADING MATHS</h3>
+  <p>Module 3 covers leverage and liquidation mathematics in full — including how exchanges profit from your liquidation, the probability of liquidation at every leverage level, and why even 5× is aggressive in crypto's volatility regime. Module 1 free.</p>
+  <a href="/academy/crypto-trading/" class="cta-link">Explore the full course →</a>
+</div>
+<div style="margin-top:1rem;padding:1rem;background:var(--surface);border:1px solid var(--border);border-radius:8px;">
+  <p style="font-size:0.78rem;color:var(--muted);">FCA risk warning: Cryptoassets are not regulated in the UK. Leveraged trading can result in losses exceeding your deposit. Capital at risk. This is mathematical education, not financial advice.</p>
+</div>
+<div class="footer"><p><a href="/">MathsWins</a> · <a href="/tools/">Tools</a> · <a href="/academy/">Academy</a><br>© 2026 MathsWins.</p></div>
+</div>
+
+<script>
+function $(id){return document.getElementById(id);}
+function fmt(n){return '$'+n.toLocaleString('en-GB',{minimumFractionDigits:2,maximumFractionDigits:2});}
+
+function pLiq(distPct, dailyVol, days){
+  // Simplified: P(hit barrier) using normal approximation
+  const sigma=dailyVol/100;
+  const barrier=distPct/100;
+  const z=barrier/(sigma*Math.sqrt(days));
+  // CDF approximation
+  const t=1/(1+0.2316419*Math.abs(z));
+  const d=0.3989422802*Math.exp(-z*z/2);
+  const p=d*t*(0.3193815+t*(-0.3565638+t*(1.781478+t*(-1.8212560+t*1.3302744))));
+  const cdf=z>0?1-p:p;
+  // Barrier hitting probability (reflection principle): ~2 × P(below barrier)
+  return Math.min(2*(1-cdf),0.999);
+}
+
+function calculate(){
+  const entry=parseFloat($('entry').value);
+  const lev=parseFloat($('leverage').value);
+  const margin=parseFloat($('margin').value);
+  const dir=$('direction').value;
+  const vol=parseFloat($('vol').value);
+  const funding=parseFloat($('funding').value);
+  if(!entry||!lev||!margin) return;
+
+  const position=margin*lev;
+  const maintMargin=0.005;
+  let liqPrice, distPct;
+  if(dir==='long'){
+    liqPrice=entry*(1-1/lev+maintMargin);
+    distPct=(entry-liqPrice)/entry*100;
+  } else {
+    liqPrice=entry*(1+1/lev-maintMargin);
+    distPct=(liqPrice-entry)/entry*100;
+  }
+
+  const p1=pLiq(distPct,vol,1)*100;
+  const p7=pLiq(distPct,vol,7)*100;
+  const p30=pLiq(distPct,vol,30)*100;
+  const p90=pLiq(distPct,vol,90)*100;
+
+  const dailyFunding=position*funding/100*3;
+  const monthlyFunding=dailyFunding*30;
+  const annualFunding=dailyFunding*365;
+  const fundingPctMargin=(annualFunding/margin)*100;
+
+  const riskColor=(p)=>p>60?'var(--red)':p>30?'var(--orange)':'var(--green)';
+
+  // Leverage comparison table
+  const levs=[2,3,5,10,20,50,100];
+  let tableRows='';
+  levs.forEach(l=>{
+    const lp=dir==='long'?entry*(1-1/l+0.005):entry*(1+1/l-0.005);
+    const dp=Math.abs(entry-lp)/entry*100;
+    const pp=pLiq(dp,vol,30)*100;
+    const isCurrent=l===lev;
+    tableRows+=`<tr class="${isCurrent?'current':''}">
+      <td>${l}×</td>
+      <td>${fmt(lp)}</td>
+      <td>${dp.toFixed(1)}%</td>
+      <td style="color:${riskColor(pp)};">${pp.toFixed(1)}%</td>
+    </tr>`;
+  });
+
+  const r=$('results');
+  r.classList.add('show');
+  r.innerHTML=`
+    <div class="liq-display">
+      <div class="liq-price">${fmt(liqPrice)}</div>
+      <div class="liq-label">Liquidation Price (${dir.toUpperCase()} ${lev}×)</div>
+      <div class="liq-dist">${distPct.toFixed(1)}% from entry</div>
+    </div>
+
+    <div class="risk-grid">
+      <div class="risk-card"><span class="risk-val" style="color:${riskColor(p1)};">${p1.toFixed(1)}%</span><span class="risk-label">P(liq) 1 day</span></div>
+      <div class="risk-card"><span class="risk-val" style="color:${riskColor(p7)};">${p7.toFixed(1)}%</span><span class="risk-label">P(liq) 7 days</span></div>
+      <div class="risk-card"><span class="risk-val" style="color:${riskColor(p30)};">${p30.toFixed(1)}%</span><span class="risk-label">P(liq) 30 days</span></div>
+    </div>
+
+    ${p30>50?`<div class="warn-box">This position has a ${p30.toFixed(0)}% probability of liquidation within 30 days. That means more likely than not, you will lose your entire ${fmt(margin)} margin. At ${lev}× leverage with ${vol}% daily volatility, the mathematics does not favour survival.</div>`:''}
+
+    <div class="panel" style="margin-top:1rem;">
+      <div class="panel-title">POSITION DETAILS</div>
+      <div class="result-row"><span>Position size</span><span class="rv rv-bright">${fmt(position)}</span></div>
+      <div class="result-row"><span>Margin</span><span class="rv rv-bright">${fmt(margin)}</span></div>
+      <div class="result-row"><span>Entry price</span><span class="rv rv-bright">${fmt(entry)}</span></div>
+      <div class="result-row"><span>Liquidation price</span><span class="rv rv-red">${fmt(liqPrice)}</span></div>
+      <div class="result-row"><span>Distance to liquidation</span><span class="rv rv-red">${distPct.toFixed(1)}%</span></div>
+      <div style="height:1px;background:var(--border);margin:0.5rem 0;"></div>
+      <div class="result-row"><span>Daily funding cost</span><span class="rv rv-red">${fmt(Math.abs(dailyFunding))}</span></div>
+      <div class="result-row"><span>Monthly funding cost</span><span class="rv rv-red">${fmt(Math.abs(monthlyFunding))}</span></div>
+      <div class="result-row"><span>Annual funding cost</span><span class="rv rv-red">${fmt(Math.abs(annualFunding))}</span></div>
+      <div class="result-row"><span>Annual funding as % of margin</span><span class="rv rv-red">${fundingPctMargin.toFixed(1)}%</span></div>
+    </div>
+
+    <div class="panel" style="margin-top:1rem;">
+      <div class="panel-title">LEVERAGE COMPARISON (${vol}% daily vol, 30-day horizon)</div>
+      <table class="lev-table">
+        <thead><tr><th>Leverage</th><th>Liq Price</th><th>Distance</th><th>P(liq, 30d)</th></tr></thead>
+        <tbody>${tableRows}</tbody>
+      </table>
+      <div class="pln">Higher leverage = closer liquidation = higher probability of total loss. At ${vol}% daily volatility, even 5× leverage has a significant liquidation probability within a month. The table shows the mathematical reality for every leverage level.</div>
+    </div>
+  `;
+}
+calculate();
+</script>
+</body>
+</html>
