@@ -4697,7 +4697,7 @@ if(typeof window!=='undefined'){window.OPTIONS_MODULE_10=OPTIONS_MODULE_10;}
   var sid=params.get('session_id');
   var slug='options';
   if(sid){localStorage.setItem('mw_access_'+slug,'granted');window.history.replaceState({},'',window.location.pathname);}
-  if(localStorage.getItem('mw_access_'+slug)==='granted'||localStorage.getItem('mw_premium')==='granted'){
+  if(localStorage.getItem('mw_access_'+slug)||localStorage.getItem('mw_premium')){
     document.addEventListener('DOMContentLoaded',function(){
       var b=document.getElementById('om-buy-section');if(b)b.style.display='none';
       document.querySelectorAll('.mc.locked').forEach(function(el){el.classList.remove('locked');});

@@ -161,7 +161,7 @@ body{font-family:'Outfit',sans-serif;background:var(--bg);color:var(--text);min-
   var sid=params.get('session_id');
   var slug='slots';
   if(sid){localStorage.setItem('mw_access_'+slug,'granted');window.history.replaceState({},'',window.location.pathname);}
-  if(localStorage.getItem('mw_access_'+slug)==='granted'||localStorage.getItem('mw_access_all')==='granted'||localStorage.getItem('mw_premium')==='granted'){
+  if(localStorage.getItem('mw_access_'+slug)||localStorage.getItem('mw_access_all')||localStorage.getItem('mw_premium')){
     document.addEventListener('DOMContentLoaded',function(){
       var b=document.getElementById('mw-buy-section');if(b)b.style.display='none';
       document.querySelectorAll('.mc.locked').forEach(function(el){el.classList.remove('locked');});
