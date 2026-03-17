@@ -959,6 +959,7 @@ async function handleUpgradeCredit(request, env) {
   const annualEffective = Math.round(Math.max(0, ANNUAL_PRICE - totalSpend) * 100) / 100;
 
   let promoCode = null;
+  let couponError = null;
   let lifetimeLink = LIFETIME_LINK;
   let annualLink = ANNUAL_LINK;
 
@@ -975,7 +976,7 @@ async function handleUpgradeCredit(request, env) {
       annualLink = ANNUAL_LINK + '?prefilled_promo_code=' + encodeURIComponent(promoCode);
     } catch (err) {
       console.error('Failed to create upgrade coupon:', err.message);
-      // Continue without coupon — account page shows "contact us" fallback
+      couponError = err.message;
     }
   }
 
@@ -988,6 +989,7 @@ async function handleUpgradeCredit(request, env) {
     lifetimeEffective,
     annualEffective,
     promoCode,
+    couponError,
     lifetimeLink,
     annualLink,
     isPremium: false,
