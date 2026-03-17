@@ -308,8 +308,30 @@ async function lookupPurchases(email, stripeKey) {
     }
 
     // Track spend for non-premium sessions (don't credit a Premium purchase toward Premium)
+    // Check for refunds via the payment intent
     if (hasRecognizedProduct && !hasPremiumInSession && session.amount_total) {
-      totalSpendPence += session.amount_total;
+      let netAmount = session.amount_total;
+      if (session.payment_intent) {
+        try {
+          const pi = await stripeGet(
+            `payment_intents/${session.payment_intent}`,
+            {},
+            stripeKey,
+          );
+          let refundedPence = 0;
+          if (pi.charges && pi.charges.data) {
+            for (const charge of pi.charges.data) {
+              refundedPence += charge.amount_refunded || 0;
+            }
+          }
+          netAmount = Math.max(0, session.amount_total - refundedPence);
+        } catch (e) {
+          // If we can't check refund status, use full amount
+        }
+      }
+      if (netAmount > 0) {
+        totalSpendPence += netAmount;
+      }
     }
   }
 
