@@ -2,13 +2,9 @@
  * MathsWins Auth Module
  * Include on any page: <script src="/auth/mw-auth.js"></script>
  *
- * Provides:
- *   - Google Sign-In button (renders into #mw-auth-container or creates floating button)
- *   - Session management (localStorage mw_session token)
- *   - Automatic purchase restoration on login
- *   - mwAuth global object for programmatic access
- *
- * Requires GOOGLE_CLIENT_ID to be set (injected below or via data attribute on the script tag).
+ * Renders a fixed top bar with Google Sign-In / user info.
+ * Gates purchases behind login — buy buttons become "Sign in to purchase".
+ * Manages session JWT + localStorage access flags.
  */
 (function () {
   'use strict';
@@ -35,6 +31,7 @@
 
   var currentUser = null;
   var listeners = [];
+  var gisLoaded = false;
 
   // ---------------------------------------------------------------------------
   // localStorage helpers
@@ -67,16 +64,14 @@
   }
 
   // ---------------------------------------------------------------------------
-  // Purchase flags — set localStorage access keys from product list
+  // Purchase flags
   // ---------------------------------------------------------------------------
 
   function applyPurchases(products, premium) {
     if (!products || !Array.isArray(products)) return;
-
     if (premium) {
       try { localStorage.setItem('mw_premium', 'true'); } catch (e) { /* ignore */ }
     }
-
     products.forEach(function (p) {
       try {
         if (typeof p === 'object' && p.key) {
@@ -90,7 +85,6 @@
     try {
       localStorage.removeItem('mw_premium');
       localStorage.removeItem('mw_access_all');
-      // Clear individual course keys
       var keys = [];
       for (var i = 0; i < localStorage.length; i++) {
         var k = localStorage.key(i);
@@ -141,9 +135,7 @@
 
   function setUser(user) {
     currentUser = user;
-    if (user) {
-      setCachedUser(user);
-    }
+    if (user) setCachedUser(user);
     notifyListeners();
     updateUI();
   }
@@ -153,17 +145,18 @@
   // ---------------------------------------------------------------------------
 
   function handleGoogleCredential(response) {
+    // Show loading state in the bar
+    var bar = document.getElementById('mw-auth-bar');
+    if (bar) {
+      var inner = bar.querySelector('.mw-auth-inner');
+      if (inner) inner.innerHTML = '<span style="color:#d4a847;font-size:.8rem;">Signing in...</span>';
+    }
+
     apiPost('/auth/google', { credential: response.credential })
       .then(function (data) {
         if (!data.ok) throw new Error(data.error || 'Auth failed');
-
-        // Store session
         setSession(data.session);
-
-        // Apply purchase flags to localStorage
         applyPurchases(data.products, data.premium);
-
-        // Update state
         setUser({
           email: data.user.email,
           name: data.user.name,
@@ -171,41 +164,35 @@
           products: data.products,
           premium: data.premium,
         });
-
-        // Reload page to apply access changes
         window.location.reload();
       })
       .catch(function (err) {
         console.error('[mw-auth] Google sign-in failed:', err);
+        updateUI();
       });
   }
 
-  // Expose globally for Google's callback
   window.mwAuthGoogleCallback = handleGoogleCredential;
 
   // ---------------------------------------------------------------------------
-  // Session restoration on page load
+  // Session restoration
   // ---------------------------------------------------------------------------
 
   function restoreSession() {
     var token = getSession();
-    if (!token) {
-      // Try cached user for instant UI (will be validated when they interact)
-      var cached = getCachedUser();
-      if (cached) {
-        currentUser = cached;
-        updateUI();
-      }
-      return;
+    var cached = getCachedUser();
+
+    if (cached) {
+      currentUser = cached;
+      updateUI();
     }
 
-    // Verify session with server
+    if (!token) return;
+
     apiGet('/auth/session', token)
       .then(function (data) {
         if (!data.ok) throw new Error('Session invalid');
-
         applyPurchases(data.products, data.premium);
-
         setUser({
           email: data.user.email,
           name: data.user.name,
@@ -215,8 +202,6 @@
         });
       })
       .catch(function () {
-        // Session expired/invalid — clear it but keep purchase flags
-        // (they'll be re-validated on next sign-in)
         clearSession();
         currentUser = null;
         updateUI();
@@ -236,7 +221,7 @@
   }
 
   // ---------------------------------------------------------------------------
-  // Refresh purchases (call after a new Stripe purchase)
+  // Refresh purchases
   // ---------------------------------------------------------------------------
 
   function refreshPurchases() {
@@ -246,78 +231,93 @@
     return apiPost('/auth/refresh-purchases', {}, token)
       .then(function (data) {
         if (!data.ok) throw new Error(data.error || 'Refresh failed');
-
-        // Update session token
         setSession(data.session);
-
-        // Apply new purchase flags
         applyPurchases(data.products, data.premium);
-
-        // Update state
         if (currentUser) {
           currentUser.products = data.products;
           currentUser.premium = data.premium;
           setCachedUser(currentUser);
         }
-
         notifyListeners();
         return data;
       });
   }
 
   // ---------------------------------------------------------------------------
-  // UI — renders sign-in button or user avatar
+  // UI — fixed top bar
   // ---------------------------------------------------------------------------
 
-  function createAuthUI() {
-    // Look for explicit container
-    var container = document.getElementById('mw-auth-container');
-    if (!container) {
-      // Create a floating auth button in top-right
-      container = document.createElement('div');
-      container.id = 'mw-auth-container';
-      container.style.cssText = 'position:fixed;top:1rem;right:1rem;z-index:9999;';
-      document.body.appendChild(container);
-    }
-    return container;
+  function injectStyles() {
+    if (document.getElementById('mw-auth-styles')) return;
+    var style = document.createElement('style');
+    style.id = 'mw-auth-styles';
+    style.textContent =
+      '#mw-auth-bar{position:fixed;top:0;left:0;right:0;z-index:99999;background:#0a0d14;border-bottom:1px solid #1e2638;height:44px;display:flex;align-items:center;justify-content:space-between;padding:0 1rem;font-family:Outfit,sans-serif;}' +
+      '#mw-auth-bar .mw-auth-brand{color:#d4a847;font-family:"Bebas Neue",sans-serif;font-size:1.1rem;letter-spacing:.04em;text-decoration:none;}' +
+      '#mw-auth-bar .mw-auth-inner{display:flex;align-items:center;gap:8px;}' +
+      '#mw-auth-bar .mw-auth-name{color:#e8ecf4;font-weight:600;font-size:.8rem;}' +
+      '#mw-auth-bar .mw-auth-signout{background:none;border:none;color:#4a5568;font-family:Outfit,sans-serif;font-size:.7rem;cursor:pointer;padding:0;}' +
+      '#mw-auth-bar .mw-auth-signout:hover{color:#d4a847;}' +
+      '#mw-auth-bar .mw-auth-signin-prompt{color:#4a5568;font-size:.8rem;display:flex;align-items:center;gap:8px;}' +
+      '#mw-auth-bar .mw-auth-signin-prompt span{display:none;}' +
+      '@media(min-width:480px){#mw-auth-bar .mw-auth-signin-prompt span{display:inline;}}' +
+      'body{padding-top:44px !important;}' +
+      '.mw-buy-signin-gate{text-align:center;padding:1rem;background:rgba(212,168,71,.06);border:1px solid rgba(212,168,71,.2);border-radius:8px;margin:.5rem 0;}' +
+      '.mw-buy-signin-gate p{font-size:.85rem;color:#c8cdd8;margin-bottom:.75rem;}' +
+      '.mw-buy-signin-gate .mw-gate-btn{display:inline-block;padding:.5rem 1.5rem;background:#d4a847;color:#050709;font-family:Outfit,sans-serif;font-weight:700;font-size:.85rem;border:none;border-radius:6px;cursor:pointer;letter-spacing:.02em;}' +
+      '.mw-buy-signin-gate .mw-gate-btn:hover{opacity:.9;}';
+    document.head.appendChild(style);
+  }
+
+  function createAuthBar() {
+    if (document.getElementById('mw-auth-bar')) return;
+    injectStyles();
+
+    var bar = document.createElement('div');
+    bar.id = 'mw-auth-bar';
+    bar.innerHTML =
+      '<a href="/" class="mw-auth-brand">MATHSWINS</a>' +
+      '<div class="mw-auth-inner"></div>';
+    document.body.insertBefore(bar, document.body.firstChild);
   }
 
   function updateUI() {
-    var container = document.getElementById('mw-auth-container');
-    if (!container) return;
+    var bar = document.getElementById('mw-auth-bar');
+    if (!bar) return;
+    var inner = bar.querySelector('.mw-auth-inner');
+    if (!inner) return;
 
     if (currentUser) {
-      // Show user info + sign out
+      // Signed in — show user info
       var initial = (currentUser.name || currentUser.email || '?').charAt(0).toUpperCase();
       var pic = currentUser.picture
-        ? '<img src="' + currentUser.picture + '" style="width:32px;height:32px;border-radius:50%;border:2px solid #d4a847;" referrerpolicy="no-referrer" alt="">'
-        : '<div style="width:32px;height:32px;border-radius:50%;background:#d4a847;color:#050709;display:flex;align-items:center;justify-content:center;font-family:Outfit,sans-serif;font-weight:700;font-size:14px;">' + initial + '</div>';
+        ? '<img src="' + currentUser.picture + '" style="width:28px;height:28px;border-radius:50%;border:2px solid #d4a847;" referrerpolicy="no-referrer" alt="">'
+        : '<div style="width:28px;height:28px;border-radius:50%;background:#d4a847;color:#050709;display:flex;align-items:center;justify-content:center;font-weight:700;font-size:12px;">' + initial + '</div>';
 
-      container.innerHTML =
-        '<div style="display:flex;align-items:center;gap:8px;background:#0a0d14;border:1px solid #1e2638;border-radius:8px;padding:6px 12px 6px 8px;">' +
-          pic +
-          '<div style="font-family:Outfit,sans-serif;font-size:.8rem;">' +
-            '<div style="color:#e8ecf4;font-weight:600;">' + escapeHtml(currentUser.name || currentUser.email) + '</div>' +
-            '<button id="mw-signout-btn" style="background:none;border:none;color:#4a5568;font-family:Outfit,sans-serif;font-size:.7rem;cursor:pointer;padding:0;">Sign out</button>' +
-          '</div>' +
+      inner.innerHTML =
+        pic +
+        '<div>' +
+          '<div class="mw-auth-name">' + escapeHtml(currentUser.name || currentUser.email) + '</div>' +
+          '<button class="mw-auth-signout" id="mw-signout-btn">Sign out</button>' +
         '</div>';
 
-      var signOutBtn = document.getElementById('mw-signout-btn');
-      if (signOutBtn) {
-        signOutBtn.addEventListener('click', signOut);
-      }
+      document.getElementById('mw-signout-btn').addEventListener('click', signOut);
 
-      // Hide buy sections when logged in with purchases
+      // Show buy buttons (user is signed in)
+      showBuyButtons();
       hideBuySectionIfOwned();
-    } else if (GOOGLE_CLIENT_ID) {
-      // Show Google Sign-In button
-      container.innerHTML =
-        '<div id="mw-g-signin-btn"></div>';
+    } else {
+      // Not signed in — show sign-in prompt + Google button
+      inner.innerHTML =
+        '<div class="mw-auth-signin-prompt">' +
+          '<span>Sign in to purchase</span>' +
+          '<div id="mw-g-signin-btn"></div>' +
+        '</div>';
 
-      // Render Google button if GIS is loaded
-      if (window.google && window.google.accounts) {
-        renderGoogleButton();
-      }
+      if (gisLoaded) renderGoogleButton();
+
+      // Gate buy buttons behind login
+      gateBuyButtons();
     }
   }
 
@@ -334,38 +334,75 @@
     });
   }
 
-  function hideBuySectionIfOwned() {
-    // Hide buy section if user owns this course
+  // ---------------------------------------------------------------------------
+  // Purchase gating — hide buy buttons if not signed in
+  // ---------------------------------------------------------------------------
+
+  function gateBuyButtons() {
     var buySection = document.getElementById('mw-buy-section');
-    if (buySection) {
-      var slug = getPageSlug();
-      if (slug) {
-        var hasAccess = localStorage.getItem('mw_access_' + slug) ||
-                        localStorage.getItem('mw_access_all') ||
-                        localStorage.getItem('mw_premium');
-        if (hasAccess) {
-          buySection.style.display = 'none';
-        }
+    if (!buySection) return;
+
+    // Store original content so we can restore it on sign-in
+    if (!buySection.dataset.originalHtml) {
+      buySection.dataset.originalHtml = buySection.innerHTML;
+    }
+
+    buySection.innerHTML =
+      '<div class="mw-buy-signin-gate">' +
+        '<p>Sign in with Google to unlock purchases</p>' +
+        '<div id="mw-gate-g-btn"></div>' +
+      '</div>';
+
+    // Render a Google button inside the gate too
+    if (gisLoaded && window.google && window.google.accounts) {
+      var gateBtn = document.getElementById('mw-gate-g-btn');
+      if (gateBtn) {
+        google.accounts.id.renderButton(gateBtn, {
+          type: 'standard',
+          shape: 'pill',
+          theme: 'filled_black',
+          size: 'large',
+          text: 'signin_with',
+          width: 280,
+        });
+      }
+    }
+  }
+
+  function showBuyButtons() {
+    var buySection = document.getElementById('mw-buy-section');
+    if (!buySection || !buySection.dataset.originalHtml) return;
+    buySection.innerHTML = buySection.dataset.originalHtml;
+  }
+
+  function hideBuySectionIfOwned() {
+    var buySection = document.getElementById('mw-buy-section');
+    if (!buySection) return;
+
+    var slug = getPageSlug();
+    if (slug) {
+      var hasAccess = localStorage.getItem('mw_access_' + slug) ||
+                      localStorage.getItem('mw_access_all') ||
+                      localStorage.getItem('mw_premium');
+      if (hasAccess) {
+        buySection.style.display = 'none';
       }
     }
 
-    // Unlock locked modules
-    var hasAnyAccess = false;
-    var slug = getPageSlug();
+    // Also unlock locked modules
     if (slug) {
-      hasAnyAccess = localStorage.getItem('mw_access_' + slug) ||
-                     localStorage.getItem('mw_access_all') ||
-                     localStorage.getItem('mw_premium');
-    }
-    if (hasAnyAccess) {
-      document.querySelectorAll('.mc.locked').forEach(function (el) {
-        el.classList.remove('locked');
-      });
+      var hasAnyAccess = localStorage.getItem('mw_access_' + slug) ||
+                         localStorage.getItem('mw_access_all') ||
+                         localStorage.getItem('mw_premium');
+      if (hasAnyAccess) {
+        document.querySelectorAll('.mc.locked').forEach(function (el) {
+          el.classList.remove('locked');
+        });
+      }
     }
   }
 
   function getPageSlug() {
-    // Extract course slug from URL path: /academy/baccarat/ → baccarat
     var match = window.location.pathname.match(/\/academy\/([^/]+)/);
     return match ? match[1] : null;
   }
@@ -390,13 +427,15 @@
     script.async = true;
     script.defer = true;
     script.onload = function () {
+      gisLoaded = true;
       google.accounts.id.initialize({
         client_id: GOOGLE_CLIENT_ID,
         callback: handleGoogleCredential,
         auto_select: false,
         cancel_on_tap_outside: true,
       });
-      renderGoogleButton();
+      // Re-render UI now that GIS is ready
+      updateUI();
     };
     document.head.appendChild(script);
   }
@@ -406,21 +445,17 @@
   // ---------------------------------------------------------------------------
 
   function init() {
-    // Create UI container
     if (document.readyState === 'loading') {
       document.addEventListener('DOMContentLoaded', function () {
-        createAuthUI();
-        updateUI();
+        createAuthBar();
         loadGoogleGIS();
+        restoreSession();
       });
     } else {
-      createAuthUI();
-      updateUI();
+      createAuthBar();
       loadGoogleGIS();
+      restoreSession();
     }
-
-    // Restore session
-    restoreSession();
   }
 
   // ---------------------------------------------------------------------------
@@ -428,13 +463,8 @@
   // ---------------------------------------------------------------------------
 
   window.mwAuth = {
-    /** Get current user or null */
     getUser: function () { return currentUser; },
-
-    /** Is user signed in? */
     isSignedIn: function () { return !!currentUser; },
-
-    /** Does current user have access to a specific course slug? */
     hasAccess: function (slug) {
       return !!(
         localStorage.getItem('mw_access_' + slug) ||
@@ -442,17 +472,10 @@
         localStorage.getItem('mw_premium')
       );
     },
-
-    /** Sign out and clear all data */
     signOut: signOut,
-
-    /** Force refresh purchases from Stripe (call after new purchase) */
     refreshPurchases: refreshPurchases,
-
-    /** Register a callback for auth state changes: fn(user|null) */
     onAuthChange: function (fn) {
       listeners.push(fn);
-      // Immediately fire with current state
       fn(currentUser);
     },
   };
