@@ -22,6 +22,12 @@ id = ""          # <-- paste production namespace id here
 #   npx wrangler secret put STRIPE_SECRET_KEY
 #   npx wrangler secret put RESEND_API_KEY
 #   npx wrangler secret put HMAC_SECRET
+#   npx wrangler secret put GOOGLE_CLIENT_ID
 #
 # To generate a strong HMAC_SECRET:
 #   node -e "console.log(require('crypto').randomBytes(32).toString('hex'))"
+#
+# GOOGLE_CLIENT_ID: Create at https://console.cloud.google.com/apis/credentials
+#   → OAuth 2.0 Client ID → Web application
+#   → Authorised JavaScript origins: https://mathswins.co.uk
+#   → The value looks like: 123456789-abc.apps.googleusercontent.com

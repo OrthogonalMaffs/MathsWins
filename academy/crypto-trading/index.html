@@ -367,6 +367,7 @@ Module 1 is free. Three paid tiers: <strong>Basic</strong> (M1&ndash;4, &pound;9
 <script src="modules/crypto-m9-yield.js"></script>
 <script src="modules/crypto-m10-risk.js"></script>
 
+<script src="/auth/mw-auth.js"></script>
 <script>
 // ════════════════════════════════════════
 //  ACCESS CONTROL
@@ -375,7 +376,7 @@ Module 1 is free. Three paid tiers: <strong>Basic</strong> (M1&ndash;4, &pound;9
   var params=new URLSearchParams(window.location.search);
   var sid=params.get('session_id');
   var slug='crypto';
-  if(sid){localStorage.setItem('mw_access_'+slug,'granted');window.history.replaceState({},'',window.location.pathname);}
+  if(sid){localStorage.setItem('mw_access_'+slug,'granted');window.history.replaceState({},'',window.location.pathname);if(window.mwAuth&&mwAuth.isSignedIn())mwAuth.refreshPurchases();}
   if(localStorage.getItem('mw_access_'+slug)||localStorage.getItem('mw_premium')){
     document.addEventListener('DOMContentLoaded',function(){
       var b=document.getElementById('ct-buy-section');if(b)b.style.display='none';

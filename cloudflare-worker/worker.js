@@ -1,19 +1,18 @@
 /**
- * MathsWins Access Restoration Worker
+ * MathsWins Access & Auth Worker
  * api.mathswins.co.uk
  *
- * Lets users who have cleared localStorage (or switched device) request
- * a magic-link email.  The link carries a signed, single-use token that
- * the frontend redeems to restore every product the customer has paid for.
- *
  * Endpoints
- *   POST /request   — send magic link to the supplied email
- *   GET  /verify    — redeem a token, return purchased products
+ *   POST /request      — send magic link to the supplied email (restore flow)
+ *   GET  /verify       — redeem a restore token, return purchased products
+ *   POST /auth/google  — verify Google ID token, return session JWT with purchases
+ *   GET  /auth/session — verify a session JWT, return user info + products
  *
  * Environment bindings
  *   STRIPE_SECRET_KEY   — Stripe secret key (restricted to read-only customers/charges)
  *   RESEND_API_KEY      — Resend API key
  *   HMAC_SECRET         — 256-bit hex secret for HMAC-SHA256 token signing
+ *   GOOGLE_CLIENT_ID    — Google OAuth 2.0 Client ID (for Sign In with Google)
  *   RESTORE_KV          — Cloudflare KV namespace
  */
 
@@ -196,7 +195,7 @@ function corsHeaders(request) {
   return {
     'Access-Control-Allow-Origin': allowedOrigin,
     'Access-Control-Allow-Methods': 'GET, POST, OPTIONS',
-    'Access-Control-Allow-Headers': 'Content-Type',
+    'Access-Control-Allow-Headers': 'Content-Type, Authorization',
     'Access-Control-Max-Age': '86400',
     'Vary': 'Origin',
   };
@@ -597,6 +596,213 @@ async function handleVerify(request, env) {
 }
 
 // ---------------------------------------------------------------------------
+// Google ID token verification
+// ---------------------------------------------------------------------------
+
+async function verifyGoogleIdToken(idToken, expectedClientId) {
+  const resp = await fetch(
+    `https://oauth2.googleapis.com/tokeninfo?id_token=${encodeURIComponent(idToken)}`,
+  );
+  if (!resp.ok) return null;
+
+  const payload = await resp.json();
+
+  // Verify audience matches our client ID
+  if (payload.aud !== expectedClientId) return null;
+
+  // Verify issuer
+  if (payload.iss !== 'accounts.google.com' && payload.iss !== 'https://accounts.google.com') {
+    return null;
+  }
+
+  // Verify not expired
+  const now = Math.floor(Date.now() / 1000);
+  if (payload.exp && now > Number(payload.exp)) return null;
+
+  return {
+    email: payload.email,
+    name: payload.name || '',
+    picture: payload.picture || '',
+    emailVerified: payload.email_verified === 'true',
+  };
+}
+
+// ---------------------------------------------------------------------------
+// POST /auth/google handler
+// ---------------------------------------------------------------------------
+
+async function handleGoogleAuth(request, env) {
+  let body;
+  try {
+    body = await request.json();
+  } catch {
+    return jsonResponse({ ok: false, error: 'Invalid JSON body.' }, 400, request);
+  }
+
+  const idToken = (body.credential || '').trim();
+  if (!idToken) {
+    return jsonResponse({ ok: false, error: 'Missing credential.' }, 400, request);
+  }
+
+  // Verify the Google ID token
+  const googleUser = await verifyGoogleIdToken(idToken, env.GOOGLE_CLIENT_ID);
+  if (!googleUser) {
+    return jsonResponse({ ok: false, error: 'Invalid Google token.' }, 401, request);
+  }
+
+  if (!googleUser.emailVerified) {
+    return jsonResponse({ ok: false, error: 'Email not verified with Google.' }, 401, request);
+  }
+
+  const email = googleUser.email.toLowerCase();
+
+  // Check KV cache first (avoids hitting Stripe on every login)
+  const cacheKey = `purchases:${email}`;
+  const cached = await env.RESTORE_KV.get(cacheKey);
+  let productList;
+
+  if (cached) {
+    productList = JSON.parse(cached);
+  } else {
+    // Look up purchases in Stripe
+    const purchaseResult = await lookupPurchases(email, env.STRIPE_SECRET_KEY);
+    productList = buildProductList(purchaseResult);
+
+    // Cache for 1 hour (purchases don't change frequently)
+    await env.RESTORE_KV.put(cacheKey, JSON.stringify(productList), {
+      expirationTtl: 3600,
+    });
+  }
+
+  // Build session token (30-day expiry)
+  const now = Math.floor(Date.now() / 1000);
+  const payload = {
+    email,
+    name: googleUser.name,
+    picture: googleUser.picture,
+    products: productList,
+    premium: productList.some((p) => p.key === 'mw_premium'),
+    iat: now,
+    exp: now + 30 * 24 * 3600, // 30 days
+  };
+  const sessionToken = await signToken(payload, env.HMAC_SECRET);
+
+  return jsonResponse(
+    {
+      ok: true,
+      session: sessionToken,
+      user: {
+        email,
+        name: googleUser.name,
+        picture: googleUser.picture,
+      },
+      products: productList,
+      premium: payload.premium,
+    },
+    200,
+    request,
+  );
+}
+
+// ---------------------------------------------------------------------------
+// GET /auth/session handler — verify existing session token
+// ---------------------------------------------------------------------------
+
+async function handleSessionCheck(request, env) {
+  const authHeader = request.headers.get('Authorization') || '';
+  const token = authHeader.startsWith('Bearer ') ? authHeader.slice(7) : '';
+
+  if (!token) {
+    return jsonResponse({ ok: false, error: 'Missing session token.' }, 401, request);
+  }
+
+  const payload = await verifyToken(token, env.HMAC_SECRET);
+  if (!payload) {
+    return jsonResponse({ ok: false, error: 'Invalid or expired session.' }, 401, request);
+  }
+
+  // Optionally refresh purchases from cache/Stripe if session is older than 1 hour
+  let products = payload.products;
+  const age = Math.floor(Date.now() / 1000) - payload.iat;
+  if (age > 3600) {
+    const cacheKey = `purchases:${payload.email}`;
+    const cached = await env.RESTORE_KV.get(cacheKey);
+    if (cached) {
+      products = JSON.parse(cached);
+    }
+  }
+
+  return jsonResponse(
+    {
+      ok: true,
+      user: {
+        email: payload.email,
+        name: payload.name,
+        picture: payload.picture,
+      },
+      products,
+      premium: products.some((p) => p.key === 'mw_premium'),
+    },
+    200,
+    request,
+  );
+}
+
+// ---------------------------------------------------------------------------
+// POST /auth/refresh-purchases — force re-check Stripe (after new purchase)
+// ---------------------------------------------------------------------------
+
+async function handleRefreshPurchases(request, env) {
+  const authHeader = request.headers.get('Authorization') || '';
+  const token = authHeader.startsWith('Bearer ') ? authHeader.slice(7) : '';
+
+  if (!token) {
+    return jsonResponse({ ok: false, error: 'Missing session token.' }, 401, request);
+  }
+
+  const payload = await verifyToken(token, env.HMAC_SECRET);
+  if (!payload) {
+    return jsonResponse({ ok: false, error: 'Invalid or expired session.' }, 401, request);
+  }
+
+  const email = payload.email;
+
+  // Force fresh Stripe lookup
+  const purchaseResult = await lookupPurchases(email, env.STRIPE_SECRET_KEY);
+  const productList = buildProductList(purchaseResult);
+
+  // Update cache
+  const cacheKey = `purchases:${email}`;
+  await env.RESTORE_KV.put(cacheKey, JSON.stringify(productList), {
+    expirationTtl: 3600,
+  });
+
+  // Issue new session token with updated products
+  const now = Math.floor(Date.now() / 1000);
+  const newPayload = {
+    email,
+    name: payload.name,
+    picture: payload.picture,
+    products: productList,
+    premium: productList.some((p) => p.key === 'mw_premium'),
+    iat: now,
+    exp: now + 30 * 24 * 3600,
+  };
+  const sessionToken = await signToken(newPayload, env.HMAC_SECRET);
+
+  return jsonResponse(
+    {
+      ok: true,
+      session: sessionToken,
+      products: productList,
+      premium: newPayload.premium,
+    },
+    200,
+    request,
+  );
+}
+
+// ---------------------------------------------------------------------------
 // Worker entrypoint
 // ---------------------------------------------------------------------------
 
@@ -621,9 +827,24 @@ export default {
       return handleVerify(request, env);
     }
 
+    // Google auth — sign in and get session + purchases
+    if (url.pathname === '/auth/google' && request.method === 'POST') {
+      return handleGoogleAuth(request, env);
+    }
+
+    // Session check — verify existing session token
+    if (url.pathname === '/auth/session' && request.method === 'GET') {
+      return handleSessionCheck(request, env);
+    }
+
+    // Refresh purchases — force re-check Stripe after new purchase
+    if (url.pathname === '/auth/refresh-purchases' && request.method === 'POST') {
+      return handleRefreshPurchases(request, env);
+    }
+
     // Health check
     if (url.pathname === '/' && request.method === 'GET') {
-      return jsonResponse({ status: 'ok', service: 'MathsWins Access Restoration' }, 200, request);
+      return jsonResponse({ status: 'ok', service: 'MathsWins Access & Auth' }, 200, request);
     }
 
     return jsonResponse({ ok: false, error: 'Not found.' }, 404, request);

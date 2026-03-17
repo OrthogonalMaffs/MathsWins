@@ -374,13 +374,14 @@ a{color:var(--gold);text-decoration:none}a:hover{text-decoration:underline}
 <div id="results" class="screen"><div class="res"><h2 id="rT"></h2><div class="big" id="rB">0%</div><div class="det" id="rD"></div><button class="cta cta-p" onclick="back()">Back to Academy</button></div></div>
 
 </div>
+<script src="/auth/mw-auth.js"></script>
 <script>
 // Access check
 (function(){
   var params=new URLSearchParams(window.location.search);
   var sid=params.get('session_id');
   var slug='blackjack';
-  if(sid){localStorage.setItem('mw_access_'+slug,'granted');window.history.replaceState({},'',window.location.pathname);}
+  if(sid){localStorage.setItem('mw_access_'+slug,'granted');window.history.replaceState({},'',window.location.pathname);if(window.mwAuth&&mwAuth.isSignedIn())mwAuth.refreshPurchases();}
   if(localStorage.getItem('mw_access_'+slug)||localStorage.getItem('mw_access_all')||localStorage.getItem('mw_premium')){
     document.addEventListener('DOMContentLoaded',function(){
       var b=document.getElementById('mw-buy-section');if(b)b.style.display='none';

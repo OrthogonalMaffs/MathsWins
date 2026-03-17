@@ -4687,13 +4687,14 @@ if(typeof window!=='undefined'){window.OPTIONS_MODULE_10=OPTIONS_MODULE_10;}
 
 </script>
 
+<script src="/auth/mw-auth.js"></script>
 <script>
 // Access check — Premium only (standalone course, not unlocked by mw_access_all)
 (function(){
   var params=new URLSearchParams(window.location.search);
   var sid=params.get('session_id');
   var slug='options';
-  if(sid){localStorage.setItem('mw_access_'+slug,'granted');window.history.replaceState({},'',window.location.pathname);}
+  if(sid){localStorage.setItem('mw_access_'+slug,'granted');window.history.replaceState({},'',window.location.pathname);if(window.mwAuth&&mwAuth.isSignedIn())mwAuth.refreshPurchases();}
   if(localStorage.getItem('mw_access_'+slug)||localStorage.getItem('mw_premium')){
     document.addEventListener('DOMContentLoaded',function(){
       var b=document.getElementById('om-buy-section');if(b)b.style.display='none';

@@ -230,12 +230,13 @@ footer a{color:var(--muted);text-decoration:none}footer a:hover{color:var(--gold
 
 </div>
 
+<script src="/auth/mw-auth.js"></script>
 <script>
 // Premium check
 (function(){
   var params=new URLSearchParams(window.location.search);
   var sid=params.get('session_id');
-  if(sid){localStorage.setItem('mw_access_all','granted');localStorage.setItem('mw_premium','granted');window.history.replaceState({},'',window.location.pathname);}
+  if(sid){localStorage.setItem('mw_access_all','granted');localStorage.setItem('mw_premium','granted');window.history.replaceState({},'',window.location.pathname);if(window.mwAuth&&mwAuth.isSignedIn())mwAuth.refreshPurchases();}
   if(localStorage.getItem('mw_access_all')||localStorage.getItem('mw_premium')){
     document.addEventListener('DOMContentLoaded',function(){
       var a=document.getElementById('mw-premium-section');
