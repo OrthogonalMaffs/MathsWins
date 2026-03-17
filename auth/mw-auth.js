@@ -295,11 +295,14 @@
         : '<div style="width:28px;height:28px;border-radius:50%;background:#d4a847;color:#050709;display:flex;align-items:center;justify-content:center;font-weight:700;font-size:12px;">' + initial + '</div>';
 
       inner.innerHTML =
-        pic +
-        '<div>' +
-          '<div class="mw-auth-name">' + escapeHtml(currentUser.name || currentUser.email) + '</div>' +
-          '<button class="mw-auth-signout" id="mw-signout-btn">Sign out</button>' +
-        '</div>';
+        '<a href="/account/" style="display:flex;align-items:center;gap:8px;text-decoration:none;">' +
+          pic +
+          '<div>' +
+            '<div class="mw-auth-name">' + escapeHtml(currentUser.name || currentUser.email) + '</div>' +
+            '<span style="font-size:.65rem;color:#4a5568;">My Account</span>' +
+          '</div>' +
+        '</a>' +
+        '<button class="mw-auth-signout" id="mw-signout-btn" style="margin-left:4px;">Sign out</button>';
 
       document.getElementById('mw-signout-btn').addEventListener('click', signOut);
 

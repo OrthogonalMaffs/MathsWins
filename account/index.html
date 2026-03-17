@@ -1,0 +1,332 @@
+<!DOCTYPE html>
+<html lang="en-GB">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>My Account | MathsWins</title>
+<meta name="description" content="View your MathsWins purchases and course access.">
+<meta property="og:title" content="My Account — MathsWins">
+<meta property="og:url" content="https://mathswins.co.uk/account/">
+<meta property="og:type" content="website">
+<link rel="canonical" href="https://mathswins.co.uk/account/">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Crimson+Pro:ital,wght@0,400;1,400&family=DM+Mono:wght@400;500&family=Outfit:wght@300;400;600;700&display=swap" rel="stylesheet">
+<script async src="https://www.googletagmanager.com/gtag/js?id=G-28ZYY6MXKP"></script>
+<script>window.dataLayer=window.dataLayer||[];function gtag(){dataLayer.push(arguments);}gtag('js',new Date());gtag('config','G-28ZYY6MXKP',{send_page_view:true,anonymize_ip:true});</script>
+<style>
+:root{--bg:#050709;--surface:#0a0d14;--surface2:#0f1319;--border:#161c28;--border2:#1e2638;--gold:#d4a847;--gold-dim:rgba(212,168,71,0.08);--green:#2dd4a0;--green-dim:rgba(45,212,160,0.08);--red:#ef5350;--text:#c8cdd8;--text-bright:#e8ecf4;--muted:#4a5568}
+*{margin:0;padding:0;box-sizing:border-box}
+body{background:var(--bg);color:var(--text);font-family:'Outfit',sans-serif;font-weight:400;line-height:1.6;-webkit-font-smoothing:antialiased;min-height:100vh}
+.container{max-width:700px;margin:0 auto;padding:0 1.5rem}
+header{padding:2rem 0 1.5rem;border-bottom:1px solid var(--border);margin-bottom:2rem}
+.breadcrumb{font-size:.8rem;color:var(--muted);margin-bottom:1rem}
+.breadcrumb a{color:var(--muted);text-decoration:none}.breadcrumb a:hover{color:var(--gold)}
+h1{font-family:'Bebas Neue',sans-serif;font-size:2.5rem;color:var(--text-bright);letter-spacing:.03em;margin-bottom:.5rem}
+h2{font-family:'Bebas Neue',sans-serif;font-size:1.4rem;color:var(--text-bright);letter-spacing:.03em;margin-bottom:1rem}
+.subtitle{font-family:'Crimson Pro',serif;font-style:italic;font-size:1.05rem;color:var(--muted);max-width:480px}
+
+/* Profile card */
+.profile-card{background:var(--surface);border:1px solid var(--border);border-radius:10px;padding:1.5rem;margin-bottom:2rem;display:flex;align-items:center;gap:1.25rem}
+.profile-pic{width:56px;height:56px;border-radius:50%;border:2px solid var(--gold);flex-shrink:0}
+.profile-pic-placeholder{width:56px;height:56px;border-radius:50%;background:var(--gold);color:var(--bg);display:flex;align-items:center;justify-content:center;font-family:'Bebas Neue',sans-serif;font-size:1.5rem;flex-shrink:0}
+.profile-info{flex:1;min-width:0}
+.profile-name{font-size:1.1rem;font-weight:600;color:var(--text-bright);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.profile-email{font-family:'DM Mono',monospace;font-size:.8rem;color:var(--muted);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.profile-badge{display:inline-block;font-family:'DM Mono',monospace;font-size:.65rem;font-weight:500;padding:.2rem .6rem;border-radius:4px;margin-top:.4rem}
+.badge-premium{background:var(--gold-dim);border:1px solid var(--gold);color:var(--gold)}
+.badge-member{background:var(--green-dim);border:1px solid var(--green);color:var(--green)}
+
+/* Course grid */
+.section{margin-bottom:2.5rem}
+.course-grid{display:grid;gap:.6rem}
+.course-row{background:var(--surface);border:1px solid var(--border);border-radius:8px;padding:.8rem 1rem;display:flex;align-items:center;justify-content:space-between;gap:1rem;transition:border-color .2s}
+.course-row:hover{border-color:var(--border2)}
+.course-row a{text-decoration:none;display:flex;align-items:center;justify-content:space-between;width:100%;gap:1rem}
+.course-name{font-size:.88rem;font-weight:600;color:var(--text-bright)}
+.course-tier{font-family:'DM Mono',monospace;font-size:.72rem;color:var(--muted)}
+.course-status{flex-shrink:0;font-family:'DM Mono',monospace;font-size:.7rem;font-weight:500;padding:.25rem .7rem;border-radius:4px;white-space:nowrap}
+.status-owned{background:var(--green-dim);border:1px solid rgba(45,212,160,.3);color:var(--green)}
+.status-free{background:rgba(37,99,235,.08);border:1px solid rgba(37,99,235,.3);color:#60a5fa}
+.status-available{background:var(--surface2);border:1px solid var(--border2);color:var(--muted)}
+
+/* Upgrade banner */
+.upgrade-banner{background:linear-gradient(135deg,rgba(212,168,71,.08) 0%,rgba(212,168,71,.03) 100%);border:1px solid rgba(212,168,71,.25);border-radius:10px;padding:1.5rem;margin-bottom:2rem;text-align:center}
+.upgrade-banner h3{font-family:'Bebas Neue',sans-serif;font-size:1.3rem;color:var(--gold);letter-spacing:.04em;margin-bottom:.4rem}
+.upgrade-banner .upgrade-savings{font-family:'DM Mono',monospace;font-size:.85rem;color:var(--green);margin-bottom:.3rem}
+.upgrade-banner .upgrade-desc{font-family:'Crimson Pro',serif;font-style:italic;font-size:.9rem;color:var(--text);margin-bottom:1rem}
+.upgrade-banner .upgrade-btn{display:inline-block;padding:.7rem 2rem;background:var(--gold);color:var(--bg);font-family:'Outfit',sans-serif;font-weight:700;font-size:.95rem;border:none;border-radius:6px;text-decoration:none;letter-spacing:.02em;cursor:pointer;transition:opacity .2s}
+.upgrade-banner .upgrade-btn:hover{opacity:.9}
+.upgrade-banner .upgrade-note{font-size:.7rem;color:var(--muted);margin-top:.6rem}
+
+/* Not signed in */
+.signin-prompt{text-align:center;padding:4rem 1rem}
+.signin-prompt h2{margin-bottom:.5rem}
+.signin-prompt p{color:var(--muted);font-size:.9rem;margin-bottom:1.5rem}
+.signin-prompt .g-btn-wrap{display:inline-block}
+
+/* Footer */
+footer{text-align:center;padding:2rem 0;margin-top:3rem;border-top:1px solid var(--border);font-size:.75rem;color:var(--muted)}
+footer a{color:var(--muted);text-decoration:none}footer a:hover{color:var(--gold)}
+
+@media(max-width:480px){
+  h1{font-size:2rem}
+  .profile-card{padding:1rem;gap:1rem}
+  .container{padding:0 1rem}
+}
+</style>
+</head>
+<body>
+<script src="/auth/mw-auth.js"></script>
+<div class="container">
+
+<header>
+  <div class="breadcrumb"><a href="/">MathsWins</a> / My Account</div>
+  <h1>MY ACCOUNT</h1>
+  <p class="subtitle">Your purchases and course access.</p>
+</header>
+
+<div id="account-content">
+  <!-- Populated by JS based on auth state -->
+</div>
+
+<footer>
+  <p>MathsWins · <a href="/">Home</a> · <a href="/academy/">Academy</a> · <a href="/everyday/">Everyday Maths</a> · <a href="/terms/">Terms</a></p>
+  <p style="margin-top:.5rem">&copy; 2026 MathsWins. All rights reserved.</p>
+</footer>
+
+</div>
+
+<script>
+(function(){
+  // Course catalogue — all academy courses
+  var courses = [
+    { slug:'blackjack',       name:'Blackjack Academy',      accent:'#d4a847', tiered:true,  price:'from £6.99' },
+    { slug:'poker',           name:'Poker School',           accent:'#2dd4a0', tiered:true,  price:'from £6.99' },
+    { slug:'sports-betting',  name:'Sports Betting Maths',   accent:'#2563eb', tiered:true,  price:'from £6.99' },
+    { slug:'trading',         name:'Trading Maths',          accent:'#10b981', tiered:true,  price:'from £6.99' },
+    { slug:'roulette',        name:'Roulette Reality Check',  accent:'#ef5350', tiered:false, price:'£3.99' },
+    { slug:'craps',           name:'Craps Decoded',          accent:'#d4a847', tiered:false, price:'£3.99' },
+    { slug:'slots',           name:'Slots: The Ugly Truth',  accent:'#e040fb', tiered:false, price:'£1.99' },
+    { slug:'lottery',         name:'Lottery Maths',          accent:'#facc15', tiered:false, price:'£1.99' },
+    { slug:'baccarat',        name:'Baccarat Breakdown',     accent:'#b8860b', tiered:false, price:'£1.99' },
+    { slug:'options',         name:'Options Maths',          accent:'#06b6d4', tiered:true,  price:'TBC', standalone:true },
+    { slug:'crypto-trading',  name:'Crypto Trading Maths',   accent:'#7c3aed', tiered:true,  price:'TBC' },
+  ];
+
+  var tierLabels = { basic:'Basic', advanced:'Advanced', master:'Master', pro:'Pro' };
+
+  function getAccess(slug) {
+    try {
+      var premium = localStorage.getItem('mw_premium');
+      var allAccess = localStorage.getItem('mw_access_all');
+      var specific = localStorage.getItem('mw_access_' + slug);
+      if (premium) return { owned:true, tier:'Premium' };
+      if (allAccess && !isCourseStandalone(slug)) return { owned:true, tier:'All Access' };
+      if (specific && specific !== 'true') return { owned:true, tier:tierLabels[specific] || specific };
+      if (specific) return { owned:true, tier:'Full Access' };
+      return { owned:false };
+    } catch(e) { return { owned:false }; }
+  }
+
+  function isCourseStandalone(slug) {
+    for (var i=0;i<courses.length;i++) {
+      if (courses[i].slug === slug) return !!courses[i].standalone;
+    }
+    return false;
+  }
+
+  function escapeHtml(str) {
+    var div = document.createElement('div');
+    div.textContent = str;
+    return div.innerHTML;
+  }
+
+  function render() {
+    var el = document.getElementById('account-content');
+    var user = window.mwAuth ? mwAuth.getUser() : null;
+
+    if (!user) {
+      el.innerHTML =
+        '<div class="signin-prompt">' +
+          '<h2>SIGN IN TO VIEW YOUR ACCOUNT</h2>' +
+          '<p>Sign in with Google to see your purchases and course access.</p>' +
+          '<div class="g-btn-wrap" id="account-g-btn"></div>' +
+        '</div>';
+
+      // Render Google button when GIS loads
+      waitForGIS(function() {
+        var btn = document.getElementById('account-g-btn');
+        if (btn && window.google && google.accounts) {
+          google.accounts.id.renderButton(btn, {
+            type:'standard', shape:'pill', theme:'filled_black', size:'large', text:'signin_with', width:300
+          });
+        }
+      });
+      return;
+    }
+
+    // --- Signed in ---
+    var initial = (user.name || user.email || '?').charAt(0).toUpperCase();
+    var picHtml = user.picture
+      ? '<img src="' + user.picture + '" class="profile-pic" referrerpolicy="no-referrer" alt="">'
+      : '<div class="profile-pic-placeholder">' + initial + '</div>';
+
+    var isPremium = !!localStorage.getItem('mw_premium');
+    var hasAllAccess = !!localStorage.getItem('mw_access_all');
+    var badgeHtml = '';
+    if (isPremium) {
+      badgeHtml = '<div class="profile-badge badge-premium">PREMIUM</div>';
+    } else if (hasAllAccess) {
+      badgeHtml = '<div class="profile-badge badge-premium">ALL ACCESS</div>';
+    } else {
+      // Check if they own anything
+      var ownsAnything = false;
+      for (var i=0;i<courses.length;i++) {
+        if (getAccess(courses[i].slug).owned) { ownsAnything = true; break; }
+      }
+      if (ownsAnything) badgeHtml = '<div class="profile-badge badge-member">MEMBER</div>';
+    }
+
+    var html =
+      '<div class="profile-card">' +
+        picHtml +
+        '<div class="profile-info">' +
+          '<div class="profile-name">' + escapeHtml(user.name || 'MathsWins User') + '</div>' +
+          '<div class="profile-email">' + escapeHtml(user.email) + '</div>' +
+          badgeHtml +
+        '</div>' +
+      '</div>';
+
+    // Split courses into owned and available
+    var ownedHtml = '';
+    var availableHtml = '';
+    var ownedCount = 0;
+
+    for (var i=0;i<courses.length;i++) {
+      var c = courses[i];
+      var access = getAccess(c.slug);
+
+      var row =
+        '<div class="course-row" style="border-left:3px solid ' + c.accent + '">' +
+          '<a href="/academy/' + c.slug + '/">' +
+            '<div>' +
+              '<div class="course-name">' + escapeHtml(c.name) + '</div>' +
+              (access.owned
+                ? '<div class="course-tier">' + escapeHtml(access.tier) + '</div>'
+                : '<div class="course-tier">Module 1 free · ' + c.price + '</div>') +
+            '</div>' +
+            (access.owned
+              ? '<div class="course-status status-owned">Owned</div>'
+              : '<div class="course-status status-available">Browse</div>') +
+          '</a>' +
+        '</div>';
+
+      if (access.owned) {
+        ownedHtml += row;
+        ownedCount++;
+      } else {
+        availableHtml += row;
+      }
+    }
+
+    // Owned courses section
+    if (ownedCount > 0) {
+      html +=
+        '<div class="section">' +
+          '<h2>YOUR COURSES (' + ownedCount + ')</h2>' +
+          '<div class="course-grid">' + ownedHtml + '</div>' +
+        '</div>';
+    }
+
+    // Upgrade banner — show if they own some courses but NOT All Access or Premium
+    if (ownedCount > 0 && !isPremium && !hasAllAccess) {
+      // Calculate approximate spend based on owned courses
+      var priceMap = {
+        'blackjack':6.99, 'poker':6.99, 'sports-betting':6.99, 'trading':6.99,
+        'roulette':3.99, 'craps':3.99, 'slots':1.99, 'lottery':1.99, 'baccarat':1.99
+      };
+      var tierPrices = { 'Basic':6.99, 'Advanced':12.99, 'Master':17.99, 'Pro':24.99 };
+      var spent = 0;
+      for (var j=0;j<courses.length;j++) {
+        var ca = getAccess(courses[j].slug);
+        if (ca.owned && !courses[j].standalone) {
+          var tp = tierPrices[ca.tier];
+          spent += tp ? tp : (priceMap[courses[j].slug] || 0);
+        }
+      }
+      var remainingCourses = 0;
+      for (var j=0;j<courses.length;j++) {
+        if (!getAccess(courses[j].slug).owned && !courses[j].standalone) remainingCourses++;
+      }
+
+      if (remainingCourses > 0) {
+        var savingsMsg = '';
+        if (spent > 39.99) {
+          savingsMsg = 'You\'ve spent £' + spent.toFixed(2) + ' on individual courses. All Access is just £39.99 for everything.';
+        } else if (spent > 20) {
+          savingsMsg = 'You\'ve already invested £' + spent.toFixed(2) + '. For just £39.99 total, unlock all ' + (9 - 0) + ' academy courses.';
+        } else {
+          savingsMsg = 'Get all 9 academy courses for one price — save vs buying individually.';
+        }
+
+        html +=
+          '<div class="upgrade-banner">' +
+            '<h3>UPGRADE TO ALL ACCESS</h3>' +
+            '<div class="upgrade-savings">' + escapeHtml(savingsMsg) + '</div>' +
+            '<div class="upgrade-desc">' + remainingCourses + ' more course' + (remainingCourses > 1 ? 's' : '') + ' waiting for you. Lifetime access. No subscription.</div>' +
+            '<a href="https://buy.stripe.com/28E6oA8bb8xNaN5bv3cwg0m" target="_blank" class="upgrade-btn">Get All Access — £39.99</a>' +
+            '<div class="upgrade-note">Instant access to every academy course, forever.</div>' +
+          '</div>';
+      }
+    }
+
+    // Available courses section
+    if (availableHtml) {
+      html +=
+        '<div class="section">' +
+          '<h2>AVAILABLE COURSES</h2>' +
+          '<div class="course-grid">' + availableHtml + '</div>' +
+        '</div>';
+    }
+
+    // Free content section
+    html +=
+      '<div class="section">' +
+        '<h2>FREE CONTENT</h2>' +
+        '<div class="course-grid">' +
+          '<div class="course-row" style="border-left:3px solid #0ea5e9"><a href="/everyday/"><div><div class="course-name">Everyday Maths</div><div class="course-tier">6 courses · Tax, mortgages, pensions & more</div></div><div class="course-status status-free">Free</div></a></div>' +
+          '<div class="course-row" style="border-left:3px solid #0d9488"><a href="/"><div><div class="course-name">Maths Games</div><div class="course-tier">13 free games · Logic, numbers & puzzles</div></div><div class="course-status status-free">Free</div></a></div>' +
+          '<div class="course-row" style="border-left:3px solid #7c3aed"><a href="/tools/student-loan/"><div><div class="course-name">Student Loan Calculator</div><div class="course-tier">All 5 UK plans · Year-by-year schedule</div></div><div class="course-status status-free">Free</div></a></div>' +
+        '</div>' +
+      '</div>';
+
+    el.innerHTML = html;
+  }
+
+  function waitForGIS(callback) {
+    if (window.google && google.accounts) { callback(); return; }
+    var attempts = 0;
+    var check = setInterval(function() {
+      attempts++;
+      if ((window.google && google.accounts) || attempts > 50) {
+        clearInterval(check);
+        if (window.google && google.accounts) callback();
+      }
+    }, 100);
+  }
+
+  // Render on load and on auth changes
+  if (window.mwAuth) {
+    mwAuth.onAuthChange(function() { render(); });
+  }
+
+  if (document.readyState === 'loading') {
+    document.addEventListener('DOMContentLoaded', render);
+  } else {
+    render();
+  }
+})();
+</script>
+</body>
+</html>
