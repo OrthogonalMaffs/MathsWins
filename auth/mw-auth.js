@@ -342,24 +342,24 @@
   // Purchase gating — hide buy buttons if not signed in
   // ---------------------------------------------------------------------------
 
-  function gateBuyButtons() {
-    var buySection = document.getElementById('mw-buy-section');
-    if (!buySection) return;
+  function gateSection(sectionId, gateBtnId) {
+    var section = document.getElementById(sectionId);
+    if (!section) return;
 
     // Store original content so we can restore it on sign-in
-    if (!buySection.dataset.originalHtml) {
-      buySection.dataset.originalHtml = buySection.innerHTML;
+    if (!section.dataset.originalHtml) {
+      section.dataset.originalHtml = section.innerHTML;
     }
 
-    buySection.innerHTML =
+    section.innerHTML =
       '<div class="mw-buy-signin-gate">' +
         '<p>Sign in with Google to unlock purchases</p>' +
-        '<div id="mw-gate-g-btn"></div>' +
+        '<div id="' + gateBtnId + '"></div>' +
       '</div>';
 
     // Render a Google button inside the gate too
     if (gisLoaded && window.google && window.google.accounts) {
-      var gateBtn = document.getElementById('mw-gate-g-btn');
+      var gateBtn = document.getElementById(gateBtnId);
       if (gateBtn) {
         google.accounts.id.renderButton(gateBtn, {
           type: 'standard',
@@ -373,10 +373,21 @@
     }
   }
 
+  function gateBuyButtons() {
+    gateSection('mw-buy-section', 'mw-gate-g-btn');
+    gateSection('mw-premium-section', 'mw-gate-g-btn-premium');
+  }
+
   function showBuyButtons() {
-    var buySection = document.getElementById('mw-buy-section');
-    if (!buySection || !buySection.dataset.originalHtml) return;
-    buySection.innerHTML = buySection.dataset.originalHtml;
+    var sections = ['mw-buy-section', 'mw-premium-section'];
+    sections.forEach(function (id) {
+      var section = document.getElementById(id);
+      if (!section || !section.dataset.originalHtml) return;
+      section.innerHTML = section.dataset.originalHtml;
+    });
+
+    // Inject promo codes into Premium payment links
+    injectUpgradeCredit();
   }
 
   function hideBuySectionIfOwned() {
@@ -404,6 +415,53 @@
         });
       }
     }
+  }
+
+  // ---------------------------------------------------------------------------
+  // Inject upgrade credit promo codes into Premium payment links
+  // ---------------------------------------------------------------------------
+
+  var PREMIUM_LINK_LIFETIME = 'buy.stripe.com/28E6oA8bb8xNaN5bv3cwg0m';
+  var PREMIUM_LINK_ANNUAL = 'buy.stripe.com/4gMcMY4YZdS7bR9gPncwg0n';
+
+  function injectUpgradeCredit() {
+    var token = getSession();
+    if (!token) return;
+
+    // Only fetch if there are Premium links on this page
+    var allLinks = document.querySelectorAll('a[href*="buy.stripe.com"]');
+    var premiumLinks = [];
+    allLinks.forEach(function (a) {
+      if (a.href.indexOf(PREMIUM_LINK_LIFETIME) !== -1 || a.href.indexOf(PREMIUM_LINK_ANNUAL) !== -1) {
+        premiumLinks.push(a);
+      }
+    });
+    if (premiumLinks.length === 0) return;
+
+    apiGet('/auth/upgrade-credit', token)
+      .then(function (data) {
+        if (!data.ok || !data.promoCode) return;
+        premiumLinks.forEach(function (a) {
+          // Strip any existing promo code param
+          var url = a.href.split('?')[0];
+          a.href = url + '?prefilled_promo_code=' + encodeURIComponent(data.promoCode);
+
+          // Update button text to show effective price if visible
+          if (a.href.indexOf(PREMIUM_LINK_LIFETIME) !== -1 && data.lifetimeEffective < data.lifetimePrice) {
+            var text = a.textContent || a.innerText;
+            if (text.indexOf('149.99') !== -1) {
+              a.textContent = text.replace('£149.99', '£' + data.lifetimeEffective.toFixed(2));
+            }
+          }
+          if (a.href.indexOf(PREMIUM_LINK_ANNUAL) !== -1 && data.annualEffective < data.annualPrice) {
+            var text2 = a.textContent || a.innerText;
+            if (text2.indexOf('99.99') !== -1) {
+              a.textContent = text2.replace('£99.99', '£' + data.annualEffective.toFixed(2));
+            }
+          }
+        });
+      })
+      .catch(function () { /* silently fail — links work without promo */ });
   }
 
   function getPageSlug() {
