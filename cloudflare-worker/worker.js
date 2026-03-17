@@ -244,6 +244,7 @@ async function stripePost(path, params, apiKey) {
     headers: {
       Authorization: `Bearer ${apiKey}`,
       'Content-Type': 'application/x-www-form-urlencoded',
+      'Stripe-Version': '2024-12-18.acacia',
     },
     body: body.toString(),
   });
