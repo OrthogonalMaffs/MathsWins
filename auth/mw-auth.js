@@ -311,10 +311,9 @@
       showBuyButtons();
       hideBuySectionIfOwned();
     } else {
-      // Not signed in — show My Account link + Google button
+      // Not signed in — show Google button only (My Account appears after sign-in)
       inner.innerHTML =
         '<div class="mw-auth-signin-prompt">' +
-          '<a href="/account/" class="mw-auth-account-link"><svg viewBox="0 0 24 24"><path d="M12 12c2.7 0 4.8-2.1 4.8-4.8S14.7 2.4 12 2.4 7.2 4.5 7.2 7.2 9.3 12 12 12zm0 2.4c-3.2 0-9.6 1.6-9.6 4.8v2.4h19.2v-2.4c0-3.2-6.4-4.8-9.6-4.8z"/></svg>My Account</a>' +
           '<div id="mw-g-signin-btn"></div>' +
         '</div>';
 
