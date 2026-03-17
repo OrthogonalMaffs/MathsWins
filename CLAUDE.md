@@ -53,9 +53,19 @@ Focused single-purpose tools. Currently: UK Student Loan Calculator.
 - Lambda Badge: 20% discount
 - Delta Badge: 25% discount
 
+**Upgrade Credit System (LIVE — built 2026-03-17):**
+- Users who bought individual courses get credit toward Premium upgrade
+- Worker endpoint `GET /auth/upgrade-credit` calculates total spend (refund-aware), creates single-use Stripe coupons
+- Promo codes auto-applied via `?prefilled_promo_code=CODE` on Payment Links
+- Four UI states on account page: no spend, partial credit, annual free (spend >= £99.99), lifetime free (spend >= £149.99)
+- `mw-auth.js` injects promo codes into all Premium Stripe links site-wide when user is signed in
+- Stripe API key requires Coupons (Write) + Promotion Codes (Write) permissions
+- Both Premium Payment Links have "Allow promotion codes" enabled in Stripe dashboard
+- Results cached in KV for 24 hours, invalidated on purchase refresh
+
 **Payment phases:**
 - Phase 1: Stripe Payment Links + localStorage (LIVE)
-- Phase 1.5: Google login + Cloudflare Worker auth + purchase restoration (LIVE — built 2026-03-17)
+- Phase 1.5: Google login + Cloudflare Worker auth + purchase restoration + upgrade credit (LIVE — built 2026-03-17)
 - Phase 2: Cloudflare Workers for server-side payment verification (api.mathswins.co.uk)
 - Phase 3: QF token payments via Academy.sol + soulbound access NFTs
 
@@ -65,7 +75,7 @@ Focused single-purpose tools. Currently: UK Student Loan Calculator.
 - Landing page with game cards, academy cards, everyday cards
 - 13 free games (all built and playable)
 - 9 academy courses with Stripe payment integration (Module 1 free on each)
-- Academy hub page with All Access Pass (£39.99)
+- Academy hub page with MathsWins Premium (£149.99 lifetime / £99.99 annual)
 - Options Maths standalone course page (Module 1 free, M2-10 coming soon)
 - 6 Everyday Maths courses (all live, free forever)
 - UK Student Loan Calculator tool
@@ -73,10 +83,11 @@ Focused single-purpose tools. Currently: UK Student Loan Calculator.
 - GitHub Pages enabled, CNAME set to mathswins.co.uk
 - DNS configured at IONOS with A records pointing to GitHub Pages
 - HTTPS enforced
-- **Google Sign-In** on all academy pages + restore page (fixed top bar)
-- **Account page** (`/account/`) — profile, owned courses, available courses, upgrade prompts
+- **Google Sign-In** on ALL pages site-wide (fixed top bar)
+- **Account page** (`/account/`) — profile, owned courses, available courses, server-side upgrade pricing
+- **Upgrade Credit System** — server-side spend calculation, Stripe coupon generation, auto-applied promo codes
 - **Access restoration** via email magic link (`/restore/`) or automatic on Google login
-- **Cloudflare Worker** (`mathswins-restore`) — auth + restore endpoints (deployed via dashboard)
+- **Cloudflare Worker** (`mathswins-restore`) — auth, restore, upgrade credit endpoints (deployed via dashboard)
 
 ### Not Yet Built / In Progress
 - Stripe redirect URLs (need to set `?session_id=` on all 18 Payment Links in Stripe dashboard)
@@ -114,7 +125,7 @@ games/                              # Free games (single-file HTML each)
   dont-press-it/index.html
   rps-vs-machine/index.html
 academy/                            # Paid courses (single-file HTML each)
-  index.html                        # Academy hub page with All Access Pass (£39.99)
+  index.html                        # Academy hub page with MathsWins Premium
   blackjack/index.html              # 11 modules, 3 tiers, 78+ scenarios
   poker/index.html                  # 20 modules, 4 tiers, 350+ scenarios, 10 interactive tools
   sports-betting/index.html         # 8 modules, 3 tiers, live calculators
@@ -163,7 +174,7 @@ contracts/                          # Solidity smart contracts (Foundry)
 
 **Shared with maffsgames.co.uk:** 52dle, equatle, prime-or-composite, estimation-engine, sequence-solver. These exist in both repos independently.
 
-## Academy Courses — All Access Pass (9 courses, £39.99)
+## Academy Courses — MathsWins Premium (9 core courses, £149.99 lifetime / £99.99 annual)
 
 ### Multi-tier courses
 | Course | Slug | Modules | Tiers | Scenarios | Key features |
@@ -312,21 +323,23 @@ forge test -vv
 - **Endpoints:**
   - `POST /auth/google` — verify Google ID token, look up Stripe purchases, return 30-day session JWT
   - `GET /auth/session` — validate existing session, return user info + products
-  - `POST /auth/refresh-purchases` — force Stripe re-lookup (call after new purchase)
+  - `POST /auth/refresh-purchases` — force Stripe re-lookup (call after new purchase), invalidates upgrade credit cache
+  - `GET /auth/upgrade-credit` — calculate total spend (refund-aware), create Stripe coupon + promo code, return personalised pricing
   - `POST /request` — send magic-link email for access restoration (legacy)
   - `GET /verify` — redeem magic-link token (legacy)
 - **Environment secrets** (set via Cloudflare dashboard → Settings → Variables and Secrets):
-  - `STRIPE_SECRET_KEY` — Stripe read-only key
+  - `STRIPE_SECRET_KEY` — Stripe key (needs Read: Checkout Sessions, Customers; Write: Coupons, Promotion Codes)
   - `RESEND_API_KEY` — transactional email
   - `HMAC_SECRET` — 256-bit hex for token signing
   - `GOOGLE_CLIENT_ID` — Google OAuth Client ID
 - **KV namespace:** `RESTORE_KV` — rate limiting, single-use tokens, purchase caching
 
 ### Frontend Auth Module — `auth/mw-auth.js`
-- Loaded on all 11 academy course pages + academy hub + restore page + account page
+- Loaded on ALL pages site-wide (47+ pages)
 - Google Identity Services (GIS) renders sign-in button
 - On login: calls `/auth/google`, stores session JWT in localStorage (`mw_session`), sets all `mw_access_*` flags, reloads page
-- **Purchase gating:** buy buttons replaced with "Sign in to purchase" when not logged in
+- **Purchase gating:** both `#mw-buy-section` (course pages) and `#mw-premium-section` (academy hub) gated behind login
+- **Promo code injection:** when signed in, calls `/auth/upgrade-credit` and injects promo codes + effective prices into all Premium Stripe links on the page
 - Session auto-restored on page load from cached user data
 - Public API: `mwAuth.getUser()`, `mwAuth.isSignedIn()`, `mwAuth.hasAccess(slug)`, `mwAuth.signOut()`, `mwAuth.refreshPurchases()`
 
@@ -334,7 +347,8 @@ forge test -vv
 - Profile card with Google avatar, name, email, membership badge
 - "Your Courses" section — owned courses with tier labels
 - "Available Courses" section — courses not yet purchased with pricing
-- **Smart upgrade banner** — calculates user's spend, shows savings vs All Access (£39.99)
+- **Server-side upgrade banner** — calls `/auth/upgrade-credit` for real spend data (refund-aware), shows personalised pricing with auto-applied promo codes
+- Four upgrade states: no spend (standard pricing), partial credit (effective price shown), annual free (spend >= £99.99), lifetime free (spend >= £149.99)
 - "Free Content" section — Everyday Maths, Games, Tools
 - Sign-in prompt if not logged in
 
