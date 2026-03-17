@@ -34,6 +34,7 @@ Focused single-purpose tools. Currently: UK Student Loan Calculator.
 - Buy buttons on all 9 academy course pages + Academy hub
 - Redirect URL pattern: `?session_id={CHECKOUT_SESSION_ID}` (deferred — not yet set in Stripe dashboard)
 - Phase 1 is client-side only — any payment unlocks all content for that course
+- **Purchases gated behind Google login** — buy buttons replaced with "Sign in to purchase" when not logged in
 
 **Confirmed pricing:**
 - Slots, Lottery, Baccarat: £1.99 (single tier)
@@ -53,7 +54,8 @@ Focused single-purpose tools. Currently: UK Student Loan Calculator.
 
 **Payment phases:**
 - Phase 1: Stripe Payment Links + localStorage (LIVE)
-- Phase 2: Cloudflare Workers (api.mathswins.co.uk/verify, signed JWT, tier-specific unlocking)
+- Phase 1.5: Google login + Cloudflare Worker auth + purchase restoration (LIVE — built 2026-03-17)
+- Phase 2: Cloudflare Workers for server-side payment verification (api.mathswins.co.uk)
 - Phase 3: QF token payments via Academy.sol + soulbound access NFTs
 
 ## Current State
@@ -70,6 +72,10 @@ Focused single-purpose tools. Currently: UK Student Loan Calculator.
 - GitHub Pages enabled, CNAME set to mathswins.co.uk
 - DNS configured at IONOS with A records pointing to GitHub Pages
 - HTTPS enforced
+- **Google Sign-In** on all academy pages + restore page (fixed top bar)
+- **Account page** (`/account/`) — profile, owned courses, available courses, upgrade prompts
+- **Access restoration** via email magic link (`/restore/`) or automatic on Google login
+- **Cloudflare Worker** (`mathswins-restore`) — auth + restore endpoints (deployed via dashboard)
 
 ### Not Yet Built / In Progress
 - Stripe redirect URLs (need to set `?session_id=` on all 18 Payment Links in Stripe dashboard)
@@ -77,14 +83,21 @@ Focused single-purpose tools. Currently: UK Student Loan Calculator.
 - Options Maths pricing (TBC)
 - Card Counter Tool (£4.99/month or £29.99/year, requires BJ Master — build after Phase 1 verified)
 - FPL Maths (build April 2026, launch August 2026)
-- Phase 2: Cloudflare Workers for payment verification
 - Phase 3: QF token payments + Academy.sol
-- Content gating hardening (currently localStorage, not secure)
 
 ## Directory Structure
 ```
 index.html                          # Landing page (dark theme, nav pills)
 CNAME                               # mathswins.co.uk
+auth/
+  mw-auth.js                       # Shared auth module — Google Sign-In, session management, purchase gating
+account/
+  index.html                        # My Account page — profile, purchases, upgrade prompts
+restore/
+  index.html                        # Access restoration — Google login + email magic link fallback
+cloudflare-worker/
+  worker.js                         # Cloudflare Worker — auth + restore endpoints (deployed via dashboard)
+  wrangler.toml                     # Worker config (KV namespace, secrets, routes)
 games/                              # Free games (single-file HTML each)
   countdown-numbers/index.html      # Classic 6-number target challenge with solver
   52dle/index.html                  # Also on maffsgames.co.uk
@@ -283,8 +296,57 @@ forge test -vv
 - **Tone:** Confident, mathematical, zero-bullshit. "The maths always wins" is the thesis.
 - **Schools cross-link:** About section links to maffsgames.co.uk/schools (one-way — maffsgames does NOT link back to MathsWins)
 
+## Authentication & Access Control
+
+### Google Sign-In (LIVE — built 2026-03-17)
+- **Google Cloud Project** with OAuth 2.0 Client ID (Web application type)
+- Authorised JavaScript origins: `https://mathswins.co.uk`
+- Fixed top bar on every academy page: MATHSWINS brand (left), Google sign-in / user avatar (right)
+- Clicking user avatar links to `/account/` page
+
+### Cloudflare Worker — `mathswins-restore` (deployed via Cloudflare dashboard)
+- **Worker URL:** `https://mathswins-restore.jonfox78.workers.dev`
+- **Custom domain:** `api.mathswins.co.uk` (route configured but DNS may need CNAME)
+- **Endpoints:**
+  - `POST /auth/google` — verify Google ID token, look up Stripe purchases, return 30-day session JWT
+  - `GET /auth/session` — validate existing session, return user info + products
+  - `POST /auth/refresh-purchases` — force Stripe re-lookup (call after new purchase)
+  - `POST /request` — send magic-link email for access restoration (legacy)
+  - `GET /verify` — redeem magic-link token (legacy)
+- **Environment secrets** (set via Cloudflare dashboard → Settings → Variables and Secrets):
+  - `STRIPE_SECRET_KEY` — Stripe read-only key
+  - `RESEND_API_KEY` — transactional email
+  - `HMAC_SECRET` — 256-bit hex for token signing
+  - `GOOGLE_CLIENT_ID` — Google OAuth Client ID
+- **KV namespace:** `RESTORE_KV` — rate limiting, single-use tokens, purchase caching
+
+### Frontend Auth Module — `auth/mw-auth.js`
+- Loaded on all 11 academy course pages + academy hub + restore page + account page
+- Google Identity Services (GIS) renders sign-in button
+- On login: calls `/auth/google`, stores session JWT in localStorage (`mw_session`), sets all `mw_access_*` flags, reloads page
+- **Purchase gating:** buy buttons replaced with "Sign in to purchase" when not logged in
+- Session auto-restored on page load from cached user data
+- Public API: `mwAuth.getUser()`, `mwAuth.isSignedIn()`, `mwAuth.hasAccess(slug)`, `mwAuth.signOut()`, `mwAuth.refreshPurchases()`
+
+### Account Page — `/account/`
+- Profile card with Google avatar, name, email, membership badge
+- "Your Courses" section — owned courses with tier labels
+- "Available Courses" section — courses not yet purchased with pricing
+- **Smart upgrade banner** — calculates user's spend, shows savings vs All Access (£39.99)
+- "Free Content" section — Everyday Maths, Games, Tools
+- Sign-in prompt if not logged in
+
+### Access Flow
+1. User visits academy course page → sees fixed auth bar at top
+2. Buy section shows "Sign in to purchase" with Google button
+3. User signs in → worker verifies Google token, looks up Stripe purchases, returns session JWT
+4. Frontend sets localStorage flags (`mw_access_SLUG`, `mw_premium`, etc.) → page reloads
+5. If user owns the course: buy section hidden, locked modules unlocked
+6. If user doesn't own: buy section shows Stripe Payment Link buttons
+7. After Stripe purchase: `?session_id=` redirect sets localStorage, `mwAuth.refreshPurchases()` syncs to server
+
 ## Analytics
-GA4 cookieless mode (G-CLNF7GSB28) — same property as maffsgames.co.uk. No personal data collected.
+GA4 cookieless mode (`G-7GTLYCZMXN`) — **separate property from maffsgames.co.uk** (zero crossover). Consent mode defaults deny all cookie storage. No cookie banner required. Collects modelled pageviews and events only.
 
 ## Relationship to Other Projects
 - **maffsgames.co.uk** — sister site, schools-only. Shares 5 games. Different repo, different branding, different audience. Zero crossover in branding or contact details.
@@ -298,6 +360,10 @@ GA4 cookieless mode (G-CLNF7GSB28) — same property as maffsgames.co.uk. No per
 - Foundry for smart contracts
 - GitHub Pages for hosting
 - Stripe for card payments (Phase 1 live — Payment Links + localStorage)
+- Cloudflare Workers + KV for auth and access restoration
+- Google Identity Services for sign-in
+- Resend for transactional email (magic links)
+- GA4 cookieless (consent mode, no cookie banner)
 
 ## Safety Rules
 - Never expose private keys or API keys
