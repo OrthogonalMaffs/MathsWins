@@ -7,6 +7,8 @@
  *   GET  /verify       — redeem a restore token, return purchased products
  *   POST /auth/google  — verify Google ID token, return session JWT with purchases
  *   GET  /auth/session — verify a session JWT, return user info + products
+ *   POST /auth/refresh-purchases — force Stripe re-lookup after new purchase
+ *   GET  /auth/upgrade-credit — calculate upgrade credit, generate Stripe coupon
  *
  * Environment bindings
  *   STRIPE_SECRET_KEY   — Stripe secret key (restricted to read-only customers/charges)
@@ -232,6 +234,26 @@ async function stripeGet(path, params, apiKey) {
   return resp.json();
 }
 
+async function stripePost(path, params, apiKey) {
+  const body = new URLSearchParams();
+  for (const [k, v] of Object.entries(params)) {
+    body.set(k, String(v));
+  }
+  const resp = await fetch(`https://api.stripe.com/v1/${path}`, {
+    method: 'POST',
+    headers: {
+      Authorization: `Bearer ${apiKey}`,
+      'Content-Type': 'application/x-www-form-urlencoded',
+    },
+    body: body.toString(),
+  });
+  if (!resp.ok) {
+    const text = await resp.text();
+    throw new Error(`Stripe POST ${path} ${resp.status}: ${text}`);
+  }
+  return resp.json();
+}
+
 /**
  * Look up every paid product for a given email address.
  * Returns an array of { key, value } localStorage entries.
@@ -240,6 +262,7 @@ async function lookupPurchases(email, stripeKey) {
   const products = new Map(); // key → value (higher tier wins)
   let isPremium = false;
   let isAllAccess = false;
+  let totalSpendPence = 0; // Track total spend for upgrade credit
   const tierRank = { basic: 1, advanced: 2, master: 3, pro: 4 };
 
   // Helper to process a checkout session's line items
@@ -252,13 +275,19 @@ async function lookupPurchases(email, stripeKey) {
       stripeKey,
     );
 
+    let hasRecognizedProduct = false;
+    let hasPremiumInSession = false;
+
     for (const item of lineItems.data) {
       const productName = item.description || (item.price && item.price.product && item.price.product.name);
       const mapped = mapProduct(productName);
       if (!mapped) continue;
 
+      hasRecognizedProduct = true;
+
       if (mapped.premium) {
         isPremium = true;
+        hasPremiumInSession = true;
         continue;
       }
       if (mapped.allAccess) {
@@ -276,6 +305,11 @@ async function lookupPurchases(email, stripeKey) {
           products.set(mapped.key, mapped.value);
         }
       }
+    }
+
+    // Track spend for non-premium sessions (don't credit a Premium purchase toward Premium)
+    if (hasRecognizedProduct && !hasPremiumInSession && session.amount_total) {
+      totalSpendPence += session.amount_total;
     }
   }
 
@@ -332,7 +366,7 @@ async function lookupPurchases(email, stripeKey) {
     }
   }
 
-  return { products, isPremium, isAllAccess };
+  return { products, isPremium, isAllAccess, totalSpendPence };
 }
 
 /**
@@ -771,6 +805,9 @@ async function handleRefreshPurchases(request, env) {
   const purchaseResult = await lookupPurchases(email, env.STRIPE_SECRET_KEY);
   const productList = buildProductList(purchaseResult);
 
+  // Invalidate upgrade credit cache (spend may have changed)
+  await env.RESTORE_KV.delete(`upgrade-credit:${email}`);
+
   // Update cache
   const cacheKey = `purchases:${email}`;
   await env.RESTORE_KV.put(cacheKey, JSON.stringify(productList), {
@@ -800,6 +837,140 @@ async function handleRefreshPurchases(request, env) {
     200,
     request,
   );
+}
+
+// ---------------------------------------------------------------------------
+// Upgrade credit — Stripe coupon creation
+// ---------------------------------------------------------------------------
+
+const LIFETIME_PRICE = 149.99;
+const ANNUAL_PRICE = 99.99;
+const LIFETIME_LINK = 'https://buy.stripe.com/28E6oA8bb8xNaN5bv3cwg0m';
+const ANNUAL_LINK = 'https://buy.stripe.com/4gMcMY4YZdS7bR9gPncwg0n';
+
+async function createUpgradeCoupon(spendPence, email, stripeKey) {
+  // Cap coupon at the lifetime price (no point giving more credit)
+  const cappedPence = Math.min(spendPence, Math.round(LIFETIME_PRICE * 100));
+
+  // Create a single-use coupon for the credit amount
+  const coupon = await stripePost('coupons', {
+    amount_off: cappedPence,
+    currency: 'gbp',
+    duration: 'once',
+    max_redemptions: 1,
+    name: 'MathsWins Upgrade Credit',
+  }, stripeKey);
+
+  // Generate unique promo code: MW-{hash8}
+  const hash = await sha256(email + ':' + Date.now());
+  const codeStr = 'MW-' + hash.substring(0, 8).toUpperCase();
+
+  // Create promotion code from coupon
+  const promoCode = await stripePost('promotion_codes', {
+    coupon: coupon.id,
+    code: codeStr,
+    max_redemptions: 1,
+  }, stripeKey);
+
+  return {
+    couponId: coupon.id,
+    promoCode: promoCode.code,
+  };
+}
+
+// ---------------------------------------------------------------------------
+// GET /auth/upgrade-credit — calculate spend, generate coupon, return pricing
+// ---------------------------------------------------------------------------
+
+async function handleUpgradeCredit(request, env) {
+  const authHeader = request.headers.get('Authorization') || '';
+  const token = authHeader.startsWith('Bearer ') ? authHeader.slice(7) : '';
+
+  if (!token) {
+    return jsonResponse({ ok: false, error: 'Missing session token.' }, 401, request);
+  }
+
+  const payload = await verifyToken(token, env.HMAC_SECRET);
+  if (!payload) {
+    return jsonResponse({ ok: false, error: 'Invalid or expired session.' }, 401, request);
+  }
+
+  const email = payload.email;
+
+  // Quick check: already Premium from session token?
+  const sessionProducts = payload.products || [];
+  if (sessionProducts.some((p) => p.key === 'mw_premium')) {
+    return jsonResponse({ ok: true, state: 'has_premium', totalSpend: 0, isPremium: true }, 200, request);
+  }
+
+  // Check KV cache (24-hour TTL)
+  const cacheKey = `upgrade-credit:${email}`;
+  const cached = await env.RESTORE_KV.get(cacheKey);
+  if (cached) {
+    return jsonResponse(JSON.parse(cached), 200, request);
+  }
+
+  // Fresh Stripe lookup
+  const purchaseResult = await lookupPurchases(email, env.STRIPE_SECRET_KEY);
+
+  // Re-check Premium from Stripe (in case session is stale)
+  if (purchaseResult.isPremium) {
+    const result = { ok: true, state: 'has_premium', totalSpend: 0, isPremium: true };
+    await env.RESTORE_KV.put(cacheKey, JSON.stringify(result), { expirationTtl: 86400 });
+    return jsonResponse(result, 200, request);
+  }
+
+  const totalSpend = Math.round(purchaseResult.totalSpendPence) / 100;
+
+  // Determine upgrade state
+  let state;
+  if (totalSpend === 0) state = 'no_spend';
+  else if (totalSpend >= LIFETIME_PRICE) state = 'lifetime_free';
+  else if (totalSpend >= ANNUAL_PRICE) state = 'annual_free';
+  else state = 'partial_credit';
+
+  const lifetimeEffective = Math.round(Math.max(0, LIFETIME_PRICE - totalSpend) * 100) / 100;
+  const annualEffective = Math.round(Math.max(0, ANNUAL_PRICE - totalSpend) * 100) / 100;
+
+  let promoCode = null;
+  let lifetimeLink = LIFETIME_LINK;
+  let annualLink = ANNUAL_LINK;
+
+  // Create Stripe coupon if they have credit
+  if (totalSpend > 0) {
+    try {
+      const couponResult = await createUpgradeCoupon(
+        purchaseResult.totalSpendPence,
+        email,
+        env.STRIPE_SECRET_KEY,
+      );
+      promoCode = couponResult.promoCode;
+      lifetimeLink = LIFETIME_LINK + '?prefilled_promo_code=' + encodeURIComponent(promoCode);
+      annualLink = ANNUAL_LINK + '?prefilled_promo_code=' + encodeURIComponent(promoCode);
+    } catch (err) {
+      console.error('Failed to create upgrade coupon:', err.message);
+      // Continue without coupon — account page shows "contact us" fallback
+    }
+  }
+
+  const result = {
+    ok: true,
+    state,
+    totalSpend: Math.round(totalSpend * 100) / 100,
+    lifetimePrice: LIFETIME_PRICE,
+    annualPrice: ANNUAL_PRICE,
+    lifetimeEffective,
+    annualEffective,
+    promoCode,
+    lifetimeLink,
+    annualLink,
+    isPremium: false,
+  };
+
+  // Cache for 24 hours
+  await env.RESTORE_KV.put(cacheKey, JSON.stringify(result), { expirationTtl: 86400 });
+
+  return jsonResponse(result, 200, request);
 }
 
 // ---------------------------------------------------------------------------
@@ -840,6 +1011,11 @@ export default {
     // Refresh purchases — force re-check Stripe after new purchase
     if (url.pathname === '/auth/refresh-purchases' && request.method === 'POST') {
       return handleRefreshPurchases(request, env);
+    }
+
+    // Upgrade credit — calculate spend, generate coupon
+    if (url.pathname === '/auth/upgrade-credit' && request.method === 'GET') {
+      return handleUpgradeCredit(request, env);
     }
 
     // Health check

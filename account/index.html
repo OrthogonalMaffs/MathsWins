@@ -239,52 +239,9 @@ footer a{color:var(--muted);text-decoration:none}footer a:hover{color:var(--gold
         '</div>';
     }
 
-    // Upgrade banner — show if they own some courses but NOT Premium
+    // Upgrade banner — placeholder that gets populated by API call
     if (!isPremium && !hasAllAccess) {
-      // Calculate approximate spend based on owned core courses (not standalone)
-      var corePriceMap = {
-        'blackjack':6.99, 'poker':6.99, 'sports-betting':6.99, 'trading':6.99,
-        'roulette':3.99, 'craps':3.99, 'slots':1.99, 'lottery':1.99, 'baccarat':1.99
-      };
-      var tierPriceMap = { 'Basic':6.99, 'Advanced':12.99, 'Master':17.99, 'Pro':24.99 };
-      var spent = 0;
-      var coreOwned = 0;
-      for (var j=0;j<courses.length;j++) {
-        if (courses[j].standalone) continue;
-        var ca = getAccess(courses[j].slug);
-        if (ca.owned) {
-          coreOwned++;
-          var tp = tierPriceMap[ca.tier];
-          spent += tp ? tp : (corePriceMap[courses[j].slug] || 0);
-        }
-      }
-
-      var premiumPrice = 149.99;
-      var effectivePrice = Math.max(0, premiumPrice - spent);
-      var remainingCourses = 9 - coreOwned;
-
-      if (remainingCourses > 0) {
-        var savingsLine = '';
-        if (spent > 0) {
-          savingsLine =
-            'You\'ve spent <strong style="color:var(--text-bright)">£' + spent.toFixed(2) + '</strong> on individual courses. ' +
-            'Upgrade to Premium for an effective price of <strong style="color:var(--green)">£' + effectivePrice.toFixed(2) + '</strong>';
-        } else {
-          savingsLine = 'Get lifetime access to all 9 core academy courses.';
-        }
-
-        html +=
-          '<div class="upgrade-banner">' +
-            '<h3>UPGRADE TO MATHSWINS PREMIUM</h3>' +
-            '<div class="upgrade-savings">' + savingsLine + '</div>' +
-            '<div class="upgrade-desc">' + remainingCourses + ' more course' + (remainingCourses > 1 ? 's' : '') + ' waiting for you. Pay once, access forever.</div>' +
-            '<div style="display:flex;gap:.75rem;justify-content:center;flex-wrap:wrap;margin-top:.75rem;">' +
-              '<a href="https://buy.stripe.com/28E6oA8bb8xNaN5bv3cwg0m" target="_blank" class="upgrade-btn">Lifetime — £149.99</a>' +
-              '<a href="https://buy.stripe.com/4gMcMY4YZdS7bR9gPncwg0n" target="_blank" class="upgrade-btn" style="background:transparent;color:var(--gold);border:2px solid var(--gold);">Annual — £99.99/yr</a>' +
-            '</div>' +
-            (spent > 0 ? '<div class="upgrade-note">Contact us after purchase to claim your £' + spent.toFixed(2) + ' credit.</div>' : '<div class="upgrade-note">Instant access to every core academy course.</div>') +
-          '</div>';
-      }
+      html += '<div id="upgrade-banner-slot"></div>';
     }
 
     // Available courses section
@@ -310,6 +267,95 @@ footer a{color:var(--muted);text-decoration:none}footer a:hover{color:var(--gold
     el.innerHTML = html;
   }
 
+  function loadUpgradeCredit() {
+    var slot = document.getElementById('upgrade-banner-slot');
+    if (!slot) return;
+    var session = null;
+    try { session = localStorage.getItem('mw_session'); } catch(e) {}
+    if (!session) return;
+
+    // Show loading state
+    slot.innerHTML =
+      '<div class="upgrade-banner" style="opacity:.5">' +
+        '<h3>CHECKING YOUR UPGRADE CREDIT...</h3>' +
+        '<div class="upgrade-desc">Calculating your personalised pricing.</div>' +
+      '</div>';
+
+    fetch('https://mathswins-restore.jonfox78.workers.dev/auth/upgrade-credit', {
+      headers: { 'Authorization': 'Bearer ' + session }
+    })
+    .then(function(r) { return r.json(); })
+    .then(function(data) {
+      if (!data.ok || data.state === 'has_premium') { slot.innerHTML = ''; return; }
+      renderUpgradeBanner(slot, data);
+    })
+    .catch(function() {
+      // Fallback: show standard pricing without coupon
+      renderUpgradeBanner(slot, {
+        state: 'no_spend', totalSpend: 0,
+        lifetimePrice: 149.99, annualPrice: 99.99,
+        lifetimeEffective: 149.99, annualEffective: 99.99,
+        lifetimeLink: 'https://buy.stripe.com/28E6oA8bb8xNaN5bv3cwg0m',
+        annualLink: 'https://buy.stripe.com/4gMcMY4YZdS7bR9gPncwg0n',
+        promoCode: null
+      });
+    });
+  }
+
+  function renderUpgradeBanner(slot, d) {
+    var h = '<div class="upgrade-banner">';
+
+    if (d.state === 'lifetime_free') {
+      h += '<h3>YOU\'VE EARNED FREE PREMIUM!</h3>' +
+        '<div class="upgrade-savings">You\'ve spent <strong style="color:var(--text-bright)">£' + d.totalSpend.toFixed(2) + '</strong> on individual courses — that covers the full Premium price!</div>' +
+        '<div class="upgrade-desc">Claim your free upgrade to unlock every core academy course forever.</div>' +
+        '<div style="display:flex;gap:.75rem;justify-content:center;flex-wrap:wrap;margin-top:.75rem;">' +
+          '<a href="' + escapeHtml(d.lifetimeLink) + '" target="_blank" class="upgrade-btn">Claim Free Lifetime Premium</a>' +
+        '</div>';
+      if (d.promoCode) {
+        h += '<div class="upgrade-note">Your code <strong>' + escapeHtml(d.promoCode) + '</strong> will be applied automatically.</div>';
+      }
+    } else if (d.state === 'annual_free') {
+      h += '<h3>FREE ANNUAL PREMIUM AVAILABLE!</h3>' +
+        '<div class="upgrade-savings">You\'ve spent <strong style="color:var(--text-bright)">£' + d.totalSpend.toFixed(2) + '</strong> — that covers a full year of Premium!</div>' +
+        '<div class="upgrade-desc">Or upgrade to Lifetime for just <strong style="color:var(--green)">£' + d.lifetimeEffective.toFixed(2) + '</strong>.</div>' +
+        '<div style="display:flex;gap:.75rem;justify-content:center;flex-wrap:wrap;margin-top:.75rem;">' +
+          '<a href="' + escapeHtml(d.annualLink) + '" target="_blank" class="upgrade-btn">Claim Free Annual Premium</a>' +
+          '<a href="' + escapeHtml(d.lifetimeLink) + '" target="_blank" class="upgrade-btn" style="background:transparent;color:var(--gold);border:2px solid var(--gold);">Lifetime — £' + d.lifetimeEffective.toFixed(2) + '</a>' +
+        '</div>';
+      if (d.promoCode) {
+        h += '<div class="upgrade-note">Your code <strong>' + escapeHtml(d.promoCode) + '</strong> will be applied automatically.</div>';
+      }
+    } else if (d.state === 'partial_credit') {
+      h += '<h3>UPGRADE TO MATHSWINS PREMIUM</h3>' +
+        '<div class="upgrade-savings">You\'ve spent <strong style="color:var(--text-bright)">£' + d.totalSpend.toFixed(2) + '</strong> on individual courses. ' +
+          'Upgrade for an effective price of <strong style="color:var(--green)">£' + d.lifetimeEffective.toFixed(2) + '</strong></div>' +
+        '<div class="upgrade-desc">Your credit is applied automatically at checkout. Pay once, access forever.</div>' +
+        '<div style="display:flex;gap:.75rem;justify-content:center;flex-wrap:wrap;margin-top:.75rem;">' +
+          '<a href="' + escapeHtml(d.lifetimeLink) + '" target="_blank" class="upgrade-btn">Lifetime — £' + d.lifetimeEffective.toFixed(2) + '</a>' +
+          '<a href="' + escapeHtml(d.annualLink) + '" target="_blank" class="upgrade-btn" style="background:transparent;color:var(--gold);border:2px solid var(--gold);">Annual — £' + d.annualEffective.toFixed(2) + '/yr</a>' +
+        '</div>';
+      if (d.promoCode) {
+        h += '<div class="upgrade-note">Code <strong>' + escapeHtml(d.promoCode) + '</strong> applied at checkout.</div>';
+      } else if (d.totalSpend > 0) {
+        h += '<div class="upgrade-note">Contact us at contact@mathswins.co.uk to claim your £' + d.totalSpend.toFixed(2) + ' credit.</div>';
+      }
+    } else {
+      // no_spend
+      h += '<h3>UPGRADE TO MATHSWINS PREMIUM</h3>' +
+        '<div class="upgrade-savings">Get lifetime access to all 9 core academy courses.</div>' +
+        '<div class="upgrade-desc">Pay once, access forever. Every core course included.</div>' +
+        '<div style="display:flex;gap:.75rem;justify-content:center;flex-wrap:wrap;margin-top:.75rem;">' +
+          '<a href="' + escapeHtml(d.lifetimeLink) + '" target="_blank" class="upgrade-btn">Lifetime — £149.99</a>' +
+          '<a href="' + escapeHtml(d.annualLink) + '" target="_blank" class="upgrade-btn" style="background:transparent;color:var(--gold);border:2px solid var(--gold);">Annual — £99.99/yr</a>' +
+        '</div>' +
+        '<div class="upgrade-note">Instant access to every core academy course.</div>';
+    }
+
+    h += '</div>';
+    slot.innerHTML = h;
+  }
+
   function waitForGIS(callback) {
     if (window.google && google.accounts) { callback(); return; }
     var attempts = 0;
@@ -322,15 +368,20 @@ footer a{color:var(--muted);text-decoration:none}footer a:hover{color:var(--gold
     }, 100);
   }
 
+  function renderAndLoad() {
+    render();
+    loadUpgradeCredit();
+  }
+
   // Render on load and on auth changes
   if (window.mwAuth) {
-    mwAuth.onAuthChange(function() { render(); });
+    mwAuth.onAuthChange(function() { renderAndLoad(); });
   }
 
   if (document.readyState === 'loading') {
-    document.addEventListener('DOMContentLoaded', render);
+    document.addEventListener('DOMContentLoaded', renderAndLoad);
   } else {
-    render();
+    renderAndLoad();
   }
 })();
 </script>
