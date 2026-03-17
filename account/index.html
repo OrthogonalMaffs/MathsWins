@@ -110,8 +110,8 @@ footer a{color:var(--muted);text-decoration:none}footer a:hover{color:var(--gold
     { slug:'slots',           name:'Slots: The Ugly Truth',  accent:'#e040fb', tiered:false, price:'£1.99' },
     { slug:'lottery',         name:'Lottery Maths',          accent:'#facc15', tiered:false, price:'£1.99' },
     { slug:'baccarat',        name:'Baccarat Breakdown',     accent:'#b8860b', tiered:false, price:'£1.99' },
-    { slug:'options',         name:'Options Maths',          accent:'#06b6d4', tiered:true,  price:'TBC', standalone:true },
-    { slug:'crypto-trading',  name:'Crypto Trading Maths',   accent:'#7c3aed', tiered:true,  price:'TBC' },
+    { slug:'options',         name:'Options Maths',          accent:'#06b6d4', tiered:true,  price:'from £9.99', standalone:true },
+    { slug:'crypto-trading',  name:'Crypto Trading Maths',   accent:'#7c3aed', tiered:true,  price:'from £9.99', standalone:true },
   ];
 
   var tierLabels = { basic:'Basic', advanced:'Advanced', master:'Master', pro:'Pro' };
@@ -239,44 +239,50 @@ footer a{color:var(--muted);text-decoration:none}footer a:hover{color:var(--gold
         '</div>';
     }
 
-    // Upgrade banner — show if they own some courses but NOT All Access or Premium
-    if (ownedCount > 0 && !isPremium && !hasAllAccess) {
-      // Calculate approximate spend based on owned courses
-      var priceMap = {
+    // Upgrade banner — show if they own some courses but NOT Premium
+    if (!isPremium && !hasAllAccess) {
+      // Calculate approximate spend based on owned core courses (not standalone)
+      var corePriceMap = {
         'blackjack':6.99, 'poker':6.99, 'sports-betting':6.99, 'trading':6.99,
         'roulette':3.99, 'craps':3.99, 'slots':1.99, 'lottery':1.99, 'baccarat':1.99
       };
-      var tierPrices = { 'Basic':6.99, 'Advanced':12.99, 'Master':17.99, 'Pro':24.99 };
+      var tierPriceMap = { 'Basic':6.99, 'Advanced':12.99, 'Master':17.99, 'Pro':24.99 };
       var spent = 0;
+      var coreOwned = 0;
       for (var j=0;j<courses.length;j++) {
+        if (courses[j].standalone) continue;
         var ca = getAccess(courses[j].slug);
-        if (ca.owned && !courses[j].standalone) {
-          var tp = tierPrices[ca.tier];
-          spent += tp ? tp : (priceMap[courses[j].slug] || 0);
+        if (ca.owned) {
+          coreOwned++;
+          var tp = tierPriceMap[ca.tier];
+          spent += tp ? tp : (corePriceMap[courses[j].slug] || 0);
         }
       }
-      var remainingCourses = 0;
-      for (var j=0;j<courses.length;j++) {
-        if (!getAccess(courses[j].slug).owned && !courses[j].standalone) remainingCourses++;
-      }
+
+      var premiumPrice = 149.99;
+      var effectivePrice = Math.max(0, premiumPrice - spent);
+      var remainingCourses = 9 - coreOwned;
 
       if (remainingCourses > 0) {
-        var savingsMsg = '';
-        if (spent > 39.99) {
-          savingsMsg = 'You\'ve spent £' + spent.toFixed(2) + ' on individual courses. All Access is just £39.99 for everything.';
-        } else if (spent > 20) {
-          savingsMsg = 'You\'ve already invested £' + spent.toFixed(2) + '. For just £39.99 total, unlock all ' + (9 - 0) + ' academy courses.';
+        var savingsLine = '';
+        if (spent > 0) {
+          savingsLine =
+            'You\'ve spent <strong style="color:var(--text-bright)">£' + spent.toFixed(2) + '</strong> on individual courses. ' +
+            'Upgrade to Premium for an effective price of <strong style="color:var(--green)">£' + effectivePrice.toFixed(2) + '</strong>';
         } else {
-          savingsMsg = 'Get all 9 academy courses for one price — save vs buying individually.';
+          savingsLine = 'Get lifetime access to all 9 core academy courses.';
         }
 
         html +=
           '<div class="upgrade-banner">' +
-            '<h3>UPGRADE TO ALL ACCESS</h3>' +
-            '<div class="upgrade-savings">' + escapeHtml(savingsMsg) + '</div>' +
-            '<div class="upgrade-desc">' + remainingCourses + ' more course' + (remainingCourses > 1 ? 's' : '') + ' waiting for you. Lifetime access. No subscription.</div>' +
-            '<a href="https://buy.stripe.com/28E6oA8bb8xNaN5bv3cwg0m" target="_blank" class="upgrade-btn">Get All Access — £39.99</a>' +
-            '<div class="upgrade-note">Instant access to every academy course, forever.</div>' +
+            '<h3>UPGRADE TO MATHSWINS PREMIUM</h3>' +
+            '<div class="upgrade-savings">' + savingsLine + '</div>' +
+            '<div class="upgrade-desc">' + remainingCourses + ' more course' + (remainingCourses > 1 ? 's' : '') + ' waiting for you. Pay once, access forever.</div>' +
+            '<div style="display:flex;gap:.75rem;justify-content:center;flex-wrap:wrap;margin-top:.75rem;">' +
+              '<a href="https://buy.stripe.com/28E6oA8bb8xNaN5bv3cwg0m" target="_blank" class="upgrade-btn">Lifetime — £149.99</a>' +
+              '<a href="https://buy.stripe.com/4gMcMY4YZdS7bR9gPncwg0n" target="_blank" class="upgrade-btn" style="background:transparent;color:var(--gold);border:2px solid var(--gold);">Annual — £99.99/yr</a>' +
+            '</div>' +
+            (spent > 0 ? '<div class="upgrade-note">Contact us after purchase to claim your £' + spent.toFixed(2) + ' credit.</div>' : '<div class="upgrade-note">Instant access to every core academy course.</div>') +
           '</div>';
       }
     }

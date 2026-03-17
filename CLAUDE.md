@@ -14,7 +14,7 @@ A platform with four pillars:
 ### 1. Games — Free skill-based maths games (13, all live)
 Pure logic, reasoning, and number sense. No luck, no gambling. These are the "QF originals" — games built for the QF Network community but enjoyable by anyone.
 
-### 2. Academy — "Maths Always Wins" courses (9 courses, All Access £39.99)
+### 2. Academy — "Maths Always Wins" courses (9 core + 2 standalone, Premium £149.99 lifetime)
 Educational deep-dives into the mathematics behind games of chance, betting, and trading. Not gambling tools — mathematical education. The thesis: understand the maths BEFORE you play.
 
 ### 3. Everyday Maths — Free financial literacy courses (6 courses, all live)
@@ -42,8 +42,9 @@ Focused single-purpose tools. Currently: UK Student Loan Calculator.
 - Trading: Basic £6.99, Advanced £12.99
 - Blackjack, Sports Betting: Basic £6.99, Advanced £12.99, Master £17.99
 - Poker School: Basic £6.99 (M1-7), Advanced £12.99 (M1-14), Master £17.99 (M1-17), Pro £24.99 (M1-20)
-- All Access Pass: £39.99 (all 9 academy courses, lifetime)
-- Options Maths: TBC (standalone, NOT in All Access)
+- Options Maths: Basic £9.99, Advanced £17.99, Master £29.99 (STANDALONE — NOT in Premium)
+- Crypto Trading Maths: Basic £9.99, Advanced £14.99, Master £24.99 (STANDALONE — NOT in Premium)
+- **MathsWins Premium:** Annual £99.99/year, Lifetime £149.99 (all 9 core academy courses)
 - FREE: Games, Everyday Maths, Module 1 of all academy courses, Tools
 
 **Badge discounts (QF payments only — Phase 3):**
@@ -169,7 +170,7 @@ contracts/                          # Solidity smart contracts (Foundry)
 |--------|------|---------|-------|-----------|--------------|
 | Blackjack Academy | `blackjack` | 11 | 3 (Basic/Advanced/Master) | 78+ | Monte Carlo sims, card counting drills, 50-hand session replay with EV analysis |
 | Poker School | `poker` | 20 | 4 (Basic/Advanced/Master/Pro) | 350+ | 10 interactive tools per module, combinatorics, Kelly criterion, bluffing frequency, exploitative maths, variance simulation |
-| Sports Betting Maths | `sports-betting` | 8 | 3 (Basic/Advanced/Master) | — | Implied probability, overround calculation, value betting, live calculators |
+| Sports Betting Maths | `sports-betting` | 16 | 3 (Basic/Advanced/Master) | — | Implied probability, overround calculation, value betting, live calculators |
 | Trading Maths | `trading` | 6 | 2 (Basic/Advanced) | — | R:R ratios, position sizing, Kelly criterion, survivorship bias, drawdown variance |
 
 ### Single-tier courses
@@ -191,10 +192,11 @@ contracts/                          # Solidity smart contracts (Foundry)
 
 Each module M11-20 includes an interactive tool (combo counter, push/fold advisor, deal calculator, bubble factor calculator, bluff frequency calculator, geometric sizing calculator, Bayesian bluff detector, Kelly calculator, variance simulator, tilt cost calculator).
 
-### Standalone Courses (NOT in All Access Pass)
-| Course | Slug | Modules | Status | Key features |
-|--------|------|---------|--------|--------------|
-| Options Maths | `options` | 10 planned | M1 free live, M2-6 stored, M7-10 TBC | Black-Scholes, Greeks, implied volatility, multi-leg strategies |
+### Standalone Courses (NOT in Premium)
+| Course | Slug | Modules | Tiers | Key features |
+|--------|------|---------|-------|--------------|
+| Options Maths | `options` | 10 planned | Basic £9.99, Advanced £17.99, Master £29.99 | Black-Scholes, Greeks, implied volatility, multi-leg strategies |
+| Crypto Trading Maths | `crypto-trading` | 10 planned | Basic £9.99, Advanced £14.99, Master £24.99 | On-chain analysis, DeFi mathematics, risk management |
 
 **Options Maths module status:**
 | # | Title | Tier | Status |
