@@ -259,8 +259,9 @@
       '#mw-auth-bar .mw-auth-signout{background:none;border:none;color:#4a5568;font-family:Outfit,sans-serif;font-size:.7rem;cursor:pointer;padding:0;}' +
       '#mw-auth-bar .mw-auth-signout:hover{color:#d4a847;}' +
       '#mw-auth-bar .mw-auth-signin-prompt{color:#4a5568;font-size:.8rem;display:flex;align-items:center;gap:8px;}' +
-      '#mw-auth-bar .mw-auth-signin-prompt span{display:none;}' +
-      '@media(min-width:480px){#mw-auth-bar .mw-auth-signin-prompt span{display:inline;}}' +
+      '#mw-auth-bar .mw-auth-account-link{display:inline-flex;align-items:center;gap:6px;padding:5px 14px;background:transparent;border:1px solid #d4a847;border-radius:6px;color:#d4a847;font-family:Outfit,sans-serif;font-weight:600;font-size:.8rem;text-decoration:none;transition:background .2s,color .2s;cursor:pointer;white-space:nowrap;}' +
+      '#mw-auth-bar .mw-auth-account-link:hover{background:#d4a847;color:#050709;}' +
+      '#mw-auth-bar .mw-auth-account-link svg{width:16px;height:16px;fill:currentColor;}' +
       'body{padding-top:44px !important;}' +
       '.mw-buy-signin-gate{text-align:center;padding:1rem;background:rgba(212,168,71,.06);border:1px solid rgba(212,168,71,.2);border-radius:8px;margin:.5rem 0;}' +
       '.mw-buy-signin-gate p{font-size:.85rem;color:#c8cdd8;margin-bottom:.75rem;}' +
@@ -310,10 +311,10 @@
       showBuyButtons();
       hideBuySectionIfOwned();
     } else {
-      // Not signed in — show sign-in prompt + Google button
+      // Not signed in — show My Account link + Google button
       inner.innerHTML =
         '<div class="mw-auth-signin-prompt">' +
-          '<span>Sign in to purchase</span>' +
+          '<a href="/account/" class="mw-auth-account-link"><svg viewBox="0 0 24 24"><path d="M12 12c2.7 0 4.8-2.1 4.8-4.8S14.7 2.4 12 2.4 7.2 4.5 7.2 7.2 9.3 12 12 12zm0 2.4c-3.2 0-9.6 1.6-9.6 4.8v2.4h19.2v-2.4c0-3.2-6.4-4.8-9.6-4.8z"/></svg>My Account</a>' +
           '<div id="mw-g-signin-btn"></div>' +
         '</div>';
 
