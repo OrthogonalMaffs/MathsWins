@@ -321,7 +321,11 @@ async function lookupPurchases(email, stripeKey) {
           let refundedPence = 0;
           if (pi.charges && pi.charges.data) {
             for (const charge of pi.charges.data) {
-              refundedPence += charge.amount_refunded || 0;
+              if (charge.refunded) {
+                refundedPence += charge.amount || 0;
+              } else {
+                refundedPence += charge.amount_refunded || 0;
+              }
             }
           }
           netAmount = Math.max(0, session.amount_total - refundedPence);
@@ -989,8 +993,11 @@ async function handleUpgradeCredit(request, env) {
     isPremium: false,
   };
 
-  // Cache for 24 hours
-  await env.RESTORE_KV.put(cacheKey, JSON.stringify(result), { expirationTtl: 86400 });
+  // Only cache if coupon was created successfully (or no coupon needed).
+  // Don't cache failures — allows retry on next request.
+  if (totalSpend === 0 || promoCode) {
+    await env.RESTORE_KV.put(cacheKey, JSON.stringify(result), { expirationTtl: 86400 });
+  }
 
   return jsonResponse(result, 200, request);
 }
