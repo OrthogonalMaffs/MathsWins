@@ -1,0 +1,216 @@
+<!DOCTYPE html>
+<html lang="en-GB">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Circle Theorems — A Parent's Guide to GCSE Geometry | MathsWins</title>
+<meta name="description" content="A friendly guide for parents on circle theorems at GCSE. The 7 key theorems explained simply — no maths background needed. Common mistakes, worked examples, and free practice.">
+<meta property="og:title" content="Circle Theorems — A Parent's Guide to GCSE Geometry | MathsWins">
+<meta property="og:description" content="A friendly guide for parents on circle theorems at GCSE. Key theorems explained, common mistakes, and free practice links.">
+<meta property="og:url" content="https://mathswins.co.uk/parents/circle-theorems/">
+<meta property="og:image" content="https://mathswins.co.uk/assets/og-image.png">
+<meta property="og:type" content="article">
+<meta property="og:site_name" content="MathsWins">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:title" content="Circle Theorems — A Parent's Guide to GCSE Geometry | MathsWins">
+<meta name="twitter:description" content="A friendly guide for parents on circle theorems at GCSE.">
+<meta name="twitter:image" content="https://mathswins.co.uk/assets/og-image.png">
+<link rel="canonical" href="https://mathswins.co.uk/parents/circle-theorems/">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Crimson+Pro:ital,wght@0,400;1,400&family=DM+Mono:wght@400;500&family=Outfit:wght@300;400;600;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/katex.min.css">
+<script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/katex.min.js"></script>
+<script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/contrib/auto-render.min.js" onload="renderMathInElement(document.body,{delimiters:[{left:'$$',right:'$$',display:true},{left:'\\(',right:'\\)',display:false}]});"></script>
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "Article",
+  "headline": "Circle Theorems — A Parent's Guide to GCSE Geometry",
+  "description": "A friendly guide for parents on circle theorems at GCSE level.",
+  "url": "https://mathswins.co.uk/parents/circle-theorems/",
+  "publisher": {
+    "@type": "Organization",
+    "name": "MathsWins",
+    "url": "https://mathswins.co.uk"
+  }
+}
+</script>
+<!-- GA4 cookieless -->
+<script async src="https://www.googletagmanager.com/gtag/js?id=G-7GTLYCZMXN"></script>
+<script>
+window.dataLayer=window.dataLayer||[];function gtag(){dataLayer.push(arguments);}
+gtag('consent','default',{analytics_storage:'denied',ad_storage:'denied',ad_user_data:'denied',ad_personalization:'denied'});
+gtag('js',new Date());gtag('config','G-7GTLYCZMXN',{send_page_view:true});
+</script>
+<style>
+:root{--bg:#050709;--surface:#0a0d14;--surface2:#0f1319;--border:#161c28;--border2:#1e2638;--sky:#0ea5e9;--sky-dim:rgba(14,165,233,0.10);--green:#2dd4a0;--green-dim:rgba(45,212,160,0.10);--red:#ef5350;--gold:#d4a847;--gold-dim:rgba(212,168,71,0.10);--cyan:#22d3ee;--teal:#0d9488;--teal-dim:rgba(13,148,136,0.10);--text:#c8cdd8;--text-bright:#e8ecf4;--muted:#4a5568;--accent:#e040fb;}
+*{margin:0;padding:0;box-sizing:border-box;}
+body{font-family:'Outfit',sans-serif;background:var(--bg);color:var(--text);min-height:100vh;line-height:1.7;}
+.container{max-width:740px;margin:0 auto;padding:2rem 1.25rem 4rem;}
+.nav-bar{display:flex;align-items:center;justify-content:space-between;padding:1rem 0;border-bottom:1px solid var(--border);margin-bottom:2rem;}
+.nav-brand{font-family:'Bebas Neue',sans-serif;font-size:1.4rem;color:var(--gold);text-decoration:none;letter-spacing:0.06em;}
+.nav-brand span{color:var(--text-bright);}
+.nav-link{font-size:0.85rem;font-weight:600;color:var(--sky);text-decoration:none;padding:0.4rem 1rem;border:1px solid var(--sky);border-radius:4px;transition:background 0.2s,color 0.2s;}
+.nav-link:hover{background:var(--sky);color:var(--bg);}
+.hero{text-align:center;margin-bottom:2.5rem;}
+.hero-eyebrow{font-size:0.75rem;font-weight:600;text-transform:uppercase;letter-spacing:0.15em;color:var(--sky);margin-bottom:0.5rem;}
+.hero h1{font-family:'Bebas Neue',sans-serif;font-size:clamp(1.8rem,5vw,2.8rem);color:var(--text-bright);letter-spacing:0.04em;line-height:1.1;margin-bottom:0.75rem;}
+.hero-sub{font-family:'Crimson Pro',serif;font-style:italic;font-size:1.05rem;color:var(--cyan);max-width:620px;margin:0 auto;}
+
+.section{background:var(--surface);border:1px solid var(--border);border-radius:10px;padding:1.75rem;margin-bottom:1.5rem;}
+.section-number{font-family:'DM Mono',monospace;font-size:0.7rem;font-weight:500;color:var(--accent);text-transform:uppercase;letter-spacing:0.12em;margin-bottom:0.35rem;}
+.section h2{font-family:'Bebas Neue',sans-serif;font-size:1.3rem;color:var(--text-bright);letter-spacing:0.05em;margin-bottom:1rem;}
+.section p{margin-bottom:1rem;font-size:0.95rem;}
+.section p:last-child{margin-bottom:0;}
+.section ul,.section ol{margin:0.75rem 0 1rem 1.5rem;font-size:0.95rem;}
+.section li{margin-bottom:0.5rem;}
+
+.math-block{background:var(--surface2);border:1px solid var(--border2);border-radius:8px;padding:1.25rem;margin:1rem 0;text-align:center;font-size:1.1rem;overflow-x:auto;}
+.theorem-list{list-style:none;margin:1rem 0;padding:0;}
+.theorem-list li{background:var(--surface2);border:1px solid var(--border2);border-radius:8px;padding:1rem 1.25rem;margin-bottom:0.75rem;font-size:0.9rem;}
+.theorem-list .theorem-name{font-family:'DM Mono',monospace;font-size:0.75rem;font-weight:500;color:var(--accent);text-transform:uppercase;letter-spacing:0.08em;margin-bottom:0.25rem;}
+
+.tip{background:rgba(224,64,251,0.08);border:1px solid rgba(224,64,251,0.25);border-radius:8px;padding:1rem 1.25rem;margin:1rem 0;font-size:0.9rem;}
+.tip-label{font-family:'DM Mono',monospace;font-size:0.7rem;font-weight:500;color:var(--accent);text-transform:uppercase;letter-spacing:0.1em;margin-bottom:0.25rem;}
+.warning{background:rgba(239,83,80,0.08);border:1px solid rgba(239,83,80,0.25);border-radius:8px;padding:1rem 1.25rem;margin:1rem 0;font-size:0.9rem;}
+.warning-label{font-family:'DM Mono',monospace;font-size:0.7rem;font-weight:500;color:var(--red);text-transform:uppercase;letter-spacing:0.1em;margin-bottom:0.25rem;}
+
+.cta-box{background:var(--surface);border:1px solid var(--sky);border-radius:10px;padding:1.75rem;text-align:center;margin-top:2rem;}
+.cta-box h3{font-family:'Bebas Neue',sans-serif;font-size:1.2rem;color:var(--text-bright);letter-spacing:0.05em;margin-bottom:0.75rem;}
+.cta-box p{font-size:0.95rem;margin-bottom:1.25rem;}
+.cta-btn{display:inline-block;font-family:'Outfit',sans-serif;font-weight:700;font-size:1rem;padding:0.75rem 2rem;background:var(--sky);color:#fff;border:none;border-radius:6px;text-decoration:none;transition:background 0.2s;}
+.cta-btn:hover{background:#38bdf8;}
+
+.footer{text-align:center;padding:2rem 0 1rem;border-top:1px solid var(--border);margin-top:2rem;font-size:0.78rem;color:var(--muted);}
+.footer a{color:var(--sky);text-decoration:none;}
+.footer a:hover{text-decoration:underline;}
+</style>
+</head>
+<body>
+<div class="container">
+
+<nav class="nav-bar">
+  <a href="/" class="nav-brand">MATHS<span>WINS</span></a>
+  <a href="/parents/" class="nav-link">All Parent Guides</a>
+</nav>
+
+<div class="hero">
+  <div class="hero-eyebrow">GCSE Parent Guide</div>
+  <h1>Circle Theorems</h1>
+  <p class="hero-sub">This might look intimidating &mdash; circles covered in lines and angles &mdash; but each theorem is actually a simple rule, and there are only seven to learn.</p>
+</div>
+
+<!-- Section 1 -->
+<div class="section">
+  <div class="section-number">Section 1</div>
+  <h2>What Your Child Is Learning</h2>
+  <p>Circle theorems are a set of rules about angles and lines inside and around circles. Your child needs to learn seven main theorems and be able to spot which one applies in a diagram.</p>
+  <p>The key thing to understand is that this topic is less about calculation and more about <strong>pattern recognition</strong>. When your child sees a circle diagram in an exam, their job is to identify the pattern, name the theorem, and use it to find the missing angle.</p>
+  <p>Each theorem is a fact that is always true for every circle. Once you know the rules, the questions are actually quite predictable.</p>
+</div>
+
+<!-- Section 2 -->
+<div class="section">
+  <div class="section-number">Section 2</div>
+  <h2>How Schools Teach It Now</h2>
+  <p>Schools teach students to learn each theorem, recognise it in a diagram, and &mdash; crucially &mdash; <strong>state the theorem as the reason</strong>. At GCSE, both the angle and the reason are required for full marks.</p>
+  <p>Here are the seven key theorems in plain language:</p>
+  <ul class="theorem-list">
+    <li>
+      <div class="theorem-name">1. Angle at centre</div>
+      The angle at the centre of a circle is twice the angle at the circumference, when both are subtended by the same arc.
+    </li>
+    <li>
+      <div class="theorem-name">2. Angle in a semicircle</div>
+      Any angle inscribed in a semicircle (where the "base" is a diameter) is exactly \(90°\).
+    </li>
+    <li>
+      <div class="theorem-name">3. Angles in the same segment</div>
+      Angles at the circumference in the same segment (on the same side of a chord) are equal.
+    </li>
+    <li>
+      <div class="theorem-name">4. Cyclic quadrilateral</div>
+      Opposite angles in a cyclic quadrilateral (a four-sided shape with all corners on the circle) add up to \(180°\).
+    </li>
+    <li>
+      <div class="theorem-name">5. Tangent and radius</div>
+      A tangent to a circle is perpendicular (\(90°\)) to the radius at the point of contact.
+    </li>
+    <li>
+      <div class="theorem-name">6. Two tangents from a point</div>
+      Two tangents drawn from the same external point are equal in length.
+    </li>
+    <li>
+      <div class="theorem-name">7. Alternate segment theorem</div>
+      The angle between a tangent and a chord equals the angle in the alternate segment.
+    </li>
+  </ul>
+  <div class="tip">
+    <div class="tip-label">Parent tip</div>
+    Your child does not need to prove these theorems &mdash; they just need to recognise which one applies and state it by name. If they can match the diagram to the rule, they are most of the way there.
+  </div>
+</div>
+
+<!-- Section 3 -->
+<div class="section">
+  <div class="section-number">Section 3</div>
+  <h2>Common Mistakes to Watch For</h2>
+  <div class="warning">
+    <div class="warning-label">Easy marks lost</div>
+    <strong>Not stating the theorem name as the reason.</strong> Finding the correct angle is only half the marks. The exam will say "give a reason for your answer" and your child must write the theorem name. "The angle at the centre is twice the angle at the circumference" is worth marks. Just writing "80" with no reason loses them.
+  </div>
+  <div class="warning">
+    <div class="warning-label">Classic mistake</div>
+    <strong>Confusing which angle is at the centre vs the circumference.</strong> In the "angle at centre = twice angle at circumference" theorem, students sometimes apply it the wrong way round &mdash; doubling when they should halve, or vice versa. If the angle at the centre is 80 degrees, the angle at the circumference is 40 degrees (half), not 160 degrees (double).
+  </div>
+  <div class="warning">
+    <div class="warning-label">Watch out</div>
+    <strong>Not spotting the diameter.</strong> When a line goes through the centre of the circle, it is a diameter, which means the "angle in a semicircle = 90 degrees" theorem applies. Students sometimes miss that a line is a diameter and overcomplicate the question.
+  </div>
+</div>
+
+<!-- Section 4 -->
+<div class="section">
+  <div class="section-number">Section 4</div>
+  <h2>Try It Together</h2>
+  <p>Here is a straightforward example:</p>
+  <p><strong>The angle at the centre of a circle is 80 degrees. Find the angle at the circumference on the same arc.</strong></p>
+  <ol>
+    <li>Identify the theorem: this is the "angle at the centre" theorem.</li>
+    <li>The rule says: the angle at the centre is twice the angle at the circumference.</li>
+    <li>So the angle at the circumference is \(80 \div 2 = 40°\).</li>
+    <li>Write the reason: "The angle at the centre is twice the angle at the circumference."</li>
+  </ol>
+  <div class="math-block">
+    $$\text{Angle at circumference} = \frac{80°}{2} = 40°$$
+  </div>
+  <div class="tip">
+    <div class="tip-label">Conversation starter</div>
+    Ask your child to draw a circle, mark the centre, and draw two lines from the centre to the edge and two more from the circumference to the same two points on the edge. Then measure the angles &mdash; the centre angle should be exactly double the circumference angle. Seeing it with a protractor makes the theorem feel real.
+  </div>
+</div>
+
+<!-- Section 5 -->
+<div class="section">
+  <div class="section-number">Section 5</div>
+  <h2>Let Them Practise</h2>
+  <p>Circle theorems are a pattern-spotting exercise. The more diagrams your child sees, the faster they will recognise which theorem to use. It becomes almost automatic with practice.</p>
+  <p>We have a free interactive game specifically for circle theorem recognition:</p>
+</div>
+
+<div class="cta-box">
+  <h3>Circle Theorem Spotter</h3>
+  <p>Free interactive practice &mdash; identify the theorem, find the angle, build confidence.</p>
+  <a href="https://maffsgames.co.uk/games/circle-theorem-spotter/" class="cta-btn">Practise Now on MaffsGames</a>
+</div>
+
+<div class="footer">
+  <p>&copy; 2026 <a href="/">MathsWins</a>. Free parent guides &mdash; no account needed.</p>
+  <p style="margin-top:0.5rem;">Schools? Visit <a href="https://maffsgames.co.uk/schools">maffsgames.co.uk/schools</a> for free classroom games.</p>
+</div>
+
+</div>
+<script src="/auth/mw-auth.js" defer></script>
+</body>
+</html>

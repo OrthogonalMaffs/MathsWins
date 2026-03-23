@@ -1,0 +1,175 @@
+<!DOCTYPE html>
+<html lang="en-GB">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Pythagoras' Theorem &mdash; A Parent's Guide | MathsWins</title>
+<meta name="description" content="Understand Pythagoras' theorem the way schools teach it now. a squared plus b squared equals c squared, finding missing sides, common mistakes, and free practice.">
+<meta property="og:title" content="Pythagoras' Theorem &mdash; A Parent's Guide | MathsWins">
+<meta property="og:description" content="Understand Pythagoras' theorem the way schools teach it now. Finding missing sides in right-angled triangles, common mistakes, and free practice.">
+<meta property="og:url" content="https://mathswins.co.uk/parents/pythagoras/">
+<meta property="og:image" content="https://mathswins.co.uk/assets/og-image.png">
+<meta property="og:type" content="website">
+<meta property="og:site_name" content="MathsWins">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:title" content="Pythagoras' Theorem &mdash; A Parent's Guide | MathsWins">
+<meta name="twitter:description" content="Understand Pythagoras' theorem the way schools teach it now. Finding missing sides, common mistakes, and free practice.">
+<meta name="twitter:image" content="https://mathswins.co.uk/assets/og-image.png">
+<link rel="canonical" href="https://mathswins.co.uk/parents/pythagoras/">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Crimson+Pro:ital,wght@0,400;1,400&family=DM+Mono:wght@400;500&family=Outfit:wght@300;400;600;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/katex.min.css">
+<script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/katex.min.js"></script>
+<script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/contrib/auto-render.min.js" onload="renderMathInElement(document.body,{delimiters:[{left:'$$',right:'$$',display:true},{left:'\\(',right:'\\)',display:false}]});"></script>
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "Article",
+  "headline": "Pythagoras' Theorem — A Parent's Guide to GCSE Maths",
+  "description": "Understand Pythagoras' theorem the way schools teach it now. Finding missing sides in right-angled triangles, common mistakes, and free practice.",
+  "url": "https://mathswins.co.uk/parents/pythagoras/",
+  "publisher": {
+    "@type": "Organization",
+    "name": "MathsWins",
+    "url": "https://mathswins.co.uk"
+  }
+}
+</script>
+<style>
+:root{--bg:#050709;--surface:#0a0d14;--surface2:#0f1319;--border:#161c28;--border2:#1e2638;--sky:#0ea5e9;--sky-dim:rgba(14,165,233,0.10);--green:#2dd4a0;--green-dim:rgba(45,212,160,0.10);--red:#ef5350;--gold:#d4a847;--gold-dim:rgba(212,168,71,0.10);--cyan:#22d3ee;--teal:#0d9488;--teal-dim:rgba(13,148,136,0.10);--text:#c8cdd8;--text-bright:#e8ecf4;--muted:#4a5568;--warm:#f0e6d3;--warm-dim:rgba(240,230,211,0.06);--accent:#e8a87c;}
+*{margin:0;padding:0;box-sizing:border-box;}
+body{font-family:'Outfit',sans-serif;background:var(--bg);color:var(--text);min-height:100vh;line-height:1.8;}
+.container{max-width:760px;margin:0 auto;padding:2rem 1.25rem 4rem;}
+.nav-bar{display:flex;align-items:center;justify-content:space-between;padding:1rem 0;border-bottom:1px solid var(--border);margin-bottom:2rem;}
+.nav-brand{font-family:'Bebas Neue',sans-serif;font-size:1.4rem;color:var(--gold);text-decoration:none;letter-spacing:0.06em;}
+.nav-brand span{color:var(--text-bright);}
+.nav-link{font-size:0.85rem;font-weight:600;color:var(--sky);text-decoration:none;padding:0.4rem 1rem;border:1px solid var(--sky);border-radius:4px;transition:background 0.2s,color 0.2s;}
+.nav-link:hover{background:var(--sky);color:var(--bg);}
+.hero{text-align:center;margin-bottom:2.5rem;padding:1.5rem 0;}
+.hero-eyebrow{font-size:0.75rem;font-weight:600;text-transform:uppercase;letter-spacing:0.15em;color:var(--accent);margin-bottom:0.5rem;}
+.hero h1{font-family:'Bebas Neue',sans-serif;font-size:clamp(1.8rem,5vw,2.8rem);color:var(--text-bright);letter-spacing:0.04em;line-height:1.1;margin-bottom:0.75rem;}
+.hero-sub{font-family:'Crimson Pro',serif;font-style:italic;font-size:1.05rem;color:var(--accent);max-width:620px;margin:0 auto;line-height:1.6;}
+.section{background:var(--surface);border:1px solid var(--border);border-radius:10px;padding:1.5rem 1.75rem;margin-bottom:1.25rem;}
+.section h2{font-family:'Bebas Neue',sans-serif;font-size:1.2rem;color:var(--text-bright);letter-spacing:0.05em;margin-bottom:0.75rem;}
+.section p,.section li{font-size:0.92rem;line-height:1.8;margin-bottom:0.6rem;}
+.section ul{padding-left:1.25rem;margin-bottom:0.5rem;}
+.section li{margin-bottom:0.4rem;}
+.katex-display{margin:1rem 0;}
+.example-box{background:var(--surface2);border:1px solid var(--border2);border-radius:8px;padding:1.25rem;margin:1rem 0;}
+.example-box .label{font-size:0.7rem;font-weight:700;text-transform:uppercase;letter-spacing:0.1em;color:var(--accent);margin-bottom:0.5rem;}
+.mistake{color:var(--red);font-weight:600;}
+.correct{color:var(--green);font-weight:600;}
+.practice-link{display:inline-block;font-weight:700;color:var(--sky);text-decoration:none;padding:0.6rem 1.25rem;border:1px solid var(--sky);border-radius:6px;margin:0.4rem 0.5rem 0.4rem 0;transition:background 0.2s,color 0.2s;font-size:0.9rem;}
+.practice-link:hover{background:var(--sky);color:var(--bg);}
+.back-link{display:inline-block;font-size:0.85rem;color:var(--accent);text-decoration:none;margin-bottom:1.5rem;font-weight:600;}
+.back-link:hover{text-decoration:underline;}
+.footer{margin-top:2.5rem;padding-top:1.25rem;border-top:1px solid var(--border);text-align:center;}
+.footer p{font-size:0.72rem;color:var(--muted);line-height:1.8;}
+.footer a{color:var(--muted);text-decoration:underline;}
+</style>
+<!-- GA4 Cookieless -->
+<script async src="https://www.googletagmanager.com/gtag/js?id=G-7GTLYCZMXN"></script>
+<script>window.dataLayer=window.dataLayer||[];function gtag(){dataLayer.push(arguments);}gtag('js',new Date());gtag('consent','default',{analytics_storage:'denied',ad_storage:'denied',ad_user_data:'denied',ad_personalization:'denied'});gtag('config','G-7GTLYCZMXN',{send_page_view:true,anonymize_ip:true});</script>
+</head>
+<body>
+<script src="/auth/mw-auth.js"></script>
+<div class="container">
+<nav class="nav-bar">
+  <a href="/" class="nav-brand">MATHS<span>WINS</span></a>
+  <a href="/parents/" class="nav-link">&larr; All Parent Guides</a>
+</nav>
+
+<a href="/parents/" class="back-link">&larr; Back to all guides</a>
+
+<div class="hero">
+  <div class="hero-eyebrow">GCSE Parent Guide</div>
+  <h1>PYTHAGORAS' THEOREM</h1>
+  <div class="hero-sub">The most famous equation in geometry &mdash; and the one GCSE topic almost every parent half-remembers.</div>
+</div>
+
+<!-- 1. What Your Child Is Learning -->
+<div class="section">
+  <h2>1. What Your Child Is Learning</h2>
+  <p>In any <strong>right-angled triangle</strong>, there's a relationship between the three sides:</p>
+  $$a^2 + b^2 = c^2$$
+  <p>where \(c\) is the <strong>hypotenuse</strong> &mdash; the longest side, always opposite the right angle. The other two sides are called the "legs" or "shorter sides".</p>
+  <p>Your child uses this to find a missing side when they know the other two. It only works in right-angled triangles (for other triangles, they'll use trigonometry or the cosine rule later).</p>
+</div>
+
+<!-- 2. How Schools Teach It Now -->
+<div class="section">
+  <h2>2. How Schools Teach It Now</h2>
+  <p>The method follows three clear steps:</p>
+  <ul>
+    <li><strong>Step 1:</strong> Identify the hypotenuse (longest side, opposite the right angle).</li>
+    <li><strong>Step 2:</strong> Substitute the known sides into \(a^2 + b^2 = c^2\).</li>
+    <li><strong>Step 3:</strong> Solve for the unknown side.</li>
+  </ul>
+  <div class="example-box">
+    <div class="label">Finding the hypotenuse</div>
+    <p>If the two shorter sides are 6 and 8:</p>
+    $$c^2 = 6^2 + 8^2 = 36 + 64 = 100$$
+    $$c = \sqrt{100} = 10$$
+    <p><strong>Add</strong> the squares, then square root.</p>
+  </div>
+  <div class="example-box">
+    <div class="label">Finding a shorter side</div>
+    <p>If the hypotenuse is 13 and one leg is 5:</p>
+    $$a^2 = 13^2 - 5^2 = 169 - 25 = 144$$
+    $$a = \sqrt{144} = 12$$
+    <p><strong>Subtract</strong> the squares, then square root.</p>
+  </div>
+</div>
+
+<!-- 3. Common Mistakes to Watch For -->
+<div class="section">
+  <h2>3. Common Mistakes to Watch For</h2>
+  <ul>
+    <li><span class="mistake">Forgetting to square root at the end:</span> students calculate \(c^2 = 169\) and write \(c = 169\) as their answer. The answer is \(c = \sqrt{169} = 13\). Always check: does the answer look like a reasonable length?</li>
+    <li><span class="mistake">Using the formula on a non-right-angled triangle:</span> Pythagoras only works when there's a right angle. If the triangle doesn't have one, the formula gives a wrong answer &mdash; no error message, just a wrong number.</li>
+    <li><span class="mistake">Adding when they should subtract:</span> finding the hypotenuse = add the squares. Finding a shorter side = subtract. Mixing these up is very common. The hypotenuse is always the biggest number, so if the answer comes out bigger than the hypotenuse, something has gone wrong.</li>
+  </ul>
+</div>
+
+<!-- 4. Try It Together -->
+<div class="section">
+  <h2>4. Try It Together</h2>
+  <div class="example-box">
+    <div class="label">Worked Example</div>
+    <p><strong>Question:</strong> A right-angled triangle has legs of 5cm and 12cm. Find the hypotenuse.</p>
+    <p><strong>Step 1:</strong> We're finding the hypotenuse, so we <em>add</em> the squares.</p>
+    $$c^2 = 5^2 + 12^2 = 25 + 144 = 169$$
+    <p><strong>Step 2:</strong> Square root both sides.</p>
+    $$c = \sqrt{169} = 13\text{cm}$$
+    <p><strong>Check:</strong> 13 is bigger than both 5 and 12. That makes sense for a hypotenuse.</p>
+  </div>
+  <p>A good follow-up: "Now find the missing short side if the hypotenuse is 10 and one leg is 6." (Answer: \(\sqrt{100 - 36} = \sqrt{64} = 8\))</p>
+</div>
+
+<!-- 5. Let Them Practise -->
+<div class="section">
+  <h2>5. Let Them Practise</h2>
+  <p>Free game on MaffsGames &mdash; no sign-up, no data collected, safe for children:</p>
+  <a href="https://maffsgames.co.uk/games/coordinate-geometry-dash/" target="_blank" rel="noopener" class="practice-link">Coordinate Geometry Dash &rarr;</a>
+</div>
+
+<footer class="footer">
+  <p>&copy; 2026 MathsWins &middot; <a href="/terms/">Terms of Use</a> &middot; <a href="mailto:contact@mathswins.co.uk">Contact</a></p>
+  <p>Free parent guides from a working maths tutor. No sign-up required.</p>
+</footer>
+</div>
+
+<!-- Cookie Consent Banner -->
+<div id="cookieConsent" style="display:none;position:fixed;bottom:0;left:0;right:0;background:#0c1628;border-top:1px solid #14263d;padding:14px 24px;z-index:99999;font-family:'Outfit',system-ui,sans-serif;font-size:13px;color:#94a3b8;align-items:center;justify-content:center;gap:16px;flex-wrap:wrap">
+<span>We use cookies for analytics to improve your experience. No personal data is sold or shared.</span>
+<button onclick="acceptCookies()" style="background:#d4a847;color:#050709;border:none;padding:8px 20px;border-radius:4px;font-weight:700;font-size:13px;cursor:pointer;font-family:inherit">Accept</button>
+<button onclick="declineCookies()" style="background:transparent;color:#64748b;border:1px solid #14263d;padding:8px 20px;border-radius:4px;font-size:13px;cursor:pointer;font-family:inherit">Decline</button>
+</div>
+<script>
+function acceptCookies(){localStorage.setItem('mw_cookies','accepted');gtag('consent','update',{analytics_storage:'granted'});document.getElementById('cookieConsent').style.display='none';}
+function declineCookies(){localStorage.setItem('mw_cookies','declined');document.getElementById('cookieConsent').style.display='none';}
+(function(){var c=localStorage.getItem('mw_cookies');if(c==='accepted'){gtag('consent','update',{analytics_storage:'granted'});}else if(!c){document.getElementById('cookieConsent').style.display='flex';}})();
+</script>
+</body>
+</html>

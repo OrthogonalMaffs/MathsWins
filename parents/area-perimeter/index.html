@@ -1,0 +1,158 @@
+<!DOCTYPE html>
+<html lang="en-GB">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Area &amp; Perimeter — A Parent's Guide | MathsWins</title>
+<meta name="description" content="A friendly parent's guide to area and perimeter at KS3. Learn how schools teach it now, common mistakes to watch for, and a worked example to try together.">
+<meta property="og:title" content="Area &amp; Perimeter — A Parent's Guide | MathsWins">
+<meta property="og:description" content="A friendly parent's guide to area and perimeter at KS3. Learn how schools teach it now and try a worked example together.">
+<meta property="og:url" content="https://mathswins.co.uk/parents/area-perimeter/">
+<meta property="og:image" content="https://mathswins.co.uk/assets/og-image.png">
+<meta property="og:type" content="article">
+<meta property="og:site_name" content="MathsWins">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:title" content="Area &amp; Perimeter — A Parent's Guide | MathsWins">
+<meta name="twitter:description" content="A friendly parent's guide to area and perimeter at KS3. Learn how schools teach it now and try a worked example together.">
+<meta name="twitter:image" content="https://mathswins.co.uk/assets/og-image.png">
+<link rel="canonical" href="https://mathswins.co.uk/parents/area-perimeter/">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Crimson+Pro:ital,wght@0,400;1,400&family=DM+Mono:wght@400;500&family=Outfit:wght@300;400;600;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/katex.min.css">
+<script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/katex.min.js"></script>
+<script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/contrib/auto-render.min.js" onload="renderMathInElement(document.body,{delimiters:[{left:'$$',right:'$$',display:true},{left:'\\(',right:'\\)',display:false}]});"></script>
+<style>
+:root{--bg:#050709;--surface:#0a0d14;--surface2:#0f1319;--border:#161c28;--border2:#1e2638;--sky:#0ea5e9;--sky-dim:rgba(14,165,233,0.10);--green:#2dd4a0;--green-dim:rgba(45,212,160,0.10);--red:#ef5350;--gold:#d4a847;--gold-dim:rgba(212,168,71,0.10);--cyan:#22d3ee;--teal:#0d9488;--teal-dim:rgba(13,148,136,0.10);--text:#c8cdd8;--text-bright:#e8ecf4;--muted:#4a5568;}
+*{margin:0;padding:0;box-sizing:border-box;}
+body{font-family:'Outfit',sans-serif;background:var(--bg);color:var(--text);min-height:100vh;line-height:1.7;}
+.container{max-width:760px;margin:0 auto;padding:2rem 1.25rem 4rem;}
+.nav-bar{display:flex;align-items:center;justify-content:space-between;padding:1rem 0;border-bottom:1px solid var(--border);margin-bottom:2rem;}
+.nav-brand{font-family:'Bebas Neue',sans-serif;font-size:1.4rem;color:var(--gold);text-decoration:none;letter-spacing:0.06em;}
+.nav-brand span{color:var(--text-bright);}
+.nav-link{font-size:0.85rem;font-weight:600;color:var(--sky);text-decoration:none;padding:0.4rem 1rem;border:1px solid var(--sky);border-radius:4px;transition:background 0.2s,color 0.2s;}
+.nav-link:hover{background:var(--sky);color:var(--bg);}
+.hero{text-align:center;margin-bottom:2.5rem;}
+.hero-eyebrow{font-size:0.75rem;font-weight:600;text-transform:uppercase;letter-spacing:0.15em;color:var(--sky);margin-bottom:0.5rem;}
+.hero h1{font-family:'Bebas Neue',sans-serif;font-size:clamp(1.8rem,5vw,2.6rem);color:var(--text-bright);letter-spacing:0.04em;line-height:1.1;margin-bottom:0.75rem;}
+.hero-sub{font-family:'Crimson Pro',serif;font-style:italic;font-size:1.05rem;color:var(--cyan);max-width:620px;margin:0 auto;}
+.section{background:var(--surface);border:1px solid var(--border);border-radius:10px;padding:1.5rem;margin-bottom:1.5rem;}
+.section h2{font-family:'Bebas Neue',sans-serif;font-size:1.2rem;color:var(--text-bright);letter-spacing:0.05em;margin-bottom:1rem;}
+.section h3{font-family:'Outfit',sans-serif;font-weight:600;font-size:0.95rem;color:var(--sky);margin:1.25rem 0 0.5rem;}
+.section p{font-size:0.92rem;line-height:1.7;margin-bottom:0.75rem;}
+.section ul{margin:0.5rem 0 1rem 1.25rem;font-size:0.92rem;}
+.section ul li{margin-bottom:0.5rem;line-height:1.6;}
+.section ul li strong{color:var(--text-bright);}
+.formula-box{font-family:'DM Mono',monospace;font-size:0.9rem;color:var(--cyan);background:var(--surface2);padding:0.85rem 1rem;border-radius:6px;margin:0.75rem 0;border-left:3px solid var(--cyan);line-height:1.8;overflow-x:auto;}
+.worked{background:var(--surface2);border:1px solid var(--border2);border-radius:8px;padding:1.25rem;margin:1rem 0;}
+.worked h3{font-family:'Bebas Neue',sans-serif;font-size:1rem;color:var(--gold);letter-spacing:0.04em;margin:0 0 0.75rem;}
+.worked p{font-size:0.9rem;line-height:1.7;margin-bottom:0.5rem;}
+.worked .step{font-family:'DM Mono',monospace;font-size:0.88rem;color:var(--green);margin:0.4rem 0;}
+.tip{font-family:'Crimson Pro',serif;font-style:italic;color:var(--cyan);background:rgba(34,211,238,0.08);border-left:3px solid var(--cyan);padding:0.85rem 1rem;border-radius:0 6px 6px 0;margin:1rem 0;font-size:0.92rem;line-height:1.6;}
+.cta-card{background:var(--surface);border:1px solid var(--border);border-left:3px solid var(--green);border-radius:0 10px 10px 0;padding:1.5rem;margin-top:2rem;text-align:center;}
+.cta-card h3{font-family:'Bebas Neue',sans-serif;font-size:1.3rem;color:var(--green);letter-spacing:0.04em;margin-bottom:0.5rem;}
+.cta-card p{font-family:'Crimson Pro',serif;font-style:italic;font-size:0.95rem;color:var(--text);line-height:1.5;margin-bottom:1rem;}
+.cta-btn{display:inline-block;font-family:'Outfit',sans-serif;font-weight:700;font-size:1rem;padding:0.85rem 2rem;background:var(--green);color:var(--bg);border:none;border-radius:6px;text-decoration:none;transition:background 0.2s;}
+.cta-btn:hover{background:#5eead4;}
+.footer{margin-top:2.5rem;padding-top:1.25rem;border-top:1px solid var(--border);text-align:center;}
+.footer p{font-size:0.72rem;color:var(--muted);line-height:1.8;}
+.footer a{color:var(--muted);text-decoration:underline;}
+@media(max-width:600px){.container{padding:1.25rem 1rem 3rem;}.section{padding:1.25rem 1rem;}}
+</style>
+<!-- GA4 Cookieless -->
+<script async src="https://www.googletagmanager.com/gtag/js?id=G-7GTLYCZMXN"></script>
+<script>window.dataLayer=window.dataLayer||[];function gtag(){dataLayer.push(arguments);}gtag('js',new Date());gtag('consent','default',{analytics_storage:'denied',ad_storage:'denied',ad_user_data:'denied',ad_personalization:'denied'});gtag('config','G-7GTLYCZMXN',{send_page_view:true,anonymize_ip:true});</script>
+</head>
+<body>
+<script src="/auth/mw-auth.js"></script>
+<div class="container">
+<nav class="nav-bar">
+  <a href="/" class="nav-brand">MATHS<span>WINS</span></a>
+  <a href="/parents/" class="nav-link">All Parent Guides &rarr;</a>
+</nav>
+
+<div class="hero">
+  <div class="hero-eyebrow">KS3 Parent Guide</div>
+  <h1>AREA &amp; PERIMETER</h1>
+  <div class="hero-sub">Everything you need to help your child &mdash; even if you haven't thought about this since school yourself.</div>
+</div>
+
+<div class="section">
+  <h2>WHAT YOUR CHILD IS LEARNING</h2>
+  <p>Your child is working with two different ways to measure a flat shape. They sound similar, and they both involve shapes, but they measure completely different things.</p>
+  <p><strong>Area</strong> is the amount of space inside a shape. Imagine painting a wall &mdash; the area tells you how much paint you need. It's measured in square units, like cm&sup2; (square centimetres). The little &sup2; is important: it means "squared," because you're measuring a flat surface, not a straight line.</p>
+  <p><strong>Perimeter</strong> is the total distance around the outside edge of a shape. Imagine walking around the edge of a football pitch &mdash; the perimeter tells you how far you'd walk. It's measured in ordinary units like cm or metres, because it's just a length.</p>
+  <p>These two measurements describe different properties of the same shape. A shape can have a large area but a small perimeter, or vice versa. That's the key idea your child needs to hold onto: area and perimeter are related to the same shape, but they measure different things.</p>
+</div>
+
+<div class="section">
+  <h2>HOW SCHOOLS TEACH IT NOW</h2>
+  <p>The approach in schools today is very hands-on at first, then builds towards formulae. Here's how it typically works.</p>
+
+  <h3>Step 1: Counting Squares</h3>
+  <p>Students start by drawing shapes on squared paper and literally counting the squares inside. This builds a solid understanding of what area actually means before any formula appears. For perimeter, they count the units along each edge and add them up.</p>
+
+  <h3>Step 2: Rectangle Formulae</h3>
+  <p>Once counting squares feels natural, students learn the shortcut formulae for rectangles:</p>
+  <div class="formula-box">
+    $$\text{Area of a rectangle} = \text{length} \times \text{width}$$
+    $$\text{Perimeter of a rectangle} = 2 \times (\text{length} + \text{width})$$
+  </div>
+  <p>The perimeter formula is just a quicker way of saying "add up all four sides." Since a rectangle has two pairs of equal sides, you add the length and width, then double it.</p>
+
+  <h3>Step 3: Triangle Formula</h3>
+  <p>Triangles come next. The key insight schools teach is that a triangle is exactly half of a rectangle (if you imagine doubling the triangle to make a rectangle). So:</p>
+  <div class="formula-box">
+    $$\text{Area of a triangle} = \frac{1}{2} \times \text{base} \times \text{height}$$
+  </div>
+  <p>The <strong>height</strong> here must be the perpendicular height &mdash; the straight-up distance from the base to the top, not the slanted side. Schools spend real time on this distinction, because it trips up a lot of students.</p>
+
+  <h3>Step 4: Compound Shapes</h3>
+  <p>Eventually, students tackle L-shapes and other irregular shapes by splitting them into rectangles, working out each area separately, and adding them together. This is a genuinely useful skill &mdash; it's how you'd calculate paint needed for a room with alcoves.</p>
+</div>
+
+<div class="section">
+  <h2>COMMON MISTAKES TO WATCH FOR</h2>
+  <ul>
+    <li><strong>Mixing up area and perimeter.</strong> This is the big one. A child might multiply the sides when they should be adding them (or the other way round). If they're finding perimeter, they're adding. If they're finding area, they're multiplying. It helps to ask: "Are we measuring the space inside, or the distance around the edge?"</li>
+    <li><strong>Forgetting the &frac12; for triangles.</strong> Students often calculate base &times; height and forget to halve the answer. Remind them: a triangle is half a rectangle, so you always halve it.</li>
+    <li><strong>Mixing up units: cm vs cm&sup2;.</strong> Perimeter is a length, so the answer is in cm (or m, or km). Area is a surface, so the answer is in cm&sup2; (or m&sup2;). If your child writes cm when they mean cm&sup2;, it's worth gently correcting &mdash; marks are lost for this in exams.</li>
+    <li><strong>Using the slanted side instead of the perpendicular height.</strong> In triangles, the height must go straight up from the base at a right angle. If the triangle is tilted, the height isn't one of the visible sides &mdash; it's a line drawn inside (or outside) the triangle.</li>
+  </ul>
+</div>
+
+<div class="section">
+  <h2>TRY IT TOGETHER</h2>
+  <div class="worked">
+    <h3>Worked Example</h3>
+    <p>A rectangle is 8 cm long and 5 cm wide. Find the area and the perimeter.</p>
+    <p><strong>Area:</strong></p>
+    <div class="step">\(\text{Area} = \text{length} \times \text{width} = 8 \times 5 = 40 \text{ cm}^2\)</div>
+    <p>That's 40 square centimetres of space inside the rectangle.</p>
+    <p><strong>Perimeter:</strong></p>
+    <div class="step">\(\text{Perimeter} = 2 \times (8 + 5) = 2 \times 13 = 26 \text{ cm}\)</div>
+    <p>That's 26 cm all the way around the edge.</p>
+  </div>
+  <div class="tip">Notice how the area and perimeter give different numbers with different units. That's the whole point &mdash; they measure different things. Try asking your child: "If we made the rectangle 10 cm by 4 cm instead, would the area change? Would the perimeter change?" (Spoiler: the area stays at 40 cm&sup2;, but the perimeter changes to 28 cm. Same area, different perimeter.)</div>
+
+  <p>Once you've worked through that, try a triangle together: a triangle with a base of 6 cm and a perpendicular height of 4 cm.</p>
+  <div class="worked">
+    <h3>Bonus: Triangle</h3>
+    <div class="step">\(\text{Area} = \frac{1}{2} \times 6 \times 4 = \frac{1}{2} \times 24 = 12 \text{ cm}^2\)</div>
+    <p>Half of base times height. Always half.</p>
+  </div>
+</div>
+
+<div class="cta-card">
+  <h3>LET THEM PRACTISE</h3>
+  <p>Your child can build confidence with area and perimeter through our interactive shapes game. It's free, it's fun, and there's no sign-up needed.</p>
+  <a href="https://maffsgames.co.uk/games/new-shapes/" target="_blank" rel="noopener" class="cta-btn">Play New Shapes on MaffsGames</a>
+</div>
+
+<footer class="footer">
+  <p><a href="/">MathsWins</a> &middot; <a href="/parents/">Parent Guides</a> &middot; <a href="/terms/">Terms</a></p>
+  <p>&copy; 2026 MathsWins. All rights reserved.</p>
+</footer>
+</div>
+</body>
+</html>

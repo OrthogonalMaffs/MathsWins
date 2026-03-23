@@ -1,0 +1,202 @@
+<!DOCTYPE html>
+<html lang="en-GB">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Simultaneous Equations — A Parent's Guide | MathsWins</title>
+<meta name="description" content="A friendly guide for parents on simultaneous equations at GCSE. No maths background needed — clear explanations of elimination and substitution methods.">
+<meta property="og:title" content="Simultaneous Equations — A Parent's Guide | MathsWins">
+<meta property="og:description" content="A friendly guide for parents on simultaneous equations at GCSE. Clear explanations, common mistakes, and practice links.">
+<meta property="og:url" content="https://mathswins.co.uk/parents/simultaneous-equations/">
+<meta property="og:image" content="https://mathswins.co.uk/assets/og-image.png">
+<meta property="og:type" content="article">
+<meta property="og:site_name" content="MathsWins">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:title" content="Simultaneous Equations — A Parent's Guide | MathsWins">
+<meta name="twitter:description" content="A friendly guide for parents on simultaneous equations at GCSE.">
+<meta name="twitter:image" content="https://mathswins.co.uk/assets/og-image.png">
+<link rel="canonical" href="https://mathswins.co.uk/parents/simultaneous-equations/">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Crimson+Pro:ital,wght@0,400;1,400&family=DM+Mono:wght@400;500&family=Outfit:wght@300;400;600;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/katex.min.css">
+<script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/katex.min.js"></script>
+<script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/contrib/auto-render.min.js" onload="renderMathInElement(document.body,{delimiters:[{left:'$$',right:'$$',display:true},{left:'\\(',right:'\\)',display:false}]});"></script>
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "Article",
+  "headline": "Simultaneous Equations — A Parent's Guide",
+  "description": "A friendly guide for parents on simultaneous equations at GCSE level.",
+  "url": "https://mathswins.co.uk/parents/simultaneous-equations/",
+  "publisher": {
+    "@type": "Organization",
+    "name": "MathsWins",
+    "url": "https://mathswins.co.uk"
+  }
+}
+</script>
+<!-- GA4 cookieless -->
+<script async src="https://www.googletagmanager.com/gtag/js?id=G-7GTLYCZMXN"></script>
+<script>
+window.dataLayer=window.dataLayer||[];function gtag(){dataLayer.push(arguments);}
+gtag('consent','default',{analytics_storage:'denied',ad_storage:'denied',ad_user_data:'denied',ad_personalization:'denied'});
+gtag('js',new Date());gtag('config','G-7GTLYCZMXN',{send_page_view:true});
+</script>
+<style>
+:root{--bg:#050709;--surface:#0a0d14;--surface2:#0f1319;--border:#161c28;--border2:#1e2638;--sky:#0ea5e9;--sky-dim:rgba(14,165,233,0.10);--green:#2dd4a0;--green-dim:rgba(45,212,160,0.10);--red:#ef5350;--gold:#d4a847;--gold-dim:rgba(212,168,71,0.10);--cyan:#22d3ee;--teal:#0d9488;--teal-dim:rgba(13,148,136,0.10);--text:#c8cdd8;--text-bright:#e8ecf4;--muted:#4a5568;--accent:#2563eb;}
+*{margin:0;padding:0;box-sizing:border-box;}
+body{font-family:'Outfit',sans-serif;background:var(--bg);color:var(--text);min-height:100vh;line-height:1.7;}
+.container{max-width:740px;margin:0 auto;padding:2rem 1.25rem 4rem;}
+.nav-bar{display:flex;align-items:center;justify-content:space-between;padding:1rem 0;border-bottom:1px solid var(--border);margin-bottom:2rem;}
+.nav-brand{font-family:'Bebas Neue',sans-serif;font-size:1.4rem;color:var(--gold);text-decoration:none;letter-spacing:0.06em;}
+.nav-brand span{color:var(--text-bright);}
+.nav-link{font-size:0.85rem;font-weight:600;color:var(--sky);text-decoration:none;padding:0.4rem 1rem;border:1px solid var(--sky);border-radius:4px;transition:background 0.2s,color 0.2s;}
+.nav-link:hover{background:var(--sky);color:var(--bg);}
+.hero{text-align:center;margin-bottom:2.5rem;}
+.hero-eyebrow{font-size:0.75rem;font-weight:600;text-transform:uppercase;letter-spacing:0.15em;color:var(--sky);margin-bottom:0.5rem;}
+.hero h1{font-family:'Bebas Neue',sans-serif;font-size:clamp(1.8rem,5vw,2.8rem);color:var(--text-bright);letter-spacing:0.04em;line-height:1.1;margin-bottom:0.75rem;}
+.hero-sub{font-family:'Crimson Pro',serif;font-style:italic;font-size:1.05rem;color:var(--cyan);max-width:620px;margin:0 auto;}
+
+.section{background:var(--surface);border:1px solid var(--border);border-radius:10px;padding:1.75rem;margin-bottom:1.5rem;}
+.section-number{font-family:'DM Mono',monospace;font-size:0.7rem;font-weight:500;color:var(--accent);text-transform:uppercase;letter-spacing:0.12em;margin-bottom:0.35rem;}
+.section h2{font-family:'Bebas Neue',sans-serif;font-size:1.3rem;color:var(--text-bright);letter-spacing:0.05em;margin-bottom:1rem;}
+.section p{margin-bottom:1rem;font-size:0.95rem;}
+.section p:last-child{margin-bottom:0;}
+.section ul,.section ol{margin:0.75rem 0 1rem 1.5rem;font-size:0.95rem;}
+.section li{margin-bottom:0.5rem;}
+
+.math-block{background:var(--surface2);border:1px solid var(--border2);border-radius:8px;padding:1.25rem;margin:1rem 0;text-align:center;font-size:1.1rem;overflow-x:auto;}
+.tip{background:rgba(37,99,235,0.08);border:1px solid rgba(37,99,235,0.25);border-radius:8px;padding:1rem 1.25rem;margin:1rem 0;font-size:0.9rem;}
+.tip-label{font-family:'DM Mono',monospace;font-size:0.7rem;font-weight:500;color:var(--accent);text-transform:uppercase;letter-spacing:0.1em;margin-bottom:0.25rem;}
+.warning{background:rgba(239,83,80,0.08);border:1px solid rgba(239,83,80,0.25);border-radius:8px;padding:1rem 1.25rem;margin:1rem 0;font-size:0.9rem;}
+.warning-label{font-family:'DM Mono',monospace;font-size:0.7rem;font-weight:500;color:var(--red);text-transform:uppercase;letter-spacing:0.1em;margin-bottom:0.25rem;}
+
+.cta-box{background:var(--surface);border:1px solid var(--sky);border-radius:10px;padding:1.75rem;text-align:center;margin-top:2rem;}
+.cta-box h3{font-family:'Bebas Neue',sans-serif;font-size:1.2rem;color:var(--text-bright);letter-spacing:0.05em;margin-bottom:0.75rem;}
+.cta-box p{font-size:0.95rem;margin-bottom:1.25rem;}
+.cta-btn{display:inline-block;font-family:'Outfit',sans-serif;font-weight:700;font-size:1rem;padding:0.75rem 2rem;background:var(--sky);color:#fff;border:none;border-radius:6px;text-decoration:none;transition:background 0.2s;}
+.cta-btn:hover{background:#38bdf8;}
+
+.footer{text-align:center;padding:2rem 0 1rem;border-top:1px solid var(--border);margin-top:2rem;font-size:0.78rem;color:var(--muted);}
+.footer a{color:var(--sky);text-decoration:none;}
+.footer a:hover{text-decoration:underline;}
+</style>
+</head>
+<body>
+<div class="container">
+
+<nav class="nav-bar">
+  <a href="/" class="nav-brand">MATHS<span>WINS</span></a>
+  <a href="/parents/" class="nav-link">All Parent Guides</a>
+</nav>
+
+<div class="hero">
+  <div class="hero-eyebrow">GCSE Parent Guide</div>
+  <h1>Simultaneous Equations</h1>
+  <p class="hero-sub">Two equations, two unknowns &mdash; this might look intimidating, but the method is actually very logical once you see it in action.</p>
+</div>
+
+<!-- Section 1 -->
+<div class="section">
+  <div class="section-number">Section 1</div>
+  <h2>What Your Child Is Learning</h2>
+  <p>A simultaneous equation problem gives your child two equations with two unknown values (usually \(x\) and \(y\)). The goal is to find the values that make <strong>both</strong> equations true at the same time.</p>
+  <p>Here is a simple example:</p>
+  <div class="math-block">
+    $$3x + y = 10$$
+    $$x + y = 4$$
+  </div>
+  <p>There is exactly one pair of values (\(x = 3\), \(y = 1\)) that works in both equations simultaneously. That is what your child is learning to find.</p>
+  <p>This comes up everywhere in real life &mdash; any time you have two conditions that must both be satisfied. It is a genuinely useful skill.</p>
+</div>
+
+<!-- Section 2 -->
+<div class="section">
+  <div class="section-number">Section 2</div>
+  <h2>How Schools Teach It Now</h2>
+  <p>Schools teach two main methods. Your child will usually learn both and choose the one that suits the question:</p>
+  <p><strong>Elimination</strong> (the most common method at GCSE):</p>
+  <ol>
+    <li>Line up the two equations.</li>
+    <li>Make the coefficients (the numbers in front) of one variable the same in both equations.</li>
+    <li>Add or subtract the equations to eliminate that variable.</li>
+    <li>Solve for the remaining variable, then substitute back to find the other.</li>
+  </ol>
+  <p><strong>Substitution</strong> (useful when one equation is already simple):</p>
+  <ol>
+    <li>Rearrange one equation to express one variable in terms of the other (e.g. \(y = 10 - 3x\)).</li>
+    <li>Plug that expression into the second equation.</li>
+    <li>Solve, then substitute back.</li>
+  </ol>
+  <div class="tip">
+    <div class="tip-label">Parent tip</div>
+    If your child finds elimination confusing, ask them to think of it as a "balancing act" &mdash; both sides of each equation are balanced, so you can add or subtract whole equations from each other without breaking the balance.
+  </div>
+</div>
+
+<!-- Section 3 -->
+<div class="section">
+  <div class="section-number">Section 3</div>
+  <h2>Common Mistakes to Watch For</h2>
+  <div class="warning">
+    <div class="warning-label">Classic mistake</div>
+    <strong>Subtracting when they should add (or vice versa).</strong> The rule is: if the matching coefficients have the <em>same sign</em>, subtract the equations. If they have <em>different signs</em>, add them. Students often get this the wrong way round, and the variable does not cancel out.
+  </div>
+  <div class="warning">
+    <div class="warning-label">Watch out</div>
+    <strong>Sign errors when eliminating.</strong> Subtracting a negative number is where most mistakes happen. If the second equation has \(-2y\) and they are subtracting, that \(-2y\) becomes \(+2y\). This catches a lot of students out.
+  </div>
+  <div class="warning">
+    <div class="warning-label">Easy marks lost</div>
+    <strong>Not checking the answer in both equations.</strong> Many students find \(x\) and \(y\), write them down, and move on. But the question almost always carries a mark for checking &mdash; substitute the values back into <strong>both</strong> original equations and confirm they work.
+  </div>
+</div>
+
+<!-- Section 4 -->
+<div class="section">
+  <div class="section-number">Section 4</div>
+  <h2>Try It Together</h2>
+  <p>Here is one to work through together:</p>
+  <div class="math-block">
+    $$3x + y = 10 \quad \text{...(1)}$$
+    $$x + y = 4 \quad \text{...(2)}$$
+  </div>
+  <p>Step by step using elimination:</p>
+  <ol>
+    <li>Both equations have \(1y\) &mdash; the coefficients already match.</li>
+    <li>Same sign on \(y\), so <strong>subtract</strong> equation (2) from equation (1):
+      <div class="math-block">$$(3x + y) - (x + y) = 10 - 4$$$$2x = 6$$$$x = 3$$</div>
+    </li>
+    <li>Substitute \(x = 3\) back into equation (2): \(3 + y = 4\), so \(y = 1\).</li>
+    <li><strong>Check in equation (1):</strong> \(3(3) + 1 = 9 + 1 = 10\). Correct.</li>
+  </ol>
+  <div class="tip">
+    <div class="tip-label">Conversation starter</div>
+    Ask your child: "If I told you that two numbers add up to 10 and the difference between them is 4, what are they?" (7 and 3.) That is a simultaneous equation in disguise &mdash; they probably solved it without even realising.
+  </div>
+</div>
+
+<!-- Section 5 -->
+<div class="section">
+  <div class="section-number">Section 5</div>
+  <h2>Let Them Practise</h2>
+  <p>Like most algebra topics, simultaneous equations become easier with practice. Once the method clicks, students can solve these quickly and reliably.</p>
+  <p>We have a free interactive tool where your child can practise solving simultaneous equations step by step:</p>
+</div>
+
+<div class="cta-box">
+  <h3>Simultaneous Solver</h3>
+  <p>Free interactive practice &mdash; work through each step with instant feedback.</p>
+  <a href="https://maffsgames.co.uk/games/simultaneous-solver/" class="cta-btn">Practise Now on MaffsGames</a>
+</div>
+
+<div class="footer">
+  <p>&copy; 2026 <a href="/">MathsWins</a>. Free parent guides &mdash; no account needed.</p>
+  <p style="margin-top:0.5rem;">Schools? Visit <a href="https://maffsgames.co.uk/schools">maffsgames.co.uk/schools</a> for free classroom games.</p>
+</div>
+
+</div>
+<script src="/auth/mw-auth.js" defer></script>
+</body>
+</html>

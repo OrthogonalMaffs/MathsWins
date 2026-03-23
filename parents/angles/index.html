@@ -1,0 +1,163 @@
+<!DOCTYPE html>
+<html lang="en-GB">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Angles — A Parent's Guide | MathsWins</title>
+<meta name="description" content="A friendly parent's guide to angles at KS3. Learn about angles on a line, around a point, vertically opposite angles, and how to help your child avoid common mistakes.">
+<meta property="og:title" content="Angles — A Parent's Guide | MathsWins">
+<meta property="og:description" content="A friendly parent's guide to angles at KS3. Angles on a line, around a point, and in triangles — explained for parents.">
+<meta property="og:url" content="https://mathswins.co.uk/parents/angles/">
+<meta property="og:image" content="https://mathswins.co.uk/assets/og-image.png">
+<meta property="og:type" content="article">
+<meta property="og:site_name" content="MathsWins">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:title" content="Angles — A Parent's Guide | MathsWins">
+<meta name="twitter:description" content="A friendly parent's guide to angles at KS3. Angles on a line, around a point, and in triangles — explained for parents.">
+<meta name="twitter:image" content="https://mathswins.co.uk/assets/og-image.png">
+<link rel="canonical" href="https://mathswins.co.uk/parents/angles/">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Crimson+Pro:ital,wght@0,400;1,400&family=DM+Mono:wght@400;500&family=Outfit:wght@300;400;600;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/katex.min.css">
+<script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/katex.min.js"></script>
+<script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/contrib/auto-render.min.js" onload="renderMathInElement(document.body,{delimiters:[{left:'$$',right:'$$',display:true},{left:'\\(',right:'\\)',display:false}]});"></script>
+<style>
+:root{--bg:#050709;--surface:#0a0d14;--surface2:#0f1319;--border:#161c28;--border2:#1e2638;--sky:#0ea5e9;--sky-dim:rgba(14,165,233,0.10);--green:#2dd4a0;--green-dim:rgba(45,212,160,0.10);--red:#ef5350;--gold:#d4a847;--gold-dim:rgba(212,168,71,0.10);--cyan:#22d3ee;--teal:#0d9488;--teal-dim:rgba(13,148,136,0.10);--text:#c8cdd8;--text-bright:#e8ecf4;--muted:#4a5568;}
+*{margin:0;padding:0;box-sizing:border-box;}
+body{font-family:'Outfit',sans-serif;background:var(--bg);color:var(--text);min-height:100vh;line-height:1.7;}
+.container{max-width:760px;margin:0 auto;padding:2rem 1.25rem 4rem;}
+.nav-bar{display:flex;align-items:center;justify-content:space-between;padding:1rem 0;border-bottom:1px solid var(--border);margin-bottom:2rem;}
+.nav-brand{font-family:'Bebas Neue',sans-serif;font-size:1.4rem;color:var(--gold);text-decoration:none;letter-spacing:0.06em;}
+.nav-brand span{color:var(--text-bright);}
+.nav-link{font-size:0.85rem;font-weight:600;color:var(--sky);text-decoration:none;padding:0.4rem 1rem;border:1px solid var(--sky);border-radius:4px;transition:background 0.2s,color 0.2s;}
+.nav-link:hover{background:var(--sky);color:var(--bg);}
+.hero{text-align:center;margin-bottom:2.5rem;}
+.hero-eyebrow{font-size:0.75rem;font-weight:600;text-transform:uppercase;letter-spacing:0.15em;color:var(--sky);margin-bottom:0.5rem;}
+.hero h1{font-family:'Bebas Neue',sans-serif;font-size:clamp(1.8rem,5vw,2.6rem);color:var(--text-bright);letter-spacing:0.04em;line-height:1.1;margin-bottom:0.75rem;}
+.hero-sub{font-family:'Crimson Pro',serif;font-style:italic;font-size:1.05rem;color:var(--cyan);max-width:620px;margin:0 auto;}
+.section{background:var(--surface);border:1px solid var(--border);border-radius:10px;padding:1.5rem;margin-bottom:1.5rem;}
+.section h2{font-family:'Bebas Neue',sans-serif;font-size:1.2rem;color:var(--text-bright);letter-spacing:0.05em;margin-bottom:1rem;}
+.section h3{font-family:'Outfit',sans-serif;font-weight:600;font-size:0.95rem;color:var(--sky);margin:1.25rem 0 0.5rem;}
+.section p{font-size:0.92rem;line-height:1.7;margin-bottom:0.75rem;}
+.section ul{margin:0.5rem 0 1rem 1.25rem;font-size:0.92rem;}
+.section ul li{margin-bottom:0.5rem;line-height:1.6;}
+.section ul li strong{color:var(--text-bright);}
+.formula-box{font-family:'DM Mono',monospace;font-size:0.9rem;color:var(--cyan);background:var(--surface2);padding:0.85rem 1rem;border-radius:6px;margin:0.75rem 0;border-left:3px solid var(--cyan);line-height:1.8;overflow-x:auto;}
+.worked{background:var(--surface2);border:1px solid var(--border2);border-radius:8px;padding:1.25rem;margin:1rem 0;}
+.worked h3{font-family:'Bebas Neue',sans-serif;font-size:1rem;color:var(--gold);letter-spacing:0.04em;margin:0 0 0.75rem;}
+.worked p{font-size:0.9rem;line-height:1.7;margin-bottom:0.5rem;}
+.worked .step{font-family:'DM Mono',monospace;font-size:0.88rem;color:var(--green);margin:0.4rem 0;}
+.tip{font-family:'Crimson Pro',serif;font-style:italic;color:var(--cyan);background:rgba(34,211,238,0.08);border-left:3px solid var(--cyan);padding:0.85rem 1rem;border-radius:0 6px 6px 0;margin:1rem 0;font-size:0.92rem;line-height:1.6;}
+.cta-card{background:var(--surface);border:1px solid var(--border);border-left:3px solid var(--green);border-radius:0 10px 10px 0;padding:1.5rem;margin-top:2rem;text-align:center;}
+.cta-card h3{font-family:'Bebas Neue',sans-serif;font-size:1.3rem;color:var(--green);letter-spacing:0.04em;margin-bottom:0.5rem;}
+.cta-card p{font-family:'Crimson Pro',serif;font-style:italic;font-size:0.95rem;color:var(--text);line-height:1.5;margin-bottom:1rem;}
+.cta-btn{display:inline-block;font-family:'Outfit',sans-serif;font-weight:700;font-size:1rem;padding:0.85rem 2rem;background:var(--green);color:var(--bg);border:none;border-radius:6px;text-decoration:none;transition:background 0.2s;}
+.cta-btn:hover{background:#5eead4;}
+.footer{margin-top:2.5rem;padding-top:1.25rem;border-top:1px solid var(--border);text-align:center;}
+.footer p{font-size:0.72rem;color:var(--muted);line-height:1.8;}
+.footer a{color:var(--muted);text-decoration:underline;}
+@media(max-width:600px){.container{padding:1.25rem 1rem 3rem;}.section{padding:1.25rem 1rem;}}
+</style>
+<!-- GA4 Cookieless -->
+<script async src="https://www.googletagmanager.com/gtag/js?id=G-7GTLYCZMXN"></script>
+<script>window.dataLayer=window.dataLayer||[];function gtag(){dataLayer.push(arguments);}gtag('js',new Date());gtag('consent','default',{analytics_storage:'denied',ad_storage:'denied',ad_user_data:'denied',ad_personalization:'denied'});gtag('config','G-7GTLYCZMXN',{send_page_view:true,anonymize_ip:true});</script>
+</head>
+<body>
+<script src="/auth/mw-auth.js"></script>
+<div class="container">
+<nav class="nav-bar">
+  <a href="/" class="nav-brand">MATHS<span>WINS</span></a>
+  <a href="/parents/" class="nav-link">All Parent Guides &rarr;</a>
+</nav>
+
+<div class="hero">
+  <div class="hero-eyebrow">KS3 Parent Guide</div>
+  <h1>ANGLES</h1>
+  <div class="hero-sub">A clear walkthrough of everything your child is learning about angles &mdash; no protractor required on your end.</div>
+</div>
+
+<div class="section">
+  <h2>WHAT YOUR CHILD IS LEARNING</h2>
+  <p>Angles measure the amount of turn between two lines that meet at a point. They're measured in degrees, written with a small circle symbol: &deg;.</p>
+  <p>There are a few landmark numbers worth knowing, because your child will use them constantly:</p>
+  <ul>
+    <li><strong>Right angle = 90&deg;</strong> &mdash; the corner of a book, a door frame, or a square. Your child already knows this one instinctively.</li>
+    <li><strong>Straight line = 180&deg;</strong> &mdash; a completely flat line. If two angles sit on a straight line, they must add up to 180&deg;.</li>
+    <li><strong>Full turn = 360&deg;</strong> &mdash; a complete rotation, like spinning all the way round on the spot. All the angles around a single point must add up to 360&deg;.</li>
+  </ul>
+  <p>At KS3, your child moves beyond just measuring angles with a protractor. They start using angle facts &mdash; logical rules &mdash; to <em>calculate</em> missing angles without measuring anything. This is where angles become more about reasoning and less about equipment.</p>
+</div>
+
+<div class="section">
+  <h2>HOW SCHOOLS TEACH IT NOW</h2>
+  <p>Schools build up angle facts in layers. Each rule is simple on its own; the skill is recognising which rule to use in a given diagram.</p>
+
+  <h3>Rule 1: Angles on a Straight Line Add to 180&deg;</h3>
+  <p>If two or more angles sit along a straight line, they must add up to 180&deg;. This is probably the most-used angle fact in KS3.</p>
+  <div class="formula-box">
+    $$a + b = 180°$$
+  </div>
+
+  <h3>Rule 2: Angles Around a Point Add to 360&deg;</h3>
+  <p>If several angles meet at a single point (like slices of a pie), they must add up to 360&deg;.</p>
+  <div class="formula-box">
+    $$a + b + c + d = 360°$$
+  </div>
+
+  <h3>Rule 3: Vertically Opposite Angles Are Equal</h3>
+  <p>When two straight lines cross, they create two pairs of equal angles. The angles that are opposite each other (across the point where the lines cross) are always equal. Schools call these "vertically opposite angles" &mdash; the word "vertical" here means they share the same vertex (the point where lines meet), not that they're up-and-down.</p>
+
+  <h3>Rule 4: Angles in a Triangle Add to 180&deg;</h3>
+  <p>The three interior angles of any triangle always sum to 180&deg;. This is true for every triangle, no matter how squashed or stretched.</p>
+  <div class="formula-box">
+    $$a + b + c = 180° \quad \text{(in any triangle)}$$
+  </div>
+
+  <p>Your child will often need to combine more than one rule in a single question. For example, they might use "angles on a straight line" to find one angle, then use "angles in a triangle" to find another.</p>
+</div>
+
+<div class="section">
+  <h2>COMMON MISTAKES TO WATCH FOR</h2>
+  <ul>
+    <li><strong>Confusing 180&deg; and 360&deg;.</strong> "Is it the straight line one or the full turn one?" If in doubt, ask your child to picture it: a straight line is half a turn (180&deg;), a full rotation is a whole turn (360&deg;). Once they can visualise the difference, it sticks.</li>
+    <li><strong>Not spotting vertically opposite angles.</strong> In a diagram with crossing lines, students sometimes try to calculate angles that are actually just equal to an angle they already know. If two lines cross, the opposite angles are equal &mdash; no calculation needed.</li>
+    <li><strong>Measuring from the wrong baseline on a protractor.</strong> Protractors have two scales (one going each way). Students often read the wrong scale and get an answer that's wildly off. A good check: if the angle is clearly less than 90&deg;, the answer should be less than 90. If it's obviously obtuse, it should be more than 90.</li>
+    <li><strong>Forgetting to give reasons.</strong> At KS3 and especially at GCSE, students lose marks for writing just the number. Schools expect a reason: "angles on a straight line add to 180&deg;" or "vertically opposite angles are equal." Encourage your child to always write the rule they used.</li>
+  </ul>
+</div>
+
+<div class="section">
+  <h2>TRY IT TOGETHER</h2>
+  <div class="worked">
+    <h3>Worked Example</h3>
+    <p>Two angles sit on a straight line. One of them is 65&deg;. What is the other angle?</p>
+    <p>We know that angles on a straight line add up to 180&deg;, so:</p>
+    <div class="step">\(x = 180° - 65° = 115°\)</div>
+    <p>The missing angle is <strong>115&deg;</strong>.</p>
+  </div>
+  <div class="tip">Try changing the known angle and asking your child to find the missing one. "What if the angle was 42&deg;?" (Answer: 138&deg;.) "What about 90&deg;?" (Answer: 90&deg; &mdash; and now you've discovered that two right angles make a straight line.)</div>
+
+  <div class="worked">
+    <h3>Bonus: Angles in a Triangle</h3>
+    <p>A triangle has angles of 50&deg; and 70&deg;. Find the third angle.</p>
+    <div class="step">\(\text{Third angle} = 180° - 50° - 70° = 60°\)</div>
+    <p>All three add up to \(50 + 70 + 60 = 180°\). It checks out.</p>
+  </div>
+
+  <p>Once your child is comfortable with these, try combining rules: "A triangle has a 40&deg; angle and a 60&deg; angle. One side of the triangle continues as a straight line. What's the angle between the straight line and the triangle's third side?" (Answer: the third angle in the triangle is 80&deg;, and the exterior angle on the straight line is \(180° - 80° = 100°\).)</p>
+</div>
+
+<div class="cta-card">
+  <h3>LET THEM PRACTISE</h3>
+  <p>Our Angle Ace game lets your child practise finding missing angles with instant feedback. It's free, works on any device, and there's no sign-up needed.</p>
+  <a href="https://maffsgames.co.uk/games/angle-ace/" target="_blank" rel="noopener" class="cta-btn">Play Angle Ace on MaffsGames</a>
+</div>
+
+<footer class="footer">
+  <p><a href="/">MathsWins</a> &middot; <a href="/parents/">Parent Guides</a> &middot; <a href="/terms/">Terms</a></p>
+  <p>&copy; 2026 MathsWins. All rights reserved.</p>
+</footer>
+</div>
+</body>
+</html>

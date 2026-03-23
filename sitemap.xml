@@ -64,4 +64,25 @@
   <url><loc>https://mathswins.co.uk/tools/emergency-fund/</loc><priority>0.8</priority><changefreq>monthly</changefreq></url>
   <url><loc>https://mathswins.co.uk/tools/child-benefit/</loc><priority>0.8</priority><changefreq>monthly</changefreq></url>
   <url><loc>https://mathswins.co.uk/tools/life-insurance/</loc><priority>0.8</priority><changefreq>monthly</changefreq></url>
+  <url><loc>https://mathswins.co.uk/parents/</loc><priority>0.8</priority><changefreq>monthly</changefreq></url>
+  <url><loc>https://mathswins.co.uk/parents/algebra-basics/</loc><priority>0.8</priority><changefreq>monthly</changefreq></url>
+  <url><loc>https://mathswins.co.uk/parents/angles/</loc><priority>0.8</priority><changefreq>monthly</changefreq></url>
+  <url><loc>https://mathswins.co.uk/parents/area-perimeter/</loc><priority>0.8</priority><changefreq>monthly</changefreq></url>
+  <url><loc>https://mathswins.co.uk/parents/averages/</loc><priority>0.8</priority><changefreq>monthly</changefreq></url>
+  <url><loc>https://mathswins.co.uk/parents/circle-theorems/</loc><priority>0.8</priority><changefreq>monthly</changefreq></url>
+  <url><loc>https://mathswins.co.uk/parents/coordinates/</loc><priority>0.8</priority><changefreq>monthly</changefreq></url>
+  <url><loc>https://mathswins.co.uk/parents/expanding-factorising/</loc><priority>0.8</priority><changefreq>monthly</changefreq></url>
+  <url><loc>https://mathswins.co.uk/parents/fractions/</loc><priority>0.8</priority><changefreq>monthly</changefreq></url>
+  <url><loc>https://mathswins.co.uk/parents/graphs-transformations/</loc><priority>0.8</priority><changefreq>monthly</changefreq></url>
+  <url><loc>https://mathswins.co.uk/parents/indices-surds/</loc><priority>0.8</priority><changefreq>monthly</changefreq></url>
+  <url><loc>https://mathswins.co.uk/parents/negative-numbers/</loc><priority>0.8</priority><changefreq>monthly</changefreq></url>
+  <url><loc>https://mathswins.co.uk/parents/probability/</loc><priority>0.8</priority><changefreq>monthly</changefreq></url>
+  <url><loc>https://mathswins.co.uk/parents/probability-trees/</loc><priority>0.8</priority><changefreq>monthly</changefreq></url>
+  <url><loc>https://mathswins.co.uk/parents/pythagoras/</loc><priority>0.8</priority><changefreq>monthly</changefreq></url>
+  <url><loc>https://mathswins.co.uk/parents/ratio-proportion/</loc><priority>0.8</priority><changefreq>monthly</changefreq></url>
+  <url><loc>https://mathswins.co.uk/parents/sequences/</loc><priority>0.8</priority><changefreq>monthly</changefreq></url>
+  <url><loc>https://mathswins.co.uk/parents/simultaneous-equations/</loc><priority>0.8</priority><changefreq>monthly</changefreq></url>
+  <url><loc>https://mathswins.co.uk/parents/standard-form/</loc><priority>0.8</priority><changefreq>monthly</changefreq></url>
+  <url><loc>https://mathswins.co.uk/parents/statistics-data/</loc><priority>0.8</priority><changefreq>monthly</changefreq></url>
+  <url><loc>https://mathswins.co.uk/parents/trigonometry/</loc><priority>0.8</priority><changefreq>monthly</changefreq></url>
 </urlset>

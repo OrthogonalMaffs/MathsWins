@@ -1,0 +1,166 @@
+<!DOCTYPE html>
+<html lang="en-GB">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Ratio &amp; Proportion — A Parent's Guide | MathsWins</title>
+<meta name="description" content="Understand ratio and proportion the way your child is learning them. Total parts method, bar models, common mistakes, and free practice games. Plain English guide from a working maths tutor.">
+<meta property="og:title" content="Ratio & Proportion — A Parent's Guide | MathsWins">
+<meta property="og:description" content="Understand ratio and proportion the way your child is learning them. Total parts method, bar models, and free practice games.">
+<meta property="og:url" content="https://mathswins.co.uk/parents/ratio-proportion/">
+<meta property="og:image" content="https://mathswins.co.uk/assets/og-image.png">
+<meta property="og:type" content="article">
+<meta property="og:site_name" content="MathsWins">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:title" content="Ratio & Proportion — A Parent's Guide | MathsWins">
+<meta name="twitter:description" content="Understand ratio and proportion the way your child is learning them. Total parts method, bar models, and free practice games.">
+<meta name="twitter:image" content="https://mathswins.co.uk/assets/og-image.png">
+<link rel="canonical" href="https://mathswins.co.uk/parents/ratio-proportion/">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Crimson+Pro:ital,wght@0,400;1,400&family=DM+Mono:wght@400;500&family=Outfit:wght@300;400;600;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/katex.min.css">
+<script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/katex.min.js"></script>
+<script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/contrib/auto-render.min.js" onload="renderMathInElement(document.body,{delimiters:[{left:'$$',right:'$$',display:true},{left:'\\(',right:'\\)',display:false}]});"></script>
+<style>
+:root{--bg:#050709;--surface:#0a0d14;--surface2:#0f1319;--border:#161c28;--border2:#1e2638;--sky:#0ea5e9;--sky-dim:rgba(14,165,233,0.10);--green:#2dd4a0;--green-dim:rgba(45,212,160,0.10);--red:#ef5350;--gold:#d4a847;--gold-dim:rgba(212,168,71,0.10);--cyan:#22d3ee;--teal:#0d9488;--teal-dim:rgba(13,148,136,0.10);--text:#c8cdd8;--text-bright:#e8ecf4;--muted:#4a5568;--accent:#e8a87c;}
+*{margin:0;padding:0;box-sizing:border-box;}
+body{font-family:'Outfit',sans-serif;background:var(--bg);color:var(--text);min-height:100vh;line-height:1.8;}
+.container{max-width:760px;margin:0 auto;padding:2rem 1.25rem 4rem;}
+.nav-bar{display:flex;align-items:center;justify-content:space-between;padding:1rem 0;border-bottom:1px solid var(--border);margin-bottom:2rem;}
+.nav-brand{font-family:'Bebas Neue',sans-serif;font-size:1.4rem;color:var(--gold);text-decoration:none;letter-spacing:0.06em;}
+.nav-brand span{color:var(--text-bright);}
+.nav-link{font-size:0.85rem;font-weight:600;color:var(--accent);text-decoration:none;padding:0.4rem 1rem;border:1px solid var(--accent);border-radius:4px;transition:background 0.2s,color 0.2s;}
+.nav-link:hover{background:var(--accent);color:var(--bg);}
+
+h1{font-family:'Bebas Neue',sans-serif;font-size:clamp(1.8rem,5vw,2.6rem);color:var(--text-bright);letter-spacing:0.04em;line-height:1.1;margin-bottom:0.5rem;}
+.subtitle{font-family:'Crimson Pro',serif;font-style:italic;font-size:1.05rem;color:var(--accent);margin-bottom:2.5rem;line-height:1.5;}
+.badge{font-size:0.65rem;font-weight:700;text-transform:uppercase;letter-spacing:0.08em;padding:0.15rem 0.5rem;border-radius:3px;background:rgba(14,165,233,0.15);color:var(--sky);border:1px solid rgba(14,165,233,0.3);margin-bottom:0.75rem;display:inline-block;}
+
+section{margin-bottom:2.5rem;}
+section h2{font-family:'Bebas Neue',sans-serif;font-size:1.3rem;color:var(--text-bright);letter-spacing:0.04em;margin-bottom:1rem;padding-bottom:0.4rem;border-bottom:1px solid var(--border);}
+section p{font-size:0.95rem;line-height:1.8;margin-bottom:1rem;}
+
+.step-list{list-style:none;counter-reset:steps;padding:0;}
+.step-list li{counter-increment:steps;padding:0.75rem 0 0.75rem 2.5rem;position:relative;border-bottom:1px solid var(--border);font-size:0.92rem;line-height:1.7;}
+.step-list li:last-child{border-bottom:none;}
+.step-list li::before{content:counter(steps);position:absolute;left:0;top:0.75rem;width:1.8rem;height:1.8rem;background:var(--surface2);border:1px solid var(--border2);border-radius:50%;display:flex;align-items:center;justify-content:center;font-family:'DM Mono',monospace;font-size:0.78rem;color:var(--accent);font-weight:500;}
+
+.mistakes-list{list-style:none;padding:0;}
+.mistakes-list li{padding:0.6rem 0 0.6rem 1.5rem;position:relative;font-size:0.92rem;line-height:1.7;border-bottom:1px solid var(--border);}
+.mistakes-list li:last-child{border-bottom:none;}
+.mistakes-list li::before{content:'!';position:absolute;left:0;top:0.7rem;color:var(--red);font-family:'DM Mono',monospace;font-weight:700;font-size:0.85rem;}
+
+.worked-panel{background:var(--surface);border:1px solid var(--border);border-left:3px solid var(--accent);border-radius:0 10px 10px 0;padding:1.5rem;margin:1rem 0;}
+.worked-panel h3{font-family:'Bebas Neue',sans-serif;font-size:1rem;color:var(--accent);letter-spacing:0.04em;margin-bottom:0.75rem;}
+.worked-panel p{font-size:0.92rem;margin-bottom:0.75rem;}
+.worked-panel .solution{background:var(--surface2);border:1px solid var(--border2);border-radius:6px;padding:1rem;margin-top:0.75rem;}
+.worked-panel .solution p{margin-bottom:0.4rem;font-size:0.9rem;}
+
+.bar-model{display:flex;gap:0;margin:1.5rem 0;border-radius:8px;overflow:hidden;border:1px solid var(--border);}
+.bar-part{padding:0.75rem 1rem;text-align:center;font-family:'DM Mono',monospace;font-size:0.85rem;font-weight:500;}
+.bar-part.a{background:rgba(14,165,233,0.2);color:var(--sky);border-right:1px solid var(--border);}
+.bar-part.b{background:rgba(212,168,71,0.2);color:var(--gold);}
+.bar-label{display:flex;justify-content:space-between;font-size:0.75rem;color:var(--muted);margin-top:0.25rem;padding:0 0.25rem;}
+
+.cta-btn{display:inline-block;background:var(--green);color:var(--bg);font-family:'Outfit',sans-serif;font-weight:700;font-size:1rem;padding:0.85rem 2rem;border-radius:6px;text-decoration:none;transition:background 0.2s;margin-top:0.5rem;}
+.cta-btn:hover{background:#38e8b0;}
+
+.footer{margin-top:2.5rem;padding-top:1.25rem;border-top:1px solid var(--border);text-align:center;}
+.footer p{font-size:0.72rem;color:var(--muted);line-height:1.8;}
+.footer a{color:var(--muted);text-decoration:underline;}
+</style>
+<!-- GA4 Cookieless -->
+<script async src="https://www.googletagmanager.com/gtag/js?id=G-7GTLYCZMXN"></script>
+<script>window.dataLayer=window.dataLayer||[];function gtag(){dataLayer.push(arguments);}gtag('js',new Date());gtag('consent','default',{analytics_storage:'denied',ad_storage:'denied',ad_user_data:'denied',ad_personalization:'denied'});gtag('config','G-7GTLYCZMXN',{send_page_view:true,anonymize_ip:true});</script>
+</head>
+<body>
+<script src="/auth/mw-auth.js"></script>
+<div class="container">
+<nav class="nav-bar">
+  <a href="/" class="nav-brand">MATHS<span>WINS</span></a>
+  <a href="/parents/" class="nav-link">&larr; All Parent Guides</a>
+</nav>
+
+<span class="badge">KS3</span>
+<h1>RATIO &amp; PROPORTION</h1>
+<p class="subtitle">A parent's guide to ratio and proportion &mdash; what they are, how schools teach them, and how to help.</p>
+
+<section>
+  <h2>What Your Child Is Learning</h2>
+  <p>A ratio compares two (or more) quantities. If a bag of sweets contains 2 red sweets for every 3 blue sweets, we write the ratio as 2:3. This doesn't mean there are exactly 2 red and 3 blue &mdash; it means the <strong>relationship</strong> between them is always "2 for every 3." There could be 4 red and 6 blue, or 20 red and 30 blue. The ratio stays the same.</p>
+  <p>Proportion is the related idea that things scale up or down together. If 3 cakes need 6 eggs, then 6 cakes need 12 eggs. The quantities change, but the relationship between them is constant. Your child will learn to use ratio and proportion to share amounts fairly, scale recipes, convert currencies, and solve all sorts of real-world problems.</p>
+  <p>This topic trips up a lot of children because it requires them to think about relationships between numbers rather than just the numbers themselves. Once the method clicks, though, it becomes very mechanical and reliable.</p>
+</section>
+
+<p style="font-size:0.85rem;color:var(--muted);text-align:center;margin-bottom:0.5rem;">Bar model for the ratio 2:3</p>
+<div class="bar-model">
+  <div class="bar-part a" style="flex:2;">2 parts</div>
+  <div class="bar-part b" style="flex:3;">3 parts</div>
+</div>
+<div class="bar-label">
+  <span>Total = 5 parts</span>
+</div>
+
+<section>
+  <h2>How Schools Teach It Now</h2>
+  <p>Schools use the <strong>"total parts" method</strong> combined with bar models. It's systematic and works every time. Here's how they'd share &pound;60 in the ratio 2:3:</p>
+  <ol class="step-list">
+    <li><strong>Add the parts of the ratio to find the total.</strong> \(2 + 3 = 5\) parts in total.</li>
+    <li><strong>Divide the amount by the total parts to find the value of one part.</strong> \(\pounds60 \div 5 = \pounds12\) per part.</li>
+    <li><strong>Multiply each side of the ratio by the value of one part.</strong> First share: \(2 \times \pounds12 = \pounds24\). Second share: \(3 \times \pounds12 = \pounds36\).</li>
+    <li><strong>Check: do the shares add up to the original amount?</strong> \(\pounds24 + \pounds36 = \pounds60\). Correct.</li>
+  </ol>
+  <p>Schools draw bar models alongside this method. The bar is split into 5 equal sections &mdash; 2 shaded one colour, 3 shaded another. This visual helps children see why they add the parts first and why each part has the same value.</p>
+</section>
+
+<section>
+  <h2>Common Mistakes to Watch For</h2>
+  <ul class="mistakes-list">
+    <li><strong>Dividing by each number instead of the total.</strong> When sharing &pound;60 in the ratio 2:3, some children divide &pound;60 by 2 and by 3, getting &pound;30 and &pound;20. But &pound;30 + &pound;20 = &pound;50, not &pound;60. They forgot to find the total parts first. Always add the ratio numbers before dividing.</li>
+    <li><strong>Confusing ratio with fraction.</strong> In a 2:3 ratio, the first share is \(\frac{2}{5}\) of the total (not \(\frac{2}{3}\)). The denominator is the total number of parts, not the other side of the ratio. This is a very common error.</li>
+    <li><strong>Not simplifying ratios.</strong> 6:9 is the same as 2:3 (divide both sides by 3). Children sometimes leave ratios unsimplified, or worse, simplify incorrectly by subtracting instead of dividing. Ratios simplify like fractions &mdash; by dividing both sides by the same number.</li>
+    <li><strong>Mixing up the order.</strong> The ratio 2:3 means something different from 3:2. If the question says "boys to girls in the ratio 2:3", then boys get 2 parts and girls get 3 parts. The order in the ratio matches the order in the words.</li>
+  </ul>
+</section>
+
+<section>
+  <h2>Try It Together</h2>
+  <div class="worked-panel">
+    <h3>The Problem</h3>
+    <p>Share &pound;60 in the ratio 2:3.</p>
+    <div class="solution">
+      <p><strong>Step 1:</strong> Total parts = \(2 + 3 = 5\).</p>
+      <p><strong>Step 2:</strong> Value of one part = \(\pounds60 \div 5 = \pounds12\).</p>
+      <p><strong>Step 3:</strong> First share = \(2 \times \pounds12 = \pounds24\).</p>
+      <p><strong>Step 4:</strong> Second share = \(3 \times \pounds12 = \pounds36\).</p>
+      <p><strong>Check:</strong> \(\pounds24 + \pounds36 = \pounds60\). Correct.</p>
+    </div>
+  </div>
+  <p>Try another one together: share &pound;45 in the ratio 4:5. (Answer: total parts = 9, one part = &pound;5, shares are &pound;20 and &pound;25.)</p>
+</section>
+
+<section>
+  <h2>Let Them Practise</h2>
+  <p>This free game lets your child practise sharing amounts using ratios. No sign-up, no data collected, completely safe for children.</p>
+  <a href="https://maffsgames.co.uk/games/split-it/" target="_blank" rel="noopener" class="cta-btn">Play Split It on MaffsGames &rarr;</a>
+</section>
+
+<footer class="footer">
+  <p>&copy; 2026 MathsWins &middot; <a href="/terms/">Terms of Use</a> &middot; <a href="mailto:contact@mathswins.co.uk">Contact</a></p>
+  <p><a href="/parents/">Back to all parent guides</a></p>
+</footer>
+</div>
+<!-- Cookie Consent Banner -->
+<div id="cookieConsent" style="display:none;position:fixed;bottom:0;left:0;right:0;background:#0c1628;border-top:1px solid #14263d;padding:14px 24px;z-index:99999;font-family:'Outfit',system-ui,sans-serif;font-size:13px;color:#94a3b8;display:none;align-items:center;justify-content:center;gap:16px;flex-wrap:wrap">
+<span>We use cookies for analytics to improve your experience. No personal data is sold or shared.</span>
+<button onclick="acceptCookies()" style="background:#d4a847;color:#050709;border:none;padding:8px 20px;border-radius:4px;font-weight:700;font-size:13px;cursor:pointer;font-family:inherit">Accept</button>
+<button onclick="declineCookies()" style="background:transparent;color:#64748b;border:1px solid #14263d;padding:8px 20px;border-radius:4px;font-size:13px;cursor:pointer;font-family:inherit">Decline</button>
+</div>
+<script>
+function acceptCookies(){localStorage.setItem('mw_cookies','accepted');gtag('consent','update',{analytics_storage:'granted'});document.getElementById('cookieConsent').style.display='none';}
+function declineCookies(){localStorage.setItem('mw_cookies','declined');document.getElementById('cookieConsent').style.display='none';}
+(function(){var c=localStorage.getItem('mw_cookies');if(c==='accepted'){gtag('consent','update',{analytics_storage:'granted'});}else if(!c){document.getElementById('cookieConsent').style.display='flex';}})();
+</script>
+</body>
+</html>

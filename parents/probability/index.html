@@ -1,0 +1,168 @@
+<!DOCTYPE html>
+<html lang="en-GB">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Probability — A Parent's Guide | MathsWins</title>
+<meta name="description" content="A friendly parent's guide to probability at KS3. Understand how schools teach it, common mistakes children make, and a worked example to try together at home.">
+<meta property="og:title" content="Probability — A Parent's Guide | MathsWins">
+<meta property="og:description" content="A friendly parent's guide to probability at KS3. Fractions, decimals, percentages — and how to avoid the gambler's fallacy.">
+<meta property="og:url" content="https://mathswins.co.uk/parents/probability/">
+<meta property="og:image" content="https://mathswins.co.uk/assets/og-image.png">
+<meta property="og:type" content="article">
+<meta property="og:site_name" content="MathsWins">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:title" content="Probability — A Parent's Guide | MathsWins">
+<meta name="twitter:description" content="A friendly parent's guide to probability at KS3. Fractions, decimals, percentages — and how to avoid the gambler's fallacy.">
+<meta name="twitter:image" content="https://mathswins.co.uk/assets/og-image.png">
+<link rel="canonical" href="https://mathswins.co.uk/parents/probability/">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Crimson+Pro:ital,wght@0,400;1,400&family=DM+Mono:wght@400;500&family=Outfit:wght@300;400;600;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/katex.min.css">
+<script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/katex.min.js"></script>
+<script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/contrib/auto-render.min.js" onload="renderMathInElement(document.body,{delimiters:[{left:'$$',right:'$$',display:true},{left:'\\(',right:'\\)',display:false}]});"></script>
+<style>
+:root{--bg:#050709;--surface:#0a0d14;--surface2:#0f1319;--border:#161c28;--border2:#1e2638;--sky:#0ea5e9;--sky-dim:rgba(14,165,233,0.10);--green:#2dd4a0;--green-dim:rgba(45,212,160,0.10);--red:#ef5350;--gold:#d4a847;--gold-dim:rgba(212,168,71,0.10);--cyan:#22d3ee;--teal:#0d9488;--teal-dim:rgba(13,148,136,0.10);--text:#c8cdd8;--text-bright:#e8ecf4;--muted:#4a5568;}
+*{margin:0;padding:0;box-sizing:border-box;}
+body{font-family:'Outfit',sans-serif;background:var(--bg);color:var(--text);min-height:100vh;line-height:1.7;}
+.container{max-width:760px;margin:0 auto;padding:2rem 1.25rem 4rem;}
+.nav-bar{display:flex;align-items:center;justify-content:space-between;padding:1rem 0;border-bottom:1px solid var(--border);margin-bottom:2rem;}
+.nav-brand{font-family:'Bebas Neue',sans-serif;font-size:1.4rem;color:var(--gold);text-decoration:none;letter-spacing:0.06em;}
+.nav-brand span{color:var(--text-bright);}
+.nav-link{font-size:0.85rem;font-weight:600;color:var(--sky);text-decoration:none;padding:0.4rem 1rem;border:1px solid var(--sky);border-radius:4px;transition:background 0.2s,color 0.2s;}
+.nav-link:hover{background:var(--sky);color:var(--bg);}
+.hero{text-align:center;margin-bottom:2.5rem;}
+.hero-eyebrow{font-size:0.75rem;font-weight:600;text-transform:uppercase;letter-spacing:0.15em;color:var(--sky);margin-bottom:0.5rem;}
+.hero h1{font-family:'Bebas Neue',sans-serif;font-size:clamp(1.8rem,5vw,2.6rem);color:var(--text-bright);letter-spacing:0.04em;line-height:1.1;margin-bottom:0.75rem;}
+.hero-sub{font-family:'Crimson Pro',serif;font-style:italic;font-size:1.05rem;color:var(--cyan);max-width:620px;margin:0 auto;}
+.section{background:var(--surface);border:1px solid var(--border);border-radius:10px;padding:1.5rem;margin-bottom:1.5rem;}
+.section h2{font-family:'Bebas Neue',sans-serif;font-size:1.2rem;color:var(--text-bright);letter-spacing:0.05em;margin-bottom:1rem;}
+.section h3{font-family:'Outfit',sans-serif;font-weight:600;font-size:0.95rem;color:var(--sky);margin:1.25rem 0 0.5rem;}
+.section p{font-size:0.92rem;line-height:1.7;margin-bottom:0.75rem;}
+.section ul{margin:0.5rem 0 1rem 1.25rem;font-size:0.92rem;}
+.section ul li{margin-bottom:0.5rem;line-height:1.6;}
+.section ul li strong{color:var(--text-bright);}
+.formula-box{font-family:'DM Mono',monospace;font-size:0.9rem;color:var(--cyan);background:var(--surface2);padding:0.85rem 1rem;border-radius:6px;margin:0.75rem 0;border-left:3px solid var(--cyan);line-height:1.8;overflow-x:auto;}
+.worked{background:var(--surface2);border:1px solid var(--border2);border-radius:8px;padding:1.25rem;margin:1rem 0;}
+.worked h3{font-family:'Bebas Neue',sans-serif;font-size:1rem;color:var(--gold);letter-spacing:0.04em;margin:0 0 0.75rem;}
+.worked p{font-size:0.9rem;line-height:1.7;margin-bottom:0.5rem;}
+.worked .step{font-family:'DM Mono',monospace;font-size:0.88rem;color:var(--green);margin:0.4rem 0;}
+.tip{font-family:'Crimson Pro',serif;font-style:italic;color:var(--cyan);background:rgba(34,211,238,0.08);border-left:3px solid var(--cyan);padding:0.85rem 1rem;border-radius:0 6px 6px 0;margin:1rem 0;font-size:0.92rem;line-height:1.6;}
+.cta-card{background:var(--surface);border:1px solid var(--border);border-left:3px solid var(--green);border-radius:0 10px 10px 0;padding:1.5rem;margin-top:2rem;text-align:center;}
+.cta-card h3{font-family:'Bebas Neue',sans-serif;font-size:1.3rem;color:var(--green);letter-spacing:0.04em;margin-bottom:0.5rem;}
+.cta-card p{font-family:'Crimson Pro',serif;font-style:italic;font-size:0.95rem;color:var(--text);line-height:1.5;margin-bottom:1rem;}
+.cta-btn{display:inline-block;font-family:'Outfit',sans-serif;font-weight:700;font-size:1rem;padding:0.85rem 2rem;background:var(--green);color:var(--bg);border:none;border-radius:6px;text-decoration:none;transition:background 0.2s;}
+.cta-btn:hover{background:#5eead4;}
+.footer{margin-top:2.5rem;padding-top:1.25rem;border-top:1px solid var(--border);text-align:center;}
+.footer p{font-size:0.72rem;color:var(--muted);line-height:1.8;}
+.footer a{color:var(--muted);text-decoration:underline;}
+@media(max-width:600px){.container{padding:1.25rem 1rem 3rem;}.section{padding:1.25rem 1rem;}}
+</style>
+<!-- GA4 Cookieless -->
+<script async src="https://www.googletagmanager.com/gtag/js?id=G-7GTLYCZMXN"></script>
+<script>window.dataLayer=window.dataLayer||[];function gtag(){dataLayer.push(arguments);}gtag('js',new Date());gtag('consent','default',{analytics_storage:'denied',ad_storage:'denied',ad_user_data:'denied',ad_personalization:'denied'});gtag('config','G-7GTLYCZMXN',{send_page_view:true,anonymize_ip:true});</script>
+</head>
+<body>
+<script src="/auth/mw-auth.js"></script>
+<div class="container">
+<nav class="nav-bar">
+  <a href="/" class="nav-brand">MATHS<span>WINS</span></a>
+  <a href="/parents/" class="nav-link">All Parent Guides &rarr;</a>
+</nav>
+
+<div class="hero">
+  <div class="hero-eyebrow">KS3 Parent Guide</div>
+  <h1>PROBABILITY</h1>
+  <div class="hero-sub">How likely is it? Your child is learning to answer that question with maths, not guesswork. Here's how to help.</div>
+</div>
+
+<div class="section">
+  <h2>WHAT YOUR CHILD IS LEARNING</h2>
+  <p>Probability is about measuring how likely something is to happen. Not "I reckon it'll rain" &mdash; actual numbers that describe the chance of an event occurring.</p>
+  <p>The scale runs from <strong>0</strong> (impossible &mdash; it absolutely cannot happen) to <strong>1</strong> (certain &mdash; it definitely will happen). Everything else falls somewhere in between.</p>
+  <p>For example:</p>
+  <ul>
+    <li>The probability of rolling a 7 on a standard die: <strong>0</strong> (impossible &mdash; the die only goes up to 6)</li>
+    <li>The probability of rolling a number less than 7 on a standard die: <strong>1</strong> (certain &mdash; every face is less than 7)</li>
+    <li>The probability of rolling a 3: <strong>1/6</strong> (one favourable outcome out of six possible outcomes)</li>
+  </ul>
+  <p>Your child will express probabilities in three ways &mdash; as a fraction, a decimal, or a percentage. These are all different ways of writing the same number. A probability of \(\frac{1}{4}\) is the same as 0.25, which is the same as 25%. Schools expect students to move fluently between all three.</p>
+</div>
+
+<div class="section">
+  <h2>HOW SCHOOLS TEACH IT NOW</h2>
+  <p>The approach is structured and logical. Students learn a single formula, then practise applying it in increasingly interesting situations.</p>
+
+  <h3>The Core Formula</h3>
+  <p>This is the foundation of everything:</p>
+  <div class="formula-box">
+    $$P(\text{event}) = \frac{\text{number of favourable outcomes}}{\text{total number of possible outcomes}}$$
+  </div>
+  <p>In plain English: count how many ways the thing you want can happen, then divide by how many things could happen in total.</p>
+
+  <h3>Step 1: Simple Events</h3>
+  <p>Students start with dice, coins, and spinners. "What's the probability of flipping heads?" There are 2 possible outcomes (heads or tails), and 1 of them is what we want, so \(P(\text{heads}) = \frac{1}{2}\).</p>
+
+  <h3>Step 2: Converting Between Forms</h3>
+  <p>Once the fractions are solid, schools practise converting:</p>
+  <div class="formula-box">
+    $$\frac{1}{2} = 0.5 = 50\%$$
+    $$\frac{3}{10} = 0.3 = 30\%$$
+  </div>
+  <p>To convert a fraction to a decimal, divide the top by the bottom. To get a percentage, multiply the decimal by 100. Schools want students to do this automatically.</p>
+
+  <h3>Step 3: "Not" Events</h3>
+  <p>If the probability of something happening is \(P\), then the probability of it <em>not</em> happening is \(1 - P\). So if there's a 30% chance of rain, there's a 70% chance it won't rain. Probabilities of all possible outcomes always add up to 1.</p>
+
+  <h3>Step 4: Listing Outcomes</h3>
+  <p>For more complex situations, students learn to list all possible outcomes systematically (using tables, lists, or tree diagrams) before counting the favourable ones.</p>
+</div>
+
+<div class="section">
+  <h2>COMMON MISTAKES TO WATCH FOR</h2>
+  <ul>
+    <li><strong>Thinking probability can be greater than 1 (or greater than 100%).</strong> A probability of 1 means certain. Nothing can be more than certain. If your child gets an answer like \(\frac{7}{5}\), something has gone wrong &mdash; the numerator can never be larger than the denominator.</li>
+    <li><strong>The gambler's fallacy: "It's due a heads."</strong> This is the belief that past results affect future outcomes. If you flip 5 heads in a row, the next flip is still 50/50. The coin doesn't have a memory. This is genuinely hard to accept (even many adults get it wrong), but it's a critical concept. Each flip is independent.</li>
+    <li><strong>Confusing "unlikely" with "impossible."</strong> Unlikely events still happen. Winning the lottery is extremely unlikely (\(\approx 1\) in 45 million), but someone wins most weeks. An event is only impossible if its probability is exactly 0. Encourage precision: "unlikely" and "impossible" mean different things in maths.</li>
+    <li><strong>Not counting all possible outcomes.</strong> When asked "What's the probability of rolling an even number?", some students count only the even numbers (2, 4, 6 = three outcomes) and write \(\frac{1}{3}\). But the denominator should be 6 (total outcomes on the die), giving \(\frac{3}{6} = \frac{1}{2}\).</li>
+  </ul>
+</div>
+
+<div class="section">
+  <h2>TRY IT TOGETHER</h2>
+  <div class="worked">
+    <h3>Worked Example</h3>
+    <p>A bag contains 3 red balls and 7 blue balls. You pick one ball at random. What is the probability that it's red?</p>
+    <p><strong>Step 1:</strong> Count the favourable outcomes (red balls).</p>
+    <div class="step">Favourable outcomes = 3</div>
+    <p><strong>Step 2:</strong> Count the total outcomes (all balls).</p>
+    <div class="step">Total outcomes = 3 + 7 = 10</div>
+    <p><strong>Step 3:</strong> Apply the formula.</p>
+    <div class="step">\(P(\text{red}) = \frac{3}{10} = 0.3 = 30\%\)</div>
+    <p>There's a 30% chance of picking a red ball.</p>
+  </div>
+  <div class="tip">Follow-up questions to try: "What's the probability of picking a blue ball?" (Answer: \(\frac{7}{10} = 0.7 = 70\%\).) "Do the two probabilities add up to 1?" (Yes: \(0.3 + 0.7 = 1\).) This reinforces the idea that all outcomes together always sum to 1.</div>
+
+  <div class="worked">
+    <h3>Bonus: A Slightly Harder One</h3>
+    <p>A spinner has 8 equal sections numbered 1 to 8. What's the probability of spinning a prime number?</p>
+    <p>Prime numbers between 1 and 8: 2, 3, 5, 7 &mdash; that's 4 primes.</p>
+    <div class="step">\(P(\text{prime}) = \frac{4}{8} = \frac{1}{2} = 0.5 = 50\%\)</div>
+    <p>Half the numbers on the spinner are prime, so there's a 50% chance.</p>
+  </div>
+</div>
+
+<div class="cta-card">
+  <h3>LET THEM PRACTISE</h3>
+  <p>Our Probability Pioneer game gives your child hands-on probability practice with instant visual feedback. It's free, it works on any device, and there's no sign-up needed.</p>
+  <a href="https://maffsgames.co.uk/games/probability-pioneer/" target="_blank" rel="noopener" class="cta-btn">Play Probability Pioneer on MaffsGames</a>
+</div>
+
+<footer class="footer">
+  <p><a href="/">MathsWins</a> &middot; <a href="/parents/">Parent Guides</a> &middot; <a href="/terms/">Terms</a></p>
+  <p>&copy; 2026 MathsWins. All rights reserved.</p>
+</footer>
+</div>
+</body>
+</html>

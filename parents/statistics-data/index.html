@@ -1,0 +1,183 @@
+<!DOCTYPE html>
+<html lang="en-GB">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Statistics &amp; Data &mdash; A Parent's Guide to GCSE Maths | MathsWins</title>
+<meta name="description" content="Understand GCSE statistics the way schools teach it now. Bar charts, scatter graphs, box plots, cumulative frequency, correlation, and common mistakes to watch for.">
+<meta property="og:title" content="Statistics &amp; Data &mdash; A Parent's Guide to GCSE Maths | MathsWins">
+<meta property="og:description" content="Understand GCSE statistics the way schools teach it now. Charts, box plots, correlation, common mistakes, and free practice.">
+<meta property="og:url" content="https://mathswins.co.uk/parents/statistics-data/">
+<meta property="og:image" content="https://mathswins.co.uk/assets/og-image.png">
+<meta property="og:type" content="website">
+<meta property="og:site_name" content="MathsWins">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:title" content="Statistics &amp; Data &mdash; A Parent's Guide to GCSE Maths | MathsWins">
+<meta name="twitter:description" content="Understand GCSE statistics the way schools teach it now. Charts, box plots, correlation, common mistakes, and free practice.">
+<meta name="twitter:image" content="https://mathswins.co.uk/assets/og-image.png">
+<link rel="canonical" href="https://mathswins.co.uk/parents/statistics-data/">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Crimson+Pro:ital,wght@0,400;1,400&family=DM+Mono:wght@400;500&family=Outfit:wght@300;400;600;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/katex.min.css">
+<script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/katex.min.js"></script>
+<script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/contrib/auto-render.min.js" onload="renderMathInElement(document.body,{delimiters:[{left:'$$',right:'$$',display:true},{left:'\\(',right:'\\)',display:false}]});"></script>
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "Article",
+  "headline": "Statistics & Data — A Parent's Guide to GCSE Maths",
+  "description": "Understand GCSE statistics the way schools teach it now. Bar charts, scatter graphs, box plots, cumulative frequency, correlation, and common mistakes.",
+  "url": "https://mathswins.co.uk/parents/statistics-data/",
+  "publisher": {
+    "@type": "Organization",
+    "name": "MathsWins",
+    "url": "https://mathswins.co.uk"
+  }
+}
+</script>
+<style>
+:root{--bg:#050709;--surface:#0a0d14;--surface2:#0f1319;--border:#161c28;--border2:#1e2638;--sky:#0ea5e9;--sky-dim:rgba(14,165,233,0.10);--green:#2dd4a0;--green-dim:rgba(45,212,160,0.10);--red:#ef5350;--gold:#d4a847;--gold-dim:rgba(212,168,71,0.10);--cyan:#22d3ee;--teal:#0d9488;--teal-dim:rgba(13,148,136,0.10);--text:#c8cdd8;--text-bright:#e8ecf4;--muted:#4a5568;--warm:#f0e6d3;--warm-dim:rgba(240,230,211,0.06);--accent:#e8a87c;}
+*{margin:0;padding:0;box-sizing:border-box;}
+body{font-family:'Outfit',sans-serif;background:var(--bg);color:var(--text);min-height:100vh;line-height:1.8;}
+.container{max-width:760px;margin:0 auto;padding:2rem 1.25rem 4rem;}
+.nav-bar{display:flex;align-items:center;justify-content:space-between;padding:1rem 0;border-bottom:1px solid var(--border);margin-bottom:2rem;}
+.nav-brand{font-family:'Bebas Neue',sans-serif;font-size:1.4rem;color:var(--gold);text-decoration:none;letter-spacing:0.06em;}
+.nav-brand span{color:var(--text-bright);}
+.nav-link{font-size:0.85rem;font-weight:600;color:var(--sky);text-decoration:none;padding:0.4rem 1rem;border:1px solid var(--sky);border-radius:4px;transition:background 0.2s,color 0.2s;}
+.nav-link:hover{background:var(--sky);color:var(--bg);}
+.hero{text-align:center;margin-bottom:2.5rem;padding:1.5rem 0;}
+.hero-eyebrow{font-size:0.75rem;font-weight:600;text-transform:uppercase;letter-spacing:0.15em;color:var(--accent);margin-bottom:0.5rem;}
+.hero h1{font-family:'Bebas Neue',sans-serif;font-size:clamp(1.8rem,5vw,2.8rem);color:var(--text-bright);letter-spacing:0.04em;line-height:1.1;margin-bottom:0.75rem;}
+.hero-sub{font-family:'Crimson Pro',serif;font-style:italic;font-size:1.05rem;color:var(--accent);max-width:620px;margin:0 auto;line-height:1.6;}
+.section{background:var(--surface);border:1px solid var(--border);border-radius:10px;padding:1.5rem 1.75rem;margin-bottom:1.25rem;}
+.section h2{font-family:'Bebas Neue',sans-serif;font-size:1.2rem;color:var(--text-bright);letter-spacing:0.05em;margin-bottom:0.75rem;}
+.section p,.section li{font-size:0.92rem;line-height:1.8;margin-bottom:0.6rem;}
+.section ul{padding-left:1.25rem;margin-bottom:0.5rem;}
+.section li{margin-bottom:0.4rem;}
+.katex-display{margin:1rem 0;}
+.example-box{background:var(--surface2);border:1px solid var(--border2);border-radius:8px;padding:1.25rem;margin:1rem 0;}
+.example-box .label{font-size:0.7rem;font-weight:700;text-transform:uppercase;letter-spacing:0.1em;color:var(--accent);margin-bottom:0.5rem;}
+.chart-list{list-style:none;padding:0;margin:0.75rem 0;}
+.chart-list li{padding:0.5rem 0;border-bottom:1px solid var(--border);font-size:0.9rem;}
+.chart-list li:last-child{border-bottom:none;}
+.chart-list strong{color:var(--text-bright);}
+.mistake{color:var(--red);font-weight:600;}
+.correct{color:var(--green);font-weight:600;}
+.practice-link{display:inline-block;font-weight:700;color:var(--sky);text-decoration:none;padding:0.6rem 1.25rem;border:1px solid var(--sky);border-radius:6px;margin:0.4rem 0.5rem 0.4rem 0;transition:background 0.2s,color 0.2s;font-size:0.9rem;}
+.practice-link:hover{background:var(--sky);color:var(--bg);}
+.back-link{display:inline-block;font-size:0.85rem;color:var(--accent);text-decoration:none;margin-bottom:1.5rem;font-weight:600;}
+.back-link:hover{text-decoration:underline;}
+.footer{margin-top:2.5rem;padding-top:1.25rem;border-top:1px solid var(--border);text-align:center;}
+.footer p{font-size:0.72rem;color:var(--muted);line-height:1.8;}
+.footer a{color:var(--muted);text-decoration:underline;}
+</style>
+<!-- GA4 Cookieless -->
+<script async src="https://www.googletagmanager.com/gtag/js?id=G-7GTLYCZMXN"></script>
+<script>window.dataLayer=window.dataLayer||[];function gtag(){dataLayer.push(arguments);}gtag('js',new Date());gtag('consent','default',{analytics_storage:'denied',ad_storage:'denied',ad_user_data:'denied',ad_personalization:'denied'});gtag('config','G-7GTLYCZMXN',{send_page_view:true,anonymize_ip:true});</script>
+</head>
+<body>
+<script src="/auth/mw-auth.js"></script>
+<div class="container">
+<nav class="nav-bar">
+  <a href="/" class="nav-brand">MATHS<span>WINS</span></a>
+  <a href="/parents/" class="nav-link">&larr; All Parent Guides</a>
+</nav>
+
+<a href="/parents/" class="back-link">&larr; Back to all guides</a>
+
+<div class="hero">
+  <div class="hero-eyebrow">GCSE Parent Guide</div>
+  <h1>STATISTICS &amp; DATA</h1>
+  <div class="hero-sub">Reading charts, comparing distributions, and understanding what the numbers actually mean in context.</div>
+</div>
+
+<!-- 1. What Your Child Is Learning -->
+<div class="section">
+  <h2>1. What Your Child Is Learning</h2>
+  <p>GCSE statistics is about <strong>reading, interpreting, and comparing data</strong>. Your child needs to work with a range of chart types and draw meaningful conclusions from them:</p>
+  <ul class="chart-list">
+    <li><strong>Bar charts &amp; pie charts</strong> &mdash; comparing categories</li>
+    <li><strong>Scatter graphs</strong> &mdash; showing the relationship between two variables</li>
+    <li><strong>Histograms</strong> &mdash; displaying grouped continuous data using frequency density (not just bar height)</li>
+    <li><strong>Cumulative frequency diagrams</strong> &mdash; finding medians and quartiles from grouped data</li>
+    <li><strong>Box plots</strong> &mdash; summarising a distribution with five key values (minimum, lower quartile, median, upper quartile, maximum)</li>
+  </ul>
+  <p>The emphasis is on <em>interpretation</em> &mdash; not just reading the number, but explaining what it means in the real-world context of the question.</p>
+</div>
+
+<!-- 2. How Schools Teach It Now -->
+<div class="section">
+  <h2>2. How Schools Teach It Now</h2>
+  <p>Students are taught to <strong>compare distributions</strong> using two measures:</p>
+  <ul>
+    <li><strong>An average</strong> (usually the median) &mdash; tells you a typical value.</li>
+    <li><strong>A measure of spread</strong> (usually the range or interquartile range) &mdash; tells you how consistent the data is.</li>
+  </ul>
+  <p>For scatter graphs, they learn to describe <strong>correlation</strong>:</p>
+  <ul>
+    <li><strong>Positive correlation</strong> &mdash; as one variable increases, so does the other.</li>
+    <li><strong>Negative correlation</strong> &mdash; as one increases, the other decreases.</li>
+    <li><strong>No correlation</strong> &mdash; no clear pattern.</li>
+  </ul>
+  <p>Key vocabulary: the <strong>interquartile range (IQR)</strong> is the difference between the upper quartile (Q3) and the lower quartile (Q1). It measures the spread of the middle 50% of the data, and is more reliable than the range because it ignores outliers.</p>
+  $$\text{IQR} = Q_3 - Q_1$$
+</div>
+
+<!-- 3. Common Mistakes to Watch For -->
+<div class="section">
+  <h2>3. Common Mistakes to Watch For</h2>
+  <ul>
+    <li><span class="mistake">Reading the wrong axis:</span> on cumulative frequency diagrams, students read across from the frequency axis when they should read up from it (or vice versa). Always check which axis the question is asking about.</li>
+    <li><span class="mistake">Confusing frequency with cumulative frequency:</span> the cumulative frequency at a value is the <em>running total</em> up to that point, not the count in that single group. Plotting raw frequencies on a cumulative frequency diagram produces a completely wrong curve.</li>
+    <li><span class="mistake">Describing correlation casually:</span> "the more hours you revise, the more marks you get" loses marks. The correct phrasing is "there is a <em>positive correlation</em> between hours of revision and marks scored". Use the mathematical vocabulary.</li>
+    <li><span class="mistake">Not answering in context:</span> "the median is higher" is incomplete. "The median score for Class A is higher, which suggests students in Class A typically performed better on the test" is what examiners want.</li>
+  </ul>
+</div>
+
+<!-- 4. Try It Together -->
+<div class="section">
+  <h2>4. Try It Together</h2>
+  <div class="example-box">
+    <div class="label">Worked Example &mdash; Reading a Box Plot</div>
+    <p><strong>Given:</strong> A box plot shows these values:</p>
+    <ul>
+      <li>Minimum = 15</li>
+      <li>Lower quartile (Q1) = 30</li>
+      <li>Median = 45</li>
+      <li>Upper quartile (Q3) = 60</li>
+      <li>Maximum = 80</li>
+    </ul>
+    <p><strong>Question:</strong> What is the interquartile range, and what does it tell us?</p>
+    $$\text{IQR} = Q_3 - Q_1 = 60 - 30 = 30$$
+    <p><strong>Interpretation:</strong> The middle 50% of the data falls between 30 and 60. An IQR of 30 means there is a fairly wide spread in the central half of the data.</p>
+    <p><strong>Bonus question:</strong> What fraction of the data lies between 30 and 60? Answer: exactly half (50%), by definition of quartiles.</p>
+  </div>
+</div>
+
+<!-- 5. Let Them Practise -->
+<div class="section">
+  <h2>5. Let Them Practise</h2>
+  <p>Free game on MaffsGames &mdash; no sign-up, no data collected, safe for children:</p>
+  <a href="https://maffsgames.co.uk/games/chart-interrogator/" target="_blank" rel="noopener" class="practice-link">Chart Interrogator Game &rarr;</a>
+</div>
+
+<footer class="footer">
+  <p>&copy; 2026 MathsWins &middot; <a href="/terms/">Terms of Use</a> &middot; <a href="mailto:contact@mathswins.co.uk">Contact</a></p>
+  <p>Free parent guides from a working maths tutor. No sign-up required.</p>
+</footer>
+</div>
+
+<!-- Cookie Consent Banner -->
+<div id="cookieConsent" style="display:none;position:fixed;bottom:0;left:0;right:0;background:#0c1628;border-top:1px solid #14263d;padding:14px 24px;z-index:99999;font-family:'Outfit',system-ui,sans-serif;font-size:13px;color:#94a3b8;align-items:center;justify-content:center;gap:16px;flex-wrap:wrap">
+<span>We use cookies for analytics to improve your experience. No personal data is sold or shared.</span>
+<button onclick="acceptCookies()" style="background:#d4a847;color:#050709;border:none;padding:8px 20px;border-radius:4px;font-weight:700;font-size:13px;cursor:pointer;font-family:inherit">Accept</button>
+<button onclick="declineCookies()" style="background:transparent;color:#64748b;border:1px solid #14263d;padding:8px 20px;border-radius:4px;font-size:13px;cursor:pointer;font-family:inherit">Decline</button>
+</div>
+<script>
+function acceptCookies(){localStorage.setItem('mw_cookies','accepted');gtag('consent','update',{analytics_storage:'granted'});document.getElementById('cookieConsent').style.display='none';}
+function declineCookies(){localStorage.setItem('mw_cookies','declined');document.getElementById('cookieConsent').style.display='none';}
+(function(){var c=localStorage.getItem('mw_cookies');if(c==='accepted'){gtag('consent','update',{analytics_storage:'granted'});}else if(!c){document.getElementById('cookieConsent').style.display='flex';}})();
+</script>
+</body>
+</html>

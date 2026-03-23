@@ -1,0 +1,169 @@
+<!DOCTYPE html>
+<html lang="en-GB">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Graph Transformations &mdash; A Parent's Guide | MathsWins</title>
+<meta name="description" content="Understand graph transformations the way schools teach them now. Translations, reflections, stretches using function notation. Common mistakes and free practice.">
+<meta property="og:title" content="Graph Transformations &mdash; A Parent's Guide | MathsWins">
+<meta property="og:description" content="Understand graph transformations the way schools teach them now. Translations, reflections, stretches, and free practice games.">
+<meta property="og:url" content="https://mathswins.co.uk/parents/graphs-transformations/">
+<meta property="og:image" content="https://mathswins.co.uk/assets/og-image.png">
+<meta property="og:type" content="website">
+<meta property="og:site_name" content="MathsWins">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:title" content="Graph Transformations &mdash; A Parent's Guide | MathsWins">
+<meta name="twitter:description" content="Understand graph transformations the way schools teach them now. Translations, reflections, stretches, and free practice games.">
+<meta name="twitter:image" content="https://mathswins.co.uk/assets/og-image.png">
+<link rel="canonical" href="https://mathswins.co.uk/parents/graphs-transformations/">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Crimson+Pro:ital,wght@0,400;1,400&family=DM+Mono:wght@400;500&family=Outfit:wght@300;400;600;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/katex.min.css">
+<script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/katex.min.js"></script>
+<script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/contrib/auto-render.min.js" onload="renderMathInElement(document.body,{delimiters:[{left:'$$',right:'$$',display:true},{left:'\\(',right:'\\)',display:false}]});"></script>
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "Article",
+  "headline": "Graph Transformations — A Parent's Guide to GCSE Maths",
+  "description": "Understand graph transformations the way schools teach them now. Translations, reflections, stretches using function notation.",
+  "url": "https://mathswins.co.uk/parents/graphs-transformations/",
+  "publisher": {
+    "@type": "Organization",
+    "name": "MathsWins",
+    "url": "https://mathswins.co.uk"
+  }
+}
+</script>
+<style>
+:root{--bg:#050709;--surface:#0a0d14;--surface2:#0f1319;--border:#161c28;--border2:#1e2638;--sky:#0ea5e9;--sky-dim:rgba(14,165,233,0.10);--green:#2dd4a0;--green-dim:rgba(45,212,160,0.10);--red:#ef5350;--gold:#d4a847;--gold-dim:rgba(212,168,71,0.10);--cyan:#22d3ee;--teal:#0d9488;--teal-dim:rgba(13,148,136,0.10);--text:#c8cdd8;--text-bright:#e8ecf4;--muted:#4a5568;--warm:#f0e6d3;--warm-dim:rgba(240,230,211,0.06);--accent:#e8a87c;}
+*{margin:0;padding:0;box-sizing:border-box;}
+body{font-family:'Outfit',sans-serif;background:var(--bg);color:var(--text);min-height:100vh;line-height:1.8;}
+.container{max-width:760px;margin:0 auto;padding:2rem 1.25rem 4rem;}
+.nav-bar{display:flex;align-items:center;justify-content:space-between;padding:1rem 0;border-bottom:1px solid var(--border);margin-bottom:2rem;}
+.nav-brand{font-family:'Bebas Neue',sans-serif;font-size:1.4rem;color:var(--gold);text-decoration:none;letter-spacing:0.06em;}
+.nav-brand span{color:var(--text-bright);}
+.nav-link{font-size:0.85rem;font-weight:600;color:var(--sky);text-decoration:none;padding:0.4rem 1rem;border:1px solid var(--sky);border-radius:4px;transition:background 0.2s,color 0.2s;}
+.nav-link:hover{background:var(--sky);color:var(--bg);}
+.hero{text-align:center;margin-bottom:2.5rem;padding:1.5rem 0;}
+.hero-eyebrow{font-size:0.75rem;font-weight:600;text-transform:uppercase;letter-spacing:0.15em;color:var(--accent);margin-bottom:0.5rem;}
+.hero h1{font-family:'Bebas Neue',sans-serif;font-size:clamp(1.8rem,5vw,2.8rem);color:var(--text-bright);letter-spacing:0.04em;line-height:1.1;margin-bottom:0.75rem;}
+.hero-sub{font-family:'Crimson Pro',serif;font-style:italic;font-size:1.05rem;color:var(--accent);max-width:620px;margin:0 auto;line-height:1.6;}
+.section{background:var(--surface);border:1px solid var(--border);border-radius:10px;padding:1.5rem 1.75rem;margin-bottom:1.25rem;}
+.section h2{font-family:'Bebas Neue',sans-serif;font-size:1.2rem;color:var(--text-bright);letter-spacing:0.05em;margin-bottom:0.75rem;}
+.section p,.section li{font-size:0.92rem;line-height:1.8;margin-bottom:0.6rem;}
+.section ul{padding-left:1.25rem;margin-bottom:0.5rem;}
+.section li{margin-bottom:0.4rem;}
+.katex-display{margin:1rem 0;}
+.example-box{background:var(--surface2);border:1px solid var(--border2);border-radius:8px;padding:1.25rem;margin:1rem 0;}
+.example-box .label{font-size:0.7rem;font-weight:700;text-transform:uppercase;letter-spacing:0.1em;color:var(--accent);margin-bottom:0.5rem;}
+.mistake{color:var(--red);font-weight:600;}
+.correct{color:var(--green);font-weight:600;}
+.practice-link{display:inline-block;font-weight:700;color:var(--sky);text-decoration:none;padding:0.6rem 1.25rem;border:1px solid var(--sky);border-radius:6px;margin:0.4rem 0.5rem 0.4rem 0;transition:background 0.2s,color 0.2s;font-size:0.9rem;}
+.practice-link:hover{background:var(--sky);color:var(--bg);}
+.back-link{display:inline-block;font-size:0.85rem;color:var(--accent);text-decoration:none;margin-bottom:1.5rem;font-weight:600;}
+.back-link:hover{text-decoration:underline;}
+.transform-table{width:100%;border-collapse:collapse;margin:1rem 0;font-size:0.88rem;}
+.transform-table th{text-align:left;font-weight:700;color:var(--text-bright);padding:0.6rem 0.75rem;border-bottom:1px solid var(--border2);font-size:0.75rem;text-transform:uppercase;letter-spacing:0.06em;}
+.transform-table td{padding:0.6rem 0.75rem;border-bottom:1px solid var(--border);vertical-align:top;}
+.footer{margin-top:2.5rem;padding-top:1.25rem;border-top:1px solid var(--border);text-align:center;}
+.footer p{font-size:0.72rem;color:var(--muted);line-height:1.8;}
+.footer a{color:var(--muted);text-decoration:underline;}
+</style>
+<!-- GA4 Cookieless -->
+<script async src="https://www.googletagmanager.com/gtag/js?id=G-7GTLYCZMXN"></script>
+<script>window.dataLayer=window.dataLayer||[];function gtag(){dataLayer.push(arguments);}gtag('js',new Date());gtag('consent','default',{analytics_storage:'denied',ad_storage:'denied',ad_user_data:'denied',ad_personalization:'denied'});gtag('config','G-7GTLYCZMXN',{send_page_view:true,anonymize_ip:true});</script>
+</head>
+<body>
+<script src="/auth/mw-auth.js"></script>
+<div class="container">
+<nav class="nav-bar">
+  <a href="/" class="nav-brand">MATHS<span>WINS</span></a>
+  <a href="/parents/" class="nav-link">&larr; All Parent Guides</a>
+</nav>
+
+<a href="/parents/" class="back-link">&larr; Back to all guides</a>
+
+<div class="hero">
+  <div class="hero-eyebrow">GCSE Parent Guide</div>
+  <h1>GRAPHS &amp; TRANSFORMATIONS</h1>
+  <div class="hero-sub">Moving, stretching, and reflecting graphs &mdash; and why "inside the bracket" does the opposite of what you'd expect.</div>
+</div>
+
+<!-- 1. What Your Child Is Learning -->
+<div class="section">
+  <h2>1. What Your Child Is Learning</h2>
+  <p>Your child is learning to <strong>transform graphs</strong> &mdash; that means moving them up, down, left, or right (translations), flipping them (reflections), and stretching or squashing them. They need to describe these transformations precisely using mathematical language and sketch what the transformed graph looks like.</p>
+  <p>The notation uses \(f(x)\) to represent any function. If you know what \(y = f(x)\) looks like, you can work out what \(y = f(x) + 3\) or \(y = f(x - 2)\) looks like without plotting every point.</p>
+</div>
+
+<!-- 2. How Schools Teach It Now -->
+<div class="section">
+  <h2>2. How Schools Teach It Now</h2>
+  <p>Students learn four core transformations using function notation:</p>
+  <table class="transform-table">
+    <thead>
+      <tr><th>Notation</th><th>What It Does</th><th>Example</th></tr>
+    </thead>
+    <tbody>
+      <tr><td>\(f(x) + a\)</td><td>Translate <strong>up</strong> by \(a\)</td><td>\(f(x) + 3\) moves every point 3 units up</td></tr>
+      <tr><td>\(f(x + a)\)</td><td>Translate <strong>left</strong> by \(a\)</td><td>\(f(x + 2)\) moves every point 2 units <em>left</em></td></tr>
+      <tr><td>\(-f(x)\)</td><td>Reflect in the <strong>x-axis</strong></td><td>Every y-coordinate flips sign</td></tr>
+      <tr><td>\(f(-x)\)</td><td>Reflect in the <strong>y-axis</strong></td><td>Every x-coordinate flips sign</td></tr>
+    </tbody>
+  </table>
+  <p>The critical insight: changes <strong>inside</strong> the bracket (affecting \(x\)) do the <em>opposite</em> of what you'd expect. \(f(x + 2)\) moves the graph <strong>left</strong>, not right. Changes <strong>outside</strong> the bracket (affecting \(y\)) do exactly what you'd expect.</p>
+  <p>Schools insist on precise language: say "translate" not "move", and give the direction and distance. For example: "a translation of \(\begin{pmatrix} -2 \\ 0 \end{pmatrix}\)" or "a translation 2 units in the negative x-direction".</p>
+</div>
+
+<!-- 3. Common Mistakes to Watch For -->
+<div class="section">
+  <h2>3. Common Mistakes to Watch For</h2>
+  <ul>
+    <li><span class="mistake">\(f(x+2)\) moves the graph RIGHT:</span> This is the single most common error. The \(+2\) is <em>inside</em> the bracket, so it moves <strong>left</strong>. Think of it this way: \(f(x+2)\) reaches each y-value 2 units <em>sooner</em> (earlier on the x-axis).</li>
+    <li><span class="mistake">Confusing vertical and horizontal transformations:</span> \(f(x) + 2\) (outside) moves up. \(f(x + 2)\) (inside) moves left. The bracket position determines the direction.</li>
+    <li><span class="mistake">Using casual language instead of mathematical terms:</span> examiners want "translate", "reflect", and "stretch" &mdash; not "move", "flip", or "squash". Marks are lost for imprecise descriptions.</li>
+  </ul>
+</div>
+
+<!-- 4. Try It Together -->
+<div class="section">
+  <h2>4. Try It Together</h2>
+  <div class="example-box">
+    <div class="label">Worked Example</div>
+    <p><strong>Question:</strong> If \(y = x^2\), what does \(y = (x - 3)^2\) look like?</p>
+    <p><strong>Step 1:</strong> The \(-3\) is inside the bracket (it's replacing \(x\) with \(x - 3\)).</p>
+    <p><strong>Step 2:</strong> Inside the bracket = opposite direction. The minus means the graph moves <strong>right</strong>.</p>
+    <p><strong>Step 3:</strong> By how much? By 3 units.</p>
+    <p><strong>Answer:</strong> It's the same parabola (\(U\)-shape), shifted <strong>3 units to the right</strong>. The vertex moves from \((0, 0)\) to \((3, 0)\).</p>
+  </div>
+  <p>A good follow-up question: "What about \(y = x^2 + 3\)?" That one's outside the bracket, so it moves straight <strong>up</strong> by 3. Vertex goes from \((0, 0)\) to \((0, 3)\).</p>
+</div>
+
+<!-- 5. Let Them Practise -->
+<div class="section">
+  <h2>5. Let Them Practise</h2>
+  <p>Free game on MaffsGames &mdash; no sign-up, no data collected, safe for children:</p>
+  <a href="https://maffsgames.co.uk/games/graph-transformer/" target="_blank" rel="noopener" class="practice-link">Graph Transformer Game &rarr;</a>
+</div>
+
+<footer class="footer">
+  <p>&copy; 2026 MathsWins &middot; <a href="/terms/">Terms of Use</a> &middot; <a href="mailto:contact@mathswins.co.uk">Contact</a></p>
+  <p>Free parent guides from a working maths tutor. No sign-up required.</p>
+</footer>
+</div>
+
+<!-- Cookie Consent Banner -->
+<div id="cookieConsent" style="display:none;position:fixed;bottom:0;left:0;right:0;background:#0c1628;border-top:1px solid #14263d;padding:14px 24px;z-index:99999;font-family:'Outfit',system-ui,sans-serif;font-size:13px;color:#94a3b8;align-items:center;justify-content:center;gap:16px;flex-wrap:wrap">
+<span>We use cookies for analytics to improve your experience. No personal data is sold or shared.</span>
+<button onclick="acceptCookies()" style="background:#d4a847;color:#050709;border:none;padding:8px 20px;border-radius:4px;font-weight:700;font-size:13px;cursor:pointer;font-family:inherit">Accept</button>
+<button onclick="declineCookies()" style="background:transparent;color:#64748b;border:1px solid #14263d;padding:8px 20px;border-radius:4px;font-size:13px;cursor:pointer;font-family:inherit">Decline</button>
+</div>
+<script>
+function acceptCookies(){localStorage.setItem('mw_cookies','accepted');gtag('consent','update',{analytics_storage:'granted'});document.getElementById('cookieConsent').style.display='none';}
+function declineCookies(){localStorage.setItem('mw_cookies','declined');document.getElementById('cookieConsent').style.display='none';}
+(function(){var c=localStorage.getItem('mw_cookies');if(c==='accepted'){gtag('consent','update',{analytics_storage:'granted'});}else if(!c){document.getElementById('cookieConsent').style.display='flex';}})();
+</script>
+</body>
+</html>

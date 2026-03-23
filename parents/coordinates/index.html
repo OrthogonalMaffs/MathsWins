@@ -1,0 +1,174 @@
+<!DOCTYPE html>
+<html lang="en-GB">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Coordinates &amp; Quadrants — A Parent's Guide | MathsWins</title>
+<meta name="description" content="A friendly parent's guide to coordinates and four quadrants at KS3. Learn how schools teach plotting points with negative numbers, and try a worked example together.">
+<meta property="og:title" content="Coordinates &amp; Quadrants — A Parent's Guide | MathsWins">
+<meta property="og:description" content="A friendly parent's guide to coordinates at KS3. Four quadrants, negative numbers, and the 'along the corridor, up the stairs' trick.">
+<meta property="og:url" content="https://mathswins.co.uk/parents/coordinates/">
+<meta property="og:image" content="https://mathswins.co.uk/assets/og-image.png">
+<meta property="og:type" content="article">
+<meta property="og:site_name" content="MathsWins">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:title" content="Coordinates &amp; Quadrants — A Parent's Guide | MathsWins">
+<meta name="twitter:description" content="A friendly parent's guide to coordinates at KS3. Four quadrants, negative numbers, and plotting points.">
+<meta name="twitter:image" content="https://mathswins.co.uk/assets/og-image.png">
+<link rel="canonical" href="https://mathswins.co.uk/parents/coordinates/">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Crimson+Pro:ital,wght@0,400;1,400&family=DM+Mono:wght@400;500&family=Outfit:wght@300;400;600;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/katex.min.css">
+<script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/katex.min.js"></script>
+<script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/contrib/auto-render.min.js" onload="renderMathInElement(document.body,{delimiters:[{left:'$$',right:'$$',display:true},{left:'\\(',right:'\\)',display:false}]});"></script>
+<style>
+:root{--bg:#050709;--surface:#0a0d14;--surface2:#0f1319;--border:#161c28;--border2:#1e2638;--sky:#0ea5e9;--sky-dim:rgba(14,165,233,0.10);--green:#2dd4a0;--green-dim:rgba(45,212,160,0.10);--red:#ef5350;--gold:#d4a847;--gold-dim:rgba(212,168,71,0.10);--cyan:#22d3ee;--teal:#0d9488;--teal-dim:rgba(13,148,136,0.10);--text:#c8cdd8;--text-bright:#e8ecf4;--muted:#4a5568;}
+*{margin:0;padding:0;box-sizing:border-box;}
+body{font-family:'Outfit',sans-serif;background:var(--bg);color:var(--text);min-height:100vh;line-height:1.7;}
+.container{max-width:760px;margin:0 auto;padding:2rem 1.25rem 4rem;}
+.nav-bar{display:flex;align-items:center;justify-content:space-between;padding:1rem 0;border-bottom:1px solid var(--border);margin-bottom:2rem;}
+.nav-brand{font-family:'Bebas Neue',sans-serif;font-size:1.4rem;color:var(--gold);text-decoration:none;letter-spacing:0.06em;}
+.nav-brand span{color:var(--text-bright);}
+.nav-link{font-size:0.85rem;font-weight:600;color:var(--sky);text-decoration:none;padding:0.4rem 1rem;border:1px solid var(--sky);border-radius:4px;transition:background 0.2s,color 0.2s;}
+.nav-link:hover{background:var(--sky);color:var(--bg);}
+.hero{text-align:center;margin-bottom:2.5rem;}
+.hero-eyebrow{font-size:0.75rem;font-weight:600;text-transform:uppercase;letter-spacing:0.15em;color:var(--sky);margin-bottom:0.5rem;}
+.hero h1{font-family:'Bebas Neue',sans-serif;font-size:clamp(1.8rem,5vw,2.6rem);color:var(--text-bright);letter-spacing:0.04em;line-height:1.1;margin-bottom:0.75rem;}
+.hero-sub{font-family:'Crimson Pro',serif;font-style:italic;font-size:1.05rem;color:var(--cyan);max-width:620px;margin:0 auto;}
+.section{background:var(--surface);border:1px solid var(--border);border-radius:10px;padding:1.5rem;margin-bottom:1.5rem;}
+.section h2{font-family:'Bebas Neue',sans-serif;font-size:1.2rem;color:var(--text-bright);letter-spacing:0.05em;margin-bottom:1rem;}
+.section h3{font-family:'Outfit',sans-serif;font-weight:600;font-size:0.95rem;color:var(--sky);margin:1.25rem 0 0.5rem;}
+.section p{font-size:0.92rem;line-height:1.7;margin-bottom:0.75rem;}
+.section ul{margin:0.5rem 0 1rem 1.25rem;font-size:0.92rem;}
+.section ul li{margin-bottom:0.5rem;line-height:1.6;}
+.section ul li strong{color:var(--text-bright);}
+.formula-box{font-family:'DM Mono',monospace;font-size:0.9rem;color:var(--cyan);background:var(--surface2);padding:0.85rem 1rem;border-radius:6px;margin:0.75rem 0;border-left:3px solid var(--cyan);line-height:1.8;overflow-x:auto;}
+.quadrant-table{width:100%;border-collapse:collapse;margin:1rem 0;font-size:0.88rem;}
+.quadrant-table th{font-family:'Outfit',sans-serif;font-weight:600;text-transform:uppercase;font-size:0.72rem;letter-spacing:0.05em;color:var(--muted);padding:0.6rem 0.75rem;text-align:left;border-bottom:1px solid var(--border);}
+.quadrant-table td{padding:0.5rem 0.75rem;border-bottom:1px solid var(--border);font-size:0.85rem;}
+.quadrant-table td:first-child{font-family:'DM Mono',monospace;font-weight:500;color:var(--sky);}
+.quadrant-table td:nth-child(2){font-family:'DM Mono',monospace;color:var(--green);}
+.worked{background:var(--surface2);border:1px solid var(--border2);border-radius:8px;padding:1.25rem;margin:1rem 0;}
+.worked h3{font-family:'Bebas Neue',sans-serif;font-size:1rem;color:var(--gold);letter-spacing:0.04em;margin:0 0 0.75rem;}
+.worked p{font-size:0.9rem;line-height:1.7;margin-bottom:0.5rem;}
+.worked .step{font-family:'DM Mono',monospace;font-size:0.88rem;color:var(--green);margin:0.4rem 0;}
+.tip{font-family:'Crimson Pro',serif;font-style:italic;color:var(--cyan);background:rgba(34,211,238,0.08);border-left:3px solid var(--cyan);padding:0.85rem 1rem;border-radius:0 6px 6px 0;margin:1rem 0;font-size:0.92rem;line-height:1.6;}
+.cta-card{background:var(--surface);border:1px solid var(--border);border-left:3px solid var(--green);border-radius:0 10px 10px 0;padding:1.5rem;margin-top:2rem;text-align:center;}
+.cta-card h3{font-family:'Bebas Neue',sans-serif;font-size:1.3rem;color:var(--green);letter-spacing:0.04em;margin-bottom:0.5rem;}
+.cta-card p{font-family:'Crimson Pro',serif;font-style:italic;font-size:0.95rem;color:var(--text);line-height:1.5;margin-bottom:1rem;}
+.cta-btn{display:inline-block;font-family:'Outfit',sans-serif;font-weight:700;font-size:1rem;padding:0.85rem 2rem;background:var(--green);color:var(--bg);border:none;border-radius:6px;text-decoration:none;transition:background 0.2s;}
+.cta-btn:hover{background:#5eead4;}
+.footer{margin-top:2.5rem;padding-top:1.25rem;border-top:1px solid var(--border);text-align:center;}
+.footer p{font-size:0.72rem;color:var(--muted);line-height:1.8;}
+.footer a{color:var(--muted);text-decoration:underline;}
+@media(max-width:600px){.container{padding:1.25rem 1rem 3rem;}.section{padding:1.25rem 1rem;}}
+</style>
+<!-- GA4 Cookieless -->
+<script async src="https://www.googletagmanager.com/gtag/js?id=G-7GTLYCZMXN"></script>
+<script>window.dataLayer=window.dataLayer||[];function gtag(){dataLayer.push(arguments);}gtag('js',new Date());gtag('consent','default',{analytics_storage:'denied',ad_storage:'denied',ad_user_data:'denied',ad_personalization:'denied'});gtag('config','G-7GTLYCZMXN',{send_page_view:true,anonymize_ip:true});</script>
+</head>
+<body>
+<script src="/auth/mw-auth.js"></script>
+<div class="container">
+<nav class="nav-bar">
+  <a href="/" class="nav-brand">MATHS<span>WINS</span></a>
+  <a href="/parents/" class="nav-link">All Parent Guides &rarr;</a>
+</nav>
+
+<div class="hero">
+  <div class="hero-eyebrow">KS3 Parent Guide</div>
+  <h1>COORDINATES &amp; QUADRANTS</h1>
+  <div class="hero-sub">Plotting points on a grid &mdash; including when the numbers go negative. Here's the full picture.</div>
+</div>
+
+<div class="section">
+  <h2>WHAT YOUR CHILD IS LEARNING</h2>
+  <p>Your child is learning to describe the position of a point on a grid using two numbers, written as a pair in brackets: \((x, y)\). The first number tells you the horizontal position (left or right), and the second tells you the vertical position (up or down).</p>
+  <p>In primary school, your child probably worked with coordinates that were all positive &mdash; a grid that only covered the top-right area, with both numbers being 1, 2, 3, and so on. At KS3, the grid expands. The axes now cross in the middle, creating four sections, and the numbers can be negative.</p>
+  <p>This is a big step. It means a point can be to the left of the centre (negative x) or below the centre (negative y), or both. The grid now has four regions, called <strong>quadrants</strong>.</p>
+  <p>The two lines that form the grid are called <strong>axes</strong>. The horizontal one is the x-axis; the vertical one is the y-axis. The point where they cross &mdash; right in the middle &mdash; is called the <strong>origin</strong>, and its coordinates are \((0, 0)\).</p>
+</div>
+
+<div class="section">
+  <h2>HOW SCHOOLS TEACH IT NOW</h2>
+
+  <h3>The Golden Rule: Along the Corridor, Up the Stairs</h3>
+  <p>This is the memory trick that every maths teacher uses, and it works brilliantly. To plot a point like \((3, 5)\):</p>
+  <ul>
+    <li>First, go <strong>along the corridor</strong> (the x-axis) &mdash; that's the first number. Positive means right, negative means left.</li>
+    <li>Then go <strong>up the stairs</strong> (the y-axis) &mdash; that's the second number. Positive means up, negative means down.</li>
+  </ul>
+  <p>The order matters. \((3, 5)\) and \((5, 3)\) are completely different points. The first number is always horizontal, the second is always vertical.</p>
+
+  <h3>The Four Quadrants</h3>
+  <p>The four sections of the grid are numbered 1 to 4, going anticlockwise from the top-right:</p>
+  <table class="quadrant-table">
+    <thead>
+      <tr><th>Quadrant</th><th>Signs</th><th>Position</th></tr>
+    </thead>
+    <tbody>
+      <tr><td>1</td><td>(+, +)</td><td>Top-right</td></tr>
+      <tr><td>2</td><td>(-, +)</td><td>Top-left</td></tr>
+      <tr><td>3</td><td>(-, -)</td><td>Bottom-left</td></tr>
+      <tr><td>4</td><td>(+, -)</td><td>Bottom-right</td></tr>
+    </tbody>
+  </table>
+  <p>Your child doesn't need to memorise this table. Once they understand the signs (negative x = left, negative y = down), the quadrants follow naturally. But knowing they're numbered anticlockwise from the top-right can help in exam questions that reference quadrants by number.</p>
+
+  <h3>Reading Coordinates from a Grid</h3>
+  <p>Students also practise the reverse: looking at a point on a grid and writing down its coordinates. The process is the same in reverse &mdash; read across to the x-axis first, then read up or down to find the y value.</p>
+
+  <h3>Plotting Shapes</h3>
+  <p>A common extension is to plot several points and join them to make a shape. "Plot (2, 1), (5, 1), (5, 4), and (2, 4). What shape have you made?" (A rectangle.) This builds towards later work on transformations and straight-line graphs.</p>
+</div>
+
+<div class="section">
+  <h2>COMMON MISTAKES TO WATCH FOR</h2>
+  <ul>
+    <li><strong>Swapping x and y.</strong> This is the most common error by far. Students go up first and across second, getting the point in the wrong place. "Along the corridor, up the stairs" puts x first every time. If your child writes \((3, 5)\) but plots it at \((5, 3)\), this is the issue.</li>
+    <li><strong>Forgetting negative signs.</strong> When working in all four quadrants, students sometimes drop the minus sign, plotting \((-3, 4)\) as \((3, 4)\). This puts the point in completely the wrong quadrant (quadrant 1 instead of quadrant 2). Double-checking the signs is worth the extra second.</li>
+    <li><strong>Plotting in the wrong quadrant.</strong> Even when students get the right numbers, they sometimes count in the wrong direction. A negative x means left of the origin, and a negative y means below the origin. If both are negative, the point is in the bottom-left (quadrant 3).</li>
+    <li><strong>Confusing the origin.</strong> Some students think \((0, 0)\) means "nowhere" or leave it off. The origin is a real point &mdash; it's where the two axes cross, right in the centre of the grid.</li>
+  </ul>
+</div>
+
+<div class="section">
+  <h2>TRY IT TOGETHER</h2>
+  <div class="worked">
+    <h3>Worked Example</h3>
+    <p>Plot the point \((-3, 4)\) on a coordinate grid.</p>
+    <p><strong>Step 1:</strong> Start at the origin \((0, 0)\).</p>
+    <p><strong>Step 2:</strong> The x-coordinate is \(-3\). Go <strong>3 left</strong> along the x-axis (negative means left).</p>
+    <div class="step">Along the corridor: 3 steps left</div>
+    <p><strong>Step 3:</strong> The y-coordinate is \(4\). Go <strong>4 up</strong> (positive means up).</p>
+    <div class="step">Up the stairs: 4 steps up</div>
+    <p>Mark the point. It sits in <strong>quadrant 2</strong> (top-left), because x is negative and y is positive.</p>
+  </div>
+  <div class="tip">Try these together on a piece of squared paper. Draw the two axes crossing in the middle, number them from -6 to 6 in both directions, then take turns calling out coordinates for the other person to plot. Mix in some negative numbers. It's surprisingly satisfying when you both get the same answer.</div>
+
+  <div class="worked">
+    <h3>Bonus: Which Quadrant?</h3>
+    <p>Without plotting, can you work out which quadrant each point falls in?</p>
+    <div class="step">\((4, 2)\) &rarr; both positive &rarr; Quadrant 1 (top-right)</div>
+    <div class="step">\((-1, -5)\) &rarr; both negative &rarr; Quadrant 3 (bottom-left)</div>
+    <div class="step">\((6, -3)\) &rarr; positive x, negative y &rarr; Quadrant 4 (bottom-right)</div>
+    <p>Once your child can do this without a grid, they've really understood how the sign of each coordinate maps to position.</p>
+  </div>
+
+  <p>A good challenge to finish: "I'm thinking of a point in quadrant 2. What do you know about it?" (Answer: the x-coordinate must be negative and the y-coordinate must be positive.) This kind of reasoning question is exactly what schools are building towards.</p>
+</div>
+
+<div class="cta-card">
+  <h3>LET THEM PRACTISE</h3>
+  <p>Our Four Quadrant Explorer lets your child practise plotting and reading coordinates across all four quadrants. It's free, works on any device, and there's no sign-up needed.</p>
+  <a href="https://maffsgames.co.uk/games/four-quadrant-explorer/" target="_blank" rel="noopener" class="cta-btn">Play Four Quadrant Explorer on MaffsGames</a>
+</div>
+
+<footer class="footer">
+  <p><a href="/">MathsWins</a> &middot; <a href="/parents/">Parent Guides</a> &middot; <a href="/terms/">Terms</a></p>
+  <p>&copy; 2026 MathsWins. All rights reserved.</p>
+</footer>
+</div>
+</body>
+</html>

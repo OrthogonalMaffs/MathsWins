@@ -1,0 +1,172 @@
+<!DOCTYPE html>
+<html lang="en-GB">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Mean, Median &amp; Mode — A Parent's Guide | MathsWins</title>
+<meta name="description" content="A friendly parent's guide to mean, median, and mode at KS3. Learn the three types of average, how schools teach them now, and a worked example to try together.">
+<meta property="og:title" content="Mean, Median &amp; Mode — A Parent's Guide | MathsWins">
+<meta property="og:description" content="A friendly parent's guide to the three types of average at KS3. Mean, median, and mode — explained clearly for parents.">
+<meta property="og:url" content="https://mathswins.co.uk/parents/averages/">
+<meta property="og:image" content="https://mathswins.co.uk/assets/og-image.png">
+<meta property="og:type" content="article">
+<meta property="og:site_name" content="MathsWins">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:title" content="Mean, Median &amp; Mode — A Parent's Guide | MathsWins">
+<meta name="twitter:description" content="A friendly parent's guide to the three types of average at KS3. Mean, median, and mode — explained clearly for parents.">
+<meta name="twitter:image" content="https://mathswins.co.uk/assets/og-image.png">
+<link rel="canonical" href="https://mathswins.co.uk/parents/averages/">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Crimson+Pro:ital,wght@0,400;1,400&family=DM+Mono:wght@400;500&family=Outfit:wght@300;400;600;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/katex.min.css">
+<script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/katex.min.js"></script>
+<script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/contrib/auto-render.min.js" onload="renderMathInElement(document.body,{delimiters:[{left:'$$',right:'$$',display:true},{left:'\\(',right:'\\)',display:false}]});"></script>
+<style>
+:root{--bg:#050709;--surface:#0a0d14;--surface2:#0f1319;--border:#161c28;--border2:#1e2638;--sky:#0ea5e9;--sky-dim:rgba(14,165,233,0.10);--green:#2dd4a0;--green-dim:rgba(45,212,160,0.10);--red:#ef5350;--gold:#d4a847;--gold-dim:rgba(212,168,71,0.10);--cyan:#22d3ee;--teal:#0d9488;--teal-dim:rgba(13,148,136,0.10);--text:#c8cdd8;--text-bright:#e8ecf4;--muted:#4a5568;}
+*{margin:0;padding:0;box-sizing:border-box;}
+body{font-family:'Outfit',sans-serif;background:var(--bg);color:var(--text);min-height:100vh;line-height:1.7;}
+.container{max-width:760px;margin:0 auto;padding:2rem 1.25rem 4rem;}
+.nav-bar{display:flex;align-items:center;justify-content:space-between;padding:1rem 0;border-bottom:1px solid var(--border);margin-bottom:2rem;}
+.nav-brand{font-family:'Bebas Neue',sans-serif;font-size:1.4rem;color:var(--gold);text-decoration:none;letter-spacing:0.06em;}
+.nav-brand span{color:var(--text-bright);}
+.nav-link{font-size:0.85rem;font-weight:600;color:var(--sky);text-decoration:none;padding:0.4rem 1rem;border:1px solid var(--sky);border-radius:4px;transition:background 0.2s,color 0.2s;}
+.nav-link:hover{background:var(--sky);color:var(--bg);}
+.hero{text-align:center;margin-bottom:2.5rem;}
+.hero-eyebrow{font-size:0.75rem;font-weight:600;text-transform:uppercase;letter-spacing:0.15em;color:var(--sky);margin-bottom:0.5rem;}
+.hero h1{font-family:'Bebas Neue',sans-serif;font-size:clamp(1.8rem,5vw,2.6rem);color:var(--text-bright);letter-spacing:0.04em;line-height:1.1;margin-bottom:0.75rem;}
+.hero-sub{font-family:'Crimson Pro',serif;font-style:italic;font-size:1.05rem;color:var(--cyan);max-width:620px;margin:0 auto;}
+.section{background:var(--surface);border:1px solid var(--border);border-radius:10px;padding:1.5rem;margin-bottom:1.5rem;}
+.section h2{font-family:'Bebas Neue',sans-serif;font-size:1.2rem;color:var(--text-bright);letter-spacing:0.05em;margin-bottom:1rem;}
+.section h3{font-family:'Outfit',sans-serif;font-weight:600;font-size:0.95rem;color:var(--sky);margin:1.25rem 0 0.5rem;}
+.section p{font-size:0.92rem;line-height:1.7;margin-bottom:0.75rem;}
+.section ul{margin:0.5rem 0 1rem 1.25rem;font-size:0.92rem;}
+.section ul li{margin-bottom:0.5rem;line-height:1.6;}
+.section ul li strong{color:var(--text-bright);}
+.formula-box{font-family:'DM Mono',monospace;font-size:0.9rem;color:var(--cyan);background:var(--surface2);padding:0.85rem 1rem;border-radius:6px;margin:0.75rem 0;border-left:3px solid var(--cyan);line-height:1.8;overflow-x:auto;}
+.worked{background:var(--surface2);border:1px solid var(--border2);border-radius:8px;padding:1.25rem;margin:1rem 0;}
+.worked h3{font-family:'Bebas Neue',sans-serif;font-size:1rem;color:var(--gold);letter-spacing:0.04em;margin:0 0 0.75rem;}
+.worked p{font-size:0.9rem;line-height:1.7;margin-bottom:0.5rem;}
+.worked .step{font-family:'DM Mono',monospace;font-size:0.88rem;color:var(--green);margin:0.4rem 0;}
+.tip{font-family:'Crimson Pro',serif;font-style:italic;color:var(--cyan);background:rgba(34,211,238,0.08);border-left:3px solid var(--cyan);padding:0.85rem 1rem;border-radius:0 6px 6px 0;margin:1rem 0;font-size:0.92rem;line-height:1.6;}
+.cta-card{background:var(--surface);border:1px solid var(--border);border-left:3px solid var(--green);border-radius:0 10px 10px 0;padding:1.5rem;margin-top:2rem;text-align:center;}
+.cta-card h3{font-family:'Bebas Neue',sans-serif;font-size:1.3rem;color:var(--green);letter-spacing:0.04em;margin-bottom:0.5rem;}
+.cta-card p{font-family:'Crimson Pro',serif;font-style:italic;font-size:0.95rem;color:var(--text);line-height:1.5;margin-bottom:1rem;}
+.cta-btn{display:inline-block;font-family:'Outfit',sans-serif;font-weight:700;font-size:1rem;padding:0.85rem 2rem;background:var(--green);color:var(--bg);border:none;border-radius:6px;text-decoration:none;transition:background 0.2s;}
+.cta-btn:hover{background:#5eead4;}
+.footer{margin-top:2.5rem;padding-top:1.25rem;border-top:1px solid var(--border);text-align:center;}
+.footer p{font-size:0.72rem;color:var(--muted);line-height:1.8;}
+.footer a{color:var(--muted);text-decoration:underline;}
+@media(max-width:600px){.container{padding:1.25rem 1rem 3rem;}.section{padding:1.25rem 1rem;}}
+</style>
+<!-- GA4 Cookieless -->
+<script async src="https://www.googletagmanager.com/gtag/js?id=G-7GTLYCZMXN"></script>
+<script>window.dataLayer=window.dataLayer||[];function gtag(){dataLayer.push(arguments);}gtag('js',new Date());gtag('consent','default',{analytics_storage:'denied',ad_storage:'denied',ad_user_data:'denied',ad_personalization:'denied'});gtag('config','G-7GTLYCZMXN',{send_page_view:true,anonymize_ip:true});</script>
+</head>
+<body>
+<script src="/auth/mw-auth.js"></script>
+<div class="container">
+<nav class="nav-bar">
+  <a href="/" class="nav-brand">MATHS<span>WINS</span></a>
+  <a href="/parents/" class="nav-link">All Parent Guides &rarr;</a>
+</nav>
+
+<div class="hero">
+  <div class="hero-eyebrow">KS3 Parent Guide</div>
+  <h1>MEAN, MEDIAN &amp; MODE</h1>
+  <div class="hero-sub">Three types of average, one guide. Here's what your child is learning and how you can help at home.</div>
+</div>
+
+<div class="section">
+  <h2>WHAT YOUR CHILD IS LEARNING</h2>
+  <p>When most of us say "average," we mean one thing. In maths, there are actually three different types of average, and your child needs to know all of them. Each one answers the question "What's a typical value?" in a slightly different way.</p>
+
+  <h3>Mean</h3>
+  <p>The one you probably remember. Add up all the values, then divide by how many there are. The mean uses every single piece of data, which makes it thorough &mdash; but it also means one extreme value can pull it way up or way down.</p>
+  <div class="formula-box">
+    $$\text{Mean} = \frac{\text{sum of all values}}{\text{number of values}}$$
+  </div>
+
+  <h3>Median</h3>
+  <p>The middle value when you put all the numbers in order. If there's an even number of values, the median is the mean of the two middle ones. The median is brilliant when you have extreme values (outliers), because it ignores them. It just cares about what's in the middle.</p>
+
+  <h3>Mode</h3>
+  <p>The value that appears most often. That's it. If no value repeats, there's no mode. If two values appear the same number of times, there are two modes. The mode is the only average that works for non-numerical data (like "What's the most popular school lunch?").</p>
+
+  <p>Schools teach all three together so students can compare them and understand that different situations call for different averages. This is actually a really important real-world skill &mdash; the mean salary in a company with one very highly paid CEO tells a very different story from the median salary.</p>
+</div>
+
+<div class="section">
+  <h2>HOW SCHOOLS TEACH IT NOW</h2>
+  <p>The teaching approach emphasises understanding <em>when</em> to use each average, not just how to calculate them.</p>
+
+  <h3>Step 1: Calculate All Three</h3>
+  <p>Given a dataset, students practise finding the mean, median, and mode of the same data. This builds fluency with each method.</p>
+
+  <h3>Step 2: Compare and Discuss</h3>
+  <p>Students look at cases where the three averages give different answers and discuss which one best represents the data. For instance, house prices in a street where one mansion inflates the mean &mdash; the median is more useful there.</p>
+
+  <h3>Step 3: Range</h3>
+  <p>Alongside the three averages, students learn the <strong>range</strong>: the difference between the highest and lowest values. The range measures how spread out the data is &mdash; it's not an average, but it's always taught alongside them.</p>
+  <div class="formula-box">
+    $$\text{Range} = \text{highest value} - \text{lowest value}$$
+  </div>
+
+  <h3>Step 4: Choosing the Right Average</h3>
+  <p>Exam questions increasingly ask "Which average best represents this data? Explain why." This is where students need to think, not just calculate. Schools spend real time on this reasoning.</p>
+</div>
+
+<div class="section">
+  <h2>COMMON MISTAKES TO WATCH FOR</h2>
+  <ul>
+    <li><strong>Forgetting to sort before finding the median.</strong> The median is the middle value <em>when the data is in order</em>. If your child picks the middle number from an unsorted list, they'll almost certainly get the wrong answer. Always sort first.</li>
+    <li><strong>Confusing mean and median.</strong> "Add them up and divide" is the mean. "Find the middle one" is the median. A helpful memory trick: m<strong>e</strong>an = <strong>e</strong>verything added up; m<strong>e</strong>di<strong>a</strong>n = middle (like the <strong>median</strong> strip in a road &mdash; it's in the middle).</li>
+    <li><strong>Thinking there's always exactly one mode.</strong> There can be no mode (if nothing repeats), one mode, or multiple modes (if several values tie for most frequent). Students sometimes panic when there isn't a clean single answer.</li>
+    <li><strong>Dividing by the wrong number for the mean.</strong> If the data is 3, 7, 7, 9, 14, there are 5 values. Students sometimes divide by the largest value, or by the number of different values. It's always the total count of all the numbers, including repeats.</li>
+  </ul>
+</div>
+
+<div class="section">
+  <h2>TRY IT TOGETHER</h2>
+  <div class="worked">
+    <h3>Worked Example</h3>
+    <p>Here are five test scores: <strong>3, 7, 7, 9, 14</strong>. Find the mean, median, and mode.</p>
+
+    <p><strong>Mean:</strong></p>
+    <div class="step">\(\text{Mean} = \frac{3 + 7 + 7 + 9 + 14}{5} = \frac{40}{5} = 8\)</div>
+
+    <p><strong>Median:</strong></p>
+    <p>The data is already sorted: 3, 7, <strong>7</strong>, 9, 14. There are 5 values, so the middle one is the 3rd value.</p>
+    <div class="step">\(\text{Median} = 7\)</div>
+
+    <p><strong>Mode:</strong></p>
+    <p>Which number appears most often? 7 appears twice; everything else appears once.</p>
+    <div class="step">\(\text{Mode} = 7\)</div>
+
+    <p><strong>Range:</strong></p>
+    <div class="step">\(\text{Range} = 14 - 3 = 11\)</div>
+  </div>
+  <div class="tip">Notice that the mean (8) and the median (7) give slightly different answers here. That's normal &mdash; they measure "typical" in different ways. Ask your child: "If we changed the 14 to 100, what would happen to the mean? What about the median?" (The mean would jump to 25.2, but the median would stay at 7. This shows why the median is better for data with outliers.)</div>
+
+  <div class="worked">
+    <h3>Bonus: Even Number of Values</h3>
+    <p>Data: <strong>2, 5, 8, 12</strong>. Find the median.</p>
+    <p>There are 4 values (even), so the median is the mean of the 2nd and 3rd values:</p>
+    <div class="step">\(\text{Median} = \frac{5 + 8}{2} = \frac{13}{2} = 6.5\)</div>
+    <p>The median can be a value that doesn't actually appear in the data. That's perfectly fine.</p>
+  </div>
+</div>
+
+<div class="cta-card">
+  <h3>LET THEM PRACTISE</h3>
+  <p>Our Stat Attack game gives your child hands-on practice with mean, median, mode, and range. It's free, it works on any device, and there's no sign-up needed.</p>
+  <a href="https://maffsgames.co.uk/games/stat-attack/" target="_blank" rel="noopener" class="cta-btn">Play Stat Attack on MaffsGames</a>
+</div>
+
+<footer class="footer">
+  <p><a href="/">MathsWins</a> &middot; <a href="/parents/">Parent Guides</a> &middot; <a href="/terms/">Terms</a></p>
+  <p>&copy; 2026 MathsWins. All rights reserved.</p>
+</footer>
+</div>
+</body>
+</html>
