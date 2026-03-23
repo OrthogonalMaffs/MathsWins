@@ -113,14 +113,18 @@ Focused single-purpose tools. Currently: UK Student Loan Calculator.
 
 ## Current State
 
+### Tagline
+"The Maths Behind Every Decision" (updated 23 March 2026, was "The Mathematics Behind Every Game of Chance")
+
 ### Deployed & Live
-- Landing page with game cards, academy cards, everyday cards
+- Landing page with game cards, academy cards, everyday cards, tools, parents
 - 13 free games (all built and playable)
 - 9 academy courses with Stripe payment integration (Module 1 free on each)
 - Academy hub page with MathsWins Premium (£149.99 lifetime / £99.99 annual)
 - Options Maths standalone course page (Module 1 free, M2-10 coming soon)
 - 6 Everyday Maths courses (all live, free forever)
-- UK Student Loan Calculator tool
+- **24 free tools** (finance, self-employment, property, family, lifestyle, betting, crypto) — see Tools section below
+- **20 parent guides** (10 KS3 + 10 GCSE) — "Help Your Child With Maths" at /parents/
 - Terms of Use page (17 sections, UK law, noindex)
 - GitHub Pages enabled, CNAME set to mathswins.co.uk
 - DNS configured at IONOS with A records pointing to GitHub Pages
@@ -130,6 +134,8 @@ Focused single-purpose tools. Currently: UK Student Loan Calculator.
 - **Upgrade Credit System** — server-side spend calculation, Stripe coupon generation, auto-applied promo codes
 - **Access restoration** via email magic link (`/restore/`) or automatic on Google login
 - **Cloudflare Worker** (`mathswins-restore`) — auth, restore, upgrade credit endpoints (deployed via dashboard)
+- **Cookie consent banner** on all pages — GA4 with consent mode (defaults denied, upgrades to granted on accept)
+- **Full SEO** on all 85 pages — title, description, canonical, OG tags, twitter:card, FAQ schema on tools, WebApplication schema on tools
 
 ### Not Yet Built / In Progress
 - Stripe redirect URLs (need to set `?session_id=` on all 18 Payment Links in Stripe dashboard)
@@ -188,8 +194,59 @@ everyday/                           # Free everyday maths courses
   inflation/index.html              # 3 modules, purchasing power, real vs nominal, shrinkflation
   probability/index.html            # 4 modules, base rates, Bayes, Monty Hall, birthday problem
 terms/index.html                    # Terms of Use (noindex, 17 sections, UK law)
-tools/                              # Free standalone tools
-  student-loan/index.html           # UK student loan calculator, all 5 plans, year-by-year schedule
+tools/                              # 24 free calculators (see Tools section below)
+  index.html                        # Tools hub with filter pills
+  student-loan/index.html
+  take-home-pay/index.html
+  pension-gap/index.html
+  stamp-duty/index.html
+  mortgage-overpayment/index.html
+  compound-interest/index.html
+  salary-sacrifice/index.html
+  debt-snowball/index.html
+  savings-goal/index.html
+  emergency-fund/index.html
+  self-employment-tax/index.html
+  side-hustle-tax/index.html
+  invoice-tax-reserve/index.html
+  ir35-calculator/index.html
+  dividend-vs-salary/index.html
+  vat-threshold/index.html
+  mileage-expenses/index.html
+  childcare-costs/index.html
+  child-benefit/index.html
+  life-insurance/index.html
+  rent-vs-buy/index.html
+  habit-cost/index.html
+  free-bet-calculator/index.html
+  accumulator-calculator/index.html
+  poker-odds/index.html
+  impermanent-loss/index.html
+  crypto-liquidation/index.html
+parents/                            # 20 parent homework help guides
+  index.html                        # Parents hub — "Help Your Child With Maths"
+  negative-numbers/index.html       # KS3 guides (10)
+  algebra-basics/index.html
+  fractions/index.html
+  ratio-proportion/index.html
+  sequences/index.html
+  area-perimeter/index.html
+  angles/index.html
+  probability/index.html
+  averages/index.html
+  coordinates/index.html
+  expanding-factorising/index.html  # GCSE guides (10)
+  simultaneous-equations/index.html
+  trigonometry/index.html
+  circle-theorems/index.html
+  standard-form/index.html
+  indices-surds/index.html
+  graphs-transformations/index.html
+  pythagoras/index.html
+  probability-trees/index.html
+  statistics-data/index.html
+assets/
+  og-image.png                      # 1200x630 OG image for social sharing
 contracts/                          # Solidity smart contracts (Foundry)
   src/
   test/
@@ -291,10 +348,100 @@ Free courses teaching the mathematics behind everyday financial decisions. No ga
 | Inflation & Real Returns | `everyday/inflation` | 3 | Purchasing power erosion, real vs nominal returns, shrinkflation maths. Live calculators. |
 | Everyday Probability | `everyday/probability` | 4 | Base rate neglect, Bayes' theorem, Monty Hall (interactive game), birthday problem. Live calculators. |
 
-## Tools (Free)
+## Tools (24 Free Calculators — built 23 March 2026)
+
+Tools hub at `/tools/` with filter pills: All, Most Popular, Self-Employment, Home & Family, Debt & Savings, Lifestyle, Betting, Crypto.
+
+Every tool has: FAQ schema, WebApplication schema, full SEO, cookie consent, educational content.
+12 tools have GOV.UK links for direct access to apply/check entitlements.
+
+### Most Popular
 | Tool | Slug | Key features |
 |------|------|--------------|
-| UK Student Loan Calculator | `tools/student-loan` | All 5 plans (1, 2, 4, 5, Postgraduate), 2025/26 thresholds, year-by-year amortisation, write-off vs payoff verdict, combined marginal rate analysis |
+| UK Take Home Pay Calculator | `tools/take-home-pay` | Gross to net, tax/NI/pension/student loan, Scottish rates, Tax Saving Explorer with pension slider |
+| UK Student Loan Calculator | `tools/student-loan` | All 5 plans, year-by-year amortisation, write-off analysis |
+| Stamp Duty Calculator | `tools/stamp-duty` | SDLT/LBTT/LTT, first-time buyer, additional property, pre/post April 2025 |
+| Pension Gap Calculator | `tools/pension-gap` | Projected pot, retirement income, gap analysis, "Close the Gap" targets |
+| Mortgage Overpayment Calculator | `tools/mortgage-overpayment` | Interest saved, term reduction, year-by-year amortisation |
+| Savings Goal Calculator | `tools/savings-goal` | Two modes: target by date OR budget to goal, milestone markers |
+
+### Self-Employment (7)
+| Tool | Slug | Key features |
+|------|------|--------------|
+| Self-Employment Tax Calculator | `tools/self-employment-tax` | Full sole trader: income tax, Class 2/4 NI, payment on account, monthly set-aside |
+| Side Hustle Tax Calculator | `tools/side-hustle-tax` | Marginal approach, trading allowance, stacks on employment income |
+| Invoice Tax Reserve | `tools/invoice-tax-reserve` | Per-invoice: how much to set aside, with conservative buffer |
+| IR35 Calculator | `tools/ir35-calculator` | Inside (umbrella) vs outside (Ltd) comparison, day rate equivalence |
+| Dividend vs Salary Calculator | `tools/dividend-vs-salary` | Optimal extraction, 3 scenarios compared, interactive slider |
+| VAT Threshold Monitor | `tools/vat-threshold` | Rolling 12-month tracker, flat rate scheme comparison |
+| Mileage & Expenses Calculator | `tools/mileage-expenses` | HMRC approved rates, home office, phone, tax saving |
+
+### Home & Family (5)
+| Tool | Slug | Key features |
+|------|------|--------------|
+| Rent vs Buy Calculator | `tools/rent-vs-buy` | True cost over 5-25 years, deposit opportunity cost, crossover analysis |
+| Childcare Cost Calculator | `tools/childcare-costs` | Tax-Free Childcare savings, free hours, scheme comparison |
+| Child Benefit Calculator | `tools/child-benefit` | HICBC clawback, pension sacrifice strategy, NI credits warning |
+| Salary Sacrifice Calculator | `tools/salary-sacrifice` | Tax + NI saving, threshold trap detection |
+| Life Insurance Calculator | `tools/life-insurance` | Needs-based cover, mortgage + income + dependents |
+
+### Debt & Savings (3)
+| Tool | Slug | Key features |
+|------|------|--------------|
+| Debt Snowball Calculator | `tools/debt-snowball` | Snowball vs avalanche comparison, pre-computed interest support |
+| Compound Interest Calculator | `tools/compound-interest` | Growth projection, Rule of 72, inflation adjustment |
+| Emergency Fund Calculator | `tools/emergency-fund` | 3/6/12 month targets, thermometer visual |
+
+### Lifestyle (1)
+| Tool | Slug | Key features |
+|------|------|--------------|
+| Habit Cost Calculator | `tools/habit-cost` | Smoking/drinking/coffee opportunity cost, compound growth, shareable |
+
+### Betting & Gambling (3)
+| Tool | Slug | Key features |
+|------|------|--------------|
+| Free Bet Calculator | `tools/free-bet-calculator` | SNR/SR valuations, qualifying costs, lay-off |
+| Accumulator Calculator | `tools/accumulator-calculator` | Combined odds, implied probability, overround |
+| Poker Odds Calculator | `tools/poker-odds` | Hand equity, outs, pot odds |
+
+### Crypto & Trading (2)
+| Tool | Slug | Key features |
+|------|------|--------------|
+| Impermanent Loss Calculator | `tools/impermanent-loss` | IL calculation, fee break-even, hold vs LP |
+| Crypto Liquidation Calculator | `tools/crypto-liquidation` | Liquidation price, margin of safety |
+
+## Parents Section (20 Guides — built 23 March 2026)
+
+Hub at `/parents/` — "Help Your Child With Maths"
+Plain English guides for parents who haven't done maths in 15+ years. Each guide links to the relevant free MaffsGames practice game (MathsWins → MaffsGames direction only, never reverse).
+
+### KS3 Guides (10)
+| Guide | Slug | Links to MaffsGames |
+|-------|------|-------------------|
+| Negative Numbers | `parents/negative-numbers` | Negative Number Line |
+| Algebra Basics | `parents/algebra-basics` | Like Terms Collector, Think of a Number |
+| Fractions, Decimals & Percentages | `parents/fractions` | Fraction Snap, Percentage Flip |
+| Ratio & Proportion | `parents/ratio-proportion` | Split It |
+| Sequences & Patterns | `parents/sequences` | Sequence Solver |
+| Area & Perimeter | `parents/area-perimeter` | New Shapes |
+| Angles | `parents/angles` | Angle Ace |
+| Probability | `parents/probability` | Probability Pioneer |
+| Mean, Median & Mode | `parents/averages` | Stat Attack |
+| Coordinates & Quadrants | `parents/coordinates` | Four Quadrant Explorer |
+
+### GCSE Guides (10)
+| Guide | Slug | Links to MaffsGames |
+|-------|------|-------------------|
+| Expanding & Factorising | `parents/expanding-factorising` | Quadratic Factoriser |
+| Simultaneous Equations | `parents/simultaneous-equations` | Simultaneous Solver |
+| Trigonometry | `parents/trigonometry` | Trig Wars, Trig Worms |
+| Circle Theorems | `parents/circle-theorems` | Circle Theorem Spotter |
+| Standard Form | `parents/standard-form` | Standard Form Blitz |
+| Indices & Surds | `parents/indices-surds` | Index Laws, Surd Simplifier |
+| Graph Transformations | `parents/graphs-transformations` | Graph Transformer |
+| Pythagoras | `parents/pythagoras` | Coordinate Geometry Dash |
+| Probability Trees | `parents/probability-trees` | Probability Paradox |
+| Statistics & Data | `parents/statistics-data` | Chart Interrogator |
 
 ## Smart Contracts
 
@@ -403,8 +550,15 @@ forge test -vv
 6. If user doesn't own: buy section shows Stripe Payment Link buttons
 7. After Stripe purchase: `?session_id=` redirect sets localStorage, `mwAuth.refreshPurchases()` syncs to server
 
-## Analytics
-GA4 cookieless mode (`G-7GTLYCZMXN`) — **separate property from maffsgames.co.uk** (zero crossover). Consent mode defaults deny all cookie storage. No cookie banner required. Collects modelled pageviews and events only.
+## SEO (Updated 23 March 2026)
+- Sitemap: 85 URLs (`sitemap.xml`)
+- All 85 pages have: title, meta description, canonical, OG tags, twitter:card
+- All 24 tools have: FAQPage schema, WebApplication schema
+- OG image: `assets/og-image.png` (1200x630 PNG, dark theme with gold branding)
+- 12 tools have GOV.UK links for direct entitlement/application access
+
+## Analytics (Updated 23 March 2026)
+GA4 (`G-7GTLYCZMXN`) with **cookie consent banner** on all pages — **separate property from maffsgames.co.uk** (zero crossover). Consent mode defaults to denied; upgrades to granted when user accepts. Cookie consent persisted in localStorage (`mw_cookies`). Collects full session data when accepted, modelled data when declined.
 
 ## Relationship to Other Projects
 - **maffsgames.co.uk** — sister site, schools-only. Shares 5 games. Different repo, different branding, different audience. Zero crossover in branding or contact details.
