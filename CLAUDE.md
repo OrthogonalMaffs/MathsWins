@@ -123,7 +123,7 @@ Focused single-purpose tools. Currently: UK Student Loan Calculator.
 - Academy hub page with MathsWins Premium (£149.99 lifetime / £99.99 annual)
 - Options Maths standalone course page (Module 1 free, M2-10 coming soon)
 - 6 Everyday Maths courses (all live, free forever)
-- **24 free tools** (finance, self-employment, property, family, lifestyle, betting, crypto) — see Tools section below
+- **27 free tools** (finance, self-employment, property, family, lifestyle, betting, crypto) — see Tools section below
 - **20 parent guides** (10 KS3 + 10 GCSE) — "Help Your Child With Maths" at /parents/
 - Terms of Use page (17 sections, UK law, noindex)
 - GitHub Pages enabled, CNAME set to mathswins.co.uk
@@ -348,7 +348,7 @@ Free courses teaching the mathematics behind everyday financial decisions. No ga
 | Inflation & Real Returns | `everyday/inflation` | 3 | Purchasing power erosion, real vs nominal returns, shrinkflation maths. Live calculators. |
 | Everyday Probability | `everyday/probability` | 4 | Base rate neglect, Bayes' theorem, Monty Hall (interactive game), birthday problem. Live calculators. |
 
-## Tools (24 Free Calculators — built 23 March 2026)
+## Tools (27 Free Calculators — built 23 March 2026)
 
 Tools hub at `/tools/` with filter pills: All, Most Popular, Self-Employment, Home & Family, Debt & Savings, Lifestyle, Betting, Crypto.
 
@@ -553,7 +553,7 @@ forge test -vv
 ## SEO (Updated 23 March 2026)
 - Sitemap: 85 URLs (`sitemap.xml`)
 - All 85 pages have: title, meta description, canonical, OG tags, twitter:card
-- All 24 tools have: FAQPage schema, WebApplication schema
+- All 27 tools have: FAQPage schema, WebApplication schema
 - OG image: `assets/og-image.png` (1200x630 PNG, dark theme with gold branding)
 - 12 tools have GOV.UK links for direct entitlement/application access
 
