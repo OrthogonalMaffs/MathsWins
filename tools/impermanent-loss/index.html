@@ -71,6 +71,12 @@ body{font-family:'Outfit',sans-serif;background:var(--bg);color:var(--text);min-
 <meta property="og:type" content="website">
 <meta property="og:url" content="https://mathswins.co.uk/tools/impermanent-loss/">
 <meta property="og:description" content="Calculate impermanent loss for any liquidity pool. See the exact cost of providing liquidity vs holding. Compare fee income against IL. Free DeFi calculator.">
+<script type="application/ld+json">
+{"@context":"https://schema.org","@type":"WebApplication","name":"Impermanent Loss Calculator","url":"https://mathswins.co.uk/tools/impermanent-loss/","applicationCategory":"FinanceApplication","offers":{"@type":"Offer","price":"0","priceCurrency":"GBP"},"provider":{"@type":"Organization","name":"MathsWins","url":"https://mathswins.co.uk"}}
+</script>
+<script type="application/ld+json">
+{"@context":"https://schema.org","@type":"FAQPage","mainEntity":[{"@type":"Question","name":"What is impermanent loss?","acceptedAnswer":{"@type":"Answer","text":"When you provide liquidity to a pool and one token's price changes relative to the other, you end up with less value than if you'd just held the tokens. That difference is impermanent loss."}},{"@type":"Question","name":"Why is it called 'impermanent'?","acceptedAnswer":{"@type":"Answer","text":"Because the loss only becomes permanent when you withdraw. If prices return to the original ratio, the loss disappears. In practice, it's usually permanent."}},{"@type":"Question","name":"How much impermanent loss at 2x price change?","acceptedAnswer":{"@type":"Answer","text":"If one token doubles relative to the other, impermanent loss is about 5.7%. At 5x it's 25.5%. The relationship is non-linear."}},{"@type":"Question","name":"Do LP fees offset impermanent loss?","acceptedAnswer":{"@type":"Answer","text":"Sometimes. High-volume pools generate fees that can exceed impermanent loss. Low-volume pools rarely do. Always calculate net return, not just APY."}},{"@type":"Question","name":"How can I reduce impermanent loss?","acceptedAnswer":{"@type":"Answer","text":"Use stablecoin pairs (minimal price divergence), concentrated liquidity ranges, or single-sided staking. Or just hold — impermanent loss affects LPs, not holders."}}]}
+</script>
 </head>
 <body>
 <script src="/auth/mw-auth.js"></script>
@@ -231,6 +237,15 @@ Break-even daily volume: ${fmt(breakEvenVolume)}
 }
 calculate();
 </script>
+<style>.faq-section{max-width:800px;margin:3rem auto;padding:0 1.5rem}.faq-title{font-family:'Bebas Neue',sans-serif;font-size:2rem;color:#e8ecf4;margin-bottom:1.5rem;letter-spacing:.03em}.faq-item{border-bottom:1px solid #161c28;padding:0}.faq-item summary{padding:1rem 0;cursor:pointer;font-weight:600;color:#e8ecf4;font-size:1rem;list-style:none;display:flex;justify-content:space-between;align-items:center}.faq-item summary::after{content:'+';color:#d4a847;font-size:1.3rem;font-weight:700;transition:transform 0.2s}.faq-item[open] summary::after{transform:rotate(45deg)}.faq-item p{padding:0 0 1rem;color:#94a3b8;line-height:1.7;font-size:0.95rem}</style>
+<div class="faq-section">
+<h2 class="faq-title">FREQUENTLY ASKED QUESTIONS</h2>
+<details class="faq-item"><summary>What is impermanent loss?</summary><p>When you provide liquidity to a pool and one token's price changes relative to the other, you end up with less value than if you'd just held the tokens. That difference is impermanent loss.</p></details>
+<details class="faq-item"><summary>Why is it called 'impermanent'?</summary><p>Because the loss only becomes permanent when you withdraw. If prices return to the original ratio, the loss disappears. In practice, it's usually permanent.</p></details>
+<details class="faq-item"><summary>How much impermanent loss at 2x price change?</summary><p>If one token doubles relative to the other, impermanent loss is about 5.7%. At 5x it's 25.5%. The relationship is non-linear.</p></details>
+<details class="faq-item"><summary>Do LP fees offset impermanent loss?</summary><p>Sometimes. High-volume pools generate fees that can exceed impermanent loss. Low-volume pools rarely do. Always calculate net return, not just APY.</p></details>
+<details class="faq-item"><summary>How can I reduce impermanent loss?</summary><p>Use stablecoin pairs (minimal price divergence), concentrated liquidity ranges, or single-sided staking. Or just hold — impermanent loss affects LPs, not holders.</p></details>
+</div>
 <!-- Cookie Consent Banner -->
 <div id="cookieConsent" style="display:none;position:fixed;bottom:0;left:0;right:0;background:#0c1628;border-top:1px solid #14263d;padding:14px 24px;z-index:99999;font-family:'Outfit',system-ui,sans-serif;font-size:13px;color:#94a3b8;display:none;align-items:center;justify-content:center;gap:16px;flex-wrap:wrap">
 <span>We use cookies for analytics to improve your experience. No personal data is sold or shared.</span>

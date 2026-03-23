@@ -72,6 +72,12 @@ body{font-family:'Outfit',sans-serif;background:var(--bg);color:var(--text);min-
 <meta name="twitter:card" content="summary_large_image">
 <meta name="twitter:title" content="MathsWins">
 <meta name="twitter:image" content="https://mathswins.co.uk/assets/og-image.png">
+<script type="application/ld+json">
+{"@context":"https://schema.org","@type":"WebApplication","name":"Mortgage Overpayment Calculator","url":"https://mathswins.co.uk/tools/mortgage-overpayment/","applicationCategory":"FinanceApplication","offers":{"@type":"Offer","price":"0","priceCurrency":"GBP"},"provider":{"@type":"Organization","name":"MathsWins","url":"https://mathswins.co.uk"}}
+</script>
+<script type="application/ld+json">
+{"@context":"https://schema.org","@type":"FAQPage","mainEntity":[{"@type":"Question","name":"How much can I save by overpaying my mortgage?","acceptedAnswer":{"@type":"Answer","text":"Depends on rate and term. On a £200,000 mortgage at 5% over 25 years, overpaying £200/month saves ~£45,000 in interest and clears it 7 years early."}},{"@type":"Question","name":"Is there a limit on mortgage overpayments?","acceptedAnswer":{"@type":"Answer","text":"Most lenders allow 10% overpayment per year without penalty. Check your mortgage terms — some charge an Early Repayment Charge (ERC)."}},{"@type":"Question","name":"Should I overpay my mortgage or save?","acceptedAnswer":{"@type":"Answer","text":"If your mortgage rate is higher than your savings rate (after tax), overpaying wins mathematically. But keep an emergency fund first."}},{"@type":"Question","name":"Does overpaying reduce my monthly payment or term?","acceptedAnswer":{"@type":"Answer","text":"You can choose. Reducing the term saves more interest overall. Reducing payment gives more monthly flexibility."}},{"@type":"Question","name":"Can I overpay a fixed rate mortgage?","acceptedAnswer":{"@type":"Answer","text":"Yes, usually up to 10% per year without penalty. Overpaying during a fixed period is one of the best financial decisions you can make."}}]}
+</script>
 </head>
 <body>
 <script src="/auth/mw-auth.js"></script>
@@ -212,6 +218,15 @@ Effective "return" on overpayments: ${(annualRate*100).toFixed(1)}% guaranteed, 
 }
 calculate();
 </script>
+<style>.faq-section{max-width:800px;margin:3rem auto;padding:0 1.5rem}.faq-title{font-family:'Bebas Neue',sans-serif;font-size:2rem;color:#e8ecf4;margin-bottom:1.5rem;letter-spacing:.03em}.faq-item{border-bottom:1px solid #161c28;padding:0}.faq-item summary{padding:1rem 0;cursor:pointer;font-weight:600;color:#e8ecf4;font-size:1rem;list-style:none;display:flex;justify-content:space-between;align-items:center}.faq-item summary::after{content:'+';color:#d4a847;font-size:1.3rem;font-weight:700;transition:transform 0.2s}.faq-item[open] summary::after{transform:rotate(45deg)}.faq-item p{padding:0 0 1rem;color:#94a3b8;line-height:1.7;font-size:0.95rem}</style>
+<div class="faq-section">
+<h2 class="faq-title">FREQUENTLY ASKED QUESTIONS</h2>
+<details class="faq-item"><summary>How much can I save by overpaying my mortgage?</summary><p>Depends on rate and term. On a £200,000 mortgage at 5% over 25 years, overpaying £200/month saves ~£45,000 in interest and clears it 7 years early.</p></details>
+<details class="faq-item"><summary>Is there a limit on mortgage overpayments?</summary><p>Most lenders allow 10% overpayment per year without penalty. Check your mortgage terms — some charge an Early Repayment Charge (ERC).</p></details>
+<details class="faq-item"><summary>Should I overpay my mortgage or save?</summary><p>If your mortgage rate is higher than your savings rate (after tax), overpaying wins mathematically. But keep an emergency fund first.</p></details>
+<details class="faq-item"><summary>Does overpaying reduce my monthly payment or term?</summary><p>You can choose. Reducing the term saves more interest overall. Reducing payment gives more monthly flexibility.</p></details>
+<details class="faq-item"><summary>Can I overpay a fixed rate mortgage?</summary><p>Yes, usually up to 10% per year without penalty. Overpaying during a fixed period is one of the best financial decisions you can make.</p></details>
+</div>
 <!-- Cookie Consent Banner -->
 <div id="cookieConsent" style="display:none;position:fixed;bottom:0;left:0;right:0;background:#0c1628;border-top:1px solid #14263d;padding:14px 24px;z-index:99999;font-family:'Outfit',system-ui,sans-serif;font-size:13px;color:#94a3b8;display:none;align-items:center;justify-content:center;gap:16px;flex-wrap:wrap">
 <span>We use cookies for analytics to improve your experience. No personal data is sold or shared.</span>

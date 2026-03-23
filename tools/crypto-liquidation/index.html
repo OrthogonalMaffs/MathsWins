@@ -71,6 +71,12 @@ body{font-family:'Outfit',sans-serif;background:var(--bg);color:var(--text);min-
 <meta property="og:type" content="website">
 <meta property="og:url" content="https://mathswins.co.uk/tools/crypto-liquidation/">
 <meta property="og:description" content="Calculate your liquidation price for any leveraged crypto position. See the probability of liquidation within 1, 7, and 30 days. Plus daily funding costs. Free tool.">
+<script type="application/ld+json">
+{"@context":"https://schema.org","@type":"WebApplication","name":"Crypto Liquidation Calculator","url":"https://mathswins.co.uk/tools/crypto-liquidation/","applicationCategory":"FinanceApplication","offers":{"@type":"Offer","price":"0","priceCurrency":"GBP"},"provider":{"@type":"Organization","name":"MathsWins","url":"https://mathswins.co.uk"}}
+</script>
+<script type="application/ld+json">
+{"@context":"https://schema.org","@type":"FAQPage","mainEntity":[{"@type":"Question","name":"What is a liquidation price?","acceptedAnswer":{"@type":"Answer","text":"The price at which your leveraged position is automatically closed by the exchange to prevent further losses. Your margin is consumed and the position is gone."}},{"@type":"Question","name":"How does leverage affect liquidation price?","acceptedAnswer":{"@type":"Answer","text":"Higher leverage = closer liquidation price. At 10x long, a 10% drop liquidates you. At 100x, a 1% drop does. The maths is brutally simple."}},{"@type":"Question","name":"Can I avoid liquidation?","acceptedAnswer":{"@type":"Answer","text":"Add more margin to push your liquidation price further away. Or use lower leverage. Or set a stop-loss above your liquidation price (recommended)."}},{"@type":"Question","name":"What happens to my money when I get liquidated?","acceptedAnswer":{"@type":"Answer","text":"Your margin is used to close the position. Any remaining balance after covering the loss stays in your account. At high leverage, there's usually nothing left."}},{"@type":"Question","name":"Is cross-margin or isolated margin safer?","acceptedAnswer":{"@type":"Answer","text":"Isolated margin limits your loss to the margin assigned to that trade. Cross-margin uses your entire account balance, risking everything but giving more room before liquidation."}}]}
+</script>
 </head>
 <body>
 <script src="/auth/mw-auth.js"></script>
@@ -220,6 +226,15 @@ function calculate(){
 }
 calculate();
 </script>
+<style>.faq-section{max-width:800px;margin:3rem auto;padding:0 1.5rem}.faq-title{font-family:'Bebas Neue',sans-serif;font-size:2rem;color:#e8ecf4;margin-bottom:1.5rem;letter-spacing:.03em}.faq-item{border-bottom:1px solid #161c28;padding:0}.faq-item summary{padding:1rem 0;cursor:pointer;font-weight:600;color:#e8ecf4;font-size:1rem;list-style:none;display:flex;justify-content:space-between;align-items:center}.faq-item summary::after{content:'+';color:#d4a847;font-size:1.3rem;font-weight:700;transition:transform 0.2s}.faq-item[open] summary::after{transform:rotate(45deg)}.faq-item p{padding:0 0 1rem;color:#94a3b8;line-height:1.7;font-size:0.95rem}</style>
+<div class="faq-section">
+<h2 class="faq-title">FREQUENTLY ASKED QUESTIONS</h2>
+<details class="faq-item"><summary>What is a liquidation price?</summary><p>The price at which your leveraged position is automatically closed by the exchange to prevent further losses. Your margin is consumed and the position is gone.</p></details>
+<details class="faq-item"><summary>How does leverage affect liquidation price?</summary><p>Higher leverage = closer liquidation price. At 10x long, a 10% drop liquidates you. At 100x, a 1% drop does. The maths is brutally simple.</p></details>
+<details class="faq-item"><summary>Can I avoid liquidation?</summary><p>Add more margin to push your liquidation price further away. Or use lower leverage. Or set a stop-loss above your liquidation price (recommended).</p></details>
+<details class="faq-item"><summary>What happens to my money when I get liquidated?</summary><p>Your margin is used to close the position. Any remaining balance after covering the loss stays in your account. At high leverage, there's usually nothing left.</p></details>
+<details class="faq-item"><summary>Is cross-margin or isolated margin safer?</summary><p>Isolated margin limits your loss to the margin assigned to that trade. Cross-margin uses your entire account balance, risking everything but giving more room before liquidation.</p></details>
+</div>
 <!-- Cookie Consent Banner -->
 <div id="cookieConsent" style="display:none;position:fixed;bottom:0;left:0;right:0;background:#0c1628;border-top:1px solid #14263d;padding:14px 24px;z-index:99999;font-family:'Outfit',system-ui,sans-serif;font-size:13px;color:#94a3b8;display:none;align-items:center;justify-content:center;gap:16px;flex-wrap:wrap">
 <span>We use cookies for analytics to improve your experience. No personal data is sold or shared.</span>

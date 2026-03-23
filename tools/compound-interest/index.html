@@ -71,6 +71,12 @@ body{font-family:'Outfit',sans-serif;background:var(--bg);color:var(--text);min-
 <meta property="og:type" content="website">
 <meta property="og:url" content="https://mathswins.co.uk/tools/compound-interest/">
 <meta property="og:description" content="Calculate compound interest on savings and investments. See how your money grows over time with regular contributions. Compare simple vs compound interest. Free UK calculator.">
+<script type="application/ld+json">
+{"@context":"https://schema.org","@type":"WebApplication","name":"Compound Interest Calculator","url":"https://mathswins.co.uk/tools/compound-interest/","applicationCategory":"FinanceApplication","offers":{"@type":"Offer","price":"0","priceCurrency":"GBP"},"provider":{"@type":"Organization","name":"MathsWins","url":"https://mathswins.co.uk"}}
+</script>
+<script type="application/ld+json">
+{"@context":"https://schema.org","@type":"FAQPage","mainEntity":[{"@type":"Question","name":"How does compound interest work?","acceptedAnswer":{"@type":"Answer","text":"You earn interest on your interest. £1,000 at 5% becomes £1,050 after year one, then £1,102.50 after year two — the £50 interest also earns interest."}},{"@type":"Question","name":"What's the difference between simple and compound interest?","acceptedAnswer":{"@type":"Answer","text":"Simple interest is calculated on the original amount only. Compound interest includes previous interest. Over long periods, the difference is enormous."}},{"@type":"Question","name":"How long does it take to double my money?","acceptedAnswer":{"@type":"Answer","text":"Use the Rule of 72: divide 72 by the interest rate. At 6%, your money doubles in approximately 12 years."}},{"@type":"Question","name":"How often should interest compound?","acceptedAnswer":{"@type":"Answer","text":"The more frequently the better. Daily compounding beats monthly, which beats annual. The difference is small but adds up over decades."}},{"@type":"Question","name":"What's the effect of inflation on compound interest?","acceptedAnswer":{"@type":"Answer","text":"If inflation is 3% and your return is 5%, your real return is roughly 2%. Always think in real (inflation-adjusted) terms."}}]}
+</script>
 </head>
 <body>
 <script src="/auth/mw-auth.js"></script>
@@ -193,6 +199,15 @@ function calculate(){
 }
 calculate();
 </script>
+<style>.faq-section{max-width:800px;margin:3rem auto;padding:0 1.5rem}.faq-title{font-family:'Bebas Neue',sans-serif;font-size:2rem;color:#e8ecf4;margin-bottom:1.5rem;letter-spacing:.03em}.faq-item{border-bottom:1px solid #161c28;padding:0}.faq-item summary{padding:1rem 0;cursor:pointer;font-weight:600;color:#e8ecf4;font-size:1rem;list-style:none;display:flex;justify-content:space-between;align-items:center}.faq-item summary::after{content:'+';color:#d4a847;font-size:1.3rem;font-weight:700;transition:transform 0.2s}.faq-item[open] summary::after{transform:rotate(45deg)}.faq-item p{padding:0 0 1rem;color:#94a3b8;line-height:1.7;font-size:0.95rem}</style>
+<div class="faq-section">
+<h2 class="faq-title">FREQUENTLY ASKED QUESTIONS</h2>
+<details class="faq-item"><summary>How does compound interest work?</summary><p>You earn interest on your interest. £1,000 at 5% becomes £1,050 after year one, then £1,102.50 after year two — the £50 interest also earns interest.</p></details>
+<details class="faq-item"><summary>What's the difference between simple and compound interest?</summary><p>Simple interest is calculated on the original amount only. Compound interest includes previous interest. Over long periods, the difference is enormous.</p></details>
+<details class="faq-item"><summary>How long does it take to double my money?</summary><p>Use the Rule of 72: divide 72 by the interest rate. At 6%, your money doubles in approximately 12 years.</p></details>
+<details class="faq-item"><summary>How often should interest compound?</summary><p>The more frequently the better. Daily compounding beats monthly, which beats annual. The difference is small but adds up over decades.</p></details>
+<details class="faq-item"><summary>What's the effect of inflation on compound interest?</summary><p>If inflation is 3% and your return is 5%, your real return is roughly 2%. Always think in real (inflation-adjusted) terms.</p></details>
+</div>
 <!-- Cookie Consent Banner -->
 <div id="cookieConsent" style="display:none;position:fixed;bottom:0;left:0;right:0;background:#0c1628;border-top:1px solid #14263d;padding:14px 24px;z-index:99999;font-family:'Outfit',system-ui,sans-serif;font-size:13px;color:#94a3b8;display:none;align-items:center;justify-content:center;gap:16px;flex-wrap:wrap">
 <span>We use cookies for analytics to improve your experience. No personal data is sold or shared.</span>

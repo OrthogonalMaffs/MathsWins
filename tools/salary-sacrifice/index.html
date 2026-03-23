@@ -67,6 +67,12 @@ body{font-family:'Outfit',sans-serif;background:var(--bg);color:var(--text);min-
 <meta property="og:type" content="website">
 <meta property="og:url" content="https://mathswins.co.uk/tools/salary-sacrifice/">
 <meta property="og:description" content="Calculate the true benefit of salary sacrifice for your pension. See your income tax saving, National Insurance saving, and the total boost to your pension pot. Free UK calculator.">
+<script type="application/ld+json">
+{"@context":"https://schema.org","@type":"WebApplication","name":"Salary Sacrifice Calculator","url":"https://mathswins.co.uk/tools/salary-sacrifice/","applicationCategory":"FinanceApplication","offers":{"@type":"Offer","price":"0","priceCurrency":"GBP"},"provider":{"@type":"Organization","name":"MathsWins","url":"https://mathswins.co.uk"}}
+</script>
+<script type="application/ld+json">
+{"@context":"https://schema.org","@type":"FAQPage","mainEntity":[{"@type":"Question","name":"How does salary sacrifice work?","acceptedAnswer":{"@type":"Answer","text":"You agree to reduce your gross salary. Your employer puts the difference into your pension. You save on income tax AND National Insurance."}},{"@type":"Question","name":"How much tax do I save with salary sacrifice?","acceptedAnswer":{"@type":"Answer","text":"A basic rate taxpayer saves 32% (20% tax + 12% NI). A higher rate taxpayer saves 42% (40% tax + 2% NI). The savings are immediate."}},{"@type":"Question","name":"Does salary sacrifice affect my mortgage application?","acceptedAnswer":{"@type":"Answer","text":"Yes — lenders look at your reduced gross salary. If you're planning a mortgage application, consider timing your salary sacrifice carefully."}},{"@type":"Question","name":"Can salary sacrifice take me below minimum wage?","acceptedAnswer":{"@type":"Answer","text":"No. Your employer cannot reduce your cash salary below National Minimum Wage through salary sacrifice."}},{"@type":"Question","name":"Is salary sacrifice better than personal pension contributions?","acceptedAnswer":{"@type":"Answer","text":"Usually yes. Personal contributions give back income tax via tax relief, but salary sacrifice also saves National Insurance — an extra 12% for basic rate taxpayers."}}]}
+</script>
 </head>
 <body>
 <script src="/auth/mw-auth.js"></script>
@@ -250,6 +256,15 @@ Every £1 sacrificed costs you only ${fmt(1-combinedMarginal/100)} in take-home.
 }
 calculate();
 </script>
+<style>.faq-section{max-width:800px;margin:3rem auto;padding:0 1.5rem}.faq-title{font-family:'Bebas Neue',sans-serif;font-size:2rem;color:#e8ecf4;margin-bottom:1.5rem;letter-spacing:.03em}.faq-item{border-bottom:1px solid #161c28;padding:0}.faq-item summary{padding:1rem 0;cursor:pointer;font-weight:600;color:#e8ecf4;font-size:1rem;list-style:none;display:flex;justify-content:space-between;align-items:center}.faq-item summary::after{content:'+';color:#d4a847;font-size:1.3rem;font-weight:700;transition:transform 0.2s}.faq-item[open] summary::after{transform:rotate(45deg)}.faq-item p{padding:0 0 1rem;color:#94a3b8;line-height:1.7;font-size:0.95rem}</style>
+<div class="faq-section">
+<h2 class="faq-title">FREQUENTLY ASKED QUESTIONS</h2>
+<details class="faq-item"><summary>How does salary sacrifice work?</summary><p>You agree to reduce your gross salary. Your employer puts the difference into your pension. You save on income tax AND National Insurance.</p></details>
+<details class="faq-item"><summary>How much tax do I save with salary sacrifice?</summary><p>A basic rate taxpayer saves 32% (20% tax + 12% NI). A higher rate taxpayer saves 42% (40% tax + 2% NI). The savings are immediate.</p></details>
+<details class="faq-item"><summary>Does salary sacrifice affect my mortgage application?</summary><p>Yes — lenders look at your reduced gross salary. If you're planning a mortgage application, consider timing your salary sacrifice carefully.</p></details>
+<details class="faq-item"><summary>Can salary sacrifice take me below minimum wage?</summary><p>No. Your employer cannot reduce your cash salary below National Minimum Wage through salary sacrifice.</p></details>
+<details class="faq-item"><summary>Is salary sacrifice better than personal pension contributions?</summary><p>Usually yes. Personal contributions give back income tax via tax relief, but salary sacrifice also saves National Insurance — an extra 12% for basic rate taxpayers.</p></details>
+</div>
 <!-- Cookie Consent Banner -->
 <div id="cookieConsent" style="display:none;position:fixed;bottom:0;left:0;right:0;background:#0c1628;border-top:1px solid #14263d;padding:14px 24px;z-index:99999;font-family:'Outfit',system-ui,sans-serif;font-size:13px;color:#94a3b8;display:none;align-items:center;justify-content:center;gap:16px;flex-wrap:wrap">
 <span>We use cookies for analytics to improve your experience. No personal data is sold or shared.</span>

@@ -69,6 +69,12 @@ body{font-family:'Outfit',sans-serif;background:var(--bg);color:var(--text);min-
 <meta property="og:type" content="website">
 <meta property="og:url" content="https://mathswins.co.uk/tools/accumulator-calculator/">
 <meta property="og:description" content="Calculate your accumulator odds, true probability, and the mathematical cost of each leg. See why the bookmaker loves your acca. Free calculator from MathsWins.">
+<script type="application/ld+json">
+{"@context":"https://schema.org","@type":"WebApplication","name":"Accumulator Calculator","url":"https://mathswins.co.uk/tools/accumulator-calculator/","applicationCategory":"FinanceApplication","offers":{"@type":"Offer","price":"0","priceCurrency":"GBP"},"provider":{"@type":"Organization","name":"MathsWins","url":"https://mathswins.co.uk"}}
+</script>
+<script type="application/ld+json">
+{"@context":"https://schema.org","@type":"FAQPage","mainEntity":[{"@type":"Question","name":"How are accumulator odds calculated?","acceptedAnswer":{"@type":"Answer","text":"Multiply the decimal odds of each selection together. Three selections at 2.0, 1.5, and 3.0 give combined odds of 9.0."}},{"@type":"Question","name":"What's the true probability of my acca winning?","acceptedAnswer":{"@type":"Answer","text":"Convert each selection's implied probability (1/decimal odds) and multiply them together. A 5-fold at evens each: (0.5)^5 = 3.1% chance."}},{"@type":"Question","name":"Why do bookmakers love accumulators?","acceptedAnswer":{"@type":"Answer","text":"The overround (bookmaker margin) compounds with each leg. A 5% edge per leg becomes a 23% edge on a 5-fold. The more legs, the worse value for you."}},{"@type":"Question","name":"Are accumulators good value?","acceptedAnswer":{"@type":"Answer","text":"Almost never. The compounding overround makes them the worst value bet in any bookmaker's shop. Single bets or doubles offer far better expected value."}},{"@type":"Question","name":"What is an each-way accumulator?","acceptedAnswer":{"@type":"Answer","text":"Two accumulators in one: a win acca and a place acca. If one selection wins but doesn't place... actually they all must place. Complex and usually poor value."}}]}
+</script>
 </head>
 <body>
 <script src="/auth/mw-auth.js"></script>
@@ -209,6 +215,15 @@ This is why bookmakers promote accumulators.</div>
 render();
 calculate();
 </script>
+<style>.faq-section{max-width:800px;margin:3rem auto;padding:0 1.5rem}.faq-title{font-family:'Bebas Neue',sans-serif;font-size:2rem;color:#e8ecf4;margin-bottom:1.5rem;letter-spacing:.03em}.faq-item{border-bottom:1px solid #161c28;padding:0}.faq-item summary{padding:1rem 0;cursor:pointer;font-weight:600;color:#e8ecf4;font-size:1rem;list-style:none;display:flex;justify-content:space-between;align-items:center}.faq-item summary::after{content:'+';color:#d4a847;font-size:1.3rem;font-weight:700;transition:transform 0.2s}.faq-item[open] summary::after{transform:rotate(45deg)}.faq-item p{padding:0 0 1rem;color:#94a3b8;line-height:1.7;font-size:0.95rem}</style>
+<div class="faq-section">
+<h2 class="faq-title">FREQUENTLY ASKED QUESTIONS</h2>
+<details class="faq-item"><summary>How are accumulator odds calculated?</summary><p>Multiply the decimal odds of each selection together. Three selections at 2.0, 1.5, and 3.0 give combined odds of 9.0.</p></details>
+<details class="faq-item"><summary>What's the true probability of my acca winning?</summary><p>Convert each selection's implied probability (1/decimal odds) and multiply them together. A 5-fold at evens each: (0.5)^5 = 3.1% chance.</p></details>
+<details class="faq-item"><summary>Why do bookmakers love accumulators?</summary><p>The overround (bookmaker margin) compounds with each leg. A 5% edge per leg becomes a 23% edge on a 5-fold. The more legs, the worse value for you.</p></details>
+<details class="faq-item"><summary>Are accumulators good value?</summary><p>Almost never. The compounding overround makes them the worst value bet in any bookmaker's shop. Single bets or doubles offer far better expected value.</p></details>
+<details class="faq-item"><summary>What is an each-way accumulator?</summary><p>Two accumulators in one: a win acca and a place acca. If one selection wins but doesn't place... actually they all must place. Complex and usually poor value.</p></details>
+</div>
 <!-- Cookie Consent Banner -->
 <div id="cookieConsent" style="display:none;position:fixed;bottom:0;left:0;right:0;background:#0c1628;border-top:1px solid #14263d;padding:14px 24px;z-index:99999;font-family:'Outfit',system-ui,sans-serif;font-size:13px;color:#94a3b8;display:none;align-items:center;justify-content:center;gap:16px;flex-wrap:wrap">
 <span>We use cookies for analytics to improve your experience. No personal data is sold or shared.</span>
