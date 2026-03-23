@@ -1,0 +1,778 @@
+<!DOCTYPE html>
+<html lang="en-GB">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Habit Cost Calculator — What Does Smoking, Drinking or Coffee Really Cost? | MathsWins</title>
+<meta name="description" content="See the true cost of your daily habits. Smoking, drinking, coffee, vaping — calculate what you spend and what it could become if invested instead. Just the maths, not a lecture.">
+<meta property="og:title" content="Habit Cost Calculator — What Does Smoking, Drinking or Coffee Really Cost? | MathsWins">
+<meta property="og:description" content="See the true cost of your daily habits. Calculate what you spend and what it could become if invested instead. Just the maths, not a lecture.">
+<meta property="og:url" content="https://mathswins.co.uk/tools/habit-cost/">
+<meta property="og:image" content="https://mathswins.co.uk/assets/og-image.png">
+<meta property="og:type" content="website">
+<meta property="og:site_name" content="MathsWins">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:title" content="Habit Cost Calculator — What Does Smoking, Drinking or Coffee Really Cost? | MathsWins">
+<meta name="twitter:description" content="See the true cost of your daily habits. Calculate what you spend and what it could become if invested instead.">
+<meta name="twitter:image" content="https://mathswins.co.uk/assets/og-image.png">
+<link rel="canonical" href="https://mathswins.co.uk/tools/habit-cost/">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Crimson+Pro:ital,wght@0,400;1,400&family=DM+Mono:wght@400;500&family=Outfit:wght@300;400;600;700&display=swap" rel="stylesheet">
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "WebApplication",
+  "name": "Habit Cost Calculator",
+  "url": "https://mathswins.co.uk/tools/habit-cost/",
+  "description": "See the true cost of your daily habits. Smoking, drinking, coffee, vaping — calculate what you spend and what it could become if invested instead.",
+  "applicationCategory": "FinanceApplication",
+  "operatingSystem": "Any",
+  "offers": {
+    "@type": "Offer",
+    "price": "0",
+    "priceCurrency": "GBP"
+  },
+  "publisher": {
+    "@type": "Organization",
+    "name": "MathsWins",
+    "url": "https://mathswins.co.uk"
+  }
+}
+</script>
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "FAQPage",
+  "mainEntity": [
+    {
+      "@type": "Question",
+      "name": "How much does smoking cost per year?",
+      "acceptedAnswer": {
+        "@type": "Answer",
+        "text": "At £14 per pack (20 cigarettes), a pack-a-day smoker spends £5,110 per year. Over 10 years: £51,100. Invested at 7%: £75,602. Over a lifetime: potentially close to £1 million."
+      }
+    },
+    {
+      "@type": "Question",
+      "name": "What's the opportunity cost of daily coffee?",
+      "acceptedAnswer": {
+        "@type": "Answer",
+        "text": "A £4 daily coffee habit costs £1,460/year. Invested at 7% for 30 years, that becomes £147,000. The coffee isn't the problem — it's what the money could have become."
+      }
+    },
+    {
+      "@type": "Question",
+      "name": "Is this calculator trying to make me quit?",
+      "acceptedAnswer": {
+        "@type": "Answer",
+        "text": "No. We show the maths. What you do with it is your decision. Some people see these numbers and cut back. Others decide the enjoyment is worth the cost. Both are valid — as long as you've seen the numbers."
+      }
+    },
+    {
+      "@type": "Question",
+      "name": "Why use 7% growth rate?",
+      "acceptedAnswer": {
+        "@type": "Answer",
+        "text": "7% is the approximate long-term average return of global stock markets after inflation. It's not guaranteed, but it's a widely used benchmark for long-term investment projections."
+      }
+    },
+    {
+      "@type": "Question",
+      "name": "How do you calculate the invested value?",
+      "acceptedAnswer": {
+        "@type": "Answer",
+        "text": "Future value of a regular monthly investment with compound growth: FV = PMT × ((1+r)^n - 1) / r. The same formula banks and pension providers use."
+      }
+    }
+  ]
+}
+</script>
+<style>
+:root{--bg:#050709;--surface:#0a0d14;--surface2:#0f1319;--border:#161c28;--border2:#1e2638;--sky:#0ea5e9;--sky-dim:rgba(14,165,233,0.10);--green:#2dd4a0;--green-dim:rgba(45,212,160,0.10);--red:#ef5350;--gold:#d4a847;--gold-dim:rgba(212,168,71,0.10);--cyan:#22d3ee;--teal:#0d9488;--teal-dim:rgba(13,148,136,0.10);--text:#c8cdd8;--text-bright:#e8ecf4;--muted:#4a5568;}
+*{margin:0;padding:0;box-sizing:border-box;}
+body{font-family:'Outfit',sans-serif;background:var(--bg);color:var(--text);min-height:100vh;line-height:1.5;}
+.container{max-width:960px;margin:0 auto;padding:2rem 1.25rem 4rem;}
+.nav-bar{display:flex;align-items:center;justify-content:space-between;padding:1rem 0;border-bottom:1px solid var(--border);margin-bottom:2rem;}
+.nav-brand{font-family:'Bebas Neue',sans-serif;font-size:1.4rem;color:var(--gold);text-decoration:none;letter-spacing:0.06em;}
+.nav-brand span{color:var(--text-bright);}
+.nav-link{font-size:0.85rem;font-weight:600;color:var(--sky);text-decoration:none;padding:0.4rem 1rem;border:1px solid var(--sky);border-radius:4px;transition:background 0.2s,color 0.2s;}
+.nav-link:hover{background:var(--sky);color:var(--bg);}
+.hero{text-align:center;margin-bottom:2rem;}
+.hero-eyebrow{font-size:0.75rem;font-weight:600;text-transform:uppercase;letter-spacing:0.15em;color:var(--sky);margin-bottom:0.5rem;}
+.hero h1{font-family:'Bebas Neue',sans-serif;font-size:clamp(1.8rem,5vw,2.8rem);color:var(--text-bright);letter-spacing:0.04em;line-height:1.1;margin-bottom:0.75rem;}
+.hero-sub{font-family:'Crimson Pro',serif;font-style:italic;font-size:1.05rem;color:var(--cyan);max-width:620px;margin:0 auto;}
+.panel{background:var(--surface);border:1px solid var(--border);border-radius:10px;padding:1.5rem;margin-bottom:1.25rem;}
+.panel-title{font-family:'Bebas Neue',sans-serif;font-size:1.1rem;color:var(--text-bright);letter-spacing:0.05em;margin-bottom:1rem;}
+.fg{display:flex;flex-direction:column;gap:0.3rem;}
+.fg label{font-size:0.72rem;font-weight:600;text-transform:uppercase;letter-spacing:0.06em;color:var(--muted);}
+.fg input,.fg select{font-family:'DM Mono',monospace;font-size:1rem;padding:0.6rem 0.8rem;background:var(--surface2);border:1px solid var(--border2);border-radius:6px;color:var(--text-bright);outline:none;}
+.fg input:focus{border-color:var(--sky);}
+.fg .hint{font-family:'Crimson Pro',serif;font-style:italic;font-size:0.78rem;color:var(--muted);}
+.calc-btn{font-family:'Outfit',sans-serif;font-weight:700;font-size:1rem;padding:0.85rem;background:var(--sky);color:#fff;border:none;border-radius:6px;cursor:pointer;width:100%;margin:1.25rem 0 0;transition:background 0.2s;}
+.calc-btn:hover{background:#38bdf8;}
+
+/* Habit preset buttons */
+.habit-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:0.75rem;margin-bottom:1.25rem;}
+@media(max-width:500px){.habit-grid{grid-template-columns:repeat(2,1fr);}}
+.habit-btn{font-family:'Outfit',sans-serif;font-weight:600;font-size:0.9rem;padding:0.75rem 0.5rem;background:var(--surface2);border:1px solid var(--border2);border-radius:8px;color:var(--text);cursor:pointer;transition:all 0.2s;text-align:center;}
+.habit-btn:hover{border-color:var(--sky);color:var(--text-bright);}
+.habit-btn.active{border-color:var(--sky);background:var(--sky-dim);color:var(--text-bright);}
+.habit-btn .habit-icon{font-size:1.4rem;display:block;margin-bottom:0.25rem;}
+
+/* Input grid */
+.input-grid{display:grid;grid-template-columns:1fr 1fr;gap:1rem;}
+@media(max-width:500px){.input-grid{grid-template-columns:1fr;}}
+.input-or{display:flex;align-items:center;justify-content:center;font-family:'Bebas Neue',sans-serif;font-size:0.9rem;color:var(--muted);letter-spacing:0.05em;grid-column:1/-1;margin:-0.25rem 0;}
+
+/* Results */
+.results{display:none;}
+.results.show{display:block;}
+
+/* Damage section */
+.damage-grid{display:grid;grid-template-columns:1fr 1fr;gap:1rem;margin-bottom:1.5rem;}
+@media(max-width:500px){.damage-grid{grid-template-columns:1fr;}}
+.damage-card{background:var(--surface);border:1px solid var(--border);border-radius:10px;padding:1.25rem;}
+.damage-card.spent{border-left:3px solid var(--red);}
+.damage-card.opportunity{border-left:3px solid var(--green);}
+.dc-title{font-family:'Bebas Neue',sans-serif;font-size:0.95rem;letter-spacing:0.05em;margin-bottom:0.75rem;}
+.damage-card.spent .dc-title{color:var(--red);}
+.damage-card.opportunity .dc-title{color:var(--green);}
+.dc-row{display:flex;justify-content:space-between;padding:0.35rem 0;border-bottom:1px solid var(--border);}
+.dc-row:last-child{border-bottom:none;}
+.dc-label{font-size:0.82rem;}
+.dc-val{font-family:'DM Mono',monospace;font-weight:500;font-size:0.9rem;}
+.dc-val.bright{color:var(--text-bright);}
+.dc-val.red{color:var(--red);}
+.dc-val.green{color:var(--green);}
+.dc-val.gold{color:var(--gold);}
+
+/* Big number callout */
+.big-callout{background:var(--surface);border:1px solid var(--border);border-radius:10px;padding:1.5rem;text-align:center;margin-bottom:1.5rem;}
+.big-callout .big-num{font-family:'DM Mono',monospace;font-size:clamp(1.6rem,4vw,2.4rem);font-weight:500;color:var(--red);margin-bottom:0.25rem;}
+.big-callout .big-label{font-size:0.85rem;color:var(--muted);}
+
+/* Timeline projections */
+.timeline-card{background:var(--surface);border:1px solid var(--border);border-radius:10px;padding:1.25rem;margin-bottom:1.5rem;}
+.timeline-card .tc-title{font-family:'Bebas Neue',sans-serif;font-size:1.05rem;color:var(--green);letter-spacing:0.05em;margin-bottom:0.75rem;}
+.timeline-card .tc-sub{font-family:'Crimson Pro',serif;font-style:italic;font-size:0.85rem;color:var(--muted);margin-bottom:1rem;}
+.milestone-row{display:flex;align-items:center;gap:0.75rem;margin-bottom:0.6rem;}
+.milestone-label{font-size:0.82rem;min-width:90px;color:var(--text);}
+.milestone-bar-wrap{flex:1;position:relative;height:28px;background:var(--surface2);border-radius:4px;overflow:hidden;}
+.milestone-bar{height:100%;border-radius:4px;display:flex;align-items:center;justify-content:flex-end;padding-right:8px;min-width:2px;transition:width 0.6s ease;}
+.milestone-bar span{font-family:'DM Mono',monospace;font-size:0.7rem;color:var(--bg);font-weight:500;white-space:nowrap;}
+.milestone-bar.invested{background:linear-gradient(90deg,var(--green),var(--teal));}
+.milestone-bar.spent{background:var(--red);opacity:0.7;}
+
+/* What could that buy */
+.could-buy{background:var(--surface);border:1px solid var(--border);border-radius:10px;padding:1.25rem;margin-bottom:1.5rem;}
+.could-buy .cb-title{font-family:'Bebas Neue',sans-serif;font-size:1.05rem;color:var(--gold);letter-spacing:0.05em;margin-bottom:1rem;}
+.buy-item{display:flex;align-items:center;gap:0.75rem;padding:0.5rem 0;border-bottom:1px solid var(--border);}
+.buy-item:last-child{border-bottom:none;}
+.buy-icon{font-size:1.3rem;min-width:32px;text-align:center;}
+.buy-text{font-size:0.88rem;color:var(--text);}
+
+/* Chart */
+.chart-panel{background:var(--surface);border:1px solid var(--border);border-radius:10px;padding:1.25rem;margin-bottom:1.5rem;}
+.chart-panel .cp-title{font-family:'Bebas Neue',sans-serif;font-size:1.05rem;color:var(--text-bright);letter-spacing:0.05em;margin-bottom:0.5rem;}
+.chart-panel .cp-sub{font-family:'Crimson Pro',serif;font-style:italic;font-size:0.82rem;color:var(--muted);margin-bottom:1rem;}
+.chart-container{position:relative;width:100%;height:320px;}
+.chart-container canvas{width:100%!important;height:100%!important;}
+
+/* Reduce section */
+.reduce-panel{background:var(--teal-dim);border:1px solid var(--teal);border-radius:10px;padding:1.25rem;margin-bottom:1.5rem;}
+.reduce-panel .rp-title{font-family:'Bebas Neue',sans-serif;font-size:1.05rem;color:var(--teal);letter-spacing:0.05em;margin-bottom:0.5rem;}
+.reduce-panel .rp-sub{font-family:'Crimson Pro',serif;font-style:italic;font-size:0.85rem;color:var(--teal);margin-bottom:1rem;}
+.reduce-grid{display:grid;grid-template-columns:1fr 1fr;gap:1rem;}
+@media(max-width:500px){.reduce-grid{grid-template-columns:1fr;}}
+.reduce-col .rc-head{font-family:'Bebas Neue',sans-serif;font-size:0.9rem;letter-spacing:0.05em;margin-bottom:0.5rem;}
+.reduce-col .rc-head.full{color:var(--red);}
+.reduce-col .rc-head.half{color:var(--green);}
+.reduce-row{display:flex;justify-content:space-between;padding:0.3rem 0;border-bottom:1px solid rgba(13,148,136,0.2);}
+.reduce-row:last-child{border-bottom:none;}
+.reduce-row .rr-label{font-size:0.78rem;color:var(--text);}
+.reduce-row .rr-val{font-family:'DM Mono',monospace;font-size:0.82rem;font-weight:500;}
+
+/* Per-hour context */
+.hour-panel{background:var(--surface);border:1px solid var(--border);border-left:3px solid var(--gold);border-radius:0 10px 10px 0;padding:1.25rem;margin-bottom:1.5rem;}
+.hour-panel .hp-title{font-family:'Bebas Neue',sans-serif;font-size:0.95rem;color:var(--gold);letter-spacing:0.05em;margin-bottom:0.5rem;}
+.hour-panel p{font-size:0.88rem;line-height:1.6;}
+.hour-panel .hp-highlight{font-family:'DM Mono',monospace;color:var(--gold);font-weight:500;}
+
+/* Share */
+.share-panel{background:var(--surface);border:1px solid var(--border);border-radius:10px;padding:1.25rem;margin-bottom:1.5rem;text-align:center;}
+.share-panel .sp-title{font-family:'Bebas Neue',sans-serif;font-size:1.05rem;color:var(--text-bright);letter-spacing:0.05em;margin-bottom:0.75rem;}
+.share-text{font-family:'DM Mono',monospace;font-size:0.82rem;color:var(--cyan);background:var(--surface2);padding:0.75rem 1rem;border-radius:6px;margin-bottom:1rem;text-align:left;line-height:1.6;}
+.copy-btn{font-family:'Outfit',sans-serif;font-weight:600;font-size:0.85rem;padding:0.6rem 1.5rem;background:transparent;border:1px solid var(--sky);border-radius:6px;color:var(--sky);cursor:pointer;transition:all 0.2s;}
+.copy-btn:hover{background:var(--sky);color:#fff;}
+.copy-btn.copied{background:var(--green);border-color:var(--green);color:var(--bg);}
+
+/* Educational */
+.edu-section{margin-top:2rem;}
+.edu-section h2{font-family:'Bebas Neue',sans-serif;font-size:1.4rem;color:var(--text-bright);letter-spacing:0.04em;margin-bottom:1rem;}
+.edu-section h3{font-family:'Bebas Neue',sans-serif;font-size:1.05rem;color:var(--text-bright);letter-spacing:0.04em;margin:1.25rem 0 0.5rem;}
+.edu-section p{font-size:0.92rem;line-height:1.7;margin-bottom:0.75rem;}
+.edu-section .formula{font-family:'DM Mono',monospace;font-size:0.88rem;color:var(--cyan);background:var(--surface2);padding:0.75rem 1rem;border-radius:6px;margin:0.75rem 0;border-left:3px solid var(--cyan);}
+.pln{font-family:'Crimson Pro',serif;font-style:italic;color:var(--cyan);background:rgba(34,211,238,0.08);border-left:3px solid var(--cyan);padding:0.85rem 1rem;border-radius:0 6px 6px 0;margin:1rem 0;font-size:0.92rem;line-height:1.6;}
+
+/* FAQ */
+.faq-section{margin-top:2rem;}
+.faq-section h2{font-family:'Bebas Neue',sans-serif;font-size:1.4rem;color:var(--text-bright);letter-spacing:0.04em;margin-bottom:1rem;}
+.faq-item{background:var(--surface);border:1px solid var(--border);border-radius:10px;margin-bottom:0.75rem;overflow:hidden;}
+.faq-q{font-family:'Outfit',sans-serif;font-weight:600;font-size:0.92rem;padding:1rem 1.25rem;cursor:pointer;display:flex;justify-content:space-between;align-items:center;color:var(--text-bright);transition:background 0.2s;}
+.faq-q:hover{background:var(--surface2);}
+.faq-q::after{content:'+';font-family:'DM Mono',monospace;font-size:1.2rem;color:var(--sky);transition:transform 0.2s;}
+.faq-item.open .faq-q::after{content:'-';}
+.faq-a{max-height:0;overflow:hidden;transition:max-height 0.3s ease,padding 0.3s ease;}
+.faq-item.open .faq-a{max-height:300px;padding:0 1.25rem 1rem;}
+.faq-a p{font-size:0.88rem;line-height:1.6;color:var(--text);}
+
+/* CTA */
+.cta-card{background:var(--surface);border:1px solid var(--border);border-left:3px solid var(--sky);border-radius:0 10px 10px 0;padding:1.5rem;margin-top:2rem;}
+.cta-card h3{font-family:'Bebas Neue',sans-serif;font-size:1.2rem;color:var(--sky);letter-spacing:0.04em;margin-bottom:0.5rem;}
+.cta-card p{font-family:'Crimson Pro',serif;font-style:italic;font-size:0.92rem;color:var(--text);line-height:1.5;margin-bottom:0.75rem;}
+.cta-link{font-weight:600;font-size:0.9rem;color:var(--sky);text-decoration:none;}
+.footer{margin-top:2.5rem;padding-top:1.25rem;border-top:1px solid var(--border);text-align:center;}
+.footer p{font-size:0.72rem;color:var(--muted);line-height:1.8;}
+.footer a{color:var(--muted);text-decoration:underline;}
+</style>
+<!-- GA4 Cookieless -->
+<script async src="https://www.googletagmanager.com/gtag/js?id=G-7GTLYCZMXN"></script>
+<script>window.dataLayer=window.dataLayer||[];function gtag(){dataLayer.push(arguments);}gtag('js',new Date());gtag('consent','default',{analytics_storage:'denied',ad_storage:'denied',ad_user_data:'denied',ad_personalization:'denied'});gtag('config','G-7GTLYCZMXN',{send_page_view:true,anonymize_ip:true});</script>
+</head>
+<body>
+<script src="/auth/mw-auth.js"></script>
+<div class="container">
+<nav class="nav-bar">
+  <a href="/" class="nav-brand">MATHS<span>WINS</span></a>
+  <a href="/everyday/compound-interest/" class="nav-link">Compound Interest Course (Free) &rarr;</a>
+</nav>
+<div class="hero">
+  <div class="hero-eyebrow">Free Tool</div>
+  <h1>WHAT DOES YOUR HABIT ACTUALLY COST?</h1>
+  <div class="hero-sub">Not a lecture. Just maths.</div>
+</div>
+
+<div class="panel">
+  <div class="panel-title">PICK YOUR HABIT</div>
+  <div class="habit-grid">
+    <button class="habit-btn" onclick="selectHabit('cigarettes')"><span class="habit-icon">&#x1F6AC;</span>Cigarettes</button>
+    <button class="habit-btn" onclick="selectHabit('drinking')"><span class="habit-icon">&#x1F37A;</span>Drinking</button>
+    <button class="habit-btn" onclick="selectHabit('coffee')"><span class="habit-icon">&#x2615;</span>Coffee</button>
+    <button class="habit-btn" onclick="selectHabit('vaping')"><span class="habit-icon">&#x1F4A8;</span>Vaping</button>
+    <button class="habit-btn" onclick="selectHabit('takeaways')"><span class="habit-icon">&#x1F354;</span>Takeaways</button>
+    <button class="habit-btn" onclick="selectHabit('custom')"><span class="habit-icon">&#x270F;&#xFE0F;</span>Custom</button>
+  </div>
+
+  <div class="panel-title">THE NUMBERS</div>
+  <div class="input-grid">
+    <div class="fg">
+      <label id="dailyLabel">Daily spend (&pound;)</label>
+      <input type="number" id="dailyCost" min="0" step="0.50" placeholder="14.00">
+      <div class="hint" id="dailyHint">e.g. one pack of 20 cigarettes</div>
+    </div>
+    <div class="fg">
+      <label>Weekly spend (&pound;) &mdash; alternative</label>
+      <input type="number" id="weeklyCost" min="0" step="1" placeholder="98.00">
+      <div class="hint">Enter either daily or weekly &mdash; we'll convert</div>
+    </div>
+  </div>
+  <div class="input-or">OR &mdash; FILL IN WHICHEVER YOU PREFER</div>
+  <div class="input-grid" style="margin-top:0.75rem;">
+    <div class="fg">
+      <label>Years you've had this habit</label>
+      <input type="number" id="yearsHad" value="10" min="0" max="80" step="1">
+      <div class="hint">We'll show what you've already spent</div>
+    </div>
+    <div class="fg">
+      <label>Investment growth rate (%)</label>
+      <input type="number" id="growthRate" value="7" min="0" max="30" step="0.5">
+      <div class="hint">S&amp;P 500 average historical return</div>
+    </div>
+  </div>
+  <div class="fg" style="margin-top:1rem;">
+    <label id="habitNameLabel" style="display:none;">Habit name (for your results)</label>
+    <input type="text" id="habitName" style="display:none;" placeholder="e.g. Lottery tickets">
+  </div>
+  <button class="calc-btn" onclick="calculate()">Show Me The Maths</button>
+</div>
+
+<div class="results" id="results"></div>
+
+<!-- Educational content -->
+<div class="edu-section">
+  <h2>THE MATHS BEHIND THE NUMBERS</h2>
+
+  <h3>Compound Growth &mdash; The Eighth Wonder</h3>
+  <p>When you invest money regularly, you don't just earn returns on what you put in. You earn returns on your returns. This is compound growth, and it's the reason small daily amounts become enormous sums over time.</p>
+  <div class="formula">FV = PMT &times; ((1 + r)<sup>n</sup> &minus; 1) / r</div>
+  <p>Where <strong>FV</strong> is the future value, <strong>PMT</strong> is your regular monthly contribution, <strong>r</strong> is the monthly interest rate, and <strong>n</strong> is the total number of months.</p>
+
+  <h3>Opportunity Cost</h3>
+  <p>Opportunity cost is what you give up by choosing one thing over another. When you spend &pound;14 on cigarettes, the cost isn't just &pound;14. It's &pound;14 plus everything that &pound;14 could have become if invested. Over decades, that's the difference between a habit and a house deposit.</p>
+
+  <h3>Why Daily Amounts Feel Small But Aren't</h3>
+  <p>Our brains are terrible at intuiting exponential growth. &pound;4 a day feels like nothing. &pound;1,460 a year feels manageable. &pound;147,000 over 30 years feels impossible. But it's the same money &mdash; just viewed through a wider lens. This calculator exists to widen that lens.</p>
+
+  <div class="pln">We're not your doctor, your mum, or your conscience. We just think you should see the numbers at least once. What you do with them is entirely up to you.</div>
+</div>
+
+<!-- FAQ -->
+<div class="faq-section">
+  <h2>FREQUENTLY ASKED QUESTIONS</h2>
+
+  <div class="faq-item">
+    <div class="faq-q" onclick="this.parentElement.classList.toggle('open')">How much does smoking cost per year?</div>
+    <div class="faq-a"><p>At &pound;14 per pack (20 cigarettes), a pack-a-day smoker spends &pound;5,110 per year. Over 10 years: &pound;51,100. Invested at 7%: &pound;75,602. Over a lifetime: potentially close to &pound;1 million.</p></div>
+  </div>
+
+  <div class="faq-item">
+    <div class="faq-q" onclick="this.parentElement.classList.toggle('open')">What's the opportunity cost of daily coffee?</div>
+    <div class="faq-a"><p>A &pound;4 daily coffee habit costs &pound;1,460/year. Invested at 7% for 30 years, that becomes &pound;147,000. The coffee isn't the problem &mdash; it's what the money could have become.</p></div>
+  </div>
+
+  <div class="faq-item">
+    <div class="faq-q" onclick="this.parentElement.classList.toggle('open')">Is this calculator trying to make me quit?</div>
+    <div class="faq-a"><p>No. We show the maths. What you do with it is your decision. Some people see these numbers and cut back. Others decide the enjoyment is worth the cost. Both are valid &mdash; as long as you've seen the numbers.</p></div>
+  </div>
+
+  <div class="faq-item">
+    <div class="faq-q" onclick="this.parentElement.classList.toggle('open')">Why use 7% growth rate?</div>
+    <div class="faq-a"><p>7% is the approximate long-term average return of global stock markets after inflation. It's not guaranteed, but it's a widely used benchmark for long-term investment projections.</p></div>
+  </div>
+
+  <div class="faq-item">
+    <div class="faq-q" onclick="this.parentElement.classList.toggle('open')">How do you calculate the invested value?</div>
+    <div class="faq-a"><p>Future value of a regular monthly investment with compound growth: FV = PMT &times; ((1+r)<sup>n</sup> &minus; 1) / r. The same formula banks and pension providers use.</p></div>
+  </div>
+</div>
+
+<!-- CTA -->
+<div class="cta-card">
+  <h3>Want to understand compound interest properly?</h3>
+  <p>Our free Compound Interest &amp; Debt course breaks down the mathematics &mdash; from the Rule of 72 to credit card traps.</p>
+  <a href="/everyday/compound-interest/" class="cta-link">Take the free course &rarr;</a>
+</div>
+
+<div class="footer">
+  <p>&copy; 2026 MathsWins &middot; <a href="/terms/">Terms</a> &middot; <a href="/">Home</a></p>
+  <p>This calculator is for educational purposes only. Investment returns are not guaranteed. Past performance is not indicative of future results.</p>
+</div>
+</div>
+
+<script>
+const HABITS = {
+  cigarettes: { name: 'Cigarettes', daily: 14, hint: 'One pack of 20 at ~\u00A314/pack' },
+  drinking:   { name: 'Drinking', daily: 8, hint: 'Roughly 2 pints at the pub' },
+  coffee:     { name: 'Coffee', daily: 4, hint: 'One takeaway coffee per day' },
+  vaping:     { name: 'Vaping', daily: 3, hint: 'Average daily vaping cost' },
+  takeaways:  { name: 'Takeaways', daily: 10, hint: 'One takeaway meal per day' },
+  custom:     { name: 'Custom', daily: '', hint: 'Enter your own amount' }
+};
+
+let selectedHabit = null;
+let lastResult = null;
+
+function selectHabit(key) {
+  selectedHabit = key;
+  const habit = HABITS[key];
+
+  // Update active state
+  document.querySelectorAll('.habit-btn').forEach(b => b.classList.remove('active'));
+  event.currentTarget.classList.add('active');
+
+  // Fill values
+  const dailyInput = document.getElementById('dailyCost');
+  const weeklyInput = document.getElementById('weeklyCost');
+  const dailyHint = document.getElementById('dailyHint');
+  const nameLabel = document.getElementById('habitNameLabel');
+  const nameInput = document.getElementById('habitName');
+
+  if (key === 'custom') {
+    dailyInput.value = '';
+    weeklyInput.value = '';
+    dailyHint.textContent = 'Enter your daily spend';
+    nameLabel.style.display = 'block';
+    nameInput.style.display = 'block';
+    nameInput.value = '';
+    nameInput.focus();
+  } else {
+    dailyInput.value = habit.daily;
+    weeklyInput.value = (habit.daily * 7).toFixed(0);
+    dailyHint.textContent = habit.hint;
+    nameLabel.style.display = 'none';
+    nameInput.style.display = 'none';
+    nameInput.value = '';
+  }
+}
+
+// Auto-sync daily/weekly
+document.getElementById('dailyCost').addEventListener('input', function() {
+  const val = parseFloat(this.value);
+  if (!isNaN(val) && val > 0) {
+    document.getElementById('weeklyCost').value = (val * 7).toFixed(2);
+  }
+});
+document.getElementById('weeklyCost').addEventListener('input', function() {
+  const val = parseFloat(this.value);
+  if (!isNaN(val) && val > 0) {
+    document.getElementById('dailyCost').value = (val / 7).toFixed(2);
+  }
+});
+
+function fmt(n) {
+  return '\u00A3' + n.toLocaleString('en-GB', { minimumFractionDigits: 2, maximumFractionDigits: 2 });
+}
+
+function fmtShort(n) {
+  if (n >= 1000000) return '\u00A3' + (n / 1000000).toFixed(1) + 'm';
+  if (n >= 1000) return '\u00A3' + Math.round(n).toLocaleString('en-GB');
+  return '\u00A3' + Math.round(n).toLocaleString('en-GB');
+}
+
+function calculateHabitCost(dailyCost, yearsHad, growthRate) {
+  const monthly = dailyCost * 30.44;
+  const annual = dailyCost * 365;
+  const alreadySpent = annual * yearsHad;
+
+  const monthlyInvestment = monthly;
+  const monthlyRate = growthRate / 100 / 12;
+  const projections = {};
+  const cumulativeSpend = {};
+
+  for (const years of [1, 5, 10, 20, 30, 40]) {
+    const months = years * 12;
+    let fv;
+    if (monthlyRate === 0) {
+      fv = monthlyInvestment * months;
+    } else {
+      fv = monthlyInvestment * ((Math.pow(1 + monthlyRate, months) - 1) / monthlyRate);
+    }
+    projections[years] = fv;
+    cumulativeSpend[years] = annual * years;
+  }
+
+  return { daily: dailyCost, monthly, annual, alreadySpent, projections, cumulativeSpend };
+}
+
+function calculate() {
+  let dailyCost = parseFloat(document.getElementById('dailyCost').value);
+  const weeklyCost = parseFloat(document.getElementById('weeklyCost').value);
+
+  if ((isNaN(dailyCost) || dailyCost <= 0) && !isNaN(weeklyCost) && weeklyCost > 0) {
+    dailyCost = weeklyCost / 7;
+    document.getElementById('dailyCost').value = dailyCost.toFixed(2);
+  }
+
+  if (isNaN(dailyCost) || dailyCost <= 0) {
+    alert('Enter a daily or weekly spend amount.');
+    return;
+  }
+
+  const yearsHad = parseFloat(document.getElementById('yearsHad').value) || 0;
+  const growthRate = parseFloat(document.getElementById('growthRate').value) || 7;
+
+  const habitName = selectedHabit && selectedHabit !== 'custom'
+    ? HABITS[selectedHabit].name
+    : (document.getElementById('habitName').value.trim() || 'Your habit');
+
+  const result = calculateHabitCost(dailyCost, yearsHad, growthRate);
+  lastResult = { ...result, habitName, growthRate, yearsHad };
+
+  renderResults(result, habitName, growthRate, yearsHad);
+
+  // Track event
+  if (typeof gtag === 'function') {
+    gtag('event', 'calculate_habit_cost', { habit: habitName, daily_cost: dailyCost });
+  }
+
+  document.getElementById('results').scrollIntoView({ behavior: 'smooth', block: 'start' });
+}
+
+function renderResults(r, habitName, growthRate, yearsHad) {
+  const el = document.getElementById('results');
+  el.classList.add('show');
+
+  // Already-spent callout
+  let alreadySpentHtml = '';
+  if (yearsHad > 0) {
+    alreadySpentHtml = `<div class="big-callout">
+      <div class="big-num">${fmtShort(r.alreadySpent)}</div>
+      <div class="big-label">You've already spent approximately this much on ${habitName.toLowerCase()} over ${yearsHad} year${yearsHad !== 1 ? 's' : ''}</div>
+    </div>`;
+  }
+
+  // Damage grid
+  const damageHtml = `<div class="damage-grid">
+    <div class="damage-card spent">
+      <div class="dc-title">THE DAMAGE</div>
+      <div class="dc-row"><span class="dc-label">Daily cost</span><span class="dc-val red">${fmt(r.daily)}</span></div>
+      <div class="dc-row"><span class="dc-label">Monthly cost</span><span class="dc-val red">${fmtShort(r.monthly)}</span></div>
+      <div class="dc-row"><span class="dc-label">Annual cost</span><span class="dc-val red">${fmtShort(r.annual)}</span></div>
+      ${yearsHad > 0 ? `<div class="dc-row"><span class="dc-label">Already spent (${yearsHad}yr${yearsHad !== 1 ? 's' : ''})</span><span class="dc-val red">${fmtShort(r.alreadySpent)}</span></div>` : ''}
+    </div>
+    <div class="damage-card opportunity">
+      <div class="dc-title">IF INVESTED AT ${growthRate}%</div>
+      <div class="dc-row"><span class="dc-label">After 1 year</span><span class="dc-val green">${fmtShort(r.projections[1])}</span></div>
+      <div class="dc-row"><span class="dc-label">After 10 years</span><span class="dc-val green">${fmtShort(r.projections[10])}</span></div>
+      <div class="dc-row"><span class="dc-label">After 20 years</span><span class="dc-val green">${fmtShort(r.projections[20])}</span></div>
+      <div class="dc-row"><span class="dc-label">After 40 years</span><span class="dc-val green">${fmtShort(r.projections[40])}</span></div>
+    </div>
+  </div>`;
+
+  // Timeline visual
+  const maxVal = r.projections[40];
+  const milestonesHtml = [1, 5, 10, 20, 30, 40].map(y => {
+    const invested = r.projections[y];
+    const spent = r.cumulativeSpend[y];
+    const investedPct = Math.max(2, (invested / maxVal) * 100);
+    const spentPct = Math.max(2, (spent / maxVal) * 100);
+    return `<div class="milestone-row">
+      <span class="milestone-label">${y} year${y !== 1 ? 's' : ''}</span>
+      <div class="milestone-bar-wrap">
+        <div class="milestone-bar invested" style="width:${investedPct}%"><span>${fmtShort(invested)}</span></div>
+      </div>
+    </div>
+    <div class="milestone-row" style="margin-bottom:0.9rem;">
+      <span class="milestone-label" style="font-size:0.72rem;color:var(--muted);">spent</span>
+      <div class="milestone-bar-wrap">
+        <div class="milestone-bar spent" style="width:${spentPct}%"><span>${fmtShort(spent)}</span></div>
+      </div>
+    </div>`;
+  }).join('');
+
+  const timelineHtml = `<div class="timeline-card">
+    <div class="tc-title">THE OPPORTUNITY COST</div>
+    <div class="tc-sub">If you invested ${fmt(r.daily)}/day instead at ${growthRate}% growth:</div>
+    ${milestonesHtml}
+  </div>`;
+
+  // What could that buy (based on 10-year invested figure)
+  const tenYr = r.projections[10];
+  const houseDeposit = Math.floor(tenYr / 75000);
+  const cars = Math.floor(tenYr / 25000);
+  const holidays = Math.floor(tenYr / 5000);
+  const tuitions = Math.floor(tenYr / 37500);
+
+  let buyItems = '';
+  if (houseDeposit >= 1) buyItems += `<div class="buy-item"><span class="buy-icon">&#x1F3E0;</span><span class="buy-text">${houseDeposit > 1 ? houseDeposit + ' house deposits' : 'A house deposit'} (15% on a &pound;${(Math.round(tenYr / 0.15 / 1000) * 1000).toLocaleString('en-GB')} property)</span></div>`;
+  if (cars >= 1) buyItems += `<div class="buy-item"><span class="buy-icon">&#x1F697;</span><span class="buy-text">${cars} brand new car${cars !== 1 ? 's' : ''}</span></div>`;
+  if (holidays >= 1) buyItems += `<div class="buy-item"><span class="buy-icon">&#x1F30D;</span><span class="buy-text">${holidays} luxury holiday${holidays !== 1 ? 's' : ''}</span></div>`;
+  if (tuitions >= 1) buyItems += `<div class="buy-item"><span class="buy-icon">&#x1F393;</span><span class="buy-text">Full university tuition for ${tuitions} child${tuitions !== 1 ? 'ren' : ''}</span></div>`;
+  buyItems += `<div class="buy-item"><span class="buy-icon">&#x1F4B0;</span><span class="buy-text">${fmtShort(tenYr)} just sitting there, being yours</span></div>`;
+
+  const couldBuyHtml = `<div class="could-buy">
+    <div class="cb-title">${fmtShort(tenYr)} AFTER 10 YEARS COULD BE:</div>
+    ${buyItems}
+  </div>`;
+
+  // Chart
+  const chartHtml = `<div class="chart-panel">
+    <div class="cp-title">COMPOUND GROWTH VS CUMULATIVE SPEND</div>
+    <div class="cp-sub">The gap between the lines is compound growth &mdash; this is the visual that makes people share it.</div>
+    <div class="chart-container"><canvas id="growthChart"></canvas></div>
+  </div>`;
+
+  // Reduce section
+  const halfDaily = r.daily / 2;
+  const halfResult = calculateHabitCost(halfDaily, yearsHad, growthRate);
+  const savings20yr = r.projections[20] - halfResult.projections[20];
+
+  const reduceHtml = `<div class="reduce-panel">
+    <div class="rp-title">CUT IN HALF? HERE'S WHAT THAT LOOKS LIKE</div>
+    <div class="rp-sub">Reduce, don't quit. Even halving your spend changes the maths dramatically.</div>
+    <div class="reduce-grid">
+      <div class="reduce-col">
+        <div class="rc-head full">CURRENT (${fmt(r.daily)}/DAY)</div>
+        <div class="reduce-row"><span class="rr-label">Annual</span><span class="rr-val" style="color:var(--red)">${fmtShort(r.annual)}</span></div>
+        <div class="reduce-row"><span class="rr-label">10yr invested</span><span class="rr-val" style="color:var(--red)">${fmtShort(r.projections[10])}</span></div>
+        <div class="reduce-row"><span class="rr-label">20yr invested</span><span class="rr-val" style="color:var(--red)">${fmtShort(r.projections[20])}</span></div>
+      </div>
+      <div class="reduce-col">
+        <div class="rc-head half">HALVED (${fmt(halfDaily)}/DAY)</div>
+        <div class="reduce-row"><span class="rr-label">You still enjoy</span><span class="rr-val" style="color:var(--teal)">${fmtShort(halfResult.annual)}/yr</span></div>
+        <div class="reduce-row"><span class="rr-label">You save (10yr)</span><span class="rr-val" style="color:var(--green)">${fmtShort(r.projections[10] / 2)}</span></div>
+        <div class="reduce-row"><span class="rr-label">You save (20yr)</span><span class="rr-val" style="color:var(--green)">${fmtShort(r.projections[20] / 2)}</span></div>
+      </div>
+    </div>
+  </div>`;
+
+  // Per-hour context
+  const hourlyAfterTax = 17; // UK avg ~£35k = ~£17/hr after tax
+  const minutesPerDay = (r.daily / hourlyAfterTax) * 60;
+  const hoursPerYear = (r.annual / hourlyAfterTax);
+
+  const hourHtml = `<div class="hour-panel">
+    <div class="hp-title">WHAT THIS COSTS IN YOUR TIME</div>
+    <p>At the average UK salary (&pound;35,000), you earn roughly &pound;17/hour after tax. Your ${fmt(r.daily)}/day ${habitName.toLowerCase()} habit costs you <span class="hp-highlight">${Math.round(minutesPerDay)} minutes of work every day</span> &mdash; <span class="hp-highlight">${Math.round(hoursPerYear)} hours per year</span>.</p>
+  </div>`;
+
+  // Share section
+  const shareText = `My ${habitName.toLowerCase()} costs \u00A3${Math.round(r.annual).toLocaleString('en-GB')}/year. Invested at ${growthRate}%, that's \u00A3${Math.round(r.projections[20]).toLocaleString('en-GB')} in 20 years. Just the maths. mathswins.co.uk/tools/habit-cost/`;
+
+  const shareHtml = `<div class="share-panel">
+    <div class="sp-title">SHARE YOUR RESULT</div>
+    <div class="share-text" id="shareText">${shareText}</div>
+    <button class="copy-btn" onclick="copyShare()">Copy to clipboard</button>
+  </div>`;
+
+  el.innerHTML = alreadySpentHtml + damageHtml + timelineHtml + couldBuyHtml + chartHtml + reduceHtml + hourHtml + shareHtml;
+
+  drawChart(r, growthRate);
+}
+
+function drawChart(r, growthRate) {
+  const canvas = document.getElementById('growthChart');
+  if (!canvas) return;
+  const ctx = canvas.getContext('2d');
+
+  // Set actual pixel size
+  const container = canvas.parentElement;
+  const dpr = window.devicePixelRatio || 1;
+  const w = container.clientWidth;
+  const h = container.clientHeight;
+  canvas.width = w * dpr;
+  canvas.height = h * dpr;
+  ctx.scale(dpr, dpr);
+
+  const padL = 65, padR = 20, padT = 20, padB = 40;
+  const cw = w - padL - padR;
+  const ch = h - padT - padB;
+
+  // Data points: years 0-40
+  const monthlyRate = growthRate / 100 / 12;
+  const monthlyInvestment = r.monthly;
+  const points = [];
+  for (let y = 0; y <= 40; y++) {
+    const months = y * 12;
+    let invested;
+    if (monthlyRate === 0) {
+      invested = monthlyInvestment * months;
+    } else {
+      invested = y === 0 ? 0 : monthlyInvestment * ((Math.pow(1 + monthlyRate, months) - 1) / monthlyRate);
+    }
+    const spent = r.annual * y;
+    points.push({ year: y, invested, spent });
+  }
+
+  const maxY = points[points.length - 1].invested * 1.1;
+
+  function xPos(year) { return padL + (year / 40) * cw; }
+  function yPos(val) { return padT + ch - (val / maxY) * ch; }
+
+  // Grid lines
+  ctx.strokeStyle = '#161c28';
+  ctx.lineWidth = 1;
+  const gridSteps = 5;
+  for (let i = 0; i <= gridSteps; i++) {
+    const val = (maxY / gridSteps) * i;
+    const y = yPos(val);
+    ctx.beginPath();
+    ctx.moveTo(padL, y);
+    ctx.lineTo(w - padR, y);
+    ctx.stroke();
+
+    ctx.fillStyle = '#4a5568';
+    ctx.font = '11px "DM Mono", monospace';
+    ctx.textAlign = 'right';
+    ctx.textBaseline = 'middle';
+    if (val >= 1000000) {
+      ctx.fillText('\u00A3' + (val / 1000000).toFixed(1) + 'm', padL - 8, y);
+    } else if (val >= 1000) {
+      ctx.fillText('\u00A3' + Math.round(val / 1000) + 'k', padL - 8, y);
+    } else {
+      ctx.fillText('\u00A3' + Math.round(val), padL - 8, y);
+    }
+  }
+
+  // X-axis labels
+  ctx.fillStyle = '#4a5568';
+  ctx.textAlign = 'center';
+  ctx.textBaseline = 'top';
+  for (const yr of [0, 5, 10, 15, 20, 25, 30, 35, 40]) {
+    ctx.fillText(yr + 'yr', xPos(yr), h - padB + 10);
+  }
+
+  // Fill area between curves (the compound growth gap)
+  ctx.beginPath();
+  for (let i = 0; i <= 40; i++) {
+    const x = xPos(points[i].year);
+    const y = yPos(points[i].invested);
+    if (i === 0) ctx.moveTo(x, y); else ctx.lineTo(x, y);
+  }
+  for (let i = 40; i >= 0; i--) {
+    const x = xPos(points[i].year);
+    const y = yPos(points[i].spent);
+    ctx.lineTo(x, y);
+  }
+  ctx.closePath();
+  ctx.fillStyle = 'rgba(45, 212, 160, 0.08)';
+  ctx.fill();
+
+  // Cumulative spend line (straight, red)
+  ctx.beginPath();
+  ctx.strokeStyle = '#ef5350';
+  ctx.lineWidth = 2;
+  for (let i = 0; i <= 40; i++) {
+    const x = xPos(points[i].year);
+    const y = yPos(points[i].spent);
+    if (i === 0) ctx.moveTo(x, y); else ctx.lineTo(x, y);
+  }
+  ctx.stroke();
+
+  // Invested value line (exponential curve, green)
+  ctx.beginPath();
+  ctx.strokeStyle = '#2dd4a0';
+  ctx.lineWidth = 2.5;
+  for (let i = 0; i <= 40; i++) {
+    const x = xPos(points[i].year);
+    const y = yPos(points[i].invested);
+    if (i === 0) ctx.moveTo(x, y); else ctx.lineTo(x, y);
+  }
+  ctx.stroke();
+
+  // Legend
+  const legY = padT + 8;
+  ctx.fillStyle = '#2dd4a0';
+  ctx.fillRect(padL + 10, legY, 14, 3);
+  ctx.fillStyle = '#c8cdd8';
+  ctx.font = '11px "Outfit", sans-serif';
+  ctx.textAlign = 'left';
+  ctx.textBaseline = 'middle';
+  ctx.fillText('Invested value', padL + 30, legY + 2);
+
+  ctx.fillStyle = '#ef5350';
+  ctx.fillRect(padL + 140, legY, 14, 3);
+  ctx.fillStyle = '#c8cdd8';
+  ctx.fillText('Cumulative spend', padL + 160, legY + 2);
+
+  // "Compound growth" label in the gap area
+  const gapYear = 30;
+  const gapInvested = points[gapYear].invested;
+  const gapSpent = points[gapYear].spent;
+  const gapMid = (gapInvested + gapSpent) / 2;
+  ctx.fillStyle = 'rgba(45,212,160,0.5)';
+  ctx.font = '600 12px "Outfit", sans-serif';
+  ctx.textAlign = 'center';
+  ctx.fillText('Compound growth', xPos(gapYear), yPos(gapMid));
+}
+
+function copyShare() {
+  const text = document.getElementById('shareText').textContent;
+  navigator.clipboard.writeText(text).then(() => {
+    const btn = document.querySelector('.copy-btn');
+    btn.textContent = 'Copied!';
+    btn.classList.add('copied');
+    setTimeout(() => { btn.textContent = 'Copy to clipboard'; btn.classList.remove('copied'); }, 2000);
+  });
+}
+
+// Redraw chart on resize
+window.addEventListener('resize', () => {
+  if (lastResult) {
+    drawChart(lastResult, lastResult.growthRate);
+  }
+});
+</script>
+</body>
+</html>

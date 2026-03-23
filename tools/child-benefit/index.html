@@ -1,0 +1,498 @@
+<!DOCTYPE html>
+<html lang="en-GB">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Child Benefit Calculator UK — HICBC & NI Credits | MathsWins</title>
+<meta name="description" content="Should you claim Child Benefit? Calculate the High Income Child Benefit Charge, see how much you keep, and why you should ALWAYS claim for National Insurance credits.">
+<meta property="og:title" content="Child Benefit Calculator UK — HICBC & NI Credits | MathsWins">
+<meta property="og:description" content="Calculate the High Income Child Benefit Charge, see how much you keep, and why you should ALWAYS claim for National Insurance credits.">
+<meta property="og:url" content="https://mathswins.co.uk/tools/child-benefit/">
+<meta property="og:image" content="https://mathswins.co.uk/assets/og-image.png">
+<meta property="og:type" content="website">
+<meta property="og:site_name" content="MathsWins">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:title" content="Child Benefit Calculator UK — HICBC & NI Credits | MathsWins">
+<meta name="twitter:description" content="Calculate the High Income Child Benefit Charge and see why you should ALWAYS claim.">
+<meta name="twitter:image" content="https://mathswins.co.uk/assets/og-image.png">
+<link rel="canonical" href="https://mathswins.co.uk/tools/child-benefit/">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Crimson+Pro:ital,wght@0,400;1,400&family=DM+Mono:wght@400;500&family=Outfit:wght@300;400;600;700&display=swap" rel="stylesheet">
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "WebApplication",
+  "name": "Child Benefit Calculator UK",
+  "url": "https://mathswins.co.uk/tools/child-benefit/",
+  "description": "Should you claim Child Benefit? Calculate the High Income Child Benefit Charge, see how much you keep, and why you should ALWAYS claim for National Insurance credits.",
+  "applicationCategory": "FinanceApplication",
+  "operatingSystem": "Any",
+  "offers": {
+    "@type": "Offer",
+    "price": "0",
+    "priceCurrency": "GBP"
+  },
+  "publisher": {
+    "@type": "Organization",
+    "name": "MathsWins",
+    "url": "https://mathswins.co.uk"
+  }
+}
+</script>
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "FAQPage",
+  "mainEntity": [
+    {
+      "@type": "Question",
+      "name": "What is the High Income Child Benefit Charge (HICBC)?",
+      "acceptedAnswer": {
+        "@type": "Answer",
+        "text": "If either parent (or their partner) earns over £60,000, HMRC claws back Child Benefit at a rate of 1% of the benefit for every £200 of income above £60,000. At £80,000 the entire benefit is clawed back. This is based on individual income, not household income."
+      }
+    },
+    {
+      "@type": "Question",
+      "name": "Can I use pension sacrifice to avoid the HICBC?",
+      "acceptedAnswer": {
+        "@type": "Answer",
+        "text": "Yes. Salary sacrifice into a workplace pension reduces your adjusted net income. If this brings the higher earner below £60,000, the full Child Benefit is kept — and you also get tax relief on the pension contribution. It is one of the most effective legal tax strategies available."
+      }
+    },
+    {
+      "@type": "Question",
+      "name": "What are NI credits and why do they matter for Child Benefit?",
+      "acceptedAnswer": {
+        "@type": "Answer",
+        "text": "A non-working or low-earning parent who claims Child Benefit automatically receives National Insurance credits. These credits count toward their State Pension entitlement. Without them, each missing qualifying year costs approximately £329 per year of pension income for life. Always claim Child Benefit, even if you opt out of receiving payments."
+      }
+    },
+    {
+      "@type": "Question",
+      "name": "Do single parents have to worry about HICBC?",
+      "acceptedAnswer": {
+        "@type": "Answer",
+        "text": "Yes. The HICBC applies to any individual earning over £60,000 who claims Child Benefit. For single parents, it is based on their own income. If they earn under £60,000, they keep the full benefit with no clawback."
+      }
+    },
+    {
+      "@type": "Question",
+      "name": "How do I claim Child Benefit?",
+      "acceptedAnswer": {
+        "@type": "Answer",
+        "text": "You can claim online at gov.uk or by post using form CH2. You should claim as soon as possible after the child is born or comes to live with you. You can claim and then opt out of payments if you only want the NI credits."
+      }
+    },
+    {
+      "@type": "Question",
+      "name": "Do I need to file a Self Assessment tax return for HICBC?",
+      "acceptedAnswer": {
+        "@type": "Answer",
+        "text": "Yes. If either you or your partner earns over £60,000 and you receive Child Benefit payments, the higher earner must register for Self Assessment and file a tax return to pay the HICBC. If you opt out of payments (but still claim for NI credits), no Self Assessment is required for HICBC purposes."
+      }
+    }
+  ]
+}
+</script>
+<style>
+:root{--bg:#050709;--surface:#0a0d14;--surface2:#0f1319;--border:#161c28;--border2:#1e2638;--sky:#0ea5e9;--sky-dim:rgba(14,165,233,0.10);--green:#2dd4a0;--green-dim:rgba(45,212,160,0.10);--red:#ef5350;--gold:#d4a847;--gold-dim:rgba(212,168,71,0.10);--cyan:#22d3ee;--teal:#0d9488;--teal-dim:rgba(13,148,136,0.10);--text:#c8cdd8;--text-bright:#e8ecf4;--muted:#4a5568;--amber:#f59e0b;--amber-dim:rgba(245,158,11,0.10);}
+*{margin:0;padding:0;box-sizing:border-box;}
+body{font-family:'Outfit',sans-serif;background:var(--bg);color:var(--text);min-height:100vh;line-height:1.5;}
+.container{max-width:960px;margin:0 auto;padding:2rem 1.25rem 4rem;}
+.nav-bar{display:flex;align-items:center;justify-content:space-between;padding:1rem 0;border-bottom:1px solid var(--border);margin-bottom:2rem;}
+.nav-brand{font-family:'Bebas Neue',sans-serif;font-size:1.4rem;color:var(--gold);text-decoration:none;letter-spacing:0.06em;}
+.nav-brand span{color:var(--text-bright);}
+.nav-link{font-size:0.85rem;font-weight:600;color:var(--sky);text-decoration:none;padding:0.4rem 1rem;border:1px solid var(--sky);border-radius:4px;transition:background 0.2s,color 0.2s;}
+.nav-link:hover{background:var(--sky);color:var(--bg);}
+.hero{text-align:center;margin-bottom:2rem;}
+.hero-eyebrow{font-size:0.75rem;font-weight:600;text-transform:uppercase;letter-spacing:0.15em;color:var(--sky);margin-bottom:0.5rem;}
+.hero h1{font-family:'Bebas Neue',sans-serif;font-size:clamp(1.8rem,5vw,2.8rem);color:var(--text-bright);letter-spacing:0.04em;line-height:1.1;margin-bottom:0.75rem;}
+.hero-sub{font-family:'Crimson Pro',serif;font-style:italic;font-size:1.05rem;color:var(--cyan);max-width:620px;margin:0 auto;}
+.panel{background:var(--surface);border:1px solid var(--border);border-radius:10px;padding:1.5rem;margin-bottom:1.25rem;}
+.panel-title{font-family:'Bebas Neue',sans-serif;font-size:1.1rem;color:var(--text-bright);letter-spacing:0.05em;margin-bottom:1rem;}
+.fg{display:flex;flex-direction:column;gap:0.3rem;margin-bottom:0.75rem;}
+.fg label{font-size:0.72rem;font-weight:600;text-transform:uppercase;letter-spacing:0.06em;color:var(--muted);}
+.fg input[type="number"]{font-family:'DM Mono',monospace;font-size:1rem;padding:0.6rem 0.8rem;background:var(--surface2);border:1px solid var(--border2);border-radius:6px;color:var(--text-bright);outline:none;width:100%;}
+.fg input:focus{border-color:var(--sky);}
+.fg .hint{font-family:'Crimson Pro',serif;font-style:italic;font-size:0.78rem;color:var(--muted);}
+.input-grid{display:grid;grid-template-columns:1fr 1fr;gap:1rem;}
+@media(max-width:600px){.input-grid{grid-template-columns:1fr;}}
+.checkbox-row{display:flex;align-items:center;gap:0.6rem;margin:0.5rem 0 0.75rem;}
+.checkbox-row input[type="checkbox"]{accent-color:var(--sky);width:18px;height:18px;cursor:pointer;}
+.checkbox-row label{font-size:0.88rem;color:var(--text);cursor:pointer;}
+.pension-input{display:none;margin-top:0.25rem;}
+.pension-input.show{display:flex;}
+.calc-btn{font-family:'Outfit',sans-serif;font-weight:700;font-size:1rem;padding:0.85rem;background:var(--sky);color:#fff;border:none;border-radius:6px;cursor:pointer;width:100%;margin:0.5rem 0 0;transition:background 0.2s;}
+.calc-btn:hover{background:#38bdf8;}
+
+/* Results */
+.results{display:none;}
+.results.show{display:block;}
+.result-panel{background:var(--surface);border:1px solid var(--border);border-radius:10px;padding:1.5rem;margin-bottom:1.25rem;}
+.result-panel h3{font-family:'Bebas Neue',sans-serif;font-size:1.05rem;color:var(--text-bright);letter-spacing:0.05em;margin-bottom:1rem;}
+.result-row{display:flex;justify-content:space-between;padding:0.45rem 0;border-bottom:1px solid var(--border);}
+.result-row:last-child{border-bottom:none;}
+.result-label{font-size:0.88rem;}
+.result-val{font-family:'DM Mono',monospace;font-weight:500;font-size:0.92rem;color:var(--text-bright);}
+.result-val.green{color:var(--green);}
+.result-val.red{color:var(--red);}
+.result-val.gold{color:var(--gold);}
+.result-val.sky{color:var(--sky);}
+
+/* Verdict box */
+.verdict-box{border-radius:10px;padding:1.25rem;text-align:center;margin-bottom:1.25rem;line-height:1.7;}
+.verdict-box.keep{background:var(--green-dim);border:1px solid var(--green);}
+.verdict-box.partial{background:var(--gold-dim);border:1px solid var(--gold);}
+.verdict-box.clawed{background:rgba(239,83,80,0.08);border:1px solid var(--red);}
+.verdict-box .big{font-family:'DM Mono',monospace;font-size:2rem;font-weight:500;}
+.verdict-box.keep .big{color:var(--green);}
+.verdict-box.partial .big{color:var(--gold);}
+.verdict-box.clawed .big{color:var(--red);}
+.verdict-box .sub{font-size:0.88rem;margin-top:0.25rem;}
+
+/* Warning box */
+.warning-box{background:var(--amber-dim);border:1px solid var(--amber);border-radius:10px;padding:1.25rem;margin-bottom:1.25rem;}
+.warning-box h4{font-family:'Bebas Neue',sans-serif;font-size:1rem;color:var(--amber);letter-spacing:0.04em;margin-bottom:0.5rem;}
+.warning-box p{font-size:0.88rem;line-height:1.7;color:var(--text);}
+.warning-box strong{color:var(--text-bright);}
+
+/* Pension strategy box */
+.pension-box{background:var(--teal-dim);border:1px solid var(--teal);border-radius:10px;padding:1.25rem;margin-bottom:1.25rem;}
+.pension-box h4{font-family:'Bebas Neue',sans-serif;font-size:1rem;color:var(--teal);letter-spacing:0.04em;margin-bottom:0.75rem;}
+.pension-box .result-row{border-bottom-color:rgba(13,148,136,0.2);}
+.pension-box .result-val{color:var(--teal);}
+.pension-box .result-val.green{color:var(--green);}
+
+/* Educational content */
+.edu-section{margin-top:2rem;}
+.edu-section h2{font-family:'Bebas Neue',sans-serif;font-size:1.4rem;color:var(--text-bright);letter-spacing:0.04em;margin-bottom:1rem;}
+.edu-section h3{font-family:'Bebas Neue',sans-serif;font-size:1.05rem;color:var(--text-bright);letter-spacing:0.04em;margin:1.25rem 0 0.5rem;}
+.edu-section p{font-size:0.92rem;line-height:1.7;margin-bottom:0.75rem;}
+.edu-section .formula{font-family:'DM Mono',monospace;font-size:0.88rem;color:var(--cyan);background:var(--surface2);padding:0.75rem 1rem;border-radius:6px;margin:0.75rem 0;border-left:3px solid var(--cyan);}
+.pln{font-family:'Crimson Pro',serif;font-style:italic;color:var(--cyan);background:rgba(34,211,238,0.08);border-left:3px solid var(--cyan);padding:0.85rem 1rem;border-radius:0 6px 6px 0;margin:1rem 0;font-size:0.92rem;line-height:1.6;}
+
+/* FAQ */
+.faq-section{margin-top:2rem;}
+.faq-section h2{font-family:'Bebas Neue',sans-serif;font-size:1.4rem;color:var(--text-bright);letter-spacing:0.04em;margin-bottom:1rem;}
+.faq-item{background:var(--surface);border:1px solid var(--border);border-radius:10px;margin-bottom:0.75rem;overflow:hidden;}
+.faq-q{font-family:'Outfit',sans-serif;font-weight:600;font-size:0.92rem;padding:1rem 1.25rem;cursor:pointer;display:flex;justify-content:space-between;align-items:center;color:var(--text-bright);transition:background 0.2s;}
+.faq-q:hover{background:var(--surface2);}
+.faq-q::after{content:'+';font-family:'DM Mono',monospace;font-size:1.2rem;color:var(--sky);transition:transform 0.2s;}
+.faq-item.open .faq-q::after{content:'-';}
+.faq-a{max-height:0;overflow:hidden;transition:max-height 0.3s ease,padding 0.3s ease;}
+.faq-item.open .faq-a{max-height:400px;padding:0 1.25rem 1rem;}
+.faq-a p{font-size:0.88rem;line-height:1.6;color:var(--text);}
+
+/* CTA */
+.cta-card{background:var(--surface);border:1px solid var(--border);border-left:3px solid var(--sky);border-radius:0 10px 10px 0;padding:1.5rem;margin-top:2rem;}
+.cta-card h3{font-family:'Bebas Neue',sans-serif;font-size:1.2rem;color:var(--sky);letter-spacing:0.04em;margin-bottom:0.5rem;}
+.cta-card p{font-family:'Crimson Pro',serif;font-style:italic;font-size:0.92rem;color:var(--text);line-height:1.5;margin-bottom:0.75rem;}
+.cta-link{font-weight:600;font-size:0.9rem;color:var(--sky);text-decoration:none;}
+.footer{margin-top:2.5rem;padding-top:1.25rem;border-top:1px solid var(--border);text-align:center;}
+.footer p{font-size:0.72rem;color:var(--muted);line-height:1.8;}
+.footer a{color:var(--muted);text-decoration:underline;}
+</style>
+<!-- GA4 Cookieless -->
+<script async src="https://www.googletagmanager.com/gtag/js?id=G-7GTLYCZMXN"></script>
+<script>window.dataLayer=window.dataLayer||[];function gtag(){dataLayer.push(arguments);}gtag('js',new Date());gtag('consent','default',{analytics_storage:'denied',ad_storage:'denied',ad_user_data:'denied',ad_personalization:'denied'});gtag('config','G-7GTLYCZMXN',{send_page_view:true,anonymize_ip:true});</script>
+</head>
+<body>
+<script src="/auth/mw-auth.js"></script>
+<div class="container">
+<nav class="nav-bar">
+  <a href="/" class="nav-brand">MATHS<span>WINS</span></a>
+  <a href="/everyday/tax/" class="nav-link">UK Tax Maths (Free) &rarr;</a>
+</nav>
+<div class="hero">
+  <div class="hero-eyebrow">Free Tool</div>
+  <h1>CHILD BENEFIT CALCULATOR</h1>
+  <div class="hero-sub">Should you claim Child Benefit? See exactly how much you keep after the High Income Charge &mdash; and why you should always claim, even if every penny is clawed back.</div>
+</div>
+
+<div class="panel">
+  <div class="panel-title">YOUR DETAILS</div>
+  <div class="input-grid">
+    <div class="fg">
+      <label>Number of children</label>
+      <input type="number" id="numChildren" value="1" min="1" max="20" step="1">
+    </div>
+    <div class="fg">
+      <label>Higher earner's annual income (&pound;)</label>
+      <input type="number" id="income" placeholder="65000" min="0" step="1000">
+      <div class="hint">Adjusted net income &mdash; the higher earner in the household</div>
+    </div>
+  </div>
+  <div class="checkbox-row">
+    <input type="checkbox" id="pensionCheck">
+    <label for="pensionCheck">Does the higher earner sacrifice into a pension?</label>
+  </div>
+  <div class="fg pension-input" id="pensionGroup">
+    <label>Pension sacrifice amount (&pound;/month)</label>
+    <input type="number" id="pensionAmount" placeholder="500" min="0" step="50">
+    <div class="hint">Salary sacrifice reduces adjusted net income &mdash; this can eliminate the HICBC entirely</div>
+  </div>
+  <button class="calc-btn" onclick="calculate()">Calculate</button>
+</div>
+
+<div class="results" id="results"></div>
+
+<!-- How the Maths Works -->
+<div class="edu-section">
+  <h2>HOW THE MATHS WORKS</h2>
+
+  <h3>Child Benefit Rates (2025/26)</h3>
+  <p>Child Benefit is paid weekly. The first child receives a higher rate, and each additional child receives a lower rate. These rates are set by HMRC each tax year.</p>
+  <div class="formula">First child: &pound;26.05/week = &pound;1,354.60/year<br>Each additional child: &pound;17.25/week = &pound;897.00/year</div>
+  <p>For a family with three children, the total would be &pound;1,354.60 + (2 &times; &pound;897.00) = &pound;3,148.60 per year. This is tax-free income &mdash; unless the High Income Child Benefit Charge applies.</p>
+
+  <h3>The High Income Child Benefit Charge</h3>
+  <p>If either parent (not the household &mdash; the individual) earns over &pound;60,000, HMRC claws back Child Benefit through the tax system. The clawback rate is precise:</p>
+  <div class="formula">Clawback = 1% of total Child Benefit for every &pound;200 income exceeds &pound;60,000</div>
+  <p>This means the clawback is linear: at &pound;62,000 you lose 10%. At &pound;70,000 you lose 50%. At &pound;80,000 or above, 100% is clawed back. The charge is collected via Self Assessment.</p>
+
+  <h3>The Pension Sacrifice Strategy</h3>
+  <p>Salary sacrifice into a workplace pension reduces your adjusted net income for HICBC purposes. If you earn &pound;65,000 and sacrifice &pound;500/month (&pound;6,000/year), your adjusted income drops to &pound;59,000 &mdash; below the threshold. You keep the full Child Benefit, gain tax relief on the pension contribution, and avoid the Self Assessment requirement for HICBC.</p>
+  <div class="pln">This is not tax avoidance &mdash; it is exactly how the system is designed to work. HMRC explicitly uses adjusted net income (after pension contributions) for the HICBC calculation.</div>
+
+  <h3>The NI Credits Trap</h3>
+  <p>This is the part most people miss. A parent who is not working (or earning below the NI threshold) and who claims Child Benefit automatically receives Class 3 National Insurance credits. These credits count toward their State Pension qualification. Each missing qualifying year reduces the State Pension by approximately &pound;329 per year &mdash; for life, from age 67 onwards.</p>
+  <p>Even if the HICBC claws back 100% of the benefit, the NI credits are still awarded. You can claim Child Benefit and immediately opt out of receiving payments. This gives the non-working parent NI credits without triggering the HICBC or requiring a Self Assessment return.</p>
+</div>
+
+<!-- FAQ -->
+<div style="text-align:center;margin:1.5rem 0;padding:1rem;background:rgba(45,212,160,0.06);border:1px solid rgba(45,212,160,0.2);border-radius:8px"><a href="https://www.gov.uk/child-benefit" target="_blank" rel="noopener noreferrer" style="color:#2dd4a0;font-weight:600;text-decoration:none;font-size:0.95rem">Claim Child Benefit &rarr; GOV.UK</a><div style="font-size:0.7rem;color:#4a5568;margin-top:4px">Opens in a new tab — official UK Government website</div></div>
+<div class="faq-section">
+  <h2>FREQUENTLY ASKED QUESTIONS</h2>
+
+  <div class="faq-item">
+    <div class="faq-q">What is the HICBC threshold and how does the clawback work?</div>
+    <div class="faq-a"><p>The High Income Child Benefit Charge starts when either parent earns over &pound;60,000 (from April 2024 &mdash; it was &pound;50,000 before). For every &pound;200 of income above &pound;60,000, you lose 1% of your Child Benefit. At &pound;80,000 the entire benefit is clawed back. This is based on individual income, not combined household income.</p></div>
+  </div>
+
+  <div class="faq-item">
+    <div class="faq-q">Can pension sacrifice help me avoid the HICBC?</div>
+    <div class="faq-a"><p>Yes. Salary sacrifice into a workplace pension reduces your adjusted net income. If this brings the higher earner below &pound;60,000, the full Child Benefit is kept with zero clawback. You also get tax relief on the pension contribution. For many families this is a significant net gain &mdash; more pension, more Child Benefit, less tax.</p></div>
+  </div>
+
+  <div class="faq-item">
+    <div class="faq-q">Why should I always claim Child Benefit, even if it is fully clawed back?</div>
+    <div class="faq-a"><p>Because claiming Child Benefit provides National Insurance credits to the non-working or lower-earning parent. These credits count toward State Pension entitlement. Each missing qualifying year costs approximately &pound;329 per year of pension income for life. You can claim and opt out of payments to get the NI credits without triggering the charge.</p></div>
+  </div>
+
+  <div class="faq-item">
+    <div class="faq-q">Do single parents have to worry about the HICBC?</div>
+    <div class="faq-a"><p>Yes. The HICBC is based on the individual income of the claimant (or their partner, if they have one). For single parents, it is based solely on their own income. If a single parent earns under &pound;60,000, they keep the full benefit with no clawback.</p></div>
+  </div>
+
+  <div class="faq-item">
+    <div class="faq-q">How do I actually claim Child Benefit?</div>
+    <div class="faq-a"><p>You can claim online via the gov.uk website or by post using form CH2. Claim as soon as possible after your child is born or comes to live with you &mdash; it can be backdated up to 3 months. If you want the NI credits but not the payments, claim and then opt out of receiving payments online.</p></div>
+  </div>
+
+  <div class="faq-item">
+    <div class="faq-q">Do I need to file a Self Assessment tax return for the HICBC?</div>
+    <div class="faq-a"><p>If you or your partner earns over &pound;60,000 and you receive Child Benefit payments, the higher earner must register for Self Assessment and file a return to pay the HICBC. However, if you claim Child Benefit but opt out of receiving payments (to get NI credits only), no Self Assessment is required for HICBC purposes.</p></div>
+  </div>
+</div>
+
+<!-- CTA -->
+<div class="cta-card">
+  <h3>Understand the Tax System</h3>
+  <p>Our free UK Tax Maths course covers marginal rates, the &pound;100k personal allowance trap, Scottish tax differences, and more &mdash; all explained with clear mathematics.</p>
+  <a href="/everyday/tax/" class="cta-link">UK Tax Maths &mdash; Free Course &rarr;</a>
+</div>
+
+<div class="footer">
+  <p>
+    &copy; 2025 MathsWins &mdash; <a href="/">Home</a> &bull; <a href="/everyday/">Everyday Maths</a> &bull; <a href="/tools/student-loan/">Student Loan Calculator</a> &bull; <a href="/tools/debt-snowball/">Debt Snowball Calculator</a> &bull; <a href="/terms/">Terms</a><br>
+    Rates shown are for the 2025/26 tax year. This calculator is for educational purposes only and does not constitute financial advice.<br>
+    <a href="mailto:contact@mathswins.co.uk">contact@mathswins.co.uk</a>
+  </p>
+</div>
+</div>
+
+<script>
+// 2025/26 rates
+const FIRST_CHILD_WEEKLY = 26.05;
+const ADDITIONAL_CHILD_WEEKLY = 17.25;
+const FIRST_CHILD_ANNUAL = 1354.60;
+const ADDITIONAL_CHILD_ANNUAL = 897.00;
+const HICBC_THRESHOLD = 60000;
+const HICBC_CEILING = 80000;
+
+// Pension checkbox toggle
+document.getElementById('pensionCheck').addEventListener('change', function() {
+  document.getElementById('pensionGroup').classList.toggle('show', this.checked);
+  if (!this.checked) document.getElementById('pensionAmount').value = '';
+});
+
+// FAQ toggles
+document.querySelectorAll('.faq-q').forEach(q => {
+  q.addEventListener('click', () => q.parentElement.classList.toggle('open'));
+});
+
+function fmt(n) {
+  return '\u00A3' + n.toLocaleString('en-GB', { minimumFractionDigits: 2, maximumFractionDigits: 2 });
+}
+
+function fmtInt(n) {
+  return '\u00A3' + n.toLocaleString('en-GB', { minimumFractionDigits: 0, maximumFractionDigits: 0 });
+}
+
+function calcBenefit(children) {
+  if (children <= 0) return 0;
+  return FIRST_CHILD_ANNUAL + Math.max(0, children - 1) * ADDITIONAL_CHILD_ANNUAL;
+}
+
+function calcClawbackPct(income) {
+  if (income <= HICBC_THRESHOLD) return 0;
+  if (income >= HICBC_CEILING) return 100;
+  const excess = income - HICBC_THRESHOLD;
+  return Math.min(100, Math.floor(excess / 200));
+}
+
+function getTaxRate(income) {
+  // Simplified UK marginal rate for pension sacrifice tax saving estimate
+  if (income > 125140) return 0.45;
+  if (income > 100000) return 0.60; // effective rate in PA taper zone
+  if (income > 50270) return 0.40;
+  if (income > 12570) return 0.20;
+  return 0;
+}
+
+function calculate() {
+  const children = parseInt(document.getElementById('numChildren').value) || 1;
+  const income = parseFloat(document.getElementById('income').value);
+  const hasPension = document.getElementById('pensionCheck').checked;
+  const pensionMonthly = hasPension ? (parseFloat(document.getElementById('pensionAmount').value) || 0) : 0;
+  const pensionAnnual = pensionMonthly * 12;
+
+  if (isNaN(income) || income < 0) {
+    alert('Please enter a valid income.');
+    return;
+  }
+
+  const totalBenefit = calcBenefit(children);
+  const firstChildWeekly = FIRST_CHILD_WEEKLY;
+  const additionalWeekly = children > 1 ? ADDITIONAL_CHILD_WEEKLY : 0;
+  const firstChildAnnual = FIRST_CHILD_ANNUAL;
+  const additionalAnnual = Math.max(0, children - 1) * ADDITIONAL_CHILD_ANNUAL;
+
+  // HICBC on raw income
+  const clawbackPct = calcClawbackPct(income);
+  const clawbackAmount = totalBenefit * (clawbackPct / 100);
+  const keepAmount = totalBenefit - clawbackAmount;
+  const excess = Math.max(0, income - HICBC_THRESHOLD);
+
+  // Build results HTML
+  let html = '';
+
+  // Entitlement panel
+  html += '<div class="result-panel"><h3>CHILD BENEFIT ENTITLEMENT</h3>';
+  html += '<div class="result-row"><span class="result-label">First child</span><span class="result-val">' + fmt(firstChildWeekly) + '/week (' + fmt(firstChildAnnual) + '/year)</span></div>';
+  if (children > 1) {
+    html += '<div class="result-row"><span class="result-label">Each additional child (&times;' + (children - 1) + ')</span><span class="result-val">' + fmt(additionalWeekly) + '/week (' + fmt(additionalAnnual) + '/year)</span></div>';
+  }
+  html += '<div class="result-row"><span class="result-label"><strong>Total for ' + children + ' child' + (children !== 1 ? 'ren' : '') + '</strong></span><span class="result-val sky"><strong>' + fmt(totalBenefit) + '/year</strong></span></div>';
+  html += '</div>';
+
+  // HICBC clawback panel
+  if (income > HICBC_THRESHOLD) {
+    html += '<div class="result-panel"><h3>HIGH INCOME CHILD BENEFIT CHARGE</h3>';
+    html += '<div class="result-row"><span class="result-label">Income</span><span class="result-val">' + fmtInt(income) + '</span></div>';
+    html += '<div class="result-row"><span class="result-label">Excess over ' + fmtInt(HICBC_THRESHOLD) + '</span><span class="result-val">' + fmtInt(excess) + '</span></div>';
+    html += '<div class="result-row"><span class="result-label">Clawback rate</span><span class="result-val">1% per &pound;200 over &pound;60k</span></div>';
+    html += '<div class="result-row"><span class="result-label">Clawback</span><span class="result-val red">' + clawbackPct + '% of benefit = ' + fmt(clawbackAmount) + '</span></div>';
+    if (clawbackPct < 100) {
+      html += '<div class="result-row"><span class="result-label"><strong>You KEEP</strong></span><span class="result-val green"><strong>' + fmt(keepAmount) + ' per year</strong></span></div>';
+    }
+    html += '</div>';
+  }
+
+  // Verdict box
+  if (income <= HICBC_THRESHOLD) {
+    html += '<div class="verdict-box keep"><div class="big">' + fmt(totalBenefit) + '/year</div><div class="sub">No clawback &mdash; you keep the full Child Benefit</div></div>';
+  } else if (clawbackPct < 100) {
+    html += '<div class="verdict-box partial"><div class="big">You keep ' + fmt(keepAmount) + '/year</div><div class="sub">' + clawbackPct + '% clawed back &mdash; ' + fmt(clawbackAmount) + ' repaid via Self Assessment</div></div>';
+  } else {
+    html += '<div class="verdict-box clawed"><div class="big">100% clawed back</div><div class="sub">The entire ' + fmt(totalBenefit) + ' is repaid via Self Assessment &mdash; but STILL claim it for NI credits</div></div>';
+  }
+
+  // NI credits warning (always shown)
+  html += '<div class="warning-box">';
+  html += '<h4>NATIONAL INSURANCE CREDITS &mdash; DO NOT SKIP THIS</h4>';
+  html += '<p>Even if your benefit is fully clawed back, the non-working parent <strong>MUST</strong> claim Child Benefit to get National Insurance credits. Without these credits, they could lose years of State Pension entitlement (worth approximately <strong>&pound;329 per missing year, every year of retirement</strong>). Always claim, even if you opt out of payments.</p>';
+  html += '</div>';
+
+  // Pension sacrifice section
+  if (hasPension && pensionAnnual > 0) {
+    const adjustedIncome = income - pensionAnnual;
+    const newClawbackPct = calcClawbackPct(adjustedIncome);
+    const newClawback = totalBenefit * (newClawbackPct / 100);
+    const newKeep = totalBenefit - newClawback;
+    const benefitGain = newKeep - keepAmount;
+    const marginalRate = getTaxRate(income);
+    const taxSaving = pensionAnnual * marginalRate;
+    const totalGain = benefitGain + taxSaving;
+
+    html += '<div class="pension-box">';
+    html += '<h4>PENSION SACRIFICE STRATEGY</h4>';
+    html += '<div class="result-row"><span class="result-label">Pension sacrifice</span><span class="result-val">' + fmt(pensionMonthly) + '/month (' + fmt(pensionAnnual) + '/year)</span></div>';
+    html += '<div class="result-row"><span class="result-label">Adjusted income</span><span class="result-val">' + fmtInt(adjustedIncome) + '</span></div>';
+
+    if (adjustedIncome <= HICBC_THRESHOLD) {
+      html += '<div class="result-row"><span class="result-label">New clawback</span><span class="result-val green">0% &mdash; below &pound;60,000 threshold</span></div>';
+      html += '<div class="result-row"><span class="result-label">Benefit kept</span><span class="result-val green">' + fmt(totalBenefit) + '/year (full amount)</span></div>';
+    } else {
+      html += '<div class="result-row"><span class="result-label">New clawback</span><span class="result-val">' + newClawbackPct + '% = ' + fmt(newClawback) + '</span></div>';
+      html += '<div class="result-row"><span class="result-label">Benefit kept</span><span class="result-val green">' + fmt(newKeep) + '/year</span></div>';
+    }
+
+    if (benefitGain > 0) {
+      html += '<div class="result-row"><span class="result-label">Extra benefit retained</span><span class="result-val green">+' + fmt(benefitGain) + '/year</span></div>';
+    }
+    html += '<div class="result-row"><span class="result-label">Tax saving on sacrifice (' + Math.round(marginalRate * 100) + '% marginal rate)</span><span class="result-val green">+' + fmt(taxSaving) + '/year</span></div>';
+    if (totalGain > 0) {
+      html += '<div class="result-row"><span class="result-label"><strong>Total net gain</strong></span><span class="result-val green"><strong>+' + fmt(totalGain) + '/year</strong></span></div>';
+    }
+    html += '</div>';
+
+    if (adjustedIncome <= HICBC_THRESHOLD && income > HICBC_THRESHOLD) {
+      html += '<div class="pln">By sacrificing ' + fmt(pensionMonthly) + '/month into pension, the higher earner\'s income drops below &pound;60,000 and the full benefit is kept. Net gain: ' + fmt(benefitGain) + '/year in benefit + ' + fmt(taxSaving) + '/year in tax savings.</div>';
+    }
+  } else if (income > HICBC_THRESHOLD && !hasPension) {
+    // Suggest pension sacrifice
+    const needed = income - HICBC_THRESHOLD;
+    const neededMonthly = Math.ceil(needed / 12);
+    const marginalRate = getTaxRate(income);
+    const taxSaving = needed * marginalRate;
+
+    html += '<div class="pension-box">';
+    html += '<h4>PENSION SACRIFICE &mdash; COULD YOU ELIMINATE THE CHARGE?</h4>';
+    html += '<div class="result-row"><span class="result-label">Sacrifice needed to reach &pound;60,000</span><span class="result-val">' + fmt(neededMonthly) + '/month (' + fmtInt(needed) + '/year)</span></div>';
+    html += '<div class="result-row"><span class="result-label">Benefit saved</span><span class="result-val green">' + fmt(clawbackAmount) + '/year</span></div>';
+    html += '<div class="result-row"><span class="result-label">Tax saving (' + Math.round(marginalRate * 100) + '% marginal rate)</span><span class="result-val green">' + fmt(taxSaving) + '/year</span></div>';
+    html += '<div class="result-row"><span class="result-label"><strong>Combined gain</strong></span><span class="result-val green"><strong>' + fmt(clawbackAmount + taxSaving) + '/year</strong></span></div>';
+    html += '</div>';
+    html += '<div class="pln">Tick the pension sacrifice checkbox above and enter ' + fmt(neededMonthly) + '/month to see the full breakdown.</div>';
+  }
+
+  const resultsDiv = document.getElementById('results');
+  resultsDiv.innerHTML = html;
+  resultsDiv.classList.add('show');
+  resultsDiv.scrollIntoView({ behavior: 'smooth', block: 'start' });
+
+  // GA4 event
+  if (typeof gtag === 'function') {
+    gtag('event', 'calculate', {
+      event_category: 'child_benefit_calculator',
+      event_label: children + '_children_' + Math.round(income),
+      value: Math.round(keepAmount)
+    });
+  }
+}
+</script>
+</body>
+</html>

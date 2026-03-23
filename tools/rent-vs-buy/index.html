@@ -1,0 +1,669 @@
+<!DOCTYPE html>
+<html lang="en-GB">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Rent vs Buy Calculator UK — Should I Rent or Buy? | MathsWins</title>
+<meta name="description" content="Should you rent or buy? Compare the true cost over 5-25 years including mortgage interest, maintenance, stamp duty, rent increases, and investment returns on your deposit.">
+<meta property="og:title" content="Rent vs Buy Calculator UK — Should I Rent or Buy? | MathsWins">
+<meta property="og:description" content="Should you rent or buy? Compare the true cost over 5-25 years including mortgage interest, maintenance, stamp duty, and investment returns on your deposit.">
+<meta property="og:url" content="https://mathswins.co.uk/tools/rent-vs-buy/">
+<meta property="og:image" content="https://mathswins.co.uk/assets/og-image.png">
+<meta property="og:type" content="website">
+<meta property="og:site_name" content="MathsWins">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:title" content="Rent vs Buy Calculator UK — Should I Rent or Buy? | MathsWins">
+<meta name="twitter:description" content="Should you rent or buy? Compare the true cost over 5-25 years including mortgage interest, maintenance, stamp duty, and investment returns.">
+<meta name="twitter:image" content="https://mathswins.co.uk/assets/og-image.png">
+<link rel="canonical" href="https://mathswins.co.uk/tools/rent-vs-buy/">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Crimson+Pro:ital,wght@0,400;1,400&family=DM+Mono:wght@400;500&family=Outfit:wght@300;400;600;700&display=swap" rel="stylesheet">
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "WebApplication",
+  "name": "Rent vs Buy Calculator UK",
+  "url": "https://mathswins.co.uk/tools/rent-vs-buy/",
+  "description": "Should you rent or buy? Compare the true cost over 5-25 years including mortgage interest, maintenance, stamp duty, rent increases, and investment returns on your deposit.",
+  "applicationCategory": "FinanceApplication",
+  "operatingSystem": "Any",
+  "offers": {
+    "@type": "Offer",
+    "price": "0",
+    "priceCurrency": "GBP"
+  },
+  "publisher": {
+    "@type": "Organization",
+    "name": "MathsWins",
+    "url": "https://mathswins.co.uk"
+  }
+}
+</script>
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "FAQPage",
+  "mainEntity": [
+    {
+      "@type": "Question",
+      "name": "When is renting better than buying?",
+      "acceptedAnswer": {
+        "@type": "Answer",
+        "text": "Renting can be better when the rent-to-price ratio is low (monthly rent is small relative to the property price), when investment returns exceed house price growth, when you plan to move within a few years, or when the deposit could earn more invested in the stock market. In expensive cities, renting and investing often wins over 10-15 years."
+      }
+    },
+    {
+      "@type": "Question",
+      "name": "When is buying better than renting?",
+      "acceptedAnswer": {
+        "@type": "Answer",
+        "text": "Buying typically wins over longer time horizons (15-25 years) because mortgage payments build equity while rent payments do not. It also wins when house price growth is strong, when rent increases are high, and when you plan to stay in one place for a long time. Once the mortgage is paid off, your housing costs drop dramatically."
+      }
+    },
+    {
+      "@type": "Question",
+      "name": "What about a house price crash?",
+      "acceptedAnswer": {
+        "@type": "Answer",
+        "text": "House prices can fall — they dropped roughly 15-20% in 2008-09. If you buy at a peak and need to sell during a downturn, you could face negative equity. This calculator lets you model low or zero house price growth to see how your numbers change. Over 25 years, even with a crash, UK property has historically recovered and grown."
+      }
+    },
+    {
+      "@type": "Question",
+      "name": "Does the size of the deposit matter?",
+      "acceptedAnswer": {
+        "@type": "Answer",
+        "text": "Absolutely. A larger deposit means a smaller mortgage (less interest paid) and often a better mortgage rate. But it also means a larger sum that could have been invested elsewhere. The opportunity cost of locking up £60,000 in a house versus investing it in the stock market at 7% per year is significant. This calculator accounts for that trade-off."
+      }
+    },
+    {
+      "@type": "Question",
+      "name": "What about the emotional value of owning a home?",
+      "acceptedAnswer": {
+        "@type": "Answer",
+        "text": "This calculator deals with the mathematics only. Owning a home provides stability, the freedom to renovate, and a sense of security that has real value — but it cannot be quantified. Some people will happily accept a worse financial outcome for the certainty of owning their home. That is a perfectly rational choice — just make it with your eyes open on the numbers."
+      }
+    }
+  ]
+}
+</script>
+<style>
+:root{--bg:#050709;--surface:#0a0d14;--surface2:#0f1319;--border:#161c28;--border2:#1e2638;--sky:#0ea5e9;--sky-dim:rgba(14,165,233,0.10);--green:#2dd4a0;--green-dim:rgba(45,212,160,0.10);--red:#ef5350;--gold:#d4a847;--gold-dim:rgba(212,168,71,0.10);--cyan:#22d3ee;--teal:#0d9488;--teal-dim:rgba(13,148,136,0.10);--amber:#f59e0b;--amber-dim:rgba(245,158,11,0.10);--text:#c8cdd8;--text-bright:#e8ecf4;--muted:#4a5568;}
+*{margin:0;padding:0;box-sizing:border-box;}
+body{font-family:'Outfit',sans-serif;background:var(--bg);color:var(--text);min-height:100vh;line-height:1.5;}
+.container{max-width:960px;margin:0 auto;padding:2rem 1.25rem 4rem;}
+.nav-bar{display:flex;align-items:center;justify-content:space-between;padding:1rem 0;border-bottom:1px solid var(--border);margin-bottom:2rem;}
+.nav-brand{font-family:'Bebas Neue',sans-serif;font-size:1.4rem;color:var(--gold);text-decoration:none;letter-spacing:0.06em;}
+.nav-brand span{color:var(--text-bright);}
+.nav-link{font-size:0.85rem;font-weight:600;color:var(--sky);text-decoration:none;padding:0.4rem 1rem;border:1px solid var(--sky);border-radius:4px;transition:background 0.2s,color 0.2s;}
+.nav-link:hover{background:var(--sky);color:var(--bg);}
+.hero{text-align:center;margin-bottom:2rem;}
+.hero-eyebrow{font-size:0.75rem;font-weight:600;text-transform:uppercase;letter-spacing:0.15em;color:var(--sky);margin-bottom:0.5rem;}
+.hero h1{font-family:'Bebas Neue',sans-serif;font-size:clamp(1.8rem,5vw,2.8rem);color:var(--text-bright);letter-spacing:0.04em;line-height:1.1;margin-bottom:0.75rem;}
+.hero-sub{font-family:'Crimson Pro',serif;font-style:italic;font-size:1.05rem;color:var(--cyan);max-width:620px;margin:0 auto;}
+.panel{background:var(--surface);border:1px solid var(--border);border-radius:10px;padding:1.5rem;margin-bottom:1.25rem;}
+.panel-title{font-family:'Bebas Neue',sans-serif;font-size:1.1rem;color:var(--text-bright);letter-spacing:0.05em;margin-bottom:1rem;}
+.input-grid{display:grid;grid-template-columns:1fr 1fr;gap:1rem;}
+@media(max-width:600px){.input-grid{grid-template-columns:1fr;}}
+.fg{display:flex;flex-direction:column;gap:0.3rem;}
+.fg label{font-size:0.72rem;font-weight:600;text-transform:uppercase;letter-spacing:0.06em;color:var(--muted);}
+.fg input,.fg select{font-family:'DM Mono',monospace;font-size:1rem;padding:0.6rem 0.8rem;background:var(--surface2);border:1px solid var(--border2);border-radius:6px;color:var(--text-bright);outline:none;}
+.fg input:focus{border-color:var(--sky);}
+.fg .hint{font-family:'Crimson Pro',serif;font-style:italic;font-size:0.78rem;color:var(--muted);}
+.fg .auto-calc{font-family:'DM Mono',monospace;font-size:0.78rem;color:var(--cyan);margin-top:0.1rem;}
+.calc-btn{font-family:'Outfit',sans-serif;font-weight:700;font-size:1rem;padding:0.85rem;background:var(--sky);color:#fff;border:none;border-radius:6px;cursor:pointer;width:100%;margin:1.25rem 0 0;transition:background 0.2s;}
+.calc-btn:hover{background:#38bdf8;}
+
+/* Time period toggle */
+.period-toggle{display:flex;gap:0;margin-top:0.3rem;}
+.period-btn{font-family:'DM Mono',monospace;font-size:0.85rem;padding:0.5rem 1rem;background:var(--surface2);border:1px solid var(--border2);color:var(--muted);cursor:pointer;transition:all 0.2s;}
+.period-btn:first-child{border-radius:6px 0 0 6px;}
+.period-btn:last-child{border-radius:0 6px 6px 0;}
+.period-btn.active{background:var(--sky);color:#fff;border-color:var(--sky);}
+
+/* Results */
+.results{display:none;}
+.results.show{display:block;}
+
+/* Big cards */
+.result-cards{display:grid;grid-template-columns:1fr 1fr;gap:1rem;margin-bottom:1.5rem;}
+@media(max-width:700px){.result-cards{grid-template-columns:1fr;}}
+.result-card{background:var(--surface);border:1px solid var(--border);border-radius:10px;padding:1.25rem;position:relative;}
+.result-card.renting{border-left:3px solid var(--amber);}
+.result-card.buying{border-left:3px solid var(--green);}
+.rc-title{font-family:'Bebas Neue',sans-serif;font-size:1.1rem;letter-spacing:0.05em;margin-bottom:0.75rem;}
+.result-card.renting .rc-title{color:var(--amber);}
+.result-card.buying .rc-title{color:var(--green);}
+.rc-row{display:flex;justify-content:space-between;padding:0.35rem 0;border-bottom:1px solid var(--border);}
+.rc-row:last-child{border-bottom:none;}
+.rc-label{font-size:0.82rem;}
+.rc-val{font-family:'DM Mono',monospace;font-weight:500;font-size:0.9rem;}
+.rc-val.bright{color:var(--text-bright);}
+.rc-val.green{color:var(--green);}
+.rc-val.red{color:var(--red);}
+.rc-val.amber{color:var(--amber);}
+.rc-val.cyan{color:var(--cyan);}
+.rc-row.net{border-top:2px solid var(--border2);margin-top:0.25rem;padding-top:0.5rem;}
+.rc-row.net .rc-label{font-weight:600;color:var(--text-bright);}
+
+/* Winner banner */
+.winner-banner{background:var(--surface);border:1px solid var(--border);border-radius:10px;padding:1.25rem;text-align:center;margin-bottom:1.5rem;line-height:1.7;font-size:0.95rem;}
+.winner-banner .winner-text{font-size:1.1rem;font-weight:600;color:var(--text-bright);}
+.winner-banner .winner-amount{font-family:'DM Mono',monospace;font-size:1.8rem;font-weight:500;margin:0.25rem 0;}
+.winner-banner.buy-wins{border-left:3px solid var(--green);border-right:3px solid var(--green);}
+.winner-banner.buy-wins .winner-amount{color:var(--green);}
+.winner-banner.rent-wins{border-left:3px solid var(--amber);border-right:3px solid var(--amber);}
+.winner-banner.rent-wins .winner-amount{color:var(--amber);}
+
+/* Year-by-year chart */
+.chart-section{margin-bottom:1.5rem;}
+.chart-section h3{font-family:'Bebas Neue',sans-serif;font-size:1rem;letter-spacing:0.05em;color:var(--text-bright);margin-bottom:0.75rem;}
+.chart-panel{background:var(--surface);border:1px solid var(--border);border-radius:10px;padding:1.25rem;overflow:hidden;}
+.chart-row{display:flex;align-items:center;gap:0.5rem;margin-bottom:0.6rem;}
+.chart-row:last-child{margin-bottom:0;}
+.chart-year{font-family:'DM Mono',monospace;font-size:0.75rem;min-width:32px;color:var(--muted);text-align:right;}
+.chart-bars{flex:1;display:flex;flex-direction:column;gap:3px;}
+.chart-bar-wrap{position:relative;height:16px;background:var(--surface2);border-radius:3px;overflow:hidden;}
+.chart-bar{height:100%;border-radius:3px;display:flex;align-items:center;justify-content:flex-end;padding-right:5px;min-width:2px;transition:width 0.5s ease;}
+.chart-bar span{font-family:'DM Mono',monospace;font-size:0.6rem;color:var(--bg);font-weight:500;white-space:nowrap;}
+.chart-bar.rent-bar{background:var(--amber);}
+.chart-bar.buy-bar{background:var(--green);}
+.chart-row.crossover .chart-year{color:var(--cyan);font-weight:500;}
+.chart-legend{display:flex;gap:1.5rem;margin-top:0.75rem;padding-top:0.5rem;border-top:1px solid var(--border);}
+.chart-legend-item{font-size:0.75rem;display:flex;align-items:center;gap:5px;color:var(--text);}
+.legend-dot{width:10px;height:10px;border-radius:2px;}
+
+/* Breakdown tables */
+.breakdown-section{margin-bottom:1.5rem;}
+.breakdown-section h3{font-family:'Bebas Neue',sans-serif;font-size:1rem;letter-spacing:0.05em;margin-bottom:0.75rem;}
+.breakdown-section h3.rent-title{color:var(--amber);}
+.breakdown-section h3.buy-title{color:var(--green);}
+.breakdown-grid{display:grid;grid-template-columns:1fr 1fr;gap:1.5rem;}
+@media(max-width:700px){.breakdown-grid{grid-template-columns:1fr;}}
+.breakdown-panel{background:var(--surface);border:1px solid var(--border);border-radius:10px;overflow:hidden;}
+.breakdown-table-wrap{max-height:400px;overflow-y:auto;overflow-x:auto;}
+.breakdown-table-wrap::-webkit-scrollbar{width:6px;}
+.breakdown-table-wrap::-webkit-scrollbar-track{background:var(--surface2);}
+.breakdown-table-wrap::-webkit-scrollbar-thumb{background:var(--border2);border-radius:3px;}
+.breakdown-table{width:100%;border-collapse:collapse;font-size:0.78rem;}
+.breakdown-table th{font-family:'Outfit',sans-serif;font-weight:600;text-transform:uppercase;font-size:0.68rem;letter-spacing:0.05em;color:var(--muted);padding:0.6rem 0.5rem;text-align:right;border-bottom:1px solid var(--border);position:sticky;top:0;background:var(--surface);}
+.breakdown-table th:first-child{text-align:left;}
+.breakdown-table td{font-family:'DM Mono',monospace;padding:0.4rem 0.5rem;text-align:right;border-bottom:1px solid var(--border);font-size:0.75rem;color:var(--text);}
+.breakdown-table td:first-child{text-align:left;font-family:'Outfit',sans-serif;font-size:0.78rem;}
+
+/* Key insight */
+.insight-box{font-family:'Crimson Pro',serif;font-style:italic;color:var(--cyan);background:rgba(34,211,238,0.08);border-left:3px solid var(--cyan);padding:0.85rem 1rem;border-radius:0 6px 6px 0;margin:1.5rem 0;font-size:0.92rem;line-height:1.6;}
+
+/* Educational content */
+.edu-section{margin-top:2rem;}
+.edu-section h2{font-family:'Bebas Neue',sans-serif;font-size:1.4rem;color:var(--text-bright);letter-spacing:0.04em;margin-bottom:1rem;}
+.edu-section h3{font-family:'Bebas Neue',sans-serif;font-size:1.05rem;color:var(--text-bright);letter-spacing:0.04em;margin:1.25rem 0 0.5rem;}
+.edu-section p{font-size:0.92rem;line-height:1.7;margin-bottom:0.75rem;}
+.edu-section .formula{font-family:'DM Mono',monospace;font-size:0.88rem;color:var(--cyan);background:var(--surface2);padding:0.75rem 1rem;border-radius:6px;margin:0.75rem 0;border-left:3px solid var(--cyan);}
+.edu-section .worked{background:var(--surface);border:1px solid var(--border);border-radius:10px;padding:1.25rem;margin:1rem 0;}
+.edu-section .worked h4{font-family:'Bebas Neue',sans-serif;font-size:0.95rem;color:var(--sky);letter-spacing:0.04em;margin-bottom:0.75rem;}
+.pln{font-family:'Crimson Pro',serif;font-style:italic;color:var(--cyan);background:rgba(34,211,238,0.08);border-left:3px solid var(--cyan);padding:0.85rem 1rem;border-radius:0 6px 6px 0;margin:1rem 0;font-size:0.92rem;line-height:1.6;}
+
+/* FAQ */
+.faq-section{margin-top:2rem;}
+.faq-section h2{font-family:'Bebas Neue',sans-serif;font-size:1.4rem;color:var(--text-bright);letter-spacing:0.04em;margin-bottom:1rem;}
+.faq-item{background:var(--surface);border:1px solid var(--border);border-radius:10px;margin-bottom:0.75rem;overflow:hidden;}
+.faq-q{font-family:'Outfit',sans-serif;font-weight:600;font-size:0.92rem;padding:1rem 1.25rem;cursor:pointer;display:flex;justify-content:space-between;align-items:center;color:var(--text-bright);transition:background 0.2s;}
+.faq-q:hover{background:var(--surface2);}
+.faq-q::after{content:'+';font-family:'DM Mono',monospace;font-size:1.2rem;color:var(--sky);transition:transform 0.2s;}
+.faq-item.open .faq-q::after{content:'-';}
+.faq-a{max-height:0;overflow:hidden;transition:max-height 0.3s ease,padding 0.3s ease;}
+.faq-item.open .faq-a{max-height:400px;padding:0 1.25rem 1rem;}
+.faq-a p{font-size:0.88rem;line-height:1.6;color:var(--text);}
+
+/* CTA */
+.cta-card{background:var(--surface);border:1px solid var(--border);border-left:3px solid var(--sky);border-radius:0 10px 10px 0;padding:1.5rem;margin-top:2rem;}
+.cta-card h3{font-family:'Bebas Neue',sans-serif;font-size:1.2rem;color:var(--sky);letter-spacing:0.04em;margin-bottom:0.5rem;}
+.cta-card p{font-family:'Crimson Pro',serif;font-style:italic;font-size:0.92rem;color:var(--text);line-height:1.5;margin-bottom:0.75rem;}
+.cta-link{font-weight:600;font-size:0.9rem;color:var(--sky);text-decoration:none;}
+.footer{margin-top:2.5rem;padding-top:1.25rem;border-top:1px solid var(--border);text-align:center;}
+.footer p{font-size:0.72rem;color:var(--muted);line-height:1.8;}
+.footer a{color:var(--muted);text-decoration:underline;}
+</style>
+<!-- GA4 Cookieless -->
+<script async src="https://www.googletagmanager.com/gtag/js?id=G-7GTLYCZMXN"></script>
+<script>window.dataLayer=window.dataLayer||[];function gtag(){dataLayer.push(arguments);}gtag('js',new Date());gtag('consent','default',{analytics_storage:'denied',ad_storage:'denied',ad_user_data:'denied',ad_personalization:'denied'});gtag('config','G-7GTLYCZMXN',{send_page_view:true,anonymize_ip:true});</script>
+</head>
+<body>
+<script src="/auth/mw-auth.js"></script>
+<div class="container">
+<nav class="nav-bar">
+  <a href="/" class="nav-brand">MATHS<span>WINS</span></a>
+  <a href="/everyday/mortgages/" class="nav-link">Mortgage Maths Course (Free) &rarr;</a>
+</nav>
+<div class="hero">
+  <div class="hero-eyebrow">Free Tool</div>
+  <h1>RENT VS BUY CALCULATOR</h1>
+  <div class="hero-sub">The big life question, answered with maths. Enter your numbers and see the true cost of renting versus buying over 5&ndash;25 years &mdash; including every hidden cost most people miss.</div>
+</div>
+
+<div class="panel">
+  <div class="panel-title">RENTING</div>
+  <div class="input-grid">
+    <div class="fg">
+      <label>Monthly rent (&pound;)</label>
+      <input type="number" id="monthlyRent" value="" min="100" step="50" placeholder="1,200">
+    </div>
+    <div class="fg">
+      <label>Annual rent increase (%)</label>
+      <input type="number" id="rentIncrease" value="3" min="0" max="20" step="0.5">
+    </div>
+  </div>
+</div>
+
+<div class="panel">
+  <div class="panel-title">BUYING</div>
+  <div class="input-grid">
+    <div class="fg">
+      <label>Property price (&pound;)</label>
+      <input type="number" id="propertyPrice" value="" min="10000" step="5000" placeholder="300,000">
+    </div>
+    <div class="fg">
+      <label>Deposit (&pound;)</label>
+      <input type="number" id="deposit" value="" min="0" step="1000" placeholder="30,000">
+      <div class="auto-calc" id="depositPct"></div>
+    </div>
+    <div class="fg">
+      <label>Mortgage rate (%)</label>
+      <input type="number" id="mortgageRate" value="5" min="0.1" max="20" step="0.1">
+    </div>
+    <div class="fg">
+      <label>Mortgage term (years)</label>
+      <input type="number" id="mortgageTerm" value="25" min="5" max="40" step="1">
+    </div>
+    <div class="fg">
+      <label>Annual maintenance (% of value)</label>
+      <input type="number" id="maintenancePct" value="1" min="0" max="10" step="0.25">
+      <div class="hint">Repairs, insurance, service charges</div>
+    </div>
+    <div class="fg">
+      <label>House price growth (%/year)</label>
+      <input type="number" id="houseGrowth" value="3" min="-10" max="20" step="0.5">
+    </div>
+  </div>
+</div>
+
+<div class="panel">
+  <div class="panel-title">OPPORTUNITY COST</div>
+  <div class="input-grid">
+    <div class="fg">
+      <label>Investment return (%/year)</label>
+      <input type="number" id="investReturn" value="7" min="0" max="30" step="0.5">
+      <div class="hint">If deposit were invested instead of buying</div>
+    </div>
+    <div class="fg">
+      <label>Time period</label>
+      <div class="period-toggle" id="periodToggle">
+        <button class="period-btn" data-years="5">5 yrs</button>
+        <button class="period-btn" data-years="10">10 yrs</button>
+        <button class="period-btn active" data-years="15">15 yrs</button>
+        <button class="period-btn" data-years="20">20 yrs</button>
+        <button class="period-btn" data-years="25">25 yrs</button>
+      </div>
+    </div>
+  </div>
+  <button class="calc-btn" onclick="calculate()">Compare Rent vs Buy</button>
+</div>
+
+<div class="results" id="results"></div>
+
+<!-- Educational content -->
+<div class="edu-section">
+  <h2>HOW THE MATHS WORKS</h2>
+
+  <h3>The True Cost of Renting</h3>
+  <p>Rent is not just &pound;X per month. Rent escalates. At 3% annual increases, &pound;1,200/month becomes &pound;1,619/month after 10 years and &pound;2,184/month after 20 years. The total rent paid over 25 years at these rates is over &pound;437,000 &mdash; none of which builds equity.</p>
+  <p>But a renter who invests the deposit they would have used to buy is not standing still. A &pound;30,000 deposit invested at 7% annual return compounds to &pound;162,637 after 25 years. That is the opportunity cost a buyer gives up.</p>
+
+  <h3>The True Cost of Buying</h3>
+  <p>Buying involves costs that go far beyond the mortgage payment:</p>
+  <div class="formula">Total cost = Mortgage payments + Stamp duty + Maintenance &minus; Property value growth</div>
+  <p>On a &pound;270,000 mortgage at 5% over 25 years, you pay &pound;473,486 in total &mdash; that is &pound;203,486 in interest alone. Add 1% annual maintenance on a property growing at 3% per year, plus stamp duty of &pound;2,500 on a &pound;300,000 property, and the true outlay is enormous.</p>
+  <p>However, the buyer builds equity. After 25 years the mortgage is gone, and if the house grew at 3% per year the property is worth &pound;627,892. That equity is the buyer&rsquo;s return.</p>
+
+  <h3>Mortgage Amortisation</h3>
+  <p>Early mortgage payments are almost entirely interest. On a &pound;270,000 mortgage at 5%, your first month&rsquo;s payment of &pound;1,578 includes &pound;1,125 of interest and only &pound;453 of principal. It takes years before the majority of each payment goes toward the actual debt.</p>
+  <div class="formula">Monthly payment = P &times; r &times; (1 + r)^n / ((1 + r)^n &minus; 1)<br>where P = loan, r = monthly rate, n = total months</div>
+
+  <h3>Stamp Duty</h3>
+  <p>UK stamp duty (SDLT) applies in bands: 0% up to &pound;125,000, then 2% on the next &pound;125,000, 5% on &pound;250,001&ndash;&pound;925,000, and so on. On a &pound;300,000 property, stamp duty is &pound;2,500. This is a sunk cost &mdash; it never comes back.</p>
+
+  <div class="pln">Buying is not always better. If rent is low relative to the property price, investing the deposit can outperform property equity. This calculator shows your specific numbers &mdash; not generalisations, not rules of thumb, just the maths.</div>
+</div>
+
+<!-- FAQ -->
+<div class="faq-section">
+  <h2>FREQUENTLY ASKED QUESTIONS</h2>
+  <div class="faq-item">
+    <div class="faq-q" onclick="toggleFaq(this)">When is renting better than buying?</div>
+    <div class="faq-a"><p>Renting can be better when the rent-to-price ratio is low (monthly rent is small relative to the property price), when investment returns exceed house price growth, when you plan to move within a few years, or when the deposit could earn more invested in the stock market. In expensive cities, renting and investing often wins over 10&ndash;15 years.</p></div>
+  </div>
+  <div class="faq-item">
+    <div class="faq-q" onclick="toggleFaq(this)">When is buying better than renting?</div>
+    <div class="faq-a"><p>Buying typically wins over longer time horizons (15&ndash;25 years) because mortgage payments build equity while rent payments do not. It also wins when house price growth is strong, when rent increases are high, and when you plan to stay in one place for a long time. Once the mortgage is paid off, your housing costs drop dramatically.</p></div>
+  </div>
+  <div class="faq-item">
+    <div class="faq-q" onclick="toggleFaq(this)">What about a house price crash?</div>
+    <div class="faq-a"><p>House prices can fall &mdash; they dropped roughly 15&ndash;20% in 2008&ndash;09. If you buy at a peak and need to sell during a downturn, you could face negative equity. Try setting house price growth to 0% or negative to see how your numbers change. Over 25 years, even with a crash, UK property has historically recovered and grown.</p></div>
+  </div>
+  <div class="faq-item">
+    <div class="faq-q" onclick="toggleFaq(this)">Does the size of the deposit matter?</div>
+    <div class="faq-a"><p>Absolutely. A larger deposit means a smaller mortgage (less interest paid) and often a better mortgage rate. But it also means a larger sum that could have been invested elsewhere. The opportunity cost of locking up &pound;60,000 in a house versus investing it at 7% per year is significant. This calculator accounts for that trade-off.</p></div>
+  </div>
+  <div class="faq-item">
+    <div class="faq-q" onclick="toggleFaq(this)">What about the emotional value of owning a home?</div>
+    <div class="faq-a"><p>This calculator deals with the mathematics only. Owning a home provides stability, the freedom to renovate, and a sense of security that has real value &mdash; but it cannot be quantified. Some people will happily accept a worse financial outcome for the certainty of owning their home. That is a perfectly rational choice &mdash; just make it with your eyes open on the numbers.</p></div>
+  </div>
+</div>
+
+<div class="cta-card">
+  <h3>MORTGAGE MATHS &mdash; FREE COURSE</h3>
+  <p>Understand exactly how mortgage amortisation works, why overpayments are so powerful, and the real cost of extending your term. Five modules, completely free.</p>
+  <a href="/everyday/mortgages/" class="cta-link">Start the free course &rarr;</a>
+</div>
+
+<div class="footer">
+  <p><a href="/">MathsWins</a> &middot; <a href="/tools/">Tools</a> &middot; <a href="/everyday/">Everyday Maths</a><br>&copy; 2026 MathsWins. Not financial advice.<br><a href="/restore/">Restore Access</a></p>
+</div>
+</div>
+
+<script>
+/* ── Deposit percentage auto-calc ── */
+const depositEl = document.getElementById('deposit');
+const priceEl = document.getElementById('propertyPrice');
+const depositPctEl = document.getElementById('depositPct');
+
+function updateDepositPct() {
+  const dep = parseFloat(depositEl.value) || 0;
+  const price = parseFloat(priceEl.value) || 0;
+  if (price > 0 && dep > 0) {
+    depositPctEl.textContent = (dep / price * 100).toFixed(1) + '% deposit';
+  } else {
+    depositPctEl.textContent = '';
+  }
+}
+depositEl.addEventListener('input', updateDepositPct);
+priceEl.addEventListener('input', updateDepositPct);
+
+/* ── Period toggle ── */
+let selectedYears = 15;
+document.querySelectorAll('.period-btn').forEach(btn => {
+  btn.addEventListener('click', () => {
+    document.querySelectorAll('.period-btn').forEach(b => b.classList.remove('active'));
+    btn.classList.add('active');
+    selectedYears = parseInt(btn.dataset.years);
+  });
+});
+
+/* ── FAQ toggle ── */
+function toggleFaq(el) {
+  el.parentElement.classList.toggle('open');
+}
+
+/* ── Stamp Duty (SDLT) ── */
+function calcStampDuty(price) {
+  // Standard SDLT rates (non-first-time buyer, England & NI, from April 2025)
+  const bands = [
+    { threshold: 125000, rate: 0 },
+    { threshold: 250000, rate: 0.02 },
+    { threshold: 925000, rate: 0.05 },
+    { threshold: 1500000, rate: 0.10 },
+    { threshold: Infinity, rate: 0.12 }
+  ];
+  let tax = 0;
+  let prev = 0;
+  for (const band of bands) {
+    if (price <= prev) break;
+    const taxable = Math.min(price, band.threshold) - prev;
+    if (taxable > 0) tax += taxable * band.rate;
+    prev = band.threshold;
+  }
+  return tax;
+}
+
+/* ── Mortgage monthly payment ── */
+function monthlyPayment(principal, annualRate, years) {
+  const r = annualRate / 100 / 12;
+  const n = years * 12;
+  if (r === 0) return principal / n;
+  return principal * r * Math.pow(1 + r, n) / (Math.pow(1 + r, n) - 1);
+}
+
+/* ── Format currency ── */
+function fmt(val) {
+  const abs = Math.abs(val);
+  if (abs >= 1000) {
+    return (val < 0 ? '-' : '') + '\u00A3' + abs.toLocaleString('en-GB', { minimumFractionDigits: 0, maximumFractionDigits: 0 });
+  }
+  return (val < 0 ? '-' : '') + '\u00A3' + abs.toFixed(0);
+}
+
+/* ── Main calculation ── */
+function calculate() {
+  const rent = parseFloat(document.getElementById('monthlyRent').value);
+  const rentInc = parseFloat(document.getElementById('rentIncrease').value) / 100;
+  const price = parseFloat(document.getElementById('propertyPrice').value);
+  const deposit = parseFloat(document.getElementById('deposit').value);
+  const mortRate = parseFloat(document.getElementById('mortgageRate').value);
+  const mortTerm = parseInt(document.getElementById('mortgageTerm').value);
+  const maintPct = parseFloat(document.getElementById('maintenancePct').value) / 100;
+  const houseGr = parseFloat(document.getElementById('houseGrowth').value) / 100;
+  const investRet = parseFloat(document.getElementById('investReturn').value) / 100;
+  const years = selectedYears;
+
+  // Validation
+  if (!rent || rent <= 0 || !price || price <= 0 || isNaN(deposit) || deposit < 0) {
+    alert('Please fill in all required fields with valid values.');
+    return;
+  }
+  if (deposit >= price) {
+    alert('Deposit must be less than the property price.');
+    return;
+  }
+
+  const loanAmount = price - deposit;
+  const mortPayment = monthlyPayment(loanAmount, mortRate, mortTerm);
+  const stampDuty = calcStampDuty(price);
+  const totalMonths = years * 12;
+  const mortTermMonths = mortTerm * 12;
+
+  // ── Year-by-year calculations ──
+  const yearlyData = [];
+  let cumRent = 0;
+  let cumMortgage = 0;
+  let cumMaintenance = 0;
+  let currentRent = rent;
+  let mortgageBalance = loanAmount;
+  const monthlyMortRate = mortRate / 100 / 12;
+
+  for (let y = 1; y <= years; y++) {
+    // Rent for this year
+    const yearRent = currentRent * 12;
+    cumRent += yearRent;
+
+    // Mortgage for this year (month by month for amortisation accuracy)
+    let yearMortPaid = 0;
+    let yearInterest = 0;
+    let yearPrincipal = 0;
+    for (let m = 0; m < 12; m++) {
+      const monthNum = (y - 1) * 12 + m + 1;
+      if (monthNum <= mortTermMonths && mortgageBalance > 0) {
+        const intPayment = mortgageBalance * monthlyMortRate;
+        const prinPayment = Math.min(mortPayment - intPayment, mortgageBalance);
+        mortgageBalance -= prinPayment;
+        if (mortgageBalance < 0.01) mortgageBalance = 0;
+        yearMortPaid += mortPayment;
+        yearInterest += intPayment;
+        yearPrincipal += prinPayment;
+      }
+    }
+    cumMortgage += yearMortPaid;
+
+    // Maintenance (based on current property value)
+    const propertyValueNow = price * Math.pow(1 + houseGr, y);
+    const yearMaint = price * Math.pow(1 + houseGr, y - 1) * maintPct;
+    cumMaintenance += yearMaint;
+
+    // Deposit invested (for renter)
+    const depositInvested = deposit * Math.pow(1 + investRet, y);
+
+    // Renter also invests monthly savings (if mortgage+maint > rent)
+    // We track the difference each year and compound it
+    // For simplicity: renter net = deposit invested, buyer net = equity - costs
+
+    // Renting net position: deposit invested value - total rent paid
+    const rentNetPosition = depositInvested - cumRent;
+
+    // Buying net position: property value - remaining mortgage - stamp duty - total maintenance - total mortgage payments + total mortgage payments (since equity is property - mortgage balance)
+    // Net wealth from buying = property value - mortgage balance - stamp duty - cumulative maintenance costs
+    // (mortgage payments are the cost; equity built is property value - remaining mortgage)
+    const equity = propertyValueNow - mortgageBalance;
+    const buyNetPosition = equity - stampDuty - cumMaintenance;
+
+    // Escalate rent for next year
+    currentRent *= (1 + rentInc);
+
+    yearlyData.push({
+      year: y,
+      cumRent,
+      depositInvested,
+      rentNet: rentNetPosition,
+      cumMortgage,
+      cumMaintenance,
+      propertyValue: propertyValueNow,
+      mortgageBalance,
+      equity,
+      buyNet: buyNetPosition,
+      yearInterest,
+      yearPrincipal,
+      yearRent: yearRent,
+      yearMortPaid
+    });
+  }
+
+  const final = yearlyData[yearlyData.length - 1];
+  const buyerWins = final.buyNet > final.rentNet;
+  const diff = Math.abs(final.buyNet - final.rentNet);
+
+  // Find crossover year
+  let crossoverYear = null;
+  for (let i = 1; i < yearlyData.length; i++) {
+    const prevDiff = yearlyData[i-1].buyNet - yearlyData[i-1].rentNet;
+    const currDiff = yearlyData[i].buyNet - yearlyData[i].rentNet;
+    if ((prevDiff < 0 && currDiff >= 0) || (prevDiff >= 0 && currDiff < 0)) {
+      crossoverYear = yearlyData[i].year;
+      break;
+    }
+  }
+
+  // ── Build results HTML ──
+  let html = '';
+
+  // Winner banner
+  const winnerClass = buyerWins ? 'buy-wins' : 'rent-wins';
+  const winnerLabel = buyerWins ? 'Buying' : 'Renting';
+  html += `<div class="winner-banner ${winnerClass}">
+    <div class="winner-text">Over ${years} years, ${winnerLabel.toLowerCase()} leaves you</div>
+    <div class="winner-amount">${fmt(diff)} better off</div>
+    <div style="font-size:0.85rem;color:var(--muted);">${crossoverYear ? (buyerWins ? 'Buying overtakes renting at year ' + crossoverYear : 'Renting overtakes buying at year ' + crossoverYear) : (buyerWins ? 'Buying leads from the start' : 'Renting leads throughout')}</div>
+  </div>`;
+
+  // Two big cards
+  html += '<div class="result-cards">';
+
+  // Renting card
+  html += `<div class="result-card renting">
+    <div class="rc-title">RENTING</div>
+    <div class="rc-row"><span class="rc-label">Total rent paid</span><span class="rc-val red">${fmt(final.cumRent)}</span></div>
+    <div class="rc-row"><span class="rc-label">Deposit invested value</span><span class="rc-val green">${fmt(final.depositInvested)}</span></div>
+    <div class="rc-row net"><span class="rc-label">Net position</span><span class="rc-val ${final.rentNet >= 0 ? 'green' : 'red'}">${fmt(final.rentNet)}</span></div>
+  </div>`;
+
+  // Buying card
+  html += `<div class="result-card buying">
+    <div class="rc-title">BUYING</div>
+    <div class="rc-row"><span class="rc-label">Total mortgage payments</span><span class="rc-val red">${fmt(final.cumMortgage)}</span></div>
+    <div class="rc-row"><span class="rc-label">Total maintenance</span><span class="rc-val red">${fmt(final.cumMaintenance)}</span></div>
+    <div class="rc-row"><span class="rc-label">Stamp duty</span><span class="rc-val red">${fmt(stampDuty)}</span></div>
+    <div class="rc-row"><span class="rc-label">Property value</span><span class="rc-val green">${fmt(final.propertyValue)}</span></div>
+    <div class="rc-row"><span class="rc-label">Equity (value &minus; mortgage)</span><span class="rc-val cyan">${fmt(final.equity)}</span></div>
+    <div class="rc-row net"><span class="rc-label">Net position</span><span class="rc-val ${final.buyNet >= 0 ? 'green' : 'red'}">${fmt(final.buyNet)}</span></div>
+  </div>`;
+
+  html += '</div>';
+
+  // Key insight
+  html += `<div class="insight-box">Buying is not always better. If rent is low relative to the property price, investing the deposit can outperform property equity. This calculator shows your specific numbers &mdash; not generalisations, not rules of thumb, just the maths.</div>`;
+
+  // Year-by-year chart
+  const maxVal = Math.max(...yearlyData.map(d => Math.max(Math.abs(d.rentNet), Math.abs(d.buyNet))));
+
+  html += '<div class="chart-section"><h3>YEAR-BY-YEAR NET POSITION</h3><div class="chart-panel">';
+  for (const d of yearlyData) {
+    const rentW = maxVal > 0 ? Math.abs(d.rentNet) / maxVal * 100 : 0;
+    const buyW = maxVal > 0 ? Math.abs(d.buyNet) / maxVal * 100 : 0;
+    const isCrossover = d.year === crossoverYear;
+    html += `<div class="chart-row${isCrossover ? ' crossover' : ''}">
+      <div class="chart-year">Y${d.year}</div>
+      <div class="chart-bars">
+        <div class="chart-bar-wrap"><div class="chart-bar rent-bar" style="width:${Math.max(rentW, 1)}%"><span>${fmt(d.rentNet)}</span></div></div>
+        <div class="chart-bar-wrap"><div class="chart-bar buy-bar" style="width:${Math.max(buyW, 1)}%"><span>${fmt(d.buyNet)}</span></div></div>
+      </div>
+    </div>`;
+  }
+  html += `<div class="chart-legend">
+    <div class="chart-legend-item"><div class="legend-dot" style="background:var(--amber);"></div> Renting net position</div>
+    <div class="chart-legend-item"><div class="legend-dot" style="background:var(--green);"></div> Buying net position</div>
+    ${crossoverYear ? '<div class="chart-legend-item"><div class="legend-dot" style="background:var(--cyan);"></div> Crossover point</div>' : ''}
+  </div>`;
+  html += '</div></div>';
+
+  // Breakdown tables
+  html += '<div class="breakdown-section"><h3>YEAR-BY-YEAR BREAKDOWN</h3><div class="breakdown-grid">';
+
+  // Renting table
+  html += '<div class="breakdown-panel"><div class="breakdown-table-wrap"><table class="breakdown-table"><thead><tr><th>Year</th><th>Monthly Rent</th><th>Cum. Rent</th><th>Deposit Value</th><th>Net Position</th></tr></thead><tbody>';
+  let rentForTable = rent;
+  for (const d of yearlyData) {
+    const monthRent = (d.year === 1) ? rent : rentForTable;
+    html += `<tr><td>Year ${d.year}</td><td>${fmt(Math.round(monthRent))}/mo</td><td>${fmt(d.cumRent)}</td><td style="color:var(--green);">${fmt(d.depositInvested)}</td><td style="color:${d.rentNet >= 0 ? 'var(--green)' : 'var(--red)'};">${fmt(d.rentNet)}</td></tr>`;
+    if (d.year === 1) rentForTable = rent * (1 + rentInc);
+    else rentForTable *= (1 + rentInc);
+  }
+  html += '</tbody></table></div></div>';
+
+  // Buying table
+  html += '<div class="breakdown-panel"><div class="breakdown-table-wrap"><table class="breakdown-table"><thead><tr><th>Year</th><th>Property Value</th><th>Mortgage Left</th><th>Equity</th><th>Net Position</th></tr></thead><tbody>';
+  for (const d of yearlyData) {
+    html += `<tr><td>Year ${d.year}</td><td>${fmt(d.propertyValue)}</td><td style="color:var(--red);">${fmt(d.mortgageBalance)}</td><td style="color:var(--cyan);">${fmt(d.equity)}</td><td style="color:${d.buyNet >= 0 ? 'var(--green)' : 'var(--red)'};">${fmt(d.buyNet)}</td></tr>`;
+  }
+  html += '</tbody></table></div></div>';
+
+  html += '</div></div>';
+
+  const resultsEl = document.getElementById('results');
+  resultsEl.innerHTML = html;
+  resultsEl.classList.add('show');
+  resultsEl.scrollIntoView({ behavior: 'smooth', block: 'start' });
+
+  // GA4 event
+  if (typeof gtag === 'function') {
+    gtag('event', 'rent_vs_buy_calculate', {
+      property_price: price,
+      deposit: deposit,
+      monthly_rent: rent,
+      time_period: years,
+      winner: buyerWins ? 'buy' : 'rent',
+      difference: Math.round(diff)
+    });
+  }
+}
+</script>
+</body>
+</html>

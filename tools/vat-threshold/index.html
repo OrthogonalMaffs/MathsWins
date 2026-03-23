@@ -1,0 +1,664 @@
+<!DOCTYPE html>
+<html lang="en-GB">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>VAT Threshold Calculator UK — Do I Need to Register? | MathsWins</title>
+<meta name="description" content="Track your turnover against the £90,000 VAT registration threshold. See your rolling 12-month total, when you'll cross, and what VAT registration means for your pricing.">
+<meta property="og:title" content="VAT Threshold Calculator UK — Do I Need to Register? | MathsWins">
+<meta property="og:description" content="Track your turnover against the £90,000 VAT registration threshold. See your rolling 12-month total, when you'll cross, and what VAT registration means for your pricing.">
+<meta property="og:url" content="https://mathswins.co.uk/tools/vat-threshold/">
+<meta property="og:image" content="https://mathswins.co.uk/assets/og-image.png">
+<meta property="og:type" content="website">
+<meta property="og:site_name" content="MathsWins">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:title" content="VAT Threshold Calculator UK — Do I Need to Register? | MathsWins">
+<meta name="twitter:description" content="Track your turnover against the £90,000 VAT registration threshold. See your rolling 12-month total, when you'll cross, and what VAT registration means for your pricing.">
+<meta name="twitter:image" content="https://mathswins.co.uk/assets/og-image.png">
+<link rel="canonical" href="https://mathswins.co.uk/tools/vat-threshold/">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Crimson+Pro:ital,wght@0,400;1,400&family=DM+Mono:wght@400;500&family=Outfit:wght@300;400;600;700&display=swap" rel="stylesheet">
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "WebApplication",
+  "name": "VAT Threshold Calculator UK",
+  "url": "https://mathswins.co.uk/tools/vat-threshold/",
+  "description": "Track your turnover against the £90,000 VAT registration threshold. See your rolling 12-month total, when you'll cross, and what VAT registration means for your pricing.",
+  "applicationCategory": "FinanceApplication",
+  "operatingSystem": "Any",
+  "offers": {
+    "@type": "Offer",
+    "price": "0",
+    "priceCurrency": "GBP"
+  },
+  "publisher": {
+    "@type": "Organization",
+    "name": "MathsWins",
+    "url": "https://mathswins.co.uk"
+  }
+}
+</script>
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "FAQPage",
+  "mainEntity": [
+    {
+      "@type": "Question",
+      "name": "When do I need to register for VAT?",
+      "acceptedAnswer": {
+        "@type": "Answer",
+        "text": "When your taxable turnover exceeds £90,000 in any rolling 12-month period, or you expect it to exceed £90,000 in the next 30 days. You must register within 30 days."
+      }
+    },
+    {
+      "@type": "Question",
+      "name": "Can I voluntarily register below the threshold?",
+      "acceptedAnswer": {
+        "@type": "Answer",
+        "text": "Yes. If your customers are VAT-registered businesses, they can reclaim your VAT so it doesn't increase their costs. You benefit by reclaiming VAT on your own expenses."
+      }
+    },
+    {
+      "@type": "Question",
+      "name": "What is the Flat Rate Scheme?",
+      "acceptedAnswer": {
+        "@type": "Answer",
+        "text": "Instead of tracking VAT on every purchase and sale, you pay a fixed percentage of turnover (rate depends on your trade). Simpler admin but sometimes more expensive — this calculator compares both."
+      }
+    },
+    {
+      "@type": "Question",
+      "name": "Will VAT registration lose me customers?",
+      "acceptedAnswer": {
+        "@type": "Answer",
+        "text": "If your customers are consumers (B2C), yes — your prices effectively increase by up to 20%. If they're businesses (B2B), no — they reclaim the VAT. Know your customer base."
+      }
+    },
+    {
+      "@type": "Question",
+      "name": "What happens if I don't register in time?",
+      "acceptedAnswer": {
+        "@type": "Answer",
+        "text": "HMRC can backdate your registration and charge you VAT on sales from the date you should have registered. Plus penalties and interest. Don't miss the deadline."
+      }
+    }
+  ]
+}
+</script>
+<style>
+:root{--bg:#050709;--surface:#0a0d14;--surface2:#0f1319;--border:#161c28;--border2:#1e2638;--sky:#0ea5e9;--sky-dim:rgba(14,165,233,0.10);--green:#2dd4a0;--green-dim:rgba(45,212,160,0.10);--red:#ef5350;--red-dim:rgba(239,83,80,0.10);--gold:#d4a847;--gold-dim:rgba(212,168,71,0.10);--cyan:#22d3ee;--teal:#0d9488;--teal-dim:rgba(13,148,136,0.10);--amber:#f59e0b;--amber-dim:rgba(245,158,11,0.10);--text:#c8cdd8;--text-bright:#e8ecf4;--muted:#4a5568;}
+*{margin:0;padding:0;box-sizing:border-box;}
+body{font-family:'Outfit',sans-serif;background:var(--bg);color:var(--text);min-height:100vh;line-height:1.5;}
+.container{max-width:960px;margin:0 auto;padding:2rem 1.25rem 4rem;}
+.nav-bar{display:flex;align-items:center;justify-content:space-between;padding:1rem 0;border-bottom:1px solid var(--border);margin-bottom:2rem;}
+.nav-brand{font-family:'Bebas Neue',sans-serif;font-size:1.4rem;color:var(--gold);text-decoration:none;letter-spacing:0.06em;}
+.nav-brand span{color:var(--text-bright);}
+.nav-link{font-size:0.85rem;font-weight:600;color:var(--sky);text-decoration:none;padding:0.4rem 1rem;border:1px solid var(--sky);border-radius:4px;transition:background 0.2s,color 0.2s;}
+.nav-link:hover{background:var(--sky);color:var(--bg);}
+.hero{text-align:center;margin-bottom:2rem;}
+.hero-eyebrow{font-size:0.75rem;font-weight:600;text-transform:uppercase;letter-spacing:0.15em;color:var(--sky);margin-bottom:0.5rem;}
+.hero h1{font-family:'Bebas Neue',sans-serif;font-size:clamp(1.8rem,5vw,2.8rem);color:var(--text-bright);letter-spacing:0.04em;line-height:1.1;margin-bottom:0.75rem;}
+.hero-sub{font-family:'Crimson Pro',serif;font-style:italic;font-size:1.05rem;color:var(--cyan);max-width:620px;margin:0 auto;}
+.panel{background:var(--surface);border:1px solid var(--border);border-radius:10px;padding:1.5rem;margin-bottom:1.25rem;}
+.panel-title{font-family:'Bebas Neue',sans-serif;font-size:1.1rem;color:var(--text-bright);letter-spacing:0.05em;margin-bottom:1rem;}
+.fg{display:flex;flex-direction:column;gap:0.3rem;}
+.fg label{font-size:0.72rem;font-weight:600;text-transform:uppercase;letter-spacing:0.06em;color:var(--muted);}
+.fg input,.fg select{font-family:'DM Mono',monospace;font-size:1rem;padding:0.6rem 0.8rem;background:var(--surface2);border:1px solid var(--border2);border-radius:6px;color:var(--text-bright);outline:none;}
+.fg input:focus{border-color:var(--sky);}
+.fg .hint{font-family:'Crimson Pro',serif;font-style:italic;font-size:0.78rem;color:var(--muted);}
+.calc-btn{font-family:'Outfit',sans-serif;font-weight:700;font-size:1rem;padding:0.85rem;background:var(--sky);color:#fff;border:none;border-radius:6px;cursor:pointer;width:100%;margin:1.25rem 0 0;transition:background 0.2s;}
+.calc-btn:hover{background:#38bdf8;}
+
+/* Month grid */
+.month-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:0.75rem;}
+@media(max-width:700px){.month-grid{grid-template-columns:repeat(2,1fr);}}
+@media(max-width:400px){.month-grid{grid-template-columns:1fr;}}
+.shortcut-row{display:grid;grid-template-columns:1fr 1fr;gap:1rem;margin-bottom:1.25rem;padding-bottom:1.25rem;border-bottom:1px solid var(--border);}
+@media(max-width:600px){.shortcut-row{grid-template-columns:1fr;}}
+.shortcut-row .fg{position:relative;}
+.shortcut-btn{font-family:'Outfit',sans-serif;font-weight:600;font-size:0.75rem;padding:0.35rem 0.75rem;background:transparent;border:1px solid var(--sky);border-radius:4px;color:var(--sky);cursor:pointer;margin-top:0.3rem;transition:background 0.2s,color 0.2s;align-self:flex-start;}
+.shortcut-btn:hover{background:var(--sky);color:var(--bg);}
+
+/* Results */
+.results{display:none;}
+.results.show{display:block;}
+
+/* Status indicator */
+.status-box{border-radius:10px;padding:1.75rem;text-align:center;margin-bottom:1.5rem;}
+.status-box.green{background:var(--green-dim);border:1px solid var(--green);}
+.status-box.amber{background:var(--amber-dim);border:1px solid var(--amber);}
+.status-box.red{background:var(--red-dim);border:1px solid var(--red);}
+.status-label{font-family:'Bebas Neue',sans-serif;font-size:1.6rem;letter-spacing:0.04em;line-height:1.2;margin-bottom:0.25rem;}
+.status-box.green .status-label{color:var(--green);}
+.status-box.amber .status-label{color:var(--amber);}
+.status-box.red .status-label{color:var(--red);}
+.status-detail{font-family:'Crimson Pro',serif;font-style:italic;font-size:1rem;}
+.status-box.green .status-detail{color:var(--green);}
+.status-box.amber .status-detail{color:var(--amber);}
+.status-box.red .status-detail{color:var(--red);}
+
+/* Chart */
+.chart-panel{background:var(--surface);border:1px solid var(--border);border-radius:10px;padding:1.25rem;margin-bottom:1.5rem;overflow-x:auto;}
+.chart-panel h3{font-family:'Bebas Neue',sans-serif;font-size:1rem;letter-spacing:0.05em;color:var(--text-bright);margin-bottom:1rem;}
+.chart-row{display:flex;align-items:center;gap:0.75rem;margin-bottom:0.5rem;}
+.chart-label{font-size:0.78rem;min-width:40px;color:var(--text);text-align:right;}
+.chart-bar-wrap{flex:1;position:relative;height:24px;background:var(--surface2);border-radius:4px;overflow:visible;}
+.chart-bar{height:100%;border-radius:4px;display:flex;align-items:center;justify-content:flex-end;padding-right:6px;min-width:2px;transition:width 0.5s ease;}
+.chart-bar span{font-family:'DM Mono',monospace;font-size:0.65rem;color:var(--bg);font-weight:500;white-space:nowrap;}
+.chart-bar.green{background:var(--green);}
+.chart-bar.amber{background:var(--amber);}
+.chart-bar.red{background:var(--red);}
+.chart-val{font-family:'DM Mono',monospace;font-size:0.7rem;color:var(--muted);min-width:60px;padding-left:4px;}
+.threshold-line{position:absolute;top:-4px;bottom:-4px;width:2px;background:var(--red);z-index:2;}
+.threshold-label{position:absolute;top:-18px;font-family:'DM Mono',monospace;font-size:0.6rem;color:var(--red);white-space:nowrap;transform:translateX(-50%);}
+
+/* Cumulative line overlay */
+.cumulative-section{margin-top:1rem;padding-top:1rem;border-top:1px solid var(--border);}
+.cumulative-section h4{font-family:'Bebas Neue',sans-serif;font-size:0.9rem;color:var(--text-bright);letter-spacing:0.04em;margin-bottom:0.75rem;}
+.cumul-svg{width:100%;height:200px;}
+
+/* Key numbers */
+.key-numbers{background:var(--surface);border:1px solid var(--border);border-radius:10px;padding:1.25rem;margin-bottom:1.5rem;}
+.key-numbers h3{font-family:'Bebas Neue',sans-serif;font-size:1rem;letter-spacing:0.05em;color:var(--text-bright);margin-bottom:0.75rem;}
+.kn-row{display:flex;justify-content:space-between;padding:0.45rem 0;border-bottom:1px solid var(--border);}
+.kn-row:last-child{border-bottom:none;}
+.kn-label{font-size:0.85rem;}
+.kn-val{font-family:'DM Mono',monospace;font-weight:500;font-size:0.9rem;color:var(--text-bright);}
+.kn-val.green{color:var(--green);}
+.kn-val.amber{color:var(--amber);}
+.kn-val.red{color:var(--red);}
+
+/* VAT impact */
+.vat-impact{background:var(--surface);border:1px solid var(--border);border-radius:10px;padding:1.25rem;margin-bottom:1.5rem;}
+.vat-impact h3{font-family:'Bebas Neue',sans-serif;font-size:1rem;letter-spacing:0.05em;color:var(--text-bright);margin-bottom:0.75rem;}
+.vi-row{display:flex;justify-content:space-between;padding:0.4rem 0;border-bottom:1px solid var(--border);}
+.vi-row:last-child{border-bottom:none;}
+.vi-row.indent{padding-left:1rem;}
+.vi-label{font-size:0.85rem;}
+.vi-val{font-family:'DM Mono',monospace;font-weight:500;font-size:0.9rem;color:var(--text-bright);}
+.vi-val.red{color:var(--red);}
+.vi-val.green{color:var(--green);}
+.vi-val.cyan{color:var(--cyan);}
+.vi-sub{font-family:'Crimson Pro',serif;font-style:italic;font-size:0.82rem;color:var(--muted);padding:0.3rem 0;}
+.vi-input-row{display:grid;grid-template-columns:1fr 1fr;gap:1rem;margin-bottom:1rem;}
+@media(max-width:600px){.vi-input-row{grid-template-columns:1fr;}}
+
+/* Flat rate comparison */
+.flat-rate-section{background:var(--surface);border:1px solid var(--border);border-radius:10px;padding:1.25rem;margin-bottom:1.5rem;}
+.flat-rate-section h3{font-family:'Bebas Neue',sans-serif;font-size:1rem;letter-spacing:0.05em;color:var(--text-bright);margin-bottom:0.5rem;}
+.flat-rate-section .desc{font-family:'Crimson Pro',serif;font-style:italic;font-size:0.88rem;color:var(--muted);margin-bottom:1rem;line-height:1.5;}
+.fr-compare{display:grid;grid-template-columns:1fr 1fr;gap:1rem;margin-top:1rem;}
+@media(max-width:600px){.fr-compare{grid-template-columns:1fr;}}
+.fr-card{background:var(--surface2);border:1px solid var(--border2);border-radius:8px;padding:1rem;}
+.fr-card h4{font-family:'Bebas Neue',sans-serif;font-size:0.9rem;letter-spacing:0.04em;margin-bottom:0.5rem;}
+.fr-card.standard h4{color:var(--sky);}
+.fr-card.flat h4{color:var(--gold);}
+.fr-row{display:flex;justify-content:space-between;padding:0.3rem 0;font-size:0.82rem;}
+.fr-row .val{font-family:'DM Mono',monospace;font-weight:500;color:var(--text-bright);}
+.fr-verdict{margin-top:1rem;text-align:center;font-weight:600;font-size:0.9rem;padding:0.75rem;border-radius:6px;}
+.fr-verdict.standard-wins{background:var(--sky-dim);color:var(--sky);border:1px solid var(--sky);}
+.fr-verdict.flat-wins{background:var(--gold-dim);color:var(--gold);border:1px solid var(--gold);}
+.fr-verdict.tie{background:var(--surface2);color:var(--text-bright);border:1px solid var(--border2);}
+
+/* Educational content */
+.edu-section{margin-top:2rem;}
+.edu-section h2{font-family:'Bebas Neue',sans-serif;font-size:1.4rem;color:var(--text-bright);letter-spacing:0.04em;margin-bottom:1rem;}
+.edu-section h3{font-family:'Bebas Neue',sans-serif;font-size:1.05rem;color:var(--text-bright);letter-spacing:0.04em;margin:1.25rem 0 0.5rem;}
+.edu-section p{font-size:0.92rem;line-height:1.7;margin-bottom:0.75rem;}
+.edu-section .formula{font-family:'DM Mono',monospace;font-size:0.88rem;color:var(--cyan);background:var(--surface2);padding:0.75rem 1rem;border-radius:6px;margin:0.75rem 0;border-left:3px solid var(--cyan);}
+.pln{font-family:'Crimson Pro',serif;font-style:italic;color:var(--cyan);background:rgba(34,211,238,0.08);border-left:3px solid var(--cyan);padding:0.85rem 1rem;border-radius:0 6px 6px 0;margin:1rem 0;font-size:0.92rem;line-height:1.6;}
+
+/* FAQ */
+.faq-section{margin-top:2rem;}
+.faq-section h2{font-family:'Bebas Neue',sans-serif;font-size:1.4rem;color:var(--text-bright);letter-spacing:0.04em;margin-bottom:1rem;}
+.faq-item{background:var(--surface);border:1px solid var(--border);border-radius:10px;margin-bottom:0.75rem;overflow:hidden;}
+.faq-q{font-family:'Outfit',sans-serif;font-weight:600;font-size:0.92rem;padding:1rem 1.25rem;cursor:pointer;display:flex;justify-content:space-between;align-items:center;color:var(--text-bright);transition:background 0.2s;}
+.faq-q:hover{background:var(--surface2);}
+.faq-q::after{content:'+';font-family:'DM Mono',monospace;font-size:1.2rem;color:var(--sky);transition:transform 0.2s;}
+.faq-item.open .faq-q::after{content:'-';}
+.faq-a{max-height:0;overflow:hidden;transition:max-height 0.3s ease,padding 0.3s ease;}
+.faq-item.open .faq-a{max-height:300px;padding:0 1.25rem 1rem;}
+.faq-a p{font-size:0.88rem;line-height:1.6;color:var(--text);}
+
+/* CTA */
+.cta-card{background:var(--surface);border:1px solid var(--border);border-left:3px solid var(--sky);border-radius:0 10px 10px 0;padding:1.5rem;margin-top:2rem;}
+.cta-card h3{font-family:'Bebas Neue',sans-serif;font-size:1.2rem;color:var(--sky);letter-spacing:0.04em;margin-bottom:0.5rem;}
+.cta-card p{font-family:'Crimson Pro',serif;font-style:italic;font-size:0.92rem;color:var(--text);line-height:1.5;margin-bottom:0.75rem;}
+.cta-link{font-weight:600;font-size:0.9rem;color:var(--sky);text-decoration:none;}
+.footer{margin-top:2.5rem;padding-top:1.25rem;border-top:1px solid var(--border);text-align:center;}
+.footer p{font-size:0.72rem;color:var(--muted);line-height:1.8;}
+.footer a{color:var(--muted);text-decoration:underline;}
+</style>
+<!-- GA4 Cookieless -->
+<script async src="https://www.googletagmanager.com/gtag/js?id=G-7GTLYCZMXN"></script>
+<script>window.dataLayer=window.dataLayer||[];function gtag(){dataLayer.push(arguments);}gtag('js',new Date());gtag('consent','default',{analytics_storage:'denied',ad_storage:'denied',ad_user_data:'denied',ad_personalization:'denied'});gtag('config','G-7GTLYCZMXN',{send_page_view:true,anonymize_ip:true});</script>
+</head>
+<body>
+<script src="/auth/mw-auth.js"></script>
+<div class="container">
+<nav class="nav-bar">
+  <a href="/" class="nav-brand">MATHS<span>WINS</span></a>
+  <a href="/everyday/tax/" class="nav-link">UK Tax Maths (Free) &rarr;</a>
+</nav>
+<div class="hero">
+  <div class="hero-eyebrow">Free Tool</div>
+  <h1>VAT THRESHOLD MONITOR</h1>
+  <div class="hero-sub">Track your monthly turnover against the &pound;90,000 VAT registration threshold. See when you'll cross it and what that means for your pricing.</div>
+</div>
+
+<div class="panel">
+  <div class="panel-title">YOUR TURNOVER</div>
+
+  <div class="shortcut-row">
+    <div class="fg">
+      <label>Average monthly turnover (&pound;)</label>
+      <input type="number" id="avgMonthly" min="0" step="100" placeholder="e.g. 6500">
+      <button class="shortcut-btn" onclick="fillFromAverage()">Fill all months equally</button>
+    </div>
+    <div class="fg">
+      <label>Current annual turnover (&pound;)</label>
+      <input type="number" id="annualTurnover" min="0" step="1000" placeholder="e.g. 78000">
+      <button class="shortcut-btn" onclick="fillFromAnnual()">Split across 12 months</button>
+    </div>
+  </div>
+
+  <div class="fg" style="margin-bottom:0.75rem;">
+    <label>Monthly turnover figures (Apr &ndash; Mar, UK tax year)</label>
+    <div class="hint">Enter actual or estimated monthly turnover</div>
+  </div>
+  <div class="month-grid" id="monthGrid"></div>
+
+  <button class="calc-btn" onclick="calculate()">Check My Position</button>
+</div>
+
+<div class="results" id="results">
+  <!-- Status -->
+  <div id="statusBox" class="status-box green">
+    <div class="status-label" id="statusLabel"></div>
+    <div class="status-detail" id="statusDetail"></div>
+  </div>
+
+  <!-- Rolling 12-month chart -->
+  <div class="chart-panel">
+    <h3>MONTHLY TURNOVER</h3>
+    <div id="barChart"></div>
+    <div class="cumulative-section">
+      <h4>ROLLING 12-MONTH CUMULATIVE TOTAL</h4>
+      <svg id="cumulSvg" class="cumul-svg" viewBox="0 0 800 200" preserveAspectRatio="xMidYMid meet"></svg>
+    </div>
+  </div>
+
+  <!-- Key numbers -->
+  <div class="key-numbers" id="keyNumbers"></div>
+
+  <!-- What happens when I register -->
+  <div class="vat-impact" id="vatImpact">
+    <h3>WHAT HAPPENS WHEN YOU REGISTER?</h3>
+    <div class="vi-input-row">
+      <div class="fg">
+        <label>Typical price per job/sale (&pound;)</label>
+        <input type="number" id="pricePerJob" value="100" min="1" step="10">
+      </div>
+      <div class="fg">
+        <label>Expenses as % of turnover</label>
+        <input type="number" id="expensesPct" value="30" min="0" max="100" step="5">
+      </div>
+    </div>
+    <button class="shortcut-btn" onclick="recalcVatImpact()" style="margin-bottom:1rem;">Recalculate</button>
+    <div id="vatImpactRows"></div>
+  </div>
+
+  <!-- Flat Rate Scheme comparison -->
+  <div class="flat-rate-section" id="flatRateSection">
+    <h3>FLAT RATE SCHEME COMPARISON</h3>
+    <div class="desc">Some businesses use the Flat Rate Scheme &mdash; pay a fixed % of turnover (varies by trade, typically 10&ndash;14.5%) instead of tracking every invoice. Simpler but sometimes more expensive.</div>
+    <div class="fg" style="max-width:300px;margin-bottom:0.5rem;">
+      <label>Flat rate % for your trade</label>
+      <input type="number" id="flatRatePct" value="12" min="0" max="20" step="0.5">
+      <div class="hint">Check <a href="https://www.gov.uk/vat-flat-rate-scheme/how-much-you-pay" target="_blank" rel="noopener" style="color:var(--sky);">HMRC's list</a> for your trade</div>
+    </div>
+    <button class="shortcut-btn" onclick="recalcFlatRate()" style="margin-bottom:0.5rem;">Recalculate</button>
+    <div id="flatRateCompare"></div>
+  </div>
+</div>
+
+<!-- Educational content -->
+<div class="edu-section">
+  <h2>UK VAT RULES &mdash; THE NUMBERS</h2>
+
+  <h3>The Threshold</h3>
+  <p>You <strong>must</strong> register for VAT if your taxable turnover exceeds &pound;90,000 in any rolling 12-month period, or if you expect it to exceed &pound;90,000 in the next 30 days alone. This is not based on your tax year or calendar year &mdash; HMRC looks at any consecutive 12-month window.</p>
+
+  <h3>Registration Deadline</h3>
+  <p>You must notify HMRC within 30 days of the end of the month in which you crossed the threshold. Your VAT registration is backdated to the first day of the second month after you crossed. Miss it and HMRC can charge you the VAT you should have been collecting.</p>
+  <div class="formula">Crossed threshold on 15 July &rarr; Notify by 30 August &rarr; VAT registered from 1 August</div>
+
+  <h3>De-registration</h3>
+  <p>If your turnover drops below &pound;88,000, you can apply to de-register. Note this is &pound;2,000 below the registration threshold &mdash; a buffer to prevent businesses repeatedly registering and de-registering.</p>
+
+  <h3>What VAT Actually Costs You</h3>
+  <p>VAT at 20% does not mean your costs increase by 20%. You reclaim VAT on your business expenses (inputs), so you only pay the difference between VAT collected and VAT reclaimed. If your expenses are 30% of turnover, the effective cost is closer to 14%.</p>
+  <div class="formula">Effective VAT cost = 20% &times; (1 &minus; expense ratio)</div>
+
+  <h3>Quarterly Returns</h3>
+  <p>Standard VAT returns are quarterly. You can opt for monthly returns if you regularly reclaim more than you owe (common in capital-intensive businesses). Each return is due one month and seven days after the end of the VAT period.</p>
+
+  <p class="pln">VAT registration is not optional above the threshold. If you are approaching &pound;90,000, start planning now &mdash; adjust your pricing, understand the Flat Rate Scheme, and speak to an accountant before you cross.</p>
+</div>
+
+<!-- FAQ -->
+<div style="text-align:center;margin:1.5rem 0;padding:1rem;background:rgba(45,212,160,0.06);border:1px solid rgba(45,212,160,0.2);border-radius:8px"><a href="https://www.gov.uk/vat-registration" target="_blank" rel="noopener noreferrer" style="color:#2dd4a0;font-weight:600;text-decoration:none;font-size:0.95rem">Register for VAT &rarr; GOV.UK</a><div style="font-size:0.7rem;color:#4a5568;margin-top:4px">Opens in a new tab — official UK Government website</div></div>
+<div class="faq-section">
+  <h2>FREQUENTLY ASKED QUESTIONS</h2>
+  <div class="faq-item">
+    <div class="faq-q" onclick="toggleFaq(this)">When do I need to register for VAT?</div>
+    <div class="faq-a"><p>When your taxable turnover exceeds &pound;90,000 in any rolling 12-month period, or you expect it to exceed &pound;90,000 in the next 30 days. You must register within 30 days of the end of the month in which you crossed the threshold.</p></div>
+  </div>
+  <div class="faq-item">
+    <div class="faq-q" onclick="toggleFaq(this)">Can I voluntarily register below the threshold?</div>
+    <div class="faq-a"><p>Yes. If your customers are VAT-registered businesses, they can reclaim your VAT so it doesn't increase their costs. You benefit by reclaiming VAT on your own expenses. Voluntary registration can save you money if your input VAT is significant.</p></div>
+  </div>
+  <div class="faq-item">
+    <div class="faq-q" onclick="toggleFaq(this)">What is the Flat Rate Scheme?</div>
+    <div class="faq-a"><p>Instead of tracking VAT on every purchase and sale, you pay a fixed percentage of turnover (rate depends on your trade). Simpler admin but sometimes more expensive &mdash; this calculator compares both approaches for your numbers.</p></div>
+  </div>
+  <div class="faq-item">
+    <div class="faq-q" onclick="toggleFaq(this)">Will VAT registration lose me customers?</div>
+    <div class="faq-a"><p>If your customers are consumers (B2C), yes &mdash; your prices effectively increase by up to 20%. If they're businesses (B2B), no &mdash; they reclaim the VAT. Know your customer base before you panic.</p></div>
+  </div>
+  <div class="faq-item">
+    <div class="faq-q" onclick="toggleFaq(this)">What happens if I don't register in time?</div>
+    <div class="faq-a"><p>HMRC can backdate your registration and charge you VAT on sales from the date you should have registered. Plus penalties and interest. Don't miss the deadline.</p></div>
+  </div>
+</div>
+
+<div class="cta-card">
+  <h3>UK TAX MATHS &mdash; FREE COURSE</h3>
+  <p>Understand marginal vs effective tax rates, the &pound;100k trap, Scottish differences, and fiscal drag. Completely free.</p>
+  <a href="/everyday/tax/" class="cta-link">Start the free course &rarr;</a>
+</div>
+
+<div class="footer">
+  <p><a href="/">MathsWins</a> &middot; <a href="/tools/">Tools</a> &middot; <a href="/everyday/">Everyday Maths</a><br>&copy; 2026 MathsWins. Not financial advice. Always consult a qualified accountant for VAT decisions.<br><a href="/restore/">Restore Access</a></p>
+</div>
+</div>
+
+<script>
+const MONTHS = ['Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec','Jan','Feb','Mar'];
+const VAT_THRESHOLD = 90000;
+const AMBER_ZONE = 75000;
+const DEREG_THRESHOLD = 88000;
+const VAT_RATE = 0.20;
+
+// Build month inputs
+(function buildMonthGrid() {
+  const grid = document.getElementById('monthGrid');
+  MONTHS.forEach((m, i) => {
+    const d = document.createElement('div');
+    d.className = 'fg';
+    d.innerHTML = '<label>' + m + '</label><input type="number" id="month-' + i + '" min="0" step="100" placeholder="0">';
+    grid.appendChild(d);
+  });
+})();
+
+function fillFromAverage() {
+  const avg = parseFloat(document.getElementById('avgMonthly').value);
+  if (!avg || avg < 0) return;
+  for (let i = 0; i < 12; i++) {
+    document.getElementById('month-' + i).value = Math.round(avg);
+  }
+}
+
+function fillFromAnnual() {
+  const annual = parseFloat(document.getElementById('annualTurnover').value);
+  if (!annual || annual < 0) return;
+  const monthly = Math.round(annual / 12);
+  for (let i = 0; i < 12; i++) {
+    document.getElementById('month-' + i).value = monthly;
+  }
+  document.getElementById('avgMonthly').value = monthly;
+}
+
+function getMonthlyFigures() {
+  const figures = [];
+  for (let i = 0; i < 12; i++) {
+    const v = parseFloat(document.getElementById('month-' + i).value) || 0;
+    figures.push(Math.max(0, v));
+  }
+  return figures;
+}
+
+function fmt(n) {
+  return '\u00A3' + n.toLocaleString('en-GB', { minimumFractionDigits: 0, maximumFractionDigits: 0 });
+}
+
+function fmt2(n) {
+  return '\u00A3' + n.toLocaleString('en-GB', { minimumFractionDigits: 2, maximumFractionDigits: 2 });
+}
+
+function calculate() {
+  const figures = getMonthlyFigures();
+  const total = figures.reduce((a, b) => a + b, 0);
+  const avg = total / 12;
+  const headroom = VAT_THRESHOLD - total;
+  const maxMonthly = VAT_THRESHOLD / 12;
+
+  // Status
+  const statusBox = document.getElementById('statusBox');
+  const statusLabel = document.getElementById('statusLabel');
+  const statusDetail = document.getElementById('statusDetail');
+
+  statusBox.className = 'status-box';
+  if (total >= VAT_THRESHOLD) {
+    statusBox.classList.add('red');
+    statusLabel.textContent = 'OVER THRESHOLD \u2014 YOU NEED TO REGISTER FOR VAT';
+    statusDetail.textContent = 'You are ' + fmt(total - VAT_THRESHOLD) + ' over the \u00A390,000 threshold.';
+  } else if (total >= AMBER_ZONE) {
+    statusBox.classList.add('amber');
+    statusLabel.textContent = 'APPROACHING \u2014 ' + fmt(headroom) + ' FROM THE THRESHOLD';
+    statusDetail.textContent = 'You are within \u00A315,000 of the VAT registration threshold. Start planning now.';
+  } else {
+    statusBox.classList.add('green');
+    statusLabel.textContent = 'SAFE \u2014 YOU\'RE ' + fmt(headroom) + ' BELOW THE THRESHOLD';
+    statusDetail.textContent = 'Your rolling 12-month turnover is comfortably below \u00A390,000.';
+  }
+
+  // Bar chart
+  const maxMonth = Math.max(...figures, 1);
+  let barHtml = '';
+  figures.forEach((v, i) => {
+    const pct = (v / maxMonth) * 100;
+    let barClass = 'green';
+    // Colour each bar based on cumulative position
+    if (total >= VAT_THRESHOLD) barClass = 'red';
+    else if (total >= AMBER_ZONE) barClass = 'amber';
+    barHtml += '<div class="chart-row">' +
+      '<div class="chart-label">' + MONTHS[i] + '</div>' +
+      '<div class="chart-bar-wrap"><div class="chart-bar ' + barClass + '" style="width:' + Math.max(pct, 0.5) + '%"><span>' + (v > maxMonth * 0.15 ? fmt(v) : '') + '</span></div></div>' +
+      '<div class="chart-val">' + fmt(v) + '</div>' +
+      '</div>';
+  });
+  document.getElementById('barChart').innerHTML = barHtml;
+
+  // Cumulative SVG
+  drawCumulativeSvg(figures);
+
+  // Key numbers
+  const headroomClass = total >= VAT_THRESHOLD ? 'red' : (total >= AMBER_ZONE ? 'amber' : 'green');
+  document.getElementById('keyNumbers').innerHTML =
+    '<h3>KEY NUMBERS</h3>' +
+    '<div class="kn-row"><span class="kn-label">Rolling 12-month turnover</span><span class="kn-val ' + headroomClass + '">' + fmt(total) + '</span></div>' +
+    '<div class="kn-row"><span class="kn-label">VAT threshold</span><span class="kn-val">' + fmt(VAT_THRESHOLD) + '</span></div>' +
+    '<div class="kn-row"><span class="kn-label">Headroom</span><span class="kn-val ' + headroomClass + '">' + (headroom >= 0 ? fmt(headroom) : '-' + fmt(Math.abs(headroom))) + '</span></div>' +
+    '<div class="kn-row"><span class="kn-label">Monthly average</span><span class="kn-val">' + fmt(Math.round(avg)) + '</span></div>' +
+    '<div class="kn-row"><span class="kn-label">You can earn up to</span><span class="kn-val">' + fmt(Math.round(maxMonthly)) + '/month before crossing</span></div>';
+
+  // VAT impact
+  recalcVatImpact();
+
+  // Flat rate
+  recalcFlatRate();
+
+  // Show results
+  document.getElementById('results').classList.add('show');
+
+  // Track in GA4
+  if (typeof gtag === 'function') {
+    gtag('event', 'vat_check', {
+      event_category: 'tools',
+      event_label: total >= VAT_THRESHOLD ? 'over' : (total >= AMBER_ZONE ? 'approaching' : 'safe'),
+      value: Math.round(total)
+    });
+  }
+}
+
+function drawCumulativeSvg(figures) {
+  const svg = document.getElementById('cumulSvg');
+  const w = 800, h = 200;
+  const pad = { top: 25, right: 20, bottom: 30, left: 10 };
+  const plotW = w - pad.left - pad.right;
+  const plotH = h - pad.top - pad.bottom;
+
+  // Build cumulative
+  const cumul = [];
+  let running = 0;
+  figures.forEach(v => { running += v; cumul.push(running); });
+
+  const maxVal = Math.max(VAT_THRESHOLD * 1.15, ...cumul, 1);
+
+  // Points
+  const points = cumul.map((v, i) => {
+    const x = pad.left + (i / 11) * plotW;
+    const y = pad.top + plotH - (v / maxVal) * plotH;
+    return { x, y, v };
+  });
+
+  // Threshold Y
+  const threshY = pad.top + plotH - (VAT_THRESHOLD / maxVal) * plotH;
+
+  let svgContent = '';
+
+  // Grid lines
+  for (let g = 0; g <= 4; g++) {
+    const gy = pad.top + (g / 4) * plotH;
+    const gVal = Math.round(maxVal * (1 - g / 4));
+    svgContent += '<line x1="' + pad.left + '" y1="' + gy + '" x2="' + (w - pad.right) + '" y2="' + gy + '" stroke="#161c28" stroke-width="1"/>';
+    svgContent += '<text x="' + (w - pad.right + 5) + '" y="' + (gy + 4) + '" fill="#4a5568" font-size="9" font-family="DM Mono,monospace">' + (gVal >= 1000 ? Math.round(gVal / 1000) + 'k' : gVal) + '</text>';
+  }
+
+  // Threshold line
+  svgContent += '<line x1="' + pad.left + '" y1="' + threshY + '" x2="' + (w - pad.right) + '" y2="' + threshY + '" stroke="#ef5350" stroke-width="2" stroke-dasharray="6,4"/>';
+  svgContent += '<text x="' + (pad.left + 4) + '" y="' + (threshY - 6) + '" fill="#ef5350" font-size="10" font-family="DM Mono,monospace">\u00A390,000 threshold</text>';
+
+  // Fill area
+  let areaPath = 'M' + points[0].x + ',' + (pad.top + plotH);
+  points.forEach(p => { areaPath += ' L' + p.x + ',' + p.y; });
+  areaPath += ' L' + points[points.length - 1].x + ',' + (pad.top + plotH) + ' Z';
+
+  const total = cumul[cumul.length - 1];
+  const fillColour = total >= VAT_THRESHOLD ? 'rgba(239,83,80,0.15)' : (total >= AMBER_ZONE ? 'rgba(245,158,11,0.15)' : 'rgba(45,212,160,0.15)');
+  const lineColour = total >= VAT_THRESHOLD ? '#ef5350' : (total >= AMBER_ZONE ? '#f59e0b' : '#2dd4a0');
+
+  svgContent += '<path d="' + areaPath + '" fill="' + fillColour + '"/>';
+
+  // Line
+  let linePath = 'M' + points[0].x + ',' + points[0].y;
+  for (let i = 1; i < points.length; i++) {
+    linePath += ' L' + points[i].x + ',' + points[i].y;
+  }
+  svgContent += '<path d="' + linePath + '" fill="none" stroke="' + lineColour + '" stroke-width="2.5" stroke-linejoin="round"/>';
+
+  // Dots and labels
+  points.forEach((p, i) => {
+    svgContent += '<circle cx="' + p.x + '" cy="' + p.y + '" r="4" fill="' + lineColour + '" stroke="var(--bg)" stroke-width="2"/>';
+    svgContent += '<text x="' + p.x + '" y="' + (pad.top + plotH + 18) + '" fill="#4a5568" font-size="10" font-family="Outfit,sans-serif" text-anchor="middle">' + MONTHS[i] + '</text>';
+  });
+
+  svg.innerHTML = svgContent;
+}
+
+function recalcVatImpact() {
+  const figures = getMonthlyFigures();
+  const total = figures.reduce((a, b) => a + b, 0);
+  const price = parseFloat(document.getElementById('pricePerJob').value) || 100;
+  const expPct = parseFloat(document.getElementById('expensesPct').value) || 30;
+
+  const priceWithVat = price * (1 + VAT_RATE);
+  const vatOnSales = total * VAT_RATE;
+  const expenses = total * (expPct / 100);
+  const vatOnExpenses = expenses * VAT_RATE;
+  const vatOwed = vatOnSales - vatOnExpenses;
+  const perQuarter = vatOwed / 4;
+  const effectivePct = total > 0 ? (vatOwed / total) * 100 : 0;
+
+  const rows = document.getElementById('vatImpactRows');
+  rows.innerHTML =
+    '<div class="vi-row"><span class="vi-label">Your current pricing</span><span class="vi-val">' + fmt2(price) + ' per job</span></div>' +
+    '<div class="vi-row"><span class="vi-label">With VAT (20%)</span><span class="vi-val">' + fmt2(priceWithVat) + ' per job</span></div>' +
+    '<div class="vi-sub">&mdash; but you reclaim VAT on expenses</div>' +
+    '<div class="vi-row"><span class="vi-label">If your expenses are ' + expPct + '% of turnover (' + fmt(Math.round(expenses)) + '):</span><span class="vi-val"></span></div>' +
+    '<div class="vi-row indent"><span class="vi-label">VAT on sales</span><span class="vi-val red">' + fmt(Math.round(vatOnSales)) + '</span></div>' +
+    '<div class="vi-row indent"><span class="vi-label">VAT on expenses (reclaimable)</span><span class="vi-val green">-' + fmt(Math.round(vatOnExpenses)) + '</span></div>' +
+    '<div class="vi-row indent"><span class="vi-label">VAT you owe HMRC</span><span class="vi-val red">' + fmt(Math.round(vatOwed)) + '</span></div>' +
+    '<div class="vi-row indent"><span class="vi-label">Per quarter</span><span class="vi-val">' + fmt(Math.round(perQuarter)) + '</span></div>' +
+    '<div class="vi-row" style="border-top:2px solid var(--border);margin-top:0.5rem;padding-top:0.75rem;"><span class="vi-label"><strong>Effective cost of VAT</strong></span><span class="vi-val cyan">' + effectivePct.toFixed(1) + '% of turnover (not 20%)</span></div>';
+}
+
+function recalcFlatRate() {
+  const figures = getMonthlyFigures();
+  const total = figures.reduce((a, b) => a + b, 0);
+  const expPct = parseFloat(document.getElementById('expensesPct').value) || 30;
+  const flatPct = parseFloat(document.getElementById('flatRatePct').value) || 12;
+
+  // Standard scheme
+  const vatOnSales = total * VAT_RATE;
+  const expenses = total * (expPct / 100);
+  const vatOnExpenses = expenses * VAT_RATE;
+  const standardOwed = vatOnSales - vatOnExpenses;
+
+  // Flat rate scheme — you pay flat% of gross (inc. VAT) turnover
+  const grossTurnover = total * 1.2; // turnover + VAT you charge
+  const flatOwed = grossTurnover * (flatPct / 100);
+
+  const diff = flatOwed - standardOwed;
+  let verdictClass, verdictText;
+  if (Math.abs(diff) < 50) {
+    verdictClass = 'tie';
+    verdictText = 'Roughly the same \u2014 Flat Rate wins on simplicity.';
+  } else if (diff > 0) {
+    verdictClass = 'standard-wins';
+    verdictText = 'Standard VAT saves you ' + fmt(Math.round(Math.abs(diff))) + '/year. Worth the extra admin.';
+  } else {
+    verdictClass = 'flat-wins';
+    verdictText = 'Flat Rate saves you ' + fmt(Math.round(Math.abs(diff))) + '/year and is simpler to run.';
+  }
+
+  const container = document.getElementById('flatRateCompare');
+  container.innerHTML =
+    '<div class="fr-compare">' +
+      '<div class="fr-card standard">' +
+        '<h4>STANDARD VAT</h4>' +
+        '<div class="fr-row"><span>VAT on sales</span><span class="val">' + fmt(Math.round(vatOnSales)) + '</span></div>' +
+        '<div class="fr-row"><span>VAT reclaimed</span><span class="val">-' + fmt(Math.round(vatOnExpenses)) + '</span></div>' +
+        '<div class="fr-row"><span><strong>You pay HMRC</strong></span><span class="val"><strong>' + fmt(Math.round(standardOwed)) + '</strong></span></div>' +
+      '</div>' +
+      '<div class="fr-card flat">' +
+        '<h4>FLAT RATE (' + flatPct + '%)</h4>' +
+        '<div class="fr-row"><span>Gross turnover (inc. VAT)</span><span class="val">' + fmt(Math.round(grossTurnover)) + '</span></div>' +
+        '<div class="fr-row"><span>Flat rate applied</span><span class="val">' + flatPct + '%</span></div>' +
+        '<div class="fr-row"><span><strong>You pay HMRC</strong></span><span class="val"><strong>' + fmt(Math.round(flatOwed)) + '</strong></span></div>' +
+      '</div>' +
+    '</div>' +
+    '<div class="fr-verdict ' + verdictClass + '">' + verdictText + '</div>';
+}
+
+function toggleFaq(el) {
+  const item = el.parentElement;
+  item.classList.toggle('open');
+}
+</script>
+</body>
+</html>

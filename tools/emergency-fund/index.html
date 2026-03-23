@@ -1,0 +1,516 @@
+<!DOCTYPE html>
+<html lang="en-GB">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Emergency Fund Calculator — How Much Do You Need? | MathsWins</title>
+<meta name="description" content="Find out how many months you could survive without income. Set your emergency fund target — 3, 6 or 12 months — and see how long it takes to build.">
+<meta property="og:title" content="Emergency Fund Calculator — How Much Do You Need? | MathsWins">
+<meta property="og:description" content="Find out how many months you could survive without income. Set your emergency fund target and see how long it takes to build.">
+<meta property="og:url" content="https://mathswins.co.uk/tools/emergency-fund/">
+<meta property="og:image" content="https://mathswins.co.uk/assets/og-image.png">
+<meta property="og:type" content="website">
+<meta property="og:site_name" content="MathsWins">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:title" content="Emergency Fund Calculator — How Much Do You Need? | MathsWins">
+<meta name="twitter:description" content="Find out how many months you could survive without income. Set your emergency fund target and see how long it takes to build.">
+<meta name="twitter:image" content="https://mathswins.co.uk/assets/og-image.png">
+<link rel="canonical" href="https://mathswins.co.uk/tools/emergency-fund/">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Crimson+Pro:ital,wght@0,400;1,400&family=DM+Mono:wght@400;500&family=Outfit:wght@300;400;600;700&display=swap" rel="stylesheet">
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "WebApplication",
+  "name": "Emergency Fund Calculator",
+  "url": "https://mathswins.co.uk/tools/emergency-fund/",
+  "description": "Find out how many months you could survive without income. Set your emergency fund target — 3, 6 or 12 months — and see how long it takes to build.",
+  "applicationCategory": "FinanceApplication",
+  "operatingSystem": "Any",
+  "offers": {
+    "@type": "Offer",
+    "price": "0",
+    "priceCurrency": "GBP"
+  },
+  "publisher": {
+    "@type": "Organization",
+    "name": "MathsWins",
+    "url": "https://mathswins.co.uk"
+  }
+}
+</script>
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "FAQPage",
+  "mainEntity": [
+    {
+      "@type": "Question",
+      "name": "How much should I have in an emergency fund?",
+      "acceptedAnswer": {
+        "@type": "Answer",
+        "text": "Most financial guidance recommends 3 to 6 months of essential expenses. Three months covers short-term disruptions like a car repair or brief gap between jobs. Six months gives you a proper safety net for bigger setbacks like redundancy or illness. Twelve months is the gold standard — rare, but powerful peace of mind."
+      }
+    },
+    {
+      "@type": "Question",
+      "name": "What counts as an essential expense?",
+      "acceptedAnswer": {
+        "@type": "Answer",
+        "text": "Essentials are the bills you must pay to keep a roof over your head and food on the table: rent or mortgage, council tax, utilities, food, transport, insurance, and minimum debt payments. Subscriptions, eating out, and entertainment are not essentials — in an emergency, those go first."
+      }
+    },
+    {
+      "@type": "Question",
+      "name": "Where should I keep my emergency fund?",
+      "acceptedAnswer": {
+        "@type": "Answer",
+        "text": "An easy-access savings account. You need the money available within 1-2 days, so fixed-term accounts or investments are not suitable. Look for the best easy-access rate — even a few percent matters when the balance grows. Do not keep it in your current account where it is too easy to spend."
+      }
+    },
+    {
+      "@type": "Question",
+      "name": "Should I pay off debt or build an emergency fund first?",
+      "acceptedAnswer": {
+        "@type": "Answer",
+        "text": "Build a starter emergency fund of at least one month's expenses first. Without any buffer, one unexpected bill puts you straight back into debt. Once you have that baseline, aggressively pay down high-interest debt. Then build the fund up to 3-6 months once the expensive debt is cleared."
+      }
+    },
+    {
+      "@type": "Question",
+      "name": "What if I can only save a small amount each month?",
+      "acceptedAnswer": {
+        "@type": "Answer",
+        "text": "Start anyway. Even £50 a month builds to £600 in a year — enough to cover a car repair or emergency plumber. The habit of saving matters more than the amount. As debts clear or income rises, increase the amount. Consistency beats intensity."
+      }
+    }
+  ]
+}
+</script>
+<style>
+:root{--bg:#050709;--surface:#0a0d14;--surface2:#0f1319;--border:#161c28;--border2:#1e2638;--sky:#0ea5e9;--sky-dim:rgba(14,165,233,0.10);--green:#2dd4a0;--green-dim:rgba(45,212,160,0.10);--red:#ef5350;--red-dim:rgba(239,83,80,0.10);--gold:#d4a847;--gold-dim:rgba(212,168,71,0.10);--cyan:#22d3ee;--teal:#0d9488;--teal-dim:rgba(13,148,136,0.10);--amber:#f59e0b;--amber-dim:rgba(245,158,11,0.10);--text:#c8cdd8;--text-bright:#e8ecf4;--muted:#4a5568;}
+*{margin:0;padding:0;box-sizing:border-box;}
+body{font-family:'Outfit',sans-serif;background:var(--bg);color:var(--text);min-height:100vh;line-height:1.5;}
+.container{max-width:960px;margin:0 auto;padding:2rem 1.25rem 4rem;}
+.nav-bar{display:flex;align-items:center;justify-content:space-between;padding:1rem 0;border-bottom:1px solid var(--border);margin-bottom:2rem;}
+.nav-brand{font-family:'Bebas Neue',sans-serif;font-size:1.4rem;color:var(--gold);text-decoration:none;letter-spacing:0.06em;}
+.nav-brand span{color:var(--text-bright);}
+.nav-link{font-size:0.85rem;font-weight:600;color:var(--sky);text-decoration:none;padding:0.4rem 1rem;border:1px solid var(--sky);border-radius:4px;transition:background 0.2s,color 0.2s;}
+.nav-link:hover{background:var(--sky);color:var(--bg);}
+.hero{text-align:center;margin-bottom:2rem;}
+.hero-eyebrow{font-size:0.75rem;font-weight:600;text-transform:uppercase;letter-spacing:0.15em;color:var(--sky);margin-bottom:0.5rem;}
+.hero h1{font-family:'Bebas Neue',sans-serif;font-size:clamp(1.8rem,5vw,2.8rem);color:var(--text-bright);letter-spacing:0.04em;line-height:1.1;margin-bottom:0.75rem;}
+.hero-sub{font-family:'Crimson Pro',serif;font-style:italic;font-size:1.05rem;color:var(--cyan);max-width:620px;margin:0 auto;}
+.panel{background:var(--surface);border:1px solid var(--border);border-radius:10px;padding:1.5rem;margin-bottom:1.25rem;}
+.panel-title{font-family:'Bebas Neue',sans-serif;font-size:1.1rem;color:var(--text-bright);letter-spacing:0.05em;margin-bottom:1rem;}
+.fg{display:flex;flex-direction:column;gap:0.3rem;margin-bottom:0.75rem;}
+.fg label{font-size:0.72rem;font-weight:600;text-transform:uppercase;letter-spacing:0.06em;color:var(--muted);}
+.fg input{font-family:'DM Mono',monospace;font-size:1rem;padding:0.6rem 0.8rem;background:var(--surface2);border:1px solid var(--border2);border-radius:6px;color:var(--text-bright);outline:none;width:100%;}
+.fg input:focus{border-color:var(--sky);}
+.fg .hint{font-family:'Crimson Pro',serif;font-style:italic;font-size:0.78rem;color:var(--muted);}
+.expense-grid{display:grid;grid-template-columns:1fr 1fr;gap:0 1.25rem;}
+@media(max-width:600px){.expense-grid{grid-template-columns:1fr;}}
+.savings-row{display:grid;grid-template-columns:1fr 1fr;gap:1.25rem;margin-top:1rem;padding-top:1rem;border-top:1px solid var(--border);}
+@media(max-width:600px){.savings-row{grid-template-columns:1fr;}}
+.calc-btn{font-family:'Outfit',sans-serif;font-weight:700;font-size:1rem;padding:0.85rem;background:var(--sky);color:#fff;border:none;border-radius:6px;cursor:pointer;width:100%;margin:1rem 0 0;transition:background 0.2s;}
+.calc-btn:hover{background:#38bdf8;}
+.results{display:none;}
+.results.show{display:block;}
+
+/* Status indicator */
+.status-card{border-radius:10px;padding:1.5rem;text-align:center;margin-bottom:1.5rem;}
+.status-card.red{background:var(--red-dim);border:1px solid var(--red);}
+.status-card.amber{background:var(--amber-dim);border:1px solid var(--amber);}
+.status-card.green{background:var(--green-dim);border:1px solid var(--green);}
+.status-card.gold{background:var(--gold-dim);border:1px solid var(--gold);}
+.status-big{font-family:'DM Mono',monospace;font-size:2rem;font-weight:500;margin-bottom:0.25rem;}
+.status-card.red .status-big{color:var(--red);}
+.status-card.amber .status-big{color:var(--amber);}
+.status-card.green .status-big{color:var(--green);}
+.status-card.gold .status-big{color:var(--gold);}
+.status-sub{font-size:0.9rem;}
+.status-card.red .status-sub{color:var(--red);}
+.status-card.amber .status-sub{color:var(--amber);}
+.status-card.green .status-sub{color:var(--green);}
+.status-card.gold .status-sub{color:var(--gold);}
+
+/* Target cards */
+.target-cards{display:grid;grid-template-columns:1fr 1fr 1fr;gap:1rem;margin-bottom:1.5rem;}
+@media(max-width:700px){.target-cards{grid-template-columns:1fr;}}
+.target-card{background:var(--surface);border:1px solid var(--border);border-radius:10px;padding:1.25rem;position:relative;}
+.target-card.reached{border-color:var(--green);background:rgba(45,212,160,0.04);}
+.tc-title{font-family:'Bebas Neue',sans-serif;font-size:1.1rem;letter-spacing:0.05em;color:var(--text-bright);margin-bottom:0.75rem;}
+.tc-row{display:flex;justify-content:space-between;padding:0.35rem 0;border-bottom:1px solid var(--border);}
+.tc-row:last-child{border-bottom:none;}
+.tc-label{font-size:0.82rem;}
+.tc-val{font-family:'DM Mono',monospace;font-weight:500;font-size:0.9rem;}
+.tc-val.bright{color:var(--text-bright);}
+.tc-val.green{color:var(--green);}
+.tc-val.sky{color:var(--sky);}
+.tc-val.gold{color:var(--gold);}
+.tc-badge{position:absolute;top:0.75rem;right:0.75rem;font-family:'DM Mono',monospace;font-size:0.65rem;font-weight:500;padding:0.2rem 0.5rem;border-radius:4px;background:var(--green-dim);color:var(--green);border:1px solid var(--green);}
+
+/* Thermometer */
+.thermo-section{margin-bottom:1.5rem;}
+.thermo-section h3{font-family:'Bebas Neue',sans-serif;font-size:1rem;letter-spacing:0.05em;color:var(--text-bright);margin-bottom:1rem;}
+.thermo-wrap{background:var(--surface);border:1px solid var(--border);border-radius:10px;padding:1.5rem;}
+.thermo-track{position:relative;height:36px;background:var(--surface2);border-radius:6px;overflow:visible;margin:0.5rem 0 2.5rem;}
+.thermo-fill{height:100%;border-radius:6px;transition:width 0.6s ease;position:relative;}
+.thermo-fill.red{background:linear-gradient(90deg,#ef5350,#ef5350);}
+.thermo-fill.amber{background:linear-gradient(90deg,#ef5350,#f59e0b);}
+.thermo-fill.green{background:linear-gradient(90deg,#ef5350,#f59e0b,#2dd4a0);}
+.thermo-fill.gold{background:linear-gradient(90deg,#ef5350,#f59e0b,#2dd4a0,#d4a847);}
+.thermo-marker{position:absolute;top:0;height:100%;width:2px;z-index:2;}
+.thermo-marker-line{width:2px;height:100%;background:var(--text-bright);opacity:0.6;}
+.thermo-marker-label{position:absolute;top:calc(100% + 6px);left:50%;transform:translateX(-50%);font-family:'DM Mono',monospace;font-size:0.65rem;color:var(--muted);white-space:nowrap;}
+.thermo-current{position:absolute;top:-8px;transform:translateX(-50%);z-index:3;}
+.thermo-current-dot{width:12px;height:12px;border-radius:50%;border:2px solid var(--text-bright);background:var(--bg);}
+.thermo-current-label{position:absolute;top:calc(100% + 28px);left:50%;transform:translateX(-50%);font-family:'DM Mono',monospace;font-size:0.7rem;color:var(--text-bright);white-space:nowrap;font-weight:500;}
+
+/* What could go wrong */
+.scenarios-section{margin-bottom:1.5rem;}
+.scenarios-section h3{font-family:'Bebas Neue',sans-serif;font-size:1rem;letter-spacing:0.05em;color:var(--text-bright);margin-bottom:1rem;}
+.scenario-grid{display:grid;grid-template-columns:1fr 1fr;gap:1rem;}
+@media(max-width:600px){.scenario-grid{grid-template-columns:1fr;}}
+.scenario-card{background:var(--surface);border:1px solid var(--border);border-radius:10px;padding:1.25rem;}
+.scenario-title{font-family:'Outfit',sans-serif;font-weight:600;font-size:0.92rem;color:var(--text-bright);margin-bottom:0.5rem;}
+.scenario-cost{font-family:'DM Mono',monospace;font-size:0.85rem;color:var(--sky);margin-bottom:0.4rem;}
+.scenario-desc{font-size:0.82rem;line-height:1.5;color:var(--muted);}
+
+/* Educational content */
+.edu-section{margin-top:2rem;}
+.edu-section h2{font-family:'Bebas Neue',sans-serif;font-size:1.4rem;color:var(--text-bright);letter-spacing:0.04em;margin-bottom:1rem;}
+.edu-section h3{font-family:'Bebas Neue',sans-serif;font-size:1.05rem;color:var(--text-bright);letter-spacing:0.04em;margin:1.25rem 0 0.5rem;}
+.edu-section p{font-size:0.92rem;line-height:1.7;margin-bottom:0.75rem;}
+.edu-section .formula{font-family:'DM Mono',monospace;font-size:0.88rem;color:var(--cyan);background:var(--surface2);padding:0.75rem 1rem;border-radius:6px;margin:0.75rem 0;border-left:3px solid var(--cyan);}
+.pln{font-family:'Crimson Pro',serif;font-style:italic;color:var(--cyan);background:rgba(34,211,238,0.08);border-left:3px solid var(--cyan);padding:0.85rem 1rem;border-radius:0 6px 6px 0;margin:1rem 0;font-size:0.92rem;line-height:1.6;}
+
+/* FAQ */
+.faq-section{margin-top:2rem;}
+.faq-section h2{font-family:'Bebas Neue',sans-serif;font-size:1.4rem;color:var(--text-bright);letter-spacing:0.04em;margin-bottom:1rem;}
+.faq-item{background:var(--surface);border:1px solid var(--border);border-radius:10px;margin-bottom:0.75rem;overflow:hidden;}
+.faq-q{font-family:'Outfit',sans-serif;font-weight:600;font-size:0.92rem;padding:1rem 1.25rem;cursor:pointer;display:flex;justify-content:space-between;align-items:center;color:var(--text-bright);transition:background 0.2s;}
+.faq-q:hover{background:var(--surface2);}
+.faq-q::after{content:'+';font-family:'DM Mono',monospace;font-size:1.2rem;color:var(--sky);transition:transform 0.2s;}
+.faq-item.open .faq-q::after{content:'-';}
+.faq-a{max-height:0;overflow:hidden;transition:max-height 0.3s ease,padding 0.3s ease;}
+.faq-item.open .faq-a{max-height:300px;padding:0 1.25rem 1rem;}
+.faq-a p{font-size:0.88rem;line-height:1.6;color:var(--text);}
+
+/* CTA */
+.cta-card{background:var(--surface);border:1px solid var(--border);border-left:3px solid var(--sky);border-radius:0 10px 10px 0;padding:1.5rem;margin-top:2rem;}
+.cta-card h3{font-family:'Bebas Neue',sans-serif;font-size:1.2rem;color:var(--sky);letter-spacing:0.04em;margin-bottom:0.5rem;}
+.cta-card p{font-family:'Crimson Pro',serif;font-style:italic;font-size:0.92rem;color:var(--text);line-height:1.5;margin-bottom:0.75rem;}
+.cta-link{font-weight:600;font-size:0.9rem;color:var(--sky);text-decoration:none;}
+.footer{margin-top:2.5rem;padding-top:1.25rem;border-top:1px solid var(--border);text-align:center;}
+.footer p{font-size:0.72rem;color:var(--muted);line-height:1.8;}
+.footer a{color:var(--muted);text-decoration:underline;}
+</style>
+<!-- GA4 Cookieless -->
+<script async src="https://www.googletagmanager.com/gtag/js?id=G-7GTLYCZMXN"></script>
+<script>window.dataLayer=window.dataLayer||[];function gtag(){dataLayer.push(arguments);}gtag('js',new Date());gtag('consent','default',{analytics_storage:'denied',ad_storage:'denied',ad_user_data:'denied',ad_personalization:'denied'});gtag('config','G-7GTLYCZMXN',{send_page_view:true,anonymize_ip:true});</script>
+</head>
+<body>
+<script src="/auth/mw-auth.js"></script>
+<div class="container">
+<nav class="nav-bar">
+  <a href="/" class="nav-brand">MATHS<span>WINS</span></a>
+  <a href="/everyday/compound-interest/" class="nav-link">Compound Interest Course (Free) &rarr;</a>
+</nav>
+<div class="hero">
+  <div class="hero-eyebrow">Free Tool</div>
+  <h1>EMERGENCY FUND CALCULATOR</h1>
+  <div class="hero-sub">How long could you survive without income? Enter your monthly expenses, see your targets, and find out exactly how long it takes to build your safety net.</div>
+</div>
+
+<div class="panel">
+  <div class="panel-title">MONTHLY ESSENTIAL EXPENSES</div>
+  <div class="expense-grid">
+    <div class="fg">
+      <label>Rent / Mortgage (&pound;)</label>
+      <input type="number" id="rent" min="0" step="10" placeholder="850">
+    </div>
+    <div class="fg">
+      <label>Council Tax (&pound;)</label>
+      <input type="number" id="councilTax" min="0" step="10" placeholder="150">
+    </div>
+    <div class="fg">
+      <label>Utilities (&pound;)</label>
+      <input type="number" id="utilities" min="0" step="10" placeholder="180">
+      <div class="hint">Gas, electric, water, broadband</div>
+    </div>
+    <div class="fg">
+      <label>Food (&pound;)</label>
+      <input type="number" id="food" min="0" step="10" placeholder="300">
+    </div>
+    <div class="fg">
+      <label>Transport (&pound;)</label>
+      <input type="number" id="transport" min="0" step="10" placeholder="150">
+      <div class="hint">Fuel, bus/train pass, car insurance</div>
+    </div>
+    <div class="fg">
+      <label>Insurance (&pound;)</label>
+      <input type="number" id="insurance" min="0" step="10" placeholder="50">
+      <div class="hint">Life, home, contents</div>
+    </div>
+    <div class="fg">
+      <label>Minimum Debt Payments (&pound;)</label>
+      <input type="number" id="debtPayments" min="0" step="10" placeholder="0">
+      <div class="hint">Credit cards, loans &mdash; minimums only</div>
+    </div>
+    <div class="fg">
+      <label>Other Essentials (&pound;)</label>
+      <input type="number" id="otherEssentials" min="0" step="10" placeholder="100">
+      <div class="hint">Phone, childcare, prescriptions, etc.</div>
+    </div>
+  </div>
+  <div class="savings-row">
+    <div class="fg" style="margin-bottom:0;">
+      <label>Current Emergency Savings (&pound;)</label>
+      <input type="number" id="currentSavings" min="0" step="100" value="0" placeholder="0">
+      <div class="hint">What you have set aside right now</div>
+    </div>
+    <div class="fg" style="margin-bottom:0;">
+      <label>Monthly Amount You Can Save (&pound;)</label>
+      <input type="number" id="monthlySaving" min="0" step="10" placeholder="200">
+      <div class="hint">After all expenses and debt payments</div>
+    </div>
+  </div>
+  <button class="calc-btn" onclick="calculate()">Calculate My Emergency Fund</button>
+</div>
+
+<div class="results" id="results">
+  <div id="statusCard"></div>
+  <div id="targetCards"></div>
+  <div id="thermometer"></div>
+  <div id="scenarios"></div>
+</div>
+
+<!-- What could go wrong — always visible -->
+<div class="scenarios-section" id="scenariosStatic">
+  <h3>WHAT COULD GO WRONG? (AND WHY THIS MATTERS)</h3>
+  <p style="font-size:0.88rem;color:var(--text);margin-bottom:1rem;line-height:1.6;">This is not about fear. It is about being practical. These are the most common financial shocks in the UK &mdash; and none of them are unlikely.</p>
+  <div class="scenario-grid">
+    <div class="scenario-card">
+      <div class="scenario-title">Job loss</div>
+      <div class="scenario-cost">3&ndash;5 months average UK job search</div>
+      <div class="scenario-desc">Redundancy can happen to anyone. The average UK professional takes 3 to 5 months to find equivalent-level work. Three months of expenses is the bare minimum; six months gives you breathing room to find the right role, not just any role.</div>
+    </div>
+    <div class="scenario-card">
+      <div class="scenario-title">Car breakdown</div>
+      <div class="scenario-cost">&pound;500 &ndash; &pound;1,500 typical repair</div>
+      <div class="scenario-desc">Clutch replacement, timing belt, gearbox fault. If you depend on your car for work, a breakdown without savings means a payday loan or credit card debt &mdash; which makes next month harder too.</div>
+    </div>
+    <div class="scenario-card">
+      <div class="scenario-title">Boiler replacement</div>
+      <div class="scenario-cost">&pound;2,500 &ndash; &pound;4,000 installed</div>
+      <div class="scenario-desc">Boilers tend to fail in winter, when you need them most. Emergency call-out plus installation is not optional when you have children or elderly family at home.</div>
+    </div>
+    <div class="scenario-card">
+      <div class="scenario-title">Medical emergency</div>
+      <div class="scenario-cost">Loss of income during recovery</div>
+      <div class="scenario-desc">The NHS covers treatment, but not lost earnings. Statutory Sick Pay is &pound;116.75/week &mdash; less than a quarter of median full-time pay. Even a few weeks off work without savings creates real financial pressure.</div>
+    </div>
+  </div>
+</div>
+
+<!-- Educational content -->
+<div class="edu-section">
+  <h2>THE MATHS BEHIND YOUR EMERGENCY FUND</h2>
+
+  <h3>Why 3, 6, and 12 Months?</h3>
+  <p>These are not arbitrary numbers. Three months covers the most common short-term shocks: a car repair, a broken boiler, a brief gap between jobs. Six months covers a proper redundancy &mdash; enough time to job-search without panic. Twelve months is the gold standard for self-employed people, single-income households, or anyone who wants maximum resilience.</p>
+
+  <h3>The Arithmetic is Simple &mdash; the Discipline is Not</h3>
+  <p>Your emergency fund target is just multiplication:</p>
+  <div class="formula">Target = Monthly essential expenses &times; Number of months</div>
+  <p>The hard part is not the calculation &mdash; it is the consistency of saving. Which is exactly why knowing your number matters. A vague goal of "save more" fails. A specific target of "&pound;7,200 for six months" gives you something concrete to track.</p>
+
+  <h3>Where to Keep It</h3>
+  <p>Your emergency fund belongs in an easy-access savings account. Not invested, not in a fixed-term bond, not in crypto. You need it available within 1-2 business days. The interest rate matters less than the accessibility &mdash; although the best easy-access accounts currently pay 4-5%, which helps your fund grow while it sits there.</p>
+
+  <h3>The Starter Fund Approach</h3>
+  <p>If you are also paying off debt, build a starter fund of one month's expenses first. This stops the cycle of emergencies creating new debt. Once you have that baseline, focus on clearing high-interest debt. Then build the full fund once the expensive debt is gone.</p>
+
+  <div class="pln">An emergency fund is not a luxury. It is the difference between a bad week and a bad year. Every pound you save now is a pound that does not go on a credit card at 22.9% APR when something goes wrong.</div>
+</div>
+
+<!-- FAQ -->
+<div class="faq-section">
+  <h2>FREQUENTLY ASKED QUESTIONS</h2>
+  <div class="faq-item">
+    <div class="faq-q" onclick="toggleFaq(this)">How much should I have in an emergency fund?</div>
+    <div class="faq-a"><p>Most financial guidance recommends 3 to 6 months of essential expenses. Three months covers short-term disruptions. Six months gives you a proper safety net. Twelve months is the gold standard for self-employed people or single-income households.</p></div>
+  </div>
+  <div class="faq-item">
+    <div class="faq-q" onclick="toggleFaq(this)">What counts as an essential expense?</div>
+    <div class="faq-a"><p>Essentials are the bills you must pay to keep a roof over your head and food on the table: rent or mortgage, council tax, utilities, food, transport, insurance, and minimum debt payments. Subscriptions, eating out, and entertainment are not essentials &mdash; in an emergency, those go first.</p></div>
+  </div>
+  <div class="faq-item">
+    <div class="faq-q" onclick="toggleFaq(this)">Where should I keep my emergency fund?</div>
+    <div class="faq-a"><p>An easy-access savings account. You need the money available within 1-2 days. Fixed-term accounts or investments are not suitable. Look for the best easy-access rate. Do not keep it in your current account where it is too easy to spend.</p></div>
+  </div>
+  <div class="faq-item">
+    <div class="faq-q" onclick="toggleFaq(this)">Should I pay off debt or build an emergency fund first?</div>
+    <div class="faq-a"><p>Build a starter fund of at least one month's expenses first. Without any buffer, one unexpected bill puts you straight back into debt. Once you have that baseline, aggressively pay down high-interest debt. Then build the full fund once the expensive debt is cleared.</p></div>
+  </div>
+  <div class="faq-item">
+    <div class="faq-q" onclick="toggleFaq(this)">What if I can only save a small amount each month?</div>
+    <div class="faq-a"><p>Start anyway. Even &pound;50 a month builds to &pound;600 in a year &mdash; enough to cover a car repair or emergency plumber. The habit of saving matters more than the amount. Consistency beats intensity.</p></div>
+  </div>
+</div>
+
+<div class="cta-card">
+  <h3>COMPOUND INTEREST &amp; DEBT &mdash; FREE COURSE</h3>
+  <p>Understand exactly how compound interest works for and against you. Simple vs compound, the credit card trap, APR decoded, and the Rule of 72. Completely free.</p>
+  <a href="/everyday/compound-interest/" class="cta-link">Start the free course &rarr;</a>
+</div>
+
+<div class="cta-card" style="border-left-color:var(--gold);margin-top:1rem;">
+  <h3>DEBT SNOWBALL CALCULATOR &mdash; FREE TOOL</h3>
+  <p>Already have debt? Compare snowball and avalanche methods side by side. See exactly how much money and time each strategy saves.</p>
+  <a href="/tools/debt-snowball/" class="cta-link" style="color:var(--gold);">Try the Debt Snowball Calculator &rarr;</a>
+</div>
+
+<div class="footer">
+  <p><a href="/">MathsWins</a> &middot; <a href="/tools/">Tools</a> &middot; <a href="/everyday/">Everyday Maths</a><br>&copy; 2026 MathsWins. Not financial advice.<br><a href="/restore/">Restore Access</a></p>
+</div>
+</div>
+
+<script>
+function getExpenses() {
+  const ids = ['rent','councilTax','utilities','food','transport','insurance','debtPayments','otherEssentials'];
+  let total = 0;
+  ids.forEach(id => {
+    const val = parseFloat(document.getElementById(id).value) || 0;
+    total += val;
+  });
+  return total;
+}
+
+function fmt(n) {
+  return n.toLocaleString('en-GB', { minimumFractionDigits: 2, maximumFractionDigits: 2 });
+}
+
+function fmtInt(n) {
+  return n.toLocaleString('en-GB', { minimumFractionDigits: 0, maximumFractionDigits: 0 });
+}
+
+function calculate() {
+  const expenses = getExpenses();
+  const savings = parseFloat(document.getElementById('currentSavings').value) || 0;
+  const monthlySave = parseFloat(document.getElementById('monthlySaving').value) || 0;
+
+  if (expenses <= 0) {
+    alert('Enter at least one monthly expense to calculate your emergency fund.');
+    return;
+  }
+
+  const monthsCovered = savings / expenses;
+  const targets = [
+    { months: 3, label: '3 Months' },
+    { months: 6, label: '6 Months' },
+    { months: 12, label: '12 Months' }
+  ];
+
+  // Status card
+  let statusClass, statusText, statusSub;
+  if (monthsCovered < 1) {
+    const days = Math.floor(monthsCovered * 30);
+    statusClass = 'red';
+    statusText = days + ' day' + (days !== 1 ? 's' : '') + ' of expenses covered';
+    statusSub = 'You need to build a safety net. Start today, even if it is small.';
+  } else if (monthsCovered < 3) {
+    statusClass = 'amber';
+    statusText = monthsCovered.toFixed(1) + ' months covered';
+    statusSub = 'A good start, but aim for at least 3 months to handle most disruptions.';
+  } else if (monthsCovered < 6) {
+    statusClass = 'green';
+    statusText = monthsCovered.toFixed(1) + ' months covered';
+    statusSub = 'Solid foundation. You can handle most common emergencies.';
+  } else {
+    statusClass = 'gold';
+    statusText = monthsCovered.toFixed(1) + ' months covered — excellent';
+    statusSub = 'You have a strong emergency fund. This is serious financial resilience.';
+  }
+
+  document.getElementById('statusCard').innerHTML =
+    '<div class="status-card ' + statusClass + '">' +
+    '<div class="status-big">' + statusText + '</div>' +
+    '<div class="status-sub">' + statusSub + '</div>' +
+    '</div>';
+
+  // Target cards
+  let cardsHTML = '<div class="target-cards">';
+  targets.forEach(t => {
+    const target = expenses * t.months;
+    const needed = Math.max(0, target - savings);
+    const reached = savings >= target;
+    let monthsToReach = '';
+    if (reached) {
+      monthsToReach = 'Already reached';
+    } else if (monthlySave > 0) {
+      const m = Math.ceil(needed / monthlySave);
+      monthsToReach = m + ' month' + (m !== 1 ? 's' : '') + ' (' + (m / 12).toFixed(1) + ' years)';
+    } else {
+      monthsToReach = 'Set a monthly saving amount';
+    }
+
+    cardsHTML += '<div class="target-card' + (reached ? ' reached' : '') + '">';
+    if (reached) cardsHTML += '<div class="tc-badge">REACHED</div>';
+    cardsHTML += '<div class="tc-title">' + t.label.toUpperCase() + '</div>';
+    cardsHTML += '<div class="tc-row"><span class="tc-label">Target</span><span class="tc-val bright">&pound;' + fmt(target) + '</span></div>';
+    cardsHTML += '<div class="tc-row"><span class="tc-label">Still needed</span><span class="tc-val ' + (needed > 0 ? 'sky' : 'green') + '">&pound;' + fmt(needed) + '</span></div>';
+    cardsHTML += '<div class="tc-row"><span class="tc-label">Time to reach</span><span class="tc-val ' + (reached ? 'green' : 'gold') + '">' + monthsToReach + '</span></div>';
+    cardsHTML += '</div>';
+  });
+  cardsHTML += '</div>';
+  document.getElementById('targetCards').innerHTML = cardsHTML;
+
+  // Thermometer
+  const maxTarget = expenses * 12;
+  const thermoMax = maxTarget * 1.05;
+  const fillPct = Math.min((savings / thermoMax) * 100, 100);
+  let fillClass = 'red';
+  if (monthsCovered >= 6) fillClass = 'gold';
+  else if (monthsCovered >= 3) fillClass = 'green';
+  else if (monthsCovered >= 1) fillClass = 'amber';
+
+  let thermoHTML = '<div class="thermo-section"><h3>YOUR PROGRESS</h3><div class="thermo-wrap">';
+  thermoHTML += '<div class="thermo-track">';
+  thermoHTML += '<div class="thermo-fill ' + fillClass + '" style="width:' + fillPct + '%"></div>';
+
+  // Markers for 3, 6, 12 months
+  [3, 6, 12].forEach(m => {
+    const pos = ((expenses * m) / thermoMax) * 100;
+    thermoHTML += '<div class="thermo-marker" style="left:' + pos + '%">';
+    thermoHTML += '<div class="thermo-marker-line"></div>';
+    thermoHTML += '<div class="thermo-marker-label">' + m + 'mo<br>&pound;' + fmtInt(expenses * m) + '</div>';
+    thermoHTML += '</div>';
+  });
+
+  // Current position indicator
+  const currentPos = Math.min((savings / thermoMax) * 100, 99);
+  thermoHTML += '<div class="thermo-current" style="left:' + currentPos + '%">';
+  thermoHTML += '<div class="thermo-current-dot"></div>';
+  thermoHTML += '<div class="thermo-current-label">You: &pound;' + fmtInt(savings) + '</div>';
+  thermoHTML += '</div>';
+
+  thermoHTML += '</div></div></div>';
+  document.getElementById('thermometer').innerHTML = thermoHTML;
+
+  // Show results
+  document.getElementById('results').classList.add('show');
+
+  // Scroll to results
+  document.getElementById('statusCard').scrollIntoView({ behavior: 'smooth', block: 'start' });
+}
+
+function toggleFaq(el) {
+  const item = el.parentElement;
+  item.classList.toggle('open');
+}
+</script>
+</body>
+</html>

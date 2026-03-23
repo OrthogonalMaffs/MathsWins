@@ -1,0 +1,430 @@
+<!DOCTYPE html>
+<html lang="en-GB">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Life Insurance Calculator UK — How Much Cover Do I Need? | MathsWins</title>
+<meta name="description" content="Calculate how much life insurance you actually need. Factor in mortgage, income, children, debts and existing cover — get your number in 60 seconds.">
+<meta property="og:title" content="Life Insurance Calculator UK — How Much Cover Do I Need? | MathsWins">
+<meta property="og:description" content="Calculate how much life insurance you actually need. Factor in mortgage, income, children, debts and existing cover.">
+<meta property="og:url" content="https://mathswins.co.uk/tools/life-insurance/">
+<meta property="og:image" content="https://mathswins.co.uk/assets/og-image.png">
+<meta property="og:type" content="website">
+<meta property="og:site_name" content="MathsWins">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:title" content="Life Insurance Calculator UK — How Much Cover Do I Need? | MathsWins">
+<meta name="twitter:description" content="Calculate how much life insurance you actually need. Factor in mortgage, income, children, debts and existing cover.">
+<meta name="twitter:image" content="https://mathswins.co.uk/assets/og-image.png">
+<link rel="canonical" href="https://mathswins.co.uk/tools/life-insurance/">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Crimson+Pro:ital,wght@0,400;1,400&family=DM+Mono:wght@400;500&family=Outfit:wght@300;400;600;700&display=swap" rel="stylesheet">
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "WebApplication",
+  "name": "Life Insurance Calculator UK",
+  "url": "https://mathswins.co.uk/tools/life-insurance/",
+  "description": "Calculate how much life insurance you actually need. Factor in mortgage, income, children, debts and existing cover — get your number in 60 seconds.",
+  "applicationCategory": "FinanceApplication",
+  "operatingSystem": "Any",
+  "offers": {
+    "@type": "Offer",
+    "price": "0",
+    "priceCurrency": "GBP"
+  },
+  "publisher": {
+    "@type": "Organization",
+    "name": "MathsWins",
+    "url": "https://mathswins.co.uk"
+  }
+}
+</script>
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "FAQPage",
+  "mainEntity": [
+    {
+      "@type": "Question",
+      "name": "How much life insurance do I need?",
+      "acceptedAnswer": {
+        "@type": "Answer",
+        "text": "A good starting point is 10 times your annual income, but the real answer depends on your mortgage, debts, number of dependents, existing cover, and your partner's income. Use this calculator to get a personalised figure based on your actual circumstances."
+      }
+    },
+    {
+      "@type": "Question",
+      "name": "What is the difference between term and whole-of-life insurance?",
+      "acceptedAnswer": {
+        "@type": "Answer",
+        "text": "Term life insurance covers you for a fixed period (e.g. 20 or 25 years) and pays out only if you die during that term. Whole-of-life insurance covers you until you die and always pays out, but it costs 5-10 times more for the same cover amount. For most families, term insurance aligned to your mortgage or until children are independent is far better value."
+      }
+    },
+    {
+      "@type": "Question",
+      "name": "Do I need life insurance if I am single with no dependents?",
+      "acceptedAnswer": {
+        "@type": "Answer",
+        "text": "If nobody depends on your income, you probably do not need life insurance. You might want a small policy to cover funeral costs and any debts that would fall on your estate. But if you are young and healthy, locking in a low premium now before any health issues arise can be a smart move if you plan to have a family later."
+      }
+    },
+    {
+      "@type": "Question",
+      "name": "Is employer life insurance enough?",
+      "acceptedAnswer": {
+        "@type": "Answer",
+        "text": "Employer-provided death-in-service benefit (typically 1-4 times salary) is a great start, but it ends when you leave the job. If you are made redundant, change careers, or start a business, you lose that cover — possibly at an age when new cover is more expensive or harder to get due to health changes. A personal policy runs alongside and stays with you."
+      }
+    },
+    {
+      "@type": "Question",
+      "name": "When should I review my life insurance?",
+      "acceptedAnswer": {
+        "@type": "Answer",
+        "text": "Review your cover whenever your circumstances change significantly: new mortgage, new baby, pay rise, divorce, paying off a large debt, or a partner stopping work. At a minimum, review every 3-5 years. A policy that was right five years ago may be too little — or too much — today."
+      }
+    }
+  ]
+}
+</script>
+<style>
+:root{--bg:#050709;--surface:#0a0d14;--surface2:#0f1319;--border:#161c28;--border2:#1e2638;--sky:#0ea5e9;--sky-dim:rgba(14,165,233,0.10);--green:#2dd4a0;--green-dim:rgba(45,212,160,0.10);--red:#ef5350;--gold:#d4a847;--gold-dim:rgba(212,168,71,0.10);--cyan:#22d3ee;--teal:#0d9488;--teal-dim:rgba(13,148,136,0.10);--text:#c8cdd8;--text-bright:#e8ecf4;--muted:#4a5568;}
+*{margin:0;padding:0;box-sizing:border-box;}
+body{font-family:'Outfit',sans-serif;background:var(--bg);color:var(--text);min-height:100vh;line-height:1.5;}
+.container{max-width:960px;margin:0 auto;padding:2rem 1.25rem 4rem;}
+.nav-bar{display:flex;align-items:center;justify-content:space-between;padding:1rem 0;border-bottom:1px solid var(--border);margin-bottom:2rem;}
+.nav-brand{font-family:'Bebas Neue',sans-serif;font-size:1.4rem;color:var(--gold);text-decoration:none;letter-spacing:0.06em;}
+.nav-brand span{color:var(--text-bright);}
+.nav-link{font-size:0.85rem;font-weight:600;color:var(--sky);text-decoration:none;padding:0.4rem 1rem;border:1px solid var(--sky);border-radius:4px;transition:background 0.2s,color 0.2s;}
+.nav-link:hover{background:var(--sky);color:var(--bg);}
+.hero{text-align:center;margin-bottom:2rem;}
+.hero-eyebrow{font-size:0.75rem;font-weight:600;text-transform:uppercase;letter-spacing:0.15em;color:var(--sky);margin-bottom:0.5rem;}
+.hero h1{font-family:'Bebas Neue',sans-serif;font-size:clamp(1.8rem,5vw,2.8rem);color:var(--text-bright);letter-spacing:0.04em;line-height:1.1;margin-bottom:0.75rem;}
+.hero-sub{font-family:'Crimson Pro',serif;font-style:italic;font-size:1.05rem;color:var(--cyan);max-width:620px;margin:0 auto;}
+.panel{background:var(--surface);border:1px solid var(--border);border-radius:10px;padding:1.5rem;margin-bottom:1.25rem;}
+.panel-title{font-family:'Bebas Neue',sans-serif;font-size:1.1rem;color:var(--text-bright);letter-spacing:0.05em;margin-bottom:1rem;}
+.input-grid{display:grid;grid-template-columns:1fr 1fr;gap:1rem;}
+@media(max-width:600px){.input-grid{grid-template-columns:1fr;}}
+.fg{display:flex;flex-direction:column;gap:0.3rem;}
+.fg label{font-size:0.72rem;font-weight:600;text-transform:uppercase;letter-spacing:0.06em;color:var(--muted);}
+.fg input{font-family:'DM Mono',monospace;font-size:1rem;padding:0.6rem 0.8rem;background:var(--surface2);border:1px solid var(--border2);border-radius:6px;color:var(--text-bright);outline:none;}
+.fg input:focus{border-color:var(--sky);}
+.fg .hint{font-family:'Crimson Pro',serif;font-style:italic;font-size:0.78rem;color:var(--muted);}
+.calc-btn{font-family:'Outfit',sans-serif;font-weight:700;font-size:1rem;padding:0.85rem;background:var(--sky);color:#fff;border:none;border-radius:6px;cursor:pointer;width:100%;margin:1.25rem 0 0;transition:background 0.2s;}
+.calc-btn:hover{background:#38bdf8;}
+
+/* Results */
+.results{display:none;}
+.results.show{display:block;}
+.big-number{background:var(--surface);border:1px solid var(--border);border-left:3px solid var(--green);border-radius:0 10px 10px 0;padding:1.5rem;text-align:center;margin-bottom:1.25rem;}
+.big-number .label{font-size:0.85rem;color:var(--muted);margin-bottom:0.25rem;}
+.big-number .amount{font-family:'DM Mono',monospace;font-size:clamp(2rem,6vw,3rem);font-weight:500;color:var(--green);}
+.breakdown-panel{background:var(--surface);border:1px solid var(--border);border-radius:10px;padding:1.25rem;margin-bottom:1.25rem;}
+.breakdown-panel h3{font-family:'Bebas Neue',sans-serif;font-size:1rem;color:var(--text-bright);letter-spacing:0.05em;margin-bottom:0.75rem;}
+.bk-row{display:flex;justify-content:space-between;padding:0.45rem 0;border-bottom:1px solid var(--border);}
+.bk-row:last-child{border-bottom:none;}
+.bk-label{font-size:0.85rem;color:var(--text);}
+.bk-val{font-family:'DM Mono',monospace;font-weight:500;font-size:0.9rem;color:var(--text-bright);}
+.bk-row.sep{border-top:2px solid var(--border2);margin-top:0.25rem;padding-top:0.6rem;}
+.bk-row.total .bk-label{font-weight:700;color:var(--text-bright);}
+.bk-row.total .bk-val{color:var(--green);font-size:1rem;}
+.bk-row.deduction .bk-val{color:var(--red);}
+
+/* Cost context */
+.cost-box{background:var(--teal-dim);border:1px solid var(--teal);border-radius:10px;padding:1.25rem;margin-bottom:1.25rem;}
+.cost-box p{font-size:0.92rem;line-height:1.7;color:var(--text);}
+.cost-box strong{color:var(--teal);}
+
+/* Mistakes */
+.mistakes-panel{background:var(--surface);border:1px solid var(--border);border-radius:10px;padding:1.25rem;margin-bottom:1.25rem;}
+.mistakes-panel h3{font-family:'Bebas Neue',sans-serif;font-size:1rem;color:var(--text-bright);letter-spacing:0.05em;margin-bottom:0.75rem;}
+.mistake{margin-bottom:0.75rem;}
+.mistake:last-child{margin-bottom:0;}
+.mistake .mistake-title{font-weight:600;font-size:0.88rem;color:var(--gold);margin-bottom:0.15rem;}
+.mistake p{font-size:0.85rem;color:var(--text);line-height:1.6;}
+
+/* Disclaimer */
+.disclaimer{background:var(--surface2);border:1px solid var(--border);border-radius:8px;padding:1rem 1.25rem;margin-bottom:1.25rem;}
+.disclaimer p{font-size:0.78rem;color:var(--muted);line-height:1.6;font-style:italic;}
+
+/* Educational content */
+.edu-section{margin-top:2rem;}
+.edu-section h2{font-family:'Bebas Neue',sans-serif;font-size:1.4rem;color:var(--text-bright);letter-spacing:0.04em;margin-bottom:1rem;}
+.edu-section h3{font-family:'Bebas Neue',sans-serif;font-size:1.05rem;color:var(--text-bright);letter-spacing:0.04em;margin:1.25rem 0 0.5rem;}
+.edu-section p{font-size:0.92rem;line-height:1.7;margin-bottom:0.75rem;}
+.edu-section .formula{font-family:'DM Mono',monospace;font-size:0.88rem;color:var(--cyan);background:var(--surface2);padding:0.75rem 1rem;border-radius:6px;margin:0.75rem 0;border-left:3px solid var(--cyan);}
+.pln{font-family:'Crimson Pro',serif;font-style:italic;color:var(--cyan);background:rgba(34,211,238,0.08);border-left:3px solid var(--cyan);padding:0.85rem 1rem;border-radius:0 6px 6px 0;margin:1rem 0;font-size:0.92rem;line-height:1.6;}
+
+/* FAQ */
+.faq-section{margin-top:2rem;}
+.faq-section h2{font-family:'Bebas Neue',sans-serif;font-size:1.4rem;color:var(--text-bright);letter-spacing:0.04em;margin-bottom:1rem;}
+.faq-item{background:var(--surface);border:1px solid var(--border);border-radius:10px;margin-bottom:0.75rem;overflow:hidden;}
+.faq-q{font-family:'Outfit',sans-serif;font-weight:600;font-size:0.92rem;padding:1rem 1.25rem;cursor:pointer;display:flex;justify-content:space-between;align-items:center;color:var(--text-bright);transition:background 0.2s;}
+.faq-q:hover{background:var(--surface2);}
+.faq-q::after{content:'+';font-family:'DM Mono',monospace;font-size:1.2rem;color:var(--sky);transition:transform 0.2s;}
+.faq-item.open .faq-q::after{content:'-';}
+.faq-a{max-height:0;overflow:hidden;transition:max-height 0.3s ease,padding 0.3s ease;}
+.faq-item.open .faq-a{max-height:500px;padding:0 1.25rem 1rem;}
+.faq-a p{font-size:0.88rem;line-height:1.6;color:var(--text);}
+
+/* CTA */
+.cta-card{background:var(--surface);border:1px solid var(--border);border-left:3px solid var(--sky);border-radius:0 10px 10px 0;padding:1.5rem;margin-top:2rem;}
+.cta-card h3{font-family:'Bebas Neue',sans-serif;font-size:1.2rem;color:var(--sky);letter-spacing:0.04em;margin-bottom:0.5rem;}
+.cta-card p{font-family:'Crimson Pro',serif;font-style:italic;font-size:0.92rem;color:var(--text);line-height:1.5;margin-bottom:0.75rem;}
+.cta-link{font-weight:600;font-size:0.9rem;color:var(--sky);text-decoration:none;}
+.footer{margin-top:2.5rem;padding-top:1.25rem;border-top:1px solid var(--border);text-align:center;}
+.footer p{font-size:0.72rem;color:var(--muted);line-height:1.8;}
+.footer a{color:var(--muted);text-decoration:underline;}
+</style>
+<!-- GA4 Cookieless -->
+<script async src="https://www.googletagmanager.com/gtag/js?id=G-7GTLYCZMXN"></script>
+<script>window.dataLayer=window.dataLayer||[];function gtag(){dataLayer.push(arguments);}gtag('js',new Date());gtag('consent','default',{analytics_storage:'denied',ad_storage:'denied',ad_user_data:'denied',ad_personalization:'denied'});gtag('config','G-7GTLYCZMXN',{send_page_view:true,anonymize_ip:true});</script>
+</head>
+<body>
+<script src="/auth/mw-auth.js"></script>
+<div class="container">
+<nav class="nav-bar">
+  <a href="/" class="nav-brand">MATHS<span>WINS</span></a>
+  <a href="/everyday/" class="nav-link">Everyday Maths (Free) &rarr;</a>
+</nav>
+<div class="hero">
+  <div class="hero-eyebrow">Free Tool</div>
+  <h1>LIFE INSURANCE CALCULATOR</h1>
+  <div class="hero-sub">How much life insurance do you actually need? Most people guess. This calculates it properly &mdash; enter your numbers, get your answer in 60 seconds.</div>
+</div>
+
+<div class="panel">
+  <div class="panel-title">YOUR CIRCUMSTANCES</div>
+  <div class="input-grid">
+    <div class="fg">
+      <label>Annual household income (&pound;)</label>
+      <input type="number" id="income" value="" min="0" step="1000" placeholder="35000">
+    </div>
+    <div class="fg">
+      <label>Years of income to replace</label>
+      <input type="number" id="years" value="10" min="1" max="30" step="1">
+      <div class="hint">Until youngest child is independent</div>
+    </div>
+    <div class="fg">
+      <label>Outstanding mortgage (&pound;)</label>
+      <input type="number" id="mortgage" value="" min="0" step="1000" placeholder="200000">
+    </div>
+    <div class="fg">
+      <label>Other debts (&pound;)</label>
+      <input type="number" id="otherDebts" value="0" min="0" step="100">
+    </div>
+    <div class="fg">
+      <label>Funeral costs (&pound;)</label>
+      <input type="number" id="funeral" value="5000" min="0" step="500">
+      <div class="hint">Average UK funeral: &pound;4,000&ndash;&pound;6,000</div>
+    </div>
+    <div class="fg">
+      <label>Emergency fund for family (&pound;)</label>
+      <input type="number" id="emergency" value="10000" min="0" step="1000">
+    </div>
+    <div class="fg">
+      <label>University fund per child (&pound;)</label>
+      <input type="number" id="uniFund" value="27750" min="0" step="250">
+      <div class="hint">Current tuition fee &times; 3 years</div>
+    </div>
+    <div class="fg">
+      <label>Number of children</label>
+      <input type="number" id="children" value="1" min="0" max="10" step="1">
+    </div>
+    <div class="fg">
+      <label>Existing life cover (&pound;)</label>
+      <input type="number" id="existingCover" value="0" min="0" step="1000">
+      <div class="hint">Check work benefits &mdash; many employers provide 1&ndash;4&times; salary</div>
+    </div>
+    <div class="fg">
+      <label>Partner's annual income (&pound;)</label>
+      <input type="number" id="partnerIncome" value="0" min="0" step="1000">
+      <div class="hint">Income that continues if you die</div>
+    </div>
+  </div>
+  <button class="calc-btn" onclick="calculate()">Calculate Cover Needed</button>
+</div>
+
+<div class="results" id="results"></div>
+
+<!-- Educational content -->
+<div class="edu-section">
+  <h2>HOW THE MATHS WORKS</h2>
+
+  <h3>The Income Multiplier Approach</h3>
+  <p>The simplest rule of thumb is "10 times your salary." It is a decent starting point, but it ignores your actual circumstances. A single person with no mortgage needs far less than a parent of three with a large outstanding loan.</p>
+
+  <h3>The Needs-Based Calculation</h3>
+  <p>This calculator uses the needs-based method &mdash; the approach financial advisers actually use. It adds up everything your family would need if you died tomorrow, then subtracts what they already have.</p>
+  <div class="formula">Cover needed = (Income &times; Years) + Mortgage + Debts + Funeral + Emergency + (Uni &times; Children) &minus; Existing cover &minus; (Partner income &times; Years)</div>
+  <p>The result is the gap between what your family needs and what they currently have. That gap is your cover amount.</p>
+
+  <h3>Why We Round Up</h3>
+  <p>Insurance policies are sold in round numbers. If you need &pound;372,750, you would buy &pound;375,000. Rounding up to the nearest &pound;25,000 gives a small buffer for inflation and unexpected costs &mdash; and the premium difference is negligible.</p>
+
+  <h3>Term Length</h3>
+  <p>Match your term to the longest obligation. If your youngest child is 3 and you want them covered until 21, that is 18 years. If your mortgage runs for 22 more years, go with 25. The term should outlast your biggest financial commitment.</p>
+
+  <div class="pln">Life insurance is one of the few financial products where the maths is genuinely simple. The hard part is not the calculation &mdash; it is sitting down and doing it. You have now done it.</div>
+</div>
+
+<!-- FAQ -->
+<div style="text-align:center;margin:1.5rem 0;padding:1rem;background:rgba(45,212,160,0.06);border:1px solid rgba(45,212,160,0.2);border-radius:8px"><a href="https://www.gov.uk/bereavement-support-payment" target="_blank" rel="noopener noreferrer" style="color:#2dd4a0;font-weight:600;text-decoration:none;font-size:0.95rem">Bereavement benefits &rarr; GOV.UK</a><div style="font-size:0.7rem;color:#4a5568;margin-top:4px">Opens in a new tab — official UK Government website</div></div>
+<div class="faq-section">
+  <h2>FREQUENTLY ASKED QUESTIONS</h2>
+
+  <div class="faq-item">
+    <div class="faq-q" onclick="toggleFaq(this)">How much life insurance do I actually need?</div>
+    <div class="faq-a"><p>It depends on your debts, income, dependents, and existing cover. The "10 times salary" rule is a rough guide, but this calculator gives you a personalised figure based on your real numbers. Most families in the UK need between &pound;200,000 and &pound;500,000 of cover.</p></div>
+  </div>
+
+  <div class="faq-item">
+    <div class="faq-q" onclick="toggleFaq(this)">What is the difference between term and whole-of-life insurance?</div>
+    <div class="faq-a"><p>Term insurance covers a fixed period (e.g. 20 years) and only pays out if you die during the term. Whole-of-life always pays out but costs 5&ndash;10 times more. For most people, term insurance matched to their mortgage or child-rearing years is far better value. You are insuring against dying too soon, not too late.</p></div>
+  </div>
+
+  <div class="faq-item">
+    <div class="faq-q" onclick="toggleFaq(this)">Do I need life insurance if I am single with no dependents?</div>
+    <div class="faq-a"><p>Probably not. Without dependents, nobody suffers financially if you die. You might want a small policy for funeral costs and any debts. However, if you plan to have a family, locking in a low premium while young and healthy can save you money long-term.</p></div>
+  </div>
+
+  <div class="faq-item">
+    <div class="faq-q" onclick="toggleFaq(this)">Is employer death-in-service benefit enough?</div>
+    <div class="faq-a"><p>It is a good start &mdash; typically 1&ndash;4 times your salary &mdash; but it ends the moment you leave the company. Redundancy, career change, or starting a business means losing that cover, often at an age when new policies are more expensive. A personal policy stays with you regardless.</p></div>
+  </div>
+
+  <div class="faq-item">
+    <div class="faq-q" onclick="toggleFaq(this)">When should I review my life insurance?</div>
+    <div class="faq-a"><p>Whenever your circumstances change: new mortgage, new baby, pay rise, divorce, debt paid off, partner stopping work. At a minimum, review every 3&ndash;5 years. A policy that was right five years ago could easily be &pound;100,000 too low or too high today.</p></div>
+  </div>
+</div>
+
+<!-- CTA -->
+<div class="cta-card">
+  <h3>Want to Understand the Maths Behind Your Money?</h3>
+  <p>This calculator is part of our free Everyday Maths collection &mdash; practical financial literacy with no sign-up required.</p>
+  <a href="/everyday/" class="cta-link">Explore Everyday Maths &rarr;</a>
+</div>
+
+<div class="footer">
+  <p>&copy; 2025&ndash;2026 MathsWins &middot; <a href="/terms/">Terms of Use</a> &middot; <a href="mailto:contact@mathswins.co.uk">Contact</a></p>
+  <p>Educational content only. We do not sell insurance or receive commission.</p>
+</div>
+</div>
+
+<script>
+function fmt(n) {
+  return '\u00A3' + n.toLocaleString('en-GB', { minimumFractionDigits: 0, maximumFractionDigits: 0 });
+}
+
+function roundUpTo(n, step) {
+  return Math.ceil(n / step) * step;
+}
+
+function calculate() {
+  const income = parseFloat(document.getElementById('income').value) || 0;
+  const years = parseInt(document.getElementById('years').value) || 10;
+  const mortgage = parseFloat(document.getElementById('mortgage').value) || 0;
+  const otherDebts = parseFloat(document.getElementById('otherDebts').value) || 0;
+  const funeral = parseFloat(document.getElementById('funeral').value) || 0;
+  const emergency = parseFloat(document.getElementById('emergency').value) || 0;
+  const uniFund = parseFloat(document.getElementById('uniFund').value) || 0;
+  const children = parseInt(document.getElementById('children').value) || 0;
+  const existingCover = parseFloat(document.getElementById('existingCover').value) || 0;
+  const partnerIncome = parseFloat(document.getElementById('partnerIncome').value) || 0;
+
+  const incomeReplacement = income * years;
+  const uniTotal = uniFund * children;
+  const partnerContribution = partnerIncome * years;
+
+  const totalNeed = incomeReplacement + mortgage + otherDebts + funeral + emergency + uniTotal;
+  const totalDeductions = existingCover + partnerContribution;
+  const rawCover = Math.max(0, totalNeed - totalDeductions);
+  const roundedCover = roundUpTo(rawCover, 25000);
+
+  // Estimate monthly cost (rough guide for a healthy 35-year-old, 20-year term)
+  // Approximately 4-7p per 1000 cover per month
+  const costLow = Math.round(roundedCover / 1000 * 0.04);
+  const costHigh = Math.round(roundedCover / 1000 * 0.067);
+
+  let html = '';
+
+  // Big number
+  html += `<div class="big-number">
+    <div class="label">Recommended cover</div>
+    <div class="amount">${fmt(roundedCover)}</div>
+  </div>`;
+
+  // Breakdown
+  html += `<div class="breakdown-panel"><h3>BREAKDOWN</h3>`;
+  html += `<div class="bk-row"><span class="bk-label">Income replacement (${years} year${years !== 1 ? 's' : ''})</span><span class="bk-val">${fmt(incomeReplacement)}</span></div>`;
+  html += `<div class="bk-row"><span class="bk-label">Outstanding mortgage</span><span class="bk-val">${fmt(mortgage)}</span></div>`;
+  html += `<div class="bk-row"><span class="bk-label">Other debts</span><span class="bk-val">${fmt(otherDebts)}</span></div>`;
+  html += `<div class="bk-row"><span class="bk-label">Funeral costs</span><span class="bk-val">${fmt(funeral)}</span></div>`;
+  html += `<div class="bk-row"><span class="bk-label">Emergency fund</span><span class="bk-val">${fmt(emergency)}</span></div>`;
+  html += `<div class="bk-row"><span class="bk-label">University fund (${children} child${children !== 1 ? 'ren' : ''})</span><span class="bk-val">${fmt(uniTotal)}</span></div>`;
+  html += `<div class="bk-row sep"><span class="bk-label" style="font-weight:600;">Total need</span><span class="bk-val">${fmt(totalNeed)}</span></div>`;
+
+  if (existingCover > 0) {
+    html += `<div class="bk-row deduction"><span class="bk-label">Less: existing cover</span><span class="bk-val">-${fmt(existingCover)}</span></div>`;
+  }
+  if (partnerContribution > 0) {
+    html += `<div class="bk-row deduction"><span class="bk-label">Less: partner's income (${years}yr)</span><span class="bk-val">-${fmt(partnerContribution)}</span></div>`;
+  }
+
+  html += `<div class="bk-row sep total"><span class="bk-label">COVER NEEDED</span><span class="bk-val">${fmt(rawCover)}</span></div>`;
+  if (roundedCover !== rawCover) {
+    html += `<div class="bk-row total"><span class="bk-label">Rounded up</span><span class="bk-val">${fmt(roundedCover)}</span></div>`;
+  }
+  html += `</div>`;
+
+  // Cost context
+  if (roundedCover > 0) {
+    html += `<div class="cost-box"><p>Term life insurance for a healthy 35-year-old for <strong>${fmt(roundedCover)}</strong> over 20 years typically costs <strong>&pound;${costLow}&ndash;&pound;${costHigh}/month</strong>. That is less than a Netflix subscription to protect your family.</p></div>`;
+  }
+
+  // Common mistakes
+  html += `<div class="mistakes-panel"><h3>COMMON MISTAKES</h3>`;
+  html += `<div class="mistake"><div class="mistake-title">Only insuring the working parent</div><p>If the non-working parent dies, childcare costs are huge. A full-time nanny costs &pound;25,000&ndash;&pound;35,000 per year. Both parents need cover.</p></div>`;
+  html += `<div class="mistake"><div class="mistake-title">Relying on employer cover</div><p>Death-in-service benefit ends when you leave the job. If you are made redundant at 50, getting new cover with a decade of extra health history will cost far more &mdash; or may not be available at all.</p></div>`;
+  html += `<div class="mistake"><div class="mistake-title">Not reviewing when circumstances change</div><p>New mortgage, new baby, pay rise &mdash; all change the number. A policy taken out five years ago may be &pound;100,000 too low today.</p></div>`;
+  html += `<div class="mistake"><div class="mistake-title">Choosing whole-of-life instead of term</div><p>Term insurance is 5&ndash;10 times cheaper for the same cover amount. Unless you have a specific estate planning reason, term is almost always the right choice.</p></div>`;
+  html += `</div>`;
+
+  // Disclaimer
+  html += `<div class="disclaimer"><p>This calculator provides a general estimate. We do not sell insurance or receive commission. For personalised advice, speak to an independent financial adviser.</p></div>`;
+
+  const resultsEl = document.getElementById('results');
+  resultsEl.innerHTML = html;
+  resultsEl.classList.add('show');
+  resultsEl.scrollIntoView({ behavior: 'smooth', block: 'start' });
+
+  // GA4 event
+  if (typeof gtag === 'function') {
+    gtag('event', 'calculate_life_insurance', {
+      cover_needed: roundedCover,
+      income: income,
+      children: children
+    });
+  }
+}
+
+function toggleFaq(el) {
+  const item = el.parentElement;
+  item.classList.toggle('open');
+}
+</script>
+<!-- Cookie Consent Banner -->
+<div id="cookieConsent" style="display:none;position:fixed;bottom:0;left:0;right:0;background:#0c1628;border-top:1px solid #14263d;padding:14px 24px;z-index:99999;font-family:'Outfit',system-ui,sans-serif;font-size:13px;color:#94a3b8;display:none;align-items:center;justify-content:center;gap:16px;flex-wrap:wrap">
+<span>We use cookies for analytics to improve your experience. No personal data is sold or shared.</span>
+<button onclick="acceptCookies()" style="background:#d4a847;color:#050709;border:none;padding:8px 20px;border-radius:4px;font-weight:700;font-size:13px;cursor:pointer;font-family:inherit">Accept</button>
+<button onclick="declineCookies()" style="background:transparent;color:#64748b;border:1px solid #14263d;padding:8px 20px;border-radius:4px;font-size:13px;cursor:pointer;font-family:inherit">Decline</button>
+</div>
+<script>
+function acceptCookies(){localStorage.setItem('mw_cookies','accepted');gtag('consent','update',{analytics_storage:'granted'});document.getElementById('cookieConsent').style.display='none';}
+function declineCookies(){localStorage.setItem('mw_cookies','declined');document.getElementById('cookieConsent').style.display='none';}
+(function(){var c=localStorage.getItem('mw_cookies');if(c==='accepted'){gtag('consent','update',{analytics_storage:'granted'});}else if(!c){document.getElementById('cookieConsent').style.display='flex';}})();
+</script>
+</body>
+</html>

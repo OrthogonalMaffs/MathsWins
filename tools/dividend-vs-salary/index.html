@@ -1,0 +1,820 @@
+<!DOCTYPE html>
+<html lang="en-GB">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Dividend vs Salary Calculator UK — Optimal Director Pay | MathsWins</title>
+<meta name="description" content="Find the most tax-efficient way to pay yourself from your limited company. Compare salary only, dividends only, and the optimal split — see exactly how much you save.">
+<meta property="og:title" content="Dividend vs Salary Calculator UK — Optimal Director Pay | MathsWins">
+<meta property="og:description" content="Find the most tax-efficient way to pay yourself from your limited company. Compare salary only, dividends only, and the optimal split.">
+<meta property="og:url" content="https://mathswins.co.uk/tools/dividend-vs-salary/">
+<meta property="og:image" content="https://mathswins.co.uk/assets/og-image.png">
+<meta property="og:type" content="website">
+<meta property="og:site_name" content="MathsWins">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:title" content="Dividend vs Salary Calculator UK — Optimal Director Pay | MathsWins">
+<meta name="twitter:description" content="Find the most tax-efficient way to pay yourself from your limited company. Compare salary only, dividends only, and the optimal split.">
+<meta name="twitter:image" content="https://mathswins.co.uk/assets/og-image.png">
+<link rel="canonical" href="https://mathswins.co.uk/tools/dividend-vs-salary/">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Crimson+Pro:ital,wght@0,400;1,400&family=DM+Mono:wght@400;500&family=Outfit:wght@300;400;600;700&display=swap" rel="stylesheet">
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "WebApplication",
+  "name": "Dividend vs Salary Calculator UK",
+  "url": "https://mathswins.co.uk/tools/dividend-vs-salary/",
+  "description": "Find the most tax-efficient way to pay yourself from your limited company. Compare salary only, dividends only, and the optimal split — see exactly how much you save.",
+  "applicationCategory": "FinanceApplication",
+  "operatingSystem": "Any",
+  "offers": {
+    "@type": "Offer",
+    "price": "0",
+    "priceCurrency": "GBP"
+  },
+  "publisher": {
+    "@type": "Organization",
+    "name": "MathsWins",
+    "url": "https://mathswins.co.uk"
+  }
+}
+</script>
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "FAQPage",
+  "mainEntity": [
+    {
+      "@type": "Question",
+      "name": "What's the most tax-efficient salary for a director?",
+      "acceptedAnswer": {
+        "@type": "Answer",
+        "text": "Usually £12,570 per year (the personal allowance). This uses your tax-free allowance, avoids employee NI, and reduces corporation tax."
+      }
+    },
+    {
+      "@type": "Question",
+      "name": "Why take dividends instead of salary?",
+      "acceptedAnswer": {
+        "@type": "Answer",
+        "text": "Dividend tax rates (8.75% basic) are much lower than income tax + NI (20% + 8% = 28%). The trade-off: dividends don't count toward pension or mortgage applications as reliably."
+      }
+    },
+    {
+      "@type": "Question",
+      "name": "Do I still pay tax on dividends?",
+      "acceptedAnswer": {
+        "@type": "Answer",
+        "text": "Yes, but at lower rates. The first £1,000 is tax-free (dividend allowance). Then 8.75% basic rate, 33.75% higher rate, 39.35% additional rate. Much less than salary."
+      }
+    },
+    {
+      "@type": "Question",
+      "name": "What about corporation tax?",
+      "acceptedAnswer": {
+        "@type": "Answer",
+        "text": "Salary is a deductible expense, so it reduces your corp tax bill. Dividends are paid from post-tax profits. The optimal split balances both."
+      }
+    },
+    {
+      "@type": "Question",
+      "name": "How does this affect my mortgage application?",
+      "acceptedAnswer": {
+        "@type": "Answer",
+        "text": "Some lenders accept salary + dividends, others prefer salary only. If you're planning a mortgage, discuss with your broker before changing your pay structure."
+      }
+    },
+    {
+      "@type": "Question",
+      "name": "Is this legal?",
+      "acceptedAnswer": {
+        "@type": "Answer",
+        "text": "Completely. Paying yourself a mix of salary and dividends is standard practice for hundreds of thousands of UK limited company directors. It's tax-efficient, not tax avoidance."
+      }
+    }
+  ]
+}
+</script>
+<style>
+:root{--bg:#050709;--surface:#0a0d14;--surface2:#0f1319;--border:#161c28;--border2:#1e2638;--sky:#0ea5e9;--sky-dim:rgba(14,165,233,0.10);--green:#2dd4a0;--green-dim:rgba(45,212,160,0.10);--red:#ef5350;--red-dim:rgba(239,83,80,0.10);--gold:#d4a847;--gold-dim:rgba(212,168,71,0.10);--cyan:#22d3ee;--teal:#0d9488;--teal-dim:rgba(13,148,136,0.10);--text:#c8cdd8;--text-bright:#e8ecf4;--muted:#4a5568;}
+*{margin:0;padding:0;box-sizing:border-box;}
+body{font-family:'Outfit',sans-serif;background:var(--bg);color:var(--text);min-height:100vh;line-height:1.5;}
+.container{max-width:960px;margin:0 auto;padding:2rem 1.25rem 4rem;}
+.nav-bar{display:flex;align-items:center;justify-content:space-between;padding:1rem 0;border-bottom:1px solid var(--border);margin-bottom:2rem;}
+.nav-brand{font-family:'Bebas Neue',sans-serif;font-size:1.4rem;color:var(--gold);text-decoration:none;letter-spacing:0.06em;}
+.nav-brand span{color:var(--text-bright);}
+.nav-link{font-size:0.85rem;font-weight:600;color:var(--sky);text-decoration:none;padding:0.4rem 1rem;border:1px solid var(--sky);border-radius:4px;transition:background 0.2s,color 0.2s;}
+.nav-link:hover{background:var(--sky);color:var(--bg);}
+.hero{text-align:center;margin-bottom:2rem;}
+.hero-eyebrow{font-size:0.75rem;font-weight:600;text-transform:uppercase;letter-spacing:0.15em;color:var(--sky);margin-bottom:0.5rem;}
+.hero h1{font-family:'Bebas Neue',sans-serif;font-size:clamp(1.8rem,5vw,2.8rem);color:var(--text-bright);letter-spacing:0.04em;line-height:1.1;margin-bottom:0.75rem;}
+.hero-sub{font-family:'Crimson Pro',serif;font-style:italic;font-size:1.05rem;color:var(--cyan);max-width:620px;margin:0 auto;}
+.panel{background:var(--surface);border:1px solid var(--border);border-radius:10px;padding:1.5rem;margin-bottom:1.25rem;}
+.panel-title{font-family:'Bebas Neue',sans-serif;font-size:1.1rem;color:var(--text-bright);letter-spacing:0.05em;margin-bottom:1rem;}
+.input-grid{display:grid;grid-template-columns:1fr 1fr;gap:1rem;}
+@media(max-width:600px){.input-grid{grid-template-columns:1fr;}}
+.fg{display:flex;flex-direction:column;gap:0.3rem;}
+.fg label{font-size:0.72rem;font-weight:600;text-transform:uppercase;letter-spacing:0.06em;color:var(--muted);}
+.fg input,.fg select{font-family:'DM Mono',monospace;font-size:1rem;padding:0.6rem 0.8rem;background:var(--surface2);border:1px solid var(--border2);border-radius:6px;color:var(--text-bright);outline:none;}
+.fg input:focus,.fg select:focus{border-color:var(--sky);}
+.fg .hint{font-family:'Crimson Pro',serif;font-style:italic;font-size:0.78rem;color:var(--muted);}
+.checkbox-row{display:flex;align-items:center;gap:0.6rem;margin-top:0.5rem;}
+.checkbox-row input[type="checkbox"]{accent-color:var(--gold);width:16px;height:16px;cursor:pointer;}
+.checkbox-row label{font-size:0.85rem;color:var(--text);cursor:pointer;}
+.calc-btn{font-family:'Outfit',sans-serif;font-weight:700;font-size:1rem;padding:0.85rem;background:var(--sky);color:#fff;border:none;border-radius:6px;cursor:pointer;width:100%;margin:1.25rem 0 0;transition:background 0.2s;}
+.calc-btn:hover{background:#38bdf8;}
+.results{display:none;}
+.results.show{display:block;}
+
+/* Scenario cards */
+.scenario-cards{display:grid;grid-template-columns:1fr 1fr 1fr;gap:1rem;margin-bottom:1.5rem;}
+@media(max-width:800px){.scenario-cards{grid-template-columns:1fr;}}
+.scenario-card{background:var(--surface);border:1px solid var(--border);border-radius:10px;padding:1.25rem;position:relative;}
+.scenario-card.all-salary{border-left:3px solid var(--red);border-top:3px solid var(--red);}
+.scenario-card.optimal{border:2px solid var(--gold);box-shadow:0 0 20px rgba(212,168,71,0.12);}
+.scenario-card.all-dividends{border-left:3px solid var(--sky);border-top:3px solid var(--sky);}
+.sc-badge{position:absolute;top:-1px;right:12px;font-family:'Outfit',sans-serif;font-weight:700;font-size:0.65rem;text-transform:uppercase;letter-spacing:0.08em;padding:0.25rem 0.6rem;border-radius:0 0 6px 6px;}
+.scenario-card.all-salary .sc-badge{background:var(--red-dim);color:var(--red);}
+.scenario-card.optimal .sc-badge{background:var(--gold-dim);color:var(--gold);}
+.scenario-card.all-dividends .sc-badge{background:var(--sky-dim);color:var(--sky);}
+.sc-title{font-family:'Bebas Neue',sans-serif;font-size:1rem;letter-spacing:0.05em;margin-bottom:0.75rem;}
+.scenario-card.all-salary .sc-title{color:var(--red);}
+.scenario-card.optimal .sc-title{color:var(--gold);}
+.scenario-card.all-dividends .sc-title{color:var(--sky);}
+.sc-row{display:flex;justify-content:space-between;padding:0.3rem 0;border-bottom:1px solid var(--border);}
+.sc-row:last-child{border-bottom:none;}
+.sc-row.sc-total{border-top:2px solid var(--border2);padding-top:0.5rem;margin-top:0.25rem;}
+.sc-label{font-size:0.78rem;}
+.sc-val{font-family:'DM Mono',monospace;font-weight:500;font-size:0.85rem;}
+.sc-val.bright{color:var(--text-bright);}
+.sc-val.green{color:var(--green);}
+.sc-val.red{color:var(--red);}
+.sc-val.gold{color:var(--gold);}
+.sc-val.sky{color:var(--sky);}
+
+/* Saving callout */
+.saving-box{background:var(--gold-dim);border:1px solid var(--gold);border-radius:10px;padding:1.25rem;text-align:center;margin-top:1rem;}
+.saving-box .big{font-family:'DM Mono',monospace;font-size:1.6rem;font-weight:500;color:var(--gold);}
+.saving-box .sub{font-size:0.85rem;color:var(--gold);margin-top:0.25rem;}
+
+/* Explanation box */
+.explain-box{background:var(--surface);border:1px solid var(--border);border-left:3px solid var(--gold);border-radius:0 10px 10px 0;padding:1.25rem;margin-bottom:1.5rem;}
+.explain-box h3{font-family:'Bebas Neue',sans-serif;font-size:1rem;color:var(--gold);letter-spacing:0.04em;margin-bottom:0.75rem;}
+.explain-box ul{list-style:none;padding:0;}
+.explain-box li{font-size:0.88rem;line-height:1.7;padding:0.2rem 0;padding-left:1.2rem;position:relative;}
+.explain-box li::before{content:'\2713';position:absolute;left:0;color:var(--gold);font-weight:700;}
+
+/* Slider section */
+.slider-section{margin-bottom:1.5rem;}
+.slider-section h3{font-family:'Bebas Neue',sans-serif;font-size:1rem;color:var(--text-bright);letter-spacing:0.04em;margin-bottom:0.75rem;}
+.slider-wrap{display:flex;align-items:center;gap:1rem;margin-bottom:0.75rem;}
+.slider-wrap input[type="range"]{flex:1;accent-color:var(--sky);height:6px;cursor:pointer;}
+.slider-val{font-family:'DM Mono',monospace;font-size:1rem;color:var(--text-bright);min-width:80px;text-align:right;}
+.slider-chart{background:var(--surface);border:1px solid var(--border);border-radius:10px;padding:1.25rem;position:relative;height:220px;}
+.slider-chart canvas{width:100%!important;height:100%!important;}
+.slider-stats{display:grid;grid-template-columns:1fr 1fr 1fr;gap:1rem;margin-top:0.75rem;}
+@media(max-width:600px){.slider-stats{grid-template-columns:1fr;}}
+.slider-stat{text-align:center;}
+.slider-stat .stat-label{font-size:0.7rem;font-weight:600;text-transform:uppercase;letter-spacing:0.06em;color:var(--muted);}
+.slider-stat .stat-val{font-family:'DM Mono',monospace;font-size:1.1rem;font-weight:500;color:var(--text-bright);margin-top:0.15rem;}
+
+/* Educational content */
+.edu-section{margin-top:2rem;}
+.edu-section h2{font-family:'Bebas Neue',sans-serif;font-size:1.4rem;color:var(--text-bright);letter-spacing:0.04em;margin-bottom:1rem;}
+.edu-section h3{font-family:'Bebas Neue',sans-serif;font-size:1.05rem;color:var(--text-bright);letter-spacing:0.04em;margin:1.25rem 0 0.5rem;}
+.edu-section p{font-size:0.92rem;line-height:1.7;margin-bottom:0.75rem;}
+.edu-section .formula{font-family:'DM Mono',monospace;font-size:0.88rem;color:var(--cyan);background:var(--surface2);padding:0.75rem 1rem;border-radius:6px;margin:0.75rem 0;border-left:3px solid var(--cyan);}
+.pln{font-family:'Crimson Pro',serif;font-style:italic;color:var(--cyan);background:rgba(34,211,238,0.08);border-left:3px solid var(--cyan);padding:0.85rem 1rem;border-radius:0 6px 6px 0;margin:1rem 0;font-size:0.92rem;line-height:1.6;}
+
+/* FAQ */
+.faq-section{margin-top:2rem;}
+.faq-section h2{font-family:'Bebas Neue',sans-serif;font-size:1.4rem;color:var(--text-bright);letter-spacing:0.04em;margin-bottom:1rem;}
+.faq-item{background:var(--surface);border:1px solid var(--border);border-radius:10px;margin-bottom:0.75rem;overflow:hidden;}
+.faq-q{font-family:'Outfit',sans-serif;font-weight:600;font-size:0.92rem;padding:1rem 1.25rem;cursor:pointer;display:flex;justify-content:space-between;align-items:center;color:var(--text-bright);transition:background 0.2s;}
+.faq-q:hover{background:var(--surface2);}
+.faq-q::after{content:'+';font-family:'DM Mono',monospace;font-size:1.2rem;color:var(--sky);transition:transform 0.2s;}
+.faq-item.open .faq-q::after{content:'-';}
+.faq-a{max-height:0;overflow:hidden;transition:max-height 0.3s ease,padding 0.3s ease;}
+.faq-item.open .faq-a{max-height:300px;padding:0 1.25rem 1rem;}
+.faq-a p{font-size:0.88rem;line-height:1.6;color:var(--text);}
+
+/* CTA */
+.cta-card{background:var(--surface);border:1px solid var(--border);border-left:3px solid var(--sky);border-radius:0 10px 10px 0;padding:1.5rem;margin-top:2rem;}
+.cta-card h3{font-family:'Bebas Neue',sans-serif;font-size:1.2rem;color:var(--sky);letter-spacing:0.04em;margin-bottom:0.5rem;}
+.cta-card p{font-family:'Crimson Pro',serif;font-style:italic;font-size:0.92rem;color:var(--text);line-height:1.5;margin-bottom:0.75rem;}
+.cta-link{font-weight:600;font-size:0.9rem;color:var(--sky);text-decoration:none;}
+.footer{margin-top:2.5rem;padding-top:1.25rem;border-top:1px solid var(--border);text-align:center;}
+.footer p{font-size:0.72rem;color:var(--muted);line-height:1.8;}
+.footer a{color:var(--muted);text-decoration:underline;}
+</style>
+<!-- GA4 Cookieless -->
+<script async src="https://www.googletagmanager.com/gtag/js?id=G-7GTLYCZMXN"></script>
+<script>window.dataLayer=window.dataLayer||[];function gtag(){dataLayer.push(arguments);}gtag('js',new Date());gtag('consent','default',{analytics_storage:'denied',ad_storage:'denied',ad_user_data:'denied',ad_personalization:'denied'});gtag('config','G-7GTLYCZMXN',{send_page_view:true,anonymize_ip:true});</script>
+</head>
+<body>
+<script src="/auth/mw-auth.js"></script>
+<div class="container">
+<nav class="nav-bar">
+  <a href="/" class="nav-brand">MATHS<span>WINS</span></a>
+  <a href="/everyday/tax/" class="nav-link">UK Tax Maths Course (Free) &rarr;</a>
+</nav>
+<div class="hero">
+  <div class="hero-eyebrow">Free Tool</div>
+  <h1>DIVIDEND VS SALARY CALCULATOR</h1>
+  <div class="hero-sub">For limited company directors: find the most tax-efficient split between salary and dividends. See exactly how much you save &mdash; with the maths behind every number.</div>
+</div>
+
+<div class="panel">
+  <div class="panel-title">YOUR COMPANY</div>
+  <div class="input-grid">
+    <div class="fg">
+      <label>Company profit (before salary)</label>
+      <input type="number" id="companyProfit" placeholder="80000" min="0" step="1000">
+      <div class="hint">Total profit before you take anything out</div>
+    </div>
+    <div class="fg">
+      <label>Other personal income</label>
+      <input type="number" id="otherIncome" value="0" min="0" step="100">
+      <div class="hint">Employment income, rental income, etc.</div>
+    </div>
+    <div class="fg">
+      <label>Student loan</label>
+      <select id="studentLoan">
+        <option value="none">None</option>
+        <option value="plan1">Plan 1</option>
+        <option value="plan2">Plan 2</option>
+        <option value="plan4">Plan 4</option>
+        <option value="plan5">Plan 5</option>
+        <option value="pg">Postgraduate</option>
+      </select>
+    </div>
+    <div class="fg">
+      <div class="checkbox-row" style="margin-top:1.4rem;">
+        <input type="checkbox" id="isScotland">
+        <label for="isScotland">Scotland?</label>
+      </div>
+    </div>
+  </div>
+  <button class="calc-btn" onclick="optimise()">Optimise</button>
+</div>
+
+<div class="results" id="results"></div>
+
+<!-- How the maths works -->
+<div class="edu-section">
+  <h2>HOW THE MATHS WORKS</h2>
+
+  <h3>The Core Trade-off</h3>
+  <p>As a limited company director, you have two ways to extract money: salary and dividends. Each is taxed differently, and the optimal strategy exploits the gap between them.</p>
+
+  <h3>Salary: Deductible but Expensive</h3>
+  <p>Salary is a company expense &mdash; it reduces your corporation tax bill. But it attracts income tax (20&ndash;45%) and National Insurance (both employee and employer). The combined marginal rate on salary above the personal allowance can reach 33.25% or more before you even count corp tax savings.</p>
+  <div class="formula">Salary cost = Income tax + Employee NI + Employer NI &minus; Corp tax saved</div>
+
+  <h3>Dividends: Cheaper but Not Deductible</h3>
+  <p>Dividends are paid from post-tax profits, so the company pays corporation tax first. But the personal tax rate on dividends is much lower: 8.75% basic vs 20% income tax, and no National Insurance at all.</p>
+  <div class="formula">Dividend cost = Corporation tax (19&ndash;25%) + Dividend tax (8.75&ndash;39.35%)</div>
+
+  <h3>The Sweet Spot</h3>
+  <p>Take exactly &pound;12,570 as salary (the personal allowance). You pay zero income tax on it, zero employee NI (below the primary threshold), and the company saves 19&ndash;25% in corp tax because salary is deductible. Everything above that comes out as dividends at 8.75% basic rate.</p>
+  <p>This is why hundreds of thousands of UK directors pay themselves this way. It is not a loophole &mdash; it is how the tax system is designed.</p>
+
+  <div class="pln">The difference between all-salary and the optimal split typically saves a director between &pound;5,000 and &pound;15,000 per year. On &pound;80,000 profit, the saving is usually around &pound;7,000 &mdash; money that stays in your pocket instead of going to HMRC.</div>
+</div>
+
+<!-- FAQ -->
+<div class="faq-section">
+  <h2>FREQUENTLY ASKED QUESTIONS</h2>
+  <div class="faq-item">
+    <div class="faq-q" onclick="toggleFaq(this)">What's the most tax-efficient salary for a director?</div>
+    <div class="faq-a"><p>Usually &pound;12,570 per year (the personal allowance). This uses your tax-free allowance, avoids employee NI, and reduces corporation tax.</p></div>
+  </div>
+  <div class="faq-item">
+    <div class="faq-q" onclick="toggleFaq(this)">Why take dividends instead of salary?</div>
+    <div class="faq-a"><p>Dividend tax rates (8.75% basic) are much lower than income tax + NI (20% + 8% = 28%). The trade-off: dividends don't count toward pension or mortgage applications as reliably.</p></div>
+  </div>
+  <div class="faq-item">
+    <div class="faq-q" onclick="toggleFaq(this)">Do I still pay tax on dividends?</div>
+    <div class="faq-a"><p>Yes, but at lower rates. The first &pound;1,000 is tax-free (dividend allowance). Then 8.75% basic rate, 33.75% higher rate, 39.35% additional rate. Much less than salary.</p></div>
+  </div>
+  <div class="faq-item">
+    <div class="faq-q" onclick="toggleFaq(this)">What about corporation tax?</div>
+    <div class="faq-a"><p>Salary is a deductible expense, so it reduces your corp tax bill. Dividends are paid from post-tax profits. The optimal split balances both.</p></div>
+  </div>
+  <div class="faq-item">
+    <div class="faq-q" onclick="toggleFaq(this)">How does this affect my mortgage application?</div>
+    <div class="faq-a"><p>Some lenders accept salary + dividends, others prefer salary only. If you're planning a mortgage, discuss with your broker before changing your pay structure.</p></div>
+  </div>
+  <div class="faq-item">
+    <div class="faq-q" onclick="toggleFaq(this)">Is this legal?</div>
+    <div class="faq-a"><p>Completely. Paying yourself a mix of salary and dividends is standard practice for hundreds of thousands of UK limited company directors. It's tax-efficient, not tax avoidance.</p></div>
+  </div>
+</div>
+
+<div class="cta-card">
+  <h3>UK TAX MATHS &mdash; FREE COURSE</h3>
+  <p>Understand marginal vs effective rates, the &pound;100k trap, Scotland comparison, deductions, and fiscal drag. With live calculators. Completely free.</p>
+  <a href="/everyday/tax/" class="cta-link">Start the free course &rarr;</a>
+</div>
+
+<div class="footer">
+  <p><a href="/">MathsWins</a> &middot; <a href="/tools/">Tools</a> &middot; <a href="/everyday/">Everyday Maths</a><br>&copy; 2026 MathsWins. Not financial advice.<br><a href="/restore/">Restore Access</a></p>
+</div>
+</div>
+
+<script>
+/* ===== UK 2025/26 Tax Constants ===== */
+const PERSONAL_ALLOWANCE = 12570;
+const PA_TAPER_START = 100000;
+const NI_PRIMARY_THRESHOLD = 12570;
+const NI_UPPER_LIMIT = 50270;
+const EMPLOYER_NI_THRESHOLD = 5000;
+const EMPLOYER_NI_RATE = 0.15;
+const DIVIDEND_ALLOWANCE = 500;
+const BASIC_BAND_END = 50270;
+const HIGHER_BAND_END = 125140;
+
+/* Scotland income tax bands 2025/26 */
+const SCOTLAND_BANDS = [
+  { from: 0,      to: 2306,   rate: 0.19 },   /* Starter */
+  { from: 2306,   to: 13991,  rate: 0.20 },   /* Basic */
+  { from: 13991,  to: 31092,  rate: 0.21 },   /* Intermediate */
+  { from: 31092,  to: 62430,  rate: 0.42 },   /* Higher */
+  { from: 62430,  to: 150000, rate: 0.45 },   /* Advanced */
+  { from: 150000, to: Infinity, rate: 0.48 }   /* Top */
+];
+
+/* rUK income tax bands 2025/26 */
+const RUK_BANDS = [
+  { from: 0,      to: 37700,  rate: 0.20 },
+  { from: 37700,  to: 125140, rate: 0.40 },
+  { from: 125140, to: Infinity, rate: 0.45 }
+];
+
+/* Student loan thresholds and rates 2025/26 */
+const STUDENT_LOANS = {
+  none:  { threshold: Infinity, rate: 0 },
+  plan1: { threshold: 24990, rate: 0.09 },
+  plan2: { threshold: 27295, rate: 0.09 },
+  plan4: { threshold: 31395, rate: 0.09 },
+  plan5: { threshold: 25000, rate: 0.09 },
+  pg:    { threshold: 21000, rate: 0.06 }
+};
+
+/* ===== Tax Calculation Functions ===== */
+
+function getPersonalAllowance(totalIncome) {
+  if (totalIncome <= PA_TAPER_START) return PERSONAL_ALLOWANCE;
+  const reduction = Math.floor((totalIncome - PA_TAPER_START) / 2);
+  return Math.max(0, PERSONAL_ALLOWANCE - reduction);
+}
+
+function calculateIncomeTax(taxableIncome, isScotland) {
+  if (taxableIncome <= 0) return 0;
+  const bands = isScotland ? SCOTLAND_BANDS : RUK_BANDS;
+  let tax = 0;
+  let remaining = taxableIncome;
+  for (const band of bands) {
+    if (remaining <= 0) break;
+    const width = band.to - band.from;
+    const inBand = Math.min(remaining, width);
+    tax += inBand * band.rate;
+    remaining -= inBand;
+  }
+  return tax;
+}
+
+function calculateIncomeTaxOnAmount(amount, existingIncome, isScotland) {
+  /* Tax on (existingIncome + amount) minus tax on (existingIncome) */
+  const totalIncome = existingIncome + amount;
+  const paTotal = getPersonalAllowance(totalIncome);
+  const paExisting = getPersonalAllowance(existingIncome);
+  const taxableTotal = Math.max(0, totalIncome - paTotal);
+  const taxableExisting = Math.max(0, existingIncome - paExisting);
+  return calculateIncomeTax(taxableTotal, isScotland) - calculateIncomeTax(taxableExisting, isScotland);
+}
+
+function calculateEmployeeNI(salary) {
+  if (salary <= NI_PRIMARY_THRESHOLD) return 0;
+  let ni = 0;
+  const basicNI = Math.min(salary, NI_UPPER_LIMIT) - NI_PRIMARY_THRESHOLD;
+  if (basicNI > 0) ni += basicNI * 0.08;
+  const upperNI = salary - NI_UPPER_LIMIT;
+  if (upperNI > 0) ni += upperNI * 0.02;
+  return ni;
+}
+
+function calculateEmployerNI(salary) {
+  if (salary <= EMPLOYER_NI_THRESHOLD) return 0;
+  return (salary - EMPLOYER_NI_THRESHOLD) * EMPLOYER_NI_RATE;
+}
+
+function calculateCorpTax(profit) {
+  if (profit <= 0) return 0;
+  if (profit <= 50000) return profit * 0.19;
+  if (profit >= 250000) return profit * 0.25;
+  /* Marginal relief: main rate minus relief */
+  const mainCharge = profit * 0.25;
+  const marginalRelief = (250000 - profit) * profit / 250000 * 3 / 200;
+  return mainCharge - marginalRelief;
+}
+
+function calculateDividendTax(dividends, otherTaxableIncome) {
+  if (dividends <= 0) return 0;
+  const taxableDividends = Math.max(0, dividends - DIVIDEND_ALLOWANCE);
+  if (taxableDividends <= 0) return 0;
+
+  /* Work out where dividends sit in bands. Dividends stack on top of other income. */
+  const basicBandRemaining = Math.max(0, BASIC_BAND_END - otherTaxableIncome);
+  const higherBandRemaining = Math.max(0, HIGHER_BAND_END - Math.max(otherTaxableIncome, BASIC_BAND_END));
+
+  let tax = 0;
+  let remaining = taxableDividends;
+
+  /* Basic rate: 8.75% */
+  const basicDiv = Math.min(remaining, basicBandRemaining);
+  tax += basicDiv * 0.0875;
+  remaining -= basicDiv;
+
+  /* Higher rate: 33.75% */
+  const higherDiv = Math.min(remaining, higherBandRemaining);
+  tax += higherDiv * 0.3375;
+  remaining -= higherDiv;
+
+  /* Additional rate: 39.35% */
+  tax += remaining * 0.3935;
+  return tax;
+}
+
+function calculateStudentLoan(grossIncome, plan) {
+  const loan = STUDENT_LOANS[plan];
+  if (!loan || grossIncome <= loan.threshold) return 0;
+  return (grossIncome - loan.threshold) * loan.rate;
+}
+
+/* ===== Scenario Builder ===== */
+
+function buildScenario(companyProfit, salary, otherIncome, studentLoan, isScotland) {
+  const employerNI = calculateEmployerNI(salary);
+  const totalSalaryCost = salary + employerNI;
+
+  /* Company side */
+  const profitAfterSalary = Math.max(0, companyProfit - totalSalaryCost);
+  const corpTax = calculateCorpTax(profitAfterSalary);
+  const availableDividends = Math.max(0, profitAfterSalary - corpTax);
+
+  /* Personal side — salary */
+  const salaryTax = calculateIncomeTaxOnAmount(salary, otherIncome, isScotland);
+  const employeeNI = calculateEmployeeNI(salary);
+
+  /* Personal side — dividends */
+  const totalNonDivIncome = salary + otherIncome;
+  const paNonDiv = getPersonalAllowance(totalNonDivIncome + availableDividends);
+  const taxableNonDiv = Math.max(0, totalNonDivIncome - paNonDiv);
+  const dividendTax = calculateDividendTax(availableDividends, taxableNonDiv);
+
+  /* Student loan on salary + dividends (combined gross income) */
+  const studentLoanAmount = calculateStudentLoan(salary + availableDividends + otherIncome, studentLoan)
+                          - calculateStudentLoan(otherIncome, studentLoan);
+
+  /* Totals */
+  const totalTax = employerNI + corpTax + salaryTax + employeeNI + dividendTax + studentLoanAmount;
+  const youKeep = companyProfit - totalTax;
+  const effectiveRate = companyProfit > 0 ? (totalTax / companyProfit) * 100 : 0;
+
+  return {
+    salary,
+    employerNI,
+    corpTax,
+    dividends: availableDividends,
+    salaryTax,
+    employeeNI,
+    dividendTax,
+    studentLoanAmount,
+    totalTax,
+    youKeep,
+    effectiveRate
+  };
+}
+
+/* ===== Main Optimise Function ===== */
+
+function optimise() {
+  const companyProfit = parseFloat(document.getElementById('companyProfit').value) || 0;
+  const otherIncome = parseFloat(document.getElementById('otherIncome').value) || 0;
+  const studentLoan = document.getElementById('studentLoan').value;
+  const isScotland = document.getElementById('isScotland').checked;
+
+  if (companyProfit <= 0) {
+    document.getElementById('results').classList.remove('show');
+    return;
+  }
+
+  /* Scenario 1: All salary */
+  const allSalary = buildScenario(companyProfit, companyProfit, otherIncome, studentLoan, isScotland);
+
+  /* Scenario 3: All dividends (£0 salary) */
+  const allDividends = buildScenario(companyProfit, 0, otherIncome, studentLoan, isScotland);
+
+  /* Scenario 2: Optimal — test salary from £0 to company profit in £10 steps */
+  let bestScenario = null;
+  let bestSalary = 0;
+  const step = 10;
+  for (let s = 0; s <= companyProfit; s += step) {
+    const scenario = buildScenario(companyProfit, s, otherIncome, studentLoan, isScotland);
+    if (!bestScenario || scenario.youKeep > bestScenario.youKeep) {
+      bestScenario = scenario;
+      bestSalary = s;
+    }
+  }
+  /* Fine-tune around the best in £1 steps */
+  const fineStart = Math.max(0, bestSalary - step);
+  const fineEnd = Math.min(companyProfit, bestSalary + step);
+  for (let s = fineStart; s <= fineEnd; s++) {
+    const scenario = buildScenario(companyProfit, s, otherIncome, studentLoan, isScotland);
+    if (scenario.youKeep > bestScenario.youKeep) {
+      bestScenario = scenario;
+      bestSalary = s;
+    }
+  }
+  const optimal = bestScenario;
+
+  const saving = optimal.youKeep - allSalary.youKeep;
+
+  /* Render */
+  const resultsEl = document.getElementById('results');
+  resultsEl.innerHTML = `
+    <div class="scenario-cards">
+      ${renderCard('ALL SALARY', 'all-salary', 'Worst', allSalary)}
+      ${renderCard('OPTIMAL SPLIT', 'optimal', 'Recommended', optimal)}
+      ${renderCard('ALL DIVIDENDS', 'all-dividends', 'Close', allDividends)}
+    </div>
+    ${saving > 0 ? `
+    <div class="explain-box">
+      <h3>WHY THE OPTIMAL SPLIT WORKS</h3>
+      <ul>
+        <li>Take &pound;${fmt(optimal.salary)} as salary &mdash; ${optimal.salary <= PERSONAL_ALLOWANCE ? 'within your personal allowance (&pound;0 income tax on salary)' : 'partially covered by your personal allowance'}</li>
+        <li>${optimal.salary <= NI_PRIMARY_THRESHOLD ? 'Below the NI primary threshold (&pound;0 employee NI)' : 'Employee NI applies above &pound;' + fmt(NI_PRIMARY_THRESHOLD)}</li>
+        <li>Salary reduces company profits by &pound;${fmt(optimal.salary)} (saving ${(calculateCorpTax(companyProfit) - optimal.corpTax > 0 ? '&pound;' + fmt(calculateCorpTax(companyProfit) - optimal.corpTax) : 'on')} corp tax)</li>
+        <li>The rest comes out as dividends at 8.75% basic rate (vs 20% income tax + 8% NI)</li>
+      </ul>
+    </div>` : ''}
+    <div class="slider-section" id="sliderSection">
+      <h3>WHAT IF YOU NEED MORE SALARY?</h3>
+      <div class="slider-wrap">
+        <span style="font-size:0.78rem;color:var(--muted);">&pound;0</span>
+        <input type="range" id="salarySlider" min="0" max="${companyProfit}" value="${Math.round(optimal.salary)}" step="100">
+        <span style="font-size:0.78rem;color:var(--muted);">&pound;${fmt(companyProfit)}</span>
+      </div>
+      <div class="slider-wrap" style="justify-content:center;">
+        <span style="font-size:0.78rem;color:var(--muted);margin-right:0.5rem;">Salary:</span>
+        <span class="slider-val" id="sliderVal">&pound;${fmt(Math.round(optimal.salary))}</span>
+      </div>
+      <div class="slider-stats" id="sliderStats"></div>
+      <div class="slider-chart"><canvas id="sliderCanvas"></canvas></div>
+    </div>
+  `;
+  resultsEl.classList.add('show');
+
+  /* Draw chart and set up slider */
+  drawSliderChart(companyProfit, otherIncome, studentLoan, isScotland);
+  updateSliderStats(optimal.salary, companyProfit, otherIncome, studentLoan, isScotland, optimal);
+
+  document.getElementById('salarySlider').addEventListener('input', function() {
+    const sal = parseFloat(this.value);
+    document.getElementById('sliderVal').textContent = '\u00A3' + fmt(sal);
+    updateSliderStats(sal, companyProfit, otherIncome, studentLoan, isScotland, optimal);
+    drawSliderMarker(sal, companyProfit);
+  });
+
+  /* Scroll to results */
+  resultsEl.scrollIntoView({ behavior: 'smooth', block: 'start' });
+
+  /* GA4 event */
+  if (typeof gtag === 'function') {
+    gtag('event', 'calculate', { event_category: 'dividend_vs_salary', company_profit: companyProfit });
+  }
+}
+
+function renderCard(title, cls, badge, data) {
+  const rows = [
+    ['Salary', fmt(data.salary), 'bright'],
+    ['Employer NI', fmt(data.employerNI), ''],
+    ['Corp tax', fmt(data.corpTax), ''],
+    ['Dividends', fmt(data.dividends), 'bright'],
+    ['Income tax (salary)', fmt(data.salaryTax), ''],
+    ['Employee NI', fmt(data.employeeNI), ''],
+    ['Dividend tax', fmt(data.dividendTax), ''],
+  ];
+  if (data.studentLoanAmount > 0) {
+    rows.push(['Student loan', fmt(data.studentLoanAmount), '']);
+  }
+
+  let html = `<div class="scenario-card ${cls}">`;
+  html += `<div class="sc-badge">${badge}</div>`;
+  html += `<div class="sc-title">${title}</div>`;
+  for (const [label, val, colorCls] of rows) {
+    html += `<div class="sc-row"><span class="sc-label">${label}</span><span class="sc-val ${colorCls}">&pound;${val}</span></div>`;
+  }
+  /* Totals */
+  html += `<div class="sc-row sc-total"><span class="sc-label"><strong>Total tax</strong></span><span class="sc-val red">&pound;${fmt(data.totalTax)}</span></div>`;
+  html += `<div class="sc-row"><span class="sc-label"><strong>You keep</strong></span><span class="sc-val green">&pound;${fmt(data.youKeep)}</span></div>`;
+  html += `<div class="sc-row"><span class="sc-label">Effective rate</span><span class="sc-val ${cls === 'optimal' ? 'gold' : ''}">${data.effectiveRate.toFixed(1)}%</span></div>`;
+
+  if (cls === 'optimal') {
+    const allSalaryKeep = buildScenario(
+      parseFloat(document.getElementById('companyProfit').value) || 0,
+      parseFloat(document.getElementById('companyProfit').value) || 0,
+      parseFloat(document.getElementById('otherIncome').value) || 0,
+      document.getElementById('studentLoan').value,
+      document.getElementById('isScotland').checked
+    ).youKeep;
+    const saving = data.youKeep - allSalaryKeep;
+    if (saving > 0) {
+      html += `<div class="saving-box"><div class="big">YOU SAVE: &pound;${fmt(saving)}</div><div class="sub">vs all-salary</div></div>`;
+    }
+  }
+  html += '</div>';
+  return html;
+}
+
+/* ===== Slider Chart (Canvas) ===== */
+
+let chartData = [];
+let chartCanvas, chartCtx;
+
+function drawSliderChart(companyProfit, otherIncome, studentLoan, isScotland) {
+  chartCanvas = document.getElementById('sliderCanvas');
+  if (!chartCanvas) return;
+  chartCtx = chartCanvas.getContext('2d');
+
+  /* Compute data points */
+  chartData = [];
+  const steps = Math.min(200, companyProfit);
+  const stepSize = companyProfit / steps;
+  for (let i = 0; i <= steps; i++) {
+    const sal = Math.round(i * stepSize);
+    const scenario = buildScenario(companyProfit, sal, otherIncome, studentLoan, isScotland);
+    chartData.push({ salary: sal, totalTax: scenario.totalTax, youKeep: scenario.youKeep });
+  }
+
+  drawChart(companyProfit);
+}
+
+function drawChart(companyProfit, markerSalary) {
+  if (!chartCtx || !chartCanvas) return;
+
+  const dpr = window.devicePixelRatio || 1;
+  const rect = chartCanvas.parentElement.getBoundingClientRect();
+  const w = rect.width - 32;
+  const h = rect.height - 32;
+  chartCanvas.width = w * dpr;
+  chartCanvas.height = h * dpr;
+  chartCanvas.style.width = w + 'px';
+  chartCanvas.style.height = h + 'px';
+  chartCtx.scale(dpr, dpr);
+
+  const pad = { top: 20, right: 15, bottom: 30, left: 55 };
+  const plotW = w - pad.left - pad.right;
+  const plotH = h - pad.top - pad.bottom;
+
+  /* Clear */
+  chartCtx.clearRect(0, 0, w, h);
+
+  if (chartData.length < 2) return;
+
+  const maxTax = Math.max(...chartData.map(d => d.totalTax));
+  const minTax = Math.min(...chartData.map(d => d.totalTax));
+  const taxRange = maxTax - minTax || 1;
+
+  /* Grid lines */
+  chartCtx.strokeStyle = '#161c28';
+  chartCtx.lineWidth = 1;
+  for (let i = 0; i <= 4; i++) {
+    const y = pad.top + (plotH / 4) * i;
+    chartCtx.beginPath();
+    chartCtx.moveTo(pad.left, y);
+    chartCtx.lineTo(pad.left + plotW, y);
+    chartCtx.stroke();
+
+    const val = maxTax - (taxRange / 4) * i;
+    chartCtx.fillStyle = '#4a5568';
+    chartCtx.font = '10px DM Mono, monospace';
+    chartCtx.textAlign = 'right';
+    chartCtx.fillText('\u00A3' + fmtShort(val), pad.left - 6, y + 3);
+  }
+
+  /* X axis labels */
+  chartCtx.fillStyle = '#4a5568';
+  chartCtx.font = '10px DM Mono, monospace';
+  chartCtx.textAlign = 'center';
+  for (let i = 0; i <= 4; i++) {
+    const x = pad.left + (plotW / 4) * i;
+    const sal = (companyProfit / 4) * i;
+    chartCtx.fillText('\u00A3' + fmtShort(sal), x, h - 5);
+  }
+
+  /* Total tax line */
+  chartCtx.strokeStyle = '#ef5350';
+  chartCtx.lineWidth = 2;
+  chartCtx.beginPath();
+  for (let i = 0; i < chartData.length; i++) {
+    const x = pad.left + (chartData[i].salary / companyProfit) * plotW;
+    const y = pad.top + (1 - (chartData[i].totalTax - minTax) / taxRange) * plotH;
+    if (i === 0) chartCtx.moveTo(x, y); else chartCtx.lineTo(x, y);
+  }
+  chartCtx.stroke();
+
+  /* Label */
+  chartCtx.fillStyle = '#ef5350';
+  chartCtx.font = '11px Outfit, sans-serif';
+  chartCtx.textAlign = 'left';
+  chartCtx.fillText('Total Tax', pad.left + 4, pad.top - 5);
+
+  /* Marker */
+  if (markerSalary !== undefined) {
+    const mx = pad.left + (markerSalary / companyProfit) * plotW;
+    chartCtx.strokeStyle = '#d4a847';
+    chartCtx.lineWidth = 1.5;
+    chartCtx.setLineDash([4, 3]);
+    chartCtx.beginPath();
+    chartCtx.moveTo(mx, pad.top);
+    chartCtx.lineTo(mx, pad.top + plotH);
+    chartCtx.stroke();
+    chartCtx.setLineDash([]);
+
+    /* Find closest data point */
+    let closest = chartData[0];
+    let closestDist = Infinity;
+    for (const d of chartData) {
+      const dist = Math.abs(d.salary - markerSalary);
+      if (dist < closestDist) { closestDist = dist; closest = d; }
+    }
+    const my = pad.top + (1 - (closest.totalTax - minTax) / taxRange) * plotH;
+    chartCtx.fillStyle = '#d4a847';
+    chartCtx.beginPath();
+    chartCtx.arc(mx, my, 4, 0, Math.PI * 2);
+    chartCtx.fill();
+  }
+}
+
+function drawSliderMarker(salary, companyProfit) {
+  drawChart(companyProfit, salary);
+}
+
+function updateSliderStats(salary, companyProfit, otherIncome, studentLoan, isScotland, optimalScenario) {
+  const scenario = buildScenario(companyProfit, salary, otherIncome, studentLoan, isScotland);
+  const diff = scenario.youKeep - optimalScenario.youKeep;
+  const diffColor = diff >= 0 ? 'var(--green)' : 'var(--red)';
+  const diffSign = diff >= 0 ? '+' : '-';
+  const statsEl = document.getElementById('sliderStats');
+  if (!statsEl) return;
+  statsEl.innerHTML = `
+    <div class="slider-stat">
+      <div class="stat-label">Total Tax</div>
+      <div class="stat-val" style="color:var(--red)">&pound;${fmt(scenario.totalTax)}</div>
+    </div>
+    <div class="slider-stat">
+      <div class="stat-label">You Keep</div>
+      <div class="stat-val" style="color:var(--green)">&pound;${fmt(scenario.youKeep)}</div>
+    </div>
+    <div class="slider-stat">
+      <div class="stat-label">vs Optimal</div>
+      <div class="stat-val" style="color:${diffColor}">${diffSign}&pound;${fmt(Math.abs(diff))}</div>
+    </div>
+  `;
+  drawChart(companyProfit, salary);
+}
+
+/* ===== Formatting ===== */
+
+function fmt(n) {
+  return Math.round(n).toLocaleString('en-GB');
+}
+
+function fmtShort(n) {
+  if (n >= 1000000) return (n / 1000000).toFixed(1) + 'M';
+  if (n >= 1000) return (n / 1000).toFixed(0) + 'k';
+  return Math.round(n).toString();
+}
+
+/* ===== FAQ Toggle ===== */
+
+function toggleFaq(el) {
+  const item = el.parentElement;
+  item.classList.toggle('open');
+}
+
+/* ===== Resize handler for chart ===== */
+window.addEventListener('resize', function() {
+  const slider = document.getElementById('salarySlider');
+  const profitInput = document.getElementById('companyProfit');
+  if (slider && profitInput && chartData.length > 0) {
+    const companyProfit = parseFloat(profitInput.value) || 0;
+    drawChart(companyProfit, parseFloat(slider.value));
+  }
+});
+</script>
+</body>
+</html>

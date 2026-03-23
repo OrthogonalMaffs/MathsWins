@@ -1,0 +1,715 @@
+<!DOCTYPE html>
+<html lang="en-GB">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Self-Employment Tax Calculator UK 2025/26 — Sole Trader Tax | MathsWins</title>
+<meta name="description" content="Calculate your self-employment tax for 2025/26. Enter income and expenses — see income tax, National Insurance, payment on account dates, and how much to set aside each month.">
+<meta property="og:title" content="Self-Employment Tax Calculator UK 2025/26 — Sole Trader Tax | MathsWins">
+<meta property="og:description" content="Calculate your self-employment tax for 2025/26. Enter income and expenses — see income tax, National Insurance, payment on account dates, and how much to set aside each month.">
+<meta property="og:url" content="https://mathswins.co.uk/tools/self-employment-tax/">
+<meta property="og:image" content="https://mathswins.co.uk/assets/og-image.png">
+<meta property="og:type" content="website">
+<meta property="og:site_name" content="MathsWins">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:title" content="Self-Employment Tax Calculator UK 2025/26 — Sole Trader Tax | MathsWins">
+<meta name="twitter:description" content="Calculate your self-employment tax for 2025/26. Enter income and expenses — see income tax, National Insurance, payment on account dates, and how much to set aside each month.">
+<meta name="twitter:image" content="https://mathswins.co.uk/assets/og-image.png">
+<link rel="canonical" href="https://mathswins.co.uk/tools/self-employment-tax/">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Crimson+Pro:ital,wght@0,400;1,400&family=DM+Mono:wght@400;500&family=Outfit:wght@300;400;600;700&display=swap" rel="stylesheet">
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "WebApplication",
+  "name": "Self-Employment Tax Calculator UK 2025/26",
+  "url": "https://mathswins.co.uk/tools/self-employment-tax/",
+  "description": "Calculate your self-employment tax for 2025/26. Enter income and expenses — see income tax, National Insurance, payment on account dates, and how much to set aside each month.",
+  "applicationCategory": "FinanceApplication",
+  "operatingSystem": "Any",
+  "offers": {
+    "@type": "Offer",
+    "price": "0",
+    "priceCurrency": "GBP"
+  },
+  "publisher": {
+    "@type": "Organization",
+    "name": "MathsWins",
+    "url": "https://mathswins.co.uk"
+  }
+}
+</script>
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "FAQPage",
+  "mainEntity": [
+    {
+      "@type": "Question",
+      "name": "How much tax do I pay as self-employed?",
+      "acceptedAnswer": {
+        "@type": "Answer",
+        "text": "Income tax on profits above \u00a312,570, plus Class 2 NI (\u00a33.45/week) and Class 4 NI (6% then 2%). Total is typically 29-42% depending on profit level."
+      }
+    },
+    {
+      "@type": "Question",
+      "name": "What is Payment on Account?",
+      "acceptedAnswer": {
+        "@type": "Answer",
+        "text": "HMRC's advance payment system. After your first year, you pay 50% of next year's estimated tax in January and 50% in July, on top of this year's balance. Budget for 150% of your tax bill in year two."
+      }
+    },
+    {
+      "@type": "Question",
+      "name": "What expenses can I claim?",
+      "acceptedAnswer": {
+        "@type": "Answer",
+        "text": "Anything 'wholly and exclusively' for business: materials, travel, phone (business %), equipment, insurance, accountant fees. Keep receipts for everything."
+      }
+    },
+    {
+      "@type": "Question",
+      "name": "Do I need an accountant?",
+      "acceptedAnswer": {
+        "@type": "Answer",
+        "text": "Not legally required, but most self-employed people save more in tax deductions than the accountant costs. An accountant typically costs \u00a3200-\u00a3500/year for a sole trader."
+      }
+    },
+    {
+      "@type": "Question",
+      "name": "When do I need to register?",
+      "acceptedAnswer": {
+        "@type": "Answer",
+        "text": "Register for Self Assessment by 5 October after the tax year you started. File by 31 January (online). Late registration carries penalties."
+      }
+    },
+    {
+      "@type": "Question",
+      "name": "Can I reduce my tax bill legally?",
+      "acceptedAnswer": {
+        "@type": "Answer",
+        "text": "Yes. Maximise allowable expenses, use pension contributions (tax-deductible), consider timing income across tax years, and claim all applicable reliefs."
+      }
+    }
+  ]
+}
+</script>
+<style>
+:root{--bg:#050709;--surface:#0a0d14;--surface2:#0f1319;--border:#161c28;--border2:#1e2638;--sky:#0ea5e9;--sky-dim:rgba(14,165,233,0.10);--green:#2dd4a0;--green-dim:rgba(45,212,160,0.10);--red:#ef5350;--gold:#d4a847;--gold-dim:rgba(212,168,71,0.10);--cyan:#22d3ee;--teal:#0d9488;--teal-dim:rgba(13,148,136,0.10);--text:#c8cdd8;--text-bright:#e8ecf4;--muted:#4a5568;}
+*{margin:0;padding:0;box-sizing:border-box;}
+body{font-family:'Outfit',sans-serif;background:var(--bg);color:var(--text);min-height:100vh;line-height:1.5;}
+.container{max-width:960px;margin:0 auto;padding:2rem 1.25rem 4rem;}
+.nav-bar{display:flex;align-items:center;justify-content:space-between;padding:1rem 0;border-bottom:1px solid var(--border);margin-bottom:2rem;}
+.nav-brand{font-family:'Bebas Neue',sans-serif;font-size:1.4rem;color:var(--gold);text-decoration:none;letter-spacing:0.06em;}
+.nav-brand span{color:var(--text-bright);}
+.nav-link{font-size:0.85rem;font-weight:600;color:var(--sky);text-decoration:none;padding:0.4rem 1rem;border:1px solid var(--sky);border-radius:4px;transition:background 0.2s,color 0.2s;}
+.nav-link:hover{background:var(--sky);color:var(--bg);}
+.hero{text-align:center;margin-bottom:2rem;}
+.hero-eyebrow{font-size:0.75rem;font-weight:600;text-transform:uppercase;letter-spacing:0.15em;color:var(--sky);margin-bottom:0.5rem;}
+.hero h1{font-family:'Bebas Neue',sans-serif;font-size:clamp(1.8rem,5vw,2.8rem);color:var(--text-bright);letter-spacing:0.04em;line-height:1.1;margin-bottom:0.75rem;}
+.hero-sub{font-family:'Crimson Pro',serif;font-style:italic;font-size:1.05rem;color:var(--cyan);max-width:620px;margin:0 auto;}
+.panel{background:var(--surface);border:1px solid var(--border);border-radius:10px;padding:1.5rem;margin-bottom:1.25rem;}
+.panel-title{font-family:'Bebas Neue',sans-serif;font-size:1.1rem;color:var(--text-bright);letter-spacing:0.05em;margin-bottom:1rem;}
+.fg{display:flex;flex-direction:column;gap:0.3rem;margin-bottom:0.75rem;}
+.fg label{font-size:0.72rem;font-weight:600;text-transform:uppercase;letter-spacing:0.06em;color:var(--muted);}
+.fg input,.fg select{font-family:'DM Mono',monospace;font-size:1rem;padding:0.6rem 0.8rem;background:var(--surface2);border:1px solid var(--border2);border-radius:6px;color:var(--text-bright);outline:none;}
+.fg input:focus,.fg select:focus{border-color:var(--sky);}
+.fg .hint{font-family:'Crimson Pro',serif;font-style:italic;font-size:0.78rem;color:var(--muted);}
+.calc-btn{font-family:'Outfit',sans-serif;font-weight:700;font-size:1rem;padding:0.85rem;background:var(--sky);color:#fff;border:none;border-radius:6px;cursor:pointer;width:100%;margin:1.25rem 0 0;transition:background 0.2s;}
+.calc-btn:hover{background:#38bdf8;}
+.results{display:none;}
+.results.show{display:block;}
+
+/* Input grid */
+.input-grid{display:grid;grid-template-columns:1fr 1fr;gap:0.75rem 1.25rem;}
+@media(max-width:600px){.input-grid{grid-template-columns:1fr;}}
+.input-grid .fg{margin-bottom:0;}
+.full-width{grid-column:1/-1;}
+
+/* Expenses collapsible */
+.expense-toggle{font-family:'Outfit',sans-serif;font-weight:600;font-size:0.88rem;padding:0.75rem 1rem;background:var(--surface2);border:1px solid var(--border2);border-radius:6px;color:var(--text-bright);cursor:pointer;display:flex;justify-content:space-between;align-items:center;width:100%;margin-bottom:0.75rem;transition:background 0.2s;}
+.expense-toggle:hover{background:var(--border);}
+.expense-toggle::after{content:'+';font-family:'DM Mono',monospace;font-size:1.2rem;color:var(--sky);transition:transform 0.2s;}
+.expense-toggle.open::after{content:'-';}
+.expense-body{max-height:0;overflow:hidden;transition:max-height 0.3s ease;}
+.expense-body.open{max-height:800px;}
+.expense-total{font-family:'DM Mono',monospace;font-size:0.85rem;color:var(--gold);margin-left:auto;padding-left:1rem;}
+
+/* Simplified expenses */
+.simplified-section{background:var(--surface2);border:1px solid var(--border2);border-radius:6px;padding:1rem;margin-bottom:0.75rem;display:none;}
+.simplified-section.show{display:block;}
+.check-row{display:flex;align-items:center;gap:0.5rem;margin-bottom:0.75rem;}
+.check-row input[type="checkbox"]{accent-color:var(--gold);width:16px;height:16px;cursor:pointer;}
+.check-row label{font-size:0.85rem;color:var(--text-bright);cursor:pointer;}
+.mileage-calc{font-family:'DM Mono',monospace;font-size:0.78rem;color:var(--cyan);margin-top:0.25rem;}
+
+/* Summary cards */
+.summary-cards{display:grid;grid-template-columns:repeat(4,1fr);gap:1rem;margin-bottom:1.5rem;}
+@media(max-width:800px){.summary-cards{grid-template-columns:1fr 1fr;}}
+@media(max-width:500px){.summary-cards{grid-template-columns:1fr;}}
+.summary-card{background:var(--surface);border:1px solid var(--border);border-radius:10px;padding:1.25rem;text-align:center;}
+.summary-card.profit{border-top:3px solid var(--sky);}
+.summary-card.tax{border-top:3px solid var(--red);}
+.summary-card.setaside{border-top:3px solid var(--gold);}
+.summary-card.keep{border-top:3px solid var(--green);}
+.sc-title{font-family:'Bebas Neue',sans-serif;font-size:0.9rem;letter-spacing:0.05em;margin-bottom:0.5rem;}
+.summary-card.profit .sc-title{color:var(--sky);}
+.summary-card.tax .sc-title{color:var(--red);}
+.summary-card.setaside .sc-title{color:var(--gold);}
+.summary-card.keep .sc-title{color:var(--green);}
+.sc-value{font-family:'DM Mono',monospace;font-size:1.6rem;font-weight:500;}
+.summary-card.profit .sc-value{color:var(--text-bright);}
+.summary-card.tax .sc-value{color:var(--red);}
+.summary-card.setaside .sc-value{color:var(--gold);}
+.summary-card.keep .sc-value{color:var(--green);}
+
+/* Breakdown table */
+.breakdown-panel{background:var(--surface);border:1px solid var(--border);border-radius:10px;padding:1.5rem;margin-bottom:1.5rem;}
+.breakdown-row{display:flex;justify-content:space-between;padding:0.5rem 0;border-bottom:1px solid var(--border);font-size:0.88rem;}
+.breakdown-row:last-child{border-bottom:none;}
+.breakdown-row.section-gap{margin-top:0.75rem;padding-top:0.75rem;border-top:1px solid var(--border2);}
+.breakdown-row.total-row{border-top:2px solid var(--border2);margin-top:0.5rem;padding-top:0.75rem;font-weight:600;}
+.br-label{color:var(--text);}
+.br-value{font-family:'DM Mono',monospace;font-weight:500;color:var(--text-bright);}
+.br-value.negative{color:var(--red);}
+.br-value.green{color:var(--green);}
+.br-value.gold{color:var(--gold);}
+.br-value.sky{color:var(--sky);}
+.br-dim{color:var(--muted);font-size:0.78rem;margin-left:0.5rem;}
+
+/* Payment on Account box */
+.poa-box{background:var(--gold-dim);border:1px solid var(--gold);border-radius:10px;padding:1.25rem;margin-bottom:1.5rem;}
+.poa-box h3{font-family:'Bebas Neue',sans-serif;font-size:1.05rem;color:var(--gold);letter-spacing:0.04em;margin-bottom:0.75rem;}
+.poa-row{display:flex;justify-content:space-between;padding:0.4rem 0;font-size:0.85rem;}
+.poa-date{color:var(--text);}
+.poa-amount{font-family:'DM Mono',monospace;font-weight:500;color:var(--gold);}
+.poa-note{font-family:'Crimson Pro',serif;font-style:italic;font-size:0.85rem;color:var(--text);margin-top:0.75rem;line-height:1.6;}
+
+/* Educational content */
+.edu-section{margin-top:2rem;}
+.edu-section h2{font-family:'Bebas Neue',sans-serif;font-size:1.4rem;color:var(--text-bright);letter-spacing:0.04em;margin-bottom:1rem;}
+.edu-section h3{font-family:'Bebas Neue',sans-serif;font-size:1.05rem;color:var(--text-bright);letter-spacing:0.04em;margin:1.25rem 0 0.5rem;}
+.edu-section p{font-size:0.92rem;line-height:1.7;margin-bottom:0.75rem;}
+.edu-section .formula{font-family:'DM Mono',monospace;font-size:0.88rem;color:var(--cyan);background:var(--surface2);padding:0.75rem 1rem;border-radius:6px;margin:0.75rem 0;border-left:3px solid var(--cyan);}
+.pln{font-family:'Crimson Pro',serif;font-style:italic;color:var(--cyan);background:rgba(34,211,238,0.08);border-left:3px solid var(--cyan);padding:0.85rem 1rem;border-radius:0 6px 6px 0;margin:1rem 0;font-size:0.92rem;line-height:1.6;}
+
+/* FAQ */
+.faq-section{margin-top:2rem;}
+.faq-section h2{font-family:'Bebas Neue',sans-serif;font-size:1.4rem;color:var(--text-bright);letter-spacing:0.04em;margin-bottom:1rem;}
+.faq-item{background:var(--surface);border:1px solid var(--border);border-radius:10px;margin-bottom:0.75rem;overflow:hidden;}
+.faq-q{font-family:'Outfit',sans-serif;font-weight:600;font-size:0.92rem;padding:1rem 1.25rem;cursor:pointer;display:flex;justify-content:space-between;align-items:center;color:var(--text-bright);transition:background 0.2s;}
+.faq-q:hover{background:var(--surface2);}
+.faq-q::after{content:'+';font-family:'DM Mono',monospace;font-size:1.2rem;color:var(--sky);transition:transform 0.2s;}
+.faq-item.open .faq-q::after{content:'-';}
+.faq-a{max-height:0;overflow:hidden;transition:max-height 0.3s ease,padding 0.3s ease;}
+.faq-item.open .faq-a{max-height:300px;padding:0 1.25rem 1rem;}
+.faq-a p{font-size:0.88rem;line-height:1.6;color:var(--text);}
+
+/* CTA */
+.cta-card{background:var(--surface);border:1px solid var(--border);border-left:3px solid var(--sky);border-radius:0 10px 10px 0;padding:1.5rem;margin-top:2rem;}
+.cta-card h3{font-family:'Bebas Neue',sans-serif;font-size:1.2rem;color:var(--sky);letter-spacing:0.04em;margin-bottom:0.5rem;}
+.cta-card p{font-family:'Crimson Pro',serif;font-style:italic;font-size:0.92rem;color:var(--text);line-height:1.5;margin-bottom:0.75rem;}
+.cta-link{font-weight:600;font-size:0.9rem;color:var(--sky);text-decoration:none;}
+.footer{margin-top:2.5rem;padding-top:1.25rem;border-top:1px solid var(--border);text-align:center;}
+.footer p{font-size:0.72rem;color:var(--muted);line-height:1.8;}
+.footer a{color:var(--muted);text-decoration:underline;}
+
+/* Error message */
+.error-msg{background:rgba(239,83,80,0.1);border:1px solid var(--red);border-radius:6px;padding:0.75rem 1rem;color:var(--red);font-size:0.85rem;margin-bottom:1rem;display:none;}
+
+/* Scotland note */
+.scotland-note{font-family:'Crimson Pro',serif;font-style:italic;font-size:0.82rem;color:var(--cyan);margin-top:0.25rem;}
+</style>
+<!-- GA4 Cookieless -->
+<script async src="https://www.googletagmanager.com/gtag/js?id=G-7GTLYCZMXN"></script>
+<script>window.dataLayer=window.dataLayer||[];function gtag(){dataLayer.push(arguments);}gtag('js',new Date());gtag('consent','default',{analytics_storage:'denied',ad_storage:'denied',ad_user_data:'denied',ad_personalization:'denied'});gtag('config','G-7GTLYCZMXN',{send_page_view:true,anonymize_ip:true});</script>
+</head>
+<body>
+<script src="/auth/mw-auth.js"></script>
+<div class="container">
+<nav class="nav-bar">
+  <a href="/" class="nav-brand">MATHS<span>WINS</span></a>
+  <a href="/everyday/tax/" class="nav-link">UK Tax Maths Course (Free) &rarr;</a>
+</nav>
+<div class="hero">
+  <div class="hero-eyebrow">Free Tool</div>
+  <h1>SELF-EMPLOYMENT TAX CALCULATOR</h1>
+  <div class="hero-sub">Enter your income and expenses &mdash; get your complete tax breakdown, NI contributions, payment on account schedule, and exactly how much to set aside each month.</div>
+</div>
+
+<!-- Income panel -->
+<div class="panel">
+  <div class="panel-title">YOUR INCOME</div>
+  <div class="input-grid">
+    <div class="fg">
+      <label>Total income / turnover (&pound;)</label>
+      <input type="number" id="turnover" placeholder="45000" min="0" step="100">
+      <div class="hint">Your total self-employment income before expenses</div>
+    </div>
+    <div class="fg">
+      <label>Other income from employment (&pound;)</label>
+      <input type="number" id="otherIncome" value="0" min="0" step="100">
+      <div class="hint">If you also have a salary, enter it here</div>
+    </div>
+  </div>
+</div>
+
+<!-- Expenses panel -->
+<div class="panel">
+  <div class="panel-title">YOUR EXPENSES</div>
+  <button class="expense-toggle" id="expenseToggle" onclick="toggleExpenses()">
+    <span>Itemised expenses</span>
+    <span class="expense-total" id="expenseTotalLabel">&pound;0</span>
+  </button>
+  <div class="expense-body" id="expenseBody">
+    <div class="input-grid">
+      <div class="fg">
+        <label>Materials &amp; stock (&pound;)</label>
+        <input type="number" class="expense-input" id="expMaterials" value="0" min="0" step="50" oninput="updateExpenseTotal()">
+      </div>
+      <div class="fg">
+        <label>Travel &amp; mileage (&pound;)</label>
+        <input type="number" class="expense-input" id="expTravel" value="0" min="0" step="50" oninput="updateExpenseTotal()">
+      </div>
+      <div class="fg">
+        <label>Office &amp; premises (&pound;)</label>
+        <input type="number" class="expense-input" id="expOffice" value="0" min="0" step="50" oninput="updateExpenseTotal()">
+      </div>
+      <div class="fg">
+        <label>Professional services (&pound;)</label>
+        <input type="number" class="expense-input" id="expProfessional" value="0" min="0" step="50" oninput="updateExpenseTotal()">
+        <div class="hint">Accountant, insurance, etc.</div>
+      </div>
+      <div class="fg">
+        <label>Marketing &amp; advertising (&pound;)</label>
+        <input type="number" class="expense-input" id="expMarketing" value="0" min="0" step="50" oninput="updateExpenseTotal()">
+      </div>
+      <div class="fg">
+        <label>Phone &amp; internet (&pound;)</label>
+        <input type="number" class="expense-input" id="expPhone" value="0" min="0" step="10" oninput="updateExpenseTotal()">
+        <div class="hint">Business proportion only</div>
+      </div>
+      <div class="fg">
+        <label>Equipment &amp; tools (&pound;)</label>
+        <input type="number" class="expense-input" id="expEquipment" value="0" min="0" step="50" oninput="updateExpenseTotal()">
+      </div>
+      <div class="fg">
+        <label>Other expenses (&pound;)</label>
+        <input type="number" class="expense-input" id="expOther" value="0" min="0" step="50" oninput="updateExpenseTotal()">
+      </div>
+    </div>
+  </div>
+
+  <!-- Simplified expenses -->
+  <div class="check-row">
+    <input type="checkbox" id="useSimplified" onchange="toggleSimplified()">
+    <label for="useSimplified">Use HMRC simplified expenses</label>
+  </div>
+  <div class="simplified-section" id="simplifiedSection">
+    <div class="input-grid">
+      <div class="fg full-width">
+        <div class="check-row" style="margin-bottom:0;">
+          <input type="checkbox" id="useHomeOffice" onchange="updateSimplifiedCalc()">
+          <label for="useHomeOffice">Home office flat rate (&pound;6/week = &pound;312/year)</label>
+        </div>
+      </div>
+      <div class="fg">
+        <label>Business miles driven (per year)</label>
+        <input type="number" id="milesDriven" value="0" min="0" step="100" oninput="updateSimplifiedCalc()">
+        <div class="hint">First 10,000 at 45p, then 25p per mile</div>
+      </div>
+      <div class="fg">
+        <label>Mileage allowance</label>
+        <div class="mileage-calc" id="mileageCalc">&pound;0</div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- Options panel -->
+<div class="panel">
+  <div class="panel-title">OPTIONS</div>
+  <div class="input-grid">
+    <div class="fg">
+      <label>Student loan</label>
+      <select id="studentLoan">
+        <option value="none">None</option>
+        <option value="plan1">Plan 1</option>
+        <option value="plan2">Plan 2</option>
+        <option value="plan4">Plan 4</option>
+        <option value="plan5">Plan 5</option>
+        <option value="postgrad">Postgraduate</option>
+      </select>
+    </div>
+    <div class="fg">
+      <div class="check-row" style="margin-top:1.6rem;">
+        <input type="checkbox" id="isScotland">
+        <label for="isScotland">I live in Scotland</label>
+      </div>
+      <div class="scotland-note">Scotland has different income tax rates (6 bands instead of 3)</div>
+    </div>
+  </div>
+</div>
+
+<div class="error-msg" id="errorMsg"></div>
+<button class="calc-btn" onclick="calculate()">Calculate My Tax</button>
+
+<!-- Results -->
+<div class="results" id="results">
+  <div class="summary-cards" id="summaryCards"></div>
+  <div id="breakdownPanel"></div>
+  <div id="poaBox"></div>
+</div>
+
+<!-- Educational content -->
+<div class="edu-section">
+  <h2>HOW SELF-EMPLOYMENT TAX WORKS</h2>
+
+  <h3>The Three Taxes You Pay</h3>
+  <p>As a sole trader, your profit (turnover minus expenses) is subject to three separate taxes: income tax, Class 2 National Insurance, and Class 4 National Insurance. Each has different thresholds and rates.</p>
+
+  <h3>Income Tax</h3>
+  <p>Your self-employment profit is added to any other income (employment salary, etc.) to determine your total taxable income. Everyone gets a &pound;12,570 personal allowance &mdash; you pay no tax on the first &pound;12,570.</p>
+  <div class="formula">Basic rate: 20% on &pound;12,571 &ndash; &pound;50,270<br>Higher rate: 40% on &pound;50,271 &ndash; &pound;125,140<br>Additional rate: 45% above &pound;125,140</div>
+  <p>If your total income exceeds &pound;100,000, your personal allowance is reduced by &pound;1 for every &pound;2 above &pound;100,000. This creates an effective 60% marginal rate between &pound;100,000 and &pound;125,140.</p>
+
+  <h3>National Insurance</h3>
+  <p>Class 2 NI is a flat &pound;3.45 per week (&pound;179.40/year) if your profits exceed &pound;12,570. Class 4 NI is 6% on profits between &pound;12,570 and &pound;50,270, then 2% above that.</p>
+  <div class="formula">Class 2: &pound;3.45/week (if profit &gt; &pound;12,570)<br>Class 4: 6% on &pound;12,570 &ndash; &pound;50,270, 2% above &pound;50,270</div>
+
+  <h3>Payment on Account</h3>
+  <p>After your first tax return, HMRC assumes you will earn a similar amount next year and asks for advance payments. In January, you pay your outstanding balance PLUS 50% of next year&rsquo;s estimated tax. In July, you pay the other 50%. This means your second year of self-employment can feel like paying 150% of your tax bill.</p>
+
+  <div class="pln">The single biggest cash-flow surprise for new sole traders is Payment on Account. If your first year&rsquo;s tax bill is &pound;6,000, your January payment will be &pound;6,000 + &pound;3,000 = &pound;9,000. Budget for it from day one.</div>
+</div>
+
+<!-- FAQ -->
+<div style="text-align:center;margin:1.5rem 0;padding:1rem;background:rgba(45,212,160,0.06);border:1px solid rgba(45,212,160,0.2);border-radius:8px"><a href="https://www.gov.uk/register-for-self-assessment" target="_blank" rel="noopener noreferrer" style="color:#2dd4a0;font-weight:600;text-decoration:none;font-size:0.95rem">Register for Self Assessment &rarr; GOV.UK</a><div style="font-size:0.7rem;color:#4a5568;margin-top:4px">Opens in a new tab — official UK Government website</div></div>
+<div class="faq-section">
+  <h2>FREQUENTLY ASKED QUESTIONS</h2>
+  <div class="faq-item">
+    <div class="faq-q" onclick="toggleFaq(this)">How much tax do I pay as self-employed?</div>
+    <div class="faq-a"><p>Income tax on profits above &pound;12,570, plus Class 2 NI (&pound;3.45/week) and Class 4 NI (6% then 2%). Total is typically 29&ndash;42% depending on profit level.</p></div>
+  </div>
+  <div class="faq-item">
+    <div class="faq-q" onclick="toggleFaq(this)">What is Payment on Account?</div>
+    <div class="faq-a"><p>HMRC&rsquo;s advance payment system. After your first year, you pay 50% of next year&rsquo;s estimated tax in January and 50% in July, on top of this year&rsquo;s balance. Budget for 150% of your tax bill in year two.</p></div>
+  </div>
+  <div class="faq-item">
+    <div class="faq-q" onclick="toggleFaq(this)">What expenses can I claim?</div>
+    <div class="faq-a"><p>Anything &ldquo;wholly and exclusively&rdquo; for business: materials, travel, phone (business %), equipment, insurance, accountant fees. Keep receipts for everything.</p></div>
+  </div>
+  <div class="faq-item">
+    <div class="faq-q" onclick="toggleFaq(this)">Do I need an accountant?</div>
+    <div class="faq-a"><p>Not legally required, but most self-employed people save more in tax deductions than the accountant costs. An accountant typically costs &pound;200&ndash;&pound;500/year for a sole trader.</p></div>
+  </div>
+  <div class="faq-item">
+    <div class="faq-q" onclick="toggleFaq(this)">When do I need to register?</div>
+    <div class="faq-a"><p>Register for Self Assessment by 5 October after the tax year you started. File by 31 January (online). Late registration carries penalties.</p></div>
+  </div>
+  <div class="faq-item">
+    <div class="faq-q" onclick="toggleFaq(this)">Can I reduce my tax bill legally?</div>
+    <div class="faq-a"><p>Yes. Maximise allowable expenses, use pension contributions (tax-deductible), consider timing income across tax years, and claim all applicable reliefs.</p></div>
+  </div>
+</div>
+
+<div class="cta-card">
+  <h3>UK TAX MATHS &mdash; FREE COURSE</h3>
+  <p>Go deeper into marginal vs effective rates, the &pound;100k trap, Scotland comparison, deductions, and fiscal drag. Five modules, completely free.</p>
+  <a href="/everyday/tax/" class="cta-link">Start the free course &rarr;</a>
+</div>
+
+<div class="footer">
+  <p><a href="/">MathsWins</a> &middot; <a href="/tools/">Tools</a> &middot; <a href="/everyday/">Everyday Maths</a><br>&copy; 2026 MathsWins. Not financial advice.<br><a href="/restore/">Restore Access</a></p>
+</div>
+</div>
+
+<script>
+/* ── Expense toggle ── */
+function toggleExpenses() {
+  const toggle = document.getElementById('expenseToggle');
+  const body = document.getElementById('expenseBody');
+  toggle.classList.toggle('open');
+  body.classList.toggle('open');
+}
+
+function updateExpenseTotal() {
+  const inputs = document.querySelectorAll('.expense-input');
+  let total = 0;
+  inputs.forEach(i => { total += parseFloat(i.value) || 0; });
+  document.getElementById('expenseTotalLabel').textContent = '\u00A3' + total.toLocaleString('en-GB');
+}
+
+/* ── Simplified expenses ── */
+function toggleSimplified() {
+  const section = document.getElementById('simplifiedSection');
+  section.classList.toggle('show', document.getElementById('useSimplified').checked);
+  updateSimplifiedCalc();
+}
+
+function updateSimplifiedCalc() {
+  const miles = parseFloat(document.getElementById('milesDriven').value) || 0;
+  let mileageAllowance = 0;
+  if (miles <= 10000) {
+    mileageAllowance = miles * 0.45;
+  } else {
+    mileageAllowance = 10000 * 0.45 + (miles - 10000) * 0.25;
+  }
+  document.getElementById('mileageCalc').textContent = '\u00A3' + mileageAllowance.toFixed(2);
+}
+
+/* ── FAQ toggle ── */
+function toggleFaq(el) {
+  el.parentElement.classList.toggle('open');
+}
+
+/* ── Formatting ── */
+function fmt(n) {
+  return '\u00A3' + n.toLocaleString('en-GB', { minimumFractionDigits: 2, maximumFractionDigits: 2 });
+}
+function fmtWhole(n) {
+  return '\u00A3' + Math.round(n).toLocaleString('en-GB');
+}
+
+/* ── Tax constants 2025/26 ── */
+const PA = 12570;
+const PA_TAPER_START = 100000;
+const BASIC_LIMIT = 50270;
+const HIGHER_LIMIT = 125140;
+const CLASS2_WEEKLY = 3.45;
+const CLASS2_ANNUAL = CLASS2_WEEKLY * 52;
+const CLASS4_LOWER = 12570;
+const CLASS4_UPPER = 50270;
+const CLASS4_MAIN = 0.06;
+const CLASS4_ADDITIONAL = 0.02;
+
+/* Scottish rates 2025/26 */
+const SCOTTISH_BANDS = [
+  { name: 'Starter', from: 0, to: 2306, rate: 0.19 },
+  { name: 'Basic', from: 2306, to: 13991, rate: 0.20 },
+  { name: 'Intermediate', from: 13991, to: 31092, rate: 0.21 },
+  { name: 'Higher', from: 31092, to: 62430, rate: 0.42 },
+  { name: 'Advanced', from: 62430, to: 112570, rate: 0.45 },
+  { name: 'Top', from: 112570, to: Infinity, rate: 0.48 }
+];
+
+/* Student loan thresholds 2025/26 */
+const STUDENT_LOANS = {
+  plan1: { threshold: 24990, rate: 0.09 },
+  plan2: { threshold: 27295, rate: 0.09 },
+  plan4: { threshold: 31395, rate: 0.09 },
+  plan5: { threshold: 25000, rate: 0.09 },
+  postgrad: { threshold: 21000, rate: 0.06 }
+};
+
+/* ── Calculate income tax (rUK) ── */
+function calcIncomeTaxRUK(taxableIncome) {
+  if (taxableIncome <= 0) return 0;
+  let tax = 0;
+  // Basic rate band: 0 to (BASIC_LIMIT - PA) = 37,700
+  const basicBand = BASIC_LIMIT - PA;
+  if (taxableIncome <= basicBand) {
+    tax = taxableIncome * 0.20;
+  } else if (taxableIncome <= (HIGHER_LIMIT - PA)) {
+    tax = basicBand * 0.20 + (taxableIncome - basicBand) * 0.40;
+  } else {
+    const higherBand = HIGHER_LIMIT - PA;
+    tax = basicBand * 0.20 + (higherBand - basicBand) * 0.40 + (taxableIncome - higherBand) * 0.45;
+  }
+  return tax;
+}
+
+/* ── Calculate income tax (Scotland) ── */
+function calcIncomeTaxScotland(taxableIncome) {
+  if (taxableIncome <= 0) return 0;
+  let tax = 0;
+  let remaining = taxableIncome;
+  for (const band of SCOTTISH_BANDS) {
+    const bandWidth = band.to - band.from;
+    if (remaining <= 0) break;
+    const taxableInBand = Math.min(remaining, bandWidth);
+    tax += taxableInBand * band.rate;
+    remaining -= taxableInBand;
+  }
+  return tax;
+}
+
+/* ── Get total expenses ── */
+function getTotalExpenses() {
+  let itemised = 0;
+  document.querySelectorAll('.expense-input').forEach(i => {
+    itemised += parseFloat(i.value) || 0;
+  });
+
+  let simplified = 0;
+  if (document.getElementById('useSimplified').checked) {
+    if (document.getElementById('useHomeOffice').checked) {
+      simplified += 312;
+    }
+    const miles = parseFloat(document.getElementById('milesDriven').value) || 0;
+    if (miles <= 10000) {
+      simplified += miles * 0.45;
+    } else {
+      simplified += 10000 * 0.45 + (miles - 10000) * 0.25;
+    }
+  }
+
+  return itemised + simplified;
+}
+
+/* ── Main calculation ── */
+function calculate() {
+  const errEl = document.getElementById('errorMsg');
+  const turnover = parseFloat(document.getElementById('turnover').value) || 0;
+  const otherIncome = parseFloat(document.getElementById('otherIncome').value) || 0;
+  const studentLoanType = document.getElementById('studentLoan').value;
+  const isScotland = document.getElementById('isScotland').checked;
+
+  if (turnover <= 0) {
+    errEl.textContent = 'Please enter your total income / turnover.';
+    errEl.style.display = 'block';
+    return;
+  }
+  errEl.style.display = 'none';
+
+  const totalExpenses = getTotalExpenses();
+  const taxableProfit = Math.max(0, turnover - totalExpenses);
+
+  // Combined income for tax band purposes
+  const totalIncome = taxableProfit + otherIncome;
+
+  // Personal allowance with taper
+  let personalAllowance = PA;
+  if (totalIncome > PA_TAPER_START) {
+    personalAllowance = Math.max(0, PA - Math.floor((totalIncome - PA_TAPER_START) / 2));
+  }
+
+  const taxableIncome = Math.max(0, totalIncome - personalAllowance);
+
+  // Income tax on total income
+  let incomeTaxTotal;
+  if (isScotland) {
+    incomeTaxTotal = calcIncomeTaxScotland(taxableIncome);
+  } else {
+    incomeTaxTotal = calcIncomeTaxRUK(taxableIncome);
+  }
+
+  // If also employed, calculate tax on employment income alone to get SE portion
+  let incomeTaxOnEmployment = 0;
+  if (otherIncome > 0) {
+    // Employment income uses personal allowance first
+    const empTaxableIncome = Math.max(0, otherIncome - personalAllowance);
+    if (isScotland) {
+      incomeTaxOnEmployment = calcIncomeTaxScotland(empTaxableIncome);
+    } else {
+      incomeTaxOnEmployment = calcIncomeTaxRUK(empTaxableIncome);
+    }
+  }
+
+  // Income tax attributable to self-employment
+  const incomeTax = incomeTaxTotal - incomeTaxOnEmployment;
+
+  // Class 2 NI — only on self-employment profit
+  let class2 = 0;
+  if (taxableProfit > PA) {
+    class2 = CLASS2_ANNUAL;
+  }
+
+  // Class 4 NI — only on self-employment profit
+  let class4 = 0;
+  if (taxableProfit > CLASS4_LOWER) {
+    const class4Basic = Math.min(taxableProfit, CLASS4_UPPER) - CLASS4_LOWER;
+    class4 = class4Basic * CLASS4_MAIN;
+    if (taxableProfit > CLASS4_UPPER) {
+      class4 += (taxableProfit - CLASS4_UPPER) * CLASS4_ADDITIONAL;
+    }
+  }
+
+  // Student loan — based on total income
+  let studentLoan = 0;
+  let studentLoanLabel = '';
+  if (studentLoanType !== 'none') {
+    const sl = STUDENT_LOANS[studentLoanType];
+    if (totalIncome > sl.threshold) {
+      studentLoan = (totalIncome - sl.threshold) * sl.rate;
+    }
+    studentLoanLabel = studentLoanType === 'postgrad' ? 'Postgraduate Loan' :
+      'Student Loan (' + studentLoanType.replace('plan', 'Plan ') + ')';
+  }
+
+  const totalTax = incomeTax + class2 + class4 + studentLoan;
+  const setAsideMonthly = totalTax / 12;
+  const youKeepAnnual = taxableProfit - totalTax;
+  const youKeepMonthly = youKeepAnnual / 12;
+
+  // Payment on Account
+  const poaHalf = totalTax / 2;
+
+  // ── Render summary cards ──
+  document.getElementById('summaryCards').innerHTML = `
+    <div class="summary-card profit">
+      <div class="sc-title">TAXABLE PROFIT</div>
+      <div class="sc-value">${fmtWhole(taxableProfit)}</div>
+    </div>
+    <div class="summary-card tax">
+      <div class="sc-title">TOTAL TAX BILL</div>
+      <div class="sc-value">${fmtWhole(totalTax)}</div>
+    </div>
+    <div class="summary-card setaside">
+      <div class="sc-title">SET ASIDE MONTHLY</div>
+      <div class="sc-value">${fmtWhole(setAsideMonthly)}</div>
+    </div>
+    <div class="summary-card keep">
+      <div class="sc-title">YOU KEEP</div>
+      <div class="sc-value">${fmtWhole(youKeepAnnual)}</div>
+    </div>
+  `;
+
+  // ── Render breakdown table ──
+  let breakdownHTML = `<div class="breakdown-panel">`;
+  breakdownHTML += `<div class="breakdown-row"><span class="br-label">Turnover</span><span class="br-value">${fmt(turnover)}</span></div>`;
+  breakdownHTML += `<div class="breakdown-row"><span class="br-label">Less expenses</span><span class="br-value negative">-${fmt(totalExpenses)}</span></div>`;
+  breakdownHTML += `<div class="breakdown-row total-row"><span class="br-label"><strong>Taxable profit</strong></span><span class="br-value sky">${fmt(taxableProfit)}</span></div>`;
+
+  if (otherIncome > 0) {
+    breakdownHTML += `<div class="breakdown-row section-gap"><span class="br-label">Other income (employment)</span><span class="br-value">${fmt(otherIncome)}</span></div>`;
+    breakdownHTML += `<div class="breakdown-row"><span class="br-label">Total income</span><span class="br-value">${fmt(totalIncome)}</span></div>`;
+  }
+
+  if (personalAllowance < PA) {
+    breakdownHTML += `<div class="breakdown-row section-gap"><span class="br-label">Personal allowance (tapered)</span><span class="br-value">${fmt(personalAllowance)}</span></div>`;
+  }
+
+  breakdownHTML += `<div class="breakdown-row section-gap"><span class="br-label">Income tax${isScotland ? ' (Scottish rates)' : ''}</span><span class="br-value">${fmt(incomeTax)}</span></div>`;
+  breakdownHTML += `<div class="breakdown-row"><span class="br-label">Class 2 NI</span><span class="br-value">${fmt(class2)}${class2 > 0 ? '<span class="br-dim">(&pound;' + CLASS2_WEEKLY.toFixed(2) + '/week)</span>' : ''}</span></div>`;
+  breakdownHTML += `<div class="breakdown-row"><span class="br-label">Class 4 NI</span><span class="br-value">${fmt(class4)}</span></div>`;
+
+  if (studentLoanType !== 'none') {
+    breakdownHTML += `<div class="breakdown-row"><span class="br-label">${studentLoanLabel}</span><span class="br-value">${fmt(studentLoan)}</span></div>`;
+  }
+
+  breakdownHTML += `<div class="breakdown-row total-row"><span class="br-label"><strong>Total tax</strong></span><span class="br-value negative">${fmt(totalTax)}</span></div>`;
+  breakdownHTML += `<div class="breakdown-row section-gap"><span class="br-label">Set aside per month</span><span class="br-value gold">${fmt(setAsideMonthly)}</span></div>`;
+  breakdownHTML += `<div class="breakdown-row"><span class="br-label">You keep per month</span><span class="br-value green">${fmt(youKeepMonthly)}</span></div>`;
+  breakdownHTML += `</div>`;
+  document.getElementById('breakdownPanel').innerHTML = breakdownHTML;
+
+  // ── Render Payment on Account ──
+  let poaHTML = `<div class="poa-box">`;
+  poaHTML += `<h3>PAYMENT ON ACCOUNT SCHEDULE</h3>`;
+  poaHTML += `<div class="poa-row"><span class="poa-date">31 January 2027</span><span class="poa-amount">${fmt(poaHalf)} <span class="br-dim">(first payment)</span></span></div>`;
+  poaHTML += `<div class="poa-row"><span class="poa-date">31 July 2027</span><span class="poa-amount">${fmt(poaHalf)} <span class="br-dim">(second payment)</span></span></div>`;
+  poaHTML += `<div class="poa-row"><span class="poa-date">31 January 2028</span><span class="poa-amount">Balancing payment</span></div>`;
+  poaHTML += `<div class="poa-note">After your first year, HMRC asks for advance payments. Your January payment includes this year&rsquo;s balance PLUS 50% of next year&rsquo;s estimated tax. July payment is the other 50%. This catches many self-employed people off guard.</div>`;
+  poaHTML += `</div>`;
+  document.getElementById('poaBox').innerHTML = poaHTML;
+
+  // Show results & scroll
+  document.getElementById('results').classList.add('show');
+  document.getElementById('summaryCards').scrollIntoView({ behavior: 'smooth', block: 'start' });
+}
+</script>
+</body>
+</html>

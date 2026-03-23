@@ -1,0 +1,670 @@
+<!DOCTYPE html>
+<html lang="en-GB">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>IR35 Calculator UK — Inside vs Outside IR35 Take-Home | MathsWins</title>
+<meta name="description" content="Compare your take-home pay inside vs outside IR35. Enter your day rate — see the exact difference in take-home through umbrella (PAYE) vs limited company (salary + dividends).">
+<meta property="og:title" content="IR35 Calculator UK — Inside vs Outside IR35 Take-Home | MathsWins">
+<meta property="og:description" content="Compare your take-home pay inside vs outside IR35. Enter your day rate — see the exact difference in take-home through umbrella (PAYE) vs limited company (salary + dividends).">
+<meta property="og:url" content="https://mathswins.co.uk/tools/ir35-calculator/">
+<meta property="og:image" content="https://mathswins.co.uk/assets/og-image.png">
+<meta property="og:type" content="website">
+<meta property="og:site_name" content="MathsWins">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:title" content="IR35 Calculator UK — Inside vs Outside IR35 Take-Home | MathsWins">
+<meta name="twitter:description" content="Compare your take-home pay inside vs outside IR35. Enter your day rate — see the exact difference in take-home.">
+<meta name="twitter:image" content="https://mathswins.co.uk/assets/og-image.png">
+<link rel="canonical" href="https://mathswins.co.uk/tools/ir35-calculator/">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Crimson+Pro:ital,wght@0,400;1,400&family=DM+Mono:wght@400;500&family=Outfit:wght@300;400;600;700&display=swap" rel="stylesheet">
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "WebApplication",
+  "name": "IR35 Calculator UK",
+  "url": "https://mathswins.co.uk/tools/ir35-calculator/",
+  "description": "Compare your take-home pay inside vs outside IR35. Enter your day rate — see the exact difference in take-home through umbrella (PAYE) vs limited company (salary + dividends).",
+  "applicationCategory": "FinanceApplication",
+  "operatingSystem": "Any",
+  "offers": {
+    "@type": "Offer",
+    "price": "0",
+    "priceCurrency": "GBP"
+  },
+  "publisher": {
+    "@type": "Organization",
+    "name": "MathsWins",
+    "url": "https://mathswins.co.uk"
+  }
+}
+</script>
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "FAQPage",
+  "mainEntity": [
+    {
+      "@type": "Question",
+      "name": "What is IR35?",
+      "acceptedAnswer": {
+        "@type": "Answer",
+        "text": "IR35 is tax legislation that determines whether a contractor is genuinely self-employed or effectively an employee. If inside IR35, you're taxed like an employee even though you work through a company."
+      }
+    },
+    {
+      "@type": "Question",
+      "name": "Who decides my IR35 status?",
+      "acceptedAnswer": {
+        "@type": "Answer",
+        "text": "For public sector and medium/large private sector clients, the client decides. For small private sector clients, you (the contractor) decide. The decision is based on working practices, not the contract alone."
+      }
+    },
+    {
+      "@type": "Question",
+      "name": "Why does inside IR35 pay so much less?",
+      "acceptedAnswer": {
+        "@type": "Answer",
+        "text": "Two reasons: employer NI (13.8%) is deducted from your gross, and you can't extract profits as dividends (which are taxed at lower rates than salary). The employer NI alone costs roughly £12,000-£15,000 per year."
+      }
+    },
+    {
+      "@type": "Question",
+      "name": "What's the optimal salary for a Ltd company?",
+      "acceptedAnswer": {
+        "@type": "Answer",
+        "text": "Usually £12,570 (the personal allowance). Below the NI primary threshold so no employee NI, and fully covered by the personal allowance so no income tax. Everything above comes as dividends."
+      }
+    },
+    {
+      "@type": "Question",
+      "name": "Should I increase my day rate for inside IR35?",
+      "acceptedAnswer": {
+        "@type": "Answer",
+        "text": "Yes — most contractors add 15-25% to their day rate to compensate for the tax difference. This calculator shows you the exact uplift needed."
+      }
+    },
+    {
+      "@type": "Question",
+      "name": "Can I work outside IR35?",
+      "acceptedAnswer": {
+        "@type": "Answer",
+        "text": "It depends on how you work, not what you want. Key factors: control, substitution rights, and mutuality of obligation. If the client controls when/where/how you work, IR35 likely applies."
+      }
+    }
+  ]
+}
+</script>
+<style>
+:root{--bg:#050709;--surface:#0a0d14;--surface2:#0f1319;--border:#161c28;--border2:#1e2638;--sky:#0ea5e9;--sky-dim:rgba(14,165,233,0.10);--green:#2dd4a0;--green-dim:rgba(45,212,160,0.10);--red:#ef5350;--red-dim:rgba(239,83,80,0.10);--gold:#d4a847;--gold-dim:rgba(212,168,71,0.10);--cyan:#22d3ee;--teal:#0d9488;--teal-dim:rgba(13,148,136,0.10);--text:#c8cdd8;--text-bright:#e8ecf4;--muted:#4a5568;}
+*{margin:0;padding:0;box-sizing:border-box;}
+body{font-family:'Outfit',sans-serif;background:var(--bg);color:var(--text);min-height:100vh;line-height:1.5;}
+.container{max-width:960px;margin:0 auto;padding:2rem 1.25rem 4rem;}
+.nav-bar{display:flex;align-items:center;justify-content:space-between;padding:1rem 0;border-bottom:1px solid var(--border);margin-bottom:2rem;}
+.nav-brand{font-family:'Bebas Neue',sans-serif;font-size:1.4rem;color:var(--gold);text-decoration:none;letter-spacing:0.06em;}
+.nav-brand span{color:var(--text-bright);}
+.nav-link{font-size:0.85rem;font-weight:600;color:var(--sky);text-decoration:none;padding:0.4rem 1rem;border:1px solid var(--sky);border-radius:4px;transition:background 0.2s,color 0.2s;}
+.nav-link:hover{background:var(--sky);color:var(--bg);}
+.hero{text-align:center;margin-bottom:2rem;}
+.hero-eyebrow{font-size:0.75rem;font-weight:600;text-transform:uppercase;letter-spacing:0.15em;color:var(--sky);margin-bottom:0.5rem;}
+.hero h1{font-family:'Bebas Neue',sans-serif;font-size:clamp(1.8rem,5vw,2.8rem);color:var(--text-bright);letter-spacing:0.04em;line-height:1.1;margin-bottom:0.75rem;}
+.hero-sub{font-family:'Crimson Pro',serif;font-style:italic;font-size:1.05rem;color:var(--cyan);max-width:620px;margin:0 auto;}
+.panel{background:var(--surface);border:1px solid var(--border);border-radius:10px;padding:1.5rem;margin-bottom:1.25rem;}
+.panel-title{font-family:'Bebas Neue',sans-serif;font-size:1.1rem;color:var(--text-bright);letter-spacing:0.05em;margin-bottom:1rem;}
+.fg{display:flex;flex-direction:column;gap:0.3rem;}
+.fg label{font-size:0.72rem;font-weight:600;text-transform:uppercase;letter-spacing:0.06em;color:var(--muted);}
+.fg input,.fg select{font-family:'DM Mono',monospace;font-size:1rem;padding:0.6rem 0.8rem;background:var(--surface2);border:1px solid var(--border2);border-radius:6px;color:var(--text-bright);outline:none;}
+.fg input:focus,.fg select:focus{border-color:var(--sky);}
+.fg .hint{font-family:'Crimson Pro',serif;font-style:italic;font-size:0.78rem;color:var(--muted);}
+.input-grid{display:grid;grid-template-columns:1fr 1fr;gap:1rem;}
+@media(max-width:600px){.input-grid{grid-template-columns:1fr;}}
+.input-row-3{display:grid;grid-template-columns:1fr 1fr 1fr;gap:1rem;margin-top:1rem;}
+@media(max-width:600px){.input-row-3{grid-template-columns:1fr;}}
+.check-row{display:flex;align-items:center;gap:0.6rem;margin-top:0.75rem;}
+.check-row input[type="checkbox"]{accent-color:var(--sky);width:18px;height:18px;cursor:pointer;}
+.check-row label{font-size:0.85rem;color:var(--text);cursor:pointer;}
+.calc-btn{font-family:'Outfit',sans-serif;font-weight:700;font-size:1rem;padding:0.85rem;background:var(--sky);color:#fff;border:none;border-radius:6px;cursor:pointer;width:100%;margin:1.25rem 0 0;transition:background 0.2s;}
+.calc-btn:hover{background:#38bdf8;}
+
+/* Results */
+.results{display:none;}
+.results.show{display:block;}
+.result-cards{display:grid;grid-template-columns:1fr 1fr;gap:1.25rem;margin-bottom:1.5rem;}
+@media(max-width:700px){.result-cards{grid-template-columns:1fr;}}
+.result-card{background:var(--surface);border:2px solid var(--border);border-radius:10px;padding:1.5rem;position:relative;}
+.result-card.inside{border-color:rgba(239,83,80,0.4);}
+.result-card.outside{border-color:rgba(45,212,160,0.4);}
+.rc-title{font-family:'Bebas Neue',sans-serif;font-size:1.15rem;letter-spacing:0.05em;margin-bottom:1rem;}
+.result-card.inside .rc-title{color:var(--red);}
+.result-card.outside .rc-title{color:var(--green);}
+.rc-row{display:flex;justify-content:space-between;padding:0.4rem 0;border-bottom:1px solid var(--border);}
+.rc-row:last-child{border-bottom:none;}
+.rc-row.section-break{margin-top:0.5rem;padding-top:0.75rem;border-top:1px solid var(--border2);}
+.rc-label{font-size:0.82rem;color:var(--text);}
+.rc-label.indent{padding-left:0.75rem;color:var(--muted);}
+.rc-val{font-family:'DM Mono',monospace;font-weight:500;font-size:0.88rem;}
+.rc-val.bright{color:var(--text-bright);}
+.rc-val.green{color:var(--green);}
+.rc-val.red{color:var(--red);}
+.rc-val.gold{color:var(--gold);}
+.rc-row.total-row{border-top:2px solid var(--border2);margin-top:0.5rem;padding-top:0.75rem;}
+.rc-row.total-row .rc-label{font-weight:700;color:var(--text-bright);}
+.rc-row.total-row .rc-val{font-size:1rem;}
+
+/* Difference / equivalence boxes */
+.diff-box{background:var(--green-dim);border:1px solid var(--green);border-radius:10px;padding:1.25rem;text-align:center;margin-bottom:1rem;line-height:1.7;}
+.diff-box .big{font-family:'DM Mono',monospace;font-size:1.6rem;font-weight:500;color:var(--green);}
+.diff-box .sub{font-size:0.88rem;color:var(--green);margin-top:0.25rem;}
+.equiv-box{background:var(--sky-dim);border:1px solid var(--sky);border-radius:10px;padding:1.25rem;text-align:center;margin-bottom:1.5rem;line-height:1.7;font-size:0.92rem;}
+.equiv-box strong{color:var(--sky);font-family:'DM Mono',monospace;}
+
+/* Disclaimers */
+.disclaimers{background:var(--surface);border:1px solid var(--border);border-radius:10px;padding:1.25rem;margin-bottom:1.5rem;}
+.disclaimers p{font-size:0.78rem;color:var(--muted);line-height:1.6;margin-bottom:0.4rem;}
+.disclaimers p:last-child{margin-bottom:0;}
+
+/* Educational content */
+.edu-section{margin-top:2rem;}
+.edu-section h2{font-family:'Bebas Neue',sans-serif;font-size:1.4rem;color:var(--text-bright);letter-spacing:0.04em;margin-bottom:1rem;}
+.edu-section h3{font-family:'Bebas Neue',sans-serif;font-size:1.05rem;color:var(--text-bright);letter-spacing:0.04em;margin:1.25rem 0 0.5rem;}
+.edu-section p{font-size:0.92rem;line-height:1.7;margin-bottom:0.75rem;}
+.edu-section .formula{font-family:'DM Mono',monospace;font-size:0.88rem;color:var(--cyan);background:var(--surface2);padding:0.75rem 1rem;border-radius:6px;margin:0.75rem 0;border-left:3px solid var(--cyan);}
+.edu-section .worked{background:var(--surface);border:1px solid var(--border);border-radius:10px;padding:1.25rem;margin:1rem 0;}
+.edu-section .worked h4{font-family:'Bebas Neue',sans-serif;font-size:0.95rem;color:var(--sky);letter-spacing:0.04em;margin-bottom:0.75rem;}
+.edu-section .worked table{width:100%;border-collapse:collapse;font-size:0.82rem;margin-bottom:0.75rem;}
+.edu-section .worked table th{font-family:'Outfit',sans-serif;font-weight:600;text-transform:uppercase;font-size:0.68rem;letter-spacing:0.05em;color:var(--muted);padding:0.5rem;text-align:left;border-bottom:1px solid var(--border);}
+.edu-section .worked table td{padding:0.4rem 0.5rem;border-bottom:1px solid var(--border);font-family:'DM Mono',monospace;font-size:0.78rem;}
+.pln{font-family:'Crimson Pro',serif;font-style:italic;color:var(--cyan);background:rgba(34,211,238,0.08);border-left:3px solid var(--cyan);padding:0.85rem 1rem;border-radius:0 6px 6px 0;margin:1rem 0;font-size:0.92rem;line-height:1.6;}
+
+/* FAQ */
+.faq-section{margin-top:2rem;}
+.faq-section h2{font-family:'Bebas Neue',sans-serif;font-size:1.4rem;color:var(--text-bright);letter-spacing:0.04em;margin-bottom:1rem;}
+.faq-item{background:var(--surface);border:1px solid var(--border);border-radius:10px;margin-bottom:0.75rem;overflow:hidden;}
+.faq-q{font-family:'Outfit',sans-serif;font-weight:600;font-size:0.92rem;padding:1rem 1.25rem;cursor:pointer;display:flex;justify-content:space-between;align-items:center;color:var(--text-bright);transition:background 0.2s;}
+.faq-q:hover{background:var(--surface2);}
+.faq-q::after{content:'+';font-family:'DM Mono',monospace;font-size:1.2rem;color:var(--sky);transition:transform 0.2s;}
+.faq-item.open .faq-q::after{content:'-';}
+.faq-a{max-height:0;overflow:hidden;transition:max-height 0.3s ease,padding 0.3s ease;}
+.faq-item.open .faq-a{max-height:300px;padding:0 1.25rem 1rem;}
+.faq-a p{font-size:0.88rem;line-height:1.6;color:var(--text);}
+
+/* CTA */
+.cta-card{background:var(--surface);border:1px solid var(--border);border-left:3px solid var(--sky);border-radius:0 10px 10px 0;padding:1.5rem;margin-top:2rem;}
+.cta-card h3{font-family:'Bebas Neue',sans-serif;font-size:1.2rem;color:var(--sky);letter-spacing:0.04em;margin-bottom:0.5rem;}
+.cta-card p{font-family:'Crimson Pro',serif;font-style:italic;font-size:0.92rem;color:var(--text);line-height:1.5;margin-bottom:0.75rem;}
+.cta-link{font-weight:600;font-size:0.9rem;color:var(--sky);text-decoration:none;}
+.footer{margin-top:2.5rem;padding-top:1.25rem;border-top:1px solid var(--border);text-align:center;}
+.footer p{font-size:0.72rem;color:var(--muted);line-height:1.8;}
+.footer a{color:var(--muted);text-decoration:underline;}
+</style>
+<!-- GA4 Cookieless -->
+<script async src="https://www.googletagmanager.com/gtag/js?id=G-7GTLYCZMXN"></script>
+<script>window.dataLayer=window.dataLayer||[];function gtag(){dataLayer.push(arguments);}gtag('js',new Date());gtag('consent','default',{analytics_storage:'denied',ad_storage:'denied',ad_user_data:'denied',ad_personalization:'denied'});gtag('config','G-7GTLYCZMXN',{send_page_view:true,anonymize_ip:true});</script>
+</head>
+<body>
+<script src="/auth/mw-auth.js"></script>
+<div class="container">
+<nav class="nav-bar">
+  <a href="/" class="nav-brand">MATHS<span>WINS</span></a>
+  <a href="/everyday/tax/" class="nav-link">UK Tax Maths Course (Free) &rarr;</a>
+</nav>
+<div class="hero">
+  <div class="hero-eyebrow">Free Tool</div>
+  <h1>IR35 CALCULATOR</h1>
+  <div class="hero-sub">Enter your day rate and see the exact take-home difference: inside IR35 (umbrella PAYE) vs outside IR35 (limited company, salary + dividends).</div>
+</div>
+
+<div class="panel">
+  <div class="panel-title">YOUR CONTRACT</div>
+  <div class="input-grid">
+    <div class="fg">
+      <label>Day rate (&pound;)</label>
+      <input type="number" id="dayRate" placeholder="500" min="1" step="25">
+    </div>
+    <div class="fg">
+      <label>Working days per year</label>
+      <input type="number" id="workDays" value="220" min="1" max="365" step="1">
+      <div class="hint">220 = 44 weeks &times; 5 days, allowing for holidays and gaps</div>
+    </div>
+  </div>
+  <div class="input-row-3">
+    <div class="fg">
+      <label>Annual business expenses (&pound;)</label>
+      <input type="number" id="expenses" value="5000" min="0" step="500">
+      <div class="hint">Accountant, insurance, equipment, travel</div>
+    </div>
+    <div class="fg">
+      <label>Student loan</label>
+      <select id="studentLoan">
+        <option value="none">None</option>
+        <option value="plan1">Plan 1</option>
+        <option value="plan2">Plan 2</option>
+        <option value="plan4">Plan 4</option>
+        <option value="plan5">Plan 5</option>
+        <option value="pg">Postgraduate</option>
+      </select>
+    </div>
+    <div class="fg" style="justify-content:flex-end;">
+      <div class="check-row">
+        <input type="checkbox" id="scotland">
+        <label for="scotland">Scotland?</label>
+      </div>
+    </div>
+  </div>
+  <button class="calc-btn" onclick="compare()">Compare</button>
+</div>
+
+<div class="results" id="results"></div>
+
+<!-- Educational content -->
+<div class="edu-section">
+  <h2>HOW THE MATHS WORKS</h2>
+
+  <h3>Inside IR35 &mdash; The Umbrella Model</h3>
+  <p>When you work inside IR35, your income passes through an umbrella company. The umbrella deducts its margin (typically 5%), then pays employer NI (13.8% above &pound;9,100) from what remains. Whatever is left becomes your taxable salary &mdash; subject to income tax and employee NI, just like any PAYE employee.</p>
+  <div class="formula">Taxable salary = Gross &minus; Umbrella margin &minus; Employer NI</div>
+  <p>The critical point: employer NI comes out of <strong>your</strong> gross, not on top of it. This is the single biggest cost of being inside IR35.</p>
+
+  <h3>Outside IR35 &mdash; The Ltd Company Model</h3>
+  <p>Outside IR35, your limited company invoices the client directly. After deducting legitimate business expenses, the company pays corporation tax on its profits. You then extract money as a combination of salary and dividends.</p>
+  <div class="formula">Take-home = Salary (at personal allowance) + Dividends (taxed at lower rates)</div>
+  <p>The optimal strategy is to take a salary at the personal allowance (&pound;12,570) &mdash; no income tax, no employee NI &mdash; and take the rest as dividends. Dividend tax rates (8.75% basic, 33.75% higher) are significantly lower than income tax rates.</p>
+
+  <h3>Why The Gap Is So Large</h3>
+  <p>Two compounding factors create the IR35 gap:</p>
+  <p><strong>1. Employer NI:</strong> At 13.8% above the threshold, this alone costs &pound;12,000&ndash;&pound;15,000/year on a typical contractor income. Inside IR35, this comes from your gross. Outside IR35, you only pay employer NI on the small salary portion.</p>
+  <p><strong>2. Dividend efficiency:</strong> Corporation tax (25%) plus dividend tax (8.75% basic rate) gives an effective combined rate of around 31.6% on basic-rate dividends &mdash; compared to 40% income tax plus 2% NI for a higher-rate PAYE employee.</p>
+
+  <div class="worked">
+    <h4>WORKED EXAMPLE: &pound;500/DAY, 220 DAYS</h4>
+    <table>
+      <thead>
+        <tr><th>Item</th><th>Inside IR35</th><th>Outside IR35</th></tr>
+      </thead>
+      <tbody>
+        <tr><td>Gross income</td><td>&pound;110,000</td><td>&pound;110,000</td></tr>
+        <tr><td>Deductions before tax</td><td>Umbrella + Employer NI</td><td>Expenses + Corp Tax</td></tr>
+        <tr><td>Tax method</td><td>Full PAYE on everything</td><td>Small salary + dividends</td></tr>
+        <tr><td>Approximate take-home</td><td>~&pound;67,000</td><td>~&pound;80,000</td></tr>
+      </tbody>
+    </table>
+    <p>The exact figures depend on expenses, student loans, and Scottish tax status &mdash; use the calculator above for your specific numbers.</p>
+  </div>
+
+  <div class="pln">IR35 status depends on the working relationship &mdash; control, substitution, and mutuality of obligation. The financial difference is substantial, but you cannot simply choose your status. If the working practices look like employment, IR35 applies regardless of what the contract says.</div>
+</div>
+
+<!-- FAQ -->
+<div class="faq-section">
+  <h2>FREQUENTLY ASKED QUESTIONS</h2>
+  <div class="faq-item">
+    <div class="faq-q" onclick="toggleFaq(this)">What is IR35?</div>
+    <div class="faq-a"><p>IR35 is tax legislation that determines whether a contractor is genuinely self-employed or effectively an employee. If inside IR35, you're taxed like an employee even though you work through a company.</p></div>
+  </div>
+  <div class="faq-item">
+    <div class="faq-q" onclick="toggleFaq(this)">Who decides my IR35 status?</div>
+    <div class="faq-a"><p>For public sector and medium/large private sector clients, the client decides. For small private sector clients, you (the contractor) decide. The decision is based on working practices, not the contract alone.</p></div>
+  </div>
+  <div class="faq-item">
+    <div class="faq-q" onclick="toggleFaq(this)">Why does inside IR35 pay so much less?</div>
+    <div class="faq-a"><p>Two reasons: employer NI (13.8%) is deducted from your gross, and you can't extract profits as dividends (which are taxed at lower rates than salary). The employer NI alone costs roughly &pound;12,000&ndash;&pound;15,000 per year.</p></div>
+  </div>
+  <div class="faq-item">
+    <div class="faq-q" onclick="toggleFaq(this)">What's the optimal salary for a Ltd company?</div>
+    <div class="faq-a"><p>Usually &pound;12,570 (the personal allowance). Below the NI primary threshold so no employee NI, and fully covered by the personal allowance so no income tax. Everything above comes as dividends.</p></div>
+  </div>
+  <div class="faq-item">
+    <div class="faq-q" onclick="toggleFaq(this)">Should I increase my day rate for inside IR35?</div>
+    <div class="faq-a"><p>Yes &mdash; most contractors add 15&ndash;25% to their day rate to compensate for the tax difference. This calculator shows you the exact uplift needed.</p></div>
+  </div>
+  <div class="faq-item">
+    <div class="faq-q" onclick="toggleFaq(this)">Can I work outside IR35?</div>
+    <div class="faq-a"><p>It depends on how you work, not what you want. Key factors: control, substitution rights, and mutuality of obligation. If the client controls when/where/how you work, IR35 likely applies.</p></div>
+  </div>
+</div>
+
+<div class="cta-card">
+  <h3>UK TAX MATHS &mdash; FREE COURSE</h3>
+  <p>Understand marginal vs effective rates, the &pound;100k trap, Scottish tax differences, and how deductions really work. Completely free.</p>
+  <a href="/everyday/tax/" class="cta-link">Start the free course &rarr;</a>
+</div>
+
+<div class="footer">
+  <p><a href="/">MathsWins</a> &middot; <a href="/tools/">Tools</a> &middot; <a href="/everyday/">Everyday Maths</a><br>&copy; 2026 MathsWins. Not financial advice.<br><a href="/restore/">Restore Access</a></p>
+</div>
+</div>
+
+<script>
+function fmt(n) {
+  return '\u00A3' + n.toLocaleString('en-GB', { minimumFractionDigits: 0, maximumFractionDigits: 0 });
+}
+function fmt2(n) {
+  return '\u00A3' + n.toLocaleString('en-GB', { minimumFractionDigits: 2, maximumFractionDigits: 2 });
+}
+function pct(n) {
+  return n.toFixed(1) + '%';
+}
+
+// 2025/26 UK tax constants
+const PERSONAL_ALLOWANCE = 12570;
+const PA_TAPER_START = 100000;
+const EMPLOYER_NI_THRESHOLD = 9100;
+const EMPLOYER_NI_RATE = 0.138;
+const EMPLOYEE_NI_PT = 12570;  // Primary threshold
+const EMPLOYEE_NI_UEL = 50270; // Upper earnings limit
+const EMPLOYEE_NI_MAIN = 0.08;
+const EMPLOYEE_NI_UPPER = 0.02;
+const DIVIDEND_ALLOWANCE = 1000;
+const OPTIMAL_SALARY = 12570;
+
+// Student loan thresholds and rates 2025/26
+const STUDENT_LOANS = {
+  none:  { threshold: Infinity, rate: 0 },
+  plan1: { threshold: 24990, rate: 0.09 },
+  plan2: { threshold: 27295, rate: 0.09 },
+  plan4: { threshold: 31395, rate: 0.09 },
+  plan5: { threshold: 25000, rate: 0.09 },
+  pg:    { threshold: 21000, rate: 0.06 }
+};
+
+// England/Wales income tax bands
+function englandTax(taxableIncome, personalAllowance) {
+  const bands = [
+    { limit: 37700, rate: 0.20 },
+    { limit: 99730, rate: 0.40 },  // 37700 to 125230 (= 150000 - PA)
+    { limit: Infinity, rate: 0.45 }
+  ];
+  return calcBandedTax(taxableIncome, personalAllowance, bands);
+}
+
+// Scotland income tax bands 2025/26
+function scotlandTax(taxableIncome, personalAllowance) {
+  const bands = [
+    { limit: 2827,  rate: 0.19 },   // Starter
+    { limit: 11962, rate: 0.20 },   // Basic (cumulative to 14789)
+    { limit: 17025, rate: 0.21 },   // Intermediate (cumulative to 31814)
+    { limit: 30537, rate: 0.42 },   // Higher (cumulative to 62351)
+    { limit: 62649, rate: 0.45 },   // Advanced (cumulative to 125000)
+    { limit: Infinity, rate: 0.48 } // Top
+  ];
+  return calcBandedTax(taxableIncome, personalAllowance, bands);
+}
+
+function calcBandedTax(taxableIncome, pa, bands) {
+  let income = Math.max(0, taxableIncome - pa);
+  let tax = 0;
+  for (const band of bands) {
+    const chunk = Math.min(income, band.limit);
+    tax += chunk * band.rate;
+    income -= chunk;
+    if (income <= 0) break;
+  }
+  return tax;
+}
+
+function getPersonalAllowance(income) {
+  if (income <= PA_TAPER_START) return PERSONAL_ALLOWANCE;
+  const reduction = Math.floor((income - PA_TAPER_START) / 2);
+  return Math.max(0, PERSONAL_ALLOWANCE - reduction);
+}
+
+function calcStudentLoan(grossSalary, plan) {
+  const sl = STUDENT_LOANS[plan];
+  if (!sl || sl.rate === 0) return 0;
+  return Math.max(0, (grossSalary - sl.threshold) * sl.rate);
+}
+
+function calcEmployeeNI(grossSalary) {
+  let ni = 0;
+  if (grossSalary > EMPLOYEE_NI_PT) {
+    const mainBand = Math.min(grossSalary, EMPLOYEE_NI_UEL) - EMPLOYEE_NI_PT;
+    ni += Math.max(0, mainBand) * EMPLOYEE_NI_MAIN;
+  }
+  if (grossSalary > EMPLOYEE_NI_UEL) {
+    ni += (grossSalary - EMPLOYEE_NI_UEL) * EMPLOYEE_NI_UPPER;
+  }
+  return ni;
+}
+
+function calcEmployerNI(grossSalary) {
+  return Math.max(0, (grossSalary - EMPLOYER_NI_THRESHOLD) * EMPLOYER_NI_RATE);
+}
+
+// Corporation tax with marginal relief
+function calcCorpTax(profit) {
+  if (profit <= 50000) return profit * 0.19;
+  if (profit >= 250000) return profit * 0.25;
+  // Marginal relief between 50k and 250k
+  const mainTax = profit * 0.25;
+  const relief = (250000 - profit) * (1 / 400) * (3 / 4); // Standard marginal relief fraction
+  // Simplified: effective rate scales from 19% to 25%
+  // Marginal relief formula: main rate tax - ((upper limit - profit) * fraction * (main rate - small profits rate))
+  const fullTax = profit * 0.25;
+  const marginalRelief = ((250000 - profit) / 200000) * (profit * 0.25 - profit * 0.19);
+  return fullTax - marginalRelief;
+}
+
+// More precise marginal relief per HMRC formula
+function calcCorpTaxPrecise(profit) {
+  if (profit <= 0) return 0;
+  if (profit <= 50000) return profit * 0.19;
+  if (profit >= 250000) return profit * 0.25;
+  // HMRC marginal relief: Tax = profit * 25% - (250000 - profit) * 3/200
+  const tax = profit * 0.25 - (250000 - profit) * 3 / 200;
+  return tax;
+}
+
+function calcDividendTax(dividends, otherIncome, pa, isScotland) {
+  // Other income (salary) uses personal allowance and occupies basic rate band first
+  const taxableOther = Math.max(0, otherIncome - pa);
+
+  // For dividend tax, we need to know how much of the basic rate band is used by salary
+  const basicRateLimit = 37700; // Basic rate band width (same for Scotland dividends)
+  const higherRateLimit = basicRateLimit + 87440; // Up to 125140 (additional rate threshold)
+
+  const bandUsed = taxableOther; // How much of the band salary uses
+
+  // Apply dividend allowance
+  let taxableDividends = Math.max(0, dividends - DIVIDEND_ALLOWANCE);
+
+  let tax = 0;
+
+  // Dividends taxed at dividend rates, positioned after other income in the bands
+  // Basic rate band remaining
+  const basicRemaining = Math.max(0, basicRateLimit - bandUsed);
+  const inBasic = Math.min(taxableDividends, basicRemaining);
+  tax += inBasic * 0.0875;
+  taxableDividends -= inBasic;
+
+  // Higher rate band remaining
+  const higherBandWidth = 87440; // 125140 - 37700
+  const higherUsed = Math.max(0, bandUsed - basicRateLimit);
+  const higherRemaining = Math.max(0, higherBandWidth - higherUsed);
+  const inHigher = Math.min(taxableDividends, higherRemaining);
+  tax += inHigher * 0.3375;
+  taxableDividends -= inHigher;
+
+  // Additional rate
+  if (taxableDividends > 0) {
+    tax += taxableDividends * 0.3935;
+  }
+
+  return tax;
+}
+
+function calcInsideIR35(gross, studentPlan, isScotland) {
+  const umbrellaMargin = gross * 0.05;
+  const afterUmbrella = gross - umbrellaMargin;
+  const employerNI = calcEmployerNI(afterUmbrella);
+  const taxableSalary = afterUmbrella - employerNI;
+
+  const pa = getPersonalAllowance(taxableSalary);
+  const incomeTax = isScotland ? scotlandTax(taxableSalary, pa) : englandTax(taxableSalary, pa);
+  const employeeNI = calcEmployeeNI(taxableSalary);
+  const studentLoan = calcStudentLoan(taxableSalary, studentPlan);
+
+  const takeHome = taxableSalary - incomeTax - employeeNI - studentLoan;
+
+  return {
+    gross,
+    umbrellaMargin,
+    employerNI,
+    taxableSalary,
+    pa,
+    incomeTax,
+    employeeNI,
+    studentLoan,
+    takeHome,
+    monthly: takeHome / 12,
+    effectiveRate: ((gross - takeHome) / gross) * 100
+  };
+}
+
+function calcOutsideIR35(gross, expenses, studentPlan, isScotland) {
+  const profit = gross - expenses;
+  const corpTax = calcCorpTaxPrecise(profit);
+  const afterCorpTax = profit - corpTax;
+
+  const salary = OPTIMAL_SALARY;
+  const employerNIOnSalary = calcEmployerNI(salary);
+  const totalSalaryCost = salary + employerNIOnSalary;
+
+  // Available for dividends is after corp tax minus total salary cost
+  const dividends = Math.max(0, afterCorpTax - totalSalaryCost);
+
+  const pa = getPersonalAllowance(salary);
+  const incomeTaxOnSalary = isScotland ? scotlandTax(salary, pa) : englandTax(salary, pa);
+  const employeeNIOnSalary = calcEmployeeNI(salary);
+  const dividendTax = calcDividendTax(dividends, salary, pa, isScotland);
+
+  // Student loan: based on salary + dividends as total income for SL purposes
+  // Actually, dividends count towards student loan repayment via self-assessment
+  const totalIncomeForSL = salary + dividends;
+  const studentLoan = calcStudentLoan(totalIncomeForSL, studentPlan);
+
+  const takeHome = salary + dividends - incomeTaxOnSalary - employeeNIOnSalary - dividendTax - studentLoan;
+
+  return {
+    gross,
+    expenses,
+    profit,
+    corpTax,
+    afterCorpTax,
+    salary,
+    employerNIOnSalary,
+    dividends,
+    pa,
+    incomeTaxOnSalary,
+    employeeNIOnSalary,
+    dividendTax,
+    studentLoan,
+    takeHome,
+    monthly: takeHome / 12,
+    effectiveRate: ((gross - takeHome) / gross) * 100
+  };
+}
+
+// Find the inside IR35 day rate that gives the same take-home as outside
+function findEquivalentRate(outsideTakeHome, workDays, studentPlan, isScotland) {
+  let lo = 1, hi = 5000;
+  for (let i = 0; i < 100; i++) {
+    const mid = (lo + hi) / 2;
+    const gross = mid * workDays;
+    const result = calcInsideIR35(gross, studentPlan, isScotland);
+    if (result.takeHome < outsideTakeHome) {
+      lo = mid;
+    } else {
+      hi = mid;
+    }
+  }
+  return Math.ceil((lo + hi) / 2);
+}
+
+function compare() {
+  const dayRate = parseFloat(document.getElementById('dayRate').value);
+  const workDays = parseInt(document.getElementById('workDays').value);
+  const expenses = parseFloat(document.getElementById('expenses').value) || 0;
+  const studentPlan = document.getElementById('studentLoan').value;
+  const isScotland = document.getElementById('scotland').checked;
+
+  if (!dayRate || dayRate <= 0 || !workDays || workDays <= 0) {
+    return;
+  }
+
+  const gross = dayRate * workDays;
+  const inside = calcInsideIR35(gross, studentPlan, isScotland);
+  const outside = calcOutsideIR35(gross, expenses, studentPlan, isScotland);
+  const diff = outside.takeHome - inside.takeHome;
+  const equivRate = findEquivalentRate(outside.takeHome, workDays, studentPlan, isScotland);
+
+  const resultsEl = document.getElementById('results');
+  resultsEl.className = 'results show';
+
+  resultsEl.innerHTML = `
+    <div class="result-cards">
+      <div class="result-card inside">
+        <div class="rc-title">INSIDE IR35 (UMBRELLA)</div>
+        <div class="rc-row"><span class="rc-label">Gross income</span><span class="rc-val bright">${fmt(inside.gross)}</span></div>
+        <div class="rc-row"><span class="rc-label indent">Umbrella margin (5%)</span><span class="rc-val red">-${fmt(inside.umbrellaMargin)}</span></div>
+        <div class="rc-row"><span class="rc-label indent">Employer NI (13.8%)</span><span class="rc-val red">-${fmt(inside.employerNI)}</span></div>
+        <div class="rc-row section-break"><span class="rc-label">Taxable salary</span><span class="rc-val bright">${fmt(inside.taxableSalary)}</span></div>
+        <div class="rc-row"><span class="rc-label indent">Income tax</span><span class="rc-val red">-${fmt(inside.incomeTax)}</span></div>
+        <div class="rc-row"><span class="rc-label indent">Employee NI</span><span class="rc-val red">-${fmt(inside.employeeNI)}</span></div>
+        ${inside.studentLoan > 0 ? `<div class="rc-row"><span class="rc-label indent">Student loan</span><span class="rc-val red">-${fmt(inside.studentLoan)}</span></div>` : ''}
+        <div class="rc-row total-row"><span class="rc-label">Annual take-home</span><span class="rc-val bright">${fmt(inside.takeHome)}</span></div>
+        <div class="rc-row"><span class="rc-label">Monthly take-home</span><span class="rc-val bright">${fmt(inside.monthly)}</span></div>
+        <div class="rc-row"><span class="rc-label">Effective rate</span><span class="rc-val red">${pct(inside.effectiveRate)}</span></div>
+      </div>
+      <div class="result-card outside">
+        <div class="rc-title">OUTSIDE IR35 (LTD COMPANY)</div>
+        <div class="rc-row"><span class="rc-label">Gross income</span><span class="rc-val bright">${fmt(outside.gross)}</span></div>
+        <div class="rc-row"><span class="rc-label indent">Less expenses</span><span class="rc-val red">-${fmt(outside.expenses)}</span></div>
+        <div class="rc-row"><span class="rc-label indent">Corporation tax</span><span class="rc-val red">-${fmt(outside.corpTax)}</span></div>
+        <div class="rc-row section-break"><span class="rc-label">Available for extraction</span><span class="rc-val bright">${fmt(outside.afterCorpTax)}</span></div>
+        <div class="rc-row"><span class="rc-label indent">Salary (personal allowance)</span><span class="rc-val">${fmt(outside.salary)}</span></div>
+        <div class="rc-row"><span class="rc-label indent">Employer NI on salary</span><span class="rc-val">${fmt(outside.employerNIOnSalary)}</span></div>
+        <div class="rc-row"><span class="rc-label indent">Dividends</span><span class="rc-val">${fmt(outside.dividends)}</span></div>
+        <div class="rc-row section-break"><span class="rc-label indent">Income tax on salary</span><span class="rc-val">${fmt(outside.incomeTaxOnSalary)}</span></div>
+        <div class="rc-row"><span class="rc-label indent">Tax on dividends</span><span class="rc-val red">-${fmt(outside.dividendTax)}</span></div>
+        ${outside.studentLoan > 0 ? `<div class="rc-row"><span class="rc-label indent">Student loan</span><span class="rc-val red">-${fmt(outside.studentLoan)}</span></div>` : ''}
+        <div class="rc-row total-row"><span class="rc-label">Annual take-home</span><span class="rc-val green">${fmt(outside.takeHome)}</span></div>
+        <div class="rc-row"><span class="rc-label">Monthly take-home</span><span class="rc-val green">${fmt(outside.monthly)}</span></div>
+        <div class="rc-row"><span class="rc-label">Effective rate</span><span class="rc-val green">${pct(outside.effectiveRate)}</span></div>
+      </div>
+    </div>
+
+    ${diff > 0 ? `
+    <div class="diff-box">
+      <div class="big">${fmt(diff)}/year more</div>
+      <div class="sub">Outside IR35 you keep <strong>${fmt(diff)}</strong> more per year (<strong>${fmt(diff / 12)}</strong>/month)</div>
+    </div>
+    ` : `
+    <div class="diff-box" style="background:var(--red-dim);border-color:var(--red);">
+      <div class="big" style="color:var(--red);">${fmt(Math.abs(diff))}/year</div>
+      <div class="sub" style="color:var(--red);">At this day rate, inside IR35 actually gives you <strong>${fmt(Math.abs(diff))}</strong> more per year</div>
+    </div>
+    `}
+
+    <div class="equiv-box">
+      To earn the same take-home inside IR35, you'd need a day rate of <strong>&pound;${equivRate.toLocaleString('en-GB')}</strong>
+      ${equivRate > dayRate ? ` &mdash; that's <strong>&pound;${(equivRate - dayRate).toLocaleString('en-GB')}/day more</strong> (${pct(((equivRate - dayRate) / dayRate) * 100)} uplift)` : ''}
+    </div>
+
+    <div class="disclaimers">
+      <p>IR35 status depends on the working relationship, not the day rate. This calculator compares the financial impact only.</p>
+      <p>Inside IR35 figures assume an umbrella company model. Agency PAYE may differ.</p>
+      <p>Outside IR35 assumes you operate through your own limited company.</p>
+      <p>This is for illustration only &mdash; not tax advice. Speak to a specialist contractor accountant.</p>
+    </div>
+  `;
+
+  resultsEl.scrollIntoView({ behavior: 'smooth', block: 'start' });
+}
+
+function toggleFaq(el) {
+  el.parentElement.classList.toggle('open');
+}
+</script>
+</body>
+</html>

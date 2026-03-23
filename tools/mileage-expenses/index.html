@@ -1,0 +1,650 @@
+<!DOCTYPE html>
+<html lang="en-GB">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Mileage &amp; Expenses Calculator UK — HMRC Approved Rates | MathsWins</title>
+<meta name="description" content="Calculate your self-employment expense deductions. Mileage at HMRC approved rates, home office costs, phone, and common expenses — see exactly how much tax you save.">
+<meta property="og:title" content="Mileage &amp; Expenses Calculator UK — HMRC Approved Rates | MathsWins">
+<meta property="og:description" content="Calculate your self-employment expense deductions. Mileage at HMRC approved rates, home office costs, phone, and common expenses — see exactly how much tax you save.">
+<meta property="og:url" content="https://mathswins.co.uk/tools/mileage-expenses/">
+<meta property="og:image" content="https://mathswins.co.uk/assets/og-image.png">
+<meta property="og:type" content="website">
+<meta property="og:site_name" content="MathsWins">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:title" content="Mileage &amp; Expenses Calculator UK — HMRC Approved Rates | MathsWins">
+<meta name="twitter:description" content="Calculate your self-employment expense deductions. Mileage at HMRC approved rates, home office costs, phone, and common expenses — see exactly how much tax you save.">
+<meta name="twitter:image" content="https://mathswins.co.uk/assets/og-image.png">
+<link rel="canonical" href="https://mathswins.co.uk/tools/mileage-expenses/">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Crimson+Pro:ital,wght@0,400;1,400&family=DM+Mono:wght@400;500&family=Outfit:wght@300;400;600;700&display=swap" rel="stylesheet">
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "WebApplication",
+  "name": "Mileage & Expenses Calculator UK",
+  "url": "https://mathswins.co.uk/tools/mileage-expenses/",
+  "description": "Calculate your self-employment expense deductions. Mileage at HMRC approved rates, home office costs, phone, and common expenses — see exactly how much tax you save.",
+  "applicationCategory": "FinanceApplication",
+  "operatingSystem": "Any",
+  "offers": {
+    "@type": "Offer",
+    "price": "0",
+    "priceCurrency": "GBP"
+  },
+  "publisher": {
+    "@type": "Organization",
+    "name": "MathsWins",
+    "url": "https://mathswins.co.uk"
+  }
+}
+</script>
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "FAQPage",
+  "mainEntity": [
+    {
+      "@type": "Question",
+      "name": "How much can I claim per mile?",
+      "acceptedAnswer": {
+        "@type": "Answer",
+        "text": "45p per mile for the first 10,000 business miles in a car or van, then 25p per mile after that. This covers fuel, insurance, wear and tear — you can't claim these separately if using the mileage rate."
+      }
+    },
+    {
+      "@type": "Question",
+      "name": "Can I claim for working from home?",
+      "acceptedAnswer": {
+        "@type": "Answer",
+        "text": "Yes. The simplest method is £6 per week (£312/year) with no receipts needed. Or calculate the actual proportion of home costs used for business — more work but potentially more money."
+      }
+    },
+    {
+      "@type": "Question",
+      "name": "What counts as a business mile?",
+      "acceptedAnswer": {
+        "@type": "Answer",
+        "text": "Travel to client sites, supplier visits, business meetings. NOT your regular commute to a fixed workplace. If you work from home, travel to clients counts from your home."
+      }
+    },
+    {
+      "@type": "Question",
+      "name": "Do I need receipts for everything?",
+      "acceptedAnswer": {
+        "@type": "Answer",
+        "text": "For mileage, keep a log of business journeys (date, destination, miles, purpose). For other expenses, keep receipts for 5 years. The simplified home office rate needs no receipts."
+      }
+    },
+    {
+      "@type": "Question",
+      "name": "Can I claim for my phone?",
+      "acceptedAnswer": {
+        "@type": "Answer",
+        "text": "Yes — the business-use proportion. If you use your phone 50% for business, claim 50% of the bill. HMRC accepts reasonable estimates but keep your bills."
+      }
+    },
+    {
+      "@type": "Question",
+      "name": "What expenses are NOT claimable?",
+      "acceptedAnswer": {
+        "@type": "Answer",
+        "text": "Client entertaining (meals/drinks), clothing (unless uniform/protective), fines and penalties, your own labour, personal items. If in doubt, the HMRC test is: wholly and exclusively for business purposes."
+      }
+    }
+  ]
+}
+</script>
+<style>
+:root{--bg:#050709;--surface:#0a0d14;--surface2:#0f1319;--border:#161c28;--border2:#1e2638;--sky:#0ea5e9;--sky-dim:rgba(14,165,233,0.10);--green:#2dd4a0;--green-dim:rgba(45,212,160,0.10);--red:#ef5350;--gold:#d4a847;--gold-dim:rgba(212,168,71,0.10);--cyan:#22d3ee;--teal:#0d9488;--teal-dim:rgba(13,148,136,0.10);--text:#c8cdd8;--text-bright:#e8ecf4;--muted:#4a5568;}
+*{margin:0;padding:0;box-sizing:border-box;}
+body{font-family:'Outfit',sans-serif;background:var(--bg);color:var(--text);min-height:100vh;line-height:1.5;}
+.container{max-width:960px;margin:0 auto;padding:2rem 1.25rem 4rem;}
+.nav-bar{display:flex;align-items:center;justify-content:space-between;padding:1rem 0;border-bottom:1px solid var(--border);margin-bottom:2rem;}
+.nav-brand{font-family:'Bebas Neue',sans-serif;font-size:1.4rem;color:var(--gold);text-decoration:none;letter-spacing:0.06em;}
+.nav-brand span{color:var(--text-bright);}
+.nav-link{font-size:0.85rem;font-weight:600;color:var(--sky);text-decoration:none;padding:0.4rem 1rem;border:1px solid var(--sky);border-radius:4px;transition:background 0.2s,color 0.2s;}
+.nav-link:hover{background:var(--sky);color:var(--bg);}
+.hero{text-align:center;margin-bottom:2rem;}
+.hero-eyebrow{font-size:0.75rem;font-weight:600;text-transform:uppercase;letter-spacing:0.15em;color:var(--sky);margin-bottom:0.5rem;}
+.hero h1{font-family:'Bebas Neue',sans-serif;font-size:clamp(1.8rem,5vw,2.8rem);color:var(--text-bright);letter-spacing:0.04em;line-height:1.1;margin-bottom:0.75rem;}
+.hero-sub{font-family:'Crimson Pro',serif;font-style:italic;font-size:1.05rem;color:var(--cyan);max-width:620px;margin:0 auto;}
+.panel{background:var(--surface);border:1px solid var(--border);border-radius:10px;padding:1.5rem;margin-bottom:1.25rem;}
+.panel-title{font-family:'Bebas Neue',sans-serif;font-size:1.1rem;color:var(--text-bright);letter-spacing:0.05em;margin-bottom:1rem;}
+.fg{display:flex;flex-direction:column;gap:0.3rem;margin-bottom:0.75rem;}
+.fg label{font-size:0.72rem;font-weight:600;text-transform:uppercase;letter-spacing:0.06em;color:var(--muted);}
+.fg input[type="number"],.fg input[type="text"],.fg select{font-family:'DM Mono',monospace;font-size:1rem;padding:0.6rem 0.8rem;background:var(--surface2);border:1px solid var(--border2);border-radius:6px;color:var(--text-bright);outline:none;width:100%;}
+.fg input:focus{border-color:var(--sky);}
+.fg .hint{font-family:'Crimson Pro',serif;font-style:italic;font-size:0.78rem;color:var(--muted);}
+.input-grid{display:grid;grid-template-columns:1fr 1fr;gap:0.75rem 1.5rem;}
+@media(max-width:600px){.input-grid{grid-template-columns:1fr;}}
+.input-grid .fg{margin-bottom:0;}
+
+/* Radio groups */
+.radio-group{display:flex;gap:0.75rem;flex-wrap:wrap;margin-bottom:0.5rem;}
+.radio-group label{font-size:0.85rem;font-weight:400;text-transform:none;letter-spacing:0;color:var(--text);cursor:pointer;display:flex;align-items:center;gap:0.4rem;padding:0.5rem 0.85rem;background:var(--surface2);border:1px solid var(--border2);border-radius:6px;transition:border-color 0.2s,background 0.2s;}
+.radio-group label:hover{border-color:var(--sky);}
+.radio-group input[type="radio"]{accent-color:var(--sky);width:14px;height:14px;}
+.radio-group input[type="radio"]:checked + .radio-label{color:var(--text-bright);}
+.radio-group label:has(input:checked){border-color:var(--sky);background:var(--sky-dim);}
+
+/* Slider */
+.slider-wrap{display:flex;align-items:center;gap:1rem;}
+.slider-wrap input[type="range"]{flex:1;accent-color:var(--sky);height:6px;cursor:pointer;}
+.slider-val{font-family:'DM Mono',monospace;font-size:1rem;color:var(--text-bright);min-width:3.5rem;text-align:right;}
+
+/* Actual costs sub-panel */
+.sub-panel{background:var(--surface2);border:1px solid var(--border);border-radius:8px;padding:1.25rem;margin-top:0.5rem;}
+.sub-panel .fg label{color:var(--muted);}
+
+/* Note box */
+.note-box{font-family:'Crimson Pro',serif;font-style:italic;color:var(--cyan);background:rgba(34,211,238,0.08);border-left:3px solid var(--cyan);padding:0.85rem 1rem;border-radius:0 6px 6px 0;margin:0.75rem 0;font-size:0.88rem;line-height:1.6;}
+
+.calc-btn{font-family:'Outfit',sans-serif;font-weight:700;font-size:1rem;padding:0.85rem;background:var(--sky);color:#fff;border:none;border-radius:6px;cursor:pointer;width:100%;margin:0.5rem 0 0;transition:background 0.2s;}
+.calc-btn:hover{background:#38bdf8;}
+
+/* Results */
+.results{display:none;}
+.results.show{display:block;}
+
+/* Summary cards */
+.summary-cards{display:grid;grid-template-columns:1fr 1fr 1fr;gap:1rem;margin-bottom:1.5rem;}
+@media(max-width:700px){.summary-cards{grid-template-columns:1fr;}}
+.summary-card{background:var(--surface);border:1px solid var(--border);border-radius:10px;padding:1.25rem;text-align:center;}
+.summary-card.total{border-top:3px solid var(--gold);}
+.summary-card.tax{border-top:3px solid var(--green);}
+.summary-card.monthly{border-top:3px solid var(--sky);}
+.sc-label{font-family:'Outfit',sans-serif;font-size:0.78rem;font-weight:600;text-transform:uppercase;letter-spacing:0.05em;color:var(--muted);margin-bottom:0.5rem;}
+.sc-big{font-family:'DM Mono',monospace;font-size:2rem;font-weight:500;line-height:1.2;}
+.sc-big.gold{color:var(--gold);}
+.sc-big.green{color:var(--green);}
+.sc-big.sky{color:var(--sky);}
+.sc-sub{font-family:'Crimson Pro',serif;font-style:italic;font-size:0.82rem;color:var(--muted);margin-top:0.25rem;}
+
+/* Breakdown */
+.breakdown-panel{background:var(--surface);border:1px solid var(--border);border-radius:10px;padding:1.5rem;margin-bottom:1.5rem;font-size:0.88rem;}
+.breakdown-panel h3{font-family:'Bebas Neue',sans-serif;font-size:1rem;letter-spacing:0.05em;color:var(--text-bright);margin-bottom:0.75rem;}
+.bk-section{margin-bottom:1.25rem;padding-bottom:1rem;border-bottom:1px solid var(--border);}
+.bk-section:last-child{border-bottom:none;margin-bottom:0;padding-bottom:0;}
+.bk-heading{font-family:'Bebas Neue',sans-serif;font-size:0.9rem;letter-spacing:0.05em;color:var(--sky);margin-bottom:0.5rem;}
+.bk-row{display:flex;justify-content:space-between;padding:0.25rem 0;gap:1rem;}
+.bk-row .bk-desc{color:var(--text);flex:1;}
+.bk-row .bk-val{font-family:'DM Mono',monospace;color:var(--text-bright);white-space:nowrap;}
+.bk-total{display:flex;justify-content:space-between;padding:0.5rem 0;margin-top:0.25rem;border-top:1px solid var(--border2);font-weight:600;}
+.bk-total .bk-desc{color:var(--text-bright);}
+.bk-total .bk-val{font-family:'DM Mono',monospace;color:var(--gold);}
+.bk-grand{display:flex;justify-content:space-between;padding:0.75rem 0;font-weight:700;font-size:1rem;}
+.bk-grand .bk-desc{color:var(--text-bright);}
+.bk-grand .bk-val{font-family:'DM Mono',monospace;color:var(--gold);font-size:1.1rem;}
+.bk-saving-row{display:flex;justify-content:space-between;padding:0.25rem 0;}
+.bk-saving-row .bk-desc{color:var(--text);}
+.bk-saving-row .bk-val{font-family:'DM Mono',monospace;color:var(--green);}
+
+/* Saving highlight */
+.saving-box{background:var(--green-dim);border:1px solid var(--green);border-radius:10px;padding:1.25rem;text-align:center;margin-bottom:1.5rem;}
+.saving-box .big{font-family:'DM Mono',monospace;font-size:1.5rem;font-weight:500;color:var(--green);}
+
+/* Missing expenses checklist */
+.missing-panel{background:var(--surface);border:1px solid var(--border);border-radius:10px;padding:1.5rem;margin-bottom:1.5rem;}
+.missing-panel h3{font-family:'Bebas Neue',sans-serif;font-size:1.05rem;letter-spacing:0.05em;color:var(--text-bright);margin-bottom:1rem;}
+.check-item{display:flex;align-items:flex-start;gap:0.6rem;padding:0.4rem 0;font-size:0.88rem;color:var(--text);}
+.check-item input[type="checkbox"]{accent-color:var(--gold);width:16px;height:16px;margin-top:2px;cursor:pointer;flex-shrink:0;}
+.check-item label{cursor:pointer;line-height:1.5;}
+.check-warning{font-family:'Crimson Pro',serif;font-style:italic;color:var(--red);background:rgba(239,83,80,0.08);border-left:3px solid var(--red);padding:0.85rem 1rem;border-radius:0 6px 6px 0;margin-top:1rem;font-size:0.85rem;line-height:1.6;}
+
+/* Educational content */
+.edu-section{margin-top:2rem;}
+.edu-section h2{font-family:'Bebas Neue',sans-serif;font-size:1.4rem;color:var(--text-bright);letter-spacing:0.04em;margin-bottom:1rem;}
+.edu-section h3{font-family:'Bebas Neue',sans-serif;font-size:1.05rem;color:var(--text-bright);letter-spacing:0.04em;margin:1.25rem 0 0.5rem;}
+.edu-section p{font-size:0.92rem;line-height:1.7;margin-bottom:0.75rem;}
+.edu-section .formula{font-family:'DM Mono',monospace;font-size:0.88rem;color:var(--cyan);background:var(--surface2);padding:0.75rem 1rem;border-radius:6px;margin:0.75rem 0;border-left:3px solid var(--cyan);}
+.edu-section .worked{background:var(--surface);border:1px solid var(--border);border-radius:10px;padding:1.25rem;margin:1rem 0;}
+.edu-section .worked h4{font-family:'Bebas Neue',sans-serif;font-size:0.95rem;color:var(--sky);letter-spacing:0.04em;margin-bottom:0.75rem;}
+.edu-section .worked table{width:100%;border-collapse:collapse;font-size:0.82rem;margin-bottom:0.75rem;}
+.edu-section .worked table th{font-family:'Outfit',sans-serif;font-weight:600;text-transform:uppercase;font-size:0.68rem;letter-spacing:0.05em;color:var(--muted);padding:0.5rem;text-align:left;border-bottom:1px solid var(--border);}
+.edu-section .worked table td{padding:0.4rem 0.5rem;border-bottom:1px solid var(--border);font-family:'DM Mono',monospace;font-size:0.78rem;}
+.pln{font-family:'Crimson Pro',serif;font-style:italic;color:var(--cyan);background:rgba(34,211,238,0.08);border-left:3px solid var(--cyan);padding:0.85rem 1rem;border-radius:0 6px 6px 0;margin:1rem 0;font-size:0.92rem;line-height:1.6;}
+
+/* FAQ */
+.faq-section{margin-top:2rem;}
+.faq-section h2{font-family:'Bebas Neue',sans-serif;font-size:1.4rem;color:var(--text-bright);letter-spacing:0.04em;margin-bottom:1rem;}
+.faq-item{background:var(--surface);border:1px solid var(--border);border-radius:10px;margin-bottom:0.75rem;overflow:hidden;}
+.faq-q{font-family:'Outfit',sans-serif;font-weight:600;font-size:0.92rem;padding:1rem 1.25rem;cursor:pointer;display:flex;justify-content:space-between;align-items:center;color:var(--text-bright);transition:background 0.2s;}
+.faq-q:hover{background:var(--surface2);}
+.faq-q::after{content:'+';font-family:'DM Mono',monospace;font-size:1.2rem;color:var(--sky);transition:transform 0.2s;}
+.faq-item.open .faq-q::after{content:'-';}
+.faq-a{max-height:0;overflow:hidden;transition:max-height 0.3s ease,padding 0.3s ease;}
+.faq-item.open .faq-a{max-height:300px;padding:0 1.25rem 1rem;}
+.faq-a p{font-size:0.88rem;line-height:1.6;color:var(--text);}
+
+/* CTA */
+.cta-card{background:var(--surface);border:1px solid var(--border);border-left:3px solid var(--sky);border-radius:0 10px 10px 0;padding:1.5rem;margin-top:2rem;}
+.cta-card h3{font-family:'Bebas Neue',sans-serif;font-size:1.2rem;color:var(--sky);letter-spacing:0.04em;margin-bottom:0.5rem;}
+.cta-card p{font-family:'Crimson Pro',serif;font-style:italic;font-size:0.92rem;color:var(--text);line-height:1.5;margin-bottom:0.75rem;}
+.cta-link{font-weight:600;font-size:0.9rem;color:var(--sky);text-decoration:none;}
+.footer{margin-top:2.5rem;padding-top:1.25rem;border-top:1px solid var(--border);text-align:center;}
+.footer p{font-size:0.72rem;color:var(--muted);line-height:1.8;}
+.footer a{color:var(--muted);text-decoration:underline;}
+</style>
+<!-- GA4 Cookieless -->
+<script async src="https://www.googletagmanager.com/gtag/js?id=G-7GTLYCZMXN"></script>
+<script>window.dataLayer=window.dataLayer||[];function gtag(){dataLayer.push(arguments);}gtag('js',new Date());gtag('consent','default',{analytics_storage:'denied',ad_storage:'denied',ad_user_data:'denied',ad_personalization:'denied'});gtag('config','G-7GTLYCZMXN',{send_page_view:true,anonymize_ip:true});</script>
+</head>
+<body>
+<script src="/auth/mw-auth.js"></script>
+<div class="container">
+<nav class="nav-bar">
+  <a href="/" class="nav-brand">MATHS<span>WINS</span></a>
+  <a href="/everyday/tax/" class="nav-link">UK Tax Maths Course (Free) &rarr;</a>
+</nav>
+<div class="hero">
+  <div class="hero-eyebrow">Free Tool</div>
+  <h1>MILEAGE &amp; EXPENSES CALCULATOR</h1>
+  <div class="hero-sub">Calculate your self-employed expense deductions at HMRC approved rates &mdash; and see exactly how much tax you save.</div>
+</div>
+
+<!-- MILEAGE SECTION -->
+<div class="panel">
+  <div class="panel-title">MILEAGE</div>
+  <div class="input-grid">
+    <div class="fg">
+      <label>Business miles this year</label>
+      <input type="number" id="businessMiles" placeholder="8,000" min="0" step="100">
+    </div>
+    <div class="fg">
+      <label>Vehicle type</label>
+      <div class="radio-group">
+        <label><input type="radio" name="vehicleType" value="car" checked><span class="radio-label">Car / Van</span></label>
+        <label><input type="radio" name="vehicleType" value="motorcycle"><span class="radio-label">Motorcycle</span></label>
+        <label><input type="radio" name="vehicleType" value="bicycle"><span class="radio-label">Bicycle</span></label>
+      </div>
+    </div>
+  </div>
+  <div class="note-box">HMRC approved rates: Cars/vans 45p/mile (first 10,000), 25p/mile (after). Motorcycles 24p/mile. Bicycles 20p/mile. These are simplified rates &mdash; you cannot also claim actual fuel, insurance, or depreciation if using these rates.</div>
+</div>
+
+<!-- HOME OFFICE SECTION -->
+<div class="panel">
+  <div class="panel-title">HOME OFFICE</div>
+  <div class="fg">
+    <label>Method</label>
+    <div class="radio-group">
+      <label><input type="radio" name="homeMethod" value="simplified" checked onchange="toggleHomeMethod()"><span class="radio-label">Simplified (&pound;6/week flat rate)</span></label>
+      <label><input type="radio" name="homeMethod" value="actual" onchange="toggleHomeMethod()"><span class="radio-label">Actual costs (proportional)</span></label>
+    </div>
+  </div>
+  <div id="simplifiedInfo" class="note-box">Automatically claims &pound;312/year (&pound;6 &times; 52 weeks). No receipts needed.</div>
+  <div id="actualCosts" class="sub-panel" style="display:none;">
+    <div class="input-grid">
+      <div class="fg">
+        <label>Annual rent or mortgage interest (&pound;)</label>
+        <input type="number" id="homeRent" placeholder="0" min="0" step="100">
+      </div>
+      <div class="fg">
+        <label>Annual utilities (&pound;)</label>
+        <input type="number" id="homeUtilities" placeholder="0" min="0" step="50">
+      </div>
+      <div class="fg">
+        <label>Annual broadband (&pound;)</label>
+        <input type="number" id="homeBroadband" placeholder="0" min="0" step="10">
+      </div>
+      <div class="fg">
+        <label>Annual council tax (&pound;)</label>
+        <input type="number" id="homeCouncilTax" placeholder="0" min="0" step="50">
+      </div>
+    </div>
+    <div class="fg" style="margin-top:0.75rem;">
+      <label>Percentage of home used for business</label>
+      <div class="slider-wrap">
+        <input type="range" id="homePercent" min="0" max="100" value="20" oninput="document.getElementById('homePercentVal').textContent=this.value+'%'">
+        <span class="slider-val" id="homePercentVal">20%</span>
+      </div>
+      <div class="hint">e.g. 1 room out of 5 = 20%</div>
+    </div>
+  </div>
+</div>
+
+<!-- PHONE & INTERNET -->
+<div class="panel">
+  <div class="panel-title">PHONE &amp; INTERNET</div>
+  <div class="input-grid">
+    <div class="fg">
+      <label>Monthly phone bill (&pound;)</label>
+      <input type="number" id="phoneBill" placeholder="50" min="0" step="5">
+    </div>
+    <div class="fg">
+      <label>Business use percentage</label>
+      <div class="slider-wrap">
+        <input type="range" id="phonePercent" min="0" max="100" value="50" oninput="document.getElementById('phonePercentVal').textContent=this.value+'%'">
+        <span class="slider-val" id="phonePercentVal">50%</span>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- OTHER CLAIMABLE EXPENSES -->
+<div class="panel">
+  <div class="panel-title">OTHER CLAIMABLE EXPENSES</div>
+  <div class="input-grid">
+    <div class="fg">
+      <label>Professional insurance (&pound;/year)</label>
+      <input type="number" id="expInsurance" placeholder="0" min="0" step="10">
+    </div>
+    <div class="fg">
+      <label>Accountant fees (&pound;/year)</label>
+      <input type="number" id="expAccountant" placeholder="0" min="0" step="10">
+    </div>
+    <div class="fg">
+      <label>Software &amp; subscriptions (&pound;/year)</label>
+      <input type="number" id="expSoftware" placeholder="0" min="0" step="10">
+    </div>
+    <div class="fg">
+      <label>Training &amp; courses (&pound;/year)</label>
+      <input type="number" id="expTraining" placeholder="0" min="0" step="10">
+    </div>
+    <div class="fg">
+      <label>Professional memberships (&pound;/year)</label>
+      <input type="number" id="expMemberships" placeholder="0" min="0" step="10">
+    </div>
+    <div class="fg">
+      <label>Stationery &amp; postage (&pound;/year)</label>
+      <input type="number" id="expStationery" placeholder="0" min="0" step="10">
+    </div>
+    <div class="fg">
+      <label>Clothing &mdash; uniforms/protective only (&pound;/year)</label>
+      <input type="number" id="expClothing" placeholder="0" min="0" step="10">
+    </div>
+  </div>
+</div>
+
+<!-- TAX RATE -->
+<div class="panel">
+  <div class="panel-title">YOUR TAX RATE</div>
+  <div class="radio-group">
+    <label><input type="radio" name="taxRate" value="20" checked><span class="radio-label">Basic (20%)</span></label>
+    <label><input type="radio" name="taxRate" value="40"><span class="radio-label">Higher (40%)</span></label>
+    <label><input type="radio" name="taxRate" value="45"><span class="radio-label">Additional (45%)</span></label>
+  </div>
+  <div class="hint" style="margin-top:0.5rem;font-family:'Crimson Pro',serif;font-style:italic;font-size:0.78rem;color:var(--muted);">Class 4 NI: 6% on profits between &pound;12,570 and &pound;50,270 (2025/26 rates).</div>
+</div>
+
+<button class="calc-btn" onclick="calculate()">Calculate My Deductions</button>
+
+<!-- RESULTS -->
+<div class="results" id="results"></div>
+
+<!-- EDUCATIONAL CONTENT -->
+<div class="edu-section">
+  <h2>HOW SELF-EMPLOYED EXPENSES WORK</h2>
+
+  <h3>The Basic Principle</h3>
+  <p>As a sole trader, you pay tax on your <strong>profit</strong> &mdash; not your total income. Every legitimate business expense reduces your taxable profit, which reduces both income tax and Class 4 National Insurance.</p>
+  <div class="formula">Tax saving = Claimable expenses &times; (tax rate + NI rate)</div>
+  <p>If you are a higher-rate taxpayer claiming &pound;5,000 in expenses, that is &pound;5,000 &times; 46% = &pound;2,300 less tax. The expenses do not come off your tax bill directly &mdash; they come off the profit that gets taxed.</p>
+
+  <h3>HMRC Simplified Mileage Rates</h3>
+  <p>HMRC lets you claim a flat rate per business mile instead of tracking actual vehicle costs. This is usually simpler and often more generous for moderate mileage.</p>
+  <div class="formula">First 10,000 miles: 45p/mile (cars/vans)<br>After 10,000 miles: 25p/mile (cars/vans)<br>Motorcycles: 24p/mile (all miles)<br>Bicycles: 20p/mile (all miles)</div>
+  <p>The 45p rate covers fuel, insurance, road tax, MOT, servicing, and depreciation. If you use the simplified rate, you cannot also claim these costs separately. Choose one method or the other.</p>
+
+  <h3>Home Office: Simplified vs Actual</h3>
+  <p>The simplified method gives you &pound;6 per week (&pound;312/year) with zero paperwork. The actual method requires you to calculate the business proportion of your home costs &mdash; more effort, but potentially a larger claim if your home costs are high or you use a significant proportion of your home for business.</p>
+
+  <div class="worked">
+    <h4>WORKED EXAMPLE: FREELANCE CONSULTANT</h4>
+    <table>
+      <thead>
+        <tr><th>Expense</th><th>Amount</th></tr>
+      </thead>
+      <tbody>
+        <tr><td>8,000 miles &times; 45p</td><td>&pound;3,600</td></tr>
+        <tr><td>Home office (simplified)</td><td>&pound;312</td></tr>
+        <tr><td>Phone (&pound;50/month &times; 50%)</td><td>&pound;300</td></tr>
+        <tr><td>Accountant</td><td>&pound;350</td></tr>
+        <tr><td>Insurance</td><td>&pound;240</td></tr>
+        <tr><td>Software</td><td>&pound;180</td></tr>
+        <tr><td style="font-family:'Outfit',sans-serif;font-weight:600;">Total claimable</td><td style="font-weight:600;color:var(--gold);">&pound;4,982</td></tr>
+      </tbody>
+    </table>
+    <p style="font-size:0.85rem;">At 40% tax + 6% NI, that is &pound;4,982 &times; 46% = <strong>&pound;2,292 saved</strong>. Without claiming these expenses, you would pay &pound;2,292 more in tax on the same income.</p>
+  </div>
+
+  <div class="pln">Most self-employed people under-claim. The biggest missed deductions are mileage (people forget to log journeys), home office (people do not realise they can claim), and professional development (courses, books, and memberships).</div>
+</div>
+
+<!-- FAQ -->
+<div style="text-align:center;margin:1.5rem 0;padding:1rem;background:rgba(45,212,160,0.06);border:1px solid rgba(45,212,160,0.2);border-radius:8px"><a href="https://www.gov.uk/simpled-expenses-if-youre-self-employed" target="_blank" rel="noopener noreferrer" style="color:#2dd4a0;font-weight:600;text-decoration:none;font-size:0.95rem">Simplified expenses if self-employed &rarr; GOV.UK</a><div style="font-size:0.7rem;color:#4a5568;margin-top:4px">Opens in a new tab — official UK Government website</div></div>
+<div class="faq-section">
+  <h2>FREQUENTLY ASKED QUESTIONS</h2>
+  <div class="faq-item">
+    <div class="faq-q" onclick="toggleFaq(this)">How much can I claim per mile?</div>
+    <div class="faq-a"><p>45p per mile for the first 10,000 business miles in a car or van, then 25p per mile after that. This covers fuel, insurance, wear and tear &mdash; you cannot claim these separately if using the mileage rate.</p></div>
+  </div>
+  <div class="faq-item">
+    <div class="faq-q" onclick="toggleFaq(this)">Can I claim for working from home?</div>
+    <div class="faq-a"><p>Yes. The simplest method is &pound;6 per week (&pound;312/year) with no receipts needed. Or calculate the actual proportion of home costs used for business &mdash; more work but potentially more money.</p></div>
+  </div>
+  <div class="faq-item">
+    <div class="faq-q" onclick="toggleFaq(this)">What counts as a business mile?</div>
+    <div class="faq-a"><p>Travel to client sites, supplier visits, business meetings. NOT your regular commute to a fixed workplace. If you work from home, travel to clients counts from your home.</p></div>
+  </div>
+  <div class="faq-item">
+    <div class="faq-q" onclick="toggleFaq(this)">Do I need receipts for everything?</div>
+    <div class="faq-a"><p>For mileage, keep a log of business journeys (date, destination, miles, purpose). For other expenses, keep receipts for 5 years. The simplified home office rate needs no receipts.</p></div>
+  </div>
+  <div class="faq-item">
+    <div class="faq-q" onclick="toggleFaq(this)">Can I claim for my phone?</div>
+    <div class="faq-a"><p>Yes &mdash; the business-use proportion. If you use your phone 50% for business, claim 50% of the bill. HMRC accepts reasonable estimates but keep your bills.</p></div>
+  </div>
+  <div class="faq-item">
+    <div class="faq-q" onclick="toggleFaq(this)">What expenses are NOT claimable?</div>
+    <div class="faq-a"><p>Client entertaining (meals/drinks), clothing (unless uniform/protective), fines and penalties, your own labour, personal items. If in doubt, the HMRC test is: &ldquo;wholly and exclusively for business purposes.&rdquo;</p></div>
+  </div>
+</div>
+
+<!-- CTA -->
+<div class="cta-card">
+  <h3>UNDERSTAND YOUR TAX PROPERLY</h3>
+  <p>This calculator shows your deductions. Our free UK Tax Maths course explains the full picture &mdash; marginal rates, the &pound;100k trap, and how to make better decisions about your income.</p>
+  <a href="/everyday/tax/" class="cta-link">UK Tax Maths &mdash; Free Course &rarr;</a>
+</div>
+
+<!-- FOOTER -->
+<div class="footer">
+  <p>Built by <a href="/">MathsWins</a> &mdash; the maths behind better decisions.</p>
+  <p>This calculator uses HMRC approved mileage rates for 2025/26. It provides estimates for educational purposes only &mdash; always consult a qualified accountant for your specific tax situation.</p>
+  <p><a href="/terms/">Terms of Use</a></p>
+</div>
+
+</div><!-- /container -->
+
+<script>
+function toggleHomeMethod() {
+  const method = document.querySelector('input[name="homeMethod"]:checked').value;
+  document.getElementById('simplifiedInfo').style.display = method === 'simplified' ? 'block' : 'none';
+  document.getElementById('actualCosts').style.display = method === 'actual' ? 'block' : 'none';
+}
+
+function val(id) {
+  return parseFloat(document.getElementById(id).value) || 0;
+}
+
+function fmt(n) {
+  return '\u00A3' + n.toLocaleString('en-GB', { minimumFractionDigits: 2, maximumFractionDigits: 2 });
+}
+
+function fmtWhole(n) {
+  return '\u00A3' + n.toLocaleString('en-GB', { minimumFractionDigits: 0, maximumFractionDigits: 0 });
+}
+
+function calculate() {
+  // --- Mileage ---
+  const miles = val('businessMiles');
+  const vehicleType = document.querySelector('input[name="vehicleType"]:checked').value;
+  let mileageClaim = 0;
+  let mileageDesc = '';
+
+  if (vehicleType === 'car') {
+    if (miles <= 10000) {
+      mileageClaim = miles * 0.45;
+      mileageDesc = miles.toLocaleString('en-GB') + ' miles \u00D7 45p';
+    } else {
+      const first = 10000 * 0.45;
+      const rest = (miles - 10000) * 0.25;
+      mileageClaim = first + rest;
+      mileageDesc = '10,000 miles \u00D7 45p + ' + (miles - 10000).toLocaleString('en-GB') + ' miles \u00D7 25p';
+    }
+  } else if (vehicleType === 'motorcycle') {
+    mileageClaim = miles * 0.24;
+    mileageDesc = miles.toLocaleString('en-GB') + ' miles \u00D7 24p';
+  } else {
+    mileageClaim = miles * 0.20;
+    mileageDesc = miles.toLocaleString('en-GB') + ' miles \u00D7 20p';
+  }
+
+  // --- Home office ---
+  const homeMethod = document.querySelector('input[name="homeMethod"]:checked').value;
+  let homeClaim = 0;
+  let homeDesc = '';
+
+  if (homeMethod === 'simplified') {
+    homeClaim = 312;
+    homeDesc = 'Simplified flat rate (52 weeks \u00D7 \u00A36)';
+  } else {
+    const rent = val('homeRent');
+    const utilities = val('homeUtilities');
+    const broadband = val('homeBroadband');
+    const councilTax = val('homeCouncilTax');
+    const pct = parseInt(document.getElementById('homePercent').value) || 0;
+    const totalHomeCosts = rent + utilities + broadband + councilTax;
+    homeClaim = totalHomeCosts * (pct / 100);
+    homeDesc = fmt(totalHomeCosts) + ' \u00D7 ' + pct + '% business use';
+  }
+
+  // --- Phone ---
+  const phoneBill = val('phoneBill');
+  const phonePct = parseInt(document.getElementById('phonePercent').value) || 0;
+  const phoneClaim = phoneBill * 12 * (phonePct / 100);
+  const phoneDesc = fmt(phoneBill) + '/month \u00D7 ' + phonePct + '% business use';
+
+  // --- Other expenses ---
+  const insurance = val('expInsurance');
+  const accountant = val('expAccountant');
+  const software = val('expSoftware');
+  const training = val('expTraining');
+  const memberships = val('expMemberships');
+  const stationery = val('expStationery');
+  const clothing = val('expClothing');
+  const otherTotal = insurance + accountant + software + training + memberships + stationery + clothing;
+
+  // --- Totals ---
+  const totalClaimable = mileageClaim + homeClaim + phoneClaim + otherTotal;
+
+  // --- Tax saving ---
+  const taxRate = parseInt(document.querySelector('input[name="taxRate"]:checked').value);
+  // Class 4 NI: 6% on profits between 12,570 and 50,270 (2025/26)
+  // Simplified: assume all claimable expenses fall within the NI band
+  const niRate = 6;
+  const incomeTaxSaved = totalClaimable * (taxRate / 100);
+  const niSaved = totalClaimable * (niRate / 100);
+  const totalSaved = incomeTaxSaved + niSaved;
+  const monthlySaved = totalSaved / 12;
+
+  // --- Build results HTML ---
+  let html = '';
+
+  // Summary cards
+  html += '<div class="summary-cards">';
+  html += '<div class="summary-card total"><div class="sc-label">Total Claimable</div><div class="sc-big gold">' + fmt(totalClaimable) + '</div><div class="sc-sub">Annual expense deductions</div></div>';
+  html += '<div class="summary-card tax"><div class="sc-label">Tax You Save</div><div class="sc-big green">' + fmt(totalSaved) + '</div><div class="sc-sub">Income tax + Class 4 NI</div></div>';
+  html += '<div class="summary-card monthly"><div class="sc-label">Monthly Saving</div><div class="sc-big sky">' + fmt(monthlySaved) + '</div><div class="sc-sub">Back in your pocket each month</div></div>';
+  html += '</div>';
+
+  // Full breakdown
+  html += '<div class="breakdown-panel"><h3>FULL BREAKDOWN</h3>';
+
+  // Mileage section
+  if (miles > 0) {
+    html += '<div class="bk-section"><div class="bk-heading">MILEAGE</div>';
+    html += '<div class="bk-row"><span class="bk-desc">' + mileageDesc + '</span><span class="bk-val">' + fmt(mileageClaim) + '</span></div>';
+    html += '</div>';
+  }
+
+  // Home office section
+  html += '<div class="bk-section"><div class="bk-heading">HOME OFFICE</div>';
+  html += '<div class="bk-row"><span class="bk-desc">' + homeDesc + '</span><span class="bk-val">' + fmt(homeClaim) + '</span></div>';
+  html += '</div>';
+
+  // Phone section
+  if (phoneBill > 0) {
+    html += '<div class="bk-section"><div class="bk-heading">PHONE</div>';
+    html += '<div class="bk-row"><span class="bk-desc">' + phoneDesc + '</span><span class="bk-val">' + fmt(phoneClaim) + '</span></div>';
+    html += '</div>';
+  }
+
+  // Other expenses section
+  if (otherTotal > 0) {
+    html += '<div class="bk-section"><div class="bk-heading">OTHER EXPENSES</div>';
+    if (insurance > 0) html += '<div class="bk-row"><span class="bk-desc">Professional insurance</span><span class="bk-val">' + fmt(insurance) + '</span></div>';
+    if (accountant > 0) html += '<div class="bk-row"><span class="bk-desc">Accountant fees</span><span class="bk-val">' + fmt(accountant) + '</span></div>';
+    if (software > 0) html += '<div class="bk-row"><span class="bk-desc">Software &amp; subscriptions</span><span class="bk-val">' + fmt(software) + '</span></div>';
+    if (training > 0) html += '<div class="bk-row"><span class="bk-desc">Training &amp; courses</span><span class="bk-val">' + fmt(training) + '</span></div>';
+    if (memberships > 0) html += '<div class="bk-row"><span class="bk-desc">Professional memberships</span><span class="bk-val">' + fmt(memberships) + '</span></div>';
+    if (stationery > 0) html += '<div class="bk-row"><span class="bk-desc">Stationery &amp; postage</span><span class="bk-val">' + fmt(stationery) + '</span></div>';
+    if (clothing > 0) html += '<div class="bk-row"><span class="bk-desc">Clothing (uniforms/protective)</span><span class="bk-val">' + fmt(clothing) + '</span></div>';
+    html += '<div class="bk-total"><span class="bk-desc">Total other</span><span class="bk-val">' + fmt(otherTotal) + '</span></div>';
+    html += '</div>';
+  }
+
+  // Grand total
+  html += '<div class="bk-section"><div class="bk-grand"><span class="bk-desc">TOTAL CLAIMABLE EXPENSES</span><span class="bk-val">' + fmt(totalClaimable) + '</span></div></div>';
+
+  // Tax saving breakdown
+  html += '<div class="bk-section"><div class="bk-heading">TAX SAVING (at ' + taxRate + '% + ' + niRate + '% NI)</div>';
+  html += '<div class="bk-saving-row"><span class="bk-desc">Income tax saved</span><span class="bk-val">' + fmt(incomeTaxSaved) + '</span></div>';
+  html += '<div class="bk-saving-row"><span class="bk-desc">Class 4 NI saved</span><span class="bk-val">' + fmt(niSaved) + '</span></div>';
+  html += '<div class="bk-total"><span class="bk-desc">Total saved</span><span class="bk-val" style="color:var(--green);">' + fmt(totalSaved) + '</span></div>';
+  html += '</div>';
+
+  html += '</div>';
+
+  // Saving highlight box
+  html += '<div class="saving-box"><div class="big">You\'d pay ' + fmt(totalSaved) + ' MORE in tax without these deductions.</div></div>';
+
+  // Missing expenses checklist
+  html += '<div class="missing-panel">';
+  html += '<h3>EXPENSES YOU MIGHT BE MISSING</h3>';
+  html += '<div class="check-item"><input type="checkbox" id="miss1"><label for="miss1">Bank charges and interest on business loans</label></div>';
+  html += '<div class="check-item"><input type="checkbox" id="miss2"><label for="miss2">Parking and tolls (business journeys)</label></div>';
+  html += '<div class="check-item"><input type="checkbox" id="miss3"><label for="miss3">Professional magazines and journals</label></div>';
+  html += '<div class="check-item"><input type="checkbox" id="miss4"><label for="miss4">Working from home (even just 1 day a week)</label></div>';
+  html += '<div class="check-item"><input type="checkbox" id="miss5"><label for="miss5">Eye tests (if you use a computer for work)</label></div>';
+  html += '<div class="check-item"><input type="checkbox" id="miss6"><label for="miss6">Business use of personal car (mileage)</label></div>';
+  html += '<div class="check-warning">Client entertaining (meals, drinks) is NOT tax-deductible for sole traders, despite being a real business cost. One of the most common mistakes on tax returns.</div>';
+  html += '</div>';
+
+  const r = document.getElementById('results');
+  r.innerHTML = html;
+  r.classList.add('show');
+  r.scrollIntoView({ behavior: 'smooth', block: 'start' });
+}
+
+function toggleFaq(el) {
+  const item = el.parentElement;
+  item.classList.toggle('open');
+}
+</script>
+<!-- Cookie Consent Banner -->
+<div id="cookieConsent" style="display:none;position:fixed;bottom:0;left:0;right:0;background:#0c1628;border-top:1px solid #14263d;padding:14px 24px;z-index:99999;font-family:'Outfit',system-ui,sans-serif;font-size:13px;color:#94a3b8;display:none;align-items:center;justify-content:center;gap:16px;flex-wrap:wrap">
+<span>We use cookies for analytics to improve your experience. No personal data is sold or shared.</span>
+<button onclick="acceptCookies()" style="background:#d4a847;color:#050709;border:none;padding:8px 20px;border-radius:4px;font-weight:700;font-size:13px;cursor:pointer;font-family:inherit">Accept</button>
+<button onclick="declineCookies()" style="background:transparent;color:#64748b;border:1px solid #14263d;padding:8px 20px;border-radius:4px;font-size:13px;cursor:pointer;font-family:inherit">Decline</button>
+</div>
+<script>
+function acceptCookies(){localStorage.setItem('mw_cookies','accepted');gtag('consent','update',{analytics_storage:'granted'});document.getElementById('cookieConsent').style.display='none';}
+function declineCookies(){localStorage.setItem('mw_cookies','declined');document.getElementById('cookieConsent').style.display='none';}
+(function(){var c=localStorage.getItem('mw_cookies');if(c==='accepted'){gtag('consent','update',{analytics_storage:'granted'});}else if(!c){document.getElementById('cookieConsent').style.display='flex';}})();
+</script>
+</body>
+</html>

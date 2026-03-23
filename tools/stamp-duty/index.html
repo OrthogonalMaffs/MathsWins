@@ -1,0 +1,689 @@
+<!DOCTYPE html>
+<html lang="en-GB">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Stamp Duty Calculator UK 2025 — SDLT, LBTT & LTT | MathsWins</title>
+<meta name="description" content="Calculate stamp duty on your property purchase. First-time buyer relief, additional property surcharge, Scotland LBTT, Wales LTT. Instant, accurate, free.">
+<meta property="og:title" content="Stamp Duty Calculator UK 2025 — SDLT, LBTT & LTT | MathsWins">
+<meta property="og:description" content="Calculate stamp duty on your property purchase. First-time buyer relief, additional property surcharge, Scotland LBTT, Wales LTT.">
+<meta property="og:url" content="https://mathswins.co.uk/tools/stamp-duty/">
+<meta property="og:image" content="https://mathswins.co.uk/assets/og-image.png">
+<meta property="og:type" content="website">
+<meta property="og:site_name" content="MathsWins">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:title" content="Stamp Duty Calculator UK 2025 — SDLT, LBTT & LTT | MathsWins">
+<meta name="twitter:description" content="Calculate stamp duty on your property purchase. First-time buyer relief, additional property surcharge.">
+<meta name="twitter:image" content="https://mathswins.co.uk/assets/og-image.png">
+<link rel="canonical" href="https://mathswins.co.uk/tools/stamp-duty/">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Crimson+Pro:ital,wght@0,400;1,400&family=DM+Mono:wght@400;500&family=Outfit:wght@300;400;600;700&display=swap" rel="stylesheet">
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "WebApplication",
+  "name": "Stamp Duty Calculator UK 2025",
+  "url": "https://mathswins.co.uk/tools/stamp-duty/",
+  "description": "Calculate stamp duty on your property purchase. First-time buyer relief, additional property surcharge, Scotland LBTT, Wales LTT. Instant, accurate, free.",
+  "applicationCategory": "FinanceApplication",
+  "operatingSystem": "Any",
+  "offers": {
+    "@type": "Offer",
+    "price": "0",
+    "priceCurrency": "GBP"
+  },
+  "publisher": {
+    "@type": "Organization",
+    "name": "MathsWins",
+    "url": "https://mathswins.co.uk"
+  }
+}
+</script>
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "FAQPage",
+  "mainEntity": [
+    {
+      "@type": "Question",
+      "name": "How much is stamp duty on a \u00a3300,000 house?",
+      "acceptedAnswer": {
+        "@type": "Answer",
+        "text": "For a standard purchase in England: \u00a32,500. For a first-time buyer: \u00a30 (if completed before April 2025, or \u00a30 on first \u00a3300,000 after). For an additional property: \u00a317,500 (\u00a32,500 + \u00a315,000 surcharge)."
+      }
+    },
+    {
+      "@type": "Question",
+      "name": "Do first-time buyers pay stamp duty?",
+      "acceptedAnswer": {
+        "@type": "Answer",
+        "text": "Below certain thresholds, no. From April 2025: nothing on the first \u00a3300,000 (properties up to \u00a3500,000). This is a significant saving worth up to \u00a36,250."
+      }
+    },
+    {
+      "@type": "Question",
+      "name": "What is the additional property surcharge?",
+      "acceptedAnswer": {
+        "@type": "Answer",
+        "text": "If you're buying a second home or buy-to-let, you pay an extra 5% on top of standard rates on the ENTIRE purchase price. On a \u00a3300,000 property that's an extra \u00a315,000."
+      }
+    },
+    {
+      "@type": "Question",
+      "name": "Is stamp duty different in Scotland?",
+      "acceptedAnswer": {
+        "@type": "Answer",
+        "text": "Yes. Scotland uses Land and Buildings Transaction Tax (LBTT) with different bands. The additional property surcharge is 8% in Scotland (vs 5% in England)."
+      }
+    },
+    {
+      "@type": "Question",
+      "name": "When do I pay stamp duty?",
+      "acceptedAnswer": {
+        "@type": "Answer",
+        "text": "Within 14 days of completion. Your solicitor usually handles this. Late payment incurs interest and penalties."
+      }
+    },
+    {
+      "@type": "Question",
+      "name": "Can I add stamp duty to my mortgage?",
+      "acceptedAnswer": {
+        "@type": "Answer",
+        "text": "Some lenders allow this, but it increases your loan amount and total interest paid. This calculator shows the monthly mortgage cost of adding stamp duty."
+      }
+    }
+  ]
+}
+</script>
+<style>
+:root{--bg:#050709;--surface:#0a0d14;--surface2:#0f1319;--border:#161c28;--border2:#1e2638;--sky:#0ea5e9;--sky-dim:rgba(14,165,233,0.10);--green:#2dd4a0;--green-dim:rgba(45,212,160,0.10);--red:#ef5350;--gold:#d4a847;--gold-dim:rgba(212,168,71,0.10);--cyan:#22d3ee;--teal:#0d9488;--teal-dim:rgba(13,148,136,0.10);--text:#c8cdd8;--text-bright:#e8ecf4;--muted:#4a5568;}
+*{margin:0;padding:0;box-sizing:border-box;}
+body{font-family:'Outfit',sans-serif;background:var(--bg);color:var(--text);min-height:100vh;line-height:1.5;}
+.container{max-width:960px;margin:0 auto;padding:2rem 1.25rem 4rem;}
+.nav-bar{display:flex;align-items:center;justify-content:space-between;padding:1rem 0;border-bottom:1px solid var(--border);margin-bottom:2rem;}
+.nav-brand{font-family:'Bebas Neue',sans-serif;font-size:1.4rem;color:var(--gold);text-decoration:none;letter-spacing:0.06em;}
+.nav-brand span{color:var(--text-bright);}
+.nav-link{font-size:0.85rem;font-weight:600;color:var(--sky);text-decoration:none;padding:0.4rem 1rem;border:1px solid var(--sky);border-radius:4px;transition:background 0.2s,color 0.2s;}
+.nav-link:hover{background:var(--sky);color:var(--bg);}
+.hero{text-align:center;margin-bottom:2rem;}
+.hero-eyebrow{font-size:0.75rem;font-weight:600;text-transform:uppercase;letter-spacing:0.15em;color:var(--sky);margin-bottom:0.5rem;}
+.hero h1{font-family:'Bebas Neue',sans-serif;font-size:clamp(1.8rem,5vw,2.8rem);color:var(--text-bright);letter-spacing:0.04em;line-height:1.1;margin-bottom:0.75rem;}
+.hero-sub{font-family:'Crimson Pro',serif;font-style:italic;font-size:1.05rem;color:var(--cyan);max-width:620px;margin:0 auto;}
+.panel{background:var(--surface);border:1px solid var(--border);border-radius:10px;padding:1.5rem;margin-bottom:1.25rem;}
+.panel-title{font-family:'Bebas Neue',sans-serif;font-size:1.1rem;color:var(--text-bright);letter-spacing:0.05em;margin-bottom:1rem;}
+.fg{display:flex;flex-direction:column;gap:0.3rem;margin-bottom:1rem;}
+.fg:last-child{margin-bottom:0;}
+.fg label{font-size:0.72rem;font-weight:600;text-transform:uppercase;letter-spacing:0.06em;color:var(--muted);}
+.fg input[type="text"],.fg input[type="number"]{font-family:'DM Mono',monospace;font-size:1rem;padding:0.6rem 0.8rem;background:var(--surface2);border:1px solid var(--border2);border-radius:6px;color:var(--text-bright);outline:none;width:100%;}
+.fg input:focus{border-color:var(--sky);}
+.fg .hint{font-family:'Crimson Pro',serif;font-style:italic;font-size:0.78rem;color:var(--muted);}
+
+/* Radio groups */
+.radio-group{display:flex;flex-wrap:wrap;gap:0.5rem;}
+.radio-group label{font-size:0.85rem;font-weight:400;text-transform:none;letter-spacing:0;color:var(--text);background:var(--surface2);border:1px solid var(--border2);border-radius:6px;padding:0.55rem 1rem;cursor:pointer;transition:all 0.2s;display:flex;align-items:center;gap:0.4rem;}
+.radio-group label:hover{border-color:var(--sky);background:var(--sky-dim);}
+.radio-group input[type="radio"]{accent-color:var(--sky);width:14px;height:14px;margin:0;}
+.radio-group input[type="radio"]:checked + .radio-label{color:var(--text-bright);}
+.radio-group label:has(input:checked){border-color:var(--sky);background:var(--sky-dim);}
+.radio-label{pointer-events:none;}
+
+.calc-btn{font-family:'Outfit',sans-serif;font-weight:700;font-size:1rem;padding:0.85rem;background:var(--sky);color:#fff;border:none;border-radius:6px;cursor:pointer;width:100%;margin:1.25rem 0 0;transition:background 0.2s;}
+.calc-btn:hover{background:#38bdf8;}
+
+/* Results */
+.results{display:none;}
+.results.show{display:block;}
+
+/* Hero result */
+.hero-result{text-align:center;padding:2rem 1.5rem;margin-bottom:1.25rem;}
+.hero-result .tax-name{font-size:0.82rem;font-weight:600;text-transform:uppercase;letter-spacing:0.1em;color:var(--muted);margin-bottom:0.5rem;}
+.hero-result .tax-amount{font-family:'DM Mono',monospace;font-size:clamp(2.2rem,6vw,3.2rem);font-weight:500;color:var(--text-bright);line-height:1;}
+.hero-result .effective-rate{font-family:'DM Mono',monospace;font-size:1.1rem;color:var(--sky);margin-top:0.75rem;}
+
+/* Band breakdown table */
+.band-table{width:100%;border-collapse:collapse;font-size:0.82rem;margin-top:0.5rem;}
+.band-table th{font-family:'Outfit',sans-serif;font-weight:600;text-transform:uppercase;font-size:0.68rem;letter-spacing:0.05em;color:var(--muted);padding:0.6rem 0.5rem;text-align:right;border-bottom:1px solid var(--border);}
+.band-table th:first-child{text-align:left;}
+.band-table td{font-family:'DM Mono',monospace;padding:0.5rem;text-align:right;border-bottom:1px solid var(--border);font-size:0.8rem;color:var(--text);}
+.band-table td:first-child{text-align:left;font-family:'Outfit',sans-serif;font-size:0.82rem;}
+.band-table tr.total-row td{border-top:2px solid var(--border2);border-bottom:none;font-weight:500;color:var(--text-bright);padding-top:0.75rem;}
+.band-table tr.surcharge-row td{color:var(--gold);}
+
+/* Info boxes */
+.info-box{border-radius:10px;padding:1.15rem 1.25rem;margin-bottom:1rem;font-size:0.9rem;line-height:1.6;}
+.info-box.saving{background:var(--green-dim);border:1px solid var(--green);color:var(--green);}
+.info-box.surcharge{background:var(--gold-dim);border:1px solid var(--gold);color:var(--gold);}
+.info-box.mortgage{background:var(--sky-dim);border:1px solid var(--sky);color:var(--sky);}
+.info-box .big-num{font-family:'DM Mono',monospace;font-weight:500;font-size:1.15rem;}
+
+/* Educational content */
+.edu-section{margin-top:2rem;}
+.edu-section h2{font-family:'Bebas Neue',sans-serif;font-size:1.4rem;color:var(--text-bright);letter-spacing:0.04em;margin-bottom:1rem;}
+.edu-section h3{font-family:'Bebas Neue',sans-serif;font-size:1.05rem;color:var(--text-bright);letter-spacing:0.04em;margin:1.25rem 0 0.5rem;}
+.edu-section p{font-size:0.92rem;line-height:1.7;margin-bottom:0.75rem;}
+.edu-section .formula{font-family:'DM Mono',monospace;font-size:0.88rem;color:var(--cyan);background:var(--surface2);padding:0.75rem 1rem;border-radius:6px;margin:0.75rem 0;border-left:3px solid var(--cyan);}
+.edu-section .worked{background:var(--surface);border:1px solid var(--border);border-radius:10px;padding:1.25rem;margin:1rem 0;}
+.edu-section .worked h4{font-family:'Bebas Neue',sans-serif;font-size:0.95rem;color:var(--sky);letter-spacing:0.04em;margin-bottom:0.75rem;}
+.edu-section .worked table{width:100%;border-collapse:collapse;font-size:0.82rem;margin-bottom:0.75rem;}
+.edu-section .worked table th{font-family:'Outfit',sans-serif;font-weight:600;text-transform:uppercase;font-size:0.68rem;letter-spacing:0.05em;color:var(--muted);padding:0.5rem;text-align:left;border-bottom:1px solid var(--border);}
+.edu-section .worked table td{padding:0.4rem 0.5rem;border-bottom:1px solid var(--border);font-family:'DM Mono',monospace;font-size:0.78rem;}
+.pln{font-family:'Crimson Pro',serif;font-style:italic;color:var(--cyan);background:rgba(34,211,238,0.08);border-left:3px solid var(--cyan);padding:0.85rem 1rem;border-radius:0 6px 6px 0;margin:1rem 0;font-size:0.92rem;line-height:1.6;}
+
+/* FAQ */
+.faq-section{margin-top:2rem;}
+.faq-section h2{font-family:'Bebas Neue',sans-serif;font-size:1.4rem;color:var(--text-bright);letter-spacing:0.04em;margin-bottom:1rem;}
+.faq-item{background:var(--surface);border:1px solid var(--border);border-radius:10px;margin-bottom:0.75rem;overflow:hidden;}
+.faq-q{font-family:'Outfit',sans-serif;font-weight:600;font-size:0.92rem;padding:1rem 1.25rem;cursor:pointer;display:flex;justify-content:space-between;align-items:center;color:var(--text-bright);transition:background 0.2s;}
+.faq-q:hover{background:var(--surface2);}
+.faq-q::after{content:'+';font-family:'DM Mono',monospace;font-size:1.2rem;color:var(--sky);transition:transform 0.2s;}
+.faq-item.open .faq-q::after{content:'-';}
+.faq-a{max-height:0;overflow:hidden;transition:max-height 0.3s ease,padding 0.3s ease;}
+.faq-item.open .faq-a{max-height:400px;padding:0 1.25rem 1rem;}
+.faq-a p{font-size:0.88rem;line-height:1.6;color:var(--text);}
+
+/* CTA */
+.cta-card{background:var(--surface);border:1px solid var(--border);border-left:3px solid var(--sky);border-radius:0 10px 10px 0;padding:1.5rem;margin-top:2rem;}
+.cta-card h3{font-family:'Bebas Neue',sans-serif;font-size:1.2rem;color:var(--sky);letter-spacing:0.04em;margin-bottom:0.5rem;}
+.cta-card p{font-family:'Crimson Pro',serif;font-style:italic;font-size:0.92rem;color:var(--text);line-height:1.5;margin-bottom:0.75rem;}
+.cta-link{font-weight:600;font-size:0.9rem;color:var(--sky);text-decoration:none;}
+.footer{margin-top:2.5rem;padding-top:1.25rem;border-top:1px solid var(--border);text-align:center;}
+.footer p{font-size:0.72rem;color:var(--muted);line-height:1.8;}
+.footer a{color:var(--muted);text-decoration:underline;}
+
+@media(max-width:600px){
+  .radio-group{flex-direction:column;}
+  .radio-group label{width:100%;}
+}
+</style>
+<!-- GA4 Cookieless -->
+<script async src="https://www.googletagmanager.com/gtag/js?id=G-7GTLYCZMXN"></script>
+<script>window.dataLayer=window.dataLayer||[];function gtag(){dataLayer.push(arguments);}gtag('js',new Date());gtag('consent','default',{analytics_storage:'denied',ad_storage:'denied',ad_user_data:'denied',ad_personalization:'denied'});gtag('config','G-7GTLYCZMXN',{send_page_view:true,anonymize_ip:true});</script>
+</head>
+<body>
+<script src="/auth/mw-auth.js"></script>
+<div class="container">
+<nav class="nav-bar">
+  <a href="/" class="nav-brand">MATHS<span>WINS</span></a>
+  <a href="/everyday/mortgages/" class="nav-link">Mortgage Maths Course (Free) &rarr;</a>
+</nav>
+<div class="hero">
+  <div class="hero-eyebrow">Free Tool</div>
+  <h1>STAMP DUTY CALCULATOR UK 2025</h1>
+  <div class="hero-sub">Enter your property price, select your buyer type and location, and get an instant, accurate stamp duty calculation &mdash; with a full band-by-band breakdown.</div>
+</div>
+
+<div class="panel">
+  <div class="panel-title">PROPERTY DETAILS</div>
+
+  <div class="fg">
+    <label>Property price (&pound;)</label>
+    <input type="text" id="price" inputmode="numeric" placeholder="300,000">
+    <div class="hint">The agreed purchase price of the property</div>
+  </div>
+
+  <div class="fg">
+    <label>Buyer type</label>
+    <div class="radio-group">
+      <label><input type="radio" name="buyer" value="ftb"><span class="radio-label">First-time buyer</span></label>
+      <label><input type="radio" name="buyer" value="standard" checked><span class="radio-label">Next home (moving)</span></label>
+      <label><input type="radio" name="buyer" value="additional"><span class="radio-label">Additional property</span></label>
+    </div>
+  </div>
+
+  <div class="fg">
+    <label>Location</label>
+    <div class="radio-group">
+      <label><input type="radio" name="location" value="england" checked><span class="radio-label">England &amp; Northern Ireland</span></label>
+      <label><input type="radio" name="location" value="scotland"><span class="radio-label">Scotland</span></label>
+      <label><input type="radio" name="location" value="wales"><span class="radio-label">Wales</span></label>
+    </div>
+  </div>
+
+  <div class="fg">
+    <label>Completion date</label>
+    <div class="radio-group">
+      <label><input type="radio" name="date" value="before"><span class="radio-label">Before 1 April 2025</span></label>
+      <label><input type="radio" name="date" value="after" checked><span class="radio-label">After 1 April 2025</span></label>
+    </div>
+  </div>
+
+  <button class="calc-btn" onclick="calculate()">Calculate Stamp Duty</button>
+</div>
+
+<div class="results" id="results"></div>
+
+<!-- How stamp duty works -->
+<div class="edu-section">
+  <h2>HOW STAMP DUTY WORKS</h2>
+
+  <h3>Progressive Bands, Not a Flat Rate</h3>
+  <p>Stamp duty is often misunderstood. It does <strong>not</strong> apply as a flat percentage on the entire purchase price. Instead, it works like income tax &mdash; different rates apply to different portions (bands) of the price.</p>
+  <p>If you buy a house for &pound;300,000 in England (standard rates, after April 2025), you do not pay 5% on the full amount. You pay 0% on the first &pound;125,000, then 2% on the next &pound;125,000, then 5% on the remaining &pound;50,000. The total is &pound;5,000 &mdash; an effective rate of just 1.67%.</p>
+
+  <div class="formula">Tax for each band = (Amount in band) &times; (Band rate)</div>
+  <div class="formula">Total stamp duty = Sum of tax across all bands</div>
+  <div class="formula">Effective rate = Total stamp duty &divide; Purchase price &times; 100</div>
+
+  <h3>First-Time Buyer Relief</h3>
+  <p>First-time buyers get a higher nil-rate threshold, meaning you pay nothing on a larger chunk of the price. From April 2025, the first &pound;300,000 is tax-free on properties up to &pound;500,000. This can save you thousands compared to standard rates.</p>
+  <p>If your property exceeds &pound;500,000, first-time buyer relief is lost entirely and you pay standard rates on the full amount. This cliff edge is important to understand &mdash; a property at &pound;499,000 gets relief, but one at &pound;501,000 does not.</p>
+
+  <h3>The Additional Property Surcharge</h3>
+  <p>If you are buying a second home, holiday home, or buy-to-let investment, a flat surcharge is added on top of standard rates across <strong>every</strong> band. In England, this is 5% (increased from 3% in October 2024). On a &pound;300,000 property, that is an extra &pound;15,000 on top of the standard &pound;5,000.</p>
+  <p>Scotland has the highest surcharge at 8%. Wales charges 5%.</p>
+
+  <div class="worked">
+    <h4>WORKED EXAMPLE: &pound;400,000 PROPERTY IN ENGLAND (AFTER APRIL 2025)</h4>
+    <table>
+      <thead>
+        <tr><th>Band</th><th>Rate</th><th>Taxable</th><th>Tax</th></tr>
+      </thead>
+      <tbody>
+        <tr><td>&pound;0 &ndash; &pound;125,000</td><td>0%</td><td>&pound;125,000</td><td>&pound;0</td></tr>
+        <tr><td>&pound;125,001 &ndash; &pound;250,000</td><td>2%</td><td>&pound;125,000</td><td>&pound;2,500</td></tr>
+        <tr><td>&pound;250,001 &ndash; &pound;400,000</td><td>5%</td><td>&pound;150,000</td><td>&pound;7,500</td></tr>
+      </tbody>
+    </table>
+    <p><strong>Total stamp duty:</strong> &pound;10,000 &mdash; an effective rate of 2.50%</p>
+    <p><strong>As a first-time buyer:</strong> &pound;0 on the first &pound;300,000, then 5% on the remaining &pound;100,000 = &pound;5,000. A saving of &pound;5,000.</p>
+    <p><strong>As an additional property:</strong> Standard &pound;10,000 + surcharge of 5% on &pound;400,000 = &pound;10,000 + &pound;20,000 = &pound;30,000.</p>
+  </div>
+
+  <div class="pln">Stamp duty is paid within 14 days of completion. Your solicitor handles the payment and filing. If you are adding the stamp duty to your mortgage, remember that you will be paying interest on it for the full mortgage term &mdash; this calculator shows you exactly what that costs per month.</div>
+</div>
+
+<!-- FAQ -->
+<div style="text-align:center;margin:1.5rem 0;padding:1rem;background:rgba(45,212,160,0.06);border:1px solid rgba(45,212,160,0.2);border-radius:8px"><a href="https://www.gov.uk/stamp-duty-land-tax" target="_blank" rel="noopener noreferrer" style="color:#2dd4a0;font-weight:600;text-decoration:none;font-size:0.95rem">Stamp Duty Land Tax guidance &rarr; GOV.UK</a><div style="font-size:0.7rem;color:#4a5568;margin-top:4px">Opens in a new tab — official UK Government website</div></div>
+<div class="faq-section">
+  <h2>FREQUENTLY ASKED QUESTIONS</h2>
+  <div class="faq-item">
+    <div class="faq-q" onclick="toggleFaq(this)">How much is stamp duty on a &pound;300,000 house?</div>
+    <div class="faq-a"><p>For a standard purchase in England (after April 2025): &pound;5,000. For a first-time buyer: &pound;0 on the first &pound;300,000, so &pound;0 total. For an additional property: &pound;5,000 + &pound;15,000 surcharge = &pound;20,000. The amount varies significantly by buyer type.</p></div>
+  </div>
+  <div class="faq-item">
+    <div class="faq-q" onclick="toggleFaq(this)">Do first-time buyers pay stamp duty?</div>
+    <div class="faq-a"><p>Below certain thresholds, no. From April 2025: nothing on the first &pound;300,000 (on properties up to &pound;500,000). Before April 2025 the nil-rate band was temporarily raised to &pound;425,000. First-time buyer relief can save you up to &pound;6,250.</p></div>
+  </div>
+  <div class="faq-item">
+    <div class="faq-q" onclick="toggleFaq(this)">What is the additional property surcharge?</div>
+    <div class="faq-a"><p>If you are buying a second home or buy-to-let, you pay an extra 5% on top of standard rates on the ENTIRE purchase price. On a &pound;300,000 property that is an extra &pound;15,000. The surcharge was 3% until October 2024, when it rose to 5%.</p></div>
+  </div>
+  <div class="faq-item">
+    <div class="faq-q" onclick="toggleFaq(this)">Is stamp duty different in Scotland?</div>
+    <div class="faq-a"><p>Yes. Scotland uses Land and Buildings Transaction Tax (LBTT) with different bands and thresholds. The additional property surcharge is 8% in Scotland (vs 5% in England and Wales). First-time buyers in Scotland pay nothing on the first &pound;175,000.</p></div>
+  </div>
+  <div class="faq-item">
+    <div class="faq-q" onclick="toggleFaq(this)">When do I pay stamp duty?</div>
+    <div class="faq-a"><p>Within 14 days of completion. Your solicitor usually handles the filing and payment. Late payment incurs interest and penalties from HMRC (or Revenue Scotland / Welsh Revenue Authority).</p></div>
+  </div>
+  <div class="faq-item">
+    <div class="faq-q" onclick="toggleFaq(this)">Can I add stamp duty to my mortgage?</div>
+    <div class="faq-a"><p>Some lenders allow this, but it increases your loan amount and total interest paid over the mortgage term. This calculator shows you the monthly mortgage cost of adding stamp duty &mdash; for example, &pound;10,000 added to a 25-year mortgage at 5% costs roughly &pound;58 per month.</p></div>
+  </div>
+</div>
+
+<div class="cta-card">
+  <h3>MORTGAGE MATHS &mdash; FREE COURSE</h3>
+  <p>Understand amortisation, overpayments, fixed vs variable rates, and how much your mortgage really costs. Completely free.</p>
+  <a href="/everyday/mortgages/" class="cta-link">Start the free course &rarr;</a>
+</div>
+
+<div class="footer">
+  <p><a href="/">MathsWins</a> &middot; <a href="/tools/">Tools</a> &middot; <a href="/everyday/">Everyday Maths</a><br>&copy; 2026 MathsWins. Not financial advice.<br><a href="/restore/">Restore Access</a></p>
+</div>
+</div>
+
+<script>
+// ============================================================
+// STAMP DUTY RATE TABLES
+// ============================================================
+
+const RATES = {
+  england: {
+    after: {
+      standard: [
+        { from: 0, to: 125000, rate: 0 },
+        { from: 125000, to: 250000, rate: 2 },
+        { from: 250000, to: 925000, rate: 5 },
+        { from: 925000, to: 1500000, rate: 10 },
+        { from: 1500000, to: Infinity, rate: 12 }
+      ],
+      ftb: {
+        maxPrice: 500000,
+        bands: [
+          { from: 0, to: 300000, rate: 0 },
+          { from: 300000, to: 500000, rate: 5 }
+        ]
+      },
+      surcharge: 5
+    },
+    before: {
+      standard: [
+        { from: 0, to: 250000, rate: 0 },
+        { from: 250000, to: 925000, rate: 5 },
+        { from: 925000, to: 1500000, rate: 10 },
+        { from: 1500000, to: Infinity, rate: 12 }
+      ],
+      ftb: {
+        maxPrice: 625000,
+        bands: [
+          { from: 0, to: 425000, rate: 0 },
+          { from: 425000, to: 625000, rate: 5 }
+        ]
+      },
+      surcharge: 5
+    }
+  },
+  scotland: {
+    after: {
+      standard: [
+        { from: 0, to: 145000, rate: 0 },
+        { from: 145000, to: 250000, rate: 2 },
+        { from: 250000, to: 325000, rate: 5 },
+        { from: 325000, to: 750000, rate: 10 },
+        { from: 750000, to: Infinity, rate: 12 }
+      ],
+      ftb: {
+        maxPrice: Infinity,
+        bands: [
+          { from: 0, to: 175000, rate: 0 },
+          { from: 175000, to: 250000, rate: 2 },
+          { from: 250000, to: 325000, rate: 5 },
+          { from: 325000, to: 750000, rate: 10 },
+          { from: 750000, to: Infinity, rate: 12 }
+        ]
+      },
+      surcharge: 8
+    },
+    before: {
+      standard: [
+        { from: 0, to: 145000, rate: 0 },
+        { from: 145000, to: 250000, rate: 2 },
+        { from: 250000, to: 325000, rate: 5 },
+        { from: 325000, to: 750000, rate: 10 },
+        { from: 750000, to: Infinity, rate: 12 }
+      ],
+      ftb: {
+        maxPrice: Infinity,
+        bands: [
+          { from: 0, to: 175000, rate: 0 },
+          { from: 175000, to: 250000, rate: 2 },
+          { from: 250000, to: 325000, rate: 5 },
+          { from: 325000, to: 750000, rate: 10 },
+          { from: 750000, to: Infinity, rate: 12 }
+        ]
+      },
+      surcharge: 8
+    }
+  },
+  wales: {
+    after: {
+      standard: [
+        { from: 0, to: 225000, rate: 0 },
+        { from: 225000, to: 400000, rate: 6 },
+        { from: 400000, to: 750000, rate: 7.5 },
+        { from: 750000, to: 1500000, rate: 10 },
+        { from: 1500000, to: Infinity, rate: 12 }
+      ],
+      ftb: null,
+      surcharge: 5
+    },
+    before: {
+      standard: [
+        { from: 0, to: 225000, rate: 0 },
+        { from: 225000, to: 400000, rate: 6 },
+        { from: 400000, to: 750000, rate: 7.5 },
+        { from: 750000, to: 1500000, rate: 10 },
+        { from: 1500000, to: Infinity, rate: 12 }
+      ],
+      ftb: null,
+      surcharge: 5
+    }
+  }
+};
+
+// ============================================================
+// HELPERS
+// ============================================================
+
+function fmt(n) {
+  return '\u00A3' + n.toLocaleString('en-GB', { minimumFractionDigits: 0, maximumFractionDigits: 0 });
+}
+
+function fmt2(n) {
+  return '\u00A3' + n.toLocaleString('en-GB', { minimumFractionDigits: 2, maximumFractionDigits: 2 });
+}
+
+function pct(n) {
+  return n.toFixed(2) + '%';
+}
+
+function parsePrice(str) {
+  return parseFloat(str.replace(/[^0-9.]/g, '')) || 0;
+}
+
+function getRadio(name) {
+  const el = document.querySelector('input[name="' + name + '"]:checked');
+  return el ? el.value : null;
+}
+
+// Format price input with commas
+const priceInput = document.getElementById('price');
+priceInput.addEventListener('blur', function() {
+  const val = parsePrice(this.value);
+  if (val > 0) {
+    this.value = val.toLocaleString('en-GB');
+  }
+});
+priceInput.addEventListener('keydown', function(e) {
+  if (e.key === 'Enter') { e.preventDefault(); calculate(); }
+});
+
+// ============================================================
+// CALCULATION
+// ============================================================
+
+function calcBands(price, bands) {
+  const result = [];
+  let remaining = price;
+  for (const band of bands) {
+    if (remaining <= 0) break;
+    const bandWidth = band.to === Infinity ? remaining : Math.min(band.to - band.from, remaining);
+    const taxable = Math.max(0, Math.min(bandWidth, remaining));
+    const tax = taxable * (band.rate / 100);
+    result.push({
+      from: band.from,
+      to: band.to === Infinity ? price : band.to,
+      rate: band.rate,
+      taxable: taxable,
+      tax: tax,
+      isInfinity: band.to === Infinity
+    });
+    remaining -= taxable;
+  }
+  return result;
+}
+
+function totalTax(bandResults) {
+  return bandResults.reduce((sum, b) => sum + b.tax, 0);
+}
+
+function monthlyMortgageCost(lumpSum, ratePercent, years) {
+  const r = ratePercent / 100 / 12;
+  const n = years * 12;
+  if (r === 0) return lumpSum / n;
+  return lumpSum * (r * Math.pow(1 + r, n)) / (Math.pow(1 + r, n) - 1);
+}
+
+function calculate() {
+  const price = parsePrice(priceInput.value);
+  if (price <= 0) { priceInput.focus(); return; }
+
+  const buyer = getRadio('buyer');
+  const location = getRadio('location');
+  const dateKey = getRadio('date');
+
+  const rateSet = RATES[location][dateKey];
+  const isAdditional = buyer === 'additional';
+  const isFtb = buyer === 'ftb';
+
+  // Determine which bands to use
+  let useBands;
+  let ftbApplied = false;
+  let ftbLost = false;
+
+  if (isFtb && rateSet.ftb) {
+    if (price <= rateSet.ftb.maxPrice) {
+      useBands = rateSet.ftb.bands;
+      ftbApplied = true;
+    } else {
+      // FTB relief lost — revert to standard
+      useBands = rateSet.standard;
+      ftbLost = true;
+    }
+  } else {
+    useBands = rateSet.standard;
+  }
+
+  // Calculate base tax
+  const bandResults = calcBands(price, useBands);
+  let baseTax = totalTax(bandResults);
+
+  // Calculate surcharge if additional property
+  let surchargeAmount = 0;
+  if (isAdditional) {
+    surchargeAmount = price * (rateSet.surcharge / 100);
+  }
+
+  const totalStampDuty = baseTax + surchargeAmount;
+  const effectiveRate = price > 0 ? (totalStampDuty / price * 100) : 0;
+
+  // Calculate FTB saving (compare to standard)
+  let ftbSaving = 0;
+  if (ftbApplied) {
+    const standardBands = calcBands(price, rateSet.standard);
+    const standardTax = totalTax(standardBands);
+    ftbSaving = standardTax - baseTax;
+  }
+
+  // Monthly mortgage cost of stamp duty
+  const monthlyCost = monthlyMortgageCost(totalStampDuty, 5, 25);
+
+  // Tax name by location
+  const taxNames = {
+    england: 'Stamp Duty Land Tax (SDLT)',
+    scotland: 'Land & Buildings Transaction Tax (LBTT)',
+    wales: 'Land Transaction Tax (LTT)'
+  };
+
+  // ============================================================
+  // RENDER RESULTS
+  // ============================================================
+
+  let html = '';
+
+  // Hero number
+  html += '<div class="panel hero-result">';
+  html += '<div class="tax-name">' + taxNames[location] + '</div>';
+  html += '<div class="tax-amount">' + fmt(Math.round(totalStampDuty)) + '</div>';
+  html += '<div class="effective-rate">Effective rate: ' + pct(effectiveRate) + '</div>';
+  html += '</div>';
+
+  // FTB saving
+  if (ftbApplied && ftbSaving > 0) {
+    html += '<div class="info-box saving">';
+    html += 'As a first-time buyer, you save <span class="big-num">' + fmt(Math.round(ftbSaving)) + '</span> compared to standard rates.';
+    html += '</div>';
+  }
+
+  // FTB lost warning
+  if (ftbLost) {
+    html += '<div class="info-box surcharge">';
+    html += 'First-time buyer relief is not available on properties over ' + fmt(rateSet.ftb.maxPrice) + '. Standard rates apply to the full purchase price.';
+    html += '</div>';
+  }
+
+  // Wales FTB note
+  if (isFtb && location === 'wales') {
+    html += '<div class="info-box surcharge">';
+    html += 'Wales does not offer first-time buyer relief on Land Transaction Tax. Standard rates apply.';
+    html += '</div>';
+  }
+
+  // Additional property surcharge
+  if (isAdditional) {
+    html += '<div class="info-box surcharge">';
+    html += 'The ' + rateSet.surcharge + '% surcharge adds <span class="big-num">' + fmt(Math.round(surchargeAmount)) + '</span> to your ' + (location === 'scotland' ? 'LBTT' : location === 'wales' ? 'LTT' : 'stamp duty') + '.';
+    html += '</div>';
+  }
+
+  // Monthly cost context
+  if (totalStampDuty > 0) {
+    html += '<div class="info-box mortgage">';
+    html += 'Added to a 25-year mortgage at 5%, this ' + (location === 'scotland' ? 'LBTT' : location === 'wales' ? 'LTT' : 'stamp duty') + ' costs <span class="big-num">' + fmt2(monthlyCost) + '</span> per month.';
+    html += '</div>';
+  }
+
+  // Band breakdown table
+  html += '<div class="panel">';
+  html += '<div class="panel-title">BAND BREAKDOWN</div>';
+  html += '<table class="band-table">';
+  html += '<thead><tr><th>Band</th><th>Rate</th><th>Taxable Amount</th><th>Tax</th></tr></thead>';
+  html += '<tbody>';
+
+  for (const b of bandResults) {
+    const bandLabel = fmt(b.from) + ' &ndash; ' + (b.isInfinity ? fmt(price) : fmt(b.to));
+    const rateLabel = b.rate + '%';
+    html += '<tr>';
+    html += '<td>' + bandLabel + '</td>';
+    html += '<td>' + rateLabel + '</td>';
+    html += '<td>' + fmt(Math.round(b.taxable)) + '</td>';
+    html += '<td>' + fmt(Math.round(b.tax)) + '</td>';
+    html += '</tr>';
+  }
+
+  // Surcharge row
+  if (isAdditional) {
+    html += '<tr class="surcharge-row">';
+    html += '<td>Additional property surcharge</td>';
+    html += '<td>' + rateSet.surcharge + '%</td>';
+    html += '<td>' + fmt(price) + '</td>';
+    html += '<td>' + fmt(Math.round(surchargeAmount)) + '</td>';
+    html += '</tr>';
+  }
+
+  // Total row
+  html += '<tr class="total-row">';
+  html += '<td></td><td></td>';
+  html += '<td>Total:</td>';
+  html += '<td>' + fmt(Math.round(totalStampDuty)) + '</td>';
+  html += '</tr>';
+
+  html += '</tbody></table>';
+  html += '</div>';
+
+  const resultsEl = document.getElementById('results');
+  resultsEl.innerHTML = html;
+  resultsEl.classList.add('show');
+  resultsEl.scrollIntoView({ behavior: 'smooth', block: 'start' });
+
+  // GA4 event
+  if (typeof gtag === 'function') {
+    gtag('event', 'stamp_duty_calculate', {
+      property_price: price,
+      buyer_type: buyer,
+      location: location,
+      completion_date: dateKey,
+      stamp_duty: Math.round(totalStampDuty)
+    });
+  }
+}
+
+function toggleFaq(el) {
+  const item = el.parentElement;
+  item.classList.toggle('open');
+}
+</script>
+</body>
+</html>

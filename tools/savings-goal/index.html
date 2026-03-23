@@ -1,0 +1,829 @@
+<!DOCTYPE html>
+<html lang="en-GB">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Savings Goal Calculator — How Much Do I Need to Save? | MathsWins</title>
+<meta name="description" content="Set a savings target and find out exactly how much to save each month. Or enter your monthly budget and see when you'll reach your goal. Simple, free, motivating.">
+<meta property="og:title" content="Savings Goal Calculator — How Much Do I Need to Save? | MathsWins">
+<meta property="og:description" content="Set a savings target and find out exactly how much to save each month. Or enter your monthly budget and see when you'll reach your goal.">
+<meta property="og:url" content="https://mathswins.co.uk/tools/savings-goal/">
+<meta property="og:image" content="https://mathswins.co.uk/assets/og-image.png">
+<meta property="og:type" content="website">
+<meta property="og:site_name" content="MathsWins">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:title" content="Savings Goal Calculator — How Much Do I Need to Save? | MathsWins">
+<meta name="twitter:description" content="Set a savings target and find out exactly how much to save each month. Or enter your monthly budget and see when you'll reach your goal.">
+<meta name="twitter:image" content="https://mathswins.co.uk/assets/og-image.png">
+<link rel="canonical" href="https://mathswins.co.uk/tools/savings-goal/">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Crimson+Pro:ital,wght@0,400;1,400&family=DM+Mono:wght@400;500&family=Outfit:wght@300;400;600;700&display=swap" rel="stylesheet">
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "WebApplication",
+  "name": "Savings Goal Calculator",
+  "url": "https://mathswins.co.uk/tools/savings-goal/",
+  "description": "Set a savings target and find out exactly how much to save each month. Or enter your monthly budget and see when you'll reach your goal. Simple, free, motivating.",
+  "applicationCategory": "FinanceApplication",
+  "operatingSystem": "Any",
+  "offers": {
+    "@type": "Offer",
+    "price": "0",
+    "priceCurrency": "GBP"
+  },
+  "publisher": {
+    "@type": "Organization",
+    "name": "MathsWins",
+    "url": "https://mathswins.co.uk"
+  }
+}
+</script>
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "FAQPage",
+  "mainEntity": [
+    {
+      "@type": "Question",
+      "name": "How much should I save each month?",
+      "acceptedAnswer": {
+        "@type": "Answer",
+        "text": "A common guideline is to save at least 20% of your take-home pay (the 50/30/20 rule). But the real answer depends on your goal. This calculator works backwards from your target amount and deadline to give you a precise monthly figure. Even saving a small amount consistently is far better than saving nothing."
+      }
+    },
+    {
+      "@type": "Question",
+      "name": "Does compound interest really make a big difference on savings?",
+      "acceptedAnswer": {
+        "@type": "Answer",
+        "text": "Yes, especially over longer timeframes. At 4% annual interest, saving £200 per month for 10 years gives you £29,490 — but only £24,000 of that is your contributions. The remaining £5,490 is free money from compound interest. Over 20 years, interest contributes over £25,000 on the same monthly saving."
+      }
+    },
+    {
+      "@type": "Question",
+      "name": "What interest rate should I use in the calculator?",
+      "acceptedAnswer": {
+        "@type": "Answer",
+        "text": "Use the AER (Annual Equivalent Rate) of your savings account. In 2025-26, easy-access accounts typically offer 3-5%, while fixed-rate ISAs can offer 4-5%. If you are investing rather than saving, historical stock market returns average around 7-10% before inflation, but with much higher risk."
+      }
+    },
+    {
+      "@type": "Question",
+      "name": "Should I save or pay off debt first?",
+      "acceptedAnswer": {
+        "@type": "Answer",
+        "text": "If your debt charges more interest than your savings earn (which is almost always the case), paying off debt first is mathematically better. However, most financial advisers recommend keeping a small emergency fund of £1,000 before aggressively paying down debt. Use our Debt Snowball Calculator to optimise your debt payoff strategy."
+      }
+    },
+    {
+      "@type": "Question",
+      "name": "How accurate is this savings calculator?",
+      "acceptedAnswer": {
+        "@type": "Answer",
+        "text": "The calculator uses standard compound interest formulae with monthly compounding. Real-world results may differ slightly due to variable interest rates, tax on savings interest above your Personal Savings Allowance, and the timing of deposits within each month. It gives you an excellent planning estimate."
+      }
+    }
+  ]
+}
+</script>
+<style>
+:root{--bg:#050709;--surface:#0a0d14;--surface2:#0f1319;--border:#161c28;--border2:#1e2638;--sky:#0ea5e9;--sky-dim:rgba(14,165,233,0.10);--green:#2dd4a0;--green-dim:rgba(45,212,160,0.10);--red:#ef5350;--gold:#d4a847;--gold-dim:rgba(212,168,71,0.10);--cyan:#22d3ee;--teal:#0d9488;--teal-dim:rgba(13,148,136,0.10);--text:#c8cdd8;--text-bright:#e8ecf4;--muted:#4a5568;}
+*{margin:0;padding:0;box-sizing:border-box;}
+body{font-family:'Outfit',sans-serif;background:var(--bg);color:var(--text);min-height:100vh;line-height:1.5;}
+.container{max-width:960px;margin:0 auto;padding:2rem 1.25rem 4rem;}
+.nav-bar{display:flex;align-items:center;justify-content:space-between;padding:1rem 0;border-bottom:1px solid var(--border);margin-bottom:2rem;}
+.nav-brand{font-family:'Bebas Neue',sans-serif;font-size:1.4rem;color:var(--gold);text-decoration:none;letter-spacing:0.06em;}
+.nav-brand span{color:var(--text-bright);}
+.nav-link{font-size:0.85rem;font-weight:600;color:var(--sky);text-decoration:none;padding:0.4rem 1rem;border:1px solid var(--sky);border-radius:4px;transition:background 0.2s,color 0.2s;}
+.nav-link:hover{background:var(--sky);color:var(--bg);}
+.hero{text-align:center;margin-bottom:2rem;}
+.hero-eyebrow{font-size:0.75rem;font-weight:600;text-transform:uppercase;letter-spacing:0.15em;color:var(--sky);margin-bottom:0.5rem;}
+.hero h1{font-family:'Bebas Neue',sans-serif;font-size:clamp(1.8rem,5vw,2.8rem);color:var(--text-bright);letter-spacing:0.04em;line-height:1.1;margin-bottom:0.75rem;}
+.hero-sub{font-family:'Crimson Pro',serif;font-style:italic;font-size:1.05rem;color:var(--cyan);max-width:620px;margin:0 auto;}
+.panel{background:var(--surface);border:1px solid var(--border);border-radius:10px;padding:1.5rem;margin-bottom:1.25rem;}
+.panel-title{font-family:'Bebas Neue',sans-serif;font-size:1.1rem;color:var(--text-bright);letter-spacing:0.05em;margin-bottom:1rem;}
+.fg{display:flex;flex-direction:column;gap:0.3rem;margin-bottom:0.75rem;}
+.fg label{font-size:0.72rem;font-weight:600;text-transform:uppercase;letter-spacing:0.06em;color:var(--muted);}
+.fg input,.fg select{font-family:'DM Mono',monospace;font-size:1rem;padding:0.6rem 0.8rem;background:var(--surface2);border:1px solid var(--border2);border-radius:6px;color:var(--text-bright);outline:none;}
+.fg input:focus{border-color:var(--sky);}
+.fg .hint{font-family:'Crimson Pro',serif;font-style:italic;font-size:0.78rem;color:var(--muted);}
+.input-grid{display:grid;grid-template-columns:1fr 1fr;gap:0 1.25rem;}
+@media(max-width:600px){.input-grid{grid-template-columns:1fr;}}
+.calc-btn{font-family:'Outfit',sans-serif;font-weight:700;font-size:1rem;padding:0.85rem;background:var(--gold);color:#fff;border:none;border-radius:6px;cursor:pointer;width:100%;margin:0.5rem 0 0;transition:background 0.2s;}
+.calc-btn:hover{background:#e0b84e;}
+
+/* Mode toggle */
+.mode-toggle{display:flex;gap:0;margin-bottom:1.25rem;}
+.mode-btn{flex:1;font-family:'Outfit',sans-serif;font-weight:600;font-size:0.88rem;padding:0.75rem 1rem;background:var(--surface2);border:1px solid var(--border);color:var(--muted);cursor:pointer;transition:all 0.2s;text-align:center;}
+.mode-btn:first-child{border-radius:6px 0 0 6px;}
+.mode-btn:last-child{border-radius:0 6px 6px 0;}
+.mode-btn.active{background:var(--gold-dim);color:var(--gold);border-color:var(--gold);}
+
+/* Results */
+.results{display:none;}
+.results.show{display:block;}
+.result-hero{background:var(--surface);border:1px solid var(--gold);border-radius:10px;padding:1.75rem;text-align:center;margin-bottom:1.5rem;}
+.result-hero .big-number{font-family:'DM Mono',monospace;font-size:clamp(2rem,6vw,3rem);font-weight:500;color:var(--gold);line-height:1.2;}
+.result-hero .result-label{font-size:0.95rem;color:var(--text);margin-top:0.5rem;line-height:1.6;}
+.result-hero .result-label strong{color:var(--text-bright);}
+
+/* Progress bar */
+.progress-section{background:var(--surface);border:1px solid var(--border);border-radius:10px;padding:1.5rem;margin-bottom:1.5rem;}
+.progress-section .panel-title{margin-bottom:0.75rem;}
+.progress-track{position:relative;width:100%;height:32px;background:var(--surface2);border-radius:6px;overflow:visible;margin-bottom:0.5rem;}
+.progress-fill{height:100%;border-radius:6px;background:linear-gradient(90deg,var(--gold),#e0b84e);transition:width 0.8s ease;position:relative;}
+.milestone-markers{position:relative;width:100%;height:28px;}
+.milestone{position:absolute;transform:translateX(-50%);text-align:center;}
+.milestone .marker{width:2px;height:10px;background:var(--cyan);margin:0 auto 2px;}
+.milestone .mlabel{font-family:'DM Mono',monospace;font-size:0.65rem;color:var(--cyan);white-space:nowrap;}
+.progress-labels{display:flex;justify-content:space-between;font-family:'DM Mono',monospace;font-size:0.75rem;color:var(--muted);margin-top:0.25rem;}
+.month-bars{display:flex;gap:1px;align-items:flex-end;height:80px;margin-top:1rem;padding-top:0.75rem;border-top:1px solid var(--border);}
+.month-bar{flex:1;min-width:0;background:var(--gold);border-radius:2px 2px 0 0;opacity:0.7;transition:opacity 0.15s;}
+.month-bar:hover{opacity:1;}
+.month-bar.milestone-bar{background:var(--cyan);opacity:0.9;}
+.bar-labels{display:flex;justify-content:space-between;font-family:'DM Mono',monospace;font-size:0.65rem;color:var(--muted);margin-top:4px;}
+
+/* What-if slider */
+.whatif-section{background:var(--surface);border:1px solid var(--border);border-radius:10px;padding:1.5rem;margin-bottom:1.5rem;}
+.whatif-section .panel-title{margin-bottom:0.5rem;}
+.slider-row{display:flex;align-items:center;gap:1rem;margin-bottom:0.75rem;}
+.slider-row input[type="range"]{flex:1;accent-color:var(--gold);height:6px;cursor:pointer;}
+.slider-val{font-family:'DM Mono',monospace;font-size:1.1rem;color:var(--gold);min-width:80px;text-align:right;}
+.whatif-result{font-size:0.95rem;color:var(--text);line-height:1.6;text-align:center;padding:0.75rem;background:var(--surface2);border-radius:6px;}
+.whatif-result strong{color:var(--text-bright);}
+.whatif-result .gold{color:var(--gold);font-family:'DM Mono',monospace;}
+
+/* Motivation */
+.motivation-section{background:var(--green-dim);border:1px solid var(--green);border-radius:10px;padding:1.5rem;margin-bottom:1.5rem;text-align:center;}
+.motivation-section .panel-title{color:var(--green);margin-bottom:0.75rem;}
+.motivation-row{display:grid;grid-template-columns:1fr 1fr 1fr;gap:1rem;margin-bottom:1rem;}
+@media(max-width:600px){.motivation-row{grid-template-columns:1fr;}}
+.motivation-card{background:rgba(0,0,0,0.2);border-radius:8px;padding:1rem;}
+.motivation-card .mc-period{font-size:0.75rem;font-weight:600;text-transform:uppercase;letter-spacing:0.08em;color:var(--green);margin-bottom:0.25rem;}
+.motivation-card .mc-amount{font-family:'DM Mono',monospace;font-size:1.4rem;font-weight:500;color:var(--text-bright);}
+.motivation-card .mc-interest{font-size:0.72rem;color:var(--muted);margin-top:0.15rem;}
+.motivation-tag{font-family:'Crimson Pro',serif;font-style:italic;font-size:1rem;color:var(--green);margin-top:0.25rem;}
+
+/* Breakdown table */
+.breakdown-section{margin-bottom:1.5rem;}
+.breakdown-toggle{font-family:'Outfit',sans-serif;font-weight:600;font-size:0.82rem;padding:0.6rem 1.25rem;background:var(--surface);border:1px solid var(--border);border-radius:10px;color:var(--sky);cursor:pointer;width:100%;text-align:center;transition:background 0.2s;}
+.breakdown-toggle:hover{background:var(--sky-dim);}
+.breakdown-content{max-height:0;overflow:hidden;transition:max-height 0.3s ease;}
+.breakdown-content.open{max-height:none;}
+.breakdown-table{width:100%;border-collapse:collapse;font-size:0.78rem;margin-top:0.5rem;}
+.breakdown-table th{font-family:'Outfit',sans-serif;font-weight:600;text-transform:uppercase;font-size:0.68rem;letter-spacing:0.05em;color:var(--muted);padding:0.6rem 0.5rem;text-align:right;border-bottom:1px solid var(--border);position:sticky;top:0;background:var(--surface);}
+.breakdown-table th:first-child{text-align:left;}
+.breakdown-table td{font-family:'DM Mono',monospace;padding:0.4rem 0.5rem;text-align:right;border-bottom:1px solid var(--border);font-size:0.75rem;color:var(--text);}
+.breakdown-table td:first-child{text-align:left;font-family:'Outfit',sans-serif;font-size:0.78rem;}
+.breakdown-table tr.milestone-row td{color:var(--cyan);font-weight:500;}
+.breakdown-table-wrap{max-height:500px;overflow-y:auto;overflow-x:auto;background:var(--surface);border:1px solid var(--border);border-top:none;border-radius:0 0 10px 10px;padding:0 1rem;}
+.breakdown-table-wrap::-webkit-scrollbar{width:6px;}
+.breakdown-table-wrap::-webkit-scrollbar-track{background:var(--surface2);}
+.breakdown-table-wrap::-webkit-scrollbar-thumb{background:var(--border2);border-radius:3px;}
+
+/* Educational */
+.edu-section{margin-top:2rem;}
+.edu-section h2{font-family:'Bebas Neue',sans-serif;font-size:1.4rem;color:var(--text-bright);letter-spacing:0.04em;margin-bottom:1rem;}
+.edu-section h3{font-family:'Bebas Neue',sans-serif;font-size:1.05rem;color:var(--text-bright);letter-spacing:0.04em;margin:1.25rem 0 0.5rem;}
+.edu-section p{font-size:0.92rem;line-height:1.7;margin-bottom:0.75rem;}
+.edu-section .formula{font-family:'DM Mono',monospace;font-size:0.88rem;color:var(--cyan);background:var(--surface2);padding:0.75rem 1rem;border-radius:6px;margin:0.75rem 0;border-left:3px solid var(--cyan);}
+.pln{font-family:'Crimson Pro',serif;font-style:italic;color:var(--cyan);background:rgba(34,211,238,0.08);border-left:3px solid var(--cyan);padding:0.85rem 1rem;border-radius:0 6px 6px 0;margin:1rem 0;font-size:0.92rem;line-height:1.6;}
+
+/* FAQ */
+.faq-section{margin-top:2rem;}
+.faq-section h2{font-family:'Bebas Neue',sans-serif;font-size:1.4rem;color:var(--text-bright);letter-spacing:0.04em;margin-bottom:1rem;}
+.faq-item{background:var(--surface);border:1px solid var(--border);border-radius:10px;margin-bottom:0.75rem;overflow:hidden;}
+.faq-q{font-family:'Outfit',sans-serif;font-weight:600;font-size:0.92rem;padding:1rem 1.25rem;cursor:pointer;display:flex;justify-content:space-between;align-items:center;color:var(--text-bright);transition:background 0.2s;}
+.faq-q:hover{background:var(--surface2);}
+.faq-q::after{content:'+';font-family:'DM Mono',monospace;font-size:1.2rem;color:var(--sky);transition:transform 0.2s;}
+.faq-item.open .faq-q::after{content:'-';}
+.faq-a{max-height:0;overflow:hidden;transition:max-height 0.3s ease,padding 0.3s ease;}
+.faq-item.open .faq-a{max-height:300px;padding:0 1.25rem 1rem;}
+.faq-a p{font-size:0.88rem;line-height:1.6;color:var(--text);}
+
+/* CTA */
+.cta-card{background:var(--surface);border:1px solid var(--border);border-left:3px solid var(--sky);border-radius:0 10px 10px 0;padding:1.5rem;margin-top:2rem;}
+.cta-card h3{font-family:'Bebas Neue',sans-serif;font-size:1.2rem;color:var(--sky);letter-spacing:0.04em;margin-bottom:0.5rem;}
+.cta-card p{font-family:'Crimson Pro',serif;font-style:italic;font-size:0.92rem;color:var(--text);line-height:1.5;margin-bottom:0.75rem;}
+.cta-link{font-weight:600;font-size:0.9rem;color:var(--sky);text-decoration:none;}
+.footer{margin-top:2.5rem;padding-top:1.25rem;border-top:1px solid var(--border);text-align:center;}
+.footer p{font-size:0.72rem;color:var(--muted);line-height:1.8;}
+.footer a{color:var(--muted);text-decoration:underline;}
+</style>
+<!-- GA4 Cookieless -->
+<script async src="https://www.googletagmanager.com/gtag/js?id=G-7GTLYCZMXN"></script>
+<script>window.dataLayer=window.dataLayer||[];function gtag(){dataLayer.push(arguments);}gtag('js',new Date());gtag('consent','default',{analytics_storage:'denied',ad_storage:'denied',ad_user_data:'denied',ad_personalization:'denied'});gtag('config','G-7GTLYCZMXN',{send_page_view:true,anonymize_ip:true});</script>
+</head>
+<body>
+<script src="/auth/mw-auth.js"></script>
+<div class="container">
+<nav class="nav-bar">
+  <a href="/" class="nav-brand">MATHS<span>WINS</span></a>
+  <a href="/everyday/compound-interest/" class="nav-link">Compound Interest Course (Free) &rarr;</a>
+</nav>
+<div class="hero">
+  <div class="hero-eyebrow">Free Tool</div>
+  <h1>SAVINGS GOAL CALCULATOR</h1>
+  <div class="hero-sub">Set a target and find out exactly how much to save each month &mdash; or enter your budget and see when you will reach your goal. The maths of building something real.</div>
+</div>
+
+<!-- Mode Toggle -->
+<div class="panel">
+  <div class="mode-toggle">
+    <button class="mode-btn active" id="modeGoal" onclick="setMode('goal')">I have a goal</button>
+    <button class="mode-btn" id="modeBudget" onclick="setMode('budget')">I can save this much</button>
+  </div>
+
+  <!-- Mode 1: I have a goal -->
+  <div id="goalInputs">
+    <div class="panel-title">YOUR SAVINGS TARGET</div>
+    <div class="input-grid">
+      <div class="fg">
+        <label>Target amount (&pound;)</label>
+        <input type="number" id="goalTarget" placeholder="10000" min="1" step="100">
+      </div>
+      <div class="fg">
+        <label>Current savings (&pound;)</label>
+        <input type="number" id="goalCurrent" value="0" min="0" step="100">
+      </div>
+      <div class="fg">
+        <label>Months from now</label>
+        <input type="number" id="goalMonths" placeholder="24" min="1" max="600" step="1">
+        <div class="hint">Or use the date picker below</div>
+      </div>
+      <div class="fg">
+        <label>Target date (alternative)</label>
+        <input type="date" id="goalDate">
+        <div class="hint">Overrides months if set</div>
+      </div>
+      <div class="fg">
+        <label>Annual interest rate (%)</label>
+        <input type="number" id="goalRate" value="4" min="0" max="30" step="0.1">
+        <div class="hint">AER on your savings account</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Mode 2: I can save this much -->
+  <div id="budgetInputs" style="display:none;">
+    <div class="panel-title">YOUR MONTHLY BUDGET</div>
+    <div class="input-grid">
+      <div class="fg">
+        <label>Monthly saving (&pound;)</label>
+        <input type="number" id="budgetMonthly" placeholder="200" min="1" step="10">
+      </div>
+      <div class="fg">
+        <label>Current savings (&pound;)</label>
+        <input type="number" id="budgetCurrent" value="0" min="0" step="100">
+      </div>
+      <div class="fg">
+        <label>Goal amount (&pound;)</label>
+        <input type="number" id="budgetGoal" placeholder="10000" min="1" step="100">
+      </div>
+      <div class="fg">
+        <label>Annual interest rate (%)</label>
+        <input type="number" id="budgetRate" value="4" min="0" max="30" step="0.1">
+        <div class="hint">AER on your savings account</div>
+      </div>
+    </div>
+  </div>
+
+  <button class="calc-btn" onclick="calculate()">Calculate</button>
+</div>
+
+<!-- Results -->
+<div class="results" id="results">
+  <!-- Result hero -->
+  <div class="result-hero" id="resultHero"></div>
+
+  <!-- Progress bar -->
+  <div class="progress-section" id="progressSection">
+    <div class="panel-title">GROWTH OVER TIME</div>
+    <div class="progress-track">
+      <div class="progress-fill" id="progressFill" style="width:0%"></div>
+    </div>
+    <div class="milestone-markers" id="milestoneMarkers"></div>
+    <div class="progress-labels" id="progressLabels"></div>
+    <div class="month-bars" id="monthBars"></div>
+    <div class="bar-labels" id="barLabels"></div>
+  </div>
+
+  <!-- What-if slider -->
+  <div class="whatif-section" id="whatifSection">
+    <div class="panel-title">WHAT IF?</div>
+    <div class="slider-row">
+      <span style="font-size:0.8rem;color:var(--muted);">&pound;</span>
+      <input type="range" id="whatifSlider" min="10" max="2000" step="10" value="200">
+      <div class="slider-val" id="whatifVal">&pound;200</div>
+    </div>
+    <div class="whatif-result" id="whatifResult"></div>
+  </div>
+
+  <!-- Motivation -->
+  <div class="motivation-section" id="motivationSection">
+    <div class="panel-title">YOU ARE BUILDING SOMETHING REAL</div>
+    <div class="motivation-row" id="motivationRow"></div>
+    <div class="motivation-tag" id="motivationTag"></div>
+  </div>
+
+  <!-- Monthly breakdown -->
+  <div class="breakdown-section">
+    <button class="breakdown-toggle" id="breakdownToggle" onclick="toggleBreakdown()">Show month-by-month breakdown</button>
+    <div class="breakdown-content" id="breakdownContent">
+      <div class="breakdown-table-wrap">
+        <table class="breakdown-table" id="breakdownTable"></table>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- Educational content -->
+<div class="edu-section">
+  <h2>THE MATHS OF SAVING</h2>
+
+  <h3>Simple vs Compound Growth</h3>
+  <p>If you save &pound;200 per month with no interest, after 5 years you have &pound;12,000. Simple enough. But with compound interest, your savings earn interest, and then that interest earns interest. This is the most powerful force in personal finance.</p>
+  <div class="formula">Future Value = PMT &times; [((1 + r)^n - 1) / r] + PV &times; (1 + r)^n</div>
+  <p>Where PMT is your monthly payment, r is the monthly interest rate (annual rate / 12), n is the number of months, and PV is your starting balance. The first term is the future value of your regular contributions. The second is the growth of what you already have.</p>
+
+  <h3>Why Consistency Beats Amount</h3>
+  <p>Saving &pound;100 every single month for 10 years at 4% gives you &pound;14,725. Saving &pound;200 a month for 5 years at the same rate gives you &pound;13,260. The person who saved <strong>half as much per month but stuck with it twice as long</strong> came out ahead. Time in the market beats timing the market. Time saving beats the amount saved.</p>
+
+  <h3>The Rule of 72</h3>
+  <p>Want to know how long it takes your money to double? Divide 72 by the interest rate. At 4%, your money doubles in roughly 18 years. At 6%, roughly 12 years. At 8%, roughly 9 years. This is a quick mental shortcut for understanding the power of compound growth.</p>
+  <div class="formula">Doubling time (years) &approx; 72 / interest rate (%)</div>
+
+  <h3>The Cost of Waiting</h3>
+  <p>Starting one year earlier on &pound;200/month at 5% means an extra &pound;3,800 after 10 years &mdash; not just &pound;2,400 in contributions, but &pound;1,400 in compound growth you would have missed. Every month you delay is a month your money cannot work for you. The best time to start was yesterday. The second best time is today.</p>
+
+  <div class="pln">Compound interest is mathematics working in your favour. Every month you save, the gap between effort and reward gets wider &mdash; in the right direction. Start small if you must, but start.</div>
+</div>
+
+<!-- FAQ -->
+<div class="faq-section">
+  <h2>FREQUENTLY ASKED QUESTIONS</h2>
+
+  <div class="faq-item">
+    <div class="faq-q" onclick="toggleFaq(this)">How much should I save each month?</div>
+    <div class="faq-a"><p>A common guideline is to save at least 20% of your take-home pay (the 50/30/20 rule). But the real answer depends on your goal. This calculator works backwards from your target amount and deadline to give you a precise monthly figure. Even saving a small amount consistently is far better than saving nothing.</p></div>
+  </div>
+
+  <div class="faq-item">
+    <div class="faq-q" onclick="toggleFaq(this)">Does compound interest really make a big difference on savings?</div>
+    <div class="faq-a"><p>Yes, especially over longer timeframes. At 4% annual interest, saving &pound;200 per month for 10 years gives you &pound;29,490 &mdash; but only &pound;24,000 of that is your contributions. The remaining &pound;5,490 is free money from compound interest. Over 20 years, interest contributes over &pound;25,000 on the same monthly saving.</p></div>
+  </div>
+
+  <div class="faq-item">
+    <div class="faq-q" onclick="toggleFaq(this)">What interest rate should I use in the calculator?</div>
+    <div class="faq-a"><p>Use the AER (Annual Equivalent Rate) of your savings account. In 2025-26, easy-access accounts typically offer 3-5%, while fixed-rate ISAs can offer 4-5%. If you are investing rather than saving, historical stock market returns average around 7-10% before inflation, but with much higher risk.</p></div>
+  </div>
+
+  <div class="faq-item">
+    <div class="faq-q" onclick="toggleFaq(this)">Should I save or pay off debt first?</div>
+    <div class="faq-a"><p>If your debt charges more interest than your savings earn (which is almost always the case), paying off debt first is mathematically better. However, most financial advisers recommend keeping a small emergency fund of &pound;1,000 before aggressively paying down debt. Use our <a href="/tools/debt-snowball/" style="color:var(--sky);">Debt Snowball Calculator</a> to optimise your debt payoff strategy.</p></div>
+  </div>
+
+  <div class="faq-item">
+    <div class="faq-q" onclick="toggleFaq(this)">How accurate is this savings calculator?</div>
+    <div class="faq-a"><p>The calculator uses standard compound interest formulae with monthly compounding. Real-world results may differ slightly due to variable interest rates, tax on savings interest above your Personal Savings Allowance, and the timing of deposits within each month. It gives you an excellent planning estimate.</p></div>
+  </div>
+</div>
+
+<!-- CTA -->
+<div class="cta-card">
+  <h3>UNDERSTAND THE MATHS BEHIND YOUR MONEY</h3>
+  <p>This calculator gives you the numbers. Our free Compound Interest course gives you the understanding. Learn the maths that banks use &mdash; and use it for yourself.</p>
+  <a href="/everyday/compound-interest/" class="cta-link">Compound Interest &amp; Debt Course (Free) &rarr;</a>
+</div>
+
+<footer class="footer">
+  <p>&copy; 2025-2026 MathsWins &middot; <a href="/">Home</a> &middot; <a href="/terms/">Terms</a> &middot; contact@mathswins.co.uk</p>
+  <p>Educational tool only. Not financial advice.</p>
+</footer>
+</div>
+
+<script>
+// ── State ──
+let currentMode = 'goal';
+let lastCalc = null;
+
+// ── Formatting helpers ──
+function fmt(n) {
+  return '£' + n.toLocaleString('en-GB', { minimumFractionDigits: 0, maximumFractionDigits: 0 });
+}
+function fmt2(n) {
+  return '£' + n.toLocaleString('en-GB', { minimumFractionDigits: 2, maximumFractionDigits: 2 });
+}
+function fmtDate(d) {
+  return d.toLocaleDateString('en-GB', { month: 'long', year: 'numeric' });
+}
+function addMonths(date, months) {
+  const d = new Date(date);
+  d.setMonth(d.getMonth() + months);
+  return d;
+}
+
+// ── Mode switching ──
+function setMode(mode) {
+  currentMode = mode;
+  document.getElementById('modeGoal').classList.toggle('active', mode === 'goal');
+  document.getElementById('modeBudget').classList.toggle('active', mode === 'budget');
+  document.getElementById('goalInputs').style.display = mode === 'goal' ? '' : 'none';
+  document.getElementById('budgetInputs').style.display = mode === 'budget' ? '' : 'none';
+  document.getElementById('results').classList.remove('show');
+}
+
+// ── Core maths ──
+// Future value of annuity (monthly deposits) + existing balance growth
+function futureValue(pv, pmt, r, n) {
+  if (r === 0) return pv + pmt * n;
+  return pv * Math.pow(1 + r, n) + pmt * ((Math.pow(1 + r, n) - 1) / r);
+}
+
+// Required monthly payment to reach target
+function requiredPMT(pv, fv, r, n) {
+  if (r === 0) return (fv - pv) / n;
+  const pvGrown = pv * Math.pow(1 + r, n);
+  return (fv - pvGrown) / ((Math.pow(1 + r, n) - 1) / r);
+}
+
+// Months to reach goal with given PMT
+function monthsToGoal(pv, pmt, r, target) {
+  if (pv >= target) return 0;
+  if (r === 0) {
+    if (pmt <= 0) return Infinity;
+    return Math.ceil((target - pv) / pmt);
+  }
+  // Iterative — compound month by month
+  let balance = pv;
+  let months = 0;
+  const maxMonths = 1200; // 100 years cap
+  while (balance < target && months < maxMonths) {
+    balance = balance * (1 + r) + pmt;
+    months++;
+  }
+  return months >= maxMonths ? Infinity : months;
+}
+
+// Build month-by-month schedule
+function buildSchedule(pv, pmt, r, totalMonths) {
+  const schedule = [];
+  let balance = pv;
+  let totalContributions = pv;
+  let totalInterest = 0;
+  for (let m = 1; m <= totalMonths; m++) {
+    const interest = balance * r;
+    balance += interest + pmt;
+    totalContributions += pmt;
+    totalInterest += interest;
+    schedule.push({
+      month: m,
+      deposit: pmt,
+      interest: interest,
+      totalInterest: totalInterest,
+      balance: balance,
+      contributions: totalContributions
+    });
+  }
+  return schedule;
+}
+
+// ── Calculate ──
+function calculate() {
+  const resultsEl = document.getElementById('results');
+
+  if (currentMode === 'goal') {
+    calculateGoalMode();
+  } else {
+    calculateBudgetMode();
+  }
+}
+
+function calculateGoalMode() {
+  const target = parseFloat(document.getElementById('goalTarget').value);
+  const current = parseFloat(document.getElementById('goalCurrent').value) || 0;
+  const rate = parseFloat(document.getElementById('goalRate').value) || 0;
+  const dateVal = document.getElementById('goalDate').value;
+  let months = parseInt(document.getElementById('goalMonths').value);
+
+  if (!target || target <= 0) return;
+
+  // Date overrides months
+  if (dateVal) {
+    const targetDate = new Date(dateVal);
+    const now = new Date();
+    months = Math.max(1, Math.round((targetDate - now) / (30.4375 * 24 * 60 * 60 * 1000)));
+  }
+
+  if (!months || months <= 0) return;
+
+  const r = rate / 100 / 12;
+  const remaining = target - current;
+  if (remaining <= 0) {
+    showAlreadyThere(target);
+    return;
+  }
+
+  const pmt = Math.max(0, requiredPMT(current, target, r, months));
+  const schedule = buildSchedule(current, pmt, r, months);
+  const endDate = addMonths(new Date(), months);
+  const totalContributions = current + pmt * months;
+  const totalInterest = schedule.length > 0 ? schedule[schedule.length - 1].totalInterest : 0;
+
+  lastCalc = { mode: 'goal', target, current, rate, months, pmt, schedule, endDate, totalInterest, totalContributions, r };
+
+  // Render
+  const heroEl = document.getElementById('resultHero');
+  heroEl.innerHTML = `
+    <div class="big-number">${fmt(Math.ceil(pmt))}/month</div>
+    <div class="result-label">Save <strong>${fmt2(pmt)}</strong> per month to reach <strong>${fmt(target)}</strong> by <strong>${fmtDate(endDate)}</strong></div>
+    <div class="result-label" style="font-size:0.82rem;color:var(--muted);margin-top:0.25rem;">Your contributions: ${fmt(Math.round(totalContributions))} &middot; Interest earned: ${fmt(Math.round(totalInterest))}</div>
+  `;
+
+  renderProgress(schedule, target);
+  renderWhatIf(current, target, r);
+  renderMotivation(pmt, current, r);
+  renderBreakdown(schedule, target);
+
+  document.getElementById('results').classList.add('show');
+  document.getElementById('resultHero').scrollIntoView({ behavior: 'smooth', block: 'start' });
+}
+
+function calculateBudgetMode() {
+  const pmt = parseFloat(document.getElementById('budgetMonthly').value);
+  const current = parseFloat(document.getElementById('budgetCurrent').value) || 0;
+  const target = parseFloat(document.getElementById('budgetGoal').value);
+  const rate = parseFloat(document.getElementById('budgetRate').value) || 0;
+
+  if (!pmt || pmt <= 0 || !target || target <= 0) return;
+
+  if (current >= target) {
+    showAlreadyThere(target);
+    return;
+  }
+
+  const r = rate / 100 / 12;
+  const months = monthsToGoal(current, pmt, r, target);
+
+  if (months === Infinity) {
+    const heroEl = document.getElementById('resultHero');
+    heroEl.innerHTML = `
+      <div class="big-number" style="color:var(--red);">Not reachable</div>
+      <div class="result-label">At ${fmt(pmt)}/month with ${rate}% interest, the interest alone is not enough to overcome the gap. Try increasing your monthly saving.</div>
+    `;
+    document.getElementById('results').classList.add('show');
+    document.getElementById('progressSection').style.display = 'none';
+    document.getElementById('whatifSection').style.display = 'none';
+    document.getElementById('motivationSection').style.display = 'none';
+    return;
+  }
+
+  const schedule = buildSchedule(current, pmt, r, months);
+  const endDate = addMonths(new Date(), months);
+  const totalContributions = current + pmt * months;
+  const totalInterest = schedule[schedule.length - 1].totalInterest;
+
+  lastCalc = { mode: 'budget', target, current, rate, months, pmt, schedule, endDate, totalInterest, totalContributions, r };
+
+  // Find milestone months
+  const m25 = schedule.findIndex(s => s.balance >= target * 0.25) + 1;
+  const m50 = schedule.findIndex(s => s.balance >= target * 0.50) + 1;
+  const m75 = schedule.findIndex(s => s.balance >= target * 0.75) + 1;
+
+  const heroEl = document.getElementById('resultHero');
+  const years = Math.floor(months / 12);
+  const remainMonths = months % 12;
+  const timeStr = years > 0 ? `${years} year${years > 1 ? 's' : ''}${remainMonths > 0 ? ` ${remainMonths} month${remainMonths > 1 ? 's' : ''}` : ''}` : `${months} month${months > 1 ? 's' : ''}`;
+
+  heroEl.innerHTML = `
+    <div class="big-number">${timeStr}</div>
+    <div class="result-label">You will reach <strong>${fmt(target)}</strong> in <strong>${months} months</strong> (${fmtDate(endDate)})</div>
+    <div class="result-label" style="font-size:0.82rem;color:var(--muted);margin-top:0.5rem;">
+      ${m25 > 0 ? `25% (${fmt(Math.round(target * 0.25))}): month ${m25} &middot; ` : ''}
+      ${m50 > 0 ? `50% (${fmt(Math.round(target * 0.50))}): month ${m50} &middot; ` : ''}
+      ${m75 > 0 ? `75% (${fmt(Math.round(target * 0.75))}): month ${m75}` : ''}
+    </div>
+    <div class="result-label" style="font-size:0.82rem;color:var(--muted);margin-top:0.25rem;">Your contributions: ${fmt(Math.round(totalContributions))} &middot; Interest earned: ${fmt(Math.round(totalInterest))}</div>
+  `;
+
+  renderProgress(schedule, target);
+  renderWhatIf(current, target, r);
+  renderMotivation(pmt, current, r);
+  renderBreakdown(schedule, target);
+
+  document.getElementById('results').classList.add('show');
+  document.getElementById('resultHero').scrollIntoView({ behavior: 'smooth', block: 'start' });
+}
+
+function showAlreadyThere(target) {
+  const heroEl = document.getElementById('resultHero');
+  heroEl.innerHTML = `
+    <div class="big-number" style="color:var(--green);">Already there</div>
+    <div class="result-label">Your current savings already meet or exceed your target of <strong>${fmt(target)}</strong>. Set a bigger goal?</div>
+  `;
+  document.getElementById('results').classList.add('show');
+  document.getElementById('progressSection').style.display = 'none';
+  document.getElementById('whatifSection').style.display = 'none';
+  document.getElementById('motivationSection').style.display = 'none';
+}
+
+// ── Render progress ──
+function renderProgress(schedule, target) {
+  const section = document.getElementById('progressSection');
+  section.style.display = '';
+
+  const finalBalance = schedule[schedule.length - 1].balance;
+  const displayTarget = Math.max(target, finalBalance);
+
+  // Progress bar fill
+  const pct = Math.min(100, (finalBalance / displayTarget) * 100);
+  document.getElementById('progressFill').style.width = pct + '%';
+
+  // Milestones
+  const markers = document.getElementById('milestoneMarkers');
+  markers.innerHTML = '';
+  [25, 50, 75, 100].forEach(p => {
+    const val = target * (p / 100);
+    const left = Math.min(100, (val / displayTarget) * 100);
+    const mMonth = schedule.findIndex(s => s.balance >= val) + 1;
+    if (mMonth > 0) {
+      markers.innerHTML += `<div class="milestone" style="left:${left}%"><div class="marker"></div><div class="mlabel">${p}% &middot; M${mMonth}</div></div>`;
+    }
+  });
+
+  // Labels
+  document.getElementById('progressLabels').innerHTML = `<span>${fmt(Math.round(schedule[0]?.balance || 0))}</span><span>${fmt(Math.round(finalBalance))}</span>`;
+
+  // Month bars
+  const barsEl = document.getElementById('monthBars');
+  const barLabelsEl = document.getElementById('barLabels');
+  barsEl.innerHTML = '';
+
+  // Downsample if too many months
+  const maxBars = 60;
+  let displaySchedule = schedule;
+  let step = 1;
+  if (schedule.length > maxBars) {
+    step = Math.ceil(schedule.length / maxBars);
+    displaySchedule = schedule.filter((_, i) => i % step === 0 || i === schedule.length - 1);
+  }
+
+  const m25idx = schedule.findIndex(s => s.balance >= target * 0.25);
+  const m50idx = schedule.findIndex(s => s.balance >= target * 0.50);
+  const m75idx = schedule.findIndex(s => s.balance >= target * 0.75);
+  const milestoneMonths = new Set([m25idx, m50idx, m75idx].filter(i => i >= 0).map(i => schedule[i].month));
+
+  displaySchedule.forEach(s => {
+    const h = Math.max(2, (s.balance / displayTarget) * 100);
+    const isMilestone = milestoneMonths.has(s.month);
+    barsEl.innerHTML += `<div class="month-bar${isMilestone ? ' milestone-bar' : ''}" style="height:${h}%" title="Month ${s.month}: ${fmt(Math.round(s.balance))}"></div>`;
+  });
+
+  // Bar labels
+  const first = displaySchedule[0];
+  const last = displaySchedule[displaySchedule.length - 1];
+  barLabelsEl.innerHTML = `<span>Month ${first.month}</span><span>Month ${last.month}</span>`;
+}
+
+// ── What-if slider ──
+function renderWhatIf(current, target, r) {
+  const section = document.getElementById('whatifSection');
+  section.style.display = '';
+  const slider = document.getElementById('whatifSlider');
+
+  // Set sensible range
+  const sensibleMax = Math.min(10000, Math.max(500, target / 6));
+  slider.max = Math.ceil(sensibleMax / 10) * 10;
+  slider.min = 10;
+  slider.step = 10;
+
+  if (lastCalc) {
+    slider.value = Math.min(Math.round(lastCalc.pmt / 10) * 10 || 200, slider.max);
+  }
+
+  updateWhatIf();
+  slider.oninput = updateWhatIf;
+}
+
+function updateWhatIf() {
+  if (!lastCalc) return;
+  const slider = document.getElementById('whatifSlider');
+  const val = parseFloat(slider.value);
+  document.getElementById('whatifVal').textContent = fmt(val);
+
+  const months = monthsToGoal(lastCalc.current, val, lastCalc.r, lastCalc.target);
+  const resultEl = document.getElementById('whatifResult');
+
+  if (months === Infinity) {
+    resultEl.innerHTML = `At <span class="gold">${fmt(val)}/month</span>, you would not reach ${fmt(lastCalc.target)} &mdash; try a higher amount.`;
+    return;
+  }
+
+  const endDate = addMonths(new Date(), months);
+  const years = Math.floor(months / 12);
+  const rm = months % 12;
+  const timeStr = years > 0 ? `${years} year${years > 1 ? 's' : ''}${rm > 0 ? ` ${rm} month${rm > 1 ? 's' : ''}` : ''}` : `${months} month${months > 1 ? 's' : ''}`;
+
+  resultEl.innerHTML = `At <span class="gold">${fmt(val)}/month</span>, you would reach <strong>${fmt(lastCalc.target)}</strong> in <strong>${timeStr}</strong> (${fmtDate(endDate)})`;
+}
+
+// ── Motivation ──
+function renderMotivation(pmt, current, r) {
+  const section = document.getElementById('motivationSection');
+  section.style.display = '';
+  const row = document.getElementById('motivationRow');
+
+  const periods = [
+    { label: '1 Year', months: 12 },
+    { label: '5 Years', months: 60 },
+    { label: '10 Years', months: 120 }
+  ];
+
+  row.innerHTML = periods.map(p => {
+    const total = futureValue(current, pmt, r, p.months);
+    const contributed = current + pmt * p.months;
+    const interest = total - contributed;
+    return `<div class="motivation-card">
+      <div class="mc-period">${p.label}</div>
+      <div class="mc-amount">${fmt(Math.round(total))}</div>
+      <div class="mc-interest">${fmt(Math.round(interest))} from interest</div>
+    </div>`;
+  }).join('');
+
+  document.getElementById('motivationTag').textContent =
+    `At ${fmt(Math.round(pmt))}/month, you are building something real. Every month the maths works harder for you.`;
+}
+
+// ── Breakdown table ──
+function renderBreakdown(schedule, target) {
+  const table = document.getElementById('breakdownTable');
+  const m25 = schedule.findIndex(s => s.balance >= target * 0.25);
+  const m50 = schedule.findIndex(s => s.balance >= target * 0.50);
+  const m75 = schedule.findIndex(s => s.balance >= target * 0.75);
+  const m100 = schedule.findIndex(s => s.balance >= target);
+  const milestones = new Set([m25, m50, m75, m100].filter(i => i >= 0));
+
+  let html = `<thead><tr><th style="text-align:left;">Month</th><th>Deposit</th><th>Interest</th><th>Total Interest</th><th>Balance</th></tr></thead><tbody>`;
+
+  schedule.forEach((s, i) => {
+    const cls = milestones.has(i) ? ' class="milestone-row"' : '';
+    const date = fmtDate(addMonths(new Date(), s.month));
+    html += `<tr${cls}>
+      <td>${s.month} (${date})</td>
+      <td>${fmt2(s.deposit)}</td>
+      <td>${fmt2(s.interest)}</td>
+      <td>${fmt2(s.totalInterest)}</td>
+      <td>${fmt2(s.balance)}</td>
+    </tr>`;
+  });
+
+  html += '</tbody>';
+  table.innerHTML = html;
+
+  // Reset toggle state
+  document.getElementById('breakdownContent').classList.remove('open');
+  document.getElementById('breakdownToggle').textContent = 'Show month-by-month breakdown';
+}
+
+// ── Toggle breakdown ──
+function toggleBreakdown() {
+  const content = document.getElementById('breakdownContent');
+  const btn = document.getElementById('breakdownToggle');
+  if (content.classList.contains('open')) {
+    content.classList.remove('open');
+    btn.textContent = 'Show month-by-month breakdown';
+  } else {
+    content.classList.add('open');
+    btn.textContent = 'Hide month-by-month breakdown';
+  }
+}
+
+// ── FAQ toggle ──
+function toggleFaq(el) {
+  const item = el.parentElement;
+  item.classList.toggle('open');
+}
+
+// ── Set min date on date picker ──
+(function() {
+  const today = new Date();
+  today.setDate(today.getDate() + 1);
+  const iso = today.toISOString().split('T')[0];
+  document.getElementById('goalDate').setAttribute('min', iso);
+})();
+</script>
+<!-- Cookie Consent Banner -->
+<div id="cookieConsent" style="display:none;position:fixed;bottom:0;left:0;right:0;background:#0c1628;border-top:1px solid #14263d;padding:14px 24px;z-index:99999;font-family:'Outfit',system-ui,sans-serif;font-size:13px;color:#94a3b8;display:none;align-items:center;justify-content:center;gap:16px;flex-wrap:wrap">
+<span>We use cookies for analytics to improve your experience. No personal data is sold or shared.</span>
+<button onclick="acceptCookies()" style="background:#d4a847;color:#050709;border:none;padding:8px 20px;border-radius:4px;font-weight:700;font-size:13px;cursor:pointer;font-family:inherit">Accept</button>
+<button onclick="declineCookies()" style="background:transparent;color:#64748b;border:1px solid #14263d;padding:8px 20px;border-radius:4px;font-size:13px;cursor:pointer;font-family:inherit">Decline</button>
+</div>
+<script>
+function acceptCookies(){localStorage.setItem('mw_cookies','accepted');gtag('consent','update',{analytics_storage:'granted'});document.getElementById('cookieConsent').style.display='none';}
+function declineCookies(){localStorage.setItem('mw_cookies','declined');document.getElementById('cookieConsent').style.display='none';}
+(function(){var c=localStorage.getItem('mw_cookies');if(c==='accepted'){gtag('consent','update',{analytics_storage:'granted'});}else if(!c){document.getElementById('cookieConsent').style.display='flex';}})();
+</script>
+</body>
+</html>

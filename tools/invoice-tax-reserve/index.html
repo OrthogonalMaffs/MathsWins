@@ -1,0 +1,488 @@
+<!DOCTYPE html>
+<html lang="en-GB">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Invoice Tax Reserve Calculator — How Much to Set Aside | MathsWins</title>
+<meta name="description" content="Just got paid? Find out exactly how much to put aside for tax. Enter your invoice amount and annual income — get your tax reserve instantly.">
+<meta property="og:title" content="Invoice Tax Reserve Calculator — How Much to Set Aside | MathsWins">
+<meta property="og:description" content="Just got paid? Find out exactly how much to put aside for tax. Enter your invoice amount and annual income — get your tax reserve instantly.">
+<meta property="og:url" content="https://mathswins.co.uk/tools/invoice-tax-reserve/">
+<meta property="og:image" content="https://mathswins.co.uk/assets/og-image.png">
+<meta property="og:type" content="website">
+<meta property="og:site_name" content="MathsWins">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:title" content="Invoice Tax Reserve Calculator — How Much to Set Aside | MathsWins">
+<meta name="twitter:description" content="Just got paid? Find out exactly how much to put aside for tax. Enter your invoice amount and annual income — get your tax reserve instantly.">
+<meta name="twitter:image" content="https://mathswins.co.uk/assets/og-image.png">
+<link rel="canonical" href="https://mathswins.co.uk/tools/invoice-tax-reserve/">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Crimson+Pro:ital,wght@0,400;1,400&family=DM+Mono:wght@400;500&family=Outfit:wght@300;400;600;700&display=swap" rel="stylesheet">
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "WebApplication",
+  "name": "Invoice Tax Reserve Calculator",
+  "url": "https://mathswins.co.uk/tools/invoice-tax-reserve/",
+  "description": "Just got paid? Find out exactly how much to put aside for tax. Enter your invoice amount and annual income — get your tax reserve instantly.",
+  "applicationCategory": "FinanceApplication",
+  "operatingSystem": "Any",
+  "offers": {
+    "@type": "Offer",
+    "price": "0",
+    "priceCurrency": "GBP"
+  },
+  "publisher": {
+    "@type": "Organization",
+    "name": "MathsWins",
+    "url": "https://mathswins.co.uk"
+  }
+}
+</script>
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "FAQPage",
+  "mainEntity": [
+    {
+      "@type": "Question",
+      "name": "How much should I set aside for tax?",
+      "acceptedAnswer": {
+        "@type": "Answer",
+        "text": "As a rule of thumb, 25-30% for basic rate taxpayers, 40-45% for higher rate. This calculator gives the exact figure based on your income."
+      }
+    },
+    {
+      "@type": "Question",
+      "name": "What if I set aside too much?",
+      "acceptedAnswer": {
+        "@type": "Answer",
+        "text": "Great — you'll have a surplus when your tax bill arrives. Much better than a shortfall. Consider it forced savings."
+      }
+    },
+    {
+      "@type": "Question",
+      "name": "Should I put the reserve in a savings account?",
+      "acceptedAnswer": {
+        "@type": "Answer",
+        "text": "Yes. A separate savings account earning interest while you wait to pay HMRC is free money. Some banks offer specific tax reserve accounts."
+      }
+    },
+    {
+      "@type": "Question",
+      "name": "When do I need to pay the tax?",
+      "acceptedAnswer": {
+        "@type": "Answer",
+        "text": "31 January after the end of the tax year. So tax on 2025/26 income (April 2025-April 2026) is due 31 January 2027."
+      }
+    },
+    {
+      "@type": "Question",
+      "name": "What about VAT?",
+      "acceptedAnswer": {
+        "@type": "Answer",
+        "text": "This calculator covers income tax and NI only. If you're VAT registered (turnover over £90,000), you'll also need to set aside 20% VAT on top."
+      }
+    }
+  ]
+}
+</script>
+<style>
+:root{--bg:#050709;--surface:#0a0d14;--surface2:#0f1319;--border:#161c28;--border2:#1e2638;--sky:#0ea5e9;--sky-dim:rgba(14,165,233,0.10);--green:#2dd4a0;--green-dim:rgba(45,212,160,0.10);--red:#ef5350;--gold:#d4a847;--gold-dim:rgba(212,168,71,0.10);--cyan:#22d3ee;--teal:#0d9488;--teal-dim:rgba(13,148,136,0.10);--text:#c8cdd8;--text-bright:#e8ecf4;--muted:#4a5568;}
+*{margin:0;padding:0;box-sizing:border-box;}
+body{font-family:'Outfit',sans-serif;background:var(--bg);color:var(--text);min-height:100vh;line-height:1.5;}
+.container{max-width:960px;margin:0 auto;padding:2rem 1.25rem 4rem;}
+.nav-bar{display:flex;align-items:center;justify-content:space-between;padding:1rem 0;border-bottom:1px solid var(--border);margin-bottom:2rem;}
+.nav-brand{font-family:'Bebas Neue',sans-serif;font-size:1.4rem;color:var(--gold);text-decoration:none;letter-spacing:0.06em;}
+.nav-brand span{color:var(--text-bright);}
+.nav-link{font-size:0.85rem;font-weight:600;color:var(--sky);text-decoration:none;padding:0.4rem 1rem;border:1px solid var(--sky);border-radius:4px;transition:background 0.2s,color 0.2s;}
+.nav-link:hover{background:var(--sky);color:var(--bg);}
+.hero{text-align:center;margin-bottom:2rem;}
+.hero-eyebrow{font-size:0.75rem;font-weight:600;text-transform:uppercase;letter-spacing:0.15em;color:var(--sky);margin-bottom:0.5rem;}
+.hero h1{font-family:'Bebas Neue',sans-serif;font-size:clamp(1.8rem,5vw,2.8rem);color:var(--text-bright);letter-spacing:0.04em;line-height:1.1;margin-bottom:0.75rem;}
+.hero-sub{font-family:'Crimson Pro',serif;font-style:italic;font-size:1.05rem;color:var(--cyan);max-width:620px;margin:0 auto;}
+.panel{background:var(--surface);border:1px solid var(--border);border-radius:10px;padding:1.5rem;margin-bottom:1.25rem;}
+.panel-title{font-family:'Bebas Neue',sans-serif;font-size:1.1rem;color:var(--text-bright);letter-spacing:0.05em;margin-bottom:1rem;}
+.input-grid{display:grid;grid-template-columns:1fr 1fr;gap:1rem;}
+@media(max-width:600px){.input-grid{grid-template-columns:1fr;}}
+.fg{display:flex;flex-direction:column;gap:0.3rem;}
+.fg label{font-size:0.72rem;font-weight:600;text-transform:uppercase;letter-spacing:0.06em;color:var(--muted);}
+.fg input,.fg select{font-family:'DM Mono',monospace;font-size:1rem;padding:0.6rem 0.8rem;background:var(--surface2);border:1px solid var(--border2);border-radius:6px;color:var(--text-bright);outline:none;}
+.fg input:focus{border-color:var(--sky);}
+.fg .hint{font-family:'Crimson Pro',serif;font-style:italic;font-size:0.78rem;color:var(--muted);}
+.slider-wrap{display:flex;align-items:center;gap:0.75rem;}
+.slider-wrap input[type="range"]{flex:1;accent-color:var(--sky);height:6px;cursor:pointer;}
+.slider-val{font-family:'DM Mono',monospace;font-size:1rem;color:var(--text-bright);min-width:3.5rem;text-align:right;}
+.calc-btn{font-family:'Outfit',sans-serif;font-weight:700;font-size:1rem;padding:0.85rem;background:var(--sky);color:#fff;border:none;border-radius:6px;cursor:pointer;width:100%;margin:1.25rem 0 0;transition:background 0.2s;}
+.calc-btn:hover{background:#38bdf8;}
+
+/* Results */
+.results{display:none;}
+.results.show{display:block;}
+
+/* Hero answer */
+.hero-answer{background:var(--surface);border:2px solid var(--green);border-radius:12px;padding:2rem 1.5rem;text-align:center;margin-bottom:1.5rem;}
+.hero-answer .amount{font-family:'DM Mono',monospace;font-size:clamp(2rem,6vw,3rem);font-weight:500;color:var(--green);}
+.hero-answer .label{font-size:1rem;color:var(--text);margin-top:0.25rem;}
+.hero-answer .pct{font-family:'DM Mono',monospace;font-size:1.1rem;color:var(--cyan);margin-top:0.5rem;}
+
+/* Breakdown table */
+.breakdown{background:var(--surface);border:1px solid var(--border);border-radius:10px;padding:1.25rem;margin-bottom:1.5rem;}
+.breakdown-title{font-family:'Bebas Neue',sans-serif;font-size:1rem;color:var(--text-bright);letter-spacing:0.05em;margin-bottom:0.75rem;}
+.bd-row{display:flex;justify-content:space-between;padding:0.4rem 0;border-bottom:1px solid var(--border);font-size:0.88rem;}
+.bd-row:last-child{border-bottom:none;}
+.bd-row .bd-label{color:var(--text);}
+.bd-row .bd-val{font-family:'DM Mono',monospace;font-weight:500;color:var(--text-bright);}
+.bd-row.indent .bd-label{padding-left:1rem;color:var(--muted);font-size:0.82rem;}
+.bd-row.indent .bd-val{color:var(--muted);font-size:0.82rem;}
+.bd-row.total{border-top:1px solid var(--border2);padding-top:0.6rem;margin-top:0.2rem;}
+.bd-row.total .bd-label{font-weight:600;color:var(--text-bright);}
+.bd-row.total .bd-val{color:var(--green);}
+.bd-row.buffer .bd-label{font-weight:600;color:var(--gold);}
+.bd-row.buffer .bd-val{color:var(--gold);font-weight:500;}
+.bd-row.buffer{background:var(--gold-dim);margin:0.5rem -1.25rem 0;padding:0.75rem 1.25rem;border-radius:0 0 10px 10px;border-bottom:none;}
+
+/* Rule callout */
+.rule-callout{background:rgba(34,211,238,0.08);border-left:3px solid var(--cyan);padding:1rem 1.25rem;border-radius:0 8px 8px 0;margin-bottom:1.5rem;font-size:0.9rem;line-height:1.7;}
+.rule-callout strong{color:var(--cyan);}
+.rule-callout p{margin:0;}
+
+/* Quick reference */
+.ref-table{background:var(--surface);border:1px solid var(--border);border-radius:10px;padding:1.25rem;margin-bottom:1.5rem;}
+.ref-table h3{font-family:'Bebas Neue',sans-serif;font-size:1rem;color:var(--text-bright);letter-spacing:0.05em;margin-bottom:0.75rem;}
+.ref-table table{width:100%;border-collapse:collapse;}
+.ref-table th{font-family:'Outfit',sans-serif;font-weight:600;text-transform:uppercase;font-size:0.68rem;letter-spacing:0.05em;color:var(--muted);padding:0.5rem;text-align:left;border-bottom:1px solid var(--border);}
+.ref-table td{padding:0.5rem;border-bottom:1px solid var(--border);font-size:0.85rem;}
+.ref-table td:last-child{font-family:'DM Mono',monospace;color:var(--cyan);text-align:right;}
+.ref-table tr.active-band{background:var(--sky-dim);}
+.ref-table tr.active-band td{color:var(--text-bright);font-weight:600;}
+.ref-table tr.active-band td:last-child{color:var(--green);}
+
+/* FAQ */
+.faq-section{margin-top:2rem;}
+.faq-section h2{font-family:'Bebas Neue',sans-serif;font-size:1.4rem;color:var(--text-bright);letter-spacing:0.04em;margin-bottom:1rem;}
+.faq-item{background:var(--surface);border:1px solid var(--border);border-radius:10px;margin-bottom:0.75rem;overflow:hidden;}
+.faq-q{font-family:'Outfit',sans-serif;font-weight:600;font-size:0.92rem;padding:1rem 1.25rem;cursor:pointer;display:flex;justify-content:space-between;align-items:center;color:var(--text-bright);transition:background 0.2s;}
+.faq-q:hover{background:var(--surface2);}
+.faq-q::after{content:'+';font-family:'DM Mono',monospace;font-size:1.2rem;color:var(--sky);transition:transform 0.2s;}
+.faq-item.open .faq-q::after{content:'-';}
+.faq-a{max-height:0;overflow:hidden;transition:max-height 0.3s ease,padding 0.3s ease;}
+.faq-item.open .faq-a{max-height:300px;padding:0 1.25rem 1rem;}
+.faq-a p{font-size:0.88rem;line-height:1.6;color:var(--text);}
+
+/* CTA */
+.cta-card{background:var(--surface);border:1px solid var(--border);border-left:3px solid var(--sky);border-radius:0 10px 10px 0;padding:1.5rem;margin-top:2rem;}
+.cta-card h3{font-family:'Bebas Neue',sans-serif;font-size:1.2rem;color:var(--sky);letter-spacing:0.04em;margin-bottom:0.5rem;}
+.cta-card p{font-family:'Crimson Pro',serif;font-style:italic;font-size:0.92rem;color:var(--text);line-height:1.5;margin-bottom:0.75rem;}
+.cta-link{font-weight:600;font-size:0.9rem;color:var(--sky);text-decoration:none;}
+.footer{margin-top:2.5rem;padding-top:1.25rem;border-top:1px solid var(--border);text-align:center;}
+.footer p{font-size:0.72rem;color:var(--muted);line-height:1.8;}
+.footer a{color:var(--muted);text-decoration:underline;}
+</style>
+<!-- GA4 Cookieless -->
+<script async src="https://www.googletagmanager.com/gtag/js?id=G-7GTLYCZMXN"></script>
+<script>window.dataLayer=window.dataLayer||[];function gtag(){dataLayer.push(arguments);}gtag('js',new Date());gtag('consent','default',{analytics_storage:'denied',ad_storage:'denied',ad_user_data:'denied',ad_personalization:'denied'});gtag('config','G-7GTLYCZMXN',{send_page_view:true,anonymize_ip:true});</script>
+</head>
+<body>
+<script src="/auth/mw-auth.js"></script>
+<div class="container">
+<nav class="nav-bar">
+  <a href="/" class="nav-brand">MATHS<span>WINS</span></a>
+  <a href="/everyday/tax/" class="nav-link">UK Tax Maths Course (Free) &rarr;</a>
+</nav>
+<div class="hero">
+  <div class="hero-eyebrow">Free Tool</div>
+  <h1>INVOICE TAX RESERVE CALCULATOR</h1>
+  <div class="hero-sub">Just got paid? Enter your invoice amount and find out exactly how much to put aside for tax. Use it every time.</div>
+</div>
+
+<div class="panel">
+  <div class="panel-title">YOUR INVOICE</div>
+  <div class="input-grid">
+    <div class="fg">
+      <label>Invoice amount (&pound;)</label>
+      <input type="number" id="invoiceAmount" min="1" step="100" placeholder="2,000">
+    </div>
+    <div class="fg">
+      <label>Estimated annual income (&pound;)</label>
+      <input type="number" id="annualIncome" min="0" step="1000" placeholder="35,000">
+      <div class="hint">Your best guess of total self-employment income this tax year</div>
+    </div>
+    <div class="fg">
+      <label>Employment income (&pound;)</label>
+      <input type="number" id="employmentIncome" min="0" step="1000" value="0" placeholder="0">
+      <div class="hint">Do you also have employment income? (default 0)</div>
+    </div>
+    <div class="fg">
+      <label>Expense rate</label>
+      <div class="slider-wrap">
+        <input type="range" id="expenseRate" min="0" max="50" value="20" step="1">
+        <span class="slider-val" id="expenseRateVal">20%</span>
+      </div>
+      <div class="hint">What percentage of income goes on expenses?</div>
+    </div>
+  </div>
+  <button class="calc-btn" onclick="calculate()">How much should I set aside?</button>
+</div>
+
+<div class="results" id="results">
+  <div class="hero-answer" id="heroAnswer"></div>
+  <div class="breakdown" id="breakdown"></div>
+  <div class="rule-callout">
+    <p><strong>The Rule:</strong> Most self-employed people in the basic rate band should set aside 25&ndash;30% of each invoice. If you're a higher rate taxpayer, set aside 40&ndash;45%. This calculator gives you the exact number.</p>
+  </div>
+</div>
+
+<div class="ref-table" id="refTable">
+  <h3>QUICK REFERENCE &mdash; HOW MUCH TO SET ASIDE</h3>
+  <table>
+    <thead>
+      <tr><th>Annual Income</th><th>Set Aside</th></tr>
+    </thead>
+    <tbody>
+      <tr id="band-0"><td>Under &pound;12,570</td><td>0%</td></tr>
+      <tr id="band-1"><td>&pound;12,571 &ndash; &pound;50,270</td><td>25&ndash;30%</td></tr>
+      <tr id="band-2"><td>&pound;50,271 &ndash; &pound;100,000</td><td>42&ndash;45%</td></tr>
+      <tr id="band-3"><td>&pound;100,001 &ndash; &pound;125,140</td><td>55&ndash;62%</td></tr>
+      <tr id="band-4"><td>Over &pound;125,140</td><td>47&ndash;49%</td></tr>
+    </tbody>
+  </table>
+</div>
+
+<div class="faq-section">
+  <h2>FREQUENTLY ASKED QUESTIONS</h2>
+  <div class="faq-item">
+    <div class="faq-q" onclick="toggleFaq(this)">How much should I set aside for tax?</div>
+    <div class="faq-a"><p>As a rule of thumb, 25&ndash;30% for basic rate taxpayers, 40&ndash;45% for higher rate. This calculator gives the exact figure based on your income.</p></div>
+  </div>
+  <div class="faq-item">
+    <div class="faq-q" onclick="toggleFaq(this)">What if I set aside too much?</div>
+    <div class="faq-a"><p>Great &mdash; you'll have a surplus when your tax bill arrives. Much better than a shortfall. Consider it forced savings.</p></div>
+  </div>
+  <div class="faq-item">
+    <div class="faq-q" onclick="toggleFaq(this)">Should I put the reserve in a savings account?</div>
+    <div class="faq-a"><p>Yes. A separate savings account earning interest while you wait to pay HMRC is free money. Some banks offer specific tax reserve accounts.</p></div>
+  </div>
+  <div class="faq-item">
+    <div class="faq-q" onclick="toggleFaq(this)">When do I need to pay the tax?</div>
+    <div class="faq-a"><p>31 January after the end of the tax year. So tax on 2025/26 income (April 2025&ndash;April 2026) is due 31 January 2027.</p></div>
+  </div>
+  <div class="faq-item">
+    <div class="faq-q" onclick="toggleFaq(this)">What about VAT?</div>
+    <div class="faq-a"><p>This calculator covers income tax and NI only. If you're VAT registered (turnover over &pound;90,000), you'll also need to set aside 20% VAT on top.</p></div>
+  </div>
+</div>
+
+<div class="cta-card">
+  <h3>UK TAX MATHS &mdash; FREE COURSE</h3>
+  <p>Understand marginal vs effective rates, the &pound;100k personal allowance trap, Scottish tax differences, and more. Completely free.</p>
+  <a href="/everyday/tax/" class="cta-link">Start the free course &rarr;</a>
+</div>
+
+<div class="footer">
+  <p><a href="/">MathsWins</a> &middot; <a href="/tools/">Tools</a> &middot; <a href="/everyday/">Everyday Maths</a><br>&copy; 2026 MathsWins. Not financial advice.<br><a href="/restore/">Restore Access</a></p>
+</div>
+</div>
+
+<script>
+/* Slider live update */
+const expenseSlider = document.getElementById('expenseRate');
+const expenseVal = document.getElementById('expenseRateVal');
+expenseSlider.addEventListener('input', () => { expenseVal.textContent = expenseSlider.value + '%'; });
+
+function fmt(n) {
+  return '\u00A3' + n.toLocaleString('en-GB', { minimumFractionDigits: 0, maximumFractionDigits: 0 });
+}
+
+function fmt2(n) {
+  return '\u00A3' + n.toLocaleString('en-GB', { minimumFractionDigits: 2, maximumFractionDigits: 2 });
+}
+
+/*
+  2025/26 UK tax bands & NI rates (self-employed)
+  Personal Allowance: £12,570 (tapers £1 for every £2 over £100,000)
+  Basic rate:  20% on £12,571–£50,270
+  Higher rate: 40% on £50,271–£125,140
+  Additional:  45% on £125,141+
+
+  Class 4 NI (self-employed):
+  6% on £12,570–£50,270
+  2% on £50,270+
+
+  Class 2 NI: abolished from 2024/25
+*/
+
+function getMarginalRates(totalIncome) {
+  // totalIncome = employment income + taxable self-employment profit
+  // Returns the marginal income tax rate and marginal Class 4 NI rate
+  // that applies to the NEXT pound of self-employment income
+
+  const pa = 12570;
+  const basicLimit = 50270;
+  const higherLimit = 125140; // PA fully tapered away
+  const paTaperStart = 100000;
+
+  // Effective personal allowance after taper
+  let effectivePA = pa;
+  if (totalIncome > paTaperStart) {
+    effectivePA = Math.max(0, pa - Math.floor((totalIncome - paTaperStart) / 2));
+  }
+
+  let taxRate = 0;
+  let niRate = 0;
+
+  if (totalIncome <= effectivePA) {
+    // Below personal allowance
+    taxRate = 0;
+  } else if (totalIncome <= basicLimit) {
+    taxRate = 0.20;
+  } else if (totalIncome <= paTaperStart) {
+    taxRate = 0.40;
+  } else if (totalIncome <= higherLimit) {
+    // PA trap: effective 60% marginal rate (40% tax + 20% PA loss)
+    taxRate = 0.60;
+  } else {
+    taxRate = 0.45;
+  }
+
+  // Class 4 NI
+  if (totalIncome <= pa) {
+    niRate = 0;
+  } else if (totalIncome <= basicLimit) {
+    niRate = 0.06;
+  } else {
+    niRate = 0.02;
+  }
+
+  return { taxRate, niRate };
+}
+
+function getBandIndex(totalIncome) {
+  if (totalIncome <= 12570) return 0;
+  if (totalIncome <= 50270) return 1;
+  if (totalIncome <= 100000) return 2;
+  if (totalIncome <= 125140) return 3;
+  return 4;
+}
+
+function calculate() {
+  const invoiceAmount = parseFloat(document.getElementById('invoiceAmount').value);
+  const annualIncome = parseFloat(document.getElementById('annualIncome').value);
+  const employmentIncome = parseFloat(document.getElementById('employmentIncome').value) || 0;
+  const expenseRate = parseInt(expenseSlider.value) / 100;
+
+  if (!invoiceAmount || invoiceAmount <= 0 || !annualIncome || annualIncome < 0) {
+    return;
+  }
+
+  // Taxable portion of invoice after expenses
+  const taxableInvoice = invoiceAmount * (1 - expenseRate);
+
+  // Total income = employment + self-employment profit (annual income after expenses)
+  const selfEmploymentProfit = annualIncome * (1 - expenseRate);
+  const totalIncome = employmentIncome + selfEmploymentProfit;
+
+  // Get marginal rates based on total income
+  const { taxRate, niRate } = getMarginalRates(totalIncome);
+  const totalRate = taxRate + niRate;
+
+  // Calculate reserves
+  const taxReserve = taxableInvoice * taxRate;
+  const niReserve = taxableInvoice * niRate;
+  const totalReserve = taxReserve + niReserve;
+  const conservativeReserve = Math.ceil(totalReserve * 1.2);
+
+  // Percentage of invoice
+  const pctOfInvoice = (conservativeReserve / invoiceAmount * 100).toFixed(1);
+
+  // Hero answer
+  document.getElementById('heroAnswer').innerHTML = `
+    <div class="amount">${fmt(conservativeReserve)}</div>
+    <div class="label">Set aside from this invoice</div>
+    <div class="pct">That's ${pctOfInvoice}% of the invoice</div>
+  `;
+
+  // Breakdown
+  const taxPct = Math.round(taxRate * 100);
+  const niPct = Math.round(niRate * 100);
+  const totalPct = Math.round(totalRate * 100);
+
+  document.getElementById('breakdown').innerHTML = `
+    <div class="breakdown-title">BREAKDOWN</div>
+    <div class="bd-row">
+      <span class="bd-label">Invoice</span>
+      <span class="bd-val">${fmt(invoiceAmount)}</span>
+    </div>
+    <div class="bd-row" style="margin-top:0.5rem;border-bottom:none;padding-bottom:0;">
+      <span class="bd-label" style="color:var(--text-bright);font-weight:600;">Your estimated marginal rates:</span>
+      <span class="bd-val"></span>
+    </div>
+    <div class="bd-row indent">
+      <span class="bd-label">Income tax</span>
+      <span class="bd-val">${taxPct}%</span>
+    </div>
+    <div class="bd-row indent">
+      <span class="bd-label">Class 4 NI</span>
+      <span class="bd-val">${niPct}%</span>
+    </div>
+    <div class="bd-row indent">
+      <span class="bd-label">Total marginal rate</span>
+      <span class="bd-val">${totalPct}%</span>
+    </div>
+    <div class="bd-row" style="margin-top:0.5rem;">
+      <span class="bd-label">After expenses (${Math.round(expenseRate * 100)}%)</span>
+      <span class="bd-val">${fmt(taxableInvoice)} taxable</span>
+    </div>
+    <div class="bd-row">
+      <span class="bd-label">Tax reserve</span>
+      <span class="bd-val">${fmt(Math.round(taxReserve))}</span>
+    </div>
+    <div class="bd-row">
+      <span class="bd-label">NI reserve</span>
+      <span class="bd-val">${fmt(Math.round(niReserve))}</span>
+    </div>
+    <div class="bd-row total">
+      <span class="bd-label">Total to set aside</span>
+      <span class="bd-val">${fmt(Math.round(totalReserve))}</span>
+    </div>
+    <div class="bd-row buffer">
+      <span class="bd-label">Conservative buffer (+20%)</span>
+      <span class="bd-val">${fmt(conservativeReserve)}</span>
+    </div>
+  `;
+
+  // Highlight active band in quick reference
+  const bandIdx = getBandIndex(totalIncome);
+  for (let i = 0; i < 5; i++) {
+    document.getElementById('band-' + i).className = (i === bandIdx) ? 'active-band' : '';
+  }
+
+  // Show results
+  document.getElementById('results').classList.add('show');
+  document.getElementById('heroAnswer').scrollIntoView({ behavior: 'smooth', block: 'start' });
+
+  // GA4 event
+  if (typeof gtag === 'function') {
+    gtag('event', 'calculate_tax_reserve', {
+      event_category: 'tools',
+      invoice_amount: invoiceAmount,
+      annual_income: annualIncome,
+      marginal_rate: totalPct
+    });
+  }
+}
+
+function toggleFaq(el) {
+  el.parentElement.classList.toggle('open');
+}
+
+/* Allow Enter key to trigger calculation */
+document.querySelectorAll('.panel input[type="number"]').forEach(input => {
+  input.addEventListener('keydown', e => {
+    if (e.key === 'Enter') calculate();
+  });
+});
+</script>
+</body>
+</html>

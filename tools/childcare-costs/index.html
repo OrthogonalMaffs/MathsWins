@@ -1,0 +1,707 @@
+<!DOCTYPE html>
+<html lang="en-GB">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Childcare Cost Calculator UK — Tax-Free Childcare Savings | MathsWins</title>
+<meta name="description" content="See how much you can save on childcare with Tax-Free Childcare. The government adds 20% to your payments — up to £2,000 per child per year. Calculate your savings instantly.">
+<meta property="og:title" content="Childcare Cost Calculator UK — Tax-Free Childcare Savings | MathsWins">
+<meta property="og:description" content="See how much you can save on childcare with Tax-Free Childcare. The government adds 20% to your payments — up to £2,000 per child per year.">
+<meta property="og:url" content="https://mathswins.co.uk/tools/childcare-costs/">
+<meta property="og:image" content="https://mathswins.co.uk/assets/og-image.png">
+<meta property="og:type" content="website">
+<meta property="og:site_name" content="MathsWins">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:title" content="Childcare Cost Calculator UK — Tax-Free Childcare Savings | MathsWins">
+<meta name="twitter:description" content="See how much you can save on childcare with Tax-Free Childcare. The government adds 20% to your payments.">
+<meta name="twitter:image" content="https://mathswins.co.uk/assets/og-image.png">
+<link rel="canonical" href="https://mathswins.co.uk/tools/childcare-costs/">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Crimson+Pro:ital,wght@0,400;1,400&family=DM+Mono:wght@400;500&family=Outfit:wght@300;400;600;700&display=swap" rel="stylesheet">
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "WebApplication",
+  "name": "Childcare Cost Calculator UK",
+  "url": "https://mathswins.co.uk/tools/childcare-costs/",
+  "description": "See how much you can save on childcare with Tax-Free Childcare. The government adds 20% to your payments — up to £2,000 per child per year. Calculate your savings instantly.",
+  "applicationCategory": "FinanceApplication",
+  "operatingSystem": "Any",
+  "offers": {
+    "@type": "Offer",
+    "price": "0",
+    "priceCurrency": "GBP"
+  },
+  "publisher": {
+    "@type": "Organization",
+    "name": "MathsWins",
+    "url": "https://mathswins.co.uk"
+  }
+}
+</script>
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "FAQPage",
+  "mainEntity": [
+    {
+      "@type": "Question",
+      "name": "What is Tax-Free Childcare?",
+      "acceptedAnswer": {
+        "@type": "Answer",
+        "text": "A government scheme where for every £8 you pay into a childcare account, the government adds £2. That's a 20% saving, up to £2,000 per child per year. You pay your childcare provider from this account."
+      }
+    },
+    {
+      "@type": "Question",
+      "name": "Am I eligible for Tax-Free Childcare?",
+      "acceptedAnswer": {
+        "@type": "Answer",
+        "text": "Both parents must earn at least £8,670/year and neither can earn over £100,000. You must be working (employed or self-employed). Single parents just need to meet the income requirements themselves."
+      }
+    },
+    {
+      "@type": "Question",
+      "name": "How do I sign up for Tax-Free Childcare?",
+      "acceptedAnswer": {
+        "@type": "Answer",
+        "text": "Register at childcare.service.gov.uk. You'll need to reconfirm eligibility every 3 months. Your childcare provider must also be registered with the scheme."
+      }
+    },
+    {
+      "@type": "Question",
+      "name": "Can I use Tax-Free Childcare AND free hours?",
+      "acceptedAnswer": {
+        "@type": "Answer",
+        "text": "Yes! Use your 15 or 30 free hours first, then Tax-Free Childcare for any remaining costs. They work together."
+      }
+    },
+    {
+      "@type": "Question",
+      "name": "What about childcare vouchers?",
+      "acceptedAnswer": {
+        "@type": "Answer",
+        "text": "Childcare vouchers closed to new members in September 2018. If you're still on them, this calculator shows which scheme saves more. For most people, Tax-Free Childcare is better."
+      }
+    },
+    {
+      "@type": "Question",
+      "name": "Is Tax-Free Childcare better than Universal Credit childcare?",
+      "acceptedAnswer": {
+        "@type": "Answer",
+        "text": "You can't use both. Universal Credit covers up to 85% of childcare costs (max £951/month for one child). If you're on UC, that's usually more generous. This calculator compares your options."
+      }
+    }
+  ]
+}
+</script>
+<style>
+:root{--bg:#050709;--surface:#0a0d14;--surface2:#0f1319;--border:#161c28;--border2:#1e2638;--sky:#0ea5e9;--sky-dim:rgba(14,165,233,0.10);--green:#2dd4a0;--green-dim:rgba(45,212,160,0.10);--red:#ef5350;--gold:#d4a847;--gold-dim:rgba(212,168,71,0.10);--cyan:#22d3ee;--teal:#0d9488;--teal-dim:rgba(13,148,136,0.10);--text:#c8cdd8;--text-bright:#e8ecf4;--muted:#4a5568;}
+*{margin:0;padding:0;box-sizing:border-box;}
+body{font-family:'Outfit',sans-serif;background:var(--bg);color:var(--text);min-height:100vh;line-height:1.5;}
+.container{max-width:960px;margin:0 auto;padding:2rem 1.25rem 4rem;}
+.nav-bar{display:flex;align-items:center;justify-content:space-between;padding:1rem 0;border-bottom:1px solid var(--border);margin-bottom:2rem;}
+.nav-brand{font-family:'Bebas Neue',sans-serif;font-size:1.4rem;color:var(--gold);text-decoration:none;letter-spacing:0.06em;}
+.nav-brand span{color:var(--text-bright);}
+.nav-link{font-size:0.85rem;font-weight:600;color:var(--sky);text-decoration:none;padding:0.4rem 1rem;border:1px solid var(--sky);border-radius:4px;transition:background 0.2s,color 0.2s;}
+.nav-link:hover{background:var(--sky);color:var(--bg);}
+.hero{text-align:center;margin-bottom:2rem;}
+.hero-eyebrow{font-size:0.75rem;font-weight:600;text-transform:uppercase;letter-spacing:0.15em;color:var(--sky);margin-bottom:0.5rem;}
+.hero h1{font-family:'Bebas Neue',sans-serif;font-size:clamp(1.8rem,5vw,2.8rem);color:var(--text-bright);letter-spacing:0.04em;line-height:1.1;margin-bottom:0.75rem;}
+.hero-sub{font-family:'Crimson Pro',serif;font-style:italic;font-size:1.05rem;color:var(--cyan);max-width:620px;margin:0 auto;}
+.panel{background:var(--surface);border:1px solid var(--border);border-radius:10px;padding:1.5rem;margin-bottom:1.25rem;}
+.panel-title{font-family:'Bebas Neue',sans-serif;font-size:1.1rem;color:var(--text-bright);letter-spacing:0.05em;margin-bottom:1rem;}
+.fg{display:flex;flex-direction:column;gap:0.3rem;}
+.fg label{font-size:0.72rem;font-weight:600;text-transform:uppercase;letter-spacing:0.06em;color:var(--muted);}
+.fg input,.fg select{font-family:'DM Mono',monospace;font-size:1rem;padding:0.6rem 0.8rem;background:var(--surface2);border:1px solid var(--border2);border-radius:6px;color:var(--text-bright);outline:none;}
+.fg input:focus,.fg select:focus{border-color:var(--sky);}
+.fg .hint{font-family:'Crimson Pro',serif;font-style:italic;font-size:0.78rem;color:var(--muted);}
+.calc-btn{font-family:'Outfit',sans-serif;font-weight:700;font-size:1rem;padding:0.85rem;background:var(--sky);color:#fff;border:none;border-radius:6px;cursor:pointer;width:100%;margin:1.25rem 0 0;transition:background 0.2s;}
+.calc-btn:hover{background:#38bdf8;}
+.results{display:none;}
+.results.show{display:block;}
+
+/* Child rows */
+.child-row{display:grid;grid-template-columns:0.6fr 1fr 1fr 40px;gap:0.75rem;align-items:end;margin-bottom:0.75rem;}
+@media(max-width:700px){.child-row{grid-template-columns:1fr 1fr;gap:0.5rem;}.child-row .fg:first-child{grid-column:1/-1;}.child-row .del-btn{grid-column:2;justify-self:end;}}
+.del-btn{background:transparent;border:1px solid var(--border2);color:var(--red);font-size:1.2rem;width:36px;height:36px;border-radius:6px;cursor:pointer;display:flex;align-items:center;justify-content:center;transition:background 0.2s;}
+.del-btn:hover{background:rgba(239,83,80,0.15);}
+.add-btn{font-family:'Outfit',sans-serif;font-weight:600;font-size:0.85rem;padding:0.5rem 1rem;background:transparent;border:1px dashed var(--border2);border-radius:6px;color:var(--sky);cursor:pointer;transition:background 0.2s,border-color 0.2s;}
+.add-btn:hover{background:var(--sky-dim);border-color:var(--sky);}
+.income-row{display:grid;grid-template-columns:1fr 1fr;gap:1rem;margin-top:1rem;padding-top:1rem;border-top:1px solid var(--border);}
+@media(max-width:600px){.income-row{grid-template-columns:1fr;}}
+.checkbox-row{display:flex;align-items:center;gap:0.6rem;margin-top:1rem;}
+.checkbox-row input[type="checkbox"]{accent-color:var(--gold);width:18px;height:18px;cursor:pointer;}
+.checkbox-row label{font-size:0.85rem;color:var(--text);cursor:pointer;}
+
+/* Eligibility banner */
+.eligibility{border-radius:10px;padding:1rem 1.25rem;margin-bottom:1.25rem;font-weight:600;font-size:0.95rem;}
+.eligibility.eligible{background:var(--green-dim);border:1px solid var(--green);color:var(--green);}
+.eligibility.ineligible{background:rgba(239,83,80,0.1);border:1px solid var(--red);color:var(--red);}
+.eligibility .reason{font-weight:400;font-size:0.85rem;margin-top:0.35rem;opacity:0.85;}
+
+/* Summary cards */
+.summary-cards{display:grid;grid-template-columns:1fr 1fr 1fr;gap:1rem;margin-bottom:1.5rem;}
+@media(max-width:700px){.summary-cards{grid-template-columns:1fr;}}
+.summary-card{background:var(--surface);border:1px solid var(--border);border-radius:10px;padding:1.25rem;text-align:center;}
+.summary-card.cost{border-top:3px solid var(--muted);}
+.summary-card.topup{border-top:3px solid var(--green);}
+.summary-card.youpay{border-top:3px solid var(--sky);}
+.sc-title{font-family:'Bebas Neue',sans-serif;font-size:0.95rem;letter-spacing:0.05em;margin-bottom:0.5rem;}
+.summary-card.cost .sc-title{color:var(--muted);}
+.summary-card.topup .sc-title{color:var(--green);}
+.summary-card.youpay .sc-title{color:var(--sky);}
+.sc-value{font-family:'DM Mono',monospace;font-weight:500;font-size:1.8rem;}
+.sc-value.bright{color:var(--text-bright);}
+.sc-value.green{color:var(--green);}
+.sc-value.sky{color:var(--sky);}
+
+/* Visual breakdown */
+.visual-box{background:var(--surface);border:1px solid var(--border);border-radius:10px;padding:1.5rem;margin-bottom:1.5rem;}
+.visual-box h3{font-family:'Bebas Neue',sans-serif;font-size:1.05rem;color:var(--text-bright);letter-spacing:0.04em;margin-bottom:1rem;}
+.ratio-bar{display:flex;height:48px;border-radius:6px;overflow:hidden;margin-bottom:1rem;}
+.ratio-you{background:var(--sky);display:flex;align-items:center;justify-content:center;font-family:'DM Mono',monospace;font-size:0.82rem;font-weight:500;color:#fff;min-width:30px;}
+.ratio-gov{background:var(--green);display:flex;align-items:center;justify-content:center;font-family:'DM Mono',monospace;font-size:0.82rem;font-weight:500;color:#050709;min-width:30px;}
+.ratio-legend{display:flex;gap:1.5rem;margin-bottom:1rem;font-size:0.82rem;}
+.ratio-legend span{display:flex;align-items:center;gap:0.4rem;}
+.ratio-legend .dot{width:12px;height:12px;border-radius:3px;}
+.ratio-legend .dot.you{background:var(--sky);}
+.ratio-legend .dot.gov{background:var(--green);}
+.ratio-lines{font-family:'DM Mono',monospace;font-size:0.88rem;line-height:2;color:var(--text);}
+.ratio-lines .label{color:var(--muted);display:inline-block;min-width:180px;}
+.ratio-lines .val{color:var(--text-bright);}
+.ratio-lines .val.green{color:var(--green);}
+.ratio-lines .max-note{font-family:'Crimson Pro',serif;font-style:italic;font-size:0.78rem;color:var(--muted);margin-top:0.5rem;}
+
+/* Comparison table */
+.comparison-section{margin-bottom:1.5rem;}
+.comparison-section h3{font-family:'Bebas Neue',sans-serif;font-size:1.05rem;color:var(--text-bright);letter-spacing:0.04em;margin-bottom:0.75rem;}
+.comparison-table{width:100%;border-collapse:collapse;font-size:0.82rem;}
+.comparison-table th{font-family:'Outfit',sans-serif;font-weight:600;text-transform:uppercase;font-size:0.68rem;letter-spacing:0.05em;color:var(--muted);padding:0.6rem 0.5rem;text-align:right;border-bottom:1px solid var(--border);background:var(--surface);}
+.comparison-table th:first-child{text-align:left;}
+.comparison-table td{font-family:'DM Mono',monospace;padding:0.5rem;text-align:right;border-bottom:1px solid var(--border);font-size:0.78rem;color:var(--text);}
+.comparison-table td:first-child{text-align:left;font-family:'Outfit',sans-serif;font-size:0.82rem;}
+.comparison-table tr.best td{color:var(--green);font-weight:500;}
+.comparison-table .footnote{font-family:'Crimson Pro',serif;font-style:italic;font-size:0.75rem;color:var(--muted);}
+.comparison-wrap{background:var(--surface);border:1px solid var(--border);border-radius:10px;overflow:hidden;}
+.comparison-wrap .comparison-table{margin:0;}
+
+/* Free hours table */
+.free-hours-section{margin-bottom:1.5rem;}
+.free-hours-section h3{font-family:'Bebas Neue',sans-serif;font-size:1.05rem;color:var(--text-bright);letter-spacing:0.04em;margin-bottom:0.75rem;}
+.free-hours-wrap{background:var(--surface);border:1px solid var(--border);border-radius:10px;overflow:hidden;margin-bottom:0.75rem;}
+.free-hours-table{width:100%;border-collapse:collapse;font-size:0.82rem;}
+.free-hours-table th{font-family:'Outfit',sans-serif;font-weight:600;text-transform:uppercase;font-size:0.68rem;letter-spacing:0.05em;color:var(--muted);padding:0.6rem 0.5rem;text-align:left;border-bottom:1px solid var(--border);background:var(--surface);}
+.free-hours-table td{padding:0.5rem;border-bottom:1px solid var(--border);font-size:0.82rem;color:var(--text);}
+.free-hours-table td:last-child{font-family:'DM Mono',monospace;font-size:0.78rem;}
+.free-hours-note{font-family:'Crimson Pro',serif;font-style:italic;font-size:0.82rem;color:var(--muted);line-height:1.6;}
+
+/* Monthly impact */
+.monthly-box{background:var(--sky-dim);border:1px solid var(--sky);border-radius:10px;padding:1.25rem;margin-bottom:1.5rem;text-align:center;line-height:1.8;font-size:0.95rem;}
+.monthly-box .big{font-family:'DM Mono',monospace;font-size:1.6rem;font-weight:500;color:var(--sky);}
+.monthly-box .sub{font-size:0.85rem;color:var(--sky);margin-top:0.15rem;}
+
+/* Compound callout */
+.compound-box{background:var(--gold-dim);border:1px solid var(--gold);border-radius:10px;padding:1.25rem;margin-bottom:1.5rem;}
+.compound-box h3{font-family:'Bebas Neue',sans-serif;font-size:1rem;color:var(--gold);letter-spacing:0.04em;margin-bottom:0.5rem;}
+.compound-box p{font-size:0.9rem;line-height:1.7;color:var(--text);}
+.compound-box .big-number{font-family:'DM Mono',monospace;font-size:1.4rem;font-weight:500;color:var(--gold);}
+
+/* Educational content */
+.edu-section{margin-top:2rem;}
+.edu-section h2{font-family:'Bebas Neue',sans-serif;font-size:1.4rem;color:var(--text-bright);letter-spacing:0.04em;margin-bottom:1rem;}
+.edu-section h3{font-family:'Bebas Neue',sans-serif;font-size:1.05rem;color:var(--text-bright);letter-spacing:0.04em;margin:1.25rem 0 0.5rem;}
+.edu-section p{font-size:0.92rem;line-height:1.7;margin-bottom:0.75rem;}
+.edu-section .formula{font-family:'DM Mono',monospace;font-size:0.88rem;color:var(--cyan);background:var(--surface2);padding:0.75rem 1rem;border-radius:6px;margin:0.75rem 0;border-left:3px solid var(--cyan);}
+.edu-section .worked{background:var(--surface);border:1px solid var(--border);border-radius:10px;padding:1.25rem;margin:1rem 0;}
+.edu-section .worked h4{font-family:'Bebas Neue',sans-serif;font-size:0.95rem;color:var(--sky);letter-spacing:0.04em;margin-bottom:0.75rem;}
+.pln{font-family:'Crimson Pro',serif;font-style:italic;color:var(--cyan);background:rgba(34,211,238,0.08);border-left:3px solid var(--cyan);padding:0.85rem 1rem;border-radius:0 6px 6px 0;margin:1rem 0;font-size:0.92rem;line-height:1.6;}
+
+/* FAQ */
+.faq-section{margin-top:2rem;}
+.faq-section h2{font-family:'Bebas Neue',sans-serif;font-size:1.4rem;color:var(--text-bright);letter-spacing:0.04em;margin-bottom:1rem;}
+.faq-item{background:var(--surface);border:1px solid var(--border);border-radius:10px;margin-bottom:0.75rem;overflow:hidden;}
+.faq-q{font-family:'Outfit',sans-serif;font-weight:600;font-size:0.92rem;padding:1rem 1.25rem;cursor:pointer;display:flex;justify-content:space-between;align-items:center;color:var(--text-bright);transition:background 0.2s;}
+.faq-q:hover{background:var(--surface2);}
+.faq-q::after{content:'+';font-family:'DM Mono',monospace;font-size:1.2rem;color:var(--sky);transition:transform 0.2s;}
+.faq-item.open .faq-q::after{content:'-';}
+.faq-a{max-height:0;overflow:hidden;transition:max-height 0.3s ease,padding 0.3s ease;}
+.faq-item.open .faq-a{max-height:400px;padding:0 1.25rem 1rem;}
+.faq-a p{font-size:0.88rem;line-height:1.6;color:var(--text);}
+
+/* CTA */
+.cta-card{background:var(--surface);border:1px solid var(--border);border-left:3px solid var(--sky);border-radius:0 10px 10px 0;padding:1.5rem;margin-top:2rem;}
+.cta-card h3{font-family:'Bebas Neue',sans-serif;font-size:1.2rem;color:var(--sky);letter-spacing:0.04em;margin-bottom:0.5rem;}
+.cta-card p{font-family:'Crimson Pro',serif;font-style:italic;font-size:0.92rem;color:var(--text);line-height:1.5;margin-bottom:0.75rem;}
+.cta-link{font-weight:600;font-size:0.9rem;color:var(--sky);text-decoration:none;}
+.footer{margin-top:2.5rem;padding-top:1.25rem;border-top:1px solid var(--border);text-align:center;}
+.footer p{font-size:0.72rem;color:var(--muted);line-height:1.8;}
+.footer a{color:var(--muted);text-decoration:underline;}
+.error-msg{background:rgba(239,83,80,0.1);border:1px solid var(--red);border-radius:6px;padding:0.75rem 1rem;color:var(--red);font-size:0.85rem;margin-bottom:1rem;display:none;}
+</style>
+<!-- GA4 Cookieless -->
+<script async src="https://www.googletagmanager.com/gtag/js?id=G-7GTLYCZMXN"></script>
+<script>window.dataLayer=window.dataLayer||[];function gtag(){dataLayer.push(arguments);}gtag('js',new Date());gtag('consent','default',{analytics_storage:'denied',ad_storage:'denied',ad_user_data:'denied',ad_personalization:'denied'});gtag('config','G-7GTLYCZMXN',{send_page_view:true,anonymize_ip:true});</script>
+</head>
+<body>
+<script src="/auth/mw-auth.js"></script>
+<div class="container">
+<nav class="nav-bar">
+  <a href="/" class="nav-brand">MATHS<span>WINS</span></a>
+  <a href="/everyday/" class="nav-link">Everyday Maths (Free) &rarr;</a>
+</nav>
+<div class="hero">
+  <div class="hero-eyebrow">Free Tool</div>
+  <h1>CHILDCARE COST CALCULATOR</h1>
+  <div class="hero-sub">See exactly how much you can save with Tax-Free Childcare. The government adds &pound;2 for every &pound;8 you pay &mdash; up to &pound;2,000 per child per year. Many parents don't realise this exists.</div>
+</div>
+
+<div class="panel">
+  <div class="panel-title">YOUR CHILDREN</div>
+  <div id="childRows"></div>
+  <button class="add-btn" onclick="addChildRow()" id="addBtn">+ Add another child</button>
+
+  <div class="income-row">
+    <div class="fg">
+      <label>Weeks of childcare per year</label>
+      <input type="number" id="weeksPerYear" value="50" min="1" max="52" step="1">
+      <div class="hint">50 = full year minus 2 weeks holiday</div>
+    </div>
+  </div>
+
+  <div class="income-row">
+    <div class="fg">
+      <label>Your annual income (&pound;)</label>
+      <input type="number" id="income1" placeholder="35000" min="0" step="100">
+    </div>
+    <div class="fg">
+      <label>Partner's annual income (&pound;)</label>
+      <input type="number" id="income2" placeholder="0" min="0" step="100">
+      <div class="hint">Leave blank or 0 if single parent</div>
+    </div>
+  </div>
+
+  <div class="checkbox-row">
+    <input type="checkbox" id="over100k">
+    <label for="over100k">Does either of you earn over &pound;100,000?</label>
+  </div>
+
+  <div class="error-msg" id="errorMsg"></div>
+  <button class="calc-btn" onclick="calculate()">Calculate My Savings</button>
+</div>
+
+<div class="results" id="results"></div>
+
+<!-- Educational content -->
+<div class="edu-section">
+  <h2>HOW TAX-FREE CHILDCARE WORKS</h2>
+
+  <h3>The 20% Top-Up</h3>
+  <p>Tax-Free Childcare is a government scheme that adds 20% to the money you put into a special childcare account. For every &pound;8 you deposit, the government adds &pound;2. The maximum government contribution is &pound;2,000 per child per year (&pound;500 per quarter), which means the scheme tops up your first &pound;10,000 of annual childcare spending per child.</p>
+  <div class="formula">For every &pound;8 you pay in &rarr; Government adds &pound;2 &rarr; Maximum &pound;2,000/child/year</div>
+
+  <h3>Who Is Eligible?</h3>
+  <p>Both parents (or a single parent) must earn at least &pound;8,670 per year &mdash; that is equivalent to 16 hours per week at the National Minimum Wage. Neither parent can earn more than &pound;100,000. You must be employed or self-employed. If you are on certain benefits (like disability benefits), different rules may apply.</p>
+  <p>Your child must be under 12 years old, or under 17 if they have a disability. For disabled children, the maximum government top-up doubles to &pound;4,000 per year.</p>
+
+  <h3>Free Hours Entitlements</h3>
+  <p>On top of Tax-Free Childcare, the government provides free childcare hours. These are term-time only (38 weeks per year), though some providers let you "stretch" them across more weeks at fewer hours per week. Use your free hours first, then Tax-Free Childcare for the remaining cost.</p>
+
+  <h3>Combining Free Hours + Tax-Free Childcare</h3>
+  <p>This is where the real savings stack up. A 3-year-old getting 30 free hours could save you roughly &pound;15,000 per year in free hours alone. On top of that, Tax-Free Childcare can save another &pound;2,000 on any remaining costs. This calculator shows you the full picture.</p>
+
+  <div class="pln">Tax-Free Childcare is not a tax deduction &mdash; it is free money deposited directly into your childcare account. You do not need to do a tax return to claim it. Register at childcare.service.gov.uk and reconfirm every 3 months.</div>
+
+  <h3>Childcare Vouchers vs Tax-Free Childcare</h3>
+  <p>Childcare vouchers closed to new entrants in September 2018. If you are still on the scheme, you can continue using them, but you cannot use both vouchers and Tax-Free Childcare at the same time. For most people, Tax-Free Childcare gives a bigger saving &mdash; especially higher-rate taxpayers who were limited to &pound;124/month in vouchers (saving &pound;993/year) versus &pound;2,000/year with Tax-Free Childcare.</p>
+  <p>Basic-rate taxpayers saved up to &pound;933/year with vouchers vs &pound;2,000/year with Tax-Free Childcare. The comparison table in this calculator shows both options side by side.</p>
+</div>
+
+<!-- FAQ -->
+<div style="text-align:center;margin:1.5rem 0;padding:1rem;background:rgba(45,212,160,0.06);border:1px solid rgba(45,212,160,0.2);border-radius:8px"><a href="https://www.gov.uk/tax-free-childcare" target="_blank" rel="noopener noreferrer" style="color:#2dd4a0;font-weight:600;text-decoration:none;font-size:0.95rem">Apply for Tax-Free Childcare &rarr; GOV.UK</a><div style="font-size:0.7rem;color:#4a5568;margin-top:4px">Opens in a new tab — official UK Government website</div></div>
+<div class="faq-section">
+  <h2>FREQUENTLY ASKED QUESTIONS</h2>
+
+  <div class="faq-item">
+    <div class="faq-q" onclick="this.parentElement.classList.toggle('open')">What is Tax-Free Childcare?</div>
+    <div class="faq-a"><p>A government scheme where for every &pound;8 you pay into a childcare account, the government adds &pound;2. That's a 20% saving, up to &pound;2,000 per child per year. You pay your childcare provider from this account.</p></div>
+  </div>
+
+  <div class="faq-item">
+    <div class="faq-q" onclick="this.parentElement.classList.toggle('open')">Am I eligible for Tax-Free Childcare?</div>
+    <div class="faq-a"><p>Both parents must earn at least &pound;8,670/year and neither can earn over &pound;100,000. You must be working (employed or self-employed). Single parents just need to meet the income requirements themselves.</p></div>
+  </div>
+
+  <div class="faq-item">
+    <div class="faq-q" onclick="this.parentElement.classList.toggle('open')">How do I sign up?</div>
+    <div class="faq-a"><p>Register at childcare.service.gov.uk. You'll need to reconfirm eligibility every 3 months. Your childcare provider must also be registered with the scheme.</p></div>
+  </div>
+
+  <div class="faq-item">
+    <div class="faq-q" onclick="this.parentElement.classList.toggle('open')">Can I use Tax-Free Childcare AND free hours?</div>
+    <div class="faq-a"><p>Yes! Use your 15 or 30 free hours first, then Tax-Free Childcare for any remaining costs. They work together.</p></div>
+  </div>
+
+  <div class="faq-item">
+    <div class="faq-q" onclick="this.parentElement.classList.toggle('open')">What about childcare vouchers?</div>
+    <div class="faq-a"><p>Childcare vouchers closed to new members in September 2018. If you're still on them, this calculator shows which scheme saves more. For most people, Tax-Free Childcare is better.</p></div>
+  </div>
+
+  <div class="faq-item">
+    <div class="faq-q" onclick="this.parentElement.classList.toggle('open')">Is Tax-Free Childcare better than Universal Credit childcare?</div>
+    <div class="faq-a"><p>You can't use both. Universal Credit covers up to 85% of childcare costs (max &pound;951/month for one child). If you're on UC, that's usually more generous. This calculator compares your options.</p></div>
+  </div>
+</div>
+
+<!-- CTA -->
+<div class="cta-card">
+  <h3>UNDERSTAND THE MATHS BEHIND YOUR MONEY</h3>
+  <p>Childcare is just one piece of the financial puzzle. Our free Everyday Maths courses cover tax, mortgages, pensions, compound interest, inflation, and probability &mdash; all the numbers that shape your life.</p>
+  <a href="/everyday/" class="cta-link">Explore Everyday Maths (Free) &rarr;</a>
+</div>
+
+<footer class="footer">
+  <p>Built by <a href="/">MathsWins</a> &middot; <a href="/terms/">Terms of Use</a> &middot; <a href="mailto:contact@mathswins.co.uk">contact@mathswins.co.uk</a></p>
+  <p>Calculator uses 2025/26 UK rates. Tax-Free Childcare eligibility is indicative only &mdash; confirm at childcare.service.gov.uk.</p>
+</footer>
+</div>
+
+<script>
+/* ========== Child Row Management ========== */
+let childCount = 0;
+
+function addChildRow() {
+  childCount++;
+  const idx = childCount;
+  const row = document.createElement('div');
+  row.className = 'child-row';
+  row.id = 'child-' + idx;
+  row.innerHTML =
+    '<div class="fg">' +
+      '<label>Child ' + idx + ' age</label>' +
+      '<select data-field="age">' +
+        '<option value="under2">Under 2</option>' +
+        '<option value="2">2 years old</option>' +
+        '<option value="3-4">3-4 years old</option>' +
+        '<option value="5-11">5-11 (school age)</option>' +
+      '</select>' +
+    '</div>' +
+    '<div class="fg">' +
+      '<label>Weekly cost (&pound;)</label>' +
+      '<input type="number" data-field="cost" placeholder="250" min="0" step="5">' +
+    '</div>' +
+    '<div class="fg" style="align-self:end;">' +
+      '<div class="hint" style="font-size:0.72rem;line-height:1.4;">Before/after school + holidays for school-age</div>' +
+    '</div>' +
+    (childCount > 1 ? '<button class="del-btn" onclick="removeChildRow(' + idx + ')" title="Remove child">&times;</button>' : '<div></div>');
+  document.getElementById('childRows').appendChild(row);
+  renumberChildren();
+}
+
+function removeChildRow(idx) {
+  const el = document.getElementById('child-' + idx);
+  if (el) el.remove();
+  renumberChildren();
+}
+
+function renumberChildren() {
+  const rows = document.querySelectorAll('.child-row');
+  rows.forEach(function(row, i) {
+    const label = row.querySelector('label');
+    if (label) label.textContent = 'Child ' + (i + 1) + ' age';
+  });
+}
+
+function getChildren() {
+  var children = [];
+  var rows = document.querySelectorAll('.child-row');
+  var weeks = parseInt(document.getElementById('weeksPerYear').value) || 50;
+  rows.forEach(function(row) {
+    var age = row.querySelector('[data-field="age"]').value;
+    var cost = parseFloat(row.querySelector('[data-field="cost"]').value) || 0;
+    children.push({ age: age, weeklyCost: cost, weeks: weeks });
+  });
+  return children;
+}
+
+// Start with one child row
+addChildRow();
+
+/* ========== Formatting ========== */
+function fmt(n) {
+  return '\u00A3' + n.toFixed(0).replace(/\B(?=(\d{3})+(?!\d))/g, ',');
+}
+function fmt2(n) {
+  return '\u00A3' + n.toFixed(2).replace(/\B(?=(\d{3})+(?!\d))/g, ',');
+}
+
+/* ========== Free Hours Logic ========== */
+function getFreeHoursPerWeek(age) {
+  if (age === 'under2') return 15;
+  if (age === '2') return 15;
+  if (age === '3-4') return 30;
+  return 0; // 5-11 no free hours
+}
+
+function getFreeHoursLabel(age) {
+  if (age === 'under2') return '15 hrs/week';
+  if (age === '2') return '15 hrs/week';
+  if (age === '3-4') return '30 hrs/week';
+  return 'None';
+}
+
+/* ========== Calculation ========== */
+function calculate() {
+  var errEl = document.getElementById('errorMsg');
+  errEl.style.display = 'none';
+  errEl.textContent = '';
+
+  var children = getChildren();
+  var income1 = parseFloat(document.getElementById('income1').value) || 0;
+  var income2 = parseFloat(document.getElementById('income2').value) || 0;
+  var over100k = document.getElementById('over100k').checked;
+  var weeks = parseInt(document.getElementById('weeksPerYear').value) || 50;
+
+  // Validation
+  if (children.length === 0) {
+    errEl.textContent = 'Please add at least one child.';
+    errEl.style.display = 'block';
+    return;
+  }
+  var hasCost = false;
+  children.forEach(function(c) { if (c.weeklyCost > 0) hasCost = true; });
+  if (!hasCost) {
+    errEl.textContent = 'Please enter a weekly childcare cost for at least one child.';
+    errEl.style.display = 'block';
+    return;
+  }
+  if (income1 <= 0) {
+    errEl.textContent = 'Please enter your annual income.';
+    errEl.style.display = 'block';
+    return;
+  }
+
+  // Eligibility
+  var isSingleParent = (income2 === 0);
+  var eligible = true;
+  var reason = '';
+
+  if (over100k) {
+    eligible = false;
+    reason = 'Neither parent can earn over \u00A3100,000 per year.';
+  } else if (income1 < 8670) {
+    eligible = false;
+    reason = 'You need to earn at least \u00A38,670/year (equivalent to 16 hrs/week at minimum wage).';
+  } else if (!isSingleParent && income2 < 8670) {
+    eligible = false;
+    reason = 'Your partner also needs to earn at least \u00A38,670/year, or leave blank if you are a single parent.';
+  }
+
+  var TERM_WEEKS = 38;
+
+  var totalAnnualCost = 0;
+  var totalFreeHoursValue = 0;
+  var totalTopUp = 0;
+
+  children.forEach(function(child) {
+    var annualCost = child.weeklyCost * child.weeks;
+    totalAnnualCost += annualCost;
+
+    // Free hours: term-time only (38 weeks), based on implied hourly rate
+    var freeHoursPerWeek = getFreeHoursPerWeek(child.age);
+    var freeHoursValue = 0;
+    if (freeHoursPerWeek > 0 && child.weeklyCost > 0) {
+      // Estimate hourly rate from weekly cost (assume ~50 hrs/week full-time for under-5, ~25 for school-age)
+      var assumedHoursPerWeek = (child.age === '5-11') ? 25 : 50;
+      var hourlyRate = child.weeklyCost / assumedHoursPerWeek;
+      freeHoursValue = freeHoursPerWeek * TERM_WEEKS * hourlyRate;
+      // Cannot exceed annual cost
+      freeHoursValue = Math.min(freeHoursValue, annualCost);
+    }
+    totalFreeHoursValue += freeHoursValue;
+
+    // Tax-Free Childcare: 20% top-up on cost AFTER free hours, max 2000/child
+    var costAfterFreeHours = Math.max(0, annualCost - freeHoursValue);
+    var topUp = eligible ? Math.min(costAfterFreeHours * 0.20, 2000) : 0;
+    totalTopUp += topUp;
+  });
+
+  var youPay = totalAnnualCost - totalTopUp - totalFreeHoursValue;
+
+  // Childcare voucher comparison (basic rate: max £243/month salary sacrifice = £933/yr saving per parent)
+  // Higher rate: max £124/month = £497/yr saving
+  // We'll use basic rate as it's most common
+  var voucherSavingPerParent = 933;
+  var voucherParents = isSingleParent ? 1 : 2;
+  var maxVoucherSaving = voucherSavingPerParent * voucherParents;
+  var voucherSaving = Math.min(maxVoucherSaving, totalAnnualCost * 0.2);
+  var voucherYouPay = totalAnnualCost - voucherSaving;
+
+  // Universal Credit: up to 85% of costs, max £951/month for 1 child, £1,630/month for 2+
+  var ucMonthlyMax = children.length === 1 ? 951 : 1630;
+  var ucAnnualMax = ucMonthlyMax * 12;
+  var ucCoverage = Math.min(totalAnnualCost * 0.85, ucAnnualMax);
+  var ucYouPay = totalAnnualCost - ucCoverage;
+
+  // Compound growth of savings
+  var annualSaving = totalTopUp + totalFreeHoursValue;
+  var rate = 0.05;
+  var years = 18;
+  var futureValue = 0;
+  for (var y = 1; y <= years; y++) {
+    futureValue = (futureValue + annualSaving) * (1 + rate);
+  }
+
+  renderResults({
+    eligible: eligible,
+    reason: reason,
+    totalAnnualCost: totalAnnualCost,
+    totalTopUp: totalTopUp,
+    totalFreeHoursValue: totalFreeHoursValue,
+    youPay: youPay,
+    voucherSaving: voucherSaving,
+    voucherYouPay: voucherYouPay,
+    ucCoverage: ucCoverage,
+    ucYouPay: ucYouPay,
+    children: children,
+    annualSaving: annualSaving,
+    futureValue: futureValue,
+    isSingleParent: isSingleParent
+  });
+
+  // GA4 event
+  if (typeof gtag === 'function') {
+    gtag('event', 'calculate_childcare', {
+      num_children: children.length,
+      annual_cost: Math.round(totalAnnualCost),
+      annual_saving: Math.round(annualSaving),
+      eligible: eligible
+    });
+  }
+}
+
+/* ========== Render ========== */
+function renderResults(r) {
+  var el = document.getElementById('results');
+  var html = '';
+
+  // Eligibility banner
+  if (r.eligible) {
+    html += '<div class="eligibility eligible">You\'re eligible for Tax-Free Childcare!</div>';
+  } else {
+    html += '<div class="eligibility ineligible">You may not be eligible for Tax-Free Childcare' +
+      (r.reason ? '<div class="reason">' + r.reason + '</div>' : '') + '</div>';
+  }
+
+  // Summary cards
+  html += '<div class="summary-cards">';
+  html += '<div class="summary-card cost"><div class="sc-title">ANNUAL CHILDCARE COST</div><div class="sc-value bright">' + fmt(r.totalAnnualCost) + '</div></div>';
+  html += '<div class="summary-card topup"><div class="sc-title">GOVERNMENT TOP-UP</div><div class="sc-value green">' + fmt(r.totalTopUp) + '</div></div>';
+  html += '<div class="summary-card youpay"><div class="sc-title">YOU ACTUALLY PAY</div><div class="sc-value sky">' + fmt(r.youPay) + '</div></div>';
+  html += '</div>';
+
+  // Visual breakdown (only if eligible and top-up > 0)
+  if (r.eligible && r.totalTopUp > 0) {
+    var youPortion = r.totalAnnualCost - r.totalFreeHoursValue - r.totalTopUp;
+    var govPortion = r.totalTopUp;
+    var totalForBar = youPortion + govPortion;
+    var youPct = Math.round((youPortion / totalForBar) * 100);
+    var govPct = 100 - youPct;
+
+    html += '<div class="visual-box">';
+    html += '<h3>HOW YOUR TAX-FREE CHILDCARE BREAKS DOWN</h3>';
+    html += '<div class="ratio-bar">';
+    html += '<div class="ratio-you" style="width:' + youPct + '%">' + fmt(youPortion) + '</div>';
+    html += '<div class="ratio-gov" style="width:' + govPct + '%">' + fmt(govPortion) + '</div>';
+    html += '</div>';
+    html += '<div class="ratio-legend">';
+    html += '<span><span class="dot you"></span> You pay</span>';
+    html += '<span><span class="dot gov"></span> Government pays</span>';
+    html += '</div>';
+    html += '<div class="ratio-lines">';
+    html += '<span class="label">Your childcare cost:</span> <span class="val">' + fmt(r.totalAnnualCost) + '/year</span><br>';
+    if (r.totalFreeHoursValue > 0) {
+      html += '<span class="label">Free hours value:</span> <span class="val green">' + fmt(r.totalFreeHoursValue) + '/year</span><br>';
+    }
+    html += '<span class="label">You pay:</span> <span class="val">' + fmt(youPortion) + '</span><br>';
+    html += '<span class="label">Government pays:</span> <span class="val green">' + fmt(govPortion) + '</span><br>';
+    html += '<span class="label">YOU SAVE:</span> <span class="val green">' + fmt(r.totalTopUp + r.totalFreeHoursValue) + '</span>';
+    html += '<div class="max-note">Maximum: &pound;2,000 per child per year (&pound;500 per quarter)</div>';
+    html += '</div></div>';
+  }
+
+  // Comparison table
+  html += '<div class="comparison-section">';
+  html += '<h3>COMPARE ALL YOUR OPTIONS</h3>';
+  html += '<div class="comparison-wrap"><table class="comparison-table">';
+  html += '<thead><tr><th>Scheme</th><th>Annual Cost</th><th>You Pay</th><th>Saving</th></tr></thead>';
+  html += '<tbody>';
+
+  // Find best saving
+  var options = [
+    { name: 'Pay directly (no scheme)', cost: r.totalAnnualCost, pay: r.totalAnnualCost, saving: 0 },
+    { name: 'Tax-Free Childcare', cost: r.totalAnnualCost, pay: r.youPay, saving: r.totalTopUp + r.totalFreeHoursValue },
+    { name: 'Childcare vouchers*', cost: r.totalAnnualCost, pay: r.voucherYouPay, saving: r.voucherSaving },
+    { name: 'Universal Credit help', cost: r.totalAnnualCost, pay: r.ucYouPay, saving: r.ucCoverage }
+  ];
+
+  var bestSaving = 0;
+  options.forEach(function(o) { if (o.saving > bestSaving) bestSaving = o.saving; });
+
+  options.forEach(function(o) {
+    var isBest = (o.saving === bestSaving && o.saving > 0);
+    html += '<tr' + (isBest ? ' class="best"' : '') + '>';
+    html += '<td>' + o.name + '</td>';
+    html += '<td>' + fmt(o.cost) + '</td>';
+    html += '<td>' + fmt(o.pay) + '</td>';
+    html += '<td>' + fmt(o.saving) + '</td>';
+    html += '</tr>';
+  });
+
+  html += '</tbody></table></div>';
+  html += '<p class="free-hours-note" style="margin-top:0.5rem;">* Childcare vouchers closed to new entrants Sept 2018. If you\'re already on them, this shows whether to switch.</p>';
+  html += '</div>';
+
+  // Free hours entitlements
+  html += '<div class="free-hours-section">';
+  html += '<h3>FREE HOURS ENTITLEMENTS (BY AGE)</h3>';
+  html += '<div class="free-hours-wrap"><table class="free-hours-table">';
+  html += '<thead><tr><th>Age</th><th>Free Hours</th><th>Worth (approx)</th></tr></thead>';
+  html += '<tbody>';
+  html += '<tr><td>Under 2</td><td>15 hrs/week</td><td>~&pound;7,500/year (from Sept 2024)</td></tr>';
+  html += '<tr><td>2 years</td><td>15 hrs/week</td><td>~&pound;7,500/year</td></tr>';
+  html += '<tr><td>3-4 years</td><td>30 hrs/week</td><td>~&pound;15,000/year (if eligible)</td></tr>';
+  html += '<tr><td>5-11 (school age)</td><td>None</td><td>&mdash;</td></tr>';
+  html += '</tbody></table></div>';
+  html += '<p class="free-hours-note">Free hours are term-time only (38 weeks). You can \'stretch\' them across more weeks at fewer hours. Not all providers offer the full 30 hours.</p>';
+  html += '</div>';
+
+  // Monthly budget impact
+  var monthlyCost = r.totalAnnualCost / 12;
+  var monthlyPay = r.youPay / 12;
+  var monthlySaving = monthlyCost - monthlyPay;
+  var annualTotalSaving = r.totalTopUp + r.totalFreeHoursValue;
+
+  html += '<div class="monthly-box">';
+  html += 'Your childcare costs <span class="big">' + fmt2(monthlyCost) + '/month</span><br>';
+  html += 'With Tax-Free Childcare' + (r.totalFreeHoursValue > 0 ? ' + free hours' : '') + ', you pay <span class="big">' + fmt2(monthlyPay) + '/month</span>';
+  html += '<div class="sub">That\'s ' + fmt2(monthlySaving) + '/month back in your pocket &mdash; ' + fmt(annualTotalSaving) + ' per year.</div>';
+  html += '</div>';
+
+  // Compound effect callout
+  if (r.totalTopUp > 0) {
+    html += '<div class="compound-box">';
+    html += '<h3>THE COMPOUND EFFECT</h3>';
+    html += '<p>If you invested the ' + fmt(annualTotalSaving) + '/year saving at 5% growth for 18 years (until your child turns 18), it would grow to <span class="big-number">' + fmt(Math.round(r.futureValue)) + '</span>.</p>';
+    html += '<p>Tax-Free Childcare doesn\'t just save you money now &mdash; it could fund part of their education.</p>';
+    html += '</div>';
+  }
+
+  el.innerHTML = html;
+  el.classList.add('show');
+  el.scrollIntoView({ behavior: 'smooth', block: 'start' });
+}
+</script>
+</body>
+</html>
