@@ -1,0 +1,897 @@
+<!DOCTYPE html>
+<html lang="en-GB">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>UK Take Home Pay Calculator 2025/26 — Salary After Tax | MathsWins</title>
+<meta name="description" content="Calculate your take-home pay after income tax, National Insurance, pension and student loan. See your monthly, weekly and daily pay — plus how pension contributions could reduce your tax bill.">
+<meta property="og:title" content="UK Take Home Pay Calculator 2025/26 — Salary After Tax | MathsWins">
+<meta property="og:description" content="Calculate your take-home pay after income tax, National Insurance, pension and student loan. See how pension contributions could reduce your tax bill.">
+<meta property="og:url" content="https://mathswins.co.uk/tools/take-home-pay/">
+<meta property="og:image" content="https://mathswins.co.uk/assets/og-image.png">
+<meta property="og:type" content="website">
+<meta property="og:site_name" content="MathsWins">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:title" content="UK Take Home Pay Calculator 2025/26 — Salary After Tax | MathsWins">
+<meta name="twitter:description" content="Calculate your take-home pay after income tax, National Insurance, pension and student loan.">
+<meta name="twitter:image" content="https://mathswins.co.uk/assets/og-image.png">
+<link rel="canonical" href="https://mathswins.co.uk/tools/take-home-pay/">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Crimson+Pro:ital,wght@0,400;1,400&family=DM+Mono:wght@400;500&family=Outfit:wght@300;400;600;700&display=swap" rel="stylesheet">
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "WebApplication",
+  "name": "UK Take Home Pay Calculator 2025/26",
+  "url": "https://mathswins.co.uk/tools/take-home-pay/",
+  "description": "Calculate your take-home pay after income tax, National Insurance, pension and student loan. See your monthly, weekly and daily pay — plus how pension contributions could reduce your tax bill.",
+  "applicationCategory": "FinanceApplication",
+  "operatingSystem": "Any",
+  "offers": {
+    "@type": "Offer",
+    "price": "0",
+    "priceCurrency": "GBP"
+  },
+  "publisher": {
+    "@type": "Organization",
+    "name": "MathsWins",
+    "url": "https://mathswins.co.uk"
+  }
+}
+</script>
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "FAQPage",
+  "mainEntity": [
+    {
+      "@type": "Question",
+      "name": "How is take-home pay calculated?",
+      "acceptedAnswer": {
+        "@type": "Answer",
+        "text": "Your employer deducts income tax, National Insurance, pension contributions, and student loan repayments from your gross salary. What's left is your take-home (net) pay."
+      }
+    },
+    {
+      "@type": "Question",
+      "name": "What tax code should I use?",
+      "acceptedAnswer": {
+        "@type": "Answer",
+        "text": "Most employees are on 1257L, which gives you the standard £12,570 personal allowance. Check your payslip or P60. If your code ends in L, multiply the number by 10 to get your personal allowance."
+      }
+    },
+    {
+      "@type": "Question",
+      "name": "How does salary sacrifice save tax?",
+      "acceptedAnswer": {
+        "@type": "Answer",
+        "text": "With salary sacrifice, your pension contribution is deducted before tax AND National Insurance are calculated. This means you save NI (8%) on top of income tax relief. Relief at source only gets income tax relief."
+      }
+    },
+    {
+      "@type": "Question",
+      "name": "Do I pay tax on my pension contributions?",
+      "acceptedAnswer": {
+        "@type": "Answer",
+        "text": "No — pension contributions are tax-free. With salary sacrifice, you never pay tax on that money. With relief at source, you pay it but get 20% back automatically (40% taxpayers claim the extra via self-assessment)."
+      }
+    },
+    {
+      "@type": "Question",
+      "name": "How does the £100,000 personal allowance trap work?",
+      "acceptedAnswer": {
+        "@type": "Answer",
+        "text": "For every £2 you earn above £100,000, you lose £1 of personal allowance. Between £100,000 and £125,140, your effective marginal rate is 60% (40% tax + 20% lost allowance). Pension contributions can bring your income below £100,000 to avoid this trap."
+      }
+    },
+    {
+      "@type": "Question",
+      "name": "Are Scottish tax rates different?",
+      "acceptedAnswer": {
+        "@type": "Answer",
+        "text": "Yes. Scotland has six income tax bands instead of three. The starter rate is 19% but the higher rate is 42% (vs 40% in England). This calculator handles both correctly."
+      }
+    }
+  ]
+}
+</script>
+<style>
+:root{--bg:#050709;--surface:#0a0d14;--surface2:#0f1319;--border:#161c28;--border2:#1e2638;--sky:#0ea5e9;--sky-dim:rgba(14,165,233,0.10);--green:#2dd4a0;--green-dim:rgba(45,212,160,0.10);--red:#ef5350;--gold:#d4a847;--gold-dim:rgba(212,168,71,0.10);--cyan:#22d3ee;--teal:#0d9488;--teal-dim:rgba(13,148,136,0.10);--text:#c8cdd8;--text-bright:#e8ecf4;--muted:#4a5568;--orange:#f97316;--purple:#a855f7;--blue:#3b82f6;}
+*{margin:0;padding:0;box-sizing:border-box;}
+body{font-family:'Outfit',sans-serif;background:var(--bg);color:var(--text);min-height:100vh;line-height:1.5;}
+.container{max-width:960px;margin:0 auto;padding:2rem 1.25rem 4rem;}
+.nav-bar{display:flex;align-items:center;justify-content:space-between;padding:1rem 0;border-bottom:1px solid var(--border);margin-bottom:2rem;}
+.nav-brand{font-family:'Bebas Neue',sans-serif;font-size:1.4rem;color:var(--gold);text-decoration:none;letter-spacing:0.06em;}
+.nav-brand span{color:var(--text-bright);}
+.nav-link{font-size:0.85rem;font-weight:600;color:var(--sky);text-decoration:none;padding:0.4rem 1rem;border:1px solid var(--sky);border-radius:4px;transition:background 0.2s,color 0.2s;}
+.nav-link:hover{background:var(--sky);color:var(--bg);}
+.hero{text-align:center;margin-bottom:2rem;}
+.hero-eyebrow{font-size:0.75rem;font-weight:600;text-transform:uppercase;letter-spacing:0.15em;color:var(--sky);margin-bottom:0.5rem;}
+.hero h1{font-family:'Bebas Neue',sans-serif;font-size:clamp(1.8rem,5vw,2.8rem);color:var(--text-bright);letter-spacing:0.04em;line-height:1.1;margin-bottom:0.75rem;}
+.hero-sub{font-family:'Crimson Pro',serif;font-style:italic;font-size:1.05rem;color:var(--cyan);max-width:620px;margin:0 auto;}
+.panel{background:var(--surface);border:1px solid var(--border);border-radius:10px;padding:1.5rem;margin-bottom:1.25rem;}
+.panel-title{font-family:'Bebas Neue',sans-serif;font-size:1.1rem;color:var(--text-bright);letter-spacing:0.05em;margin-bottom:1rem;}
+.fg{display:flex;flex-direction:column;gap:0.3rem;}
+.fg label{font-size:0.72rem;font-weight:600;text-transform:uppercase;letter-spacing:0.06em;color:var(--muted);}
+.fg input,.fg select{font-family:'DM Mono',monospace;font-size:1rem;padding:0.6rem 0.8rem;background:var(--surface2);border:1px solid var(--border2);border-radius:6px;color:var(--text-bright);outline:none;}
+.fg input:focus,.fg select:focus{border-color:var(--sky);}
+.fg .hint{font-family:'Crimson Pro',serif;font-style:italic;font-size:0.78rem;color:var(--muted);}
+.input-grid{display:grid;grid-template-columns:1fr 1fr;gap:1rem;}
+.input-grid-3{display:grid;grid-template-columns:1fr 1fr 1fr;gap:1rem;}
+@media(max-width:600px){.input-grid,.input-grid-3{grid-template-columns:1fr;}}
+.radio-group{display:flex;gap:1rem;align-items:center;padding:0.4rem 0;}
+.radio-group label{font-size:0.85rem;color:var(--text);display:flex;align-items:center;gap:0.4rem;cursor:pointer;text-transform:none;font-weight:400;letter-spacing:0;}
+.radio-group input[type="radio"]{accent-color:var(--sky);width:16px;height:16px;}
+.checkbox-group{display:flex;align-items:center;gap:0.5rem;padding:0.4rem 0;}
+.checkbox-group label{font-size:0.85rem;color:var(--text);cursor:pointer;text-transform:none;font-weight:400;letter-spacing:0;}
+.checkbox-group input[type="checkbox"]{accent-color:var(--sky);width:16px;height:16px;}
+.calc-btn{font-family:'Outfit',sans-serif;font-weight:700;font-size:1rem;padding:0.85rem;background:var(--sky);color:#fff;border:none;border-radius:6px;cursor:pointer;width:100%;margin:1.25rem 0 0;transition:background 0.2s;}
+.calc-btn:hover{background:#38bdf8;}
+
+/* Pay period toggle */
+.period-toggle{display:flex;gap:0;border:1px solid var(--border2);border-radius:6px;overflow:hidden;}
+.period-btn{font-family:'Outfit',sans-serif;font-weight:600;font-size:0.8rem;padding:0.5rem 1rem;background:var(--surface2);color:var(--muted);border:none;cursor:pointer;transition:all 0.2s;}
+.period-btn.active{background:var(--sky);color:#fff;}
+@media(max-width:480px){.period-btn{padding:0.5rem 0.6rem;font-size:0.72rem;}}
+
+/* Results */
+.results{display:none;}
+.results.show{display:block;}
+
+/* Hero card */
+.hero-card{background:var(--surface);border:2px solid var(--gold);border-radius:10px;padding:2rem;text-align:center;margin-bottom:1.5rem;}
+.hero-card .big-num{font-family:'DM Mono',monospace;font-size:clamp(2rem,6vw,3rem);font-weight:500;color:var(--gold);}
+.hero-card .equiv{font-family:'DM Mono',monospace;font-size:0.9rem;color:var(--text);margin-top:0.5rem;line-height:1.8;}
+.hero-card .pct-line{font-size:0.88rem;color:var(--muted);margin-top:0.5rem;}
+
+/* Stacked bar */
+.stacked-bar-wrap{margin-bottom:1.5rem;}
+.stacked-bar-label{font-size:0.72rem;font-weight:600;text-transform:uppercase;letter-spacing:0.06em;color:var(--muted);margin-bottom:0.5rem;}
+.stacked-bar{display:flex;height:32px;border-radius:6px;overflow:hidden;width:100%;}
+.stacked-bar div{height:100%;transition:width 0.4s ease;}
+.bar-legend{display:flex;flex-wrap:wrap;gap:0.75rem;margin-top:0.5rem;}
+.bar-legend-item{font-size:0.72rem;display:flex;align-items:center;gap:4px;color:var(--text);}
+.bar-legend-dot{width:10px;height:10px;border-radius:2px;flex-shrink:0;}
+
+/* Breakdown table */
+.breakdown-table{width:100%;border-collapse:collapse;font-size:0.82rem;margin-bottom:0.5rem;}
+.breakdown-table th{font-family:'Outfit',sans-serif;font-weight:600;text-transform:uppercase;font-size:0.68rem;letter-spacing:0.05em;color:var(--muted);padding:0.6rem 0.5rem;text-align:right;border-bottom:1px solid var(--border);}
+.breakdown-table th:first-child{text-align:left;}
+.breakdown-table td{font-family:'DM Mono',monospace;padding:0.5rem;text-align:right;border-bottom:1px solid var(--border);font-size:0.8rem;color:var(--text);}
+.breakdown-table td:first-child{text-align:left;font-family:'Outfit',sans-serif;font-size:0.85rem;}
+.breakdown-table tr.total-row td{border-top:2px solid var(--border2);font-weight:500;color:var(--text-bright);padding-top:0.75rem;}
+.breakdown-table tr.total-row td:first-child{font-weight:700;}
+
+/* Marginal rate */
+.marginal-card{background:var(--surface);border:1px solid var(--border);border-radius:10px;padding:1.25rem;margin-bottom:1.5rem;}
+.marginal-card .marginal-main{font-size:0.95rem;color:var(--text-bright);margin-bottom:0.5rem;}
+.marginal-card .marginal-main strong{color:var(--cyan);font-family:'DM Mono',monospace;}
+.marginal-card .threshold-warn{font-size:0.85rem;padding:0.6rem 0.8rem;border-radius:6px;margin-top:0.5rem;line-height:1.5;}
+.threshold-warn.info{background:var(--sky-dim);border-left:3px solid var(--sky);color:var(--sky);}
+.threshold-warn.warning{background:rgba(249,115,22,0.1);border-left:3px solid var(--orange);color:var(--orange);}
+.threshold-warn.danger{background:rgba(239,83,80,0.1);border-left:3px solid var(--red);color:var(--red);}
+
+/* Tax saving explorer */
+.explorer{margin-bottom:1.5rem;}
+.explorer-header{font-family:'Bebas Neue',sans-serif;font-size:1.3rem;color:var(--green);letter-spacing:0.04em;margin-bottom:0.25rem;}
+.explorer-sub{font-family:'Crimson Pro',serif;font-style:italic;font-size:0.85rem;color:var(--muted);margin-bottom:1.25rem;}
+.slider-wrap{margin-bottom:1.5rem;}
+.slider-label{font-size:0.82rem;font-weight:600;color:var(--text-bright);margin-bottom:0.5rem;}
+.slider-val{font-family:'DM Mono',monospace;color:var(--green);font-size:1.1rem;margin-left:0.5rem;}
+input[type="range"]{-webkit-appearance:none;appearance:none;width:100%;height:6px;background:var(--border2);border-radius:3px;outline:none;margin:0.5rem 0;}
+input[type="range"]::-webkit-slider-thumb{-webkit-appearance:none;appearance:none;width:20px;height:20px;background:var(--green);border-radius:50%;cursor:pointer;}
+input[type="range"]::-moz-range-thumb{width:20px;height:20px;background:var(--green);border-radius:50%;cursor:pointer;border:none;}
+.explorer-grid{display:grid;grid-template-columns:1fr 1fr;gap:0.75rem;margin-bottom:1.25rem;}
+@media(max-width:600px){.explorer-grid{grid-template-columns:1fr;}}
+.explorer-stat{background:var(--surface2);border:1px solid var(--border);border-radius:8px;padding:1rem;}
+.explorer-stat .es-label{font-size:0.72rem;font-weight:600;text-transform:uppercase;letter-spacing:0.06em;color:var(--muted);margin-bottom:0.25rem;}
+.explorer-stat .es-val{font-family:'DM Mono',monospace;font-size:1.05rem;font-weight:500;}
+.explorer-stat .es-val.green{color:var(--green);}
+.explorer-stat .es-val.red{color:var(--red);}
+.explorer-stat .es-val.gold{color:var(--gold);}
+.explorer-stat .es-val.cyan{color:var(--cyan);}
+.explorer-projection{background:var(--green-dim);border:1px solid var(--green);border-radius:10px;padding:1.25rem;text-align:center;margin-bottom:1.25rem;}
+.explorer-projection .proj-big{font-family:'DM Mono',monospace;font-size:1.8rem;font-weight:500;color:var(--green);}
+.explorer-projection .proj-sub{font-size:0.85rem;color:var(--green);margin-top:0.25rem;}
+.explorer-projection .proj-cost{font-size:0.82rem;color:var(--text);margin-top:0.25rem;}
+
+/* Comparison table */
+.compare-table{width:100%;border-collapse:collapse;font-size:0.82rem;margin-bottom:1rem;}
+.compare-table th{font-family:'Outfit',sans-serif;font-weight:600;text-transform:uppercase;font-size:0.68rem;letter-spacing:0.05em;color:var(--muted);padding:0.6rem 0.5rem;text-align:right;border-bottom:1px solid var(--border);}
+.compare-table th:first-child{text-align:left;}
+.compare-table td{font-family:'DM Mono',monospace;padding:0.5rem;text-align:right;border-bottom:1px solid var(--border);font-size:0.8rem;color:var(--text);}
+.compare-table td:first-child{text-align:left;font-family:'Outfit',sans-serif;font-size:0.85rem;}
+.compare-table td.highlight{color:var(--green);font-weight:500;}
+
+/* Disclaimer */
+.disclaimer{background:var(--surface2);border:1px solid var(--border);border-radius:8px;padding:1rem 1.25rem;font-size:0.78rem;color:var(--muted);line-height:1.6;margin-bottom:1.5rem;}
+.disclaimer strong{color:var(--text);}
+
+/* Educational content */
+.edu-section{margin-top:2rem;}
+.edu-section h2{font-family:'Bebas Neue',sans-serif;font-size:1.4rem;color:var(--text-bright);letter-spacing:0.04em;margin-bottom:1rem;}
+.edu-section h3{font-family:'Bebas Neue',sans-serif;font-size:1.05rem;color:var(--text-bright);letter-spacing:0.04em;margin:1.25rem 0 0.5rem;}
+.edu-section p{font-size:0.92rem;line-height:1.7;margin-bottom:0.75rem;}
+.edu-section .formula{font-family:'DM Mono',monospace;font-size:0.88rem;color:var(--cyan);background:var(--surface2);padding:0.75rem 1rem;border-radius:6px;margin:0.75rem 0;border-left:3px solid var(--cyan);}
+.pln{font-family:'Crimson Pro',serif;font-style:italic;color:var(--cyan);background:rgba(34,211,238,0.08);border-left:3px solid var(--cyan);padding:0.85rem 1rem;border-radius:0 6px 6px 0;margin:1rem 0;font-size:0.92rem;line-height:1.6;}
+
+/* FAQ */
+.faq-section{margin-top:2rem;}
+.faq-section h2{font-family:'Bebas Neue',sans-serif;font-size:1.4rem;color:var(--text-bright);letter-spacing:0.04em;margin-bottom:1rem;}
+.faq-item{background:var(--surface);border:1px solid var(--border);border-radius:10px;margin-bottom:0.75rem;overflow:hidden;}
+.faq-q{font-family:'Outfit',sans-serif;font-weight:600;font-size:0.92rem;padding:1rem 1.25rem;cursor:pointer;display:flex;justify-content:space-between;align-items:center;color:var(--text-bright);transition:background 0.2s;}
+.faq-q:hover{background:var(--surface2);}
+.faq-q::after{content:'+';font-family:'DM Mono',monospace;font-size:1.2rem;color:var(--sky);transition:transform 0.2s;}
+.faq-item.open .faq-q::after{content:'-';}
+.faq-a{max-height:0;overflow:hidden;transition:max-height 0.3s ease,padding 0.3s ease;}
+.faq-item.open .faq-a{max-height:500px;padding:0 1.25rem 1rem;}
+.faq-a p{font-size:0.88rem;line-height:1.6;color:var(--text);}
+
+/* CTA */
+.cta-card{background:var(--surface);border:1px solid var(--border);border-left:3px solid var(--sky);border-radius:0 10px 10px 0;padding:1.5rem;margin-top:2rem;}
+.cta-card h3{font-family:'Bebas Neue',sans-serif;font-size:1.2rem;color:var(--sky);letter-spacing:0.04em;margin-bottom:0.5rem;}
+.cta-card p{font-family:'Crimson Pro',serif;font-style:italic;font-size:0.92rem;color:var(--text);line-height:1.5;margin-bottom:0.75rem;}
+.cta-link{font-weight:600;font-size:0.9rem;color:var(--sky);text-decoration:none;}
+.footer{margin-top:2.5rem;padding-top:1.25rem;border-top:1px solid var(--border);text-align:center;}
+.footer p{font-size:0.72rem;color:var(--muted);line-height:1.8;}
+.footer a{color:var(--muted);text-decoration:underline;}
+
+/* Error */
+.error-msg{background:rgba(239,83,80,0.1);border:1px solid var(--red);border-radius:6px;padding:0.75rem 1rem;color:var(--red);font-size:0.85rem;margin-bottom:1rem;display:none;}
+</style>
+<!-- GA4 Cookieless -->
+<script async src="https://www.googletagmanager.com/gtag/js?id=G-7GTLYCZMXN"></script>
+<script>window.dataLayer=window.dataLayer||[];function gtag(){dataLayer.push(arguments);}gtag('js',new Date());gtag('consent','default',{analytics_storage:'denied',ad_storage:'denied',ad_user_data:'denied',ad_personalization:'denied'});gtag('config','G-7GTLYCZMXN',{send_page_view:true,anonymize_ip:true});</script>
+</head>
+<body>
+<script src="/auth/mw-auth.js"></script>
+<div class="container">
+<nav class="nav-bar">
+  <a href="/" class="nav-brand">MATHS<span>WINS</span></a>
+  <a href="/everyday/tax/" class="nav-link">UK Tax Maths Course (Free) &rarr;</a>
+</nav>
+<div class="hero">
+  <div class="hero-eyebrow">Free Tool</div>
+  <h1>UK TAKE HOME PAY CALCULATOR</h1>
+  <div class="hero-sub">Enter your salary, see exactly what you take home after tax, NI, pension and student loan &mdash; plus discover how pension contributions could reduce your tax bill.</div>
+</div>
+
+<div class="panel">
+  <div class="panel-title">YOUR DETAILS</div>
+  <div class="input-grid" style="margin-bottom:1rem;">
+    <div class="fg">
+      <label>Gross annual salary (&pound;)</label>
+      <input type="text" id="grossSalary" placeholder="35,000" inputmode="numeric">
+    </div>
+    <div class="fg">
+      <label>Tax code</label>
+      <input type="text" id="taxCode" value="1257L" style="text-transform:uppercase;">
+      <div class="hint">Found on your payslip. 1257L is the standard 2025/26 code</div>
+    </div>
+  </div>
+  <div class="input-grid" style="margin-bottom:1rem;">
+    <div class="fg">
+      <label>Student loan</label>
+      <select id="studentLoan">
+        <option value="none">None</option>
+        <option value="plan1">Plan 1</option>
+        <option value="plan2">Plan 2</option>
+        <option value="plan4">Plan 4</option>
+        <option value="plan5">Plan 5</option>
+        <option value="postgrad">Postgraduate</option>
+        <option value="plan2pg">Plan 2 + Postgraduate</option>
+      </select>
+    </div>
+    <div class="fg">
+      <label>Pension contribution (%)</label>
+      <input type="number" id="pensionPct" value="5" min="0" max="100" step="0.5">
+      <div class="hint">Your contribution only, not employer's</div>
+    </div>
+  </div>
+  <div style="margin-bottom:1rem;">
+    <div class="fg">
+      <label>Pension type</label>
+      <div class="radio-group">
+        <label><input type="radio" name="pensionType" value="sacrifice" checked> Salary sacrifice</label>
+        <label><input type="radio" name="pensionType" value="relief"> Relief at source</label>
+      </div>
+    </div>
+  </div>
+  <div style="margin-bottom:1rem;">
+    <div class="checkbox-group">
+      <input type="checkbox" id="isScotland">
+      <label for="isScotland">I pay Scottish income tax</label>
+    </div>
+  </div>
+  <div class="fg" style="margin-bottom:0.5rem;">
+    <label>Pay period</label>
+    <div class="period-toggle">
+      <button class="period-btn" data-period="annual" onclick="setPeriod('annual')">Annual</button>
+      <button class="period-btn active" data-period="monthly" onclick="setPeriod('monthly')">Monthly</button>
+      <button class="period-btn" data-period="weekly" onclick="setPeriod('weekly')">Weekly</button>
+      <button class="period-btn" data-period="daily" onclick="setPeriod('daily')">Daily</button>
+    </div>
+  </div>
+  <div class="error-msg" id="errorMsg"></div>
+  <button class="calc-btn" onclick="calculate()">Calculate Take-Home Pay</button>
+</div>
+
+<div class="results" id="results">
+  <!-- Hero card -->
+  <div class="hero-card" id="heroCard"></div>
+
+  <!-- Stacked bar -->
+  <div class="panel" id="barPanel">
+    <div class="panel-title">WHERE YOUR SALARY GOES</div>
+    <div class="stacked-bar-wrap">
+      <div class="stacked-bar" id="stackedBar"></div>
+      <div class="bar-legend" id="barLegend"></div>
+    </div>
+    <div style="overflow-x:auto;">
+      <table class="breakdown-table" id="breakdownTable"></table>
+    </div>
+  </div>
+
+  <!-- Marginal rate -->
+  <div class="marginal-card" id="marginalCard"></div>
+
+  <!-- Tax Saving Explorer -->
+  <div class="panel explorer" id="explorerPanel">
+    <div class="explorer-header">COULD YOU PAY LESS TAX?</div>
+    <div class="explorer-sub">For illustration purposes only &mdash; not financial advice</div>
+    <div class="slider-wrap">
+      <div class="slider-label">Extra monthly pension contribution: <span class="slider-val" id="sliderVal">&pound;0</span></div>
+      <input type="range" id="extraPensionSlider" min="0" max="500" step="10" value="0" oninput="updateExplorer()">
+    </div>
+    <div class="explorer-grid" id="explorerGrid"></div>
+    <div class="explorer-projection" id="explorerProj" style="display:none;"></div>
+    <div style="overflow-x:auto;">
+      <table class="compare-table" id="compareTable"></table>
+    </div>
+    <div class="disclaimer">
+      <strong>Important:</strong> This section shows the mathematical effect of pension contributions on your tax position. It is not financial advice. Pension contributions may not be suitable for everyone &mdash; your money is locked until age 57 (rising from 55 in 2028). Consider your circumstances and speak to a qualified financial adviser if you're unsure.
+    </div>
+  </div>
+</div>
+
+<!-- Educational content -->
+<div class="edu-section">
+  <h2>UNDERSTANDING YOUR PAYSLIP</h2>
+
+  <h3>The Journey From Gross to Net</h3>
+  <p>Your gross salary is what your employer pays for your role. But before money reaches your bank account, several deductions are taken. Income tax is collected under PAYE (Pay As You Earn), National Insurance funds the state pension and NHS, and any student loan repayment is collected automatically once you earn above the threshold.</p>
+
+  <h3>Why Marginal Rates Matter More Than Average Rates</h3>
+  <p>Your <em>average</em> tax rate is total tax divided by total income. Your <em>marginal</em> rate is the tax on your next pound of income. This distinction matters because it tells you how much of a pay rise you actually keep. A 40% taxpayer getting a &pound;1,000 raise keeps &pound;520 after tax and NI &mdash; not the &pound;780 that the average rate might suggest.</p>
+  <div class="formula">Marginal rate = Income tax rate + NI rate + Student loan rate on your next &pound;1</div>
+
+  <h3>The Pension Contribution Trick</h3>
+  <p>Every &pound;1 you put into a pension costs you less than &pound;1 from your pocket. With salary sacrifice, a basic-rate taxpayer putting in &pound;100 only loses &pound;72 from their take-home pay (they save &pound;20 income tax + &pound;8 NI). A higher-rate taxpayer loses only &pound;58 for the same &pound;100 pension contribution.</p>
+  <p>This is mathematics, not a loophole. The government deliberately incentivises pension saving through tax relief.</p>
+
+  <h3>Why the &pound;100k Trap Exists</h3>
+  <p>The personal allowance (&pound;12,570 of tax-free income) is withdrawn at a rate of &pound;1 for every &pound;2 earned above &pound;100,000. Between &pound;100,000 and &pound;125,140, you effectively pay 60% tax on each additional pound (40% income tax + 20% from lost allowance). Pension contributions can bring your adjusted income below &pound;100,000, restoring your full personal allowance. The maths can be striking: a &pound;1,000 pension contribution in this band could save &pound;600 in tax.</p>
+
+  <div class="pln">Understanding your marginal rate is the single most useful piece of financial mathematics you can learn. It determines the real cost of pension contributions, the real value of a pay rise, and whether you are near a threshold worth optimising around.</div>
+</div>
+
+<!-- FAQ -->
+<div class="faq-section">
+  <h2>FREQUENTLY ASKED QUESTIONS</h2>
+  <div class="faq-item">
+    <div class="faq-q" onclick="toggleFaq(this)">How is take-home pay calculated?</div>
+    <div class="faq-a"><p>Your employer deducts income tax, National Insurance, pension contributions, and student loan repayments from your gross salary. What's left is your take-home (net) pay. This calculator uses 2025/26 HMRC rates and thresholds.</p></div>
+  </div>
+  <div class="faq-item">
+    <div class="faq-q" onclick="toggleFaq(this)">What tax code should I use?</div>
+    <div class="faq-a"><p>Most employees are on 1257L, which gives you the standard &pound;12,570 personal allowance. Check your payslip or P60. If your code ends in L, multiply the number by 10 to get your personal allowance. Other codes (BR, D0, K codes) work differently &mdash; this calculator interprets L, T, and 0T codes. Use 1257L if unsure.</p></div>
+  </div>
+  <div class="faq-item">
+    <div class="faq-q" onclick="toggleFaq(this)">How does salary sacrifice save tax?</div>
+    <div class="faq-a"><p>With salary sacrifice, your pension contribution is deducted before tax AND National Insurance are calculated. This means you save NI (8%) on top of income tax relief. Relief at source only gets income tax relief &mdash; you still pay NI on the full amount.</p></div>
+  </div>
+  <div class="faq-item">
+    <div class="faq-q" onclick="toggleFaq(this)">Do I pay tax on my pension contributions?</div>
+    <div class="faq-a"><p>No &mdash; pension contributions are tax-free. With salary sacrifice, you never pay tax on that money. With relief at source, you pay it but get 20% back automatically (your provider claims it from HMRC). Higher-rate taxpayers can claim the extra relief via self-assessment.</p></div>
+  </div>
+  <div class="faq-item">
+    <div class="faq-q" onclick="toggleFaq(this)">How does the &pound;100,000 personal allowance trap work?</div>
+    <div class="faq-a"><p>For every &pound;2 you earn above &pound;100,000, you lose &pound;1 of personal allowance. Between &pound;100,000 and &pound;125,140, your effective marginal rate is 60% (40% tax + 20% from the lost allowance). Pension contributions can bring your adjusted income below &pound;100,000 to avoid this trap entirely.</p></div>
+  </div>
+  <div class="faq-item">
+    <div class="faq-q" onclick="toggleFaq(this)">Are Scottish tax rates different?</div>
+    <div class="faq-a"><p>Yes. Scotland has six income tax bands instead of three. The starter rate is 19% (lower than England's 20%) but the higher rate is 42% (vs 40% in England) and the top rate is 48% (vs 45%). The crossover point depends on your income. This calculator handles both correctly &mdash; tick the Scotland checkbox to use Scottish rates.</p></div>
+  </div>
+</div>
+
+<div class="cta-card">
+  <h3>UK TAX MATHS &mdash; FREE COURSE</h3>
+  <p>Understand exactly how income tax, National Insurance, and the personal allowance work. Marginal vs effective rates, the &pound;100k trap, Scottish comparison, and more. Completely free.</p>
+  <a href="/everyday/tax/" class="cta-link">Start the free course &rarr;</a>
+</div>
+
+<div class="footer">
+  <p><a href="/">MathsWins</a> &middot; <a href="/tools/">Tools</a> &middot; <a href="/everyday/">Everyday Maths</a><br>&copy; 2026 MathsWins. Not financial advice.<br><a href="/restore/">Restore Access</a></p>
+</div>
+</div>
+
+<script>
+/* ========== UK 2025/26 Tax Constants ========== */
+const PERSONAL_ALLOWANCE = 12570;
+const BASIC_RATE_LIMIT = 50270;
+const HIGHER_RATE_LIMIT = 125140;
+const PA_TAPER_START = 100000;
+const NI_LOWER = 12570;
+const NI_UPPER = 50270;
+
+/* Scottish 2025/26 bands (income above PA) */
+const SCOTTISH_BANDS = [
+  { from: 12571, to: 14876, rate: 0.19, name: 'Starter' },
+  { from: 14877, to: 26561, rate: 0.20, name: 'Basic' },
+  { from: 26562, to: 43662, rate: 0.21, name: 'Intermediate' },
+  { from: 43663, to: 75000, rate: 0.42, name: 'Higher' },
+  { from: 75001, to: 125140, rate: 0.45, name: 'Advanced' },
+  { from: 125141, to: Infinity, rate: 0.48, name: 'Top' }
+];
+
+/* Student loan thresholds */
+const SL_PLANS = {
+  plan1:   { threshold: 24990, rate: 0.09 },
+  plan2:   { threshold: 27295, rate: 0.09 },
+  plan4:   { threshold: 31395, rate: 0.09 },
+  plan5:   { threshold: 25000, rate: 0.09 },
+  postgrad:{ threshold: 21000, rate: 0.06 }
+};
+
+let currentPeriod = 'monthly';
+let lastResult = null;
+
+/* ========== Formatting ========== */
+function fmt(n) {
+  return '\u00A3' + Math.abs(n).toLocaleString('en-GB', { minimumFractionDigits: 2, maximumFractionDigits: 2 });
+}
+function fmtInt(n) {
+  return '\u00A3' + Math.abs(n).toLocaleString('en-GB', { minimumFractionDigits: 0, maximumFractionDigits: 0 });
+}
+function parseCurrency(str) {
+  return parseFloat(str.replace(/[^\d.]/g, '')) || 0;
+}
+
+/* ========== Tax Code Parser ========== */
+function parseAllowanceFromCode(code) {
+  code = code.trim().toUpperCase();
+  if (code === 'BR') return { allowance: 0, type: 'BR' };
+  if (code === 'D0') return { allowance: 0, type: 'D0' };
+  if (code === 'D1') return { allowance: 0, type: 'D1' };
+  if (code === '0T' || code === 'OT') return { allowance: 0, type: '0T' };
+  if (code === 'NT') return { allowance: 0, type: 'NT' };
+  const match = code.match(/^(\d+)([A-Z]?)$/);
+  if (match) {
+    return { allowance: parseInt(match[1]) * 10, type: match[2] || 'L' };
+  }
+  // K code (negative allowance — adds to taxable)
+  const kMatch = code.match(/^K(\d+)$/);
+  if (kMatch) {
+    return { allowance: -(parseInt(kMatch[1]) * 10), type: 'K' };
+  }
+  return { allowance: PERSONAL_ALLOWANCE, type: 'L' };
+}
+
+/* ========== Income Tax ========== */
+function calculateTax(taxableIncome, personalAllowance, isScotland) {
+  if (isScotland) return calculateScottishTax(taxableIncome, personalAllowance);
+
+  let pa = personalAllowance;
+  // PA taper
+  if (taxableIncome > PA_TAPER_START) {
+    pa = Math.max(0, pa - Math.floor((taxableIncome - PA_TAPER_START) / 2));
+  }
+
+  const income = Math.max(0, taxableIncome - pa);
+  let tax = 0;
+  const basicBand = BASIC_RATE_LIMIT - PERSONAL_ALLOWANCE; // 37700
+  const higherBand = HIGHER_RATE_LIMIT - BASIC_RATE_LIMIT;  // 74870
+
+  // But we need to recalculate bands relative to actual PA
+  const basicLimit = Math.max(0, BASIC_RATE_LIMIT - pa);
+  const higherLimit = Math.max(0, HIGHER_RATE_LIMIT - pa);
+
+  if (income <= basicLimit) {
+    tax = income * 0.20;
+  } else if (income <= higherLimit) {
+    tax = basicLimit * 0.20 + (income - basicLimit) * 0.40;
+  } else {
+    tax = basicLimit * 0.20 + (higherLimit - basicLimit) * 0.40 + (income - higherLimit) * 0.45;
+  }
+
+  return { tax: Math.max(0, tax), effectivePA: pa };
+}
+
+function calculateScottishTax(taxableIncome, personalAllowance) {
+  let pa = personalAllowance;
+  if (taxableIncome > PA_TAPER_START) {
+    pa = Math.max(0, pa - Math.floor((taxableIncome - PA_TAPER_START) / 2));
+  }
+
+  let remaining = Math.max(0, taxableIncome - pa);
+  let tax = 0;
+
+  for (const band of SCOTTISH_BANDS) {
+    const bandStart = Math.max(0, band.from - pa);
+    const bandEnd = band.to === Infinity ? Infinity : Math.max(0, band.to - pa);
+    const bandWidth = bandEnd === Infinity ? remaining : bandEnd - bandStart;
+
+    if (remaining <= 0) break;
+    const taxableInBand = Math.min(remaining, bandWidth);
+    tax += taxableInBand * band.rate;
+    remaining -= taxableInBand;
+  }
+
+  return { tax: Math.max(0, tax), effectivePA: pa };
+}
+
+/* ========== National Insurance ========== */
+function calculateNI(niableIncome) {
+  let ni = 0;
+  if (niableIncome > NI_UPPER) {
+    ni = (NI_UPPER - NI_LOWER) * 0.08 + (niableIncome - NI_UPPER) * 0.02;
+  } else if (niableIncome > NI_LOWER) {
+    ni = (niableIncome - NI_LOWER) * 0.08;
+  }
+  return Math.max(0, ni);
+}
+
+/* ========== Student Loan ========== */
+function calculateStudentLoan(gross, planKey) {
+  if (planKey === 'none') return 0;
+  if (planKey === 'plan2pg') {
+    const p2 = SL_PLANS.plan2;
+    const pg = SL_PLANS.postgrad;
+    return Math.max(0, (gross - p2.threshold) * p2.rate) + Math.max(0, (gross - pg.threshold) * pg.rate);
+  }
+  const plan = SL_PLANS[planKey];
+  if (!plan) return 0;
+  return Math.max(0, (gross - plan.threshold) * plan.rate);
+}
+
+/* ========== Main Calculation ========== */
+function computeTakeHome(gross, pensionPct, pensionType, studentLoanPlan, isScotland, taxCodeAllowance) {
+  const pensionAmount = gross * pensionPct / 100;
+  let taxableIncome = gross;
+  let niableIncome = gross;
+
+  if (pensionType === 'sacrifice') {
+    taxableIncome -= pensionAmount;
+    niableIncome -= pensionAmount;
+  } else {
+    // Relief at source: deducted after tax calc but before NI? No — relief at source:
+    // Employee pays from net pay, provider claims 20% from HMRC.
+    // So taxable income is reduced by pension for tax purposes.
+    taxableIncome -= pensionAmount;
+    // NI is NOT reduced for relief at source
+  }
+
+  const { tax, effectivePA } = calculateTax(taxableIncome, taxCodeAllowance, isScotland);
+  const ni = calculateNI(niableIncome);
+  const sl = calculateStudentLoan(gross, studentLoanPlan);
+
+  // Take home: gross minus all deductions
+  // For salary sacrifice: pension is already removed from taxableIncome/niableIncome
+  // Take home = taxableIncome - tax - ni - sl  (sacrifice)
+  // For relief at source: pension deducted from gross after tax/NI calc
+  // Take home = gross - tax - ni - sl - pensionAmount (relief)
+  let takeHome;
+  if (pensionType === 'sacrifice') {
+    takeHome = taxableIncome - tax - ni - sl;
+  } else {
+    takeHome = gross - tax - ni - sl - pensionAmount;
+  }
+
+  return {
+    gross,
+    pensionAmount,
+    pensionType,
+    incomeTax: tax,
+    nationalInsurance: ni,
+    studentLoan: sl,
+    takeHome,
+    effectivePA,
+    taxableIncome,
+    niableIncome
+  };
+}
+
+/* ========== Marginal Rate ========== */
+function getMarginalRate(gross, pensionPct, pensionType, studentLoanPlan, isScotland, taxCodeAllowance) {
+  const base = computeTakeHome(gross, pensionPct, pensionType, studentLoanPlan, isScotland, taxCodeAllowance);
+  const bump = computeTakeHome(gross + 1, pensionPct, pensionType, studentLoanPlan, isScotland, taxCodeAllowance);
+  const taxRate = bump.incomeTax - base.incomeTax;
+  const niRate = bump.nationalInsurance - base.nationalInsurance;
+  const slRate = bump.studentLoan - base.studentLoan;
+  return {
+    total: (taxRate + niRate + slRate),
+    tax: taxRate,
+    ni: niRate,
+    sl: slRate
+  };
+}
+
+/* ========== Period Divisors ========== */
+function divisor(period) {
+  switch (period) {
+    case 'annual': return 1;
+    case 'monthly': return 12;
+    case 'weekly': return 52;
+    case 'daily': return 365;
+  }
+}
+function periodLabel(period) {
+  switch (period) {
+    case 'annual': return 'Annual';
+    case 'monthly': return 'Monthly';
+    case 'weekly': return 'Weekly';
+    case 'daily': return 'Daily';
+  }
+}
+
+/* ========== UI ========== */
+function setPeriod(p) {
+  currentPeriod = p;
+  document.querySelectorAll('.period-btn').forEach(b => b.classList.toggle('active', b.dataset.period === p));
+  if (lastResult) renderResults(lastResult);
+}
+
+function toggleFaq(el) {
+  el.parentElement.classList.toggle('open');
+}
+
+function calculate() {
+  const grossStr = document.getElementById('grossSalary').value;
+  const gross = parseCurrency(grossStr);
+  const taxCode = document.getElementById('taxCode').value;
+  const studentLoanPlan = document.getElementById('studentLoan').value;
+  const pensionPct = parseFloat(document.getElementById('pensionPct').value) || 0;
+  const pensionType = document.querySelector('input[name="pensionType"]:checked').value;
+  const isScotland = document.getElementById('isScotland').checked;
+
+  const errEl = document.getElementById('errorMsg');
+  if (!gross || gross <= 0) {
+    errEl.textContent = 'Please enter a valid gross salary.';
+    errEl.style.display = 'block';
+    return;
+  }
+  if (gross > 10000000) {
+    errEl.textContent = 'Please enter a realistic salary (up to \u00A310,000,000).';
+    errEl.style.display = 'block';
+    return;
+  }
+  errEl.style.display = 'none';
+
+  const { allowance } = parseAllowanceFromCode(taxCode);
+  const result = computeTakeHome(gross, pensionPct, pensionType, studentLoanPlan, isScotland, allowance >= 0 ? allowance : PERSONAL_ALLOWANCE);
+  result.studentLoanPlan = studentLoanPlan;
+  result.pensionPct = pensionPct;
+  result.isScotland = isScotland;
+  result.taxCodeAllowance = allowance >= 0 ? allowance : PERSONAL_ALLOWANCE;
+  result.marginal = getMarginalRate(gross, pensionPct, pensionType, studentLoanPlan, isScotland, result.taxCodeAllowance);
+
+  lastResult = result;
+  renderResults(result);
+  document.getElementById('results').classList.add('show');
+  document.getElementById('results').scrollIntoView({ behavior: 'smooth', block: 'start' });
+
+  // GA4 event
+  if (typeof gtag === 'function') {
+    gtag('event', 'calculate_take_home', { salary_band: gross < 30000 ? 'under30k' : gross < 50000 ? '30k-50k' : gross < 100000 ? '50k-100k' : 'over100k' });
+  }
+}
+
+function renderResults(r) {
+  const d = divisor(currentPeriod);
+  const pLabel = periodLabel(currentPeriod);
+
+  // Hero card
+  const heroCard = document.getElementById('heroCard');
+  const pctGross = ((r.takeHome / r.gross) * 100).toFixed(1);
+  heroCard.innerHTML = `
+    <div style="font-size:0.75rem;font-weight:600;text-transform:uppercase;letter-spacing:0.12em;color:var(--muted);margin-bottom:0.5rem;">${pLabel} Take-Home Pay</div>
+    <div class="big-num">${fmt(r.takeHome / d)}</div>
+    <div class="equiv">
+      ${currentPeriod !== 'annual' ? `${fmtInt(r.takeHome)}/year` : ''}
+      ${currentPeriod !== 'monthly' ? `${fmt(r.takeHome / 12)}/month` : ''}
+      ${currentPeriod !== 'weekly' ? `${fmt(r.takeHome / 52)}/week` : ''}
+      ${currentPeriod !== 'daily' ? `${fmt(r.takeHome / 365)}/day` : ''}
+    </div>
+    <div class="pct-line">That's ${pctGross}% of your gross salary</div>
+  `;
+
+  // Stacked bar
+  const parts = [
+    { label: 'Take Home', value: r.takeHome, color: 'var(--green)' },
+    { label: 'Income Tax', value: r.incomeTax, color: 'var(--red)' },
+    { label: 'National Insurance', value: r.nationalInsurance, color: 'var(--orange)' },
+    { label: `Pension (${r.pensionPct}%)`, value: r.pensionAmount, color: 'var(--blue)' }
+  ];
+  if (r.studentLoan > 0) {
+    parts.push({ label: 'Student Loan', value: r.studentLoan, color: 'var(--purple)' });
+  }
+
+  const bar = document.getElementById('stackedBar');
+  const legend = document.getElementById('barLegend');
+  bar.innerHTML = parts.map(p => {
+    const pct = (p.value / r.gross * 100);
+    return pct > 0 ? `<div style="width:${pct}%;background:${p.color};" title="${p.label}: ${fmt(p.value / d)}"></div>` : '';
+  }).join('');
+  legend.innerHTML = parts.map(p =>
+    `<div class="bar-legend-item"><div class="bar-legend-dot" style="background:${p.color};"></div>${p.label}</div>`
+  ).join('');
+
+  // Breakdown table
+  const table = document.getElementById('breakdownTable');
+  const rows = [
+    { label: 'Gross salary', annual: r.gross, cls: '' },
+    { label: 'Income tax', annual: -r.incomeTax, cls: '' },
+    { label: 'National Insurance', annual: -r.nationalInsurance, cls: '' },
+    { label: `Pension (${r.pensionPct}%)`, annual: -r.pensionAmount, cls: '' }
+  ];
+  if (r.studentLoan > 0) {
+    rows.push({ label: 'Student loan', annual: -r.studentLoan, cls: '' });
+  }
+
+  table.innerHTML = `
+    <thead>
+      <tr><th></th><th>Annual</th><th>Monthly</th><th>Weekly</th></tr>
+    </thead>
+    <tbody>
+      ${rows.map(row => `
+        <tr>
+          <td>${row.label}</td>
+          <td>${row.annual >= 0 ? fmt(row.annual) : '-' + fmt(row.annual)}</td>
+          <td>${row.annual >= 0 ? fmt(row.annual / 12) : '-' + fmt(row.annual / 12)}</td>
+          <td>${row.annual >= 0 ? fmt(row.annual / 52) : '-' + fmt(row.annual / 52)}</td>
+        </tr>
+      `).join('')}
+      <tr class="total-row">
+        <td>Take home</td>
+        <td>${fmt(r.takeHome)}</td>
+        <td>${fmt(r.takeHome / 12)}</td>
+        <td>${fmt(r.takeHome / 52)}</td>
+      </tr>
+    </tbody>
+  `;
+
+  // Marginal rate
+  const mc = document.getElementById('marginalCard');
+  const m = r.marginal;
+  const marginalPct = (m.total * 100).toFixed(0);
+  let marginalBreakdown = `${(m.tax * 100).toFixed(0)}% tax`;
+  if (m.ni > 0) marginalBreakdown += ` + ${(m.ni * 100).toFixed(0)}% NI`;
+  if (m.sl > 0) marginalBreakdown += ` + ${(m.sl * 100).toFixed(0)}% student loan`;
+
+  let warnings = '';
+  const effectiveGross = r.pensionType === 'sacrifice' ? r.taxableIncome : r.gross;
+
+  if (effectiveGross >= 50000 && effectiveGross < BASIC_RATE_LIMIT) {
+    const gap = BASIC_RATE_LIMIT - effectiveGross;
+    warnings += `<div class="threshold-warn info">You're ${fmtInt(gap)} away from the 40% tax band</div>`;
+  } else if (effectiveGross >= 45000 && effectiveGross < 50000) {
+    const gap = BASIC_RATE_LIMIT - effectiveGross;
+    warnings += `<div class="threshold-warn info">You're ${fmtInt(gap)} away from the 40% tax band</div>`;
+  }
+
+  if (effectiveGross >= 90000 && effectiveGross < PA_TAPER_START) {
+    const gap = PA_TAPER_START - effectiveGross;
+    warnings += `<div class="threshold-warn warning">You're ${fmtInt(gap)} away from the &pound;100,000 personal allowance taper</div>`;
+  }
+
+  if (effectiveGross >= PA_TAPER_START && effectiveGross < HIGHER_RATE_LIMIT) {
+    warnings += `<div class="threshold-warn danger">Warning: income above &pound;100,000 triggers the personal allowance trap (60% effective rate between &pound;100k&ndash;&pound;125,140). Pension contributions could bring you below &pound;100,000.</div>`;
+  }
+
+  if (effectiveGross >= HIGHER_RATE_LIMIT) {
+    warnings += `<div class="threshold-warn info">Above &pound;125,140: 45% rate applies but personal allowance is fully withdrawn</div>`;
+  }
+
+  mc.innerHTML = `
+    <div class="marginal-main">Your next &pound;1 of income would be taxed at <strong>${marginalPct}%</strong> (${marginalBreakdown})</div>
+    ${warnings}
+  `;
+
+  // Explorer
+  updateExplorer();
+}
+
+function updateExplorer() {
+  if (!lastResult) return;
+  const r = lastResult;
+  const extraMonthly = parseFloat(document.getElementById('extraPensionSlider').value) || 0;
+  document.getElementById('sliderVal').textContent = fmt(extraMonthly);
+
+  const extraAnnual = extraMonthly * 12;
+  const newPensionPct = ((r.pensionAmount + extraAnnual) / r.gross) * 100;
+  const pensionType = r.pensionType;
+  const newResult = computeTakeHome(r.gross, newPensionPct, pensionType, r.studentLoanPlan, r.isScotland, r.taxCodeAllowance);
+
+  const takeHomeDrop = r.takeHome - newResult.takeHome; // positive = you lose this from take home
+  const taxSaved = (r.incomeTax + r.nationalInsurance) - (newResult.incomeTax + newResult.nationalInsurance);
+  const netCost = extraAnnual - taxSaved; // what it actually costs you
+
+  const grid = document.getElementById('explorerGrid');
+  const proj = document.getElementById('explorerProj');
+  const cTable = document.getElementById('compareTable');
+
+  if (extraMonthly === 0) {
+    grid.innerHTML = `
+      <div class="explorer-stat"><div class="es-label">Extra pension contribution</div><div class="es-val" style="color:var(--muted);">&pound;0/month</div></div>
+      <div class="explorer-stat"><div class="es-label">Move the slider to explore</div><div class="es-val" style="color:var(--muted);">...</div></div>
+    `;
+    proj.style.display = 'none';
+    cTable.innerHTML = '';
+    return;
+  }
+
+  grid.innerHTML = `
+    <div class="explorer-stat"><div class="es-label">Extra pension contribution</div><div class="es-val green">${fmt(extraMonthly)}/month</div></div>
+    <div class="explorer-stat"><div class="es-label">Your take-home decreases by</div><div class="es-val red">-${fmt(takeHomeDrop / 12)}/month</div></div>
+    <div class="explorer-stat"><div class="es-label">Net cost to you</div><div class="es-val gold">${fmt(netCost / 12)}/month</div></div>
+    <div class="explorer-stat"><div class="es-label">Tax you save</div><div class="es-val cyan">${fmt(taxSaved / 12)}/month (${fmtInt(taxSaved)}/year)</div></div>
+  `;
+
+  // 20-year projection at 5% growth
+  const monthlyRate = 0.05 / 12;
+  const months = 20 * 12;
+  const futureValue = extraMonthly * ((Math.pow(1 + monthlyRate, months) - 1) / monthlyRate);
+
+  proj.style.display = 'block';
+  proj.innerHTML = `
+    <div class="proj-big">${fmtInt(futureValue)}</div>
+    <div class="proj-sub">Over 20 years at 5% growth, this extra ${fmt(extraMonthly)}/month becomes ${fmtInt(futureValue)}</div>
+    <div class="proj-cost">It only costs you ${fmt(netCost / 12)}/month in lost take-home</div>
+  `;
+
+  cTable.innerHTML = `
+    <thead>
+      <tr><th></th><th>Without extra</th><th>With ${fmt(extraMonthly)} extra</th></tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td>Monthly take-home</td>
+        <td>${fmt(r.takeHome / 12)}</td>
+        <td>${fmt(newResult.takeHome / 12)}</td>
+      </tr>
+      <tr>
+        <td>Monthly pension</td>
+        <td>${fmt(r.pensionAmount / 12)}</td>
+        <td class="highlight">${fmt((r.pensionAmount + extraAnnual) / 12)}</td>
+      </tr>
+      <tr>
+        <td>Annual tax saving</td>
+        <td>${fmt(0)}</td>
+        <td class="highlight">${fmt(taxSaved)}</td>
+      </tr>
+      <tr>
+        <td>20-year pot boost (5% growth)</td>
+        <td>&mdash;</td>
+        <td class="highlight">${fmtInt(futureValue)}</td>
+      </tr>
+    </tbody>
+  `;
+}
+
+/* ========== Salary input formatting ========== */
+document.getElementById('grossSalary').addEventListener('blur', function() {
+  const val = parseCurrency(this.value);
+  if (val > 0) {
+    this.value = val.toLocaleString('en-GB', { minimumFractionDigits: 0, maximumFractionDigits: 0 });
+  }
+});
+document.getElementById('grossSalary').addEventListener('keydown', function(e) {
+  if (e.key === 'Enter') {
+    e.preventDefault();
+    calculate();
+  }
+});
+</script>
+</body>
+</html>

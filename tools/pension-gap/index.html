@@ -1,0 +1,671 @@
+<!DOCTYPE html>
+<html lang="en-GB">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Pension Gap Calculator UK — Am I Saving Enough to Retire? | MathsWins</title>
+<meta name="description" content="Find out if your pension savings are on track. Enter your age, salary and contributions — see your projected pot, retirement income, and exactly how much more you need to save.">
+<meta property="og:title" content="Pension Gap Calculator UK — Am I Saving Enough to Retire? | MathsWins">
+<meta property="og:description" content="Find out if your pension savings are on track. See your projected pot, retirement income, and exactly how much more you need to save.">
+<meta property="og:url" content="https://mathswins.co.uk/tools/pension-gap/">
+<meta property="og:image" content="https://mathswins.co.uk/assets/og-image.png">
+<meta property="og:type" content="website">
+<meta property="og:site_name" content="MathsWins">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:title" content="Pension Gap Calculator UK — Am I Saving Enough to Retire? | MathsWins">
+<meta name="twitter:description" content="Find out if your pension savings are on track. See your projected pot, retirement income, and exactly how much more you need to save.">
+<meta name="twitter:image" content="https://mathswins.co.uk/assets/og-image.png">
+<link rel="canonical" href="https://mathswins.co.uk/tools/pension-gap/">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Crimson+Pro:ital,wght@0,400;1,400&family=DM+Mono:wght@400;500&family=Outfit:wght@300;400;600;700&display=swap" rel="stylesheet">
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "WebApplication",
+  "name": "Pension Gap Calculator UK",
+  "url": "https://mathswins.co.uk/tools/pension-gap/",
+  "description": "Find out if your pension savings are on track. Enter your age, salary and contributions — see your projected pot, retirement income, and exactly how much more you need to save.",
+  "applicationCategory": "FinanceApplication",
+  "operatingSystem": "Any",
+  "offers": {
+    "@type": "Offer",
+    "price": "0",
+    "priceCurrency": "GBP"
+  },
+  "publisher": {
+    "@type": "Organization",
+    "name": "MathsWins",
+    "url": "https://mathswins.co.uk"
+  }
+}
+</script>
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "FAQPage",
+  "mainEntity": [
+    {
+      "@type": "Question",
+      "name": "How much pension do I need to retire?",
+      "acceptedAnswer": {
+        "@type": "Answer",
+        "text": "A common rule of thumb is 67% of your pre-retirement salary. So if you earn £35,000, aim for ~£23,000/year in retirement. This calculator shows you whether you're on track."
+      }
+    },
+    {
+      "@type": "Question",
+      "name": "What is the 4% rule?",
+      "acceptedAnswer": {
+        "@type": "Answer",
+        "text": "Based on the Trinity Study, if you withdraw 4% of your pension pot in year one and adjust for inflation each year, your money has historically lasted 30+ years. £400,000 pot = £16,000/year withdrawal."
+      }
+    },
+    {
+      "@type": "Question",
+      "name": "How much should I contribute to my pension?",
+      "acceptedAnswer": {
+        "@type": "Answer",
+        "text": "Auto-enrolment minimum is 8% total (5% you + 3% employer). Financial advisers often recommend 12-15% total to retire comfortably. The earlier you start, the less you need to save due to compound growth."
+      }
+    },
+    {
+      "@type": "Question",
+      "name": "Does my employer contribution count?",
+      "acceptedAnswer": {
+        "@type": "Answer",
+        "text": "Yes — and it's essentially free money. If your employer matches up to 5%, not contributing at least 5% is leaving salary on the table. This calculator includes both your and your employer's contributions."
+      }
+    },
+    {
+      "@type": "Question",
+      "name": "What is the state pension in 2025/26?",
+      "acceptedAnswer": {
+        "@type": "Answer",
+        "text": "The full new state pension is £11,502 per year (£221.20 per week). You need 35 qualifying years of National Insurance to get the full amount. This calculator adds the state pension to your private pension income."
+      }
+    },
+    {
+      "@type": "Question",
+      "name": "When can I access my pension?",
+      "acceptedAnswer": {
+        "@type": "Answer",
+        "text": "Currently 55 (rising to 57 in 2028). But accessing early gives your pot less time to grow. This calculator shows the impact of different retirement ages."
+      }
+    }
+  ]
+}
+</script>
+<style>
+:root{--bg:#050709;--surface:#0a0d14;--surface2:#0f1319;--border:#161c28;--border2:#1e2638;--sky:#0ea5e9;--sky-dim:rgba(14,165,233,0.10);--green:#2dd4a0;--green-dim:rgba(45,212,160,0.10);--red:#ef5350;--gold:#d4a847;--gold-dim:rgba(212,168,71,0.10);--cyan:#22d3ee;--teal:#0d9488;--teal-dim:rgba(13,148,136,0.10);--text:#c8cdd8;--text-bright:#e8ecf4;--muted:#4a5568;}
+*{margin:0;padding:0;box-sizing:border-box;}
+body{font-family:'Outfit',sans-serif;background:var(--bg);color:var(--text);min-height:100vh;line-height:1.5;}
+.container{max-width:960px;margin:0 auto;padding:2rem 1.25rem 4rem;}
+.nav-bar{display:flex;align-items:center;justify-content:space-between;padding:1rem 0;border-bottom:1px solid var(--border);margin-bottom:2rem;}
+.nav-brand{font-family:'Bebas Neue',sans-serif;font-size:1.4rem;color:var(--gold);text-decoration:none;letter-spacing:0.06em;}
+.nav-brand span{color:var(--text-bright);}
+.nav-link{font-size:0.85rem;font-weight:600;color:var(--sky);text-decoration:none;padding:0.4rem 1rem;border:1px solid var(--sky);border-radius:4px;transition:background 0.2s,color 0.2s;}
+.nav-link:hover{background:var(--sky);color:var(--bg);}
+.hero{text-align:center;margin-bottom:2rem;}
+.hero-eyebrow{font-size:0.75rem;font-weight:600;text-transform:uppercase;letter-spacing:0.15em;color:var(--sky);margin-bottom:0.5rem;}
+.hero h1{font-family:'Bebas Neue',sans-serif;font-size:clamp(1.8rem,5vw,2.8rem);color:var(--text-bright);letter-spacing:0.04em;line-height:1.1;margin-bottom:0.75rem;}
+.hero-sub{font-family:'Crimson Pro',serif;font-style:italic;font-size:1.05rem;color:var(--cyan);max-width:620px;margin:0 auto;}
+.panel{background:var(--surface);border:1px solid var(--border);border-radius:10px;padding:1.5rem;margin-bottom:1.25rem;}
+.panel-title{font-family:'Bebas Neue',sans-serif;font-size:1.1rem;color:var(--text-bright);letter-spacing:0.05em;margin-bottom:1rem;}
+.fg{display:flex;flex-direction:column;gap:0.3rem;}
+.fg label{font-size:0.72rem;font-weight:600;text-transform:uppercase;letter-spacing:0.06em;color:var(--muted);}
+.fg input,.fg select{font-family:'DM Mono',monospace;font-size:1rem;padding:0.6rem 0.8rem;background:var(--surface2);border:1px solid var(--border2);border-radius:6px;color:var(--text-bright);outline:none;}
+.fg input:focus{border-color:var(--sky);}
+.fg .hint{font-family:'Crimson Pro',serif;font-style:italic;font-size:0.78rem;color:var(--muted);}
+.input-grid{display:grid;grid-template-columns:1fr 1fr;gap:1rem;}
+@media(max-width:600px){.input-grid{grid-template-columns:1fr;}}
+.input-grid-3{display:grid;grid-template-columns:1fr 1fr 1fr;gap:1rem;}
+@media(max-width:700px){.input-grid-3{grid-template-columns:1fr;}}
+.calc-btn{font-family:'Outfit',sans-serif;font-weight:700;font-size:1rem;padding:0.85rem;background:var(--sky);color:#fff;border:none;border-radius:6px;cursor:pointer;width:100%;margin:1.25rem 0 0;transition:background 0.2s;}
+.calc-btn:hover{background:#38bdf8;}
+.results{display:none;}
+.results.show{display:block;}
+
+/* Summary cards */
+.summary-cards{display:grid;grid-template-columns:1fr 1fr;gap:1rem;margin-bottom:1.5rem;}
+@media(max-width:600px){.summary-cards{grid-template-columns:1fr 1fr;}}
+@media(max-width:400px){.summary-cards{grid-template-columns:1fr;}}
+.summary-card{background:var(--surface);border:1px solid var(--border);border-radius:10px;padding:1.25rem;text-align:center;}
+.sc-label{font-size:0.75rem;font-weight:600;text-transform:uppercase;letter-spacing:0.06em;color:var(--muted);margin-bottom:0.4rem;}
+.sc-value{font-family:'DM Mono',monospace;font-size:1.5rem;font-weight:500;line-height:1.2;}
+@media(max-width:500px){.sc-value{font-size:1.2rem;}}
+.sc-sub{font-size:0.72rem;color:var(--muted);margin-top:0.25rem;}
+.sc-gold{color:var(--gold);}
+.sc-green{color:var(--green);}
+.sc-sky{color:var(--sky);}
+.sc-red{color:var(--red);}
+
+/* Chart */
+.chart-section{background:var(--surface);border:1px solid var(--border);border-radius:10px;padding:1.5rem;margin-bottom:1.5rem;overflow:hidden;}
+.chart-title{font-family:'Bebas Neue',sans-serif;font-size:1.05rem;color:var(--text-bright);letter-spacing:0.05em;margin-bottom:1rem;}
+.chart-wrap{display:flex;align-items:flex-end;gap:2px;height:220px;padding-top:1.5rem;position:relative;overflow-x:auto;overflow-y:hidden;}
+.chart-wrap::-webkit-scrollbar{height:6px;}
+.chart-wrap::-webkit-scrollbar-track{background:var(--surface2);}
+.chart-wrap::-webkit-scrollbar-thumb{background:var(--border2);border-radius:3px;}
+.chart-bar{flex:1;min-width:6px;max-width:28px;border-radius:3px 3px 0 0;position:relative;transition:height 0.3s ease;cursor:default;}
+.chart-bar:hover{opacity:0.85;}
+.chart-bar .tooltip{display:none;position:absolute;bottom:calc(100% + 6px);left:50%;transform:translateX(-50%);background:var(--surface2);border:1px solid var(--border2);border-radius:4px;padding:0.35rem 0.55rem;font-family:'DM Mono',monospace;font-size:0.65rem;color:var(--text-bright);white-space:nowrap;z-index:10;pointer-events:none;}
+.chart-bar:hover .tooltip{display:block;}
+.chart-labels{display:flex;gap:2px;margin-top:0.4rem;}
+.chart-labels span{flex:1;min-width:6px;max-width:28px;text-align:center;font-size:0.55rem;color:var(--muted);font-family:'DM Mono',monospace;}
+
+/* Breakdown */
+.breakdown-panel{background:var(--surface);border:1px solid var(--border);border-radius:10px;padding:1.5rem;margin-bottom:1.5rem;}
+.breakdown-row{display:flex;justify-content:space-between;padding:0.5rem 0;border-bottom:1px solid var(--border);}
+.breakdown-row:last-child{border-bottom:none;}
+.breakdown-row.total{border-top:2px solid var(--border2);margin-top:0.25rem;padding-top:0.75rem;}
+.bd-label{font-size:0.85rem;}
+.bd-label.indent{padding-left:1.25rem;color:var(--muted);font-size:0.82rem;}
+.bd-val{font-family:'DM Mono',monospace;font-weight:500;font-size:0.9rem;color:var(--text-bright);}
+.bd-val.gold{color:var(--gold);}
+.bd-val.green{color:var(--green);}
+.bd-val.sky{color:var(--sky);}
+.bd-pct{font-family:'DM Mono',monospace;font-size:0.82rem;margin-top:0.5rem;padding:0.75rem;background:var(--surface2);border-radius:6px;text-align:center;}
+
+/* Close the gap */
+.gap-section{background:var(--surface);border:1px solid var(--border);border-radius:10px;padding:1.5rem;margin-bottom:1.5rem;}
+.gap-title{font-family:'Bebas Neue',sans-serif;font-size:1.05rem;color:var(--text-bright);letter-spacing:0.05em;margin-bottom:1rem;}
+.gap-row{display:flex;justify-content:space-between;align-items:center;padding:0.6rem 0;border-bottom:1px solid var(--border);}
+.gap-row:last-child{border-bottom:none;}
+.gap-target{font-size:0.85rem;}
+.gap-answer{font-family:'DM Mono',monospace;font-weight:500;font-size:0.88rem;color:var(--green);}
+.gap-extra{margin-top:1rem;padding:0.85rem 1rem;background:var(--gold-dim);border:1px solid var(--gold);border-radius:6px;font-size:0.88rem;line-height:1.5;text-align:center;}
+.gap-extra .big{font-family:'DM Mono',monospace;color:var(--gold);font-weight:500;}
+
+/* Tax relief note */
+.tax-note{background:var(--teal-dim);border:1px solid var(--teal);border-radius:6px;padding:0.85rem 1rem;font-size:0.85rem;line-height:1.6;margin-bottom:1.5rem;}
+.tax-note strong{color:var(--teal);}
+
+/* Disclaimers */
+.disclaimers{margin-bottom:1.5rem;}
+.disclaimers p{font-size:0.75rem;color:var(--muted);line-height:1.7;padding-left:0.75rem;border-left:2px solid var(--border);}
+
+/* Educational content */
+.edu-section{margin-top:2rem;}
+.edu-section h2{font-family:'Bebas Neue',sans-serif;font-size:1.4rem;color:var(--text-bright);letter-spacing:0.04em;margin-bottom:1rem;}
+.edu-section h3{font-family:'Bebas Neue',sans-serif;font-size:1.05rem;color:var(--text-bright);letter-spacing:0.04em;margin:1.25rem 0 0.5rem;}
+.edu-section p{font-size:0.92rem;line-height:1.7;margin-bottom:0.75rem;}
+.edu-section .formula{font-family:'DM Mono',monospace;font-size:0.88rem;color:var(--cyan);background:var(--surface2);padding:0.75rem 1rem;border-radius:6px;margin:0.75rem 0;border-left:3px solid var(--cyan);}
+.edu-section .worked{background:var(--surface);border:1px solid var(--border);border-radius:10px;padding:1.25rem;margin:1rem 0;}
+.edu-section .worked h4{font-family:'Bebas Neue',sans-serif;font-size:0.95rem;color:var(--sky);letter-spacing:0.04em;margin-bottom:0.75rem;}
+.edu-section .worked table{width:100%;border-collapse:collapse;font-size:0.82rem;margin-bottom:0.75rem;}
+.edu-section .worked table th{font-family:'Outfit',sans-serif;font-weight:600;text-transform:uppercase;font-size:0.68rem;letter-spacing:0.05em;color:var(--muted);padding:0.5rem;text-align:left;border-bottom:1px solid var(--border);}
+.edu-section .worked table td{padding:0.4rem 0.5rem;border-bottom:1px solid var(--border);font-family:'DM Mono',monospace;font-size:0.78rem;}
+.edu-section .worked td.highlight{color:var(--gold);font-weight:500;}
+.pln{font-family:'Crimson Pro',serif;font-style:italic;color:var(--cyan);background:rgba(34,211,238,0.08);border-left:3px solid var(--cyan);padding:0.85rem 1rem;border-radius:0 6px 6px 0;margin:1rem 0;font-size:0.92rem;line-height:1.6;}
+
+/* FAQ */
+.faq-section{margin-top:2rem;}
+.faq-section h2{font-family:'Bebas Neue',sans-serif;font-size:1.4rem;color:var(--text-bright);letter-spacing:0.04em;margin-bottom:1rem;}
+.faq-item{background:var(--surface);border:1px solid var(--border);border-radius:10px;margin-bottom:0.75rem;overflow:hidden;}
+.faq-q{font-family:'Outfit',sans-serif;font-weight:600;font-size:0.92rem;padding:1rem 1.25rem;cursor:pointer;display:flex;justify-content:space-between;align-items:center;color:var(--text-bright);transition:background 0.2s;}
+.faq-q:hover{background:var(--surface2);}
+.faq-q::after{content:'+';font-family:'DM Mono',monospace;font-size:1.2rem;color:var(--sky);transition:transform 0.2s;}
+.faq-item.open .faq-q::after{content:'-';}
+.faq-a{max-height:0;overflow:hidden;transition:max-height 0.3s ease,padding 0.3s ease;}
+.faq-item.open .faq-a{max-height:300px;padding:0 1.25rem 1rem;}
+.faq-a p{font-size:0.88rem;line-height:1.6;color:var(--text);}
+
+/* CTA */
+.cta-card{background:var(--surface);border:1px solid var(--border);border-left:3px solid var(--sky);border-radius:0 10px 10px 0;padding:1.5rem;margin-top:2rem;}
+.cta-card h3{font-family:'Bebas Neue',sans-serif;font-size:1.2rem;color:var(--sky);letter-spacing:0.04em;margin-bottom:0.5rem;}
+.cta-card p{font-family:'Crimson Pro',serif;font-style:italic;font-size:0.92rem;color:var(--text);line-height:1.5;margin-bottom:0.75rem;}
+.cta-link{font-weight:600;font-size:0.9rem;color:var(--sky);text-decoration:none;}
+.footer{margin-top:2.5rem;padding-top:1.25rem;border-top:1px solid var(--border);text-align:center;}
+.footer p{font-size:0.72rem;color:var(--muted);line-height:1.8;}
+.footer a{color:var(--muted);text-decoration:underline;}
+
+/* Error message */
+.error-msg{background:rgba(239,83,80,0.1);border:1px solid var(--red);border-radius:6px;padding:0.75rem 1rem;color:var(--red);font-size:0.85rem;margin-bottom:1rem;display:none;}
+</style>
+<!-- GA4 Cookieless -->
+<script async src="https://www.googletagmanager.com/gtag/js?id=G-7GTLYCZMXN"></script>
+<script>window.dataLayer=window.dataLayer||[];function gtag(){dataLayer.push(arguments);}gtag('js',new Date());gtag('consent','default',{analytics_storage:'denied',ad_storage:'denied',ad_user_data:'denied',ad_personalization:'denied'});gtag('config','G-7GTLYCZMXN',{send_page_view:true,anonymize_ip:true});</script>
+</head>
+<body>
+<script src="/auth/mw-auth.js"></script>
+<div class="container">
+<nav class="nav-bar">
+  <a href="/" class="nav-brand">MATHS<span>WINS</span></a>
+  <a href="/everyday/pensions/" class="nav-link">Pension Maths Course (Free) &rarr;</a>
+</nav>
+<div class="hero">
+  <div class="hero-eyebrow">Free Tool</div>
+  <h1>PENSION GAP CALCULATOR</h1>
+  <div class="hero-sub">Enter your age, salary, and contributions &mdash; see your projected pension pot, retirement income, and exactly how much more you need to save.</div>
+</div>
+
+<div class="panel">
+  <div class="panel-title">YOUR DETAILS</div>
+  <div class="input-grid" style="margin-bottom:1rem;">
+    <div class="fg">
+      <label>Your age</label>
+      <input type="number" id="age" min="16" max="75" step="1" placeholder="35">
+    </div>
+    <div class="fg">
+      <label>Retirement age</label>
+      <input type="number" id="retirementAge" value="67" min="55" max="80" step="1">
+      <div class="hint">UK state pension age is currently 67</div>
+    </div>
+  </div>
+  <div class="input-grid" style="margin-bottom:1rem;">
+    <div class="fg">
+      <label>Annual salary (&pound;)</label>
+      <input type="number" id="salary" min="1" step="500" placeholder="35000">
+    </div>
+    <div class="fg">
+      <label>Current pension pot (&pound;)</label>
+      <input type="number" id="currentPot" min="0" step="500" placeholder="25000">
+    </div>
+  </div>
+  <div class="input-grid-3">
+    <div class="fg">
+      <label>Your monthly contribution (%)</label>
+      <input type="number" id="employeePct" value="5" min="0" max="100" step="0.5">
+      <div class="hint">Auto-enrolment minimum: 5%</div>
+    </div>
+    <div class="fg">
+      <label>Employer monthly contribution (%)</label>
+      <input type="number" id="employerPct" value="3" min="0" max="100" step="0.5">
+      <div class="hint">Auto-enrolment minimum: 3%</div>
+    </div>
+    <div class="fg">
+      <label>Expected annual growth rate (%)</label>
+      <input type="number" id="growthRate" value="5" min="0" max="20" step="0.5">
+      <div class="hint">5% is a common assumption after fees and inflation</div>
+    </div>
+  </div>
+  <div class="error-msg" id="errorMsg"></div>
+  <button class="calc-btn" onclick="calculate()">Calculate</button>
+</div>
+
+<div class="results" id="results">
+  <!-- Populated by JS -->
+</div>
+
+<!-- How pension maths works -->
+<div class="edu-section">
+  <h2>HOW PENSION MATHS WORKS</h2>
+
+  <h3>The Power of Compound Growth</h3>
+  <p>Compound growth is the single most important force in pension mathematics. Your contributions earn returns, then those returns earn returns, then <em>those</em> returns earn returns. Given enough time, the growth dwarfs the contributions themselves.</p>
+  <div class="formula">Future Value = P &times; (1 + r)<sup>n</sup> + C &times; [((1 + r)<sup>n</sup> - 1) / r]</div>
+  <p>Where P is your starting pot, r is the monthly growth rate, n is the number of months, and C is your monthly contribution.</p>
+
+  <p>Here is why starting early matters so much:</p>
+  <div class="worked">
+    <h4>STARTING AT 25 VS STARTING AT 35 &mdash; &pound;100/MONTH</h4>
+    <table>
+      <thead>
+        <tr><th>Scenario</th><th>Monthly</th><th>Years</th><th>Total Contributed</th><th>Pot at 67 (5% growth)</th></tr>
+      </thead>
+      <tbody>
+        <tr><td>Start at 25</td><td>&pound;100</td><td>42</td><td>&pound;50,400</td><td class="highlight">&pound;163,240</td></tr>
+        <tr><td>Start at 35</td><td>&pound;100</td><td>32</td><td>&pound;38,400</td><td class="highlight">&pound;89,890</td></tr>
+      </tbody>
+    </table>
+    <p>Ten extra years of contributions (&pound;12,000 more paid in) produces &pound;73,350 more in the pot. That extra &pound;73,350 came from compound growth &mdash; not from your pocket. Starting early is the closest thing to free money in finance.</p>
+  </div>
+
+  <h3>Why Employer Match Is the Best Return in Finance</h3>
+  <p>If your employer matches your pension contributions, that match is an instant 100% return on your money. No investment in history consistently delivers 100% returns &mdash; but employer matching does, every single month.</p>
+  <p>If you earn &pound;35,000 and your employer matches up to 5%, that is &pound;1,750 per year in free money. Over 32 years at 5% growth, that employer match alone grows to roughly &pound;131,000. Not contributing enough to get the full employer match is leaving salary on the table.</p>
+
+  <h3>The State Pension as Your Foundation</h3>
+  <p>The full new state pension is &pound;11,502 per year (2025/26). It provides a baseline &mdash; but it replaces only about 33% of the average UK salary. Think of it as the foundation, not the whole building. Your private pension needs to fill the gap between the state pension and the income you actually want in retirement.</p>
+
+  <div class="worked">
+    <h4>WORKED EXAMPLE: 30-YEAR-OLD ON &pound;35,000</h4>
+    <table>
+      <thead>
+        <tr><th>Input</th><th>Value</th></tr>
+      </thead>
+      <tbody>
+        <tr><td>Age</td><td>30</td></tr>
+        <tr><td>Retirement age</td><td>67</td></tr>
+        <tr><td>Salary</td><td>&pound;35,000</td></tr>
+        <tr><td>Current pot</td><td>&pound;8,000</td></tr>
+        <tr><td>Employee contribution</td><td>5% (&pound;145.83/month)</td></tr>
+        <tr><td>Employer contribution</td><td>3% (&pound;87.50/month)</td></tr>
+        <tr><td>Growth rate</td><td>5%</td></tr>
+      </tbody>
+    </table>
+    <table>
+      <thead>
+        <tr><th>Result</th><th>Value</th></tr>
+      </thead>
+      <tbody>
+        <tr><td>Total contributions</td><td>&pound;111,700</td></tr>
+        <tr><td>Investment growth</td><td>&pound;158,600</td></tr>
+        <tr><td>Final pot at 67</td><td class="highlight">&pound;270,300</td></tr>
+        <tr><td>Annual withdrawal (4%)</td><td>&pound;10,812</td></tr>
+        <tr><td>State pension</td><td>&pound;11,502</td></tr>
+        <tr><td>Total retirement income</td><td class="highlight">&pound;22,314/year</td></tr>
+        <tr><td>Salary replacement</td><td>64%</td></tr>
+      </tbody>
+    </table>
+    <p>At 64% replacement, this person is close to the 67% rule of thumb but not quite there. Increasing contributions from 5% to 7% would close the gap entirely. That is an extra &pound;58/month &mdash; about &pound;2 a day &mdash; to retire comfortably.</p>
+  </div>
+
+  <div class="pln">The mathematics are unambiguous: time in the market matters more than the amount you invest. A 25-year-old contributing &pound;100/month will comfortably beat a 45-year-old contributing &pound;300/month. If you are reading this and you are young &mdash; start now. Even a small amount. The maths will do the heavy lifting.</div>
+</div>
+
+<!-- FAQ -->
+<div class="faq-section">
+  <h2>FREQUENTLY ASKED QUESTIONS</h2>
+  <div class="faq-item">
+    <div class="faq-q" onclick="toggleFaq(this)">How much pension do I need to retire?</div>
+    <div class="faq-a"><p>A common rule of thumb is 67% of your pre-retirement salary. So if you earn &pound;35,000, aim for ~&pound;23,000/year in retirement. This calculator shows you whether you're on track.</p></div>
+  </div>
+  <div class="faq-item">
+    <div class="faq-q" onclick="toggleFaq(this)">What is the 4% rule?</div>
+    <div class="faq-a"><p>Based on the Trinity Study, if you withdraw 4% of your pension pot in year one and adjust for inflation each year, your money has historically lasted 30+ years. &pound;400,000 pot = &pound;16,000/year withdrawal.</p></div>
+  </div>
+  <div class="faq-item">
+    <div class="faq-q" onclick="toggleFaq(this)">How much should I contribute to my pension?</div>
+    <div class="faq-a"><p>Auto-enrolment minimum is 8% total (5% you + 3% employer). Financial advisers often recommend 12-15% total to retire comfortably. The earlier you start, the less you need to save due to compound growth.</p></div>
+  </div>
+  <div class="faq-item">
+    <div class="faq-q" onclick="toggleFaq(this)">Does my employer contribution count?</div>
+    <div class="faq-a"><p>Yes &mdash; and it is essentially free money. If your employer matches up to 5%, not contributing at least 5% is leaving salary on the table. This calculator includes both your and your employer's contributions.</p></div>
+  </div>
+  <div class="faq-item">
+    <div class="faq-q" onclick="toggleFaq(this)">What is the state pension in 2025/26?</div>
+    <div class="faq-a"><p>The full new state pension is &pound;11,502 per year (&pound;221.20 per week). You need 35 qualifying years of National Insurance to get the full amount. This calculator adds the state pension to your private pension income.</p></div>
+  </div>
+  <div class="faq-item">
+    <div class="faq-q" onclick="toggleFaq(this)">When can I access my pension?</div>
+    <div class="faq-a"><p>Currently 55 (rising to 57 in 2028). But accessing early gives your pot less time to grow. This calculator shows the impact of different retirement ages.</p></div>
+  </div>
+</div>
+
+<div class="cta-card">
+  <h3>PENSION MATHS &mdash; FREE COURSE</h3>
+  <p>Go deeper into the mathematics of pensions. Tax relief by band, compound growth, the 25% lump sum decision, annuity vs drawdown. Completely free, no sign-up required.</p>
+  <a href="/everyday/pensions/" class="cta-link">Start the free course &rarr;</a>
+</div>
+
+<div class="footer">
+  <p><a href="/">MathsWins</a> &middot; <a href="/tools/">Tools</a> &middot; <a href="/everyday/">Everyday Maths</a><br>&copy; 2026 MathsWins. Not financial advice.<br><a href="/restore/">Restore Access</a></p>
+</div>
+</div>
+
+<script>
+const STATE_PENSION = 11502;
+const WITHDRAWAL_RATE = 0.04;
+
+function fmt(n) {
+  return '\u00A3' + Math.round(n).toLocaleString('en-GB');
+}
+
+function fmtFull(n) {
+  return '\u00A3' + n.toLocaleString('en-GB', { minimumFractionDigits: 2, maximumFractionDigits: 2 });
+}
+
+function fmtPct(n) {
+  return n.toFixed(1) + '%';
+}
+
+function calculatePension(age, retirementAge, salary, currentPot, employeePct, employerPct, growthRate) {
+  const yearsToRetirement = retirementAge - age;
+  const monthlyGrowth = growthRate / 100 / 12;
+  const monthlyContrib = salary * (employeePct + employerPct) / 100 / 12;
+  const monthlyEmployee = salary * employeePct / 100 / 12;
+  const monthlyEmployer = salary * employerPct / 100 / 12;
+
+  let pot = currentPot;
+  const yearlyPots = [pot];
+
+  for (let year = 0; year < yearsToRetirement; year++) {
+    for (let month = 0; month < 12; month++) {
+      pot = pot * (1 + monthlyGrowth) + monthlyContrib;
+    }
+    yearlyPots.push(pot);
+  }
+
+  const totalEmployeeContrib = monthlyEmployee * 12 * yearsToRetirement;
+  const totalEmployerContrib = monthlyEmployer * 12 * yearsToRetirement;
+  const totalContributions = monthlyContrib * 12 * yearsToRetirement + currentPot;
+  const investmentGrowth = pot - totalContributions;
+  const withdrawalIncome = pot * WITHDRAWAL_RATE;
+  const annualIncome = withdrawalIncome + STATE_PENSION;
+  const salaryReplacement = annualIncome / salary * 100;
+  const gap = salary - annualIncome;
+
+  return {
+    finalPot: pot,
+    annualIncome,
+    withdrawalIncome,
+    statePension: STATE_PENSION,
+    totalContributions,
+    totalEmployeeContrib,
+    totalEmployerContrib,
+    currentPot,
+    investmentGrowth,
+    salaryReplacement,
+    yearlyPots,
+    gap,
+    yearsToRetirement,
+    monthlyContrib,
+    retirementAge
+  };
+}
+
+function findRequiredPct(age, retirementAge, salary, currentPot, employerPct, growthRate, targetIncome) {
+  // Binary search for the employee % needed to hit targetIncome
+  let lo = 0, hi = 100;
+  for (let i = 0; i < 100; i++) {
+    const mid = (lo + hi) / 2;
+    const result = calculatePension(age, retirementAge, salary, currentPot, mid, employerPct, growthRate);
+    if (result.annualIncome < targetIncome) {
+      lo = mid;
+    } else {
+      hi = mid;
+    }
+  }
+  return (lo + hi) / 2;
+}
+
+function calculateExtraImpact(age, retirementAge, extraMonthly, growthRate) {
+  const yearsToRetirement = retirementAge - age;
+  const monthlyGrowth = growthRate / 100 / 12;
+  let pot = 0;
+  for (let year = 0; year < yearsToRetirement; year++) {
+    for (let month = 0; month < 12; month++) {
+      pot = pot * (1 + monthlyGrowth) + extraMonthly;
+    }
+  }
+  return pot;
+}
+
+function calculate() {
+  const age = parseInt(document.getElementById('age').value);
+  const retirementAge = parseInt(document.getElementById('retirementAge').value);
+  const salary = parseFloat(document.getElementById('salary').value);
+  const currentPot = parseFloat(document.getElementById('currentPot').value) || 0;
+  const employeePct = parseFloat(document.getElementById('employeePct').value) || 0;
+  const employerPct = parseFloat(document.getElementById('employerPct').value) || 0;
+  const growthRate = parseFloat(document.getElementById('growthRate').value) || 5;
+
+  // Validation
+  const errEl = document.getElementById('errorMsg');
+  errEl.style.display = 'none';
+
+  if (!age || age < 16 || age > 75) {
+    errEl.textContent = 'Please enter a valid age (16-75).';
+    errEl.style.display = 'block';
+    return;
+  }
+  if (!retirementAge || retirementAge <= age) {
+    errEl.textContent = 'Retirement age must be greater than your current age.';
+    errEl.style.display = 'block';
+    return;
+  }
+  if (!salary || salary <= 0) {
+    errEl.textContent = 'Please enter a valid annual salary.';
+    errEl.style.display = 'block';
+    return;
+  }
+
+  const r = calculatePension(age, retirementAge, salary, currentPot, employeePct, employerPct, growthRate);
+
+  const hasGap = r.gap > 0;
+  const gapClass = hasGap ? 'sc-red' : 'sc-green';
+  const gapText = hasGap ? ('-' + fmt(r.gap) + '/year') : 'On track!';
+
+  // Build chart bars
+  const maxPot = Math.max(...r.yearlyPots, 1);
+  let chartBars = '';
+  let chartLabels = '';
+  const startAge = age;
+  for (let i = 0; i < r.yearlyPots.length; i++) {
+    const pct = (r.yearlyPots[i] / maxPot) * 100;
+    const hue = 43 + (i / (r.yearlyPots.length - 1 || 1)) * (140 - 43); // gold(43) to green(140)
+    const currentAge = startAge + i;
+    const showLabel = r.yearlyPots.length <= 20 || i % 5 === 0 || i === r.yearlyPots.length - 1;
+    chartBars += `<div class="chart-bar" style="height:${Math.max(pct, 1)}%;background:hsl(${hue},65%,50%)"><span class="tooltip">Age ${currentAge}: ${fmt(r.yearlyPots[i])}</span></div>`;
+    chartLabels += `<span>${showLabel ? currentAge : ''}</span>`;
+  }
+
+  // Close the gap section
+  let gapHTML = '';
+  if (hasGap) {
+    const target100 = findRequiredPct(age, retirementAge, salary, currentPot, employerPct, growthRate, salary);
+    const target80 = findRequiredPct(age, retirementAge, salary, currentPot, employerPct, growthRate, salary * 0.8);
+    const target67 = findRequiredPct(age, retirementAge, salary, currentPot, employerPct, growthRate, salary * 0.67);
+    const extra50Impact = calculateExtraImpact(age, retirementAge, 50, growthRate);
+
+    gapHTML = `
+    <div class="gap-section">
+      <div class="gap-title">CLOSE THE GAP</div>
+      <div class="gap-row">
+        <span class="gap-target">To replace <strong>100%</strong> of salary</span>
+        <span class="gap-answer">${target100 <= 100 ? 'Increase your contribution to ' + fmtPct(target100) : 'Not achievable with contributions alone'}</span>
+      </div>
+      <div class="gap-row">
+        <span class="gap-target">To replace <strong>80%</strong> of salary</span>
+        <span class="gap-answer">${target80 <= 100 ? 'Increase your contribution to ' + fmtPct(target80) : 'Not achievable with contributions alone'}</span>
+      </div>
+      <div class="gap-row">
+        <span class="gap-target">To replace <strong>67%</strong> of salary</span>
+        <span class="gap-answer">${target67 <= 100 ? 'Increase your contribution to ' + fmtPct(target67) : 'Not achievable with contributions alone'}</span>
+      </div>
+      <div class="gap-extra">
+        Every extra <span class="big">&pound;50/month</span> adds <span class="big">${fmt(extra50Impact)}</span> to your pot at retirement
+      </div>
+    </div>`;
+  } else {
+    const extra50Impact = calculateExtraImpact(age, retirementAge, 50, growthRate);
+    gapHTML = `
+    <div class="gap-section">
+      <div class="gap-title">YOU ARE ON TRACK</div>
+      <p style="font-size:0.92rem;line-height:1.6;margin-bottom:0.75rem;">Your projected retirement income exceeds your current salary. You are in a strong position. Consider whether you want to retire earlier, or build a larger buffer for unexpected costs.</p>
+      <div class="gap-extra">
+        Every extra <span class="big">&pound;50/month</span> adds <span class="big">${fmt(extra50Impact)}</span> to your pot at retirement
+      </div>
+    </div>`;
+  }
+
+  const resultsEl = document.getElementById('results');
+  resultsEl.innerHTML = `
+    <div class="summary-cards">
+      <div class="summary-card">
+        <div class="sc-label">Projected Pot at ${r.retirementAge}</div>
+        <div class="sc-value sc-gold">${fmt(r.finalPot)}</div>
+      </div>
+      <div class="summary-card">
+        <div class="sc-label">Annual Retirement Income</div>
+        <div class="sc-value sc-green">${fmt(r.annualIncome)}/year</div>
+        <div class="sc-sub">4% withdrawal + state pension</div>
+      </div>
+      <div class="summary-card">
+        <div class="sc-label">Current Salary</div>
+        <div class="sc-value sc-sky">${fmt(salary)}/year</div>
+      </div>
+      <div class="summary-card">
+        <div class="sc-label">The Gap</div>
+        <div class="sc-value ${gapClass}">${gapText}</div>
+        ${hasGap ? '<div class="sc-sub">Shortfall vs current salary</div>' : '<div class="sc-sub">Income exceeds current salary</div>'}
+      </div>
+    </div>
+
+    <div class="chart-section">
+      <div class="chart-title">PENSION POT GROWTH &mdash; AGE ${age} TO ${retirementAge}</div>
+      <div class="chart-wrap">${chartBars}</div>
+      <div class="chart-labels">${chartLabels}</div>
+    </div>
+
+    <div class="breakdown-panel">
+      <div class="panel-title">DETAILED BREAKDOWN</div>
+      <div class="breakdown-row">
+        <span class="bd-label">Total contributions</span>
+        <span class="bd-val">${fmt(r.totalContributions)}</span>
+      </div>
+      <div class="breakdown-row">
+        <span class="bd-label indent">Your contributions</span>
+        <span class="bd-val">${fmt(r.totalEmployeeContrib)}</span>
+      </div>
+      <div class="breakdown-row">
+        <span class="bd-label indent">Employer contributions</span>
+        <span class="bd-val">${fmt(r.totalEmployerContrib)}</span>
+      </div>
+      <div class="breakdown-row">
+        <span class="bd-label indent">Starting pot</span>
+        <span class="bd-val">${fmt(r.currentPot)}</span>
+      </div>
+      <div class="breakdown-row">
+        <span class="bd-label">Investment growth</span>
+        <span class="bd-val green">${fmt(r.investmentGrowth)}</span>
+      </div>
+      <div class="breakdown-row total">
+        <span class="bd-label"><strong>Final pot at ${r.retirementAge}</strong></span>
+        <span class="bd-val gold">${fmt(r.finalPot)}</span>
+      </div>
+      <div class="breakdown-row" style="margin-top:1rem;padding-top:1rem;border-top:2px solid var(--border2);">
+        <span class="bd-label">Annual income at 4% withdrawal</span>
+        <span class="bd-val">${fmt(r.withdrawalIncome)}</span>
+      </div>
+      <div class="breakdown-row">
+        <span class="bd-label">State pension (2025/26 full new state pension)</span>
+        <span class="bd-val">${fmt(r.statePension)}</span>
+      </div>
+      <div class="breakdown-row total">
+        <span class="bd-label"><strong>Total retirement income</strong></span>
+        <span class="bd-val green">${fmt(r.annualIncome)}/year</span>
+      </div>
+      <div class="bd-pct">
+        Percentage of current salary replaced: <strong style="color:${r.salaryReplacement >= 67 ? 'var(--green)' : 'var(--red)'}">${fmtPct(r.salaryReplacement)}</strong>
+      </div>
+    </div>
+
+    ${gapHTML}
+
+    <div class="tax-note">
+      <strong>Tax relief:</strong> Your pension contributions come from your gross salary. A basic-rate (20%) taxpayer contributing &pound;100 only costs &pound;80 after tax relief. A higher-rate (40%) taxpayer only pays &pound;60. This calculator uses gross contribution percentages &mdash; meaning the true cost to you is lower than it appears.
+    </div>
+
+    <div class="disclaimers">
+      <p>
+        This calculator provides estimates only and is not financial advice.<br>
+        Investment returns are not guaranteed &mdash; your pot could go up or down.<br>
+        The 4% rule is a guideline, not a guarantee.<br>
+        State pension age and amount may change in future.<br>
+        Consider speaking to a qualified financial adviser for personalised advice.
+      </p>
+    </div>
+  `;
+  resultsEl.className = 'results show';
+  resultsEl.scrollIntoView({ behavior: 'smooth', block: 'start' });
+}
+
+function toggleFaq(el) {
+  el.parentElement.classList.toggle('open');
+}
+</script>
+</body>
+</html>

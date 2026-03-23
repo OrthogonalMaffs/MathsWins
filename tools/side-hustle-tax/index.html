@@ -1,0 +1,687 @@
+<!DOCTYPE html>
+<html lang="en-GB">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Side Hustle Tax Calculator UK — How Much Tax on Side Income? | MathsWins</title>
+<meta name="description" content="Find out exactly how much tax you owe on your side hustle income. Enter your salary and side income — see income tax, National Insurance, student loan, and what you actually keep.">
+<meta property="og:title" content="Side Hustle Tax Calculator UK — How Much Tax on Side Income? | MathsWins">
+<meta property="og:description" content="Find out exactly how much tax you owe on your side hustle income. Enter your salary and side income — see income tax, National Insurance, student loan, and what you actually keep.">
+<meta property="og:url" content="https://mathswins.co.uk/tools/side-hustle-tax/">
+<meta property="og:image" content="https://mathswins.co.uk/assets/og-image.png">
+<meta property="og:type" content="website">
+<meta property="og:site_name" content="MathsWins">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:title" content="Side Hustle Tax Calculator UK — How Much Tax on Side Income? | MathsWins">
+<meta name="twitter:description" content="Find out exactly how much tax you owe on your side hustle income. Enter your salary and side income — see income tax, National Insurance, student loan, and what you actually keep.">
+<meta name="twitter:image" content="https://mathswins.co.uk/assets/og-image.png">
+<link rel="canonical" href="https://mathswins.co.uk/tools/side-hustle-tax/">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Crimson+Pro:ital,wght@0,400;1,400&family=DM+Mono:wght@400;500&family=Outfit:wght@300;400;600;700&display=swap" rel="stylesheet">
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "WebApplication",
+  "name": "Side Hustle Tax Calculator UK",
+  "url": "https://mathswins.co.uk/tools/side-hustle-tax/",
+  "description": "Find out exactly how much tax you owe on your side hustle income. Enter your salary and side income — see income tax, National Insurance, student loan, and what you actually keep.",
+  "applicationCategory": "FinanceApplication",
+  "operatingSystem": "Any",
+  "offers": {
+    "@type": "Offer",
+    "price": "0",
+    "priceCurrency": "GBP"
+  },
+  "publisher": {
+    "@type": "Organization",
+    "name": "MathsWins",
+    "url": "https://mathswins.co.uk"
+  }
+}
+</script>
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "FAQPage",
+  "mainEntity": [
+    {
+      "@type": "Question",
+      "name": "Do I need to pay tax on my side hustle?",
+      "acceptedAnswer": {
+        "@type": "Answer",
+        "text": "If your side income exceeds £1,000 (the Trading Allowance), yes. You'll need to register for Self Assessment and file a tax return. Below £1,000, you don't need to report it at all."
+      }
+    },
+    {
+      "@type": "Question",
+      "name": "How much tax will I pay on side income?",
+      "acceptedAnswer": {
+        "@type": "Answer",
+        "text": "It depends on your employment income. Your side income is taxed at your marginal rate — 20% if you're a basic rate taxpayer, 40% if higher rate. Plus Class 2 and Class 4 National Insurance on self-employment profits."
+      }
+    },
+    {
+      "@type": "Question",
+      "name": "What is the £1,000 Trading Allowance?",
+      "acceptedAnswer": {
+        "@type": "Answer",
+        "text": "HMRC lets you earn up to £1,000 from self-employment without paying tax or reporting it. If you earn more, you can either deduct the £1,000 allowance OR deduct your actual expenses — whichever saves more."
+      }
+    },
+    {
+      "@type": "Question",
+      "name": "Do I pay National Insurance on side income?",
+      "acceptedAnswer": {
+        "@type": "Answer",
+        "text": "Yes, if profits exceed £12,570. Class 2 NI is a flat £3.45/week. Class 4 NI is 6% on profits between £12,570 and £50,270, then 2% above that. This is separate from the NI your employer deducts from your salary."
+      }
+    },
+    {
+      "@type": "Question",
+      "name": "When do I need to register for Self Assessment?",
+      "acceptedAnswer": {
+        "@type": "Answer",
+        "text": "By 5 October after the end of the tax year in which you started your side hustle. File your return by 31 January (online). Late registration and late filing both carry penalties."
+      }
+    },
+    {
+      "@type": "Question",
+      "name": "What expenses can I deduct?",
+      "acceptedAnswer": {
+        "@type": "Answer",
+        "text": "Anything 'wholly and exclusively' for your side hustle: equipment, materials, software, phone (business proportion), travel to clients, professional training, home office costs (simplified: £6/week or £26/month without receipts)."
+      }
+    }
+  ]
+}
+</script>
+<style>
+:root{--bg:#050709;--surface:#0a0d14;--surface2:#0f1319;--border:#161c28;--border2:#1e2638;--sky:#0ea5e9;--sky-dim:rgba(14,165,233,0.10);--green:#2dd4a0;--green-dim:rgba(45,212,160,0.10);--red:#ef5350;--gold:#d4a847;--gold-dim:rgba(212,168,71,0.10);--cyan:#22d3ee;--teal:#0d9488;--teal-dim:rgba(13,148,136,0.10);--text:#c8cdd8;--text-bright:#e8ecf4;--muted:#4a5568;}
+*{margin:0;padding:0;box-sizing:border-box;}
+body{font-family:'Outfit',sans-serif;background:var(--bg);color:var(--text);min-height:100vh;line-height:1.5;}
+.container{max-width:960px;margin:0 auto;padding:2rem 1.25rem 4rem;}
+.nav-bar{display:flex;align-items:center;justify-content:space-between;padding:1rem 0;border-bottom:1px solid var(--border);margin-bottom:2rem;}
+.nav-brand{font-family:'Bebas Neue',sans-serif;font-size:1.4rem;color:var(--gold);text-decoration:none;letter-spacing:0.06em;}
+.nav-brand span{color:var(--text-bright);}
+.nav-link{font-size:0.85rem;font-weight:600;color:var(--sky);text-decoration:none;padding:0.4rem 1rem;border:1px solid var(--sky);border-radius:4px;transition:background 0.2s,color 0.2s;}
+.nav-link:hover{background:var(--sky);color:var(--bg);}
+.hero{text-align:center;margin-bottom:2rem;}
+.hero-eyebrow{font-size:0.75rem;font-weight:600;text-transform:uppercase;letter-spacing:0.15em;color:var(--sky);margin-bottom:0.5rem;}
+.hero h1{font-family:'Bebas Neue',sans-serif;font-size:clamp(1.8rem,5vw,2.8rem);color:var(--text-bright);letter-spacing:0.04em;line-height:1.1;margin-bottom:0.75rem;}
+.hero-sub{font-family:'Crimson Pro',serif;font-style:italic;font-size:1.05rem;color:var(--cyan);max-width:620px;margin:0 auto;}
+.panel{background:var(--surface);border:1px solid var(--border);border-radius:10px;padding:1.5rem;margin-bottom:1.25rem;}
+.panel-title{font-family:'Bebas Neue',sans-serif;font-size:1.1rem;color:var(--text-bright);letter-spacing:0.05em;margin-bottom:1rem;}
+.fg{display:flex;flex-direction:column;gap:0.3rem;margin-bottom:0.75rem;}
+.fg label{font-size:0.72rem;font-weight:600;text-transform:uppercase;letter-spacing:0.06em;color:var(--muted);}
+.fg input,.fg select{font-family:'DM Mono',monospace;font-size:1rem;padding:0.6rem 0.8rem;background:var(--surface2);border:1px solid var(--border2);border-radius:6px;color:var(--text-bright);outline:none;width:100%;}
+.fg input:focus,.fg select:focus{border-color:var(--sky);}
+.fg .hint{font-family:'Crimson Pro',serif;font-style:italic;font-size:0.78rem;color:var(--muted);}
+.fg input:disabled{opacity:0.4;cursor:not-allowed;}
+.input-grid{display:grid;grid-template-columns:1fr 1fr;gap:1rem;}
+@media(max-width:600px){.input-grid{grid-template-columns:1fr;}}
+.check-row{display:flex;align-items:flex-start;gap:0.6rem;margin-bottom:0.75rem;padding:0.75rem;background:var(--surface2);border-radius:6px;border:1px solid var(--border2);}
+.check-row input[type="checkbox"]{accent-color:var(--gold);width:18px;height:18px;cursor:pointer;margin-top:2px;flex-shrink:0;}
+.check-row .check-content{flex:1;}
+.check-row .check-label{font-size:0.88rem;font-weight:600;color:var(--text-bright);cursor:pointer;}
+.check-row .check-hint{font-family:'Crimson Pro',serif;font-style:italic;font-size:0.78rem;color:var(--muted);margin-top:0.25rem;line-height:1.5;}
+.calc-btn{font-family:'Outfit',sans-serif;font-weight:700;font-size:1rem;padding:0.85rem;background:var(--sky);color:#fff;border:none;border-radius:6px;cursor:pointer;width:100%;margin:0.5rem 0 0;transition:background 0.2s;}
+.calc-btn:hover{background:#38bdf8;}
+.results{display:none;}
+.results.show{display:block;animation:fadeIn 0.3s ease;}
+@keyframes fadeIn{from{opacity:0;transform:translateY(10px);}to{opacity:1;transform:translateY(0);}}
+
+/* Summary cards */
+.summary-cards{display:grid;grid-template-columns:1fr 1fr 1fr;gap:1rem;margin-bottom:1.5rem;}
+@media(max-width:700px){.summary-cards{grid-template-columns:1fr;}}
+.summary-card{background:var(--surface);border:1px solid var(--border);border-radius:10px;padding:1.25rem;text-align:center;}
+.summary-card.tax-card{border-top:3px solid var(--red);}
+.summary-card.rate-card{border-top:3px solid var(--sky);}
+.summary-card.keep-card{border-top:3px solid var(--green);}
+.sc-label{font-size:0.72rem;font-weight:600;text-transform:uppercase;letter-spacing:0.06em;color:var(--muted);margin-bottom:0.5rem;}
+.sc-big{font-family:'DM Mono',monospace;font-weight:500;font-size:2rem;line-height:1.2;}
+.sc-big.red{color:var(--red);}
+.sc-big.sky{color:var(--sky);}
+.sc-big.green{color:var(--green);}
+.sc-big.gold{color:var(--gold);}
+
+/* Breakdown */
+.breakdown-panel{background:var(--surface);border:1px solid var(--border);border-radius:10px;padding:1.5rem;margin-bottom:1.5rem;}
+.breakdown-panel .panel-title{margin-bottom:0.75rem;}
+.bk-row{display:flex;justify-content:space-between;align-items:center;padding:0.5rem 0;border-bottom:1px solid var(--border);}
+.bk-row:last-child{border-bottom:none;}
+.bk-row.total{border-top:2px solid var(--border2);border-bottom:none;padding-top:0.75rem;margin-top:0.25rem;}
+.bk-label{font-size:0.88rem;}
+.bk-label.indent{padding-left:1rem;color:var(--muted);font-size:0.82rem;}
+.bk-val{font-family:'DM Mono',monospace;font-weight:500;font-size:0.92rem;color:var(--text-bright);}
+.bk-val.red{color:var(--red);}
+.bk-val.green{color:var(--green);}
+.bk-val.gold{color:var(--gold);}
+.bk-val.muted{color:var(--muted);}
+.bk-val.sky{color:var(--sky);}
+.bk-separator{height:1px;background:var(--border2);margin:0.5rem 0;}
+
+/* Callouts */
+.callout{border-radius:10px;padding:1rem 1.25rem;margin-bottom:1rem;font-size:0.9rem;line-height:1.6;}
+.callout-title{font-family:'Bebas Neue',sans-serif;font-size:0.95rem;letter-spacing:0.05em;margin-bottom:0.35rem;}
+.callout.info{background:var(--sky-dim);border:1px solid rgba(14,165,233,0.3);color:var(--sky);}
+.callout.info .callout-title{color:var(--sky);}
+.callout.info p{color:var(--text);}
+.callout.warning{background:rgba(239,83,80,0.08);border:1px solid rgba(239,83,80,0.3);}
+.callout.warning .callout-title{color:var(--red);}
+.callout.warning p{color:var(--text);}
+.callout.success{background:var(--green-dim);border:1px solid rgba(45,212,160,0.3);}
+.callout.success .callout-title{color:var(--green);}
+.callout.success p{color:var(--text);}
+.callout.gold-callout{background:var(--gold-dim);border:1px solid rgba(212,168,71,0.3);}
+.callout.gold-callout .callout-title{color:var(--gold);}
+.callout.gold-callout p{color:var(--text);}
+
+/* Educational content */
+.edu-section{margin-top:2rem;}
+.edu-section h2{font-family:'Bebas Neue',sans-serif;font-size:1.4rem;color:var(--text-bright);letter-spacing:0.04em;margin-bottom:1rem;}
+.edu-section h3{font-family:'Bebas Neue',sans-serif;font-size:1.05rem;color:var(--text-bright);letter-spacing:0.04em;margin:1.25rem 0 0.5rem;}
+.edu-section p{font-size:0.92rem;line-height:1.7;margin-bottom:0.75rem;}
+.edu-section .formula{font-family:'DM Mono',monospace;font-size:0.88rem;color:var(--cyan);background:var(--surface2);padding:0.75rem 1rem;border-radius:6px;margin:0.75rem 0;border-left:3px solid var(--cyan);}
+.edu-section .worked{background:var(--surface);border:1px solid var(--border);border-radius:10px;padding:1.25rem;margin:1rem 0;}
+.edu-section .worked h4{font-family:'Bebas Neue',sans-serif;font-size:0.95rem;color:var(--sky);letter-spacing:0.04em;margin-bottom:0.75rem;}
+.edu-section .worked table{width:100%;border-collapse:collapse;font-size:0.82rem;margin-bottom:0.75rem;}
+.edu-section .worked table th{font-family:'Outfit',sans-serif;font-weight:600;text-transform:uppercase;font-size:0.68rem;letter-spacing:0.05em;color:var(--muted);padding:0.5rem;text-align:left;border-bottom:1px solid var(--border);}
+.edu-section .worked table td{padding:0.4rem 0.5rem;border-bottom:1px solid var(--border);font-family:'DM Mono',monospace;font-size:0.78rem;}
+.edu-section .worked table td.label-cell{font-family:'Outfit',sans-serif;font-size:0.82rem;}
+.pln{font-family:'Crimson Pro',serif;font-style:italic;color:var(--cyan);background:rgba(34,211,238,0.08);border-left:3px solid var(--cyan);padding:0.85rem 1rem;border-radius:0 6px 6px 0;margin:1rem 0;font-size:0.92rem;line-height:1.6;}
+
+/* FAQ */
+.faq-section{margin-top:2rem;}
+.faq-section h2{font-family:'Bebas Neue',sans-serif;font-size:1.4rem;color:var(--text-bright);letter-spacing:0.04em;margin-bottom:1rem;}
+.faq-item{background:var(--surface);border:1px solid var(--border);border-radius:10px;margin-bottom:0.75rem;overflow:hidden;}
+.faq-q{font-family:'Outfit',sans-serif;font-weight:600;font-size:0.92rem;padding:1rem 1.25rem;cursor:pointer;display:flex;justify-content:space-between;align-items:center;color:var(--text-bright);transition:background 0.2s;}
+.faq-q:hover{background:var(--surface2);}
+.faq-q::after{content:'+';font-family:'DM Mono',monospace;font-size:1.2rem;color:var(--sky);transition:transform 0.2s;}
+.faq-item.open .faq-q::after{content:'-';}
+.faq-a{max-height:0;overflow:hidden;transition:max-height 0.3s ease,padding 0.3s ease;}
+.faq-item.open .faq-a{max-height:300px;padding:0 1.25rem 1rem;}
+.faq-a p{font-size:0.88rem;line-height:1.6;color:var(--text);}
+
+/* CTA */
+.cta-card{background:var(--surface);border:1px solid var(--border);border-left:3px solid var(--sky);border-radius:0 10px 10px 0;padding:1.5rem;margin-top:2rem;}
+.cta-card h3{font-family:'Bebas Neue',sans-serif;font-size:1.2rem;color:var(--sky);letter-spacing:0.04em;margin-bottom:0.5rem;}
+.cta-card p{font-family:'Crimson Pro',serif;font-style:italic;font-size:0.92rem;color:var(--text);line-height:1.5;margin-bottom:0.75rem;}
+.cta-link{font-weight:600;font-size:0.9rem;color:var(--sky);text-decoration:none;}
+
+.footer{margin-top:2.5rem;padding-top:1.25rem;border-top:1px solid var(--border);text-align:center;}
+.footer p{font-size:0.72rem;color:var(--muted);line-height:1.8;}
+.footer a{color:var(--muted);text-decoration:underline;}
+
+/* Error message */
+.error-msg{background:rgba(239,83,80,0.1);border:1px solid var(--red);border-radius:6px;padding:0.75rem 1rem;color:var(--red);font-size:0.85rem;margin-bottom:1rem;display:none;}
+</style>
+<!-- GA4 Cookieless -->
+<script async src="https://www.googletagmanager.com/gtag/js?id=G-7GTLYCZMXN"></script>
+<script>window.dataLayer=window.dataLayer||[];function gtag(){dataLayer.push(arguments);}gtag('js',new Date());gtag('consent','default',{analytics_storage:'denied',ad_storage:'denied',ad_user_data:'denied',ad_personalization:'denied'});gtag('config','G-7GTLYCZMXN',{send_page_view:true,anonymize_ip:true});</script>
+</head>
+<body>
+<script src="/auth/mw-auth.js"></script>
+<div class="container">
+<nav class="nav-bar">
+  <a href="/" class="nav-brand">MATHS<span>WINS</span></a>
+  <a href="/everyday/tax/" class="nav-link">UK Tax Maths Course (Free) &rarr;</a>
+</nav>
+<div class="hero">
+  <div class="hero-eyebrow">Free Tool</div>
+  <h1>SIDE HUSTLE TAX CALCULATOR</h1>
+  <div class="hero-sub">Etsy, freelancing, tutoring, Uber, Deliveroo, eBay selling, content creation &mdash; find out exactly how much of your side income you actually keep after tax.</div>
+</div>
+
+<div class="panel">
+  <div class="panel-title">YOUR INCOME</div>
+  <div class="input-grid">
+    <div class="fg">
+      <label>Your salary before tax</label>
+      <input type="number" id="employment" placeholder="35000" min="0" step="500">
+      <div class="hint">Employment income (gross annual)</div>
+    </div>
+    <div class="fg">
+      <label>Total side income this tax year (before expenses)</label>
+      <input type="number" id="sideIncome" placeholder="5000" min="0" step="100">
+      <div class="hint">Gross side hustle income</div>
+    </div>
+  </div>
+  <div class="input-grid">
+    <div class="fg">
+      <label>Business expenses you can deduct</label>
+      <input type="number" id="expenses" placeholder="500" min="0" step="50" value="0">
+      <div class="hint">Equipment, materials, travel, software, etc.</div>
+    </div>
+    <div class="fg">
+      <label>Student loan?</label>
+      <select id="studentLoan">
+        <option value="none">None</option>
+        <option value="plan1">Plan 1</option>
+        <option value="plan2">Plan 2</option>
+        <option value="plan4">Plan 4</option>
+        <option value="plan5">Plan 5</option>
+        <option value="postgrad">Postgraduate</option>
+      </select>
+    </div>
+  </div>
+  <div class="check-row">
+    <input type="checkbox" id="tradingAllowance" onchange="toggleTrading()">
+    <div class="check-content">
+      <label class="check-label" for="tradingAllowance">Use &pound;1,000 Trading Allowance instead of expenses</label>
+      <div class="check-hint">The &pound;1,000 trading allowance means you don't need to report side income under &pound;1,000. If your expenses exceed &pound;1,000, deduct expenses instead.</div>
+    </div>
+  </div>
+  <div class="error-msg" id="errorMsg"></div>
+  <button class="calc-btn" onclick="calculate()">Calculate Tax on Side Income</button>
+</div>
+
+<div class="results" id="results"></div>
+
+<!-- How side hustle tax actually works -->
+<div class="edu-section">
+  <h2>HOW SIDE HUSTLE TAX ACTUALLY WORKS</h2>
+
+  <h3>Your Side Income Sits on Top</h3>
+  <p>For tax purposes, your side hustle profit is added on top of your employment income. This means it is taxed at whatever your highest marginal rate happens to be &mdash; not from zero. If your salary already uses up your Personal Allowance and basic rate band, every pound of side income is taxed at 40% or even 45%.</p>
+
+  <h3>The Marginal Rate Trap</h3>
+  <p>Many people assume side income is taxed separately at 20%. It is not. Your total income determines your tax band, and side income fills up from wherever your salary left off. A basic rate taxpayer earning &pound;45,000 has &pound;5,270 of basic rate band remaining. Any side income beyond that crosses into the 40% higher rate band.</p>
+  <div class="formula">Marginal tax on side income = Total tax WITH side income &minus; Total tax WITHOUT side income</div>
+
+  <h3>The &pound;100k Personal Allowance Trap</h3>
+  <p>If your combined income crosses &pound;100,000, you lose &pound;1 of Personal Allowance for every &pound;2 over &pound;100k. This creates an effective 60% tax rate on income between &pound;100,000 and &pound;125,140. A side hustle pushing you into this zone can be devastatingly expensive in tax.</p>
+  <div class="formula">Effective rate between &pound;100k&ndash;&pound;125,140 = 40% income tax + 20% PA clawback = 60%</div>
+
+  <h3>National Insurance &mdash; The One People Forget</h3>
+  <p>Self-employment profits above &pound;12,570 attract both Class 2 NI (&pound;3.45/week flat) and Class 4 NI (6% on profits between &pound;12,570 and &pound;50,270, then 2% above that). This is on top of income tax and is separate from the NI your employer deducts from your salary.</p>
+
+  <h3>Payment on Account</h3>
+  <p>After your first Self Assessment, HMRC demands advance payments. In January and July, you pay 50% of your previous year's tax bill as an advance for the current year. This catches many first-time side hustlers off guard &mdash; your first January bill can be 150% of what you expected.</p>
+
+  <div class="worked">
+    <h4>WORKED EXAMPLE: &pound;35,000 SALARY + &pound;8,000 SIDE INCOME</h4>
+    <table>
+      <thead><tr><th></th><th>Amount</th></tr></thead>
+      <tbody>
+        <tr><td class="label-cell">Side hustle gross income</td><td>&pound;8,000</td></tr>
+        <tr><td class="label-cell">Less expenses (e.g. equipment)</td><td>-&pound;1,200</td></tr>
+        <tr><td class="label-cell">Taxable side income</td><td>&pound;6,800</td></tr>
+        <tr><td class="label-cell" colspan="2" style="padding-top:0.75rem;border-bottom:none;font-weight:600;">Tax calculation:</td></tr>
+        <tr><td class="label-cell">Income tax at marginal rate (20%)</td><td>&pound;1,360</td></tr>
+        <tr><td class="label-cell">Class 2 NI (not applicable &mdash; profit &lt; &pound;12,570)</td><td>&pound;0</td></tr>
+        <tr><td class="label-cell">Class 4 NI (not applicable &mdash; profit &lt; &pound;12,570)</td><td>&pound;0</td></tr>
+        <tr><td class="label-cell" style="font-weight:600;">Total tax on side income</td><td style="font-weight:600;">&pound;1,360</td></tr>
+        <tr><td class="label-cell" style="color:var(--green);">You keep</td><td style="color:var(--green);">&pound;6,640</td></tr>
+        <tr><td class="label-cell">Effective tax rate on side income</td><td>17.0%</td></tr>
+      </tbody>
+    </table>
+    <p style="font-size:0.82rem;color:var(--muted);margin:0;">Because the &pound;6,800 profit is below the &pound;12,570 NI threshold, no National Insurance is due. The only tax is income tax at the basic 20% rate. Not bad.</p>
+  </div>
+
+  <div class="pln">The key insight: your side income is not taxed in isolation. It sits on top of your salary, which determines whether you pay 20%, 40%, 45%, or even 60%. Always calculate the marginal impact &mdash; total tax with side income minus total tax without it.</div>
+</div>
+
+<!-- FAQ -->
+<div class="faq-section">
+  <h2>FREQUENTLY ASKED QUESTIONS</h2>
+  <div class="faq-item">
+    <div class="faq-q" onclick="toggleFaq(this)">Do I need to pay tax on my side hustle?</div>
+    <div class="faq-a"><p>If your side income exceeds &pound;1,000 (the Trading Allowance), yes. You will need to register for Self Assessment and file a tax return. Below &pound;1,000, you don't need to report it at all.</p></div>
+  </div>
+  <div class="faq-item">
+    <div class="faq-q" onclick="toggleFaq(this)">How much tax will I pay on side income?</div>
+    <div class="faq-a"><p>It depends on your employment income. Your side income is taxed at your marginal rate &mdash; 20% if you are a basic rate taxpayer, 40% if higher rate. Plus Class 2 and Class 4 National Insurance on self-employment profits above &pound;12,570.</p></div>
+  </div>
+  <div class="faq-item">
+    <div class="faq-q" onclick="toggleFaq(this)">What is the &pound;1,000 Trading Allowance?</div>
+    <div class="faq-a"><p>HMRC lets you earn up to &pound;1,000 from self-employment without paying tax or reporting it. If you earn more, you can either deduct the &pound;1,000 allowance OR deduct your actual expenses &mdash; whichever saves you more.</p></div>
+  </div>
+  <div class="faq-item">
+    <div class="faq-q" onclick="toggleFaq(this)">Do I pay National Insurance on side income?</div>
+    <div class="faq-a"><p>Yes, if profits exceed &pound;12,570. Class 2 NI is a flat &pound;3.45/week (&pound;179.40/year). Class 4 NI is 6% on profits between &pound;12,570 and &pound;50,270, then 2% above that. This is separate from the NI your employer deducts from your salary.</p></div>
+  </div>
+  <div class="faq-item">
+    <div class="faq-q" onclick="toggleFaq(this)">When do I need to register for Self Assessment?</div>
+    <div class="faq-a"><p>By 5 October after the end of the tax year in which you started your side hustle. File your return by 31 January (online). Late registration and late filing both carry penalties.</p></div>
+  </div>
+  <div class="faq-item">
+    <div class="faq-q" onclick="toggleFaq(this)">What expenses can I deduct?</div>
+    <div class="faq-a"><p>Anything &ldquo;wholly and exclusively&rdquo; for your side hustle: equipment, materials, software, phone (business proportion), travel to clients, professional training, home office costs (simplified: &pound;6/week or &pound;26/month without receipts).</p></div>
+  </div>
+</div>
+
+<div class="cta-card">
+  <h3>UK TAX MATHS &mdash; FREE COURSE</h3>
+  <p>Understand marginal vs effective rates, the &pound;100k trap, Scotland comparison, deductions, and fiscal drag. Interactive calculators throughout. Completely free.</p>
+  <a href="/everyday/tax/" class="cta-link">Start the free course &rarr;</a>
+</div>
+
+<div class="footer">
+  <p><a href="/">MathsWins</a> &middot; <a href="/tools/">Tools</a> &middot; <a href="/everyday/">Everyday Maths</a><br>&copy; 2026 MathsWins. Not financial advice. Tax rates are for the 2025/26 tax year.<br><a href="/restore/">Restore Access</a></p>
+</div>
+</div>
+
+<script>
+/* ===== UK 2025/26 Tax Constants ===== */
+const TAX_YEAR = '2025/26';
+const PERSONAL_ALLOWANCE = 12570;
+const BASIC_RATE_LIMIT = 50270;
+const HIGHER_RATE_LIMIT = 125140;
+const PA_TAPER_START = 100000;
+const BASIC_BAND = BASIC_RATE_LIMIT - PERSONAL_ALLOWANCE; // 37700
+const HIGHER_BAND = HIGHER_RATE_LIMIT - BASIC_RATE_LIMIT;  // 74870
+
+// NI thresholds for self-employment
+const NI_LOWER_PROFITS = 12570;
+const NI_UPPER_PROFITS = 50270;
+const CLASS2_WEEKLY = 3.45;
+const CLASS4_MAIN_RATE = 0.06;
+const CLASS4_UPPER_RATE = 0.02;
+
+// Student loan thresholds 2025/26
+const STUDENT_LOANS = {
+  none:     { rate: 0, threshold: Infinity },
+  plan1:    { rate: 0.09, threshold: 24990 },
+  plan2:    { rate: 0.09, threshold: 27295 },
+  plan4:    { rate: 0.09, threshold: 31395 },
+  plan5:    { rate: 0.09, threshold: 25000 },
+  postgrad: { rate: 0.06, threshold: 21000 }
+};
+
+/* ===== Income Tax Calculator ===== */
+function calculateIncomeTax(totalIncome) {
+  let pa = PERSONAL_ALLOWANCE;
+  // PA taper: lose £1 for every £2 over £100k
+  if (totalIncome > PA_TAPER_START) {
+    const reduction = Math.floor((totalIncome - PA_TAPER_START) / 2);
+    pa = Math.max(0, pa - reduction);
+  }
+
+  const taxable = Math.max(0, totalIncome - pa);
+  let tax = 0;
+
+  // Basic rate: 20% on first £37,700 of taxable income
+  const basicBand = Math.min(taxable, BASIC_BAND);
+  tax += basicBand * 0.20;
+
+  // Higher rate: 40% from £37,701 to £125,140 taxable
+  const higherBand = Math.min(Math.max(0, taxable - BASIC_BAND), HIGHER_RATE_LIMIT - BASIC_RATE_LIMIT);
+  tax += higherBand * 0.40;
+
+  // Additional rate: 45% above £125,140
+  const additionalBand = Math.max(0, taxable - (HIGHER_RATE_LIMIT - pa > 0 ? HIGHER_RATE_LIMIT - pa : BASIC_BAND + (HIGHER_RATE_LIMIT - BASIC_RATE_LIMIT)));
+  // Simpler: additional rate on taxable income above the higher band
+  const additionalTaxable = Math.max(0, taxable - BASIC_BAND - (HIGHER_RATE_LIMIT - BASIC_RATE_LIMIT));
+  tax = basicBand * 0.20 + higherBand * 0.40 + additionalTaxable * 0.45;
+
+  return tax;
+}
+
+/* ===== Side Hustle Tax Calculator ===== */
+function calculateSideHustleTax(employmentIncome, sideIncome, expenses, useTrading, studentLoanPlan) {
+  const tradingAllowance = 1000;
+  const deduction = useTrading ? Math.min(tradingAllowance, sideIncome) : expenses;
+  const taxableProfit = Math.max(0, sideIncome - deduction);
+
+  // Tax WITHOUT side income
+  const taxWithout = calculateIncomeTax(employmentIncome);
+
+  // Tax WITH side income
+  const totalIncome = employmentIncome + taxableProfit;
+  const taxWith = calculateIncomeTax(totalIncome);
+
+  // Difference = income tax on side income
+  const incomeTax = taxWith - taxWithout;
+
+  // Class 2 NI (flat rate if profits above threshold)
+  const class2 = taxableProfit > NI_LOWER_PROFITS ? CLASS2_WEEKLY * 52 : 0;
+
+  // Class 4 NI on self-employment profits only
+  let class4 = 0;
+  if (taxableProfit > NI_LOWER_PROFITS) {
+    const band1 = Math.min(taxableProfit, NI_UPPER_PROFITS) - NI_LOWER_PROFITS;
+    class4 += Math.max(0, band1) * CLASS4_MAIN_RATE;
+    if (taxableProfit > NI_UPPER_PROFITS) {
+      class4 += (taxableProfit - NI_UPPER_PROFITS) * CLASS4_UPPER_RATE;
+    }
+  }
+
+  // Student loan: calculated on total income, subtract what employment already covers
+  let studentLoanOnSide = 0;
+  const sl = STUDENT_LOANS[studentLoanPlan];
+  if (sl && sl.rate > 0) {
+    const slOnTotal = Math.max(0, totalIncome - sl.threshold) * sl.rate;
+    const slOnEmployment = Math.max(0, employmentIncome - sl.threshold) * sl.rate;
+    studentLoanOnSide = Math.max(0, slOnTotal - slOnEmployment);
+  }
+
+  const totalTax = incomeTax + class2 + class4 + studentLoanOnSide;
+  const takeHome = sideIncome - totalTax;
+  const effectiveRate = sideIncome > 0 ? (totalTax / sideIncome) * 100 : 0;
+
+  // Determine marginal income tax rate
+  let marginalRate = 20;
+  if (totalIncome > HIGHER_RATE_LIMIT) marginalRate = 45;
+  else if (totalIncome > BASIC_RATE_LIMIT) marginalRate = 40;
+
+  // Check for PA taper zone
+  const inPATaper = totalIncome > PA_TAPER_START && totalIncome <= HIGHER_RATE_LIMIT;
+
+  return {
+    sideIncome,
+    deduction,
+    deductionLabel: useTrading ? 'Trading Allowance' : 'Expenses',
+    taxableProfit,
+    incomeTax,
+    class2,
+    class4,
+    studentLoan: studentLoanOnSide,
+    studentLoanPlan,
+    totalTax,
+    takeHome,
+    effectiveRate,
+    marginalRate,
+    inPATaper,
+    totalIncome,
+    employmentIncome,
+    crossesHigherRate: employmentIncome <= BASIC_RATE_LIMIT && totalIncome > BASIC_RATE_LIMIT,
+    crossesPATaper: employmentIncome <= PA_TAPER_START && totalIncome > PA_TAPER_START,
+    underTradingAllowance: sideIncome <= tradingAllowance,
+    // Band split detail for callout
+    basicPortionOfSide: 0,
+    higherPortionOfSide: 0
+  };
+}
+
+/* ===== UI Helpers ===== */
+function fmt(n) {
+  return '\u00A3' + Math.abs(n).toLocaleString('en-GB', { minimumFractionDigits: 2, maximumFractionDigits: 2 });
+}
+
+function fmtShort(n) {
+  return '\u00A3' + Math.abs(n).toLocaleString('en-GB', { minimumFractionDigits: 0, maximumFractionDigits: 0 });
+}
+
+function toggleTrading() {
+  const cb = document.getElementById('tradingAllowance');
+  const expInput = document.getElementById('expenses');
+  expInput.disabled = cb.checked;
+  if (cb.checked) {
+    expInput.dataset.prevValue = expInput.value;
+    expInput.value = '';
+  } else {
+    expInput.value = expInput.dataset.prevValue || '0';
+  }
+}
+
+function toggleFaq(el) {
+  el.parentElement.classList.toggle('open');
+}
+
+/* ===== Main Calculate ===== */
+function calculate() {
+  const errEl = document.getElementById('errorMsg');
+  errEl.style.display = 'none';
+
+  const employmentIncome = parseFloat(document.getElementById('employment').value) || 0;
+  const sideIncome = parseFloat(document.getElementById('sideIncome').value) || 0;
+  const expenses = parseFloat(document.getElementById('expenses').value) || 0;
+  const useTrading = document.getElementById('tradingAllowance').checked;
+  const studentLoanPlan = document.getElementById('studentLoan').value;
+
+  if (sideIncome <= 0) {
+    errEl.textContent = 'Please enter your side hustle income.';
+    errEl.style.display = 'block';
+    return;
+  }
+
+  if (!useTrading && expenses > sideIncome) {
+    errEl.textContent = 'Your expenses exceed your side income. If that is correct, your taxable profit is zero and you owe no tax.';
+    errEl.style.display = 'block';
+  }
+
+  const result = calculateSideHustleTax(employmentIncome, sideIncome, expenses, useTrading, studentLoanPlan);
+
+  // Calculate band split if crossing higher rate
+  let basicPortion = 0;
+  let higherPortion = 0;
+  if (result.crossesHigherRate) {
+    const roomInBasic = Math.max(0, BASIC_RATE_LIMIT - employmentIncome);
+    basicPortion = Math.min(result.taxableProfit, roomInBasic);
+    higherPortion = Math.max(0, result.taxableProfit - roomInBasic);
+  }
+
+  // Build results HTML
+  let html = '';
+
+  // Summary cards
+  html += '<div class="summary-cards">';
+  html += '<div class="summary-card tax-card">';
+  html += '<div class="sc-label">Tax on Side Income</div>';
+  html += '<div class="sc-big red">' + fmt(result.totalTax) + '</div>';
+  html += '</div>';
+  html += '<div class="summary-card rate-card">';
+  html += '<div class="sc-label">Effective Tax Rate</div>';
+  html += '<div class="sc-big sky">' + result.effectiveRate.toFixed(1) + '%</div>';
+  html += '</div>';
+  html += '<div class="summary-card keep-card">';
+  html += '<div class="sc-label">You Keep</div>';
+  html += '<div class="sc-big green">' + fmt(result.takeHome) + '</div>';
+  html += '</div>';
+  html += '</div>';
+
+  // Detailed breakdown
+  html += '<div class="breakdown-panel">';
+  html += '<div class="panel-title">DETAILED BREAKDOWN &mdash; ' + TAX_YEAR + ' TAX YEAR</div>';
+
+  html += '<div class="bk-row"><span class="bk-label">Side hustle gross income</span><span class="bk-val">' + fmt(result.sideIncome) + '</span></div>';
+  html += '<div class="bk-row"><span class="bk-label">Less ' + result.deductionLabel.toLowerCase() + '</span><span class="bk-val muted">-' + fmt(result.deduction) + '</span></div>';
+  html += '<div class="bk-row"><span class="bk-label" style="font-weight:600;">Taxable side income</span><span class="bk-val" style="font-weight:600;">' + fmt(result.taxableProfit) + '</span></div>';
+
+  html += '<div class="bk-separator"></div>';
+
+  // Marginal rate display
+  let rateLabel = result.marginalRate + '%';
+  if (result.inPATaper) rateLabel = '40% (+ PA taper = 60% effective)';
+  html += '<div class="bk-row"><span class="bk-label">Your marginal income tax rate</span><span class="bk-val sky">' + rateLabel + '</span></div>';
+  html += '<div class="bk-row"><span class="bk-label">Income tax on side income</span><span class="bk-val red">' + fmt(result.incomeTax) + '</span></div>';
+
+  // Class 2 NI
+  if (result.class2 > 0) {
+    html += '<div class="bk-row"><span class="bk-label">Class 2 NI (&pound;3.45/week &times; 52)</span><span class="bk-val red">' + fmt(result.class2) + '</span></div>';
+  } else {
+    html += '<div class="bk-row"><span class="bk-label">Class 2 NI (profit &lt; &pound;12,570)</span><span class="bk-val muted">&pound;0.00</span></div>';
+  }
+
+  // Class 4 NI
+  if (result.class4 > 0) {
+    let c4Detail = '6%';
+    if (result.taxableProfit > NI_UPPER_PROFITS) c4Detail = '6% + 2%';
+    html += '<div class="bk-row"><span class="bk-label">Class 4 NI (' + c4Detail + ' on profits)</span><span class="bk-val red">' + fmt(result.class4) + '</span></div>';
+  } else {
+    html += '<div class="bk-row"><span class="bk-label">Class 4 NI (profit &lt; &pound;12,570)</span><span class="bk-val muted">&pound;0.00</span></div>';
+  }
+
+  // Student loan
+  if (result.studentLoan > 0) {
+    const planLabel = studentLoanPlan === 'postgrad' ? 'Postgraduate (6%)' : studentLoanPlan.replace('plan', 'Plan ') + ' (9%)';
+    html += '<div class="bk-row"><span class="bk-label">Student loan &mdash; ' + planLabel + '</span><span class="bk-val red">' + fmt(result.studentLoan) + '</span></div>';
+  } else if (studentLoanPlan !== 'none') {
+    const sl = STUDENT_LOANS[studentLoanPlan];
+    html += '<div class="bk-row"><span class="bk-label">Student loan (combined income &lt; &pound;' + sl.threshold.toLocaleString() + ')</span><span class="bk-val muted">&pound;0.00</span></div>';
+  }
+
+  html += '<div class="bk-separator"></div>';
+
+  html += '<div class="bk-row total"><span class="bk-label" style="font-weight:700;">Total tax owed on side income</span><span class="bk-val red" style="font-size:1.05rem;">' + fmt(result.totalTax) + '</span></div>';
+  html += '<div class="bk-row"><span class="bk-label" style="font-weight:700;">You keep</span><span class="bk-val green" style="font-size:1.05rem;">' + fmt(result.takeHome) + '</span></div>';
+  html += '<div class="bk-row"><span class="bk-label">Effective rate on side income</span><span class="bk-val gold">' + result.effectiveRate.toFixed(1) + '%</span></div>';
+
+  html += '</div>';
+
+  // "Did you know?" callouts
+  let callouts = '';
+
+  if (result.underTradingAllowance) {
+    callouts += '<div class="callout success">';
+    callouts += '<div class="callout-title">DID YOU KNOW?</div>';
+    callouts += '<p>Your side income is under &pound;1,000 &mdash; the Trading Allowance means you don\'t need to report this to HMRC at all. No Self Assessment required.</p>';
+    callouts += '</div>';
+  }
+
+  if (result.crossesHigherRate) {
+    const roomInBasic = Math.max(0, BASIC_RATE_LIMIT - employmentIncome);
+    const inHigher = Math.max(0, result.taxableProfit - roomInBasic);
+    callouts += '<div class="callout gold-callout">';
+    callouts += '<div class="callout-title">DID YOU KNOW?</div>';
+    callouts += '<p>Your side income pushes you into the <strong>40% tax band</strong>. The first ' + fmtShort(roomInBasic) + ' of your side profit is taxed at 20%, but the remaining ' + fmtShort(inHigher) + ' is taxed at 40%.</p>';
+    callouts += '</div>';
+  }
+
+  if (result.crossesPATaper) {
+    callouts += '<div class="callout warning">';
+    callouts += '<div class="callout-title">WARNING: PERSONAL ALLOWANCE TRAP</div>';
+    callouts += '<p>Your combined income exceeds &pound;100,000, triggering the Personal Allowance taper. You lose &pound;1 of Personal Allowance for every &pound;2 over &pound;100k. This creates an <strong>effective 60% tax rate</strong> on income between &pound;100,000 and &pound;125,140. This is the most punishing tax zone in the UK system.</p>';
+    callouts += '</div>';
+  }
+
+  // Payment on account warning if tax is significant
+  if (result.totalTax > 1000) {
+    callouts += '<div class="callout info">';
+    callouts += '<div class="callout-title">PAYMENT ON ACCOUNT</div>';
+    callouts += '<p>Because your Self Assessment tax bill exceeds &pound;1,000, HMRC will require <strong>Payments on Account</strong>. After your first year, you\'ll pay 50% of your bill in advance in January and July. Your first January bill could be up to ' + fmt(result.totalTax * 1.5) + ' (current year + 50% advance).</p>';
+    callouts += '</div>';
+  }
+
+  // Self Assessment reminder
+  if (result.taxableProfit > 0 && !result.underTradingAllowance) {
+    callouts += '<div class="callout info">';
+    callouts += '<div class="callout-title">SELF ASSESSMENT REQUIRED</div>';
+    callouts += '<p>You must register for Self Assessment by 5 October after the tax year ends, and file your return online by 31 January. Late registration and filing both carry automatic penalties.</p>';
+    callouts += '</div>';
+  }
+
+  html += callouts;
+
+  const r = document.getElementById('results');
+  r.innerHTML = html;
+  r.classList.add('show');
+
+  // Scroll to results
+  r.scrollIntoView({ behavior: 'smooth', block: 'start' });
+
+  // GA4 event
+  if (typeof gtag === 'function') {
+    gtag('event', 'calculate_side_hustle_tax', {
+      employment_income_band: employmentIncome < 12570 ? 'under_pa' : employmentIncome < 50270 ? 'basic' : employmentIncome < 125140 ? 'higher' : 'additional',
+      side_income_band: sideIncome < 1000 ? 'under_trading' : sideIncome < 5000 ? 'small' : sideIncome < 20000 ? 'medium' : 'large',
+      used_trading_allowance: useTrading,
+      student_loan: studentLoanPlan,
+      effective_rate: Math.round(result.effectiveRate)
+    });
+  }
+}
+</script>
+</body>
+</html>
