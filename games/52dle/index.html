@@ -20,6 +20,7 @@
 <meta property="og:title" content="52-dle · MathsWins">
 <meta property="og:description" content="Play 52-dle, a daily number-guessing game. Use maths clues and deduction to identify the hidden number in six guesses or fewer.">
 <meta property="og:url" content="https://mathswins.co.uk/games/52dle/">
+<meta property="og:image" content="https://mathswins.co.uk/assets/og-image.png">
 <link rel="canonical" href="https://mathswins.co.uk/games/52dle/">
 <link rel="icon" type="image/svg+xml" href="../../schools/assets/favicon.svg">
 <title>52-dle · MathsWins</title>
@@ -559,12 +560,15 @@ nav {
   .si-val { font-size: 0.9rem; }
 }
 </style>
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:title" content="MathsWins">
+<meta name="twitter:image" content="https://mathswins.co.uk/assets/og-image.png">
 </head>
 <body>
 <script src="/auth/mw-auth.js"></script>
 
 <nav>
-  <a class="nav-logo" href="/">Maffs Games</a>
+  <a class="nav-logo" href="/">MathsWins</a>
   <span style="font-family:'DM Mono',monospace;font-size:0.48rem;letter-spacing:0.1em;text-transform:uppercase;padding:0.2rem 0.6rem;border:1px solid #134e4a;border-radius:2px;color:#2dd4bf">Hosted on QF Network</span>
   <a class="nav-back" href="../../">← Back</a>
 </nav>
@@ -840,7 +844,7 @@ function buildShareGrid() {
 function shareResult() {
   const grid = buildShareGrid();
   const secs = Math.floor(((state.endTime||Date.now()) - state.startTime) / 1000) + (state.elapsed||0);
-  const txt = `52-dle ${new Date().toLocaleDateString('en-GB')}\n${state.won ? '✓ ' + state.guesses.length + '/6' : '✗ X/6'} · ${state.hintsUsed} hints\n${grid}\nmaffsgames.qfnetwork.io/52dle`;
+  const txt = `52-dle ${new Date().toLocaleDateString('en-GB')}\n${state.won ? '✓ ' + state.guesses.length + '/6' : '✗ X/6'} · ${state.hintsUsed} hints\n${grid}\nmathswins.co.uk/games/52dle`;
   if (navigator.clipboard) {
     navigator.clipboard.writeText(txt).then(() => {
       const btn = document.querySelector('.modal-acts .btn-ghost');
@@ -981,6 +985,17 @@ function init() {
 }
 
 init();
+</script>
+<!-- Cookie Consent Banner -->
+<div id="cookieConsent" style="display:none;position:fixed;bottom:0;left:0;right:0;background:#0c1628;border-top:1px solid #14263d;padding:14px 24px;z-index:99999;font-family:'Outfit',system-ui,sans-serif;font-size:13px;color:#94a3b8;display:none;align-items:center;justify-content:center;gap:16px;flex-wrap:wrap">
+<span>We use cookies for analytics to improve your experience. No personal data is sold or shared.</span>
+<button onclick="acceptCookies()" style="background:#d4a847;color:#050709;border:none;padding:8px 20px;border-radius:4px;font-weight:700;font-size:13px;cursor:pointer;font-family:inherit">Accept</button>
+<button onclick="declineCookies()" style="background:transparent;color:#64748b;border:1px solid #14263d;padding:8px 20px;border-radius:4px;font-size:13px;cursor:pointer;font-family:inherit">Decline</button>
+</div>
+<script>
+function acceptCookies(){localStorage.setItem('mw_cookies','accepted');gtag('consent','update',{analytics_storage:'granted'});document.getElementById('cookieConsent').style.display='none';}
+function declineCookies(){localStorage.setItem('mw_cookies','declined');document.getElementById('cookieConsent').style.display='none';}
+(function(){var c=localStorage.getItem('mw_cookies');if(c==='accepted'){gtag('consent','update',{analytics_storage:'granted'});}else if(!c){document.getElementById('cookieConsent').style.display='flex';}})();
 </script>
 </body>
 </html>

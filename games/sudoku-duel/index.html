@@ -20,6 +20,7 @@
 <meta property="og:title" content="Sudoku Duel · MathsWins">
 <meta property="og:description" content="Solve the daily Sudoku puzzle and race for the fastest time. A new board every 24 hours.">
 <meta property="og:url" content="https://mathswins.co.uk/games/sudoku-duel/">
+<meta property="og:image" content="https://mathswins.co.uk/assets/og-image.png">
 <link rel="canonical" href="https://mathswins.co.uk/games/sudoku-duel/">
 <link rel="icon" type="image/svg+xml" href="../../schools/assets/favicon.svg">
 <title>Sudoku Duel · MathsWins</title>
@@ -317,12 +318,15 @@ nav {
   .btn { padding:0.5rem 0.5rem; font-size:0.52rem; }
 }
 </style>
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:title" content="MathsWins">
+<meta name="twitter:image" content="https://mathswins.co.uk/assets/og-image.png">
 </head>
 <body>
 <script src="/auth/mw-auth.js"></script>
 
 <nav>
-  <a class="nav-logo" href="/">Maffs Games</a>
+  <a class="nav-logo" href="/">MathsWins</a>
   <span style="font-family:'DM Mono',monospace;font-size:0.48rem;letter-spacing:0.1em;text-transform:uppercase;padding:0.2rem 0.6rem;border:1px solid #134e4a;border-radius:2px;color:#2dd4bf">Hosted on QF Network</span>
   <a class="nav-back" href="../../">← Back</a>
 </nav>
@@ -740,7 +744,7 @@ function shareResult() {
   const m=Math.floor(secs/60), s=secs%60;
   const won = grid.every((v,i)=>v===solution[i]);
   const pct = Math.round(finalScore/BASE*100);
-  const txt = `Sudoku Duel ${new Date().toLocaleDateString('en-GB')}\n${won?'✓ Solved':'✗ DNF'} · ${m}:${s.toString().padStart(2,'0')} · ${mistakes} mistakes · ${hintsUsed} hints\nScore: ${finalScore.toLocaleString()} (${pct}% of base)\nmaffsgames.qfnetwork.io/sudoku-duel`;
+  const txt = `Sudoku Duel ${new Date().toLocaleDateString('en-GB')}\n${won?'✓ Solved':'✗ DNF'} · ${m}:${s.toString().padStart(2,'0')} · ${mistakes} mistakes · ${hintsUsed} hints\nScore: ${finalScore.toLocaleString()} (${pct}% of base)\nmathswins.co.uk/games/sudoku-duel`;
   navigator.clipboard && navigator.clipboard.writeText(txt);
   const btn = document.querySelector('.modal-acts .btn-ghost');
   btn.textContent='Copied!'; setTimeout(()=>btn.textContent='Share',2000);
@@ -829,6 +833,17 @@ function init() {
 }
 
 init();
+</script>
+<!-- Cookie Consent Banner -->
+<div id="cookieConsent" style="display:none;position:fixed;bottom:0;left:0;right:0;background:#0c1628;border-top:1px solid #14263d;padding:14px 24px;z-index:99999;font-family:'Outfit',system-ui,sans-serif;font-size:13px;color:#94a3b8;display:none;align-items:center;justify-content:center;gap:16px;flex-wrap:wrap">
+<span>We use cookies for analytics to improve your experience. No personal data is sold or shared.</span>
+<button onclick="acceptCookies()" style="background:#d4a847;color:#050709;border:none;padding:8px 20px;border-radius:4px;font-weight:700;font-size:13px;cursor:pointer;font-family:inherit">Accept</button>
+<button onclick="declineCookies()" style="background:transparent;color:#64748b;border:1px solid #14263d;padding:8px 20px;border-radius:4px;font-size:13px;cursor:pointer;font-family:inherit">Decline</button>
+</div>
+<script>
+function acceptCookies(){localStorage.setItem('mw_cookies','accepted');gtag('consent','update',{analytics_storage:'granted'});document.getElementById('cookieConsent').style.display='none';}
+function declineCookies(){localStorage.setItem('mw_cookies','declined');document.getElementById('cookieConsent').style.display='none';}
+(function(){var c=localStorage.getItem('mw_cookies');if(c==='accepted'){gtag('consent','update',{analytics_storage:'granted'});}else if(!c){document.getElementById('cookieConsent').style.display='flex';}})();
 </script>
 </body>
 </html>

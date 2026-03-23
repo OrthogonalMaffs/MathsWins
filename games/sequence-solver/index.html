@@ -7,6 +7,7 @@
 <meta property="og:title" content="Sequence Solver · MathsWins">
 <meta property="og:description" content="Spot the pattern and find the rule. Covers arithmetic, geometric, quadratic sequences and sigma notation.">
 <meta property="og:url" content="https://mathswins.co.uk/games/sequence-solver/">
+<meta property="og:image" content="https://mathswins.co.uk/assets/og-image.png">
 <link rel="canonical" href="https://mathswins.co.uk/games/sequence-solver/">
 <link rel="icon" type="image/svg+xml" href="../../schools/assets/favicon.svg">
 <title>Sequence Solver · MathsWins</title>
@@ -59,6 +60,9 @@ body{font-family:'Outfit',sans-serif;background:var(--bg);color:var(--text);min-
 .katex{font-size:1.05em!important}.q-card .katex{font-size:1.25em!important}
 .back-link{display:inline-block;margin:1rem 0;color:var(--muted);text-decoration:none;font-size:.85rem}.back-link:hover{color:var(--text)}
 </style>
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:title" content="MathsWins">
+<meta name="twitter:image" content="https://mathswins.co.uk/assets/og-image.png">
 </head>
 <body>
 <script src="/auth/mw-auth.js"></script>
@@ -322,6 +326,17 @@ function pip(c){const ps=document.querySelectorAll('.pip');if(ps[qIdx]){ps[qIdx]
 function adv(){qIdx++;if(qIdx>=totalQ){end();return}document.querySelectorAll('.pip')[qIdx]?.classList.add('current');showQ()}
 function end(){const pct=Math.round(correctCount/totalQ*100);let t='Keep Practising!';if(pct>=90)t='Outstanding!';else if(pct>=70)t='Well Done!';else if(pct>=50)t='Good Effort!';document.getElementById('resultTitle').textContent=t;document.getElementById('finalScore').textContent=score;document.getElementById('statsLine').textContent=`${correctCount}/${totalQ} correct (${pct}%) · Best streak: ${bestStreak}`;show('results')}
 function showMenu(){show('menu')}
+</script>
+<!-- Cookie Consent Banner -->
+<div id="cookieConsent" style="display:none;position:fixed;bottom:0;left:0;right:0;background:#0c1628;border-top:1px solid #14263d;padding:14px 24px;z-index:99999;font-family:'Outfit',system-ui,sans-serif;font-size:13px;color:#94a3b8;display:none;align-items:center;justify-content:center;gap:16px;flex-wrap:wrap">
+<span>We use cookies for analytics to improve your experience. No personal data is sold or shared.</span>
+<button onclick="acceptCookies()" style="background:#d4a847;color:#050709;border:none;padding:8px 20px;border-radius:4px;font-weight:700;font-size:13px;cursor:pointer;font-family:inherit">Accept</button>
+<button onclick="declineCookies()" style="background:transparent;color:#64748b;border:1px solid #14263d;padding:8px 20px;border-radius:4px;font-size:13px;cursor:pointer;font-family:inherit">Decline</button>
+</div>
+<script>
+function acceptCookies(){localStorage.setItem('mw_cookies','accepted');gtag('consent','update',{analytics_storage:'granted'});document.getElementById('cookieConsent').style.display='none';}
+function declineCookies(){localStorage.setItem('mw_cookies','declined');document.getElementById('cookieConsent').style.display='none';}
+(function(){var c=localStorage.getItem('mw_cookies');if(c==='accepted'){gtag('consent','update',{analytics_storage:'granted'});}else if(!c){document.getElementById('cookieConsent').style.display='flex';}})();
 </script>
 </body>
 </html>

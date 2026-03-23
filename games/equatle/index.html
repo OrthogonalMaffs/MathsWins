@@ -20,6 +20,7 @@
 <meta property="og:title" content="Equatle · MathsWins">
 <meta property="og:description" content="Equatle is a daily maths Wordle. Guess the hidden equation in six attempts using colour-coded feedback for each digit and operator.">
 <meta property="og:url" content="https://mathswins.co.uk/games/equatle/">
+<meta property="og:image" content="https://mathswins.co.uk/assets/og-image.png">
 <link rel="canonical" href="https://mathswins.co.uk/games/equatle/">
 <link rel="icon" type="image/svg+xml" href="../../schools/assets/favicon.svg">
 <title>Equatle · MathsWins</title>
@@ -187,11 +188,14 @@ body.cb .tile[data-s=present]::after{content:'▲';position:absolute;bottom:1px;
 .toast{position:fixed;top:66px;left:50%;transform:translateX(-50%);background:var(--body);color:var(--ink);z-index:300;padding:.55rem 1.1rem;border-radius:3px;font-family:'DM Mono',monospace;font-size:.62rem;font-weight:500;opacity:0;transition:opacity .2s;pointer-events:none;white-space:nowrap}
 .toast.on{opacity:1}
 </style>
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:title" content="MathsWins">
+<meta name="twitter:image" content="https://mathswins.co.uk/assets/og-image.png">
 </head>
 <body>
 <script src="/auth/mw-auth.js"></script>
 <nav>
-  <a class="logo" href="/">Maffs Games</a>
+  <a class="logo" href="/">MathsWins</a>
   <span style="font-family:'DM Mono',monospace;font-size:0.48rem;letter-spacing:0.1em;text-transform:uppercase;padding:0.2rem 0.6rem;border:1px solid #134e4a;border-radius:2px;color:#2dd4bf">Hosted on QF Network</span>
   <span class="pill" id="mode-pill">Daily</span>
   <div class="nav-r">
@@ -244,7 +248,7 @@ body.cb .tile[data-s=present]::after{content:'▲';position:absolute;bottom:1px;
     </div>
     <div id="lbrows"></div>
     <div id="lbsub" style="display:none"><div class="lbsr"><button class="btn bg" id="lbsbtn" onclick="submitLB()" disabled>Submit Score (finish puzzle first)</button></div></div>
-    <div class="lbnote">Local scores until Maffs Games launches on-chain.</div>
+    <div class="lbnote">Local scores until MathsWins launches on-chain.</div>
   </div>
 </div>
 
@@ -799,7 +803,7 @@ function share(){
   const s=lstats(), score=G.status==='won'?G.guesses.length+'/6':'X/6';
   const EM={correct:'🟩',present:'🟨',absent:'⬜'};
   const lines=G.guesses.map(g=>states(g,G.target).map(st=>EM[st]).join(''));
-  const text=[`Equatle #${pnum()} ${score} 🔥${s.streak||0}`,...lines,'equatle.maffsgames.io'].join('\n');
+  const text=[`Equatle #${pnum()} ${score} 🔥${s.streak||0}`,...lines,'mathswins.co.uk/games/equatle'].join('\n');
   navigator.clipboard.writeText(text).then(()=>toast('Copied!')).catch(()=>{});
 }
 
@@ -916,6 +920,17 @@ function init(){
 }
 
 init();
+</script>
+<!-- Cookie Consent Banner -->
+<div id="cookieConsent" style="display:none;position:fixed;bottom:0;left:0;right:0;background:#0c1628;border-top:1px solid #14263d;padding:14px 24px;z-index:99999;font-family:'Outfit',system-ui,sans-serif;font-size:13px;color:#94a3b8;display:none;align-items:center;justify-content:center;gap:16px;flex-wrap:wrap">
+<span>We use cookies for analytics to improve your experience. No personal data is sold or shared.</span>
+<button onclick="acceptCookies()" style="background:#d4a847;color:#050709;border:none;padding:8px 20px;border-radius:4px;font-weight:700;font-size:13px;cursor:pointer;font-family:inherit">Accept</button>
+<button onclick="declineCookies()" style="background:transparent;color:#64748b;border:1px solid #14263d;padding:8px 20px;border-radius:4px;font-size:13px;cursor:pointer;font-family:inherit">Decline</button>
+</div>
+<script>
+function acceptCookies(){localStorage.setItem('mw_cookies','accepted');gtag('consent','update',{analytics_storage:'granted'});document.getElementById('cookieConsent').style.display='none';}
+function declineCookies(){localStorage.setItem('mw_cookies','declined');document.getElementById('cookieConsent').style.display='none';}
+(function(){var c=localStorage.getItem('mw_cookies');if(c==='accepted'){gtag('consent','update',{analytics_storage:'granted'});}else if(!c){document.getElementById('cookieConsent').style.display='flex';}})();
 </script>
 </body>
 </html>

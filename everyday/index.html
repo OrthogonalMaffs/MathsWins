@@ -8,6 +8,7 @@
 <meta property="og:title" content="Everyday Maths — Free Financial Literacy Courses">
 <meta property="og:description" content="Free courses on UK tax, mortgages, pensions, compound interest, inflation, and probability. The maths behind everyday money decisions.">
 <meta property="og:url" content="https://mathswins.co.uk/everyday/">
+<meta property="og:image" content="https://mathswins.co.uk/assets/og-image.png">
 <meta property="og:type" content="website">
 <link rel="canonical" href="https://mathswins.co.uk/everyday/">
 <link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Crimson+Pro:ital,wght@0,400;0,700;1,400&family=DM+Mono:wght@400;500&family=Outfit:wght@300;400;600;700&display=swap" rel="stylesheet">
@@ -328,6 +329,9 @@ footer {
 footer a { color: var(--muted); text-decoration: none; }
 footer a:hover { color: var(--sky); }
 </style>
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:title" content="MathsWins">
+<meta name="twitter:image" content="https://mathswins.co.uk/assets/og-image.png">
 </head>
 <body>
 <script src="/auth/mw-auth.js"></script>
@@ -545,5 +549,16 @@ footer a:hover { color: var(--sky); }
 
 </div>
 
+<!-- Cookie Consent Banner -->
+<div id="cookieConsent" style="display:none;position:fixed;bottom:0;left:0;right:0;background:#0c1628;border-top:1px solid #14263d;padding:14px 24px;z-index:99999;font-family:'Outfit',system-ui,sans-serif;font-size:13px;color:#94a3b8;display:none;align-items:center;justify-content:center;gap:16px;flex-wrap:wrap">
+<span>We use cookies for analytics to improve your experience. No personal data is sold or shared.</span>
+<button onclick="acceptCookies()" style="background:#d4a847;color:#050709;border:none;padding:8px 20px;border-radius:4px;font-weight:700;font-size:13px;cursor:pointer;font-family:inherit">Accept</button>
+<button onclick="declineCookies()" style="background:transparent;color:#64748b;border:1px solid #14263d;padding:8px 20px;border-radius:4px;font-size:13px;cursor:pointer;font-family:inherit">Decline</button>
+</div>
+<script>
+function acceptCookies(){localStorage.setItem('mw_cookies','accepted');gtag('consent','update',{analytics_storage:'granted'});document.getElementById('cookieConsent').style.display='none';}
+function declineCookies(){localStorage.setItem('mw_cookies','declined');document.getElementById('cookieConsent').style.display='none';}
+(function(){var c=localStorage.getItem('mw_cookies');if(c==='accepted'){gtag('consent','update',{analytics_storage:'granted'});}else if(!c){document.getElementById('cookieConsent').style.display='flex';}})();
+</script>
 </body>
 </html>
