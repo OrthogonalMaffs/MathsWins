@@ -92,6 +92,14 @@
         "@type": "Answer",
         "text": "If your debt APR is higher than your savings interest rate, paying off debt first is mathematically better. But always keep a small emergency fund (£1,000) before aggressively paying down debt."
       }
+    },
+    {
+      "@type": "Question",
+      "name": "What about loans where interest is added upfront?",
+      "acceptedAnswer": {
+        "@type": "Answer",
+        "text": "Some lenders like Oakbrook calculate all interest at the start and add it to your balance. Your monthly payments just divide the total by the number of months. For these loans, tick 'Interest already added to balance' and the calculator treats the APR as 0% since interest is already baked into the balance."
+      }
     }
   ]
 }
@@ -124,6 +132,10 @@ body{font-family:'Outfit',sans-serif;background:var(--bg);color:var(--text);min-
 
 /* Debt rows */
 .debt-row{display:grid;grid-template-columns:1.5fr 1fr 0.8fr 1fr 40px;gap:0.75rem;align-items:end;margin-bottom:0.75rem;}
+.precomp-row{display:flex;align-items:center;gap:0.5rem;margin:-0.25rem 0 0.75rem 0;padding-left:2px;}
+.precomp-row input[type="checkbox"]{accent-color:var(--gold);width:16px;height:16px;cursor:pointer;}
+.precomp-row label{font-size:0.75rem;color:var(--muted);cursor:pointer;}
+.precomp-row .hint{font-size:0.7rem;color:#4a5568;font-style:italic;}
 @media(max-width:700px){.debt-row{grid-template-columns:1fr 1fr;gap:0.5rem;}.debt-row .fg:first-child{grid-column:1/-1;}.debt-row .del-btn{grid-column:2;justify-self:end;}}
 .del-btn{background:transparent;border:1px solid var(--border2);color:var(--red);font-size:1.2rem;width:36px;height:36px;border-radius:6px;cursor:pointer;display:flex;align-items:center;justify-content:center;transition:background 0.2s;}
 .del-btn:hover{background:rgba(239,83,80,0.15);}
@@ -344,6 +356,10 @@ body{font-family:'Outfit',sans-serif;background:var(--bg);color:var(--text);min-
     <div class="faq-q" onclick="toggleFaq(this)">Should I save or pay off debt first?</div>
     <div class="faq-a"><p>If your debt APR is higher than your savings interest rate, paying off debt first is mathematically better. But always keep a small emergency fund (&pound;1,000) before aggressively paying down debt.</p></div>
   </div>
+  <div class="faq-item">
+    <div class="faq-q" onclick="toggleFaq(this)">What about loans where interest is added upfront?</div>
+    <div class="faq-a"><p>Some lenders (like Oakbrook) calculate all interest at the start and add it to your balance. Your monthly payments just divide the total by the number of months — no ongoing interest calculation. For these loans, tick "Interest already added to balance" and the calculator treats it correctly. The balance you owe is already the full amount including interest.</p></div>
+  </div>
 </div>
 
 <div class="cta-card">
@@ -365,6 +381,9 @@ let debtCount = 0;
 function addDebtRow(name, balance, apr, minPay) {
   debtCount++;
   const id = debtCount;
+  const wrapper = document.createElement('div');
+  wrapper.id = 'debtwrap-' + id;
+
   const row = document.createElement('div');
   row.className = 'debt-row';
   row.id = 'debt-' + id;
@@ -375,13 +394,24 @@ function addDebtRow(name, balance, apr, minPay) {
     <div class="fg"><label>Min payment (&pound;/mo)</label><input type="number" id="min-${id}" value="${minPay || ''}" min="1" step="5" placeholder="85"></div>
     <button class="del-btn" onclick="removeDebtRow(${id})" title="Remove this debt">&times;</button>
   `;
-  document.getElementById('debtRows').appendChild(row);
+
+  const precomp = document.createElement('div');
+  precomp.className = 'precomp-row';
+  precomp.innerHTML = `
+    <input type="checkbox" id="precomp-${id}">
+    <label for="precomp-${id}">Interest already added to balance</label>
+    <span class="hint">(e.g. Oakbrook, pre-computed interest loans)</span>
+  `;
+
+  wrapper.appendChild(row);
+  wrapper.appendChild(precomp);
+  document.getElementById('debtRows').appendChild(wrapper);
   updateDeleteButtons();
 }
 
 function removeDebtRow(id) {
-  const row = document.getElementById('debt-' + id);
-  if (row) row.remove();
+  const wrapper = document.getElementById('debtwrap-' + id);
+  if (wrapper) wrapper.remove();
   updateDeleteButtons();
 }
 
@@ -400,10 +430,13 @@ function getDebts() {
     const id = row.id.replace('debt-', '');
     const name = document.getElementById('name-' + id).value.trim() || ('Debt ' + id);
     const balance = parseFloat(document.getElementById('bal-' + id).value);
-    const apr = parseFloat(document.getElementById('apr-' + id).value);
+    const rawApr = parseFloat(document.getElementById('apr-' + id).value);
     const minPayment = parseFloat(document.getElementById('min-' + id).value);
-    if (balance > 0 && apr >= 0 && minPayment > 0) {
-      debts.push({ name, balance, apr, minPayment });
+    const precomputed = document.getElementById('precomp-' + id)?.checked || false;
+    // Pre-computed interest: interest is already baked into the balance, so effective APR is 0
+    const apr = precomputed ? 0 : rawApr;
+    if (balance > 0 && rawApr >= 0 && minPayment > 0) {
+      debts.push({ name, balance, apr, minPayment, precomputed });
     }
   });
   return debts;
