@@ -114,6 +114,53 @@ body{font-family:'Outfit',sans-serif;background:var(--bg);color:var(--text);min-
     <li><strong>Opposite</strong> &mdash; the side directly opposite the angle you are looking at.</li>
     <li><strong>Adjacent</strong> &mdash; the side next to the angle (that is not the hypotenuse).</li>
   </ul>
+  <p><strong>This is the most important thing to understand:</strong> the hypotenuse never changes — it's always opposite the right angle. But <em>opposite</em> and <em>adjacent</em> swap depending on which angle you're working with.</p>
+
+  <div style="display:flex;gap:1.5rem;flex-wrap:wrap;justify-content:center;margin:1.5rem 0">
+    <!-- Triangle 1: angle A at bottom-left -->
+    <div style="text-align:center">
+      <svg viewBox="0 0 220 180" width="220" height="180" style="display:block;margin:0 auto">
+        <!-- Triangle -->
+        <polygon points="20,160 200,160 200,30" fill="none" stroke="#4a5568" stroke-width="2"/>
+        <!-- Right angle marker -->
+        <rect x="185" y="145" width="15" height="15" fill="none" stroke="#4a5568" stroke-width="1.5"/>
+        <!-- Angle A arc -->
+        <path d="M 50,160 A 30,30 0 0,0 38,140" fill="none" stroke="#d4a847" stroke-width="2.5"/>
+        <!-- Labels -->
+        <text x="30" y="155" font-family="Outfit,sans-serif" font-size="14" font-weight="700" fill="#d4a847">A</text>
+        <text x="110" y="178" font-family="DM Mono,monospace" font-size="11" fill="#94a3b8" text-anchor="middle">Adjacent</text>
+        <text x="215" y="100" font-family="DM Mono,monospace" font-size="11" fill="#2dd4a0" text-anchor="start">Opposite</text>
+        <text x="95" y="85" font-family="DM Mono,monospace" font-size="11" fill="#ef5350" text-anchor="middle" transform="rotate(-35,95,85)">Hypotenuse</text>
+      </svg>
+      <div style="font-size:0.75rem;color:var(--muted);margin-top:0.25rem">Looking from angle <span style="color:#d4a847;font-weight:700">A</span></div>
+    </div>
+
+    <!-- Triangle 2: angle B at top-right -->
+    <div style="text-align:center">
+      <svg viewBox="0 0 220 180" width="220" height="180" style="display:block;margin:0 auto">
+        <!-- Same triangle -->
+        <polygon points="20,160 200,160 200,30" fill="none" stroke="#4a5568" stroke-width="2"/>
+        <!-- Right angle marker -->
+        <rect x="185" y="145" width="15" height="15" fill="none" stroke="#4a5568" stroke-width="1.5"/>
+        <!-- Angle B arc -->
+        <path d="M 200,60 A 30,30 0 0,0 175,40" fill="none" stroke="#0ea5e9" stroke-width="2.5"/>
+        <!-- Labels -->
+        <text x="195" y="35" font-family="Outfit,sans-serif" font-size="14" font-weight="700" fill="#0ea5e9">B</text>
+        <text x="110" y="178" font-family="DM Mono,monospace" font-size="11" fill="#2dd4a0" text-anchor="middle">Opposite</text>
+        <text x="215" y="100" font-family="DM Mono,monospace" font-size="11" fill="#94a3b8" text-anchor="start">Adjacent</text>
+        <text x="95" y="85" font-family="DM Mono,monospace" font-size="11" fill="#ef5350" text-anchor="middle" transform="rotate(-35,95,85)">Hypotenuse</text>
+      </svg>
+      <div style="font-size:0.75rem;color:var(--muted);margin-top:0.25rem">Looking from angle <span style="color:#0ea5e9;font-weight:700">B</span></div>
+    </div>
+  </div>
+
+  <div style="background:var(--surface2);border:1px solid var(--border2);border-radius:8px;padding:1rem 1.25rem;margin:1rem 0;font-size:0.85rem;line-height:1.7">
+    <strong style="color:var(--text-bright)">Same triangle. Same sides. Different angle.</strong><br>
+    The <span style="color:#ef5350;font-weight:600">hypotenuse</span> (red) stays the same — it's always the longest side, always opposite the right angle.<br>
+    But the <span style="color:#2dd4a0">opposite</span> and <span style="color:#94a3b8">adjacent</span> swap depending on which angle you're working from.<br>
+    <em>This is the single most common mistake in trigonometry.</em>
+  </div>
+
   <p>The three ratios connect these sides to the angle:</p>
   <div class="math-block">
     $$\sin(\theta) = \frac{\text{Opposite}}{\text{Hypotenuse}} \qquad \cos(\theta) = \frac{\text{Adjacent}}{\text{Hypotenuse}} \qquad \tan(\theta) = \frac{\text{Opposite}}{\text{Adjacent}}$$
