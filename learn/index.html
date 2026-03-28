@@ -1,76 +1,180 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="en-GB">
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<meta name="robots" content="noindex, nofollow">
-<title>Learn — Mathematical Articles & Guides | MathsWins</title>
+<title>Learn — The Maths Behind Better Decisions | MathsWins</title>
+<meta name="description" content="In-depth articles on poker odds, bookmaker margins, salary sacrifice, and the mathematics behind everyday decisions. Free guides from MathsWins.">
+<meta property="og:title" content="Learn — The Maths Behind Better Decisions | MathsWins">
+<meta property="og:description" content="In-depth articles on poker odds, bookmaker margins, salary sacrifice, and the mathematics behind everyday decisions.">
+<meta property="og:url" content="https://mathswins.co.uk/learn/">
+<meta property="og:image" content="https://mathswins.co.uk/assets/og-image.png">
+<meta property="og:type" content="website">
+<meta name="twitter:card" content="summary_large_image">
+<link rel="canonical" href="https://mathswins.co.uk/learn/">
+<script type="application/ld+json">
+{"@context":"https://schema.org","@type":"CollectionPage","name":"Learn — MathsWins Articles","description":"In-depth mathematical articles on probability, expected value, and financial decision-making.","url":"https://mathswins.co.uk/learn/","provider":{"@type":"EducationalOrganization","name":"MathsWins","url":"https://mathswins.co.uk"},"hasPart":[{"@type":"Article","name":"How to Calculate Poker Odds","url":"https://mathswins.co.uk/learn/how-to-calculate-poker-odds/"},{"@type":"Article","name":"How Salary Sacrifice Works","url":"https://mathswins.co.uk/learn/salary-sacrifice-explained/"},{"@type":"Article","name":"How Bookmaker Odds Work — Overround Explained","url":"https://mathswins.co.uk/learn/overround-explained/"}]}
+</script>
 <link rel="preconnect" href="https://fonts.googleapis.com">
-<link href="https://fonts.googleapis.com/css2?family=DM+Mono:wght@400;500&family=Bebas+Neue&family=Crimson+Pro:ital,wght@0,400;0,700;1,400&family=Outfit:wght@300;400;600;700&display=swap" rel="stylesheet">
-<!-- Google Analytics (cookieless) -->
+<link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Crimson+Pro:ital,wght@0,400;0,700;1,400&family=DM+Mono:wght@400;500&family=Outfit:wght@300;400;600;700&display=swap" rel="stylesheet">
 <script async src="https://www.googletagmanager.com/gtag/js?id=G-7GTLYCZMXN"></script>
 <script>window.dataLayer=window.dataLayer||[];function gtag(){dataLayer.push(arguments);}gtag('js',new Date());gtag('consent','default',{analytics_storage:'denied',ad_storage:'denied',ad_user_data:'denied',ad_personalization:'denied'});gtag('config','G-7GTLYCZMXN',{send_page_view:true,anonymize_ip:true});</script>
 <style>
 *{margin:0;padding:0;box-sizing:border-box}
 :root{
   --bg:#050709;--surface:#0a0d14;--surface2:#0f1319;--border:#161c28;--border2:#1e2638;
-  --navy:#1a2744;--gold:#d4a847;--gold-dim:rgba(212,168,71,.06);--gold-glow:rgba(212,168,71,.12);
-  --teal:#0d9488;--teal-bright:#2dd4bf;--teal-dim:rgba(13,148,136,.08);
-  --green:#2dd4a0;--red:#ef5350;--blue:#2563eb;--purple:#7c3aed;
-  --text:#c8cdd8;--text-bright:#e8ecf4;--muted:#4a5568;--muted2:#2d3748;
+  --gold:#d4a847;--gold-dim:rgba(212,168,71,.08);
+  --teal:#0d9488;--teal-dim:rgba(13,148,136,.08);
+  --green:#2dd4a0;--blue:#2563eb;--purple:#7c3aed;
+  --text:#c8cdd8;--text-bright:#e8ecf4;--muted:#4a5568;
 }
-body{font-family:'Outfit',sans-serif;background:var(--bg);color:var(--text);min-height:100vh;-webkit-font-smoothing:antialiased;overflow-x:hidden;display:flex;flex-direction:column}
-.outer{max-width:900px;margin:0 auto;padding:0 1.25rem;flex:1;display:flex;flex-direction:column}
-.content{flex:1;display:flex;flex-direction:column;align-items:center;justify-content:center;text-align:center;padding:6rem 0}
-h1{font-family:'Bebas Neue',sans-serif;font-size:4rem;letter-spacing:.06em;color:var(--gold);line-height:1;margin-bottom:1rem}
-.subtitle{font-family:'Crimson Pro',serif;font-style:italic;font-size:1.15rem;color:var(--muted);max-width:500px;line-height:1.6}
-.back-link{display:inline-block;margin-top:2.5rem;font-size:.85rem;color:var(--muted);text-decoration:none;border:1px solid var(--border2);padding:.5rem 1.4rem;border-radius:20px;transition:all .15s}
-.back-link:hover{border-color:var(--gold);color:var(--text)}
-.footer{text-align:center;padding:2rem 0;margin-top:2rem;border-top:1px solid var(--border)}
-.footer p{font-size:.68rem;color:var(--muted2);line-height:1.6}
+body{font-family:'Outfit',sans-serif;background:var(--bg);color:var(--text);min-height:100vh;line-height:1.6;-webkit-font-smoothing:antialiased}
+.container{max-width:800px;margin:0 auto;padding:0 1.25rem}
+
+.nav-bar{display:flex;align-items:center;justify-content:space-between;padding:1rem 0;border-bottom:1px solid var(--border);margin-bottom:2.5rem}
+.nav-brand{font-family:'Bebas Neue',sans-serif;font-size:1.4rem;color:var(--gold);text-decoration:none;letter-spacing:.06em}
+.nav-brand span{color:var(--text-bright)}
+.nav-link{font-size:.85rem;font-weight:600;color:var(--gold);text-decoration:none;padding:.4rem 1rem;border:1px solid rgba(212,168,71,.3);border-radius:4px;transition:all .2s}
+.nav-link:hover{background:var(--gold-dim);border-color:var(--gold)}
+
+header{padding:2rem 0;text-align:center}
+header h1{font-family:'Bebas Neue',sans-serif;font-size:2.8rem;color:var(--text-bright);letter-spacing:.03em;margin-bottom:.4rem}
+header p{font-size:1rem;color:var(--muted);max-width:560px;margin:0 auto;line-height:1.6}
+
+.topic-label{font-family:'Bebas Neue',sans-serif;font-size:1.1rem;color:var(--gold);letter-spacing:.06em;margin-top:2.5rem;margin-bottom:1rem;padding-bottom:.5rem;border-bottom:1px solid var(--border)}
+
+.articles{display:flex;flex-direction:column;gap:1rem;margin-bottom:1rem}
+
+.article-card{
+  display:block;text-decoration:none;color:inherit;
+  background:var(--surface);border:1px solid var(--border);border-radius:12px;
+  padding:1.4rem 1.6rem;transition:all .15s;position:relative;overflow:hidden
+}
+.article-card:hover{border-color:var(--gold);transform:translateY(-2px);box-shadow:0 4px 20px rgba(212,168,71,.08)}
+.article-card .card-eyebrow{font-size:.75rem;font-weight:600;text-transform:uppercase;letter-spacing:.06em;margin-bottom:.4rem}
+.article-card h3{font-size:1.05rem;font-weight:700;color:var(--text-bright);margin-bottom:.4rem}
+.article-card p{font-size:.88rem;color:var(--muted);line-height:1.5}
+.article-card .read-more{font-size:.82rem;font-weight:600;color:var(--gold);margin-top:.6rem;display:inline-block}
+
+.hub-links{
+  display:flex;gap:1rem;flex-wrap:wrap;justify-content:center;
+  margin:3rem 0 2rem;padding-top:2rem;border-top:1px solid var(--border)
+}
+.hub-link{
+  padding:.6rem 1.2rem;border-radius:8px;border:1px solid var(--border);
+  background:var(--surface);color:var(--text-bright);text-decoration:none;
+  font-weight:600;font-size:.85rem;transition:all .15s
+}
+.hub-link:hover{border-color:var(--gold);color:var(--gold)}
+
+.footer{text-align:center;padding:2rem 0;font-size:.78rem;color:var(--muted);border-top:1px solid var(--border);margin-top:2rem}
 .footer a{color:var(--muted);text-decoration:none}
-.footer a:hover{color:var(--gold)}
+.footer a:hover{color:var(--text)}
+
+@media(max-width:480px){
+  header h1{font-size:2.2rem}
+}
 </style>
-<meta name="twitter:card" content="summary_large_image">
-<meta name="twitter:title" content="MathsWins">
-<meta name="twitter:image" content="https://mathswins.co.uk/assets/og-image.png">
-<meta property="og:image" content="https://mathswins.co.uk/assets/og-image.png">
-<link rel="canonical" href="https://mathswins.co.uk/learn/">
-<meta property="og:title" content="Learn — Mathematical Articles & Guides | MathsWins">
-<meta property="og:description" content="Mathematical articles, guides and resources from MathsWins.">
-<meta property="og:type" content="website">
-<meta property="og:url" content="https://mathswins.co.uk/learn/">
-<meta name="description" content="Learn — Mathematical Articles & Guides | MathsWins — Free maths games, courses and tools from MathsWins.">
 </head>
 <body>
 <script src="/auth/mw-auth.js"></script>
-<div class="outer">
 
-<div class="content">
-<h1>COMING SOON</h1>
-<p class="subtitle">In-depth mathematical articles arriving shortly.</p>
-<a href="/" class="back-link">Back to MathsWins</a>
+<div class="container">
+
+<nav class="nav-bar">
+  <a href="/" class="nav-brand">MATHS<span>WINS</span></a>
+  <a href="/" class="nav-link">&larr; Home</a>
+</nav>
+
+<header>
+  <h1>LEARN</h1>
+  <p>The mathematics behind better decisions. Probability, expected value, and the numbers your bookmaker, bank, and employer hope you never check.</p>
+</header>
+
+<!-- BETTING & GAMBLING -->
+<div class="topic-label">BETTING &amp; GAMBLING</div>
+<div class="articles">
+
+<a href="/learn/how-to-calculate-poker-odds/" class="article-card">
+  <div class="card-eyebrow" style="color:var(--green)">Poker</div>
+  <h3>How to Calculate Poker Odds</h3>
+  <p>Outs, pot odds, the rule of 2 and 4, and expected value. The arithmetic that separates winning players from everyone else.</p>
+  <span class="read-more">Read article &rarr;</span>
+</a>
+
+<a href="/learn/overround-explained/" class="article-card">
+  <div class="card-eyebrow" style="color:var(--blue)">Sports Betting</div>
+  <h3>How Bookmaker Odds Work &mdash; Overround Explained</h3>
+  <p>Every set of odds has a built-in profit margin. We show you how to calculate it, what it costs you, and how to find better value.</p>
+  <span class="read-more">Read article &rarr;</span>
+</a>
+
 </div>
 
-<!-- FOOTER -->
-<div class="footer">
-<p>
-MathsWins · Built on <a href="#">QF Network</a> · Schools: <a href="https://maffsgames.co.uk/schools/">maffsgames.co.uk</a><br>
-No personal data collected · Cookieless analytics · <a href="mailto:contact@mathswins.co.uk">Contact</a>
-</p>
+<!-- PERSONAL FINANCE -->
+<div class="topic-label">PERSONAL FINANCE</div>
+<div class="articles">
+
+<a href="/learn/salary-sacrifice-explained/" class="article-card">
+  <div class="card-eyebrow" style="color:var(--gold)">Pensions &amp; Tax</div>
+  <h3>How Salary Sacrifice Works &mdash; The Maths</h3>
+  <p>Salary sacrifice can save you thousands in tax and National Insurance. Worked examples at every income level.</p>
+  <span class="read-more">Read article &rarr;</span>
+</a>
+
+</div>
+
+<!-- COMING SOON -->
+<div class="topic-label" style="color:var(--muted)">COMING SOON</div>
+<div class="articles">
+
+<div class="article-card" style="opacity:.5;pointer-events:none">
+  <div class="card-eyebrow" style="color:var(--green)">Poker</div>
+  <h3>How Pot Odds Work in Poker</h3>
+  <p>A deeper dive into pot odds, implied odds, and reverse implied odds with worked examples.</p>
+</div>
+
+<div class="article-card" style="opacity:.5;pointer-events:none">
+  <div class="card-eyebrow" style="color:var(--gold)">Blackjack</div>
+  <h3>Is Card Counting Illegal in the UK?</h3>
+  <p>The legal position, the practical reality, and what casinos actually do when they spot a counter.</p>
+</div>
+
+<div class="article-card" style="opacity:.5;pointer-events:none">
+  <div class="card-eyebrow" style="color:var(--purple)">Crypto</div>
+  <h3>What Is Impermanent Loss?</h3>
+  <p>The hidden cost of providing liquidity in DeFi, explained with actual maths instead of hand-waving.</p>
 </div>
 
 </div>
-<!-- Cookie Consent Banner -->
-<div id="cookieConsent" style="display:none;position:fixed;bottom:0;left:0;right:0;background:#0c1628;border-top:1px solid #14263d;padding:14px 24px;z-index:99999;font-family:'Outfit',system-ui,sans-serif;font-size:13px;color:#94a3b8;display:none;align-items:center;justify-content:center;gap:16px;flex-wrap:wrap">
-<span>We use cookies for analytics to improve your experience. No personal data is sold or shared.</span>
-<button onclick="acceptCookies()" style="background:#d4a847;color:#050709;border:none;padding:8px 20px;border-radius:4px;font-weight:700;font-size:13px;cursor:pointer;font-family:inherit">Accept</button>
-<button onclick="declineCookies()" style="background:transparent;color:#64748b;border:1px solid #14263d;padding:8px 20px;border-radius:4px;font-size:13px;cursor:pointer;font-family:inherit">Decline</button>
+
+<div class="hub-links">
+  <a href="/tools/" class="hub-link">Free Tools</a>
+  <a href="/academy/" class="hub-link">Academy Courses</a>
+  <a href="/everyday/" class="hub-link">Everyday Maths</a>
+  <a href="/about/" class="hub-link">About</a>
+</div>
+
+</div>
+
+<footer class="footer">
+  <p>MathsWins &middot; <a href="/">Home</a> &middot; <a href="/academy/">Academy</a> &middot; <a href="/everyday/">Everyday Maths</a> &middot; <a href="/tools/">Tools</a> &middot; <a href="/about/">About</a> &middot; <a href="mailto:contact@mathswins.co.uk">Contact</a></p>
+  <p style="margin-top:.5rem">Built by a mathematician. No personal data collected.</p>
+</footer>
+
+<!-- Cookie Consent -->
+<div id="cookieBanner" style="display:none;position:fixed;bottom:0;left:0;right:0;background:#0a0d14;border-top:1px solid #161c28;padding:12px 20px;font-size:13px;color:#64748b;z-index:9999;text-align:center">
+We use cookieless analytics. Accept to enable full session data. <a href="/terms/" style="color:#d4a847;text-decoration:none">Privacy</a>
+<button onclick="acceptCookies()" style="background:#d4a847;color:#050709;border:none;padding:6px 16px;border-radius:4px;font-weight:700;font-size:12px;cursor:pointer;margin-left:12px">Accept</button>
+<button onclick="declineCookies()" style="background:transparent;color:#64748b;border:1px solid #161c28;padding:6px 16px;border-radius:4px;font-size:12px;cursor:pointer;margin-left:4px">Decline</button>
 </div>
 <script>
-function acceptCookies(){localStorage.setItem('mw_cookies','accepted');gtag('consent','update',{analytics_storage:'granted'});document.getElementById('cookieConsent').style.display='none';}
-function declineCookies(){localStorage.setItem('mw_cookies','declined');document.getElementById('cookieConsent').style.display='none';}
-(function(){var c=localStorage.getItem('mw_cookies');if(c==='accepted'){gtag('consent','update',{analytics_storage:'granted'});}else if(!c){document.getElementById('cookieConsent').style.display='flex';}})();
+var cc=localStorage.getItem('mw_cookies');
+if(!cc)document.getElementById('cookieBanner').style.display='block';
+else if(cc==='accepted')gtag('consent','update',{analytics_storage:'granted'});
+function acceptCookies(){localStorage.setItem('mw_cookies','accepted');gtag('consent','update',{analytics_storage:'granted'});document.getElementById('cookieBanner').style.display='none'}
+function declineCookies(){localStorage.setItem('mw_cookies','declined');document.getElementById('cookieBanner').style.display='none'}
 </script>
+
 </body>
 </html>

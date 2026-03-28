@@ -1,0 +1,545 @@
+<!DOCTYPE html>
+<html lang="en-GB">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>How to Calculate Poker Odds — A Step-by-Step Guide | MathsWins</title>
+<meta name="description" content="Learn to calculate poker odds, outs, pot odds, and expected value. Step-by-step worked examples with the maths explained in plain English.">
+<meta property="og:title" content="How to Calculate Poker Odds — A Step-by-Step Guide | MathsWins">
+<meta property="og:description" content="Learn to calculate poker odds, outs, pot odds, and expected value. Step-by-step worked examples with the maths explained in plain English.">
+<meta property="og:url" content="https://mathswins.co.uk/learn/how-to-calculate-poker-odds/">
+<meta property="og:image" content="https://mathswins.co.uk/assets/og-image.png">
+<meta property="og:type" content="article">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:title" content="How to Calculate Poker Odds — MathsWins">
+<meta name="twitter:image" content="https://mathswins.co.uk/assets/og-image.png">
+<link rel="canonical" href="https://mathswins.co.uk/learn/how-to-calculate-poker-odds/">
+<script type="application/ld+json">
+{"@context":"https://schema.org","@type":"Article","headline":"How to Calculate Poker Odds — A Step-by-Step Guide","description":"Learn to calculate poker odds, outs, pot odds, and expected value. Step-by-step worked examples with the maths explained in plain English.","url":"https://mathswins.co.uk/learn/how-to-calculate-poker-odds/","datePublished":"2026-03-26","dateModified":"2026-03-26","author":{"@type":"Organization","name":"MathsWins","url":"https://mathswins.co.uk"},"publisher":{"@type":"Organization","name":"MathsWins","url":"https://mathswins.co.uk","logo":{"@type":"ImageObject","url":"https://mathswins.co.uk/assets/og-image.png"}},"image":"https://mathswins.co.uk/assets/og-image.png","mainEntityOfPage":{"@type":"WebPage","@id":"https://mathswins.co.uk/learn/how-to-calculate-poker-odds/"}}
+</script>
+<script type="application/ld+json">
+{"@context":"https://schema.org","@type":"FAQPage","mainEntity":[{"@type":"Question","name":"What is the Rule of 2 and 4 in poker?","acceptedAnswer":{"@type":"Answer","text":"After the flop, multiply your outs by 4 to estimate your percentage chance of hitting by the river. After the turn, multiply by 2. For example, a flush draw has 9 outs: 9 × 4 = 36% after the flop, 9 × 2 = 18% after the turn. These are approximations — the exact figures are 35.0% and 19.6%."}},{"@type":"Question","name":"How do you calculate pot odds in poker?","acceptedAnswer":{"@type":"Answer","text":"Pot odds = cost to call ÷ (current pot + opponent's bet + your call). If the pot is £30, your opponent bets £10, and you must call £10, your pot odds are £10 ÷ £50 = 20%. If your equity exceeds 20%, calling is mathematically correct."}},{"@type":"Question","name":"How many outs does a flush draw have?","acceptedAnswer":{"@type":"Answer","text":"A flush draw has 9 outs. You hold 2 cards of one suit and the board shows 2 more, so 4 of the 13 cards in that suit are accounted for. That leaves 13 − 4 = 9 unseen cards that complete your flush."}},{"@type":"Question","name":"What is expected value (EV) in poker?","acceptedAnswer":{"@type":"Answer","text":"Expected value is the average amount you win or lose on a decision over the long run. EV = (probability of winning × amount won) − (probability of losing × amount lost). A positive EV decision is profitable over time, even if you lose on any individual hand."}}]}
+</script>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Crimson+Pro:ital,wght@0,400;0,700;1,400&family=DM+Mono:wght@400;500&family=Outfit:wght@300;400;600;700&display=swap" rel="stylesheet">
+<style>
+:root {
+  --bg: #050709;
+  --surface: #0a0d14;
+  --surface2: #0f1319;
+  --border: #161c28;
+  --border2: #1e2638;
+  --green: #2dd4a0;
+  --green-dim: rgba(45,212,160,0.10);
+  --red: #ef5350;
+  --red-dim: rgba(239,83,80,0.10);
+  --blue: #2563eb;
+  --gold: #d4a847;
+  --cyan: #22d3ee;
+  --cyan-dim: rgba(34,211,238,0.10);
+  --text: #c8cdd8;
+  --text-bright: #e8ecf4;
+  --muted: #4a5568;
+}
+
+* { margin: 0; padding: 0; box-sizing: border-box; }
+
+body {
+  font-family: 'Outfit', sans-serif;
+  background: var(--bg);
+  color: var(--text);
+  min-height: 100vh;
+  line-height: 1.6;
+  -webkit-font-smoothing: antialiased;
+}
+
+.container {
+  max-width: 780px;
+  margin: 0 auto;
+  padding: 2rem 1.25rem 4rem;
+}
+
+/* Nav */
+.nav-bar {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 1rem 0;
+  border-bottom: 1px solid var(--border);
+  margin-bottom: 2.5rem;
+}
+.nav-brand {
+  font-family: 'Bebas Neue', sans-serif;
+  font-size: 1.4rem;
+  color: var(--gold);
+  text-decoration: none;
+  letter-spacing: 0.06em;
+}
+.nav-brand span { color: var(--text-bright); }
+.nav-link {
+  font-size: 0.85rem;
+  font-weight: 600;
+  color: var(--green);
+  text-decoration: none;
+  padding: 0.4rem 1rem;
+  border: 1px solid var(--green);
+  border-radius: 4px;
+  transition: background 0.2s, color 0.2s;
+}
+.nav-link:hover { background: var(--green); color: var(--bg); }
+
+/* Hero */
+.hero {
+  text-align: center;
+  margin-bottom: 2.5rem;
+}
+.hero-eyebrow {
+  font-size: 0.75rem;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.15em;
+  color: var(--green);
+  margin-bottom: 0.5rem;
+}
+.hero h1 {
+  font-family: 'Bebas Neue', sans-serif;
+  font-size: clamp(2rem, 5vw, 3rem);
+  color: var(--text-bright);
+  letter-spacing: 0.04em;
+  line-height: 1.1;
+  margin-bottom: 0.75rem;
+}
+.hero-sub {
+  font-family: 'Crimson Pro', serif;
+  font-style: italic;
+  font-size: 1.05rem;
+  color: var(--cyan);
+  max-width: 600px;
+  margin: 0 auto;
+}
+
+/* Article body */
+.article-body h2 {
+  font-family: 'Bebas Neue', sans-serif;
+  font-size: 1.6rem;
+  color: var(--text-bright);
+  letter-spacing: 0.04em;
+  margin: 2.5rem 0 1rem;
+}
+.article-body h3 {
+  font-family: 'Bebas Neue', sans-serif;
+  font-size: 1.2rem;
+  color: var(--green);
+  letter-spacing: 0.04em;
+  margin: 1.5rem 0 0.75rem;
+}
+.article-body p {
+  font-family: 'Crimson Pro', serif;
+  font-size: 1.05rem;
+  color: var(--text);
+  line-height: 1.75;
+  margin-bottom: 1rem;
+  max-width: 720px;
+}
+.article-body strong {
+  color: var(--text-bright);
+}
+
+/* Maths box (monospace formula/worked example) */
+.mb {
+  background: var(--surface2);
+  border: 1px solid var(--border2);
+  border-radius: 6px;
+  padding: 1rem 1.25rem;
+  font-family: 'DM Mono', monospace;
+  font-size: 0.85rem;
+  color: var(--text-bright);
+  line-height: 1.7;
+  white-space: pre-wrap;
+  margin: 1rem 0;
+  overflow-x: auto;
+}
+
+/* Plain English callout */
+.pln {
+  font-family: 'Crimson Pro', serif;
+  font-style: italic;
+  color: var(--cyan);
+  background: var(--cyan-dim);
+  border-left: 3px solid var(--cyan);
+  padding: 0.85rem 1.15rem;
+  border-radius: 0 6px 6px 0;
+  margin: 1rem 0;
+  line-height: 1.6;
+  font-size: 0.95rem;
+}
+
+/* Danger / warning box */
+.danger-box {
+  font-family: 'Crimson Pro', serif;
+  font-style: italic;
+  color: var(--red);
+  background: var(--red-dim);
+  border-left: 3px solid var(--red);
+  padding: 0.85rem 1.15rem;
+  border-radius: 0 6px 6px 0;
+  margin: 1rem 0;
+  line-height: 1.6;
+  font-size: 0.95rem;
+}
+
+/* Tables */
+.article-body table {
+  width: 100%;
+  border-collapse: collapse;
+  margin: 1rem 0;
+  font-size: 0.9rem;
+}
+.article-body th {
+  font-family: 'Outfit', sans-serif;
+  font-weight: 600;
+  font-size: 0.78rem;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  color: var(--muted);
+  text-align: left;
+  padding: 0.6rem 0.75rem;
+  border-bottom: 2px solid var(--border2);
+}
+.article-body td {
+  font-family: 'DM Mono', monospace;
+  font-size: 0.88rem;
+  color: var(--text-bright);
+  padding: 0.55rem 0.75rem;
+  border-bottom: 1px solid var(--border);
+}
+.article-body td:first-child {
+  font-family: 'Outfit', sans-serif;
+  color: var(--text);
+}
+
+/* CTA card */
+.cta-card {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-left: 3px solid var(--green);
+  border-radius: 0 10px 10px 0;
+  padding: 1.5rem 1.75rem;
+  margin-top: 2.5rem;
+}
+.cta-card h3 {
+  font-family: 'Bebas Neue', sans-serif;
+  font-size: 1.2rem;
+  color: var(--green);
+  letter-spacing: 0.04em;
+  margin-bottom: 0.5rem;
+}
+.cta-card p {
+  font-family: 'Crimson Pro', serif;
+  font-style: italic;
+  font-size: 0.95rem;
+  color: var(--text);
+  line-height: 1.5;
+  margin-bottom: 1rem;
+}
+.cta-link {
+  font-family: 'Outfit', sans-serif;
+  font-weight: 600;
+  font-size: 0.9rem;
+  color: var(--green);
+  text-decoration: none;
+  border-bottom: 1px solid transparent;
+  transition: border-color 0.2s;
+}
+.cta-link:hover { border-bottom-color: var(--green); }
+
+/* FAQ */
+.faq-section { max-width: 780px; margin: 3rem auto; padding: 0; }
+.faq-title { font-family: 'Bebas Neue', sans-serif; font-size: 2rem; color: #e8ecf4; margin-bottom: 1.5rem; letter-spacing: .03em; }
+.faq-item { border-bottom: 1px solid #161c28; padding: 0; }
+.faq-item summary { padding: 1rem 0; cursor: pointer; font-weight: 600; color: #e8ecf4; font-size: 1rem; list-style: none; display: flex; justify-content: space-between; align-items: center; }
+.faq-item summary::after { content: '+'; color: #d4a847; font-size: 1.3rem; font-weight: 700; transition: transform 0.2s; }
+.faq-item[open] summary::after { transform: rotate(45deg); }
+.faq-item p { padding: 0 0 1rem; color: #94a3b8; line-height: 1.7; font-size: 0.95rem; }
+
+/* Footer */
+.footer {
+  margin-top: 3rem;
+  padding-top: 1.5rem;
+  border-top: 1px solid var(--border);
+  text-align: center;
+}
+.footer p {
+  font-family: 'Outfit', sans-serif;
+  font-size: 0.75rem;
+  color: var(--muted);
+  line-height: 1.8;
+}
+.footer a {
+  color: var(--muted);
+  text-decoration: underline;
+  text-underline-offset: 2px;
+}
+
+/* Responsive */
+@media (max-width: 600px) {
+  .hero h1 { font-size: 2rem; }
+  .article-body table { font-size: 0.8rem; }
+  .article-body td, .article-body th { padding: 0.45rem 0.5rem; }
+}
+</style>
+<!-- GA4 Cookieless -->
+<script async src="https://www.googletagmanager.com/gtag/js?id=G-7GTLYCZMXN"></script>
+<script>window.dataLayer=window.dataLayer||[];function gtag(){dataLayer.push(arguments);}gtag('js',new Date());gtag('consent','default',{analytics_storage:'denied',ad_storage:'denied',ad_user_data:'denied',ad_personalization:'denied'});gtag('config','G-7GTLYCZMXN',{send_page_view:true,anonymize_ip:true});</script>
+</head>
+<body>
+<script src="/auth/mw-auth.js"></script>
+<div class="container">
+
+<nav class="nav-bar">
+  <a href="/" class="nav-brand">MATHS<span>WINS</span></a>
+  <a href="/tools/poker-odds/" class="nav-link">Poker Odds Calculator →</a>
+</nav>
+
+<div class="hero">
+  <div class="hero-eyebrow">Learn</div>
+  <h1>HOW TO CALCULATE POKER ODDS</h1>
+  <div class="hero-sub">Every poker decision reduces to a single question: is the price right? This guide teaches you the mathematics to answer it.</div>
+</div>
+
+<div class="article-body">
+
+<!-- 1. INTRO -->
+<p>Poker is not a game of luck. Over any meaningful sample, the player who makes mathematically correct decisions wins. The player who relies on gut feeling donates money to those who don't.</p>
+
+<p>This guide covers the core mathematics you need: probability, outs, the Rule of 2 and 4, pot odds, and expected value. No prior maths knowledge required. Every concept is built from first principles with worked examples.</p>
+
+<div class="pln">If you can multiply, divide, and compare two numbers, you can calculate poker odds. That's it. Everything else is vocabulary.</div>
+
+
+<!-- 2. PROBABILITY BASICS -->
+<h2>PROBABILITY BASICS — CARDS AND COMBINATIONS</h2>
+
+<p>A standard deck has 52 cards: 13 ranks (2 through Ace) in each of 4 suits (spades, hearts, diamonds, clubs). Before any cards are dealt, every card is equally likely. The probability of any specific card being dealt is:</p>
+
+<div class="mb">P(specific card) = 1/52 = 0.0192 = 1.92%</div>
+
+<p>In Texas Hold'em, you see your 2 hole cards, then the board is dealt: 3 cards on the flop, 1 on the turn, 1 on the river. After you see your hole cards, there are <strong>50 unknown cards</strong> remaining. After the flop, there are <strong>47 unknown cards</strong>. After the turn, <strong>46</strong>.</p>
+
+<p>Probability in poker is always about counting: how many of the unseen cards help you, divided by how many unseen cards remain.</p>
+
+<div class="mb">P(hitting your card) = cards that help you / unseen cards remaining</div>
+
+<div class="pln">This is the foundation of every poker calculation. All the techniques below are shortcuts for this single fraction.</div>
+
+
+<!-- 3. COUNTING OUTS -->
+<h2>COUNTING OUTS</h2>
+
+<p>An <strong>out</strong> is any unseen card that completes your draw and (presumably) gives you the winning hand. Counting outs is the first step in every poker odds calculation.</p>
+
+<p>Here are the common draws and their out counts:</p>
+
+<table>
+  <thead>
+    <tr><th>Draw</th><th>Outs</th><th>Example</th></tr>
+  </thead>
+  <tbody>
+    <tr><td>Flush draw</td><td>9</td><td>4 suited cards, 13 - 4 = 9 remaining</td></tr>
+    <tr><td>Open-ended straight draw</td><td>8</td><td>5-6-7-8 on board, need a 4 or 9</td></tr>
+    <tr><td>Gutshot straight draw</td><td>4</td><td>5-6-_-8 on board, need only a 7</td></tr>
+    <tr><td>Two overcards</td><td>6</td><td>A-K vs lower pair, 3 Aces + 3 Kings</td></tr>
+    <tr><td>Set from pocket pair</td><td>2</td><td>Pocket 9s, 2 remaining Nines in deck</td></tr>
+    <tr><td>Flush draw + gutshot</td><td>12</td><td>9 flush outs + 3 non-flush straight outs</td></tr>
+    <tr><td>Flush draw + open-ended straight</td><td>15</td><td>9 flush outs + 6 non-flush straight outs</td></tr>
+  </tbody>
+</table>
+
+<div class="pln">Be careful not to double-count. If a card completes both your flush and your straight, it's still only one out. That's why the combo draws above have fewer outs than flush + straight added together.</div>
+
+<p>Also beware of <strong>tainted outs</strong>. If one of your "outs" also completes a better hand for your opponent (e.g. it puts a fourth flush card on the board when your opponent may already have the flush), discount it. Experienced players routinely shave 1-2 outs from their count to account for this.</p>
+
+
+<!-- 4. THE RULE OF 2 AND 4 -->
+<h2>THE RULE OF 2 AND 4</h2>
+
+<p>The Rule of 2 and 4 is a mental shortcut that converts outs into an approximate percentage chance of hitting.</p>
+
+<div class="mb">After the flop (2 cards to come):  Outs x 4 = approximate % equity
+After the turn (1 card to come):   Outs x 2 = approximate % equity</div>
+
+<p>Why does this work? After the flop, you have two chances to hit your out (turn and river). With 47 unseen cards, each out gives you roughly 1/47 per card = about 2.1% per card, times 2 remaining cards = about 4.2%. The "times 4" approximation is close enough for table decisions.</p>
+
+<p>Here's how the estimate compares to the exact probability for common draws:</p>
+
+<table>
+  <thead>
+    <tr><th>Draw</th><th>Outs</th><th>Rule of 4 (flop)</th><th>Exact (flop)</th><th>Rule of 2 (turn)</th><th>Exact (turn)</th></tr>
+  </thead>
+  <tbody>
+    <tr><td>Gutshot</td><td>4</td><td>16%</td><td>16.5%</td><td>8%</td><td>8.7%</td></tr>
+    <tr><td>Two overcards</td><td>6</td><td>24%</td><td>24.1%</td><td>12%</td><td>13.0%</td></tr>
+    <tr><td>Open-ended straight</td><td>8</td><td>32%</td><td>31.5%</td><td>16%</td><td>17.4%</td></tr>
+    <tr><td>Flush draw</td><td>9</td><td>36%</td><td>35.0%</td><td>18%</td><td>19.6%</td></tr>
+    <tr><td>Flush + gutshot</td><td>12</td><td>48%</td><td>45.0%</td><td>24%</td><td>26.1%</td></tr>
+    <tr><td>Flush + open-ended</td><td>15</td><td>60%</td><td>54.1%</td><td>30%</td><td>32.6%</td></tr>
+  </tbody>
+</table>
+
+<div class="pln">The Rule of 4 slightly overestimates with large out counts (12+). With 15 outs, it says 60% when the real figure is 54%. For everyday table decisions with 4-9 outs, the approximation is excellent. If you want a tighter estimate for big draws, use outs x 4 minus (outs - 8) when outs exceed 8.</div>
+
+
+<!-- 5. POT ODDS -->
+<h2>POT ODDS</h2>
+
+<p>Pot odds tell you how much equity you need to justify calling a bet. The formula is:</p>
+
+<div class="mb">Pot odds = Cost to call / (Pot + Opponent's bet + Your call)
+
+Or equivalently:
+Pot odds = Cost to call / Total pot after your call</div>
+
+<h3>WORKED EXAMPLE</h3>
+
+<p>The pot is <strong>£30</strong>. Your opponent bets <strong>£10</strong>. You must call <strong>£10</strong>.</p>
+
+<div class="mb">Total pot after your call = £30 + £10 + £10 = £50
+
+Pot odds = £10 / £50 = 0.20 = 20%</div>
+
+<p>You need <strong>more than 20% equity</strong> to call profitably.</p>
+
+<p>Suppose you have a flush draw (9 outs). After the flop, the Rule of 4 gives you approximately 36% equity. Since 36% > 20%, calling is mathematically correct. You'll lose more often than you win, but when you hit the flush, the pot more than compensates.</p>
+
+<div class="pln">The decision rule is simple: if your equity is greater than your pot odds, call. If it's less, fold. If it's roughly equal, it's a marginal spot where other factors (position, opponent tendencies, implied odds) tip the balance.</div>
+
+<h3>COMMON POT ODDS BY BET SIZE</h3>
+
+<table>
+  <thead>
+    <tr><th>Bet as % of pot</th><th>Pot odds you need</th></tr>
+  </thead>
+  <tbody>
+    <tr><td>25% pot (quarter)</td><td>16.7%</td></tr>
+    <tr><td>33% pot (third)</td><td>20.0%</td></tr>
+    <tr><td>50% pot (half)</td><td>25.0%</td></tr>
+    <tr><td>67% pot (two-thirds)</td><td>28.6%</td></tr>
+    <tr><td>75% pot (three-quarter)</td><td>30.0%</td></tr>
+    <tr><td>100% pot (full)</td><td>33.3%</td></tr>
+    <tr><td>150% pot (overbet)</td><td>37.5%</td></tr>
+  </tbody>
+</table>
+
+<div class="pln">Memorise these. When someone bets half the pot, you need 25% equity. A flush draw after the flop gives you 35%. You don't need a calculator for this at the table once you know the numbers.</div>
+
+
+<!-- 6. EXPECTED VALUE -->
+<h2>EXPECTED VALUE</h2>
+
+<p>Expected value (EV) puts a monetary figure on a decision. It answers the question: if I made this exact play a thousand times, how much would I gain or lose on average per hand?</p>
+
+<div class="mb">EV = (P(win) x Amount won) - (P(lose) x Amount lost)</div>
+
+<h3>WORKED EXAMPLE — FLUSH DRAW FACING A BET</h3>
+
+<p>You have a flush draw on the flop. The pot is <strong>£60</strong>. Your opponent bets <strong>£20</strong>. You must call £20 to continue.</p>
+
+<div class="mb">Equity (flush draw, 2 cards to come) = 35%
+
+If you call and hit (35% of the time):
+  You win the pot = £60 + £20 (their bet) + £20 (your call) = £100 total
+  Your profit = £100 - £20 (your investment) = £80
+
+If you call and miss (65% of the time):
+  You lose your £20 call
+
+EV(call) = (0.35 x £80) - (0.65 x £20)
+         = £28.00 - £13.00
+         = +£15.00</div>
+
+<p>The expected value of calling is <strong>+£15.00</strong>. This means that every time you face this exact situation and call, you profit £15 on average. You'll miss the flush more often than you hit it, but the pot is offering you a price that more than compensates for the risk.</p>
+
+<div class="pln">A positive EV decision is correct even when it loses. You'll miss the flush 65% of the time. But making +EV calls consistently, over hundreds of hands, is where your profit accumulates. That's the maths always winning.</div>
+
+<p>For comparison, let's check the EV of folding:</p>
+
+<div class="mb">EV(fold) = £0
+
+Folding is never wrong in the sense that you don't lose anything — but you forfeit
++£15.00 of expected value every time you fold here. Over 100 identical spots,
+that's £1,500 left on the table.</div>
+
+
+<!-- 7. IMPLIED ODDS -->
+<h2>IMPLIED ODDS</h2>
+
+<p>Strict pot odds assume no further betting. But poker has multiple streets. If you hit your draw, you'll often win additional bets from your opponent on later streets. This extra money is called <strong>implied odds</strong>.</p>
+
+<p>Implied odds can justify a call even when pot odds alone say fold. If the pot is offering you 22% but you need 25%, the missing 3% might be covered by the additional bets you'll extract when you hit.</p>
+
+<p>Factors that increase implied odds:</p>
+
+<p><strong>Your opponent has a strong but second-best hand</strong> (e.g. top pair when you're drawing to a flush) and will pay you off. <strong>You are in position</strong>, giving you control of the final betting round. <strong>Your draw is hidden</strong> — a backdoor flush or runner-runner straight that your opponent won't see coming.</p>
+
+<p>Factors that decrease implied odds:</p>
+
+<p><strong>The board is obviously dangerous</strong> (three to a flush, four to a straight) and your opponent will shut down if you hit. <strong>Your opponent is short-stacked</strong> and doesn't have enough money behind to pay you. <strong>You are out of position</strong> and may not get the chance to extract value.</p>
+
+<div class="danger-box">Implied odds are real, but they are the most commonly overestimated factor in amateur poker. Beginners routinely justify loose calls with "implied odds" when their opponent has no intention of putting another penny in. If you can't articulate specifically why your opponent will pay you off, you don't have implied odds — you have wishful thinking.</div>
+
+
+<!-- CROSS-LINKS -->
+<h2>PUT IT INTO PRACTICE</h2>
+
+<p>The mathematics on this page covers the fundamentals. To calculate odds for specific hands in real time, use the <a href="/tools/poker-odds/" style="color:var(--green);font-weight:600;text-decoration:none;border-bottom:1px solid var(--green);">Poker Odds Calculator</a> — select your hole cards and the board, and get exact equity from 10,000 Monte Carlo simulations.</p>
+
+<p>To go deeper into every concept covered here — combinatorics, GTO, bet sizing, ICM, bluffing frequency, Kelly criterion, and 350+ practice scenarios — see the <a href="/academy/poker/" style="color:var(--green);font-weight:600;text-decoration:none;border-bottom:1px solid var(--green);">Poker School</a> (20 modules, Module 1 free).</p>
+
+</div><!-- end article-body -->
+
+
+<!-- CTA -->
+<div class="cta-card">
+  <h3>POKER SCHOOL — 20 MODULES</h3>
+  <p>This article gives you the foundations. The Poker School builds on every concept here with interactive tools, live scenarios, and the advanced mathematics that separates break-even players from long-term winners. Module 1 is free.</p>
+  <a href="/academy/poker/" class="cta-link">Explore the full course →</a>
+</div>
+
+<div class="cta-card" style="border-left-color: var(--cyan); margin-top: 1.25rem;">
+  <h3 style="color: var(--cyan);">POKER ODDS CALCULATOR</h3>
+  <p>Select your cards, see your exact equity. Free, instant, no sign-up required.</p>
+  <a href="/tools/poker-odds/" class="cta-link" style="color: var(--cyan);">Open the calculator →</a>
+</div>
+
+
+<!-- FAQ -->
+<div class="faq-section">
+<h2 class="faq-title">FREQUENTLY ASKED QUESTIONS</h2>
+<details class="faq-item"><summary>What is the Rule of 2 and 4 in poker?</summary><p>After the flop, multiply your outs by 4 to estimate your percentage chance of hitting by the river. After the turn, multiply by 2. For example, a flush draw has 9 outs: 9 x 4 = 36% after the flop, 9 x 2 = 18% after the turn. These are approximations — the exact figures are 35.0% and 19.6%.</p></details>
+<details class="faq-item"><summary>How do you calculate pot odds in poker?</summary><p>Pot odds = cost to call divided by (current pot + opponent's bet + your call). If the pot is £30, your opponent bets £10, and you must call £10, your pot odds are £10 / £50 = 20%. If your equity exceeds 20%, calling is mathematically correct.</p></details>
+<details class="faq-item"><summary>How many outs does a flush draw have?</summary><p>A flush draw has 9 outs. You hold 2 cards of one suit and the board shows 2 more, so 4 of the 13 cards in that suit are accounted for. That leaves 13 minus 4 = 9 unseen cards that complete your flush.</p></details>
+<details class="faq-item"><summary>What is expected value (EV) in poker?</summary><p>Expected value is the average amount you win or lose on a decision over the long run. EV = (probability of winning x amount won) minus (probability of losing x amount lost). A positive EV decision is profitable over time, even if you lose on any individual hand.</p></details>
+</div>
+
+
+<div class="footer">
+  <p>Built by a first-class mathematics graduate with QTS.<br>
+  <a href="/">MathsWins</a> · <a href="/academy/">Academy</a> · <a href="/tools/">Tools</a> · <a href="/games/">Games</a> · <a href="/learn/">Learn</a><br>
+  © 2026 MathsWins. Maths Always Wins.<br><a href="/restore/">Restore Access</a></p>
+</div>
+</div>
+
+<!-- Cookie Consent Banner -->
+<div id="cookieConsent" style="display:none;position:fixed;bottom:0;left:0;right:0;background:#0c1628;border-top:1px solid #14263d;padding:14px 24px;z-index:99999;font-family:'Outfit',system-ui,sans-serif;font-size:13px;color:#94a3b8;display:none;align-items:center;justify-content:center;gap:16px;flex-wrap:wrap">
+<span>We use cookies for analytics to improve your experience. No personal data is sold or shared.</span>
+<button onclick="acceptCookies()" style="background:#d4a847;color:#050709;border:none;padding:8px 20px;border-radius:4px;font-weight:700;font-size:13px;cursor:pointer;font-family:inherit">Accept</button>
+<button onclick="declineCookies()" style="background:transparent;color:#64748b;border:1px solid #14263d;padding:8px 20px;border-radius:4px;font-size:13px;cursor:pointer;font-family:inherit">Decline</button>
+</div>
+<script>
+function acceptCookies(){localStorage.setItem('mw_cookies','accepted');gtag('consent','update',{analytics_storage:'granted'});document.getElementById('cookieConsent').style.display='none';}
+function declineCookies(){localStorage.setItem('mw_cookies','declined');document.getElementById('cookieConsent').style.display='none';}
+(function(){var c=localStorage.getItem('mw_cookies');if(c==='accepted'){gtag('consent','update',{analytics_storage:'granted'});}else if(!c){document.getElementById('cookieConsent').style.display='flex';}})();
+</script>
+</body>
+</html>

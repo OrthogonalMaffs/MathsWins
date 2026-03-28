@@ -1,0 +1,598 @@
+<!DOCTYPE html>
+<html lang="en-GB">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>How Bookmaker Odds Work — Overround Explained with Maths | MathsWins</title>
+<meta name="description" content="Every set of bookmaker odds has a built-in profit margin called overround. We show you how to calculate it, what it costs you, and how to find better value.">
+<meta name="keywords" content="overround explained, bookmaker margin, how bookmaker odds work, betting maths, implied probability, accumulator overround">
+<meta property="og:title" content="How Bookmaker Odds Work — Overround Explained with Maths | MathsWins">
+<meta property="og:description" content="Every set of bookmaker odds has a built-in profit margin called overround. We show you how to calculate it, what it costs you, and how to find better value.">
+<meta property="og:url" content="https://mathswins.co.uk/learn/overround-explained/">
+<meta property="og:image" content="https://mathswins.co.uk/assets/og-image.png">
+<meta property="og:type" content="article">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:title" content="MathsWins">
+<meta name="twitter:image" content="https://mathswins.co.uk/assets/og-image.png">
+<link rel="canonical" href="https://mathswins.co.uk/learn/overround-explained/">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Crimson+Pro:ital,wght@0,400;0,700;1,400&family=DM+Mono:wght@400;500&family=Outfit:wght@300;400;600;700&display=swap" rel="stylesheet">
+
+<style>
+  :root {
+    --bg: #050709;
+    --surface: #0a0d14;
+    --surface2: #0f1319;
+    --border: #161c28;
+    --border2: #1e2638;
+    --navy: #1a2744;
+    --gold: #d4a847;
+    --teal: #0d9488;
+    --teal-bright: #2dd4bf;
+    --blue: #2563eb;
+    --blue-dim: rgba(37,99,235,0.12);
+    --green-bright: #2dd4a0;
+    --green-dim: rgba(45,212,160,0.12);
+    --red-bright: #ef5350;
+    --red-dim: rgba(239,83,80,0.12);
+    --text: #c8cdd8;
+    --text-bright: #e8ecf4;
+    --muted: #4a5568;
+    --cyan: #22d3ee;
+    --cyan-dim: rgba(34,211,238,0.10);
+  }
+
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+
+  body {
+    font-family: 'Outfit', sans-serif;
+    background: var(--bg);
+    color: var(--text);
+    line-height: 1.6;
+    min-height: 100vh;
+  }
+
+  .container {
+    max-width: 920px;
+    margin: 0 auto;
+    padding: 2rem 1.25rem 4rem;
+  }
+
+  /* Header */
+  .nav-bar {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 1rem 0;
+    border-bottom: 1px solid var(--border);
+    margin-bottom: 2.5rem;
+  }
+  .nav-brand {
+    font-family: 'Bebas Neue', sans-serif;
+    font-size: 1.4rem;
+    color: var(--gold);
+    text-decoration: none;
+    letter-spacing: 0.06em;
+  }
+  .nav-brand span { color: var(--text-bright); }
+  .nav-link {
+    font-family: 'Outfit', sans-serif;
+    font-size: 0.85rem;
+    font-weight: 600;
+    color: var(--blue);
+    text-decoration: none;
+    padding: 0.4rem 1rem;
+    border: 1px solid var(--blue);
+    border-radius: 4px;
+    transition: background 0.2s, color 0.2s;
+  }
+  .nav-link:hover { background: var(--blue); color: var(--bg); }
+
+  /* Hero */
+  .hero {
+    text-align: center;
+    margin-bottom: 2.5rem;
+  }
+  .hero-eyebrow {
+    font-family: 'Outfit', sans-serif;
+    font-size: 0.75rem;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.15em;
+    color: var(--blue);
+    margin-bottom: 0.5rem;
+  }
+  .hero h1 {
+    font-family: 'Bebas Neue', sans-serif;
+    font-size: clamp(2rem, 5vw, 3rem);
+    color: var(--text-bright);
+    letter-spacing: 0.04em;
+    line-height: 1.1;
+    margin-bottom: 0.75rem;
+  }
+  .hero-sub {
+    font-family: 'Crimson Pro', serif;
+    font-style: italic;
+    font-size: 1.1rem;
+    color: var(--cyan);
+    max-width: 640px;
+    margin: 0 auto;
+  }
+
+  /* Article body */
+  .article-body {
+    margin-top: 1rem;
+  }
+  .article-body h2 {
+    font-family: 'Bebas Neue', sans-serif;
+    font-size: 1.6rem;
+    color: var(--text-bright);
+    letter-spacing: 0.04em;
+    margin: 2.5rem 0 1rem;
+    padding-top: 1.5rem;
+    border-top: 1px solid var(--border);
+  }
+  .article-body h2:first-child {
+    margin-top: 0;
+    padding-top: 0;
+    border-top: none;
+  }
+  .article-body h3 {
+    font-family: 'Bebas Neue', sans-serif;
+    font-size: 1.2rem;
+    color: var(--blue);
+    margin: 1.5rem 0 0.75rem;
+    letter-spacing: 0.04em;
+  }
+  .article-body p {
+    font-family: 'Crimson Pro', serif;
+    font-size: 1rem;
+    color: var(--text);
+    line-height: 1.7;
+    margin-bottom: 1rem;
+    max-width: 720px;
+  }
+  .article-body a {
+    color: var(--blue);
+    text-decoration: underline;
+    text-underline-offset: 2px;
+  }
+  .article-body a:hover {
+    color: var(--cyan);
+  }
+  .article-body ul {
+    margin: 0 0 1rem 1.5rem;
+    font-family: 'Crimson Pro', serif;
+    font-size: 1rem;
+    color: var(--text);
+    line-height: 1.7;
+    max-width: 720px;
+  }
+  .article-body ul li {
+    margin-bottom: 0.4rem;
+  }
+
+  /* Educational boxes */
+  .mb {
+    background: var(--surface2);
+    border: 1px solid var(--border2);
+    border-radius: 6px;
+    padding: 1rem 1.25rem;
+    font-family: 'DM Mono', monospace;
+    font-size: 0.85rem;
+    color: var(--text-bright);
+    line-height: 1.7;
+    white-space: pre-wrap;
+    margin: 1rem 0;
+    overflow-x: auto;
+  }
+  .pln {
+    font-family: 'Crimson Pro', serif;
+    font-style: italic;
+    color: var(--cyan);
+    background: var(--cyan-dim);
+    border-left: 3px solid var(--cyan);
+    padding: 0.85rem 1.15rem;
+    border-radius: 0 6px 6px 0;
+    margin: 1rem 0;
+    line-height: 1.6;
+    font-size: 0.95rem;
+  }
+  .pt {
+    border-left: 3px solid var(--blue);
+    background: var(--blue-dim);
+    padding: 1rem 1.25rem;
+    border-radius: 0 6px 6px 0;
+    margin: 1.5rem 0;
+    font-family: 'Crimson Pro', serif;
+    font-size: 0.95rem;
+    color: var(--text);
+    line-height: 1.6;
+  }
+  .pt strong { color: var(--blue); }
+  .dg {
+    border-left: 3px solid var(--red-bright);
+    background: var(--red-dim);
+    padding: 1rem 1.25rem;
+    border-radius: 0 6px 6px 0;
+    margin: 1.5rem 0;
+    font-family: 'Crimson Pro', serif;
+    font-size: 0.95rem;
+    color: var(--red-bright);
+    line-height: 1.6;
+  }
+
+  /* Cross-links */
+  .cross-links {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+    gap: 1rem;
+    margin-top: 2rem;
+  }
+  .cross-link {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    padding: 1.25rem;
+    text-decoration: none;
+    transition: border-color 0.2s;
+  }
+  .cross-link:hover { border-color: var(--blue); }
+  .cross-link h4 {
+    font-family: 'Bebas Neue', sans-serif;
+    font-size: 1rem;
+    color: var(--blue);
+    letter-spacing: 0.04em;
+    margin-bottom: 0.35rem;
+  }
+  .cross-link p {
+    font-family: 'Crimson Pro', serif;
+    font-style: italic;
+    font-size: 0.85rem;
+    color: var(--muted);
+    line-height: 1.5;
+  }
+
+  /* CTA */
+  .cta-card {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-left: 3px solid var(--blue);
+    border-radius: 0 10px 10px 0;
+    padding: 1.5rem 1.75rem;
+    margin-top: 2.5rem;
+  }
+  .cta-card h3 {
+    font-family: 'Bebas Neue', sans-serif;
+    font-size: 1.2rem;
+    color: var(--blue);
+    letter-spacing: 0.04em;
+    margin-bottom: 0.5rem;
+  }
+  .cta-card p {
+    font-family: 'Crimson Pro', serif;
+    font-style: italic;
+    font-size: 0.95rem;
+    color: var(--text);
+    line-height: 1.5;
+    margin-bottom: 1rem;
+  }
+  .cta-link {
+    font-family: 'Outfit', sans-serif;
+    font-weight: 600;
+    font-size: 0.9rem;
+    color: var(--blue);
+    text-decoration: none;
+    border-bottom: 1px solid transparent;
+    transition: border-color 0.2s;
+  }
+  .cta-link:hover { border-bottom-color: var(--blue); }
+
+  /* FAQ */
+  .faq-section {
+    margin-top: 3rem;
+    padding-top: 2rem;
+    border-top: 1px solid var(--border);
+  }
+  .faq-title {
+    font-family: 'Bebas Neue', sans-serif;
+    font-size: 2rem;
+    color: var(--text-bright);
+    margin-bottom: 1.5rem;
+    letter-spacing: 0.03em;
+  }
+  .faq-item {
+    border-bottom: 1px solid var(--border);
+    padding: 0;
+  }
+  .faq-item summary {
+    padding: 1rem 0;
+    cursor: pointer;
+    font-weight: 600;
+    color: var(--text-bright);
+    font-size: 1rem;
+    list-style: none;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+  }
+  .faq-item summary::after {
+    content: '+';
+    color: var(--gold);
+    font-size: 1.3rem;
+    font-weight: 700;
+    transition: transform 0.2s;
+  }
+  .faq-item[open] summary::after { transform: rotate(45deg); }
+  .faq-item p {
+    padding: 0 0 1rem;
+    color: #94a3b8;
+    line-height: 1.7;
+    font-size: 0.95rem;
+  }
+
+  /* Footer */
+  .footer {
+    margin-top: 3rem;
+    padding-top: 1.5rem;
+    border-top: 1px solid var(--border);
+    text-align: center;
+  }
+  .footer p {
+    font-family: 'Outfit', sans-serif;
+    font-size: 0.75rem;
+    color: var(--muted);
+    line-height: 1.8;
+  }
+  .footer a {
+    color: var(--muted);
+    text-decoration: underline;
+    text-underline-offset: 2px;
+  }
+
+  /* Responsive */
+  @media (max-width: 600px) {
+    .hero h1 { font-size: 2rem; }
+    .cross-links { grid-template-columns: 1fr; }
+  }
+</style>
+
+<!-- GA4 Cookieless -->
+<script async src="https://www.googletagmanager.com/gtag/js?id=G-7GTLYCZMXN"></script>
+<script>window.dataLayer=window.dataLayer||[];function gtag(){dataLayer.push(arguments);}gtag('js',new Date());gtag('consent','default',{analytics_storage:'denied',ad_storage:'denied',ad_user_data:'denied',ad_personalization:'denied'});gtag('config','G-7GTLYCZMXN',{send_page_view:true,anonymize_ip:true});</script>
+
+<script type="application/ld+json">
+{"@context":"https://schema.org","@type":"Article","headline":"How Bookmaker Odds Work — Overround Explained with Maths","description":"Every set of bookmaker odds has a built-in profit margin called overround. We show you how to calculate it, what it costs you, and how to find better value.","url":"https://mathswins.co.uk/learn/overround-explained/","author":{"@type":"Organization","name":"MathsWins","url":"https://mathswins.co.uk"},"publisher":{"@type":"Organization","name":"MathsWins","url":"https://mathswins.co.uk","logo":{"@type":"ImageObject","url":"https://mathswins.co.uk/assets/og-image.png"}},"datePublished":"2026-03-26","dateModified":"2026-03-26","image":"https://mathswins.co.uk/assets/og-image.png","mainEntityOfPage":{"@type":"WebPage","@id":"https://mathswins.co.uk/learn/overround-explained/"}}
+</script>
+<script type="application/ld+json">
+{"@context":"https://schema.org","@type":"FAQPage","mainEntity":[{"@type":"Question","name":"What is overround in betting?","acceptedAnswer":{"@type":"Answer","text":"Overround is the bookmaker's built-in profit margin. It's the amount by which the implied probabilities of all outcomes in a market exceed 100%. For example, if a market's implied probabilities sum to 105%, the overround is 5%. Also called 'vig' (US) or 'juice'."}},{"@type":"Question","name":"Why do bookmaker odds always add up to more than 100%?","acceptedAnswer":{"@type":"Answer","text":"Bookmakers shorten every price so the implied probabilities exceed 100%. This guarantees them a profit margin regardless of the outcome. A fair market would sum to exactly 100%, but no bookmaker offers truly fair odds because they need to cover costs and generate profit."}},{"@type":"Question","name":"How does overround affect accumulators?","acceptedAnswer":{"@type":"Answer","text":"Overround compounds with each leg of an accumulator. If each market has a 5% overround, a 4-leg accumulator gives the bookmaker roughly a 21.6% combined edge — not 20%. A 10-leg acca at the same overround produces a 62.9% edge, which is worse than almost any casino game."}},{"@type":"Question","name":"How can I reduce the impact of overround on my bets?","acceptedAnswer":{"@type":"Answer","text":"Compare prices across multiple bookmakers to find the best odds on each selection. Use betting exchanges like Betfair or Smarkets, which typically operate at 100-102% instead of 104-110%. Avoid exotic markets (correct score, first goalscorer) where overround can exceed 30%. Keep accumulators short — 2 or 3 legs maximum."}}]}
+</script>
+</head>
+<body>
+<script src="/auth/mw-auth.js"></script>
+<div class="container">
+
+  <!-- Nav -->
+  <nav class="nav-bar">
+    <a href="/" class="nav-brand">MATHS<span>WINS</span></a>
+    <a href="/academy/sports-betting/" class="nav-link">Sports Betting Maths Course &rarr;</a>
+  </nav>
+
+  <!-- Hero -->
+  <div class="hero">
+    <div class="hero-eyebrow">Learn</div>
+    <h1>HOW BOOKMAKER ODDS WORK</h1>
+    <div class="hero-sub">Every price a bookmaker offers is worse than the true probability. The gap between what they offer and what is fair has a name &mdash; and understanding it changes how you think about every bet you place.</div>
+  </div>
+
+  <!-- Article Content -->
+  <div class="article-body">
+
+    <h2>THE PRICE IS NEVER FAIR</h2>
+
+    <p>Walk into any bookmaker or open any betting app, and every single price you see has been adjusted in the house's favour. The odds on offer do not reflect the true probability of an outcome &mdash; they reflect a probability that has been deliberately inflated. The bookmaker's profit is baked into every market before a single pound is wagered.</p>
+
+    <p>This built-in margin is called the <strong style="color:var(--text-bright);">overround</strong> (also known as <em>vig</em> or <em>juice</em> in the US). It is the single most important concept in betting mathematics, and most recreational bettors have never heard of it. Once you understand it, you will never look at a set of odds the same way again.</p>
+
+    <h2>FROM PROBABILITY TO ODDS</h2>
+
+    <p>Before we can see the overround, we need to understand how probability becomes odds. The conversion is straightforward: divide 1 by the probability to get the fair decimal odds.</p>
+
+    <p>Take the simplest possible event &mdash; a fair coin toss. Heads has a 50% chance of landing. Tails has a 50% chance. If a bookmaker offered fair odds on this event, both outcomes would pay 2.00 in decimal odds.</p>
+
+    <div class="mb">Fair odds = 1 &divide; probability
+
+Heads: 1 &divide; 0.50 = 2.00
+Tails: 1 &divide; 0.50 = 2.00</div>
+
+    <p>This is a <strong style="color:var(--text-bright);">100% book</strong>. The implied probabilities sum to exactly 100%: you convert each decimal price back to a probability using 1&nbsp;&divide;&nbsp;odds&nbsp;&times;&nbsp;100, and if they add up to 100%, the market is perfectly fair. There is no margin for the house. No bookmaker in the real world operates this way.</p>
+
+    <h2>HOW BOOKMAKERS ADJUST THE ODDS</h2>
+
+    <p>Instead of offering 2.00 on both sides of that coin toss, a bookmaker might offer 1.91 on heads and 1.91 on tails. The payout looks similar, but the mathematics have shifted fundamentally.</p>
+
+    <div class="mb">Bookmaker's coin toss market:
+
+Heads 1.91 &rarr; implied prob = 1/1.91 = 52.36%
+Tails 1.91 &rarr; implied prob = 1/1.91 = 52.36%
+
+Total implied probability = 104.7%
+Overround = 104.7% &minus; 100% = 4.7%</div>
+
+    <p>The bookmaker has created a market where the implied probabilities sum to 104.7%. That extra 4.7% is the overround. It means that for every &pound;100 wagered proportionally across all outcomes, the bookmaker expects to pay out roughly &pound;95.50 and keep &pound;4.50. The margin is invisible to most punters because it is spread across every price in the market rather than charged as an explicit fee.</p>
+
+    <div class="pln">The overround is the betting equivalent of the house edge in a casino. A European roulette wheel has a 2.7% house edge. A football match-result market at 5% overround has a roughly comparable cost per bet. The difference is that casino edges are fixed by the rules of the game, while bookmaker margins vary wildly between markets, events, and operators.</div>
+
+    <h2>REAL-WORLD EXAMPLES</h2>
+
+    <p>The overround varies enormously depending on the type of market. Here are three worked examples that show the range you will encounter in practice.</p>
+
+    <h3>FOOTBALL MATCH RESULT (1X2)</h3>
+
+    <p>A Premier League fixture with three outcomes &mdash; home win, draw, away win. This is typically one of the most competitive markets available.</p>
+
+    <div class="mb">Arsenal vs Chelsea
+
+Home  1.95 &rarr; 1/1.95 = 51.28%
+Draw  3.60 &rarr; 1/3.60 = 27.78%
+Away  4.00 &rarr; 1/4.00 = 25.00%
+
+Total = 104.06%
+Overround = 4.06%</div>
+
+    <p>At 4.06%, this is a competitive market. You are paying roughly 4p per pound in margin. Over a season of bets, this adds up, but it is manageable &mdash; especially if you shop around for the best price on your specific selection.</p>
+
+    <h3>HORSE RACING &mdash; 10 RUNNERS</h3>
+
+    <p>Horse racing markets have more outcomes, which gives bookmakers more room to build in margin across a wider spread of prices.</p>
+
+    <div class="mb">10-runner handicap:
+
+Horse 1:  3.50 &rarr; 28.57%     Horse 6:  11.00 &rarr;  9.09%
+Horse 2:  5.00 &rarr; 20.00%     Horse 7:  13.00 &rarr;  7.69%
+Horse 3:  6.00 &rarr; 16.67%     Horse 8:  17.00 &rarr;  5.88%
+Horse 4:  7.00 &rarr; 14.29%     Horse 9:  21.00 &rarr;  4.76%
+Horse 5:  9.00 &rarr; 11.11%     Horse 10: 34.00 &rarr;  2.94%
+
+Total = 121.00%
+Overround = 21.00%</div>
+
+    <p>At 21%, this is a very different proposition from football. For every &pound;100 staked proportionally, the bookmaker expects to keep &pound;17.36. Most of the margin is hidden in the shorter-priced runners, where a small odds reduction translates to a large probability shift.</p>
+
+    <h3>CORRECT SCORE</h3>
+
+    <p>Correct score markets typically offer 15&ndash;25 possible outcomes. This is where bookmakers extract their largest margins, and where most punters pay the least attention to value.</p>
+
+    <div class="mb">Correct score market (selected prices):
+
+1-0:  7.00 &rarr; 14.29%       0-1:  9.00 &rarr; 11.11%
+2-1:  9.50 &rarr; 10.53%       1-2: 12.00 &rarr;  8.33%
+0-0:  8.00 &rarr; 12.50%       2-0: 10.00 &rarr; 10.00%
+1-1:  7.50 &rarr; 13.33%       Other: 5.50 &rarr; 18.18%
+...plus 12 more outcomes
+
+Typical total = 130&ndash;145%
+Overround = 30&ndash;45%</div>
+
+    <div class="dg"><strong>The pattern is clear:</strong> more outcomes means higher hidden overround. With only 3 outcomes, a bookmaker has limited room to build margin without the prices looking obviously poor. With 20+ outcomes, the margin can be spread so thinly across each selection that no individual price looks unreasonable &mdash; but the total cost to the bettor is enormous.</div>
+
+    <h2>ACCUMULATORS &mdash; WHERE OVERROUND COMPOUNDS</h2>
+
+    <p>Single bets are expensive enough. Accumulators are where the mathematics become truly punitive, and it is no coincidence that bookmakers promote them more aggressively than any other product.</p>
+
+    <p>The overround on an accumulator does not simply add up. It <strong style="color:var(--text-bright);">multiplies</strong>. Each leg compounds the bookmaker's edge, just as compound interest grows a savings balance &mdash; except here, the compounding works against you.</p>
+
+    <div class="mb">Combined edge = (book&#8321; &times; book&#8322; &times; ... &times; book&#8345;) &times; 100 &minus; 100
+
+Where each book = total implied probability &divide; 100
+
+Example: 4-leg accumulator, each market at 5% overround
+
+Each book = 1.05
+Combined = 1.05 &times; 1.05 &times; 1.05 &times; 1.05 = 1.2155
+Combined edge = 121.55% &minus; 100% = 21.6%</div>
+
+    <p>Four legs at 5% overround each gives the bookmaker a 21.6% combined edge. Not 20%. The compounding effect adds an extra 1.6 percentage points that most bettors never account for.</p>
+
+    <p>The damage escalates rapidly with more legs:</p>
+
+    <div class="mb">Accumulator edges at 5% overround per leg:
+
+ 2 legs:  10.3% edge     &pound;0.907 return per &pound;1
+ 3 legs:  15.8% edge     &pound;0.864 return per &pound;1
+ 4 legs:  21.6% edge     &pound;0.823 return per &pound;1
+ 5 legs:  27.6% edge     &pound;0.784 return per &pound;1
+ 7 legs:  40.7% edge     &pound;0.711 return per &pound;1
+10 legs:  62.9% edge     &pound;0.614 return per &pound;1</div>
+
+    <div class="dg"><strong>A 10-leg accumulator at just 5% overround per leg gives the bookmaker a 62.9% edge.</strong> You are expected to lose 63p of every &pound;1 staked. For comparison, a roulette wheel has a 2.7% house edge and a slot machine typically runs at 3&ndash;8%. The 10-fold acca is mathematically worse than almost any game in the casino. Bookmakers promote accumulators for a reason &mdash; they are the single most profitable product on the menu.</div>
+
+    <h2>WHAT YOU CAN DO ABOUT IT</h2>
+
+    <p>Overround is a fact of betting &mdash; you cannot eliminate it entirely. But you can reduce its impact significantly. Here are the approaches that actually move the needle.</p>
+
+    <div class="pt"><strong>Compare bookmakers on every bet.</strong> Two bookmakers might both offer your selection at 2.10, but if one runs a 103% book and the other runs a 108% book, the first is giving you meaningfully better value. Price comparison is the single easiest way to reduce the margin you pay. Over hundreds of bets, the difference between 3% and 8% overround is the difference between slow losses and near break-even.</div>
+
+    <div class="pt"><strong>Use betting exchanges.</strong> Platforms like Betfair and Smarkets match bettors against each other rather than against a bookmaker. Their markets typically run at 100&ndash;102% overround. You pay a commission on winning bets (usually 2&ndash;5%), but the total cost is almost always lower than traditional bookmaker margin. If you bet regularly and are not using exchanges, you are overpaying on virtually every wager.</div>
+
+    <div class="pt"><strong>Avoid high-overround markets.</strong> Correct score, first goalscorer, anytime scorer, and novelty markets routinely carry overrounds above 20%. These are the bookmaker's highest-margin products. If you want the fairest prices, stick to match results, Asian handicaps, and totals (over/under) markets, where competition between bookmakers keeps margins tight.</div>
+
+    <div class="pt"><strong>Keep accumulators short.</strong> If you enjoy accumulators, limit yourself to 2 or 3 legs. Beyond that, the compounding overround creates an edge that is almost impossible to overcome through selection skill alone. A 3-leg acca at 5% overround costs you 15.8%. A 10-leg acca at the same overround costs you 62.9%. The maths is unambiguous.</div>
+
+    <div class="pt"><strong>Use the <a href="/tools/overround/">Overround Calculator</a> before you bet.</strong> Enter the odds for any market and see the exact margin you are paying. It takes 30 seconds and gives you a clear, quantified picture of how competitive the prices actually are. If the overround is above 110%, consider whether the bet is worth placing at all.</div>
+
+    <div class="pln">None of this is betting advice. It is mathematics. The overround exists in every market, on every event, at every bookmaker. Understanding it does not guarantee you will win &mdash; but it guarantees you will stop paying more margin than you need to.</div>
+
+  </div>
+
+  <!-- Cross-links -->
+  <div class="cross-links">
+    <a href="/tools/overround/" class="cross-link">
+      <h4>OVERROUND CALCULATOR</h4>
+      <p>Enter the odds for any market and see the exact bookmaker margin, fair odds, and a plain-English verdict.</p>
+    </a>
+    <a href="/tools/accumulator-calculator/" class="cross-link">
+      <h4>ACCUMULATOR CALCULATOR</h4>
+      <p>See the true cost of your acca &mdash; combined odds, probability, and how the overround compounds per leg.</p>
+    </a>
+    <a href="/tools/free-bet-calculator/" class="cross-link">
+      <h4>FREE BET CALCULATOR</h4>
+      <p>Calculate what your free bet is really worth and the optimal strategy for using it.</p>
+    </a>
+    <a href="/academy/sports-betting/" class="cross-link">
+      <h4>SPORTS BETTING MATHS COURSE</h4>
+      <p>16 modules covering implied probability, value betting, exchange maths, and why 95% of bettors lose. Module 1 free.</p>
+    </a>
+  </div>
+
+  <!-- CTA -->
+  <div class="cta-card">
+    <h3>SPORTS BETTING MATHS &mdash; 16 MODULES</h3>
+    <p>This article introduces overround. The Sports Betting course goes deeper: implied probability, value identification, exchange strategy, Kelly criterion, and the mathematical reasons why the vast majority of bettors lose long-term. 165+ scenarios. Module 1 free.</p>
+    <a href="/academy/sports-betting/" class="cta-link">Explore the full course &rarr;</a>
+  </div>
+
+  <!-- FAQ -->
+  <div class="faq-section">
+    <h2 class="faq-title">FREQUENTLY ASKED QUESTIONS</h2>
+    <details class="faq-item"><summary>What is overround in betting?</summary><p>Overround is the bookmaker's built-in profit margin. It is the amount by which the implied probabilities of all outcomes in a market exceed 100%. For example, if you convert every price in a football match to implied probabilities and they sum to 105%, the overround is 5%. The terms &ldquo;vig&rdquo; (short for vigorish) and &ldquo;juice&rdquo; mean the same thing &mdash; they are the American equivalents.</p></details>
+    <details class="faq-item"><summary>Why do bookmaker odds always add up to more than 100%?</summary><p>Because the bookmaker needs a profit margin. Fair odds would sum to exactly 100%, but that would leave no room for the bookmaker to cover costs or generate income. By shortening every price slightly, the bookmaker ensures that the implied probabilities exceed 100%. The excess is their guaranteed edge, regardless of which outcome wins.</p></details>
+    <details class="faq-item"><summary>How does overround affect accumulators?</summary><p>Overround compounds with each leg. It multiplies rather than adds. If each market has 5% overround, a 4-leg accumulator gives the bookmaker a 21.6% combined edge (not 20%). A 10-leg accumulator at the same per-leg overround produces a 62.9% edge &mdash; worse than virtually any casino game. This compounding effect is the primary mathematical reason why long accumulators are so profitable for bookmakers.</p></details>
+    <details class="faq-item"><summary>How can I reduce the impact of overround on my bets?</summary><p>Four approaches make a real difference. First, compare prices across multiple bookmakers &mdash; even small differences in overround add up over hundreds of bets. Second, use betting exchanges (Betfair, Smarkets), which typically run at 100&ndash;102% instead of 104&ndash;110%. Third, avoid exotic markets like correct score and first goalscorer, where overround often exceeds 20%. Fourth, keep accumulators to 2&ndash;3 legs maximum to limit the compounding effect.</p></details>
+  </div>
+
+  <!-- Responsible Gambling -->
+  <div style="margin-top:2rem; padding:1.25rem; background:var(--surface); border:1px solid var(--border); border-radius:8px;">
+    <p style="font-family:'Outfit',sans-serif; font-size:0.78rem; color:var(--muted); line-height:1.7;">
+      This is a mathematical education article, not betting advice. If you or someone you know is affected by problem gambling:<br>
+      <strong style="color:var(--text);">National Gambling Helpline: 0808 8020 133</strong> (free, 24/7)<br>
+      <a href="https://www.gamcare.org.uk" style="color:var(--muted);">GamCare</a> &middot;
+      <a href="https://www.begambleaware.org" style="color:var(--muted);">BeGambleAware</a>
+    </p>
+  </div>
+
+  <!-- Footer -->
+  <div class="footer">
+    <p>
+      Built by a first-class mathematics graduate with QTS.<br>
+      <a href="/">MathsWins</a> &middot; <a href="/learn/">Articles</a> &middot; <a href="/tools/">Tools</a> &middot; <a href="/academy/">Academy</a> &middot; <a href="/restore/">Restore Access</a><br>
+      &copy; 2026 MathsWins. Maths Always Wins.
+    </p>
+  </div>
+
+</div>
+
+<!-- Cookie Consent Banner -->
+<div id="cookieConsent" style="display:none;position:fixed;bottom:0;left:0;right:0;background:#0c1628;border-top:1px solid #14263d;padding:14px 24px;z-index:99999;font-family:'Outfit',system-ui,sans-serif;font-size:13px;color:#94a3b8;align-items:center;justify-content:center;gap:16px;flex-wrap:wrap">
+<span>We use cookies for analytics to improve your experience. No personal data is sold or shared.</span>
+<button onclick="acceptCookies()" style="background:#d4a847;color:#050709;border:none;padding:8px 20px;border-radius:4px;font-weight:700;font-size:13px;cursor:pointer;font-family:inherit">Accept</button>
+<button onclick="declineCookies()" style="background:transparent;color:#64748b;border:1px solid #14263d;padding:8px 20px;border-radius:4px;font-size:13px;cursor:pointer;font-family:inherit">Decline</button>
+</div>
+<script>
+function acceptCookies(){localStorage.setItem('mw_cookies','accepted');gtag('consent','update',{analytics_storage:'granted'});document.getElementById('cookieConsent').style.display='none';}
+function declineCookies(){localStorage.setItem('mw_cookies','declined');document.getElementById('cookieConsent').style.display='none';}
+(function(){var c=localStorage.getItem('mw_cookies');if(c==='accepted'){gtag('consent','update',{analytics_storage:'granted'});}else if(!c){document.getElementById('cookieConsent').style.display='flex';}})();
+</script>
+</body>
+</html>

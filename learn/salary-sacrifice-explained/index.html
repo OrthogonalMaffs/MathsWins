@@ -1,0 +1,248 @@
+<!DOCTYPE html>
+<html lang="en-GB">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>How Salary Sacrifice Works — The Maths Behind Your Pension Boost | MathsWins</title>
+<meta name="description" content="Salary sacrifice can save you thousands in tax and National Insurance. We show you exactly how much with worked examples at every income level.">
+<meta property="og:url" content="https://mathswins.co.uk/learn/salary-sacrifice-explained/">
+<meta property="og:image" content="https://mathswins.co.uk/assets/og-image.png">
+<meta property="og:title" content="How Salary Sacrifice Works — The Maths Behind Your Pension Boost | MathsWins">
+<meta property="og:type" content="article">
+<meta property="og:description" content="Salary sacrifice can save you thousands in tax and National Insurance. We show you exactly how much with worked examples at every income level.">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:title" content="How Salary Sacrifice Works | MathsWins">
+<meta name="twitter:image" content="https://mathswins.co.uk/assets/og-image.png">
+<link rel="canonical" href="https://mathswins.co.uk/learn/salary-sacrifice-explained/">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Crimson+Pro:ital,wght@0,400;1,400&family=DM+Mono:wght@400;500&family=Outfit:wght@300;400;600;700&display=swap" rel="stylesheet">
+<style>
+:root{--bg:#050709;--surface:#0a0d14;--surface2:#0f1319;--border:#161c28;--border2:#1e2638;--sky:#0ea5e9;--sky-dim:rgba(14,165,233,0.10);--green:#2dd4a0;--green-dim:rgba(45,212,160,0.10);--red:#ef5350;--red-dim:rgba(239,83,80,0.10);--gold:#d4a847;--cyan:#22d3ee;--text:#c8cdd8;--text-bright:#e8ecf4;--muted:#4a5568;}
+*{margin:0;padding:0;box-sizing:border-box;}
+body{font-family:'Outfit',sans-serif;background:var(--bg);color:var(--text);min-height:100vh;line-height:1.7;}
+.container{max-width:800px;margin:0 auto;padding:2rem 1.25rem 4rem;}
+.nav-bar{display:flex;align-items:center;justify-content:space-between;padding:1rem 0;border-bottom:1px solid var(--border);margin-bottom:2rem;}
+.nav-brand{font-family:'Bebas Neue',sans-serif;font-size:1.4rem;color:var(--gold);text-decoration:none;letter-spacing:0.06em;}.nav-brand span{color:var(--text-bright);}
+.nav-link{font-size:0.85rem;font-weight:600;color:var(--sky);text-decoration:none;padding:0.4rem 1rem;border:1px solid var(--sky);border-radius:4px;}
+.hero{text-align:center;margin-bottom:2.5rem;}
+.hero-eyebrow{font-size:0.75rem;font-weight:600;text-transform:uppercase;letter-spacing:0.15em;color:var(--sky);margin-bottom:0.5rem;}
+.hero h1{font-family:'Bebas Neue',sans-serif;font-size:clamp(1.8rem,5vw,2.8rem);color:var(--text-bright);letter-spacing:0.04em;line-height:1.1;margin-bottom:0.75rem;}
+.hero-sub{font-family:'Crimson Pro',serif;font-style:italic;font-size:1.05rem;color:var(--cyan);max-width:600px;margin:0 auto;}
+article h2{font-family:'Bebas Neue',sans-serif;font-size:1.5rem;color:var(--text-bright);letter-spacing:0.04em;margin:2.5rem 0 1rem;padding-bottom:0.5rem;border-bottom:1px solid var(--border);}
+article p{margin-bottom:1rem;font-size:0.95rem;line-height:1.75;}
+article strong{color:var(--text-bright);}
+.mb{background:var(--surface2);border:1px solid var(--border2);border-radius:6px;padding:1rem;font-family:'DM Mono',monospace;font-size:0.82rem;color:var(--text-bright);line-height:1.7;white-space:pre-wrap;margin:1rem 0;}
+.pln{font-family:'Crimson Pro',serif;font-style:italic;color:var(--cyan);background:rgba(34,211,238,0.08);border-left:3px solid var(--cyan);padding:0.85rem 1rem;border-radius:0 6px 6px 0;margin:1rem 0;font-size:0.92rem;}
+.dg{font-family:'Outfit',sans-serif;color:var(--red);background:var(--red-dim);border-left:3px solid var(--red);padding:0.85rem 1rem;border-radius:0 6px 6px 0;margin:1rem 0;font-size:0.92rem;line-height:1.6;}
+.dg strong{color:var(--red);}
+.pt{font-family:'Crimson Pro',serif;font-style:italic;color:var(--green);background:var(--green-dim);border-left:3px solid var(--green);padding:0.85rem 1rem;border-radius:0 6px 6px 0;margin:1rem 0;font-size:0.92rem;}
+.cta-card{background:var(--surface);border:1px solid var(--border);border-left:3px solid var(--sky);border-radius:0 10px 10px 0;padding:1.5rem;margin-top:2rem;}
+.cta-card h3{font-family:'Bebas Neue',sans-serif;font-size:1.2rem;color:var(--sky);margin-bottom:0.5rem;}
+.cta-card p{font-family:'Crimson Pro',serif;font-style:italic;font-size:0.92rem;color:var(--text);margin-bottom:0.75rem;}
+.cta-link{font-weight:600;font-size:0.9rem;color:var(--sky);text-decoration:none;display:inline-block;margin-top:0.25rem;}
+.footer{margin-top:2.5rem;padding-top:1.25rem;border-top:1px solid var(--border);text-align:center;}
+.footer p{font-size:0.72rem;color:var(--muted);line-height:1.8;}
+.footer a{color:var(--muted);text-decoration:underline;}
+.compare{display:grid;grid-template-columns:1fr 1fr;gap:1rem;margin:1rem 0;}
+@media(max-width:600px){.compare{grid-template-columns:1fr;}}
+.compare-card{background:var(--surface);border:1px solid var(--border);border-radius:10px;padding:1.25rem;}
+.compare-card.hl{border-color:var(--green);border-width:2px;}
+.cc-title{font-family:'Bebas Neue',sans-serif;font-size:1rem;color:var(--muted);letter-spacing:0.05em;margin-bottom:0.75rem;}
+.cc-title.hl{color:var(--green);}
+.cc-row{display:flex;justify-content:space-between;padding:0.4rem 0;border-bottom:1px solid var(--border);}
+.cc-row:last-child{border-bottom:none;}
+.cc-label{font-size:0.88rem;}
+.cc-val{font-family:'DM Mono',monospace;font-weight:500;font-size:0.95rem;}
+.cc-val.green{color:var(--green);}.cc-val.red{color:var(--red);}.cc-val.bright{color:var(--text-bright);}
+.inline-link{color:var(--sky);text-decoration:none;font-weight:600;border-bottom:1px solid rgba(14,165,233,0.3);}
+.inline-link:hover{border-bottom-color:var(--sky);}
+</style>
+<!-- GA4 Cookieless -->
+<script async src="https://www.googletagmanager.com/gtag/js?id=G-7GTLYCZMXN"></script>
+<script>window.dataLayer=window.dataLayer||[];function gtag(){dataLayer.push(arguments);}gtag('js',new Date());gtag('consent','default',{analytics_storage:'denied',ad_storage:'denied',ad_user_data:'denied',ad_personalization:'denied'});gtag('config','G-7GTLYCZMXN',{send_page_view:true,anonymize_ip:true});</script>
+<script type="application/ld+json">
+{"@context":"https://schema.org","@type":"Article","headline":"How Salary Sacrifice Works — The Maths Behind Your Pension Boost","description":"Salary sacrifice can save you thousands in tax and National Insurance. We show you exactly how much with worked examples at every income level.","url":"https://mathswins.co.uk/learn/salary-sacrifice-explained/","datePublished":"2026-03-26","dateModified":"2026-03-26","author":{"@type":"Organization","name":"MathsWins","url":"https://mathswins.co.uk"},"publisher":{"@type":"Organization","name":"MathsWins","url":"https://mathswins.co.uk","logo":{"@type":"ImageObject","url":"https://mathswins.co.uk/assets/og-image.png"}},"image":"https://mathswins.co.uk/assets/og-image.png","mainEntityOfPage":{"@type":"WebPage","@id":"https://mathswins.co.uk/learn/salary-sacrifice-explained/"}}
+</script>
+<script type="application/ld+json">
+{"@context":"https://schema.org","@type":"FAQPage","mainEntity":[{"@type":"Question","name":"Is salary sacrifice better than paying into a personal pension?","acceptedAnswer":{"@type":"Answer","text":"Almost always yes. A personal pension contribution gives you income tax relief, but you've already paid National Insurance on that money. Salary sacrifice avoids both income tax AND National Insurance, saving a basic rate taxpayer 32% compared to 20% with a personal contribution."}},{"@type":"Question","name":"Does salary sacrifice reduce my mortgage borrowing?","acceptedAnswer":{"@type":"Answer","text":"Yes. Mortgage lenders use your contractual gross salary, which is lower after a salary sacrifice arrangement. If you're applying for a mortgage, you may want to pause salary sacrifice temporarily or provide documentation showing your pre-sacrifice salary."}},{"@type":"Question","name":"Can salary sacrifice affect my State Pension?","acceptedAnswer":{"@type":"Answer","text":"Only if your reduced salary falls below the NI Lower Earnings Limit (£6,396 in 2025/26). Below this threshold, you stop earning qualifying years toward your State Pension. For most full-time employees this is not a risk, but part-time workers should check carefully."}},{"@type":"Question","name":"Does salary sacrifice reduce my student loan repayments?","acceptedAnswer":{"@type":"Answer","text":"Yes. Student loan repayments are calculated on your gross salary after sacrifice. On Plan 2, you repay 9% of everything above £27,295. Each £1,000 sacrificed saves £90 per year in loan repayments — money that goes to your pension instead of your loan balance."}}]}
+</script>
+</head>
+<body>
+<script src="/auth/mw-auth.js"></script>
+<div class="container">
+<nav class="nav-bar">
+  <a href="/" class="nav-brand">MATHS<span>WINS</span></a>
+  <a href="/tools/salary-sacrifice/" class="nav-link">Salary Sacrifice Calculator →</a>
+</nav>
+
+<div class="hero">
+  <div class="hero-eyebrow">Learn</div>
+  <h1>HOW SALARY SACRIFICE WORKS</h1>
+  <div class="hero-sub">Salary sacrifice is one of the most tax-efficient ways to boost your pension — but most people don't understand exactly how much they save. Let's fix that with actual numbers.</div>
+</div>
+
+<article>
+
+<h2>WHAT SALARY SACRIFICE IS</h2>
+
+<p>Salary sacrifice is a formal agreement between you and your employer. You agree to give up part of your gross salary. In return, your employer pays that amount directly into your workplace pension.</p>
+
+<p>The crucial detail: <strong>the money never appears on your payslip</strong>. As far as HMRC is concerned, your salary is the lower figure. You don't pay income tax on the sacrificed amount. You don't pay National Insurance on it. Your employer doesn't pay employer NI on it either.</p>
+
+<p>This is fundamentally different from making a personal pension contribution. With a personal contribution, your salary stays the same — you pay tax and NI on the full amount, then the pension provider claims back income tax via tax relief. With salary sacrifice, the money is redirected <em>before</em> any deductions happen.</p>
+
+<div class="pln">Think of it this way: a personal pension contribution is like paying full price and getting a partial refund. Salary sacrifice is like never being charged in the first place.</div>
+
+<h2>WHY IT SAVES MORE MONEY</h2>
+
+<p>Let's work through a concrete example. Take a basic rate taxpayer earning <strong>£35,000</strong> who wants to put <strong>£200 per month</strong> (£2,400/year) into their pension.</p>
+
+<div class="mb">WITHOUT salary sacrifice (personal contribution):
+  Gross salary:           £35,000
+  Income tax (20%):      -£4,486
+  Employee NI (8%):      -£1,794
+  Take-home before pension: £28,720
+  Personal pension contribution: -£2,400
+  Take-home after pension:  £26,320
+
+  Pension receives: £2,400 + £600 tax relief = £3,000</div>
+
+<div class="mb">WITH salary sacrifice:
+  Gross salary (reduced): £32,600
+  Income tax (20%):      -£4,006
+  Employee NI (8%):      -£1,602
+  Take-home:              £26,992
+
+  Pension receives: £2,400 (directly from employer)</div>
+
+<p>Compare the two outcomes:</p>
+
+<div class="compare">
+  <div class="compare-card">
+    <div class="cc-title">PERSONAL CONTRIBUTION</div>
+    <div class="cc-row"><span class="cc-label">Your take-home</span><span class="cc-val bright">£26,320</span></div>
+    <div class="cc-row"><span class="cc-label">Pension receives</span><span class="cc-val bright">£3,000</span></div>
+    <div class="cc-row"><span class="cc-label">NI paid by you</span><span class="cc-val red">£1,794</span></div>
+  </div>
+  <div class="compare-card hl">
+    <div class="cc-title hl">SALARY SACRIFICE</div>
+    <div class="cc-row"><span class="cc-label">Your take-home</span><span class="cc-val green">£26,992</span></div>
+    <div class="cc-row"><span class="cc-label">Pension receives</span><span class="cc-val bright">£2,400</span></div>
+    <div class="cc-row"><span class="cc-label">NI paid by you</span><span class="cc-val green">£1,602</span></div>
+  </div>
+</div>
+
+<p>With salary sacrifice, your take-home is <strong>£672 higher</strong> and your pension still receives a direct £2,400. The NI saving is £192/year — money that would have been lost entirely with a personal contribution. Many employers also pass on their own employer NI saving (13.8% of the sacrificed amount = £331/year), which goes straight into your pension pot.</p>
+
+<div class="pt">If your employer passes on their NI saving, your pension receives £2,400 + £331 = £2,731. You keep £672 more in take-home. The total benefit versus a personal contribution: £1,003 per year — from sacrificing the same £200/month.</div>
+
+<h2>HIGHER RATE AND ADDITIONAL RATE</h2>
+
+<p>The savings become dramatically larger at higher tax rates. Same £200/month sacrifice:</p>
+
+<div class="mb">HIGHER RATE TAXPAYER (£60,000 salary, 40% tax + 2% NI):
+  Tax saving on £2,400:   £960 (vs £480 via tax relief reclaim)
+  NI saving:              £48
+  Your annual benefit:    £1,008
+  Employer NI saving:     £331 (13.8% of £2,400)
+
+  Cost to your take-home: only £1,392 for £2,400 in pension
+  Every £1 sacrificed costs you just 58p.</div>
+
+<div class="mb">ADDITIONAL RATE TAXPAYER (£160,000 salary, 45% tax + 2% NI):
+  Tax saving on £2,400:   £1,080
+  NI saving:              £48
+  Your annual benefit:    £1,128
+  Employer NI saving:     £331
+
+  Cost to your take-home: only £1,272 for £2,400 in pension
+  Every £1 sacrificed costs you just 53p.</div>
+
+<p>And there is a particularly powerful zone between <strong>£100,000 and £125,140</strong> where your personal allowance is tapered away. In this band, the effective marginal rate is 60%+. Salary sacrifice here saves you more than 60p for every £1 redirected. If your salary sits in this range, salary sacrifice is one of the most efficient moves available in the entire UK tax system.</p>
+
+<div class="pln">The £100k-£125,140 trap is covered in detail in our <a href="/everyday/tax/" class="inline-link">UK Tax Maths course</a> — free, five modules, and essential reading for anyone earning near this threshold.</div>
+
+<h2>THE CATCHES</h2>
+
+<p>Salary sacrifice is not free money. There are real trade-offs you need to understand before committing.</p>
+
+<div class="dg"><strong>Reduced official salary.</strong> Your contractual gross salary drops. Mortgage lenders, landlords, and credit providers see the lower figure. If you're planning a mortgage application in the next 6-12 months, consider pausing salary sacrifice or asking your employer for a letter confirming your pre-sacrifice salary. Not all lenders accept these.</div>
+
+<div class="dg"><strong>Lower statutory payments.</strong> Statutory maternity pay (SMP), statutory paternity pay (SPP), and statutory sick pay (SSP) are all calculated on your reduced salary. If you're planning to start a family, check whether your employer offers enhanced maternity/paternity pay — if they do, it may be based on the pre-sacrifice figure, but you need to confirm this.</div>
+
+<div class="dg"><strong>State Pension risk for low earners.</strong> If salary sacrifice takes your earnings below the NI Lower Earnings Limit (£6,396 in 2025/26), you stop accruing qualifying years for the State Pension. This is unlikely for full-time workers but is a genuine risk for part-time employees making large sacrifices.</div>
+
+<div class="dg"><strong>Reduced death-in-service benefit.</strong> If your employer provides life insurance as a multiple of salary (e.g. 4x salary), salary sacrifice reduces the payout. A £50,000 salary sacrificing £5,000 means your death-in-service benefit drops from £200,000 to £180,000.</div>
+
+<h2>STUDENT LOAN INTERACTION</h2>
+
+<p>Here is an often-overlooked benefit: salary sacrifice <strong>reduces your student loan repayments</strong>. Loan repayments are calculated on your gross salary — and after sacrifice, that gross salary is lower.</p>
+
+<div class="mb">Plan 2 student loan (most graduates since 2012):
+  Repayment: 9% of everything above £27,295
+
+  Without sacrifice (£35,000 salary):
+    Repayable income: £35,000 - £27,295 = £7,705
+    Annual repayment: £7,705 × 9% = £693.45
+
+  With £200/month sacrifice (£32,600 salary):
+    Repayable income: £32,600 - £27,295 = £5,305
+    Annual repayment: £5,305 × 9% = £477.45
+
+  Student loan saving: £216/year</div>
+
+<p>Every £1,000 you sacrifice saves £90 per year in Plan 2 loan repayments. That's money redirected from a loan charging RPI + 3% interest to a pension that should be growing at 5-8% long-term. Mathematically, this is a no-brainer for most graduates — especially those who are unlikely to fully repay their loan before the 30-year write-off.</p>
+
+<div class="pt">If you have a Plan 2 student loan AND you're a basic rate taxpayer, salary sacrifice saves you 20% income tax + 8% NI + 9% student loan = 37% on every pound sacrificed. Your pension receives £1 for every 63p it costs your take-home.</div>
+
+<p>The same logic applies to Plan 1 (9% above £24,990), Plan 4 (9% above £31,395), Plan 5 (9% above £25,000), and postgraduate loans (6% above £21,000). If you're on multiple plans, the savings stack.</p>
+
+<h2>WHAT TO DO NEXT</h2>
+
+<p>Salary sacrifice is not something you can set up unilaterally — it requires your employer's agreement and a formal variation to your employment contract. Here's the practical sequence:</p>
+
+<p><strong>1.</strong> Use our <a href="/tools/salary-sacrifice/" class="inline-link">Salary Sacrifice Calculator</a> to see your exact tax, NI, and student loan savings at your specific salary.</p>
+
+<p><strong>2.</strong> Ask your HR department whether salary sacrifice is available and whether they pass on the employer NI saving to your pension.</p>
+
+<p><strong>3.</strong> Check whether you have any upcoming mortgage applications, maternity/paternity leave, or other events where your contractual salary matters.</p>
+
+<p><strong>4.</strong> If everything checks out, the maths almost always favours sacrifice over personal contributions — and the higher your tax rate, the larger the advantage.</p>
+
+</article>
+
+<div class="cta-card">
+  <h3>SALARY SACRIFICE CALCULATOR</h3>
+  <p>See the exact tax, NI, and student loan saving for your salary. Compares with and without sacrifice side-by-side.</p>
+  <a href="/tools/salary-sacrifice/" class="cta-link">Open the calculator →</a>
+</div>
+
+<div class="cta-card">
+  <h3>UK TAX MATHS — FREE COURSE</h3>
+  <p>Understand marginal vs effective rates, the £100k personal allowance trap, salary sacrifice mathematics, and how the tax system actually works. Five modules, completely free.</p>
+  <a href="/everyday/tax/" class="cta-link">Start the free course →</a>
+</div>
+
+<div class="cta-card">
+  <h3>STUDENT LOAN CALCULATOR</h3>
+  <p>See your full repayment timeline, total interest paid, and whether you'll clear the balance before write-off. All five UK plans supported.</p>
+  <a href="/tools/student-loan/" class="cta-link">Check your loan →</a>
+</div>
+
+<div class="footer"><p><a href="/">MathsWins</a> · <a href="/tools/">Tools</a> · <a href="/everyday/">Everyday Maths</a><br>&copy; 2026 MathsWins. Not financial advice.<br><a href="/restore/">Restore Access</a></p></div>
+</div>
+
+<!-- Cookie Consent Banner -->
+<div id="cookieConsent" style="display:none;position:fixed;bottom:0;left:0;right:0;background:#0c1628;border-top:1px solid #14263d;padding:14px 24px;z-index:99999;font-family:'Outfit',system-ui,sans-serif;font-size:13px;color:#94a3b8;display:none;align-items:center;justify-content:center;gap:16px;flex-wrap:wrap">
+<span>We use cookies for analytics to improve your experience. No personal data is sold or shared.</span>
+<button onclick="acceptCookies()" style="background:#d4a847;color:#050709;border:none;padding:8px 20px;border-radius:4px;font-weight:700;font-size:13px;cursor:pointer;font-family:inherit">Accept</button>
+<button onclick="declineCookies()" style="background:transparent;color:#64748b;border:1px solid #14263d;padding:8px 20px;border-radius:4px;font-size:13px;cursor:pointer;font-family:inherit">Decline</button>
+</div>
+<script>
+function acceptCookies(){localStorage.setItem('mw_cookies','accepted');gtag('consent','update',{analytics_storage:'granted'});document.getElementById('cookieConsent').style.display='none';}
+function declineCookies(){localStorage.setItem('mw_cookies','declined');document.getElementById('cookieConsent').style.display='none';}
+(function(){var c=localStorage.getItem('mw_cookies');if(c==='accepted'){gtag('consent','update',{analytics_storage:'granted'});}else if(!c){document.getElementById('cookieConsent').style.display='flex';}})();
+</script>
+</body>
+</html>

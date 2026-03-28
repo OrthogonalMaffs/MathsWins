@@ -1,0 +1,966 @@
+<!DOCTYPE html>
+<html lang="en-GB">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Bookmaker Overround Calculator — See the Real Margin | MathsWins</title>
+<meta name="description" content="Calculate the bookmaker's built-in profit margin on any market. Enter the odds, see the overround, and understand what it means for your expected value.">
+<meta name="keywords" content="overround calculator, bookmaker margin calculator, betting margin calculator, vig calculator">
+<meta property="og:title" content="Bookmaker Overround Calculator — See the Real Margin | MathsWins">
+<meta property="og:description" content="Calculate the bookmaker's built-in profit margin on any market. Enter the odds, see the overround, and understand what it means for your expected value.">
+<meta property="og:url" content="https://mathswins.co.uk/tools/overround/">
+<meta property="og:image" content="https://mathswins.co.uk/assets/og-image.png">
+<meta property="og:type" content="website">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:title" content="MathsWins">
+<meta name="twitter:image" content="https://mathswins.co.uk/assets/og-image.png">
+<link rel="canonical" href="https://mathswins.co.uk/tools/overround/">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Crimson+Pro:ital,wght@0,400;0,700;1,400&family=DM+Mono:wght@400;500&family=Outfit:wght@300;400;600;700&display=swap" rel="stylesheet">
+
+<style>
+  :root {
+    --bg: #050709;
+    --surface: #0a0d14;
+    --surface2: #0f1319;
+    --border: #161c28;
+    --border2: #1e2638;
+    --navy: #1a2744;
+    --gold: #d4a847;
+    --teal: #0d9488;
+    --teal-bright: #2dd4bf;
+    --blue: #2563eb;
+    --blue-dim: rgba(37,99,235,0.12);
+    --green-bright: #2dd4a0;
+    --green-dim: rgba(45,212,160,0.12);
+    --red-bright: #ef5350;
+    --red-dim: rgba(239,83,80,0.12);
+    --text: #c8cdd8;
+    --text-bright: #e8ecf4;
+    --muted: #4a5568;
+    --cyan: #22d3ee;
+    --cyan-dim: rgba(34,211,238,0.10);
+  }
+
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+
+  body {
+    font-family: 'Outfit', sans-serif;
+    background: var(--bg);
+    color: var(--text);
+    line-height: 1.6;
+    min-height: 100vh;
+  }
+
+  .container {
+    max-width: 920px;
+    margin: 0 auto;
+    padding: 2rem 1.25rem 4rem;
+  }
+
+  /* Header */
+  .nav-bar {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 1rem 0;
+    border-bottom: 1px solid var(--border);
+    margin-bottom: 2.5rem;
+  }
+  .nav-brand {
+    font-family: 'Bebas Neue', sans-serif;
+    font-size: 1.4rem;
+    color: var(--gold);
+    text-decoration: none;
+    letter-spacing: 0.06em;
+  }
+  .nav-brand span { color: var(--text-bright); }
+  .nav-link {
+    font-family: 'Outfit', sans-serif;
+    font-size: 0.85rem;
+    font-weight: 600;
+    color: var(--blue);
+    text-decoration: none;
+    padding: 0.4rem 1rem;
+    border: 1px solid var(--blue);
+    border-radius: 4px;
+    transition: background 0.2s, color 0.2s;
+  }
+  .nav-link:hover { background: var(--blue); color: var(--bg); }
+
+  /* Hero */
+  .hero {
+    text-align: center;
+    margin-bottom: 2.5rem;
+  }
+  .hero-eyebrow {
+    font-family: 'Outfit', sans-serif;
+    font-size: 0.75rem;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.15em;
+    color: var(--blue);
+    margin-bottom: 0.5rem;
+  }
+  .hero h1 {
+    font-family: 'Bebas Neue', sans-serif;
+    font-size: clamp(2rem, 5vw, 3rem);
+    color: var(--text-bright);
+    letter-spacing: 0.04em;
+    line-height: 1.1;
+    margin-bottom: 0.75rem;
+  }
+  .hero-sub {
+    font-family: 'Crimson Pro', serif;
+    font-style: italic;
+    font-size: 1.1rem;
+    color: var(--cyan);
+    max-width: 600px;
+    margin: 0 auto;
+  }
+
+  /* Calculator panel */
+  .calc-panel {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 10px;
+    padding: 1.75rem;
+    margin-bottom: 2rem;
+  }
+  .panel-title {
+    font-family: 'Bebas Neue', sans-serif;
+    font-size: 1.2rem;
+    color: var(--text-bright);
+    letter-spacing: 0.05em;
+    margin-bottom: 1rem;
+  }
+
+  /* Format selector */
+  .format-row {
+    display: flex;
+    gap: 0.5rem;
+    margin-bottom: 1.5rem;
+  }
+  .format-btn {
+    font-family: 'Outfit', sans-serif;
+    font-size: 0.85rem;
+    font-weight: 600;
+    padding: 0.5rem 1.25rem;
+    background: var(--surface2);
+    border: 1px solid var(--border2);
+    border-radius: 6px;
+    color: var(--muted);
+    cursor: pointer;
+    transition: all 0.2s;
+  }
+  .format-btn.active {
+    background: var(--blue-dim);
+    border-color: var(--blue);
+    color: var(--blue);
+  }
+
+  /* Outcome rows */
+  .outcome-row {
+    display: flex;
+    gap: 0.5rem;
+    align-items: center;
+    margin-bottom: 0.5rem;
+    flex-wrap: wrap;
+  }
+  .outcome-num {
+    font-family: 'DM Mono', monospace;
+    font-size: 0.8rem;
+    color: var(--muted);
+    min-width: 24px;
+  }
+  .outcome-row input[type="text"] {
+    font-family: 'Outfit', sans-serif;
+    font-size: 0.95rem;
+    padding: 0.5rem 0.7rem;
+    background: var(--surface2);
+    border: 1px solid var(--border2);
+    border-radius: 5px;
+    color: var(--text-bright);
+    outline: none;
+    width: 140px;
+    transition: border-color 0.2s;
+  }
+  .outcome-row input[type="text"]:focus { border-color: var(--blue); }
+  .outcome-row input[type="text"]::placeholder { color: var(--muted); }
+  .outcome-row input.odds-input {
+    font-family: 'DM Mono', monospace;
+    font-size: 0.95rem;
+    padding: 0.5rem 0.7rem;
+    background: var(--surface2);
+    border: 1px solid var(--border2);
+    border-radius: 5px;
+    color: var(--text-bright);
+    outline: none;
+    width: 100px;
+    transition: border-color 0.2s;
+  }
+  .outcome-row input.odds-input:focus { border-color: var(--blue); }
+  .outcome-row input.odds-input::placeholder { color: var(--muted); }
+  .outcome-remove {
+    background: none;
+    border: 1px solid var(--border2);
+    border-radius: 4px;
+    color: var(--red-bright);
+    font-size: 0.8rem;
+    padding: 0.35rem 0.6rem;
+    cursor: pointer;
+    transition: border-color 0.2s;
+  }
+  .outcome-remove:hover { border-color: var(--red-bright); }
+
+  .btn-row {
+    display: flex;
+    gap: 0.5rem;
+    margin-top: 0.75rem;
+  }
+  .btn-add {
+    font-family: 'Outfit', sans-serif;
+    font-size: 0.82rem;
+    font-weight: 600;
+    padding: 0.5rem 1rem;
+    background: var(--surface2);
+    border: 1px solid var(--border2);
+    border-radius: 5px;
+    color: var(--text);
+    cursor: pointer;
+    transition: all 0.2s;
+  }
+  .btn-add:hover { border-color: var(--blue); color: var(--blue); }
+
+  /* Results */
+  .results {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 10px;
+    padding: 1.75rem;
+    margin-bottom: 2rem;
+  }
+  .results-title {
+    font-family: 'Bebas Neue', sans-serif;
+    font-size: 1.3rem;
+    color: var(--text-bright);
+    letter-spacing: 0.05em;
+    margin-bottom: 1.25rem;
+  }
+  .result-row {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 0.6rem 0;
+    border-bottom: 1px solid var(--border);
+  }
+  .result-row:last-child { border-bottom: none; }
+  .result-label {
+    font-family: 'Outfit', sans-serif;
+    font-size: 0.9rem;
+    color: var(--text);
+  }
+  .result-value {
+    font-family: 'DM Mono', monospace;
+    font-size: 1.05rem;
+    font-weight: 500;
+  }
+  .result-value.positive { color: var(--green-bright); }
+  .result-value.negative { color: var(--red-bright); }
+  .result-value.neutral { color: var(--text-bright); }
+  .result-value.accent { color: var(--blue); }
+
+  .verdict-box {
+    margin-top: 1.25rem;
+    padding: 1rem 1.25rem;
+    border-radius: 6px;
+    font-family: 'Crimson Pro', serif;
+    font-style: italic;
+    font-size: 0.95rem;
+    line-height: 1.5;
+  }
+  .verdict-box.excellent {
+    background: var(--green-dim);
+    border-left: 3px solid var(--green-bright);
+    color: var(--green-bright);
+  }
+  .verdict-box.good {
+    background: var(--blue-dim);
+    border-left: 3px solid var(--blue);
+    color: var(--blue);
+  }
+  .verdict-box.average {
+    background: var(--cyan-dim);
+    border-left: 3px solid var(--cyan);
+    color: var(--cyan);
+  }
+  .verdict-box.poor {
+    background: rgba(212,168,71,0.10);
+    border-left: 3px solid var(--gold);
+    color: var(--gold);
+  }
+  .verdict-box.terrible {
+    background: var(--red-dim);
+    border-left: 3px solid var(--red-bright);
+    color: var(--red-bright);
+  }
+
+  /* Breakdown table */
+  .breakdown-table {
+    width: 100%;
+    border-collapse: collapse;
+    margin-top: 1rem;
+    font-size: 0.85rem;
+  }
+  .breakdown-table th {
+    font-family: 'Outfit', sans-serif;
+    font-size: 0.72rem;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.06em;
+    color: var(--muted);
+    padding: 0.6rem 0.5rem;
+    text-align: left;
+    border-bottom: 1px solid var(--border2);
+  }
+  .breakdown-table td {
+    font-family: 'DM Mono', monospace;
+    padding: 0.5rem;
+    border-bottom: 1px solid var(--border);
+    color: var(--text-bright);
+  }
+  .breakdown-table td:first-child {
+    font-family: 'Outfit', sans-serif;
+    color: var(--text);
+  }
+
+  /* Educational boxes */
+  .mb {
+    background: var(--surface2);
+    border: 1px solid var(--border2);
+    border-radius: 6px;
+    padding: 1rem 1.25rem;
+    font-family: 'DM Mono', monospace;
+    font-size: 0.85rem;
+    color: var(--text-bright);
+    line-height: 1.7;
+    white-space: pre-wrap;
+    margin: 1rem 0;
+    overflow-x: auto;
+  }
+  .pln {
+    font-family: 'Crimson Pro', serif;
+    font-style: italic;
+    color: var(--cyan);
+    background: var(--cyan-dim);
+    border-left: 3px solid var(--cyan);
+    padding: 0.85rem 1.15rem;
+    border-radius: 0 6px 6px 0;
+    margin: 1rem 0;
+    line-height: 1.6;
+    font-size: 0.95rem;
+  }
+  .pt {
+    border-left: 3px solid var(--blue);
+    background: var(--blue-dim);
+    padding: 1rem 1.25rem;
+    border-radius: 0 6px 6px 0;
+    margin: 1.5rem 0;
+    font-family: 'Crimson Pro', serif;
+    font-size: 0.95rem;
+    color: var(--text);
+    line-height: 1.6;
+  }
+  .pt strong { color: var(--blue); }
+  .dg {
+    border-left: 3px solid var(--red-bright);
+    background: var(--red-dim);
+    padding: 1rem 1.25rem;
+    border-radius: 0 6px 6px 0;
+    margin: 1.5rem 0;
+    font-family: 'Crimson Pro', serif;
+    font-size: 0.95rem;
+    color: var(--red-bright);
+    line-height: 1.6;
+  }
+
+  /* How it works section */
+  .how-section {
+    margin-top: 3rem;
+    padding-top: 2rem;
+    border-top: 1px solid var(--border);
+  }
+  .how-section h2 {
+    font-family: 'Bebas Neue', sans-serif;
+    font-size: 1.6rem;
+    color: var(--text-bright);
+    letter-spacing: 0.04em;
+    margin-bottom: 1rem;
+  }
+  .how-section h3 {
+    font-family: 'Bebas Neue', sans-serif;
+    font-size: 1.2rem;
+    color: var(--blue);
+    margin: 1.5rem 0 0.75rem;
+    letter-spacing: 0.04em;
+  }
+  .how-section p {
+    font-family: 'Crimson Pro', serif;
+    font-size: 1rem;
+    color: var(--text);
+    line-height: 1.7;
+    margin-bottom: 1rem;
+    max-width: 720px;
+  }
+
+  /* Cross-links */
+  .cross-links {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+    gap: 1rem;
+    margin-top: 2rem;
+  }
+  .cross-link {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    padding: 1.25rem;
+    text-decoration: none;
+    transition: border-color 0.2s;
+  }
+  .cross-link:hover { border-color: var(--blue); }
+  .cross-link h4 {
+    font-family: 'Bebas Neue', sans-serif;
+    font-size: 1rem;
+    color: var(--blue);
+    letter-spacing: 0.04em;
+    margin-bottom: 0.35rem;
+  }
+  .cross-link p {
+    font-family: 'Crimson Pro', serif;
+    font-style: italic;
+    font-size: 0.85rem;
+    color: var(--muted);
+    line-height: 1.5;
+  }
+
+  /* CTA */
+  .cta-card {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-left: 3px solid var(--blue);
+    border-radius: 0 10px 10px 0;
+    padding: 1.5rem 1.75rem;
+    margin-top: 2.5rem;
+  }
+  .cta-card h3 {
+    font-family: 'Bebas Neue', sans-serif;
+    font-size: 1.2rem;
+    color: var(--blue);
+    letter-spacing: 0.04em;
+    margin-bottom: 0.5rem;
+  }
+  .cta-card p {
+    font-family: 'Crimson Pro', serif;
+    font-style: italic;
+    font-size: 0.95rem;
+    color: var(--text);
+    line-height: 1.5;
+    margin-bottom: 1rem;
+  }
+  .cta-link {
+    font-family: 'Outfit', sans-serif;
+    font-weight: 600;
+    font-size: 0.9rem;
+    color: var(--blue);
+    text-decoration: none;
+    border-bottom: 1px solid transparent;
+    transition: border-color 0.2s;
+  }
+  .cta-link:hover { border-bottom-color: var(--blue); }
+
+  /* Footer */
+  .footer {
+    margin-top: 3rem;
+    padding-top: 1.5rem;
+    border-top: 1px solid var(--border);
+    text-align: center;
+  }
+  .footer p {
+    font-family: 'Outfit', sans-serif;
+    font-size: 0.75rem;
+    color: var(--muted);
+    line-height: 1.8;
+  }
+  .footer a {
+    color: var(--muted);
+    text-decoration: underline;
+    text-underline-offset: 2px;
+  }
+
+  /* FAQ */
+  .faq-section {
+    margin-top: 3rem;
+    padding-top: 2rem;
+    border-top: 1px solid var(--border);
+  }
+  .faq-title {
+    font-family: 'Bebas Neue', sans-serif;
+    font-size: 2rem;
+    color: var(--text-bright);
+    margin-bottom: 1.5rem;
+    letter-spacing: 0.03em;
+  }
+  .faq-item {
+    border-bottom: 1px solid var(--border);
+    padding: 0;
+  }
+  .faq-item summary {
+    padding: 1rem 0;
+    cursor: pointer;
+    font-weight: 600;
+    color: var(--text-bright);
+    font-size: 1rem;
+    list-style: none;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+  }
+  .faq-item summary::after {
+    content: '+';
+    color: var(--gold);
+    font-size: 1.3rem;
+    font-weight: 700;
+    transition: transform 0.2s;
+  }
+  .faq-item[open] summary::after { transform: rotate(45deg); }
+  .faq-item p {
+    padding: 0 0 1rem;
+    color: #94a3b8;
+    line-height: 1.7;
+    font-size: 0.95rem;
+  }
+
+  /* Responsive */
+  @media (max-width: 600px) {
+    .format-btn { padding: 0.4rem 0.8rem; font-size: 0.78rem; }
+    .hero h1 { font-size: 2rem; }
+    .outcome-row input[type="text"] { width: 100px; }
+    .outcome-row input.odds-input { width: 80px; }
+    .breakdown-table { font-size: 0.75rem; }
+    .breakdown-table th, .breakdown-table td { padding: 0.4rem 0.3rem; }
+  }
+</style>
+
+<!-- GA4 Cookieless -->
+<script async src="https://www.googletagmanager.com/gtag/js?id=G-7GTLYCZMXN"></script>
+<script>window.dataLayer=window.dataLayer||[];function gtag(){dataLayer.push(arguments);}gtag('js',new Date());gtag('consent','default',{analytics_storage:'denied',ad_storage:'denied',ad_user_data:'denied',ad_personalization:'denied'});gtag('config','G-7GTLYCZMXN',{send_page_view:true,anonymize_ip:true});</script>
+
+<script type="application/ld+json">
+{"@context":"https://schema.org","@type":"WebApplication","name":"Bookmaker Overround Calculator","url":"https://mathswins.co.uk/tools/overround/","applicationCategory":"FinanceApplication","offers":{"@type":"Offer","price":"0","priceCurrency":"GBP"},"provider":{"@type":"Organization","name":"MathsWins","url":"https://mathswins.co.uk"}}
+</script>
+<script type="application/ld+json">
+{"@context":"https://schema.org","@type":"FAQPage","mainEntity":[{"@type":"Question","name":"What is a good overround percentage?","acceptedAnswer":{"@type":"Answer","text":"Under 103% is excellent and very competitive. 103-106% is good and typical for major football or tennis markets. Above 110%, you should shop around for better prices."}},{"@type":"Question","name":"How does overround affect accumulators?","acceptedAnswer":{"@type":"Answer","text":"Overround compounds with each leg of an accumulator. A 5% overround per leg across 5 selections gives the bookmaker a 27.6% edge, not 25%. The more legs, the worse the value."}},{"@type":"Question","name":"What is the difference between overround and vig?","acceptedAnswer":{"@type":"Answer","text":"They are the same thing. Overround is the UK term, vig (short for vigorish) is the US term. Both describe the bookmaker's built-in profit margin on a market."}},{"@type":"Question","name":"Do betting exchanges have overround?","acceptedAnswer":{"@type":"Answer","text":"Betting exchanges typically have very low overround, between 100-102%, because prices are set by other bettors rather than a bookmaker. Instead, exchanges charge a commission (usually 2-5%) on winning bets."}}]}
+</script>
+</head>
+<body>
+<script src="/auth/mw-auth.js"></script>
+<div class="container">
+
+  <!-- Nav -->
+  <nav class="nav-bar">
+    <a href="/" class="nav-brand">MATHS<span>WINS</span></a>
+    <a href="/academy/sports-betting/" class="nav-link">Sports Betting Maths Course &rarr;</a>
+  </nav>
+
+  <!-- Hero -->
+  <div class="hero">
+    <div class="hero-eyebrow">Free Tool</div>
+    <h1>BOOKMAKER OVERROUND CALCULATOR</h1>
+    <div class="hero-sub">Enter the odds for any market. See the bookmaker's real margin, the true fair odds, and a plain-English verdict on how competitive the prices are.</div>
+  </div>
+
+  <!-- Calculator -->
+  <div class="calc-panel">
+    <div class="panel-title">ODDS FORMAT</div>
+    <div class="format-row">
+      <button class="format-btn active" data-format="decimal">Decimal</button>
+      <button class="format-btn" data-format="fractional">Fractional</button>
+      <button class="format-btn" data-format="american">American</button>
+    </div>
+
+    <div class="panel-title">OUTCOMES</div>
+    <div id="outcomes"></div>
+    <div class="btn-row">
+      <button class="btn-add" id="btn-add-outcome">+ Add Outcome</button>
+      <button class="btn-add" id="btn-clear">Clear All</button>
+    </div>
+  </div>
+
+  <!-- Results (always visible, updates live) -->
+  <div class="results" id="results" style="display:none;"></div>
+
+  <!-- Educational Content -->
+  <div class="how-section">
+    <h2>WHAT IS OVERROUND?</h2>
+
+    <p>Every bookmaker builds a profit margin into their odds. They shorten every price slightly so the implied probabilities add up to more than 100%. The amount above 100% is the overround &mdash; and it represents the bookmaker's guaranteed edge.</p>
+
+    <div class="pln">Think of it this way: if a fair coin toss should pay 2.00 on heads and 2.00 on tails (each 50%, totalling 100%), a bookmaker might offer 1.91 on both. Now each implied probability is 52.4%, totalling 104.8%. That extra 4.8% is the overround &mdash; the bookmaker's built-in profit margin.</div>
+
+    <div class="mb">Implied probability = 1 &divide; decimal odds &times; 100
+
+Example: Liverpool vs Man City
+  Home 2.10 &rarr; 1/2.10 = 47.62%
+  Draw 3.40 &rarr; 1/3.40 = 29.41%
+  Away 3.50 &rarr; 1/3.50 = 28.57%
+
+Total implied probability = 105.60%
+Overround = 105.60% &minus; 100% = 5.60%</div>
+
+    <div class="pln">The bookmaker has built a 5.6% margin into this market. For every &pound;100 staked across all outcomes in proportion, the bookmaker expects to keep &pound;5.30 and pay out &pound;94.70.</div>
+
+    <h2>WHY IT MATTERS</h2>
+
+    <p>The overround tells you exactly how much the bookmaker keeps. You can calculate the expected payout per &pound;1 staked on any market:</p>
+
+    <div class="mb">Expected payout per &pound;1 = 100 / (100 + overround)
+
+At 5% overround:  100/105 = &pound;0.952 per &pound;1 staked
+At 10% overround: 100/110 = &pound;0.909 per &pound;1 staked
+At 20% overround: 100/120 = &pound;0.833 per &pound;1 staked</div>
+
+    <div class="pln">Overround is the betting equivalent of the house edge in a casino. A roulette wheel has a 2.7% house edge. A football match-result market at 5% overround has a roughly similar cost per bet. But some markets &mdash; like correct score or first goalscorer &mdash; can have overrounds above 30%.</div>
+
+    <div class="pt"><strong>Practical tip:</strong> Always check the overround before placing a bet. Two bookmakers might both offer 2.10 on Liverpool, but if one has 104% total book and the other has 108%, the first is giving you fairer value across the market.</div>
+
+    <h2>OVERROUND ON ACCUMULATORS</h2>
+
+    <p>This is where bookmakers make serious money. The overround compounds with each leg of an accumulator. The formula for the combined bookmaker edge is:</p>
+
+    <div class="mb">Combined book = (book&sub1; &times; book&sub2; &times; ... &times; book&#8345;) &times; 100 &minus; 100
+
+Where each book = total implied probability / 100
+
+Example: 5 legs, each with 5% overround (book = 1.05)
+Combined = 1.05&sup5; &times; 100 &minus; 100
+         = 1.2763 &times; 100 &minus; 100
+         = 27.6%
+
+The bookmaker's edge is 27.6% &mdash; not 25%.</div>
+
+    <div class="dg"><strong>Danger:</strong> A 10-leg accumulator where each market has just 5% overround gives the bookmaker a combined edge of 62.9%. You are expected to lose 62.9p of every &pound;1 staked. This is worse than almost any casino game. Bookmakers promote accumulators for a reason &mdash; they are the most profitable product in the shop.</div>
+
+    <h2>HOW TO USE THIS INFORMATION</h2>
+
+    <p>Understanding overround gives you a mathematical framework for making better decisions:</p>
+
+    <div class="pt"><strong>Compare bookmakers:</strong> Before placing a bet, check the overround at multiple bookmakers. A market at 102.5% gives you dramatically better value than the same market at 108%. Over hundreds of bets, this difference is the difference between slow losses and near break-even.</div>
+
+    <div class="pt"><strong>Use betting exchanges:</strong> Exchanges like Betfair and Smarkets typically have overrounds of 100&ndash;102%, compared to 104&ndash;110% at traditional bookmakers. You pay a commission on winnings instead, but the net cost is usually lower.</div>
+
+    <div class="pt"><strong>Avoid high-overround markets:</strong> Correct score, first goalscorer, and novelty markets often have overrounds above 20%. These are the bookmaker's most profitable products. Stick to match results, Asian handicaps, and over/under totals for the fairest prices.</div>
+
+    <div class="pt"><strong>Think twice about accumulators:</strong> Every leg multiplies the bookmaker's edge. If you enjoy accumulators, keep them to 2-3 legs maximum. Beyond that, the compounding overround makes the maths almost impossible to overcome.</div>
+  </div>
+
+  <!-- Cross-links -->
+  <div class="cross-links">
+    <a href="/tools/accumulator-calculator/" class="cross-link">
+      <h4>ACCUMULATOR CALCULATOR</h4>
+      <p>See the true cost of your acca &mdash; combined odds, probability, and how the overround compounds per leg.</p>
+    </a>
+    <a href="/tools/free-bet-calculator/" class="cross-link">
+      <h4>FREE BET CALCULATOR</h4>
+      <p>Calculate what your free bet is really worth and the optimal strategy for using it.</p>
+    </a>
+    <a href="/academy/sports-betting/" class="cross-link">
+      <h4>SPORTS BETTING MATHS COURSE</h4>
+      <p>16 modules covering implied probability, value betting, exchange maths, and why 95% of bettors lose. Module 1 free.</p>
+    </a>
+  </div>
+
+  <!-- CTA -->
+  <div class="cta-card">
+    <h3>SPORTS BETTING MATHS &mdash; 16 MODULES</h3>
+    <p>This calculator shows you the margin on a single market. The Sports Betting course teaches you how to find value, compare bookmakers mathematically, use exchanges, and understand why the maths always wins. 165+ scenarios. Module 1 free.</p>
+    <a href="/academy/sports-betting/" class="cta-link">Explore the full course &rarr;</a>
+  </div>
+
+  <!-- FAQ -->
+  <div class="faq-section">
+    <h2 class="faq-title">FREQUENTLY ASKED QUESTIONS</h2>
+    <details class="faq-item"><summary>What is a good overround percentage?</summary><p>Under 103% is excellent and typically found on major football match-result markets at competitive bookmakers or betting exchanges. 103&ndash;106% is good and standard for most mainstream markets. Above 110%, you are paying a significant margin and should consider shopping around for better odds.</p></details>
+    <details class="faq-item"><summary>How does overround affect accumulators?</summary><p>Overround compounds with each leg. If each market has 5% overround, a 5-leg accumulator gives the bookmaker a 27.6% edge &mdash; not 25%. A 10-leg acca at the same overround gives a 62.9% edge. This is why bookmakers aggressively promote accumulators.</p></details>
+    <details class="faq-item"><summary>What is the difference between overround and vig?</summary><p>They are the same concept with different names. Overround is the standard UK and European term. Vig (short for vigorish) or juice is the US term. Both describe the bookmaker's built-in profit margin &mdash; the amount by which implied probabilities exceed 100%.</p></details>
+    <details class="faq-item"><summary>Do betting exchanges have overround?</summary><p>Exchanges typically have very low overround, usually 100&ndash;102%, because prices are set by other bettors rather than a bookmaker. Instead of overround, exchanges charge a commission (usually 2&ndash;5%) on net winnings. The total cost to the bettor is generally lower than traditional bookmaker overround.</p></details>
+  </div>
+
+  <!-- Responsible Gambling -->
+  <div style="margin-top:2rem; padding:1.25rem; background:var(--surface); border:1px solid var(--border); border-radius:8px;">
+    <p style="font-family:'Outfit',sans-serif; font-size:0.78rem; color:var(--muted); line-height:1.7;">
+      This is a mathematical education tool, not betting advice. If you or someone you know is affected by problem gambling:<br>
+      <strong style="color:var(--text);">National Gambling Helpline: 0808 8020 133</strong> (free, 24/7)<br>
+      <a href="https://www.gamcare.org.uk" style="color:var(--muted);">GamCare</a> &middot;
+      <a href="https://www.begambleaware.org" style="color:var(--muted);">BeGambleAware</a>
+    </p>
+  </div>
+
+  <!-- Footer -->
+  <div class="footer">
+    <p>
+      Built by a first-class mathematics graduate with QTS.<br>
+      <a href="/">MathsWins</a> &middot; <a href="/tools/">All Tools</a> &middot; <a href="/academy/">Academy</a> &middot; <a href="/restore/">Restore Access</a><br>
+      &copy; 2026 MathsWins. Maths Always Wins.
+    </p>
+  </div>
+
+</div>
+
+<script>
+(function() {
+  // --- State ---
+  let oddsFormat = 'decimal';
+  let outcomes = [
+    { label: 'Home', odds: '2.10' },
+    { label: 'Draw', odds: '3.40' },
+    { label: 'Away', odds: '3.50' }
+  ];
+
+  // --- Format buttons ---
+  const formatBtns = document.querySelectorAll('.format-btn');
+  formatBtns.forEach(btn => {
+    btn.addEventListener('click', () => {
+      formatBtns.forEach(b => b.classList.remove('active'));
+      btn.classList.add('active');
+      oddsFormat = btn.dataset.format;
+      renderOutcomes();
+      calculate();
+    });
+  });
+
+  // --- Odds conversion ---
+  function toDecimal(input, format) {
+    const s = String(input).trim();
+    if (!s) return NaN;
+
+    if (format === 'decimal') {
+      return parseFloat(s);
+    }
+
+    if (format === 'fractional') {
+      const parts = s.split('/');
+      if (parts.length !== 2) return NaN;
+      const num = parseFloat(parts[0]);
+      const den = parseFloat(parts[1]);
+      if (!num || !den || den === 0) return NaN;
+      return (num / den) + 1;
+    }
+
+    if (format === 'american') {
+      const n = parseFloat(s);
+      if (isNaN(n)) return NaN;
+      if (n > 0) return (n / 100) + 1;
+      if (n < 0) return (100 / Math.abs(n)) + 1;
+      return NaN;
+    }
+
+    return NaN;
+  }
+
+  function fromDecimal(dec, format) {
+    if (isNaN(dec) || dec <= 1) return '';
+
+    if (format === 'decimal') {
+      return dec.toFixed(2);
+    }
+
+    if (format === 'fractional') {
+      const frac = dec - 1;
+      // Find a clean fraction
+      for (let den = 1; den <= 100; den++) {
+        const num = frac * den;
+        if (Math.abs(num - Math.round(num)) < 0.01) {
+          return Math.round(num) + '/' + den;
+        }
+      }
+      return frac.toFixed(2) + '/1';
+    }
+
+    if (format === 'american') {
+      if (dec >= 2) return '+' + Math.round((dec - 1) * 100);
+      return '-' + Math.round(100 / (dec - 1));
+    }
+
+    return dec.toFixed(2);
+  }
+
+  // --- Render outcomes ---
+  function renderOutcomes() {
+    const el = document.getElementById('outcomes');
+    let placeholder = 'e.g. 2.10';
+    if (oddsFormat === 'fractional') placeholder = 'e.g. 11/10';
+    if (oddsFormat === 'american') placeholder = 'e.g. +110';
+
+    el.innerHTML = outcomes.map((o, i) => `<div class="outcome-row">
+      <span class="outcome-num">${i + 1}.</span>
+      <input type="text" placeholder="Label (optional)" value="${o.label}" data-idx="${i}" data-field="label">
+      <input type="text" class="odds-input" placeholder="${placeholder}" value="${o.odds}" data-idx="${i}" data-field="odds">
+      ${outcomes.length > 2 ? `<button class="outcome-remove" data-idx="${i}">&times;</button>` : ''}
+    </div>`).join('');
+
+    // Attach events
+    el.querySelectorAll('input[data-field="label"]').forEach(inp => {
+      inp.addEventListener('input', function() {
+        outcomes[parseInt(this.dataset.idx)].label = this.value;
+      });
+    });
+
+    el.querySelectorAll('input[data-field="odds"]').forEach(inp => {
+      inp.addEventListener('input', function() {
+        outcomes[parseInt(this.dataset.idx)].odds = this.value;
+        calculate();
+      });
+    });
+
+    el.querySelectorAll('.outcome-remove').forEach(btn => {
+      btn.addEventListener('click', function() {
+        outcomes.splice(parseInt(this.dataset.idx), 1);
+        renderOutcomes();
+        calculate();
+      });
+    });
+  }
+
+  // --- Add / Clear ---
+  document.getElementById('btn-add-outcome').addEventListener('click', () => {
+    if (outcomes.length >= 20) return;
+    outcomes.push({ label: '', odds: '' });
+    renderOutcomes();
+  });
+
+  document.getElementById('btn-clear').addEventListener('click', () => {
+    outcomes = [
+      { label: '', odds: '' },
+      { label: '', odds: '' }
+    ];
+    renderOutcomes();
+    document.getElementById('results').style.display = 'none';
+  });
+
+  // --- Calculate ---
+  function calculate() {
+    const r = document.getElementById('results');
+
+    // Convert all odds to decimal
+    const parsed = outcomes.map(o => ({
+      label: o.label,
+      decimal: toDecimal(o.odds, oddsFormat)
+    }));
+
+    const valid = parsed.filter(o => !isNaN(o.decimal) && o.decimal > 1);
+    if (valid.length < 2) {
+      r.style.display = 'none';
+      return;
+    }
+
+    // Calculate implied probabilities
+    const impliedProbs = valid.map(o => (1 / o.decimal) * 100);
+    const totalImplied = impliedProbs.reduce((a, b) => a + b, 0);
+    const overround = totalImplied - 100;
+
+    // True (fair) probabilities
+    const trueProbs = impliedProbs.map(p => (p / totalImplied) * 100);
+
+    // Fair odds (removing margin)
+    const fairOdds = trueProbs.map(p => 100 / p);
+
+    // Margin per outcome (how much each price is inflated)
+    const marginPerOutcome = valid.map((o, i) => {
+      return ((fairOdds[i] - o.decimal) / fairOdds[i]) * 100;
+    });
+
+    // Expected payout per pound
+    const payoutPerPound = 100 / totalImplied;
+
+    // Verdict
+    let verdictText, verdictClass;
+    if (totalImplied < 100) {
+      verdictText = 'Arbitrage opportunity — the implied probabilities sum to less than 100%. Check the odds carefully.';
+      verdictClass = 'excellent';
+    } else if (totalImplied <= 103) {
+      verdictText = 'Excellent — very competitive market. This overround is typical of betting exchanges or sharp bookmakers on major events.';
+      verdictClass = 'excellent';
+    } else if (totalImplied <= 106) {
+      verdictText = 'Good — typical for major football or tennis match-result markets at mainstream bookmakers.';
+      verdictClass = 'good';
+    } else if (totalImplied <= 110) {
+      verdictText = 'Average — reasonable margin. Standard for less popular markets or smaller bookmakers.';
+      verdictClass = 'average';
+    } else if (totalImplied <= 120) {
+      verdictText = 'Poor — consider shopping around. This margin significantly reduces your expected value.';
+      verdictClass = 'poor';
+    } else {
+      verdictText = 'Very high — heavily favours the bookmaker. Markets like correct score, first goalscorer, or novelty bets often have this level of margin.';
+      verdictClass = 'terrible';
+    }
+
+    // Build output
+    let html = `<div class="results-title">MARKET ANALYSIS</div>`;
+    html += `<div class="result-row"><span class="result-label">Total implied probability</span><span class="result-value ${totalImplied <= 103 ? 'positive' : totalImplied <= 106 ? 'accent' : 'negative'}">${totalImplied.toFixed(2)}%</span></div>`;
+    html += `<div class="result-row"><span class="result-label">Overround</span><span class="result-value ${overround <= 3 ? 'positive' : overround <= 6 ? 'accent' : 'negative'}">${overround.toFixed(2)}%</span></div>`;
+    html += `<div class="result-row"><span class="result-label">Expected payout per &pound;1</span><span class="result-value ${payoutPerPound >= 0.97 ? 'positive' : payoutPerPound >= 0.94 ? 'neutral' : 'negative'}">&pound;${payoutPerPound.toFixed(3)}</span></div>`;
+    html += `<div class="result-row"><span class="result-label">Bookmaker keeps per &pound;1</span><span class="result-value negative">&pound;${(1 - payoutPerPound).toFixed(3)}</span></div>`;
+
+    // Verdict
+    html += `<div class="verdict-box ${verdictClass}">${verdictText}</div>`;
+
+    // Breakdown table
+    html += `<table class="breakdown-table">
+      <thead><tr>
+        <th>Outcome</th>
+        <th>Odds</th>
+        <th>Implied Prob</th>
+        <th>True Prob</th>
+        <th>Fair Odds</th>
+        <th>Margin</th>
+      </tr></thead><tbody>`;
+
+    valid.forEach((o, i) => {
+      const label = o.label || ('Outcome ' + (i + 1));
+      html += `<tr>
+        <td>${label}</td>
+        <td>${o.decimal.toFixed(2)}</td>
+        <td>${impliedProbs[i].toFixed(2)}%</td>
+        <td>${trueProbs[i].toFixed(2)}%</td>
+        <td>${fromDecimal(fairOdds[i], oddsFormat)}</td>
+        <td style="color:var(--red-bright)">${marginPerOutcome[i].toFixed(1)}%</td>
+      </tr>`;
+    });
+
+    html += `</tbody></table>`;
+
+    r.innerHTML = html;
+    r.style.display = 'block';
+  }
+
+  // --- Init ---
+  renderOutcomes();
+  calculate();
+})();
+</script>
+
+<!-- Cookie Consent Banner -->
+<div id="cookieConsent" style="display:none;position:fixed;bottom:0;left:0;right:0;background:#0c1628;border-top:1px solid #14263d;padding:14px 24px;z-index:99999;font-family:'Outfit',system-ui,sans-serif;font-size:13px;color:#94a3b8;align-items:center;justify-content:center;gap:16px;flex-wrap:wrap">
+<span>We use cookies for analytics to improve your experience. No personal data is sold or shared.</span>
+<button onclick="acceptCookies()" style="background:#d4a847;color:#050709;border:none;padding:8px 20px;border-radius:4px;font-weight:700;font-size:13px;cursor:pointer;font-family:inherit">Accept</button>
+<button onclick="declineCookies()" style="background:transparent;color:#64748b;border:1px solid #14263d;padding:8px 20px;border-radius:4px;font-size:13px;cursor:pointer;font-family:inherit">Decline</button>
+</div>
+<script>
+function acceptCookies(){localStorage.setItem('mw_cookies','accepted');gtag('consent','update',{analytics_storage:'granted'});document.getElementById('cookieConsent').style.display='none';}
+function declineCookies(){localStorage.setItem('mw_cookies','declined');document.getElementById('cookieConsent').style.display='none';}
+(function(){var c=localStorage.getItem('mw_cookies');if(c==='accepted'){gtag('consent','update',{analytics_storage:'granted'});}else if(!c){document.getElementById('cookieConsent').style.display='flex';}})();
+</script>
+</body>
+</html>
