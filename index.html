@@ -80,6 +80,7 @@ h1.site-title span.w{color:var(--gold)}
    GAME CARDS
    ════════════════════════════════════ */
 .game-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(260px,1fr));gap:.6rem}
+a.game-card,a.academy-card{text-decoration:none;color:inherit;display:block}
 .game-card{background:var(--surface);border:1px solid var(--border);border-radius:10px;padding:.9rem 1rem;transition:all .15s;cursor:pointer;position:relative;overflow:hidden}
 .game-card:hover{border-color:var(--gold);transform:translateY(-2px);box-shadow:0 8px 24px rgba(0,0,0,.3)}
 .game-card::before{content:'';position:absolute;left:0;top:0;bottom:0;width:3px;border-radius:3px 0 0 3px}
@@ -191,83 +192,83 @@ h1.site-title span.w{color:var(--gold)}
 </div>
 
 <div class="game-grid">
-<div class="game-card cat-puzzle" onclick="go('games/countdown-numbers/')">
+<a href="games/countdown-numbers/" class="game-card cat-puzzle">
 <div class="gc-title">Countdown Numbers</div>
 <div class="gc-desc">Six cards. One target. Make it using +, −, ×, ÷. Same cards for everyone — pure arithmetic skill.</div>
 <div class="gc-tags"><span class="gc-tag free">Free</span><span class="gc-tag competitive">Competitive</span><span class="gc-tag">Arithmetic</span></div>
-</div>
+</a>
 
-<div class="game-card cat-puzzle" onclick="go('games/52dle/')">
+<a href="games/52dle/" class="game-card cat-puzzle">
 <div class="gc-title">52-dle</div>
 <div class="gc-desc">Daily word puzzle. Crypto edition. One word per day — share your score on-chain.</div>
 <div class="gc-tags"><span class="gc-tag free">Free</span><span class="gc-tag">Daily</span><span class="gc-tag">Words</span></div>
-</div>
+</a>
 
-<div class="game-card cat-number" onclick="go('games/equatle/')">
+<a href="games/equatle/" class="game-card cat-number">
 <div class="gc-title">Equatle</div>
 <div class="gc-desc">Build the equation. Like Wordle, but with numbers and operators.</div>
 <div class="gc-tags"><span class="gc-tag free">Free</span><span class="gc-tag">Daily</span><span class="gc-tag">Equations</span></div>
-</div>
+</a>
 
-<div class="game-card cat-strategy" onclick="go('games/sudoku-duel/')">
+<a href="games/sudoku-duel/" class="game-card cat-strategy">
 <div class="gc-title">Sudoku Duel</div>
 <div class="gc-desc">Head-to-head Sudoku. Same puzzle, race to finish. Speed + logic.</div>
 <div class="gc-tags"><span class="gc-tag free">Free</span><span class="gc-tag competitive">VS</span><span class="gc-tag">Logic</span></div>
-</div>
+</a>
 
-<div class="game-card cat-number" onclick="go('games/higher-or-lower/')">
+<a href="games/higher-or-lower/" class="game-card cat-number">
 <div class="gc-title">Higher or Lower</div>
 <div class="gc-desc">Predict the next number. Build a streak. How far can your intuition carry you?</div>
 <div class="gc-tags"><span class="gc-tag free">Free</span><span class="gc-tag">Number Sense</span></div>
-</div>
+</a>
 
-<div class="game-card cat-number" onclick="go('games/prime-or-composite/')">
+<a href="games/prime-or-composite/" class="game-card cat-number">
 <div class="gc-title">Prime or Composite</div>
 <div class="gc-desc">Rapid classification. Is this number prime? Five seconds to decide.</div>
 <div class="gc-tags"><span class="gc-tag free">Free</span><span class="gc-tag">Primes</span></div>
-</div>
+</a>
 
-<div class="game-card cat-number" onclick="go('games/estimation-engine/')">
+<a href="games/estimation-engine/" class="game-card cat-number">
 <div class="gc-title">Estimation Engine</div>
 <div class="gc-desc">Mental arithmetic with a tolerance. Close enough counts.</div>
 <div class="gc-tags"><span class="gc-tag free">Free</span><span class="gc-tag">Mental Maths</span></div>
-</div>
+</a>
 
-<div class="game-card cat-puzzle" onclick="go('games/sequence-solver/')">
+<a href="games/sequence-solver/" class="game-card cat-puzzle">
 <div class="gc-title">Sequence Solver</div>
 <div class="gc-desc">Spot the pattern. Complete the sequence. Escalates from obvious to evil.</div>
 <div class="gc-tags"><span class="gc-tag free">Free</span><span class="gc-tag">Patterns</span></div>
-</div>
+</a>
 
-<div class="game-card cat-logic" onclick="go('games/towers-of-hanoi/')">
+<a href="games/towers-of-hanoi/" class="game-card cat-logic">
 <div class="gc-title">Towers of Hanoi</div>
 <div class="gc-desc">The classic recursion puzzle. Move the stack. Minimum moves = 2ⁿ − 1.</div>
 <div class="gc-tags"><span class="gc-tag free">Free</span><span class="gc-tag">Logic</span></div>
-</div>
+</a>
 
-<div class="game-card cat-puzzle" onclick="go('games/cryptarithmetic-club/')">
+<a href="games/cryptarithmetic-club/" class="game-card cat-puzzle">
 <div class="gc-title">Cryptarithmetic Club</div>
 <div class="gc-desc">SEND + MORE = MONEY. Replace letters with digits. Pure deduction.</div>
 <div class="gc-tags"><span class="gc-tag free">Free</span><span class="gc-tag">Deduction</span></div>
-</div>
+</a>
 
-<div class="game-card cat-logic" onclick="go('games/memory-matrix/')">
+<a href="games/memory-matrix/" class="game-card cat-logic">
 <div class="gc-title">Memory Matrix</div>
 <div class="gc-desc">Remember the grid pattern. Reproduce it. Scales until your brain melts.</div>
 <div class="gc-tags"><span class="gc-tag free">Free</span><span class="gc-tag">Memory</span></div>
-</div>
+</a>
 
-<div class="game-card cat-strategy" onclick="go('games/dont-press-it/')">
+<a href="games/dont-press-it/" class="game-card cat-strategy">
 <div class="gc-title">Don't Press It</div>
 <div class="gc-desc">The button multiplies your score. But press too many times and you lose everything. When do you stop?</div>
 <div class="gc-tags"><span class="gc-tag free">Free</span><span class="gc-tag">Risk</span><span class="gc-tag">Expected Value</span></div>
-</div>
+</a>
 
-<div class="game-card cat-strategy" onclick="go('games/rps-vs-machine/')">
+<a href="games/rps-vs-machine/" class="game-card cat-strategy">
 <div class="gc-title">RPS vs Machine</div>
 <div class="gc-desc">Rock Paper Scissors against a pattern-learning AI. Can you be random enough to beat it?</div>
 <div class="gc-tags"><span class="gc-tag free">Free</span><span class="gc-tag">Game Theory</span></div>
-</div>
+</a>
 </div>
 </div>
 
@@ -280,7 +281,7 @@ h1.site-title span.w{color:var(--gold)}
 </div>
 
 <div class="academy-grid">
-<div class="academy-card ac-bj" onclick="go('academy/blackjack/')">
+<a href="academy/blackjack/" class="academy-card ac-bj">
 <div class="ac-accent"></div>
 <div class="ac-eyebrow">11 Modules · 3 Tiers</div>
 <div class="ac-title">BLACKJACK ACADEMY</div>
@@ -291,9 +292,9 @@ h1.site-title span.w{color:var(--gold)}
 <div class="ac-stat"><div class="as-num">5</div><div class="as-label">Interactive tools</div></div>
 </div>
 <div class="ac-price">From 500 QF</div>
-</div>
+</a>
 
-<div class="academy-card ac-pk" onclick="go('academy/poker/')">
+<a href="academy/poker/" class="academy-card ac-pk">
 <div class="ac-accent"></div>
 <div class="ac-eyebrow">20 Modules · 4 Tiers</div>
 <div class="ac-title">POKER SCHOOL</div>
@@ -304,9 +305,9 @@ h1.site-title span.w{color:var(--gold)}
 <div class="ac-stat"><div class="as-num">10</div><div class="as-label">Tutorials</div></div>
 </div>
 <div class="ac-price">From 500 QF</div>
-</div>
+</a>
 
-<div class="academy-card ac-sb" onclick="go('academy/sports-betting/')">
+<a href="academy/sports-betting/" class="academy-card ac-sb">
 <div class="ac-accent"></div>
 <div class="ac-eyebrow">16 Modules · 3 Tiers</div>
 <div class="ac-title">SPORTS BETTING MATHS</div>
@@ -317,9 +318,9 @@ h1.site-title span.w{color:var(--gold)}
 <div class="ac-stat"><div class="as-num">2</div><div class="as-label">Live calculators</div></div>
 </div>
 <div class="ac-price">From 500 QF</div>
-</div>
+</a>
 
-<div class="academy-card ac-rl" onclick="go('academy/roulette/')">
+<a href="academy/roulette/" class="academy-card ac-rl">
 <div class="ac-accent"></div>
 <div class="ac-eyebrow">5 Modules · Single Tier</div>
 <div class="ac-title">ROULETTE REALITY CHECK</div>
@@ -330,9 +331,9 @@ h1.site-title span.w{color:var(--gold)}
 <div class="ac-stat"><div class="as-num">100k</div><div class="as-label">Simulated spins</div></div>
 </div>
 <div class="ac-price">250 QF</div>
-</div>
+</a>
 
-<div class="academy-card ac-cr" onclick="go('academy/craps/')">
+<a href="academy/craps/" class="academy-card ac-cr">
 <div class="ac-accent"></div>
 <div class="ac-eyebrow">5 Modules · Single Tier</div>
 <div class="ac-title">CRAPS DECODED</div>
@@ -343,9 +344,9 @@ h1.site-title span.w{color:var(--gold)}
 <div class="ac-stat"><div class="as-num">36</div><div class="as-label">Dice outcomes</div></div>
 </div>
 <div class="ac-price">250 QF</div>
-</div>
+</a>
 
-<div class="academy-card ac-sl" onclick="go('academy/slots/')">
+<a href="academy/slots/" class="academy-card ac-sl">
 <div class="ac-accent"></div>
 <div class="ac-eyebrow">7 Modules · Single Tier</div>
 <div class="ac-title">SLOTS: THE UGLY TRUTH</div>
@@ -356,9 +357,9 @@ h1.site-title span.w{color:var(--gold)}
 <div class="ac-stat"><div class="as-num">1k</div><div class="as-label">Live sim spins</div></div>
 </div>
 <div class="ac-price">250 QF</div>
-</div>
+</a>
 
-<div class="academy-card ac-lt" onclick="go('academy/lottery/')">
+<a href="academy/lottery/" class="academy-card ac-lt">
 <div class="ac-accent"></div>
 <div class="ac-eyebrow">5 Modules · Single Tier</div>
 <div class="ac-title">LOTTERY MATHS</div>
@@ -369,9 +370,9 @@ h1.site-title span.w{color:var(--gold)}
 <div class="ac-stat"><div class="as-num">£5,200</div><div class="as-label">Lifetime cost</div></div>
 </div>
 <div class="ac-price">250 QF</div>
-</div>
+</a>
 
-<div class="academy-card ac-bc" onclick="go('academy/baccarat/')">
+<a href="academy/baccarat/" class="academy-card ac-bc">
 <div class="ac-accent"></div>
 <div class="ac-eyebrow">4 Modules · Single Tier</div>
 <div class="ac-title">BACCARAT BREAKDOWN</div>
@@ -382,9 +383,9 @@ h1.site-title span.w{color:var(--gold)}
 <div class="ac-stat"><div class="as-num">0</div><div class="as-label">Decisions</div></div>
 </div>
 <div class="ac-price">250 QF</div>
-</div>
+</a>
 
-<div class="academy-card ac-tr" onclick="go('academy/trading/')">
+<a href="academy/trading/" class="academy-card ac-tr">
 <div class="ac-accent"></div>
 <div class="ac-eyebrow">6 Modules · Single Tier</div>
 <div class="ac-title">TRADING MATHS</div>
@@ -395,7 +396,7 @@ h1.site-title span.w{color:var(--gold)}
 <div class="ac-stat"><div class="as-num">6</div><div class="as-label">Core concepts</div></div>
 </div>
 <div class="ac-price">250 QF</div>
-</div>
+</a>
 </div>
 </div>
 
@@ -407,7 +408,7 @@ h1.site-title span.w{color:var(--gold)}
 </div>
 
 <div class="academy-grid">
-<div class="academy-card ac-tx" onclick="go('everyday/tax/')">
+<a href="everyday/tax/" class="academy-card ac-tx">
 <div class="ac-accent"></div>
 <div class="ac-eyebrow">5 Modules · Free</div>
 <div class="ac-title">UK TAX MATHS</div>
@@ -417,9 +418,9 @@ h1.site-title span.w{color:var(--gold)}
 <div class="ac-stat"><div class="as-num">5</div><div class="as-label">Live calculators</div></div>
 <div class="ac-stat"><div class="as-num" style="color:var(--green)">Free</div><div class="as-label">Always</div></div>
 </div>
-</div>
+</a>
 
-<div class="academy-card ac-tx" onclick="go('everyday/compound-interest/')">
+<a href="everyday/compound-interest/" class="academy-card ac-tx">
 <div class="ac-accent"></div>
 <div class="ac-eyebrow">4 Modules · Free</div>
 <div class="ac-title">COMPOUND INTEREST & DEBT</div>
@@ -429,9 +430,9 @@ h1.site-title span.w{color:var(--gold)}
 <div class="ac-stat"><div class="as-num">4</div><div class="as-label">Live calculators</div></div>
 <div class="ac-stat"><div class="as-num" style="color:var(--green)">Free</div><div class="as-label">Always</div></div>
 </div>
-</div>
+</a>
 
-<div class="academy-card ac-tx" onclick="go('everyday/mortgages/')">
+<a href="everyday/mortgages/" class="academy-card ac-tx">
 <div class="ac-accent"></div>
 <div class="ac-eyebrow">5 Modules · Free</div>
 <div class="ac-title">MORTGAGE MATHS</div>
@@ -441,9 +442,9 @@ h1.site-title span.w{color:var(--gold)}
 <div class="ac-stat"><div class="as-num">5</div><div class="as-label">Modules</div></div>
 <div class="ac-stat"><div class="as-num" style="color:var(--green)">Free</div><div class="as-label">Always</div></div>
 </div>
-</div>
+</a>
 
-<div class="academy-card ac-tx" onclick="go('everyday/pensions/')">
+<a href="everyday/pensions/" class="academy-card ac-tx">
 <div class="ac-accent"></div>
 <div class="ac-eyebrow">4 Modules · Free</div>
 <div class="ac-title">PENSION MATHS</div>
@@ -453,9 +454,9 @@ h1.site-title span.w{color:var(--gold)}
 <div class="ac-stat"><div class="as-num">4</div><div class="as-label">Modules</div></div>
 <div class="ac-stat"><div class="as-num" style="color:var(--green)">Free</div><div class="as-label">Always</div></div>
 </div>
-</div>
+</a>
 
-<div class="academy-card ac-tx" onclick="go('everyday/inflation/')">
+<a href="everyday/inflation/" class="academy-card ac-tx">
 <div class="ac-accent"></div>
 <div class="ac-eyebrow">3 Modules · Free</div>
 <div class="ac-title">INFLATION & REAL RETURNS</div>
@@ -465,9 +466,9 @@ h1.site-title span.w{color:var(--gold)}
 <div class="ac-stat"><div class="as-num">3</div><div class="as-label">Modules</div></div>
 <div class="ac-stat"><div class="as-num" style="color:var(--green)">Free</div><div class="as-label">Always</div></div>
 </div>
-</div>
+</a>
 
-<div class="academy-card ac-tx" onclick="go('everyday/probability/')">
+<a href="everyday/probability/" class="academy-card ac-tx">
 <div class="ac-accent"></div>
 <div class="ac-eyebrow">4 Modules · Free</div>
 <div class="ac-title">EVERYDAY PROBABILITY</div>
@@ -477,7 +478,7 @@ h1.site-title span.w{color:var(--gold)}
 <div class="ac-stat"><div class="as-num">4</div><div class="as-label">Modules</div></div>
 <div class="ac-stat"><div class="as-num" style="color:var(--green)">Free</div><div class="as-label">Always</div></div>
 </div>
-</div>
+</a>
 </div>
 <p style="text-align:center;margin-top:1.2rem"><a href="/everyday/" style="color:#0ea5e9;font-family:'Outfit',sans-serif;font-weight:600;font-size:.85rem;text-decoration:none;letter-spacing:.02em">See all Everyday Maths courses →</a></p>
 </div>
@@ -491,7 +492,7 @@ h1.site-title span.w{color:var(--gold)}
 </div>
 
 <div class="academy-grid">
-<div class="academy-card" onclick="go('tools/poker-odds/')" style="cursor:pointer">
+<a href="tools/poker-odds/" class="academy-card" style="cursor:pointer">
 <div class="ac-accent" style="background:var(--blue)"></div>
 <div class="ac-eyebrow" style="color:var(--blue)">Betting · Free</div>
 <div class="ac-title">POKER ODDS CALCULATOR</div>
@@ -500,9 +501,9 @@ h1.site-title span.w{color:var(--gold)}
 <div class="ac-stat"><div class="as-num" style="color:var(--blue)">10,000</div><div class="as-label">Simulations</div></div>
 <div class="ac-stat"><div class="as-num" style="color:var(--green)">Free</div><div class="as-label">Always</div></div>
 </div>
-</div>
+</a>
 
-<div class="academy-card" onclick="go('tools/free-bet-calculator/')" style="cursor:pointer">
+<a href="tools/free-bet-calculator/" class="academy-card" style="cursor:pointer">
 <div class="ac-accent" style="background:var(--green)"></div>
 <div class="ac-eyebrow" style="color:var(--green)">Betting · Free</div>
 <div class="ac-title">FREE BET CALCULATOR</div>
@@ -511,9 +512,9 @@ h1.site-title span.w{color:var(--gold)}
 <div class="ac-stat"><div class="as-num" style="color:var(--green)">3</div><div class="as-label">Calculators</div></div>
 <div class="ac-stat"><div class="as-num" style="color:var(--green)">Free</div><div class="as-label">Always</div></div>
 </div>
-</div>
+</a>
 
-<div class="academy-card" onclick="go('tools/mortgage-overpayment/')" style="cursor:pointer">
+<a href="tools/mortgage-overpayment/" class="academy-card" style="cursor:pointer">
 <div class="ac-accent" style="background:#0ea5e9"></div>
 <div class="ac-eyebrow" style="color:#0ea5e9">Finance · Free</div>
 <div class="ac-title">MORTGAGE OVERPAYMENT CALCULATOR</div>
@@ -522,9 +523,9 @@ h1.site-title span.w{color:var(--gold)}
 <div class="ac-stat"><div class="as-num" style="color:#0ea5e9">£</div><div class="as-label">Savings shown</div></div>
 <div class="ac-stat"><div class="as-num" style="color:var(--green)">Free</div><div class="as-label">Always</div></div>
 </div>
-</div>
+</a>
 
-<div class="academy-card" onclick="go('tools/salary-sacrifice/')" style="cursor:pointer">
+<a href="tools/salary-sacrifice/" class="academy-card" style="cursor:pointer">
 <div class="ac-accent" style="background:#0ea5e9"></div>
 <div class="ac-eyebrow" style="color:#0ea5e9">Finance · Free</div>
 <div class="ac-title">SALARY SACRIFICE CALCULATOR</div>
@@ -533,9 +534,9 @@ h1.site-title span.w{color:var(--gold)}
 <div class="ac-stat"><div class="as-num" style="color:#0ea5e9">2025/26</div><div class="as-label">Tax year</div></div>
 <div class="ac-stat"><div class="as-num" style="color:var(--green)">Free</div><div class="as-label">Always</div></div>
 </div>
-</div>
+</a>
 
-<div class="academy-card" onclick="go('tools/compound-interest/')" style="cursor:pointer">
+<a href="tools/compound-interest/" class="academy-card" style="cursor:pointer">
 <div class="ac-accent" style="background:#0ea5e9"></div>
 <div class="ac-eyebrow" style="color:#0ea5e9">Finance · Free</div>
 <div class="ac-title">COMPOUND INTEREST CALCULATOR</div>
@@ -544,9 +545,9 @@ h1.site-title span.w{color:var(--gold)}
 <div class="ac-stat"><div class="as-num" style="color:#0ea5e9">72</div><div class="as-label">Rule of</div></div>
 <div class="ac-stat"><div class="as-num" style="color:var(--green)">Free</div><div class="as-label">Always</div></div>
 </div>
-</div>
+</a>
 
-<div class="academy-card" onclick="go('tools/')" style="cursor:pointer">
+<a href="tools/" class="academy-card" style="cursor:pointer">
 <div class="ac-accent" style="background:var(--gold)"></div>
 <div class="ac-eyebrow" style="color:var(--gold)">+ 4 More Tools</div>
 <div class="ac-title">VIEW ALL 9 TOOLS</div>
@@ -555,7 +556,7 @@ h1.site-title span.w{color:var(--gold)}
 <div class="ac-stat"><div class="as-num" style="color:var(--gold)">9</div><div class="as-label">Total tools</div></div>
 <div class="ac-stat"><div class="as-num" style="color:var(--green)">Free</div><div class="as-label">Always</div></div>
 </div>
-</div>
+</a>
 </div>
 </div>
 
@@ -568,7 +569,7 @@ h1.site-title span.w{color:var(--gold)}
 </div>
 
 <div class="academy-grid">
-<div class="academy-card ac-tx" onclick="go('parents/negative-numbers/')">
+<a href="parents/negative-numbers/" class="academy-card ac-tx">
 <div class="ac-accent"></div>
 <div class="ac-eyebrow">KS3 · Parent Guide</div>
 <div class="ac-title">NEGATIVE NUMBERS</div>
@@ -576,9 +577,9 @@ h1.site-title span.w{color:var(--gold)}
 <div class="ac-stats">
 <div class="ac-stat"><div class="as-num" style="color:var(--green)">Free</div><div class="as-label">Always</div></div>
 </div>
-</div>
+</a>
 
-<div class="academy-card ac-tx" onclick="go('parents/algebra-basics/')">
+<a href="parents/algebra-basics/" class="academy-card ac-tx">
 <div class="ac-accent"></div>
 <div class="ac-eyebrow">KS3 · Parent Guide</div>
 <div class="ac-title">ALGEBRA BASICS</div>
@@ -586,9 +587,9 @@ h1.site-title span.w{color:var(--gold)}
 <div class="ac-stats">
 <div class="ac-stat"><div class="as-num" style="color:var(--green)">Free</div><div class="as-label">Always</div></div>
 </div>
-</div>
+</a>
 
-<div class="academy-card ac-tx" onclick="go('parents/fractions/')">
+<a href="parents/fractions/" class="academy-card ac-tx">
 <div class="ac-accent"></div>
 <div class="ac-eyebrow">KS3 · Parent Guide</div>
 <div class="ac-title">FRACTIONS, DECIMALS & PERCENTAGES</div>
@@ -596,9 +597,9 @@ h1.site-title span.w{color:var(--gold)}
 <div class="ac-stats">
 <div class="ac-stat"><div class="as-num" style="color:var(--green)">Free</div><div class="as-label">Always</div></div>
 </div>
-</div>
+</a>
 
-<div class="academy-card ac-tx" onclick="go('parents/trigonometry/')">
+<a href="parents/trigonometry/" class="academy-card ac-tx">
 <div class="ac-accent"></div>
 <div class="ac-eyebrow">GCSE · Parent Guide</div>
 <div class="ac-title">TRIGONOMETRY</div>
@@ -606,9 +607,9 @@ h1.site-title span.w{color:var(--gold)}
 <div class="ac-stats">
 <div class="ac-stat"><div class="as-num" style="color:var(--green)">Free</div><div class="as-label">Always</div></div>
 </div>
-</div>
+</a>
 
-<div class="academy-card ac-tx" onclick="go('parents/simultaneous-equations/')">
+<a href="parents/simultaneous-equations/" class="academy-card ac-tx">
 <div class="ac-accent"></div>
 <div class="ac-eyebrow">GCSE · Parent Guide</div>
 <div class="ac-title">SIMULTANEOUS EQUATIONS</div>
@@ -616,9 +617,9 @@ h1.site-title span.w{color:var(--gold)}
 <div class="ac-stats">
 <div class="ac-stat"><div class="as-num" style="color:var(--green)">Free</div><div class="as-label">Always</div></div>
 </div>
-</div>
+</a>
 
-<div class="academy-card ac-tx" onclick="go('parents/expanding-factorising/')">
+<a href="parents/expanding-factorising/" class="academy-card ac-tx">
 <div class="ac-accent"></div>
 <div class="ac-eyebrow">GCSE · Parent Guide</div>
 <div class="ac-title">EXPANDING & FACTORISING</div>
@@ -626,7 +627,7 @@ h1.site-title span.w{color:var(--gold)}
 <div class="ac-stats">
 <div class="ac-stat"><div class="as-num" style="color:var(--green)">Free</div><div class="as-label">Always</div></div>
 </div>
-</div>
+</a>
 
 </div>
 </div>
@@ -663,7 +664,6 @@ function showSection(id){
   document.querySelectorAll('.nav-pill').forEach(p=>p.classList.remove('active'));
   event.target.classList.add('active');
 }
-function go(path){window.location.href=path}
 </script>
 <!-- Cookie Consent Banner -->
 <div id="cookieConsent" style="display:none;position:fixed;bottom:0;left:0;right:0;background:#0c1628;border-top:1px solid #14263d;padding:14px 24px;z-index:99999;font-family:'Outfit',system-ui,sans-serif;font-size:13px;color:#94a3b8;display:none;align-items:center;justify-content:center;gap:16px;flex-wrap:wrap">
