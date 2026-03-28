@@ -1,0 +1,222 @@
+<!DOCTYPE html>
+<html lang="en-GB">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>About MathsWins — The Maths Behind Every Decision</title>
+<meta name="description" content="MathsWins teaches the mathematics behind gambling, betting, trading, and everyday financial decisions. Educational, not gambling. Maths, not tips.">
+<meta property="og:title" content="About MathsWins">
+<meta property="og:description" content="MathsWins teaches the mathematics behind gambling, betting, trading, and everyday financial decisions. Educational, not gambling. Maths, not tips.">
+<meta property="og:url" content="https://mathswins.co.uk/about/">
+<meta property="og:image" content="https://mathswins.co.uk/assets/og-image.png">
+<meta property="og:type" content="website">
+<meta name="twitter:card" content="summary_large_image">
+<link rel="canonical" href="https://mathswins.co.uk/about/">
+<script type="application/ld+json">
+{"@context":"https://schema.org","@type":"AboutPage","name":"About MathsWins","url":"https://mathswins.co.uk/about/","mainEntity":{"@type":"EducationalOrganization","name":"MathsWins","url":"https://mathswins.co.uk","description":"Mathematical education platform teaching probability, expected value, and decision theory through interactive courses, free tools, and games."}}
+</script>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Crimson+Pro:ital,wght@0,400;0,700;1,400&family=DM+Mono:wght@400;500&family=Outfit:wght@300;400;600;700&display=swap" rel="stylesheet">
+<!-- Google Analytics -->
+<script async src="https://www.googletagmanager.com/gtag/js?id=G-7GTLYCZMXN"></script>
+<script>window.dataLayer=window.dataLayer||[];function gtag(){dataLayer.push(arguments);}gtag('js',new Date());gtag('consent','default',{analytics_storage:'denied',ad_storage:'denied',ad_user_data:'denied',ad_personalization:'denied'});gtag('config','G-7GTLYCZMXN',{send_page_view:true,anonymize_ip:true});</script>
+<style>
+*{margin:0;padding:0;box-sizing:border-box}
+:root{
+  --bg:#050709;--surface:#0a0d14;--surface2:#0f1319;--border:#161c28;--border2:#1e2638;
+  --gold:#d4a847;--gold-dim:rgba(212,168,71,.08);
+  --teal:#0d9488;--teal-dim:rgba(13,148,136,.08);
+  --text:#c8cdd8;--text-bright:#e8ecf4;--muted:#4a5568;
+}
+body{font-family:'Outfit',sans-serif;background:var(--bg);color:var(--text);min-height:100vh;line-height:1.6;-webkit-font-smoothing:antialiased}
+
+.container{max-width:680px;margin:0 auto;padding:2rem 1.25rem 4rem}
+
+.nav-bar{display:flex;align-items:center;justify-content:space-between;padding:1rem 0;border-bottom:1px solid var(--border);margin-bottom:2.5rem}
+.nav-brand{font-family:'Bebas Neue',sans-serif;font-size:1.4rem;color:var(--gold);text-decoration:none;letter-spacing:.06em}
+.nav-brand span{color:var(--text-bright)}
+.nav-link{font-size:.85rem;font-weight:600;color:var(--gold);text-decoration:none;padding:.4rem 1rem;border:1px solid rgba(212,168,71,.3);border-radius:4px;transition:all .2s}
+.nav-link:hover{background:var(--gold-dim);border-color:var(--gold)}
+
+h1{font-family:'Bebas Neue',sans-serif;font-size:2.4rem;color:var(--text-bright);letter-spacing:.03em;margin-bottom:.3rem}
+.strapline{color:var(--gold);font-weight:600;font-size:1rem;margin-bottom:2rem}
+
+.bio{font-size:.95rem;line-height:1.8}
+.bio p{margin-bottom:1rem}
+.bio a{color:var(--gold);text-decoration:none}
+.bio a:hover{text-decoration:underline}
+.bio strong{color:var(--text-bright)}
+
+.credentials{
+  background:var(--gold-dim);border-left:3px solid var(--gold);
+  padding:.8rem 1rem;border-radius:0 8px 8px 0;margin:1.5rem 0;
+  font-size:.88rem;color:var(--text-bright);line-height:1.6
+}
+
+.card{
+  background:var(--surface);border:1px solid var(--border);border-radius:12px;
+  padding:1.5rem 1.8rem;margin:2rem 0
+}
+.card h2{font-family:'Bebas Neue',sans-serif;font-size:1.3rem;color:var(--text-bright);letter-spacing:.03em;margin-bottom:.8rem}
+.card ul{list-style:none;padding:0}
+.card li{
+  padding:.4rem 0;padding-left:1.4rem;position:relative;
+  font-size:.9rem;line-height:1.5
+}
+.card li::before{content:'\2713';position:absolute;left:0;color:var(--gold);font-weight:700}
+
+.pillar-grid{display:grid;grid-template-columns:1fr 1fr;gap:12px;margin:1.5rem 0}
+.pillar{background:var(--surface);border:1px solid var(--border);border-radius:10px;padding:1rem 1.2rem}
+.pillar-title{font-family:'Bebas Neue',sans-serif;font-size:1rem;color:var(--gold);letter-spacing:.04em;margin-bottom:.3rem}
+.pillar-desc{font-size:.82rem;color:var(--muted);line-height:1.5}
+.pillar a{color:var(--gold);text-decoration:none;font-weight:600;font-size:.8rem;display:inline-block;margin-top:.4rem}
+.pillar a:hover{text-decoration:underline}
+
+.support{
+  background:var(--surface);border:1px solid var(--border);border-radius:12px;
+  padding:1.5rem 1.8rem;margin:2rem 0;text-align:center
+}
+.support p{font-size:.9rem;color:var(--text);line-height:1.6;margin-bottom:1rem}
+.coffee-btn{
+  display:inline-flex;align-items:center;gap:8px;
+  padding:.6rem 1.4rem;border-radius:8px;
+  background:#FFDD00;color:#000;text-decoration:none;
+  font-weight:700;font-size:.9rem;transition:all .15s
+}
+.coffee-btn:hover{background:#ffce00;transform:translateY(-1px);box-shadow:0 2px 8px rgba(255,221,0,.3)}
+.coffee-btn svg{width:20px;height:20px}
+
+.links{display:flex;gap:1rem;flex-wrap:wrap;margin:2rem 0}
+.page-link{
+  padding:.6rem 1.2rem;border-radius:8px;border:1px solid var(--border);
+  background:var(--surface);color:var(--text-bright);text-decoration:none;
+  font-weight:600;font-size:.85rem;transition:all .15s
+}
+.page-link:hover{border-color:var(--gold);color:var(--gold)}
+
+.footer{text-align:center;padding:2rem;font-size:.78rem;color:var(--muted);border-top:1px solid var(--border);margin-top:2rem}
+.footer a{color:var(--muted);text-decoration:none}
+.footer a:hover{color:var(--text)}
+
+@media(max-width:480px){
+  .pillar-grid{grid-template-columns:1fr}
+  h1{font-size:2rem}
+}
+</style>
+</head>
+<body>
+
+<div class="container">
+
+<nav class="nav-bar">
+  <a href="/" class="nav-brand">MATHS<span>WINS</span></a>
+  <a href="/" class="nav-link">&larr; Home</a>
+</nav>
+
+<h1>ABOUT MATHSWINS</h1>
+<div class="strapline">The maths behind every decision.</div>
+
+<div class="bio">
+  <p>
+    MathsWins is built on a simple premise: in every game of chance, every financial decision,
+    and every market trade, the person who understands the mathematics has the advantage.
+  </p>
+  <p>
+    Casinos know this. Bookmakers know this. Your bank definitely knows this.
+    MathsWins exists to make sure <strong>you</strong> know it too.
+  </p>
+  <p>
+    This is an educational platform, not a gambling service. We don't sell tips, systems,
+    or predictions. We teach the probability, expected value, and decision theory that
+    underpins every game and every financial choice &mdash; so you can make informed
+    decisions based on mathematics, not instinct.
+  </p>
+  <p>
+    MathsWins is built by a qualified mathematician with a first-class degree and
+    Qualified Teacher Status. From the team behind
+    <a href="https://maffsgames.co.uk" target="_blank" rel="noopener">MaffsGames</a>
+    &mdash; free maths games used in UK schools.
+  </p>
+</div>
+
+<div class="card">
+  <h2>FOUR PILLARS</h2>
+  <div class="pillar-grid">
+    <div class="pillar">
+      <div class="pillar-title">ACADEMY</div>
+      <div class="pillar-desc">9 courses on the mathematics of blackjack, poker, sports betting, roulette, and trading. Module 1 free on every course.</div>
+      <a href="/academy/">Explore courses &rarr;</a>
+    </div>
+    <div class="pillar">
+      <div class="pillar-title">TOOLS</div>
+      <div class="pillar-desc">27 free UK finance calculators. Tax, pensions, mortgages, debt, betting odds, crypto liquidation.</div>
+      <a href="/tools/">Browse tools &rarr;</a>
+    </div>
+    <div class="pillar">
+      <div class="pillar-title">EVERYDAY MATHS</div>
+      <div class="pillar-desc">6 free courses on the maths behind everyday money decisions. Tax, pensions, compound interest, inflation.</div>
+      <a href="/everyday/">Start learning &rarr;</a>
+    </div>
+    <div class="pillar">
+      <div class="pillar-title">GAMES</div>
+      <div class="pillar-desc">13 free skill-based games. Mental arithmetic, pattern recognition, logic, strategy. No luck required.</div>
+      <a href="/#sec-games">Play games &rarr;</a>
+    </div>
+  </div>
+</div>
+
+<div class="card">
+  <h2>WHAT MATHSWINS IS</h2>
+  <ul>
+    <li>Educational &mdash; we teach mathematics, not gambling strategies</li>
+    <li>Free tools and courses &mdash; 27 calculators, 6 everyday courses, 13 games, all free</li>
+    <li>Module 1 free on every academy course &mdash; try before you buy</li>
+    <li>No personal data collected &mdash; cookieless analytics only</li>
+    <li>Built by a mathematician &mdash; the maths is real, not hand-waved</li>
+  </ul>
+</div>
+
+<div class="support">
+  <p>
+    MathsWins is largely a one-person project. The tools, everyday courses, and games
+    are all free and always will be. If you've found any of it useful, you can support
+    the project here.
+  </p>
+  <a href="https://buymeacoffee.com/mathswins" target="_blank" rel="noopener" class="coffee-btn">
+    <svg viewBox="0 0 884 1279" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M791 298c0 0 22-68-26-113C712 131 631 168 631 168s-37-75-120-96C428 51 371 96 371 96s-74-63-157-37c-83 27-97 113-97 113S26 205 5 298c-21 93 39 163 39 163s647 0 747-163z" fill="#FF813F"/><path d="M313 572h257v447c0 72-58 130-129 130-71 0-128-58-128-130V572z" fill="#FFDD00"/></svg>
+    Support MathsWins
+  </a>
+</div>
+
+<div class="links">
+  <a href="/" class="page-link">Home</a>
+  <a href="/academy/" class="page-link">Academy</a>
+  <a href="/tools/" class="page-link">Tools</a>
+  <a href="/everyday/" class="page-link">Everyday Maths</a>
+  <a href="mailto:contact@mathswins.co.uk" class="page-link">Contact</a>
+</div>
+
+</div>
+
+<footer class="footer">
+  <p>MathsWins &middot; <a href="/">Home</a> &middot; <a href="/academy/">Academy</a> &middot; <a href="/everyday/">Everyday Maths</a> &middot; <a href="/tools/">Tools</a> &middot; <a href="/about/">About</a> &middot; <a href="mailto:contact@mathswins.co.uk">Contact</a></p>
+  <p style="margin-top:.5rem">Built by a mathematician. No personal data collected. Cookieless analytics.</p>
+  <p style="margin-top:.5rem"><a href="/restore/">Restore Access</a></p>
+</footer>
+
+<!-- Cookie Consent -->
+<div id="cookieBanner" style="display:none;position:fixed;bottom:0;left:0;right:0;background:#0a0d14;border-top:1px solid #161c28;padding:12px 20px;font-size:13px;color:#64748b;z-index:9999;text-align:center">
+We use cookieless analytics. Accept to enable full session data. <a href="/terms/" style="color:#d4a847;text-decoration:none">Privacy</a>
+<button onclick="acceptCookies()" style="background:#d4a847;color:#050709;border:none;padding:6px 16px;border-radius:4px;font-weight:700;font-size:12px;cursor:pointer;margin-left:12px">Accept</button>
+<button onclick="declineCookies()" style="background:transparent;color:#64748b;border:1px solid #161c28;padding:6px 16px;border-radius:4px;font-size:12px;cursor:pointer;margin-left:4px">Decline</button>
+</div>
+<script>
+var cc=localStorage.getItem('mw_cookies');
+if(!cc)document.getElementById('cookieBanner').style.display='block';
+else if(cc==='accepted')gtag('consent','update',{analytics_storage:'granted'});
+function acceptCookies(){localStorage.setItem('mw_cookies','accepted');gtag('consent','update',{analytics_storage:'granted'});document.getElementById('cookieBanner').style.display='none'}
+function declineCookies(){localStorage.setItem('mw_cookies','declined');document.getElementById('cookieBanner').style.display='none'}
+</script>
+
+</body>
+</html>
