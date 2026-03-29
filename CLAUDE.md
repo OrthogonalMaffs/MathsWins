@@ -62,8 +62,11 @@ Educational deep-dives into the mathematics behind games of chance, betting, and
 ### 3. Everyday Maths — Free financial literacy courses (6 courses, all live)
 The mathematics behind everyday financial decisions. Tax, mortgages, pensions, compound interest, inflation, probability. Free forever.
 
-### 4. Tools — Free standalone calculators (1 live)
-Focused single-purpose tools. Currently: UK Student Loan Calculator.
+### 4. Tools — Free standalone calculators (28 live)
+Focused single-purpose tools. Finance, self-employment, property, family, lifestyle, betting, crypto.
+
+### 5. Learn — Free educational articles
+SEO-focused articles explaining mathematical concepts. Hub at `/learn/` with CollectionPage schema.
 
 ## Business Model
 **Dual payment — card or QF tokens:**
@@ -123,7 +126,7 @@ Focused single-purpose tools. Currently: UK Student Loan Calculator.
 - Academy hub page with MathsWins Premium (£149.99 lifetime / £99.99 annual)
 - Options Maths standalone course page (Module 1 free, M2-10 coming soon)
 - 6 Everyday Maths courses (all live, free forever)
-- **27 free tools** (finance, self-employment, property, family, lifestyle, betting, crypto) — see Tools section below
+- **28 free tools** (finance, self-employment, property, family, lifestyle, betting, crypto) — see Tools section below
 - **20 parent guides** (10 KS3 + 10 GCSE) — "Help Your Child With Maths" at /parents/
 - Terms of Use page (17 sections, UK law, noindex)
 - GitHub Pages enabled, CNAME set to mathswins.co.uk
@@ -135,7 +138,11 @@ Focused single-purpose tools. Currently: UK Student Loan Calculator.
 - **Access restoration** via email magic link (`/restore/`) or automatic on Google login
 - **Cloudflare Worker** (`mathswins-restore`) — auth, restore, upgrade credit endpoints (deployed via dashboard)
 - **Cookie consent banner** on all pages — GA4 with consent mode (defaults denied, upgrades to granted on accept)
-- **Full SEO** on all 85 pages — title, description, canonical, OG tags, twitter:card, FAQ schema on tools, WebApplication schema on tools
+- **About page** (`/about/`) — four pillars, BMC link (buymeacoffee.com/maffsgames), MaffsGames credibility line
+- **Learn hub** (`/learn/`) — educational articles with CollectionPage schema
+- **3 Learn articles** — poker odds, salary sacrifice, overround explained
+- **Full SEO** on all 90+ pages — title, description, canonical, OG tags, twitter:card, FAQ schema on tools, WebApplication schema on tools
+- **SEO fix (28 March 2026):** homepage cards converted from onclick divs to `<a>` tags (40 cards)
 
 ### Not Yet Built / In Progress
 - Stripe redirect URLs (need to set `?session_id=` on all 18 Payment Links in Stripe dashboard)
@@ -193,8 +200,15 @@ everyday/                           # Free everyday maths courses
   pensions/index.html               # 4 modules, tax relief, compound growth, lump sum, calculator
   inflation/index.html              # 3 modules, purchasing power, real vs nominal, shrinkflation
   probability/index.html            # 4 modules, base rates, Bayes, Monty Hall, birthday problem
+about/
+  index.html                        # About page — four pillars, BMC link, MaffsGames credibility
+learn/
+  index.html                        # Learn hub — CollectionPage schema, article cards by topic
+  how-to-calculate-poker-odds/index.html   # Poker odds article
+  salary-sacrifice-explained/index.html    # Salary sacrifice article
+  overround-explained/index.html           # Overround explained article
 terms/index.html                    # Terms of Use (noindex, 17 sections, UK law)
-tools/                              # 24 free calculators (see Tools section below)
+tools/                              # 28 free calculators (see Tools section below)
   index.html                        # Tools hub with filter pills
   student-loan/index.html
   take-home-pay/index.html
@@ -222,6 +236,7 @@ tools/                              # 24 free calculators (see Tools section bel
   accumulator-calculator/index.html
   poker-odds/index.html
   impermanent-loss/index.html
+  overround/index.html
   crypto-liquidation/index.html
 parents/                            # 20 parent homework help guides
   index.html                        # Parents hub — "Help Your Child With Maths"
@@ -348,12 +363,13 @@ Free courses teaching the mathematics behind everyday financial decisions. No ga
 | Inflation & Real Returns | `everyday/inflation` | 3 | Purchasing power erosion, real vs nominal returns, shrinkflation maths. Live calculators. |
 | Everyday Probability | `everyday/probability` | 4 | Base rate neglect, Bayes' theorem, Monty Hall (interactive game), birthday problem. Live calculators. |
 
-## Tools (27 Free Calculators — built 23 March 2026)
+## Tools (28 Free Calculators — updated 28 March 2026)
 
 Tools hub at `/tools/` with filter pills: All, Most Popular, Self-Employment, Home & Family, Debt & Savings, Lifestyle, Betting, Crypto.
 
 Every tool has: FAQ schema, WebApplication schema, full SEO, cookie consent, educational content.
 12 tools have GOV.UK links for direct access to apply/check entitlements.
+BMC link: buymeacoffee.com/maffsgames (shared with MaffsGames).
 
 ### Most Popular
 | Tool | Slug | Key features |
@@ -397,12 +413,13 @@ Every tool has: FAQ schema, WebApplication schema, full SEO, cookie consent, edu
 |------|------|--------------|
 | Habit Cost Calculator | `tools/habit-cost` | Smoking/drinking/coffee opportunity cost, compound growth, shareable |
 
-### Betting & Gambling (3)
+### Betting & Gambling (4)
 | Tool | Slug | Key features |
 |------|------|--------------|
 | Free Bet Calculator | `tools/free-bet-calculator` | SNR/SR valuations, qualifying costs, lay-off |
 | Accumulator Calculator | `tools/accumulator-calculator` | Combined odds, implied probability, overround |
 | Poker Odds Calculator | `tools/poker-odds` | Hand equity, outs, pot odds |
+| Bookmaker Overround Calculator | `tools/overround` | Overround %, true odds, margin per outcome |
 
 ### Crypto & Trading (2)
 | Tool | Slug | Key features |
@@ -524,7 +541,7 @@ forge test -vv
 - **KV namespace:** `RESTORE_KV` — rate limiting, single-use tokens, purchase caching
 
 ### Frontend Auth Module — `auth/mw-auth.js`
-- Loaded on ALL pages site-wide (47+ pages)
+- Loaded on ALL pages site-wide (50+ pages)
 - Google Identity Services (GIS) renders sign-in button
 - On login: calls `/auth/google`, stores session JWT in localStorage (`mw_session`), sets all `mw_access_*` flags, reloads page
 - **Purchase gating:** both `#mw-buy-section` (course pages) and `#mw-premium-section` (academy hub) gated behind login
@@ -550,10 +567,13 @@ forge test -vv
 6. If user doesn't own: buy section shows Stripe Payment Link buttons
 7. After Stripe purchase: `?session_id=` redirect sets localStorage, `mwAuth.refreshPurchases()` syncs to server
 
-## SEO (Updated 23 March 2026)
-- Sitemap: 85 URLs (`sitemap.xml`)
-- All 85 pages have: title, meta description, canonical, OG tags, twitter:card
-- All 27 tools have: FAQPage schema, WebApplication schema
+## SEO (Updated 28 March 2026)
+- Sitemap: 90+ URLs (`sitemap.xml`)
+- All 90+ pages have: title, meta description, canonical, OG tags, twitter:card
+- All 28 tools have: FAQPage schema, WebApplication schema
+- Learn hub and articles indexed and in sitemap (previously /learn/ was noindex, fixed 28 March)
+- Homepage cards converted from onclick divs to semantic `<a>` tags (40 cards, 28 March)
+- Broken /about/ links fixed across 9 pages (28 March)
 - OG image: `assets/og-image.png` (1200x630 PNG, dark theme with gold branding)
 - 12 tools have GOV.UK links for direct entitlement/application access
 
