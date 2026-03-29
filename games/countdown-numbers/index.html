@@ -29,26 +29,22 @@ h1{font-family:'Bebas Neue',sans-serif;font-size:2.5rem;color:var(--text-bright)
 .target-num{font-family:'DM Mono',monospace;font-size:4rem;font-weight:500;color:var(--gold);line-height:1.1}
 
 /* Timer */
-.timer-bar{width:100%;height:8px;background:var(--border2);border-radius:4px;margin:1rem 0;overflow:hidden}
-.timer-fill{height:100%;background:var(--teal-bright);border-radius:4px;transition:width .1s linear}
-.timer-fill.warning{background:var(--gold)}
-.timer-fill.danger{background:var(--red-bright)}
-.timer-text{font-family:'DM Mono',monospace;font-size:1.2rem;text-align:center;color:var(--text-bright)}
+.timer-text{font-family:'DM Mono',monospace;font-size:1.2rem;text-align:center;color:var(--text-bright);margin:.75rem 0}
 
 /* Number tiles */
 .tiles{display:flex;gap:.5rem;justify-content:center;flex-wrap:wrap;margin:1.5rem 0}
-.tile{font-family:'DM Mono',monospace;font-size:1.4rem;font-weight:500;width:70px;height:56px;display:flex;align-items:center;justify-content:center;background:var(--surface);border:2px solid var(--border2);border-radius:8px;color:var(--text-bright);cursor:pointer;transition:all .15s;user-select:none}
-.tile:hover:not(.used):not(.disabled){border-color:var(--teal-bright);transform:translateY(-2px)}
-.tile.used{opacity:.25;pointer-events:none;border-color:var(--border)}
-.tile.disabled{opacity:.3;pointer-events:none}
-.tile.selected{border-color:var(--gold);background:rgba(212,168,71,.1);color:var(--gold)}
+.tile{font-family:'DM Mono',monospace;font-size:1.4rem;font-weight:500;width:70px;height:56px;display:flex;align-items:center;justify-content:center;background:var(--surface);border:2px solid var(--border2);border-radius:8px;color:var(--text-bright);user-select:none}
 
-/* Operator buttons */
-.operators{display:flex;gap:.5rem;justify-content:center;margin:1rem 0}
-.op-btn{font-family:'DM Mono',monospace;font-size:1.5rem;width:56px;height:48px;display:flex;align-items:center;justify-content:center;background:var(--surface2);border:2px solid var(--border2);border-radius:8px;color:var(--teal-bright);cursor:pointer;transition:all .15s;user-select:none}
-.op-btn:hover:not(.disabled){border-color:var(--teal-bright)}
-.op-btn.selected{border-color:var(--teal-bright);background:rgba(45,212,191,.1)}
-.op-btn.disabled{opacity:.3;pointer-events:none}
+/* Expression input */
+.expr-area{margin:1.5rem 0}
+.expr-input{font-family:'DM Mono',monospace;font-size:1.3rem;width:100%;padding:.75rem 1rem;background:var(--surface);border:2px solid var(--border2);border-radius:8px;color:var(--text-bright);outline:none;text-align:center}
+.expr-input:focus{border-color:var(--teal-bright)}
+.expr-input::placeholder{color:var(--muted);font-size:.95rem}
+.expr-hint{font-size:.75rem;color:var(--muted);text-align:center;margin-top:.5rem}
+.expr-result{font-family:'DM Mono',monospace;font-size:1.3rem;text-align:center;padding:.75rem;margin-top:.75rem;border-radius:8px;display:none}
+.expr-result.valid{display:block;background:rgba(45,212,160,.08);border:1px solid rgba(45,212,160,.25);color:var(--teal-bright)}
+.expr-result.exact{display:block;background:rgba(45,212,160,.15);border:1px solid rgba(45,212,160,.4);color:var(--green-bright)}
+.expr-result.error{display:block;background:rgba(239,83,80,.08);border:1px solid rgba(239,83,80,.2);color:var(--red-bright);font-size:.9rem}
 
 /* Working area */
 .working{background:var(--surface);border:1px solid var(--border);border-radius:10px;padding:1.25rem;margin:1.5rem 0;min-height:120px}
@@ -105,7 +101,7 @@ footer a{color:var(--muted);text-decoration:none}footer a:hover{color:var(--teal
 <header>
   <a href="/" class="back-link">← MathsWins</a>
   <h1>COUNTDOWN NUMBERS</h1>
-  <p class="tagline">Six numbers. One target. Thirty seconds. Pure arithmetic.</p>
+  <p class="tagline">Six numbers. One target. Pure arithmetic.</p>
 </header>
 
 <!-- SETUP SCREEN -->
@@ -136,20 +132,14 @@ footer a{color:var(--muted);text-decoration:none}footer a:hover{color:var(--teal
     <div class="target-num" id="targetNum">---</div>
   </div>
 
-  <div class="timer-bar"><div class="timer-fill" id="timerFill"></div></div>
-  <div class="timer-text" id="timerText">30</div>
+  <div class="timer-text" id="timerText">0:00</div>
 
   <div class="tiles" id="tilesContainer"></div>
-  <div class="operators" id="opsContainer">
-    <div class="op-btn disabled" data-op="+" onclick="selectOp('+')">+</div>
-    <div class="op-btn disabled" data-op="-" onclick="selectOp('−')">−</div>
-    <div class="op-btn disabled" data-op="*" onclick="selectOp('×')">×</div>
-    <div class="op-btn disabled" data-op="/" onclick="selectOp('÷')">÷</div>
-  </div>
 
-  <div class="working" id="working">
-    <div class="working-title">YOUR WORKING</div>
-    <div id="steps"></div>
+  <div class="expr-area">
+    <input type="text" class="expr-input" id="exprInput" placeholder="e.g. (100 + 25) × 4" autocomplete="off" spellcheck="false">
+    <div class="expr-hint">Use your numbers with + − × ÷ and brackets. Press Enter or Calculate to evaluate.</div>
+    <div class="expr-result" id="exprResult"></div>
   </div>
 
   <div class="result-display" id="resultDisplay">
@@ -160,8 +150,8 @@ footer a{color:var(--muted);text-decoration:none}footer a:hover{color:var(--teal
   <div id="solutionArea"></div>
 
   <div class="controls">
-    <button class="btn btn-danger" id="undoBtn" onclick="undoStep()" style="display:none">Undo</button>
-    <button class="btn btn-secondary" id="clearBtn" onclick="clearAll()" style="display:none">Clear</button>
+    <button class="btn btn-primary" id="calcBtn" onclick="evaluateExpr()">Calculate</button>
+    <button class="btn btn-secondary" id="clearBtn" onclick="clearExpr()">Clear</button>
     <button class="btn btn-primary" id="submitBtn" onclick="submitAnswer()" style="display:none">Submit</button>
     <button class="btn btn-primary" id="newGameBtn" onclick="showSetup()" style="display:none">New Game</button>
   </div>
@@ -177,9 +167,7 @@ footer a{color:var(--muted);text-decoration:none}footer a:hover{color:var(--teal
 // Game state
 let G = {
   numbers: [], target: 0, largeCount: 1,
-  available: [], results: [], steps: [],
-  selectedNum: null, selectedOp: null,
-  timer: null, timeLeft: 30, gameOver: false,
+  timer: null, elapsed: 0, gameOver: false, lastResult: null,
   stats: JSON.parse(localStorage.getItem('mw_countdown_stats') || '{"games":0,"exact":0,"close":0,"points":0}')
 };
 
@@ -198,11 +186,8 @@ function setLarge(n) {
 function generateNumbers(largeCount) {
   const large = [25, 50, 75, 100];
   const small = [1,1,2,2,3,3,4,4,5,5,6,6,7,7,8,8,9,9,10,10];
-  
-  // Shuffle
   for (let i = large.length - 1; i > 0; i--) { const j = Math.floor(Math.random() * (i+1)); [large[i],large[j]] = [large[j],large[i]]; }
   for (let i = small.length - 1; i > 0; i--) { const j = Math.floor(Math.random() * (i+1)); [small[i],small[j]] = [small[j],small[i]]; }
-  
   const nums = [];
   for (let i = 0; i < largeCount; i++) nums.push(large[i]);
   for (let i = 0; i < 6 - largeCount; i++) nums.push(small[i]);
@@ -210,25 +195,22 @@ function generateNumbers(largeCount) {
 }
 
 function generateTarget() {
-  return Math.floor(Math.random() * 899) + 101; // 101-999
+  return Math.floor(Math.random() * 899) + 101;
 }
 
 function showSetup() {
   document.getElementById('setupScreen').style.display = '';
   document.getElementById('gameScreen').style.display = 'none';
+  if (G.timer) clearInterval(G.timer);
   updateStatsDisplay();
 }
 
 function startGame() {
   G.numbers = generateNumbers(G.largeCount);
   G.target = generateTarget();
-  G.available = G.numbers.map((n, i) => ({ value: n, id: 'orig_' + i, used: false }));
-  G.results = [];
-  G.steps = [];
-  G.selectedNum = null;
-  G.selectedOp = null;
   G.gameOver = false;
-  G.timeLeft = 30;
+  G.lastResult = null;
+  G.elapsed = 0;
 
   document.getElementById('setupScreen').style.display = 'none';
   document.getElementById('gameScreen').style.display = '';
@@ -236,168 +218,235 @@ function startGame() {
   document.getElementById('resultDisplay').style.display = 'none';
   document.getElementById('solutionArea').innerHTML = '';
   document.getElementById('newGameBtn').style.display = 'none';
-  document.getElementById('submitBtn').style.display = '';
-  document.getElementById('undoBtn').style.display = '';
+  document.getElementById('submitBtn').style.display = 'none';
+  document.getElementById('calcBtn').style.display = '';
   document.getElementById('clearBtn').style.display = '';
+  document.getElementById('exprInput').value = '';
+  document.getElementById('exprInput').disabled = false;
+  document.getElementById('exprResult').className = 'expr-result';
+  document.getElementById('exprResult').textContent = '';
 
   renderTiles();
-  renderSteps();
-  setOpsState(false);
   startTimer();
+  document.getElementById('exprInput').focus();
 }
 
 function renderTiles() {
   const container = document.getElementById('tilesContainer');
   container.innerHTML = '';
-  const allNums = [...G.available, ...G.results];
-  allNums.forEach(n => {
-    if (n.used) return; // hidden
+  G.numbers.forEach(n => {
     const div = document.createElement('div');
-    div.className = 'tile' + (G.gameOver ? ' disabled' : '') + (G.selectedNum === n.id ? ' selected' : '');
-    div.textContent = n.value;
-    div.onclick = () => selectNumber(n.id);
+    div.className = 'tile';
+    div.textContent = n;
     container.appendChild(div);
   });
 }
 
-function selectNumber(id) {
-  if (G.gameOver) return;
-  const num = [...G.available, ...G.results].find(n => n.id === id && !n.used);
-  if (!num) return;
+// --- Expression parser (BODMAS-safe, recursive descent) ---
 
-  if (G.selectedNum === null) {
-    // First number selected
-    G.selectedNum = id;
-    setOpsState(true);
-    renderTiles();
-  } else if (G.selectedOp !== null && G.selectedNum !== id) {
-    // Second number selected — perform operation
-    const first = [...G.available, ...G.results].find(n => n.id === G.selectedNum);
-    const second = num;
-    const op = G.selectedOp;
-    
-    let result;
-    if (op === '+') result = first.value + second.value;
-    else if (op === '-') result = first.value - second.value;
-    else if (op === '*') result = first.value * second.value;
-    else if (op === '/') result = first.value / second.value;
-
-    // Validate
-    if (result <= 0 || !Number.isInteger(result)) {
-      // Invalid — flash and reset
-      G.selectedNum = null; G.selectedOp = null;
-      setOpsState(false);
-      renderTiles();
-      clearOpSelection();
-      return;
-    }
-
-    // Mark both as used
-    first.used = true;
-    second.used = true;
-
-    // Create result tile
-    const resultId = 'res_' + G.results.length;
-    G.results.push({ value: result, id: resultId, used: false, fromA: first.id, fromB: second.id });
-
-    const opSymbol = op === '*' ? '×' : op === '/' ? '÷' : op === '-' ? '−' : '+';
-    G.steps.push({
-      text: `${first.value} ${opSymbol} ${second.value} = ${result}`,
-      resultId: resultId, aId: first.id, bId: second.id
-    });
-
-    G.selectedNum = null; G.selectedOp = null;
-    setOpsState(false);
-    clearOpSelection();
-    renderTiles();
-    renderSteps();
-  } else {
-    // Deselect or reselect
-    G.selectedNum = id;
-    G.selectedOp = null;
-    setOpsState(true);
-    clearOpSelection();
-    renderTiles();
-  }
-}
-
-function selectOp(op) {
-  if (G.gameOver || G.selectedNum === null) return;
-  const realOp = op === '−' ? '-' : op === '×' ? '*' : op === '÷' ? '/' : '+';
-  G.selectedOp = realOp;
-  document.querySelectorAll('.op-btn').forEach(b => b.classList.toggle('selected', b.dataset.op === realOp));
-}
-
-function clearOpSelection() {
-  document.querySelectorAll('.op-btn').forEach(b => b.classList.remove('selected'));
-}
-
-function setOpsState(enabled) {
-  document.querySelectorAll('.op-btn').forEach(b => {
-    b.classList.toggle('disabled', !enabled);
+function tokenise(expr) {
+  // Normalise operator characters
+  expr = expr.replace(/×/g, '*').replace(/÷/g, '/').replace(/−/g, '-').replace(/\u2013/g, '-').replace(/x/gi, function(m, offset, str) {
+    // Only treat 'x' as multiply if between number/paren and number/paren
+    var before = str[offset - 1];
+    var after = str[offset + 1];
+    if (before && after && /[\d)]/.test(before) && /[\d(]/.test(after)) return '*';
+    return m;
   });
+
+  var tokens = [];
+  var i = 0;
+  while (i < expr.length) {
+    if (expr[i] === ' ') { i++; continue; }
+    if ('0123456789'.indexOf(expr[i]) >= 0) {
+      var num = '';
+      while (i < expr.length && '0123456789'.indexOf(expr[i]) >= 0) { num += expr[i]; i++; }
+      tokens.push({ type: 'num', value: parseInt(num, 10) });
+    } else if ('+-*/'.indexOf(expr[i]) >= 0) {
+      tokens.push({ type: 'op', value: expr[i] });
+      i++;
+    } else if (expr[i] === '(') {
+      tokens.push({ type: 'lparen' });
+      i++;
+    } else if (expr[i] === ')') {
+      tokens.push({ type: 'rparen' });
+      i++;
+    } else {
+      throw new Error('Unexpected character: ' + expr[i]);
+    }
+  }
+  return tokens;
 }
 
-function renderSteps() {
-  const container = document.getElementById('steps');
-  if (G.steps.length === 0) {
-    container.innerHTML = '<span style="color:var(--muted);font-size:.85rem">Select a number, then an operator, then another number.</span>';
+function parseExpr(tokens, pos) {
+  // expression = term (('+' | '-') term)*
+  var result = parseTerm(tokens, pos);
+  var val = result.value;
+  pos = result.pos;
+  while (pos < tokens.length && tokens[pos].type === 'op' && (tokens[pos].value === '+' || tokens[pos].value === '-')) {
+    var op = tokens[pos].value;
+    pos++;
+    result = parseTerm(tokens, pos);
+    pos = result.pos;
+    if (op === '+') val += result.value;
+    else val -= result.value;
+  }
+  return { value: val, pos: pos };
+}
+
+function parseTerm(tokens, pos) {
+  // term = factor (('*' | '/') factor)*
+  var result = parseFactor(tokens, pos);
+  var val = result.value;
+  pos = result.pos;
+  while (pos < tokens.length && tokens[pos].type === 'op' && (tokens[pos].value === '*' || tokens[pos].value === '/')) {
+    var op = tokens[pos].value;
+    pos++;
+    result = parseFactor(tokens, pos);
+    pos = result.pos;
+    if (op === '*') val *= result.value;
+    else {
+      if (result.value === 0) throw new Error('Division by zero');
+      val = val / result.value;
+    }
+  }
+  return { value: val, pos: pos };
+}
+
+function parseFactor(tokens, pos) {
+  if (pos >= tokens.length) throw new Error('Unexpected end of expression');
+  // Handle negative sign at start or after open paren
+  if (tokens[pos].type === 'op' && tokens[pos].value === '-') {
+    pos++;
+    var result = parseFactor(tokens, pos);
+    return { value: -result.value, pos: result.pos };
+  }
+  if (tokens[pos].type === 'num') {
+    return { value: tokens[pos].value, pos: pos + 1 };
+  }
+  if (tokens[pos].type === 'lparen') {
+    pos++;
+    var result = parseExpr(tokens, pos);
+    if (pos >= tokens.length || tokens[result.pos] === undefined || tokens[result.pos].type !== 'rparen') {
+      throw new Error('Missing closing bracket');
+    }
+    return { value: result.value, pos: result.pos + 1 };
+  }
+  throw new Error('Unexpected token');
+}
+
+function evaluateExpression(expr) {
+  var tokens = tokenise(expr);
+  if (tokens.length === 0) throw new Error('Empty expression');
+  var result = parseExpr(tokens, 0);
+  if (result.pos !== tokens.length) throw new Error('Unexpected content after expression');
+  return result.value;
+}
+
+function extractNumbers(expr) {
+  // Extract all integer numbers from expression
+  var cleaned = expr.replace(/×/g, '*').replace(/÷/g, '/').replace(/−/g, '-');
+  var matches = cleaned.match(/\d+/g);
+  return matches ? matches.map(Number) : [];
+}
+
+function validateNumbers(usedNums, available) {
+  // Check each used number appears in the available pool (respecting duplicates)
+  var pool = available.slice();
+  for (var i = 0; i < usedNums.length; i++) {
+    var idx = pool.indexOf(usedNums[i]);
+    if (idx === -1) return { valid: false, bad: usedNums[i] };
+    pool.splice(idx, 1);
+  }
+  return { valid: true };
+}
+
+function evaluateExpr() {
+  if (G.gameOver) return;
+  var input = document.getElementById('exprInput');
+  var resultDiv = document.getElementById('exprResult');
+  var expr = input.value.trim();
+
+  if (!expr) {
+    resultDiv.className = 'expr-result error';
+    resultDiv.textContent = 'Type an expression using your numbers.';
     return;
   }
-  container.innerHTML = G.steps.map((s, i) =>
-    `<div class="step"><span>${s.text.replace(/=\s*(\d+)/, '= <span class="step-result">$1</span>')}</span>${!G.gameOver ? '<span class="undo-step" onclick="undoStep()">✕</span>' : ''}</div>`
-  ).join('');
+
+  // Validate numbers used
+  var usedNums = extractNumbers(expr);
+  var check = validateNumbers(usedNums, G.numbers);
+  if (!check.valid) {
+    resultDiv.className = 'expr-result error';
+    resultDiv.textContent = check.bad + ' is not available (or used too many times). Your numbers: ' + G.numbers.join(', ');
+    return;
+  }
+
+  // Evaluate
+  var result;
+  try {
+    result = evaluateExpression(expr);
+  } catch (e) {
+    resultDiv.className = 'expr-result error';
+    resultDiv.textContent = e.message;
+    return;
+  }
+
+  // Check result is a positive integer
+  if (!Number.isFinite(result)) {
+    resultDiv.className = 'expr-result error';
+    resultDiv.textContent = 'Result is not a valid number.';
+    return;
+  }
+
+  if (!Number.isInteger(result)) {
+    resultDiv.className = 'expr-result error';
+    resultDiv.textContent = '= ' + result.toFixed(4) + ' — not a whole number. In Countdown, all intermediate results must be whole numbers.';
+    return;
+  }
+
+  if (result <= 0) {
+    resultDiv.className = 'expr-result error';
+    resultDiv.textContent = '= ' + result + ' — results must be positive.';
+    return;
+  }
+
+  G.lastResult = result;
+  var diff = Math.abs(result - G.target);
+
+  if (diff === 0) {
+    resultDiv.className = 'expr-result exact';
+    resultDiv.textContent = '= ' + result + ' — EXACT!';
+  } else {
+    resultDiv.className = 'expr-result valid';
+    resultDiv.textContent = '= ' + result + '  (' + diff + ' away from ' + G.target + ')';
+  }
+
+  // Show submit button
+  document.getElementById('submitBtn').style.display = '';
 }
 
-function undoStep() {
-  if (G.steps.length === 0 || G.gameOver) return;
-  const last = G.steps.pop();
-  // Remove the result
-  const resIdx = G.results.findIndex(r => r.id === last.resultId);
-  if (resIdx >= 0) G.results.splice(resIdx, 1);
-  // Restore the used numbers
-  const allNums = [...G.available, ...G.results];
-  const a = allNums.find(n => n.id === last.aId);
-  const b = allNums.find(n => n.id === last.bId);
-  if (a) a.used = false;
-  if (b) b.used = false;
-  G.selectedNum = null; G.selectedOp = null;
-  setOpsState(false);
-  clearOpSelection();
-  renderTiles();
-  renderSteps();
-}
-
-function clearAll() {
+function clearExpr() {
   if (G.gameOver) return;
-  G.available.forEach(n => n.used = false);
-  G.results = [];
-  G.steps = [];
-  G.selectedNum = null; G.selectedOp = null;
-  setOpsState(false);
-  clearOpSelection();
-  renderTiles();
-  renderSteps();
+  document.getElementById('exprInput').value = '';
+  document.getElementById('exprResult').className = 'expr-result';
+  document.getElementById('exprResult').textContent = '';
+  document.getElementById('submitBtn').style.display = 'none';
+  G.lastResult = null;
+  document.getElementById('exprInput').focus();
 }
 
-// Timer
+// Timer (counts UP)
 function startTimer() {
-  const fill = document.getElementById('timerFill');
-  const text = document.getElementById('timerText');
-  G.timeLeft = 30;
-
+  var text = document.getElementById('timerText');
+  G.elapsed = 0;
   if (G.timer) clearInterval(G.timer);
-  G.timer = setInterval(() => {
-    G.timeLeft -= 0.1;
-    if (G.timeLeft <= 0) {
-      G.timeLeft = 0;
-      clearInterval(G.timer);
-      endGame();
-    }
-    const pct = (G.timeLeft / 30) * 100;
-    fill.style.width = pct + '%';
-    fill.className = 'timer-fill' + (G.timeLeft <= 5 ? ' danger' : G.timeLeft <= 10 ? ' warning' : '');
-    text.textContent = Math.ceil(G.timeLeft);
+  G.timer = setInterval(function() {
+    G.elapsed += 0.1;
+    var secs = Math.floor(G.elapsed);
+    var mins = Math.floor(secs / 60);
+    secs = secs % 60;
+    text.textContent = mins + ':' + (secs < 10 ? '0' : '') + secs;
   }, 100);
 }
 
@@ -410,44 +459,32 @@ function submitAnswer() {
 function endGame() {
   G.gameOver = true;
   document.getElementById('submitBtn').style.display = 'none';
-  document.getElementById('undoBtn').style.display = 'none';
+  document.getElementById('calcBtn').style.display = 'none';
   document.getElementById('clearBtn').style.display = 'none';
   document.getElementById('newGameBtn').style.display = '';
+  document.getElementById('exprInput').disabled = true;
 
-  // Find the closest result
-  const allValues = [...G.available.filter(n => !n.used).map(n => n.value), ...G.results.filter(n => !n.used).map(n => n.value)];
-  if (G.steps.length > 0) {
-    // The last result is the answer
-    const lastResult = G.results[G.results.length - 1];
-    if (lastResult) allValues.push(lastResult.value);
-  }
-
-  let closest = null;
-  let closestDiff = Infinity;
-  allValues.forEach(v => {
-    const diff = Math.abs(v - G.target);
-    if (diff < closestDiff) { closestDiff = diff; closest = v; }
-  });
-
-  // Also check all intermediate results
-  G.results.forEach(r => {
-    const diff = Math.abs(r.value - G.target);
-    if (diff < closestDiff) { closestDiff = diff; closest = r.value; }
-  });
+  var answer = G.lastResult;
+  var diff = answer !== null ? Math.abs(answer - G.target) : Infinity;
 
   // Score
-  let points = 0, cls = 'miss', label = '';
-  if (closestDiff === 0) { points = 10; cls = 'exact'; label = 'EXACT!'; }
-  else if (closestDiff <= 5) { points = 7; cls = 'close'; label = closestDiff + ' AWAY'; }
-  else if (closestDiff <= 10) { points = 5; cls = 'close'; label = closestDiff + ' AWAY'; }
-  else { label = closest !== null ? closestDiff + ' AWAY' : 'NO ANSWER'; }
+  var points = 0, cls = 'miss', label = '';
+  if (diff === 0) { points = 10; cls = 'exact'; label = 'EXACT!'; }
+  else if (diff <= 5) { points = 7; cls = 'close'; label = diff + ' AWAY'; }
+  else if (diff <= 10) { points = 5; cls = 'close'; label = diff + ' AWAY'; }
+  else { label = answer !== null ? diff + ' AWAY' : 'NO ANSWER'; }
 
-  const disp = document.getElementById('resultDisplay');
+  var elapsed = Math.floor(G.elapsed);
+  var mins = Math.floor(elapsed / 60);
+  var secs = elapsed % 60;
+  var timeStr = mins + ':' + (secs < 10 ? '0' : '') + secs;
+
+  var disp = document.getElementById('resultDisplay');
   disp.className = 'result-display ' + cls;
   disp.style.display = '';
   document.getElementById('resultLabel').textContent = label;
   document.getElementById('resultLabel').style.color = cls === 'exact' ? 'var(--green-bright)' : cls === 'close' ? 'var(--gold)' : 'var(--red-bright)';
-  document.getElementById('resultScore').textContent = points > 0 ? points + ' points' + (closest !== null ? ' (your answer: ' + closest + ')' : '') : (closest !== null ? 'Your answer: ' + closest : '');
+  document.getElementById('resultScore').textContent = (points > 0 ? points + ' points' : '') + (answer !== null ? ' (your answer: ' + answer + ')' : '') + ' — Time: ' + timeStr;
 
   // Update stats
   G.stats.games++;
@@ -458,37 +495,31 @@ function endGame() {
 
   // Show solution
   showSolution();
-  renderTiles();
-  renderSteps();
 }
 
 // Solver (brute force, finds one solution)
 function solve(numbers, target) {
   if (numbers.length === 0) return null;
-  
-  for (let i = 0; i < numbers.length; i++) {
+  for (var i = 0; i < numbers.length; i++) {
     if (numbers[i].value === target) return [];
   }
-
-  for (let i = 0; i < numbers.length; i++) {
-    for (let j = 0; j < numbers.length; j++) {
+  for (var i = 0; i < numbers.length; i++) {
+    for (var j = 0; j < numbers.length; j++) {
       if (i === j) continue;
-      const a = numbers[i].value, b = numbers[j].value;
-      const remaining = numbers.filter((_, k) => k !== i && k !== j);
-      
-      const ops = [
+      var a = numbers[i].value, b = numbers[j].value;
+      var remaining = numbers.filter(function(_, k) { return k !== i && k !== j; });
+      var ops = [
         { symbol: '+', result: a + b },
         { symbol: '−', result: a - b },
-        { symbol: '×', result: a * b },
+        { symbol: '×', result: a * b }
       ];
       if (b !== 0 && a % b === 0) ops.push({ symbol: '÷', result: a / b });
-
-      for (const op of ops) {
-        if (op.result <= 0) continue;
-        const newNums = [...remaining, { value: op.result }];
-        const sub = solve(newNums, target);
+      for (var o = 0; o < ops.length; o++) {
+        if (ops[o].result <= 0) continue;
+        var newNums = remaining.concat([{ value: ops[o].result }]);
+        var sub = solve(newNums, target);
         if (sub !== null) {
-          return [{ a, op: op.symbol, b, result: op.result }, ...sub];
+          return [{ a: a, op: ops[o].symbol, b: b, result: ops[o].result }].concat(sub);
         }
       }
     }
@@ -497,21 +528,25 @@ function solve(numbers, target) {
 }
 
 function showSolution() {
-  const nums = G.numbers.map(v => ({ value: v }));
-  const solution = solve(nums, G.target);
-  const area = document.getElementById('solutionArea');
-  
+  var nums = G.numbers.map(function(v) { return { value: v }; });
+  var solution = solve(nums, G.target);
+  var area = document.getElementById('solutionArea');
+
   if (solution && solution.length > 0) {
-    area.innerHTML = `<div class="solution"><div class="solution-title">ONE POSSIBLE SOLUTION</div>${
-      solution.map(s => `<div class="solution-step">${s.a} ${s.op} ${s.b} = ${s.result}</div>`).join('')
-    }</div>`;
+    area.innerHTML = '<div class="solution"><div class="solution-title">ONE POSSIBLE SOLUTION</div>' +
+      solution.map(function(s) { return '<div class="solution-step">' + s.a + ' ' + s.op + ' ' + s.b + ' = ' + s.result + '</div>'; }).join('') +
+      '</div>';
   } else if (solution && solution.length === 0) {
-    area.innerHTML = `<div class="solution"><div class="solution-title">SOLUTION</div><div class="solution-step">${G.target} is one of your numbers!</div></div>`;
+    area.innerHTML = '<div class="solution"><div class="solution-title">SOLUTION</div><div class="solution-step">' + G.target + ' is one of your numbers!</div></div>';
   } else {
-    // Try to find closest
-    area.innerHTML = `<div class="solution"><div class="no-solution">No exact solution exists for this combination. This happens in about 9% of games.</div></div>`;
+    area.innerHTML = '<div class="solution"><div class="no-solution">No exact solution exists for this combination.</div></div>';
   }
 }
+
+// Enter key submits
+document.getElementById('exprInput').addEventListener('keydown', function(e) {
+  if (e.key === 'Enter') { e.preventDefault(); evaluateExpr(); }
+});
 
 // Init
 updateStatsDisplay();
