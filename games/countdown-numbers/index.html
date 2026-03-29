@@ -261,7 +261,13 @@ function tokenise(expr) {
     if ('0123456789'.indexOf(expr[i]) >= 0) {
       var num = '';
       while (i < expr.length && '0123456789'.indexOf(expr[i]) >= 0) { num += expr[i]; i++; }
-      tokens.push({ type: 'num', value: parseInt(num, 10) });
+      // Implied multiply: number followed by ( e.g. 75(3+2)
+      if (i < expr.length && expr[i] === '(') {
+        tokens.push({ type: 'num', value: parseInt(num, 10) });
+        tokens.push({ type: 'op', value: '*' });
+      } else {
+        tokens.push({ type: 'num', value: parseInt(num, 10) });
+      }
     } else if ('+-*/'.indexOf(expr[i]) >= 0) {
       tokens.push({ type: 'op', value: expr[i] });
       i++;
@@ -271,6 +277,10 @@ function tokenise(expr) {
     } else if (expr[i] === ')') {
       tokens.push({ type: 'rparen' });
       i++;
+      // Implied multiply: ) followed by number or ( e.g. (3+2)75 or (3+2)(4+1)
+      if (i < expr.length && ('0123456789'.indexOf(expr[i]) >= 0 || expr[i] === '(')) {
+        tokens.push({ type: 'op', value: '*' });
+      }
     } else {
       throw new Error('Unexpected character: ' + expr[i]);
     }
