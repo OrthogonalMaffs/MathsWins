@@ -50,6 +50,20 @@ import {
   stripQuestion as kenStrip,
 } from './kenken.mjs';
 
+import {
+  GAME_ID as nonoId,
+  evaluator as nonoEval,
+  selectQuestions as nonoSelect,
+  stripQuestion as nonoStrip,
+} from './nonogram.mjs';
+
+import {
+  GAME_ID as kakId,
+  evaluator as kakEval,
+  selectQuestions as kakSelect,
+  stripQuestion as kakStrip,
+} from './kakuro.mjs';
+
 export function registerAllGames() {
   // Estimation Engine — sequential (10 questions, 60s each)
   registerGame(estId, estQ, estEval, estSelect, null, 'sequential');
@@ -117,5 +131,27 @@ export function registerAllGames() {
     questionsPerSession: 1
   });
 
-  console.log('Registered games:', [estId, sudId, pocId, seqId, cdnId, kenId].join(', '));
+  // Nonogram — continuous (single puzzle, timed session)
+  registerGame(nonoId, null, nonoEval, nonoSelect, nonoStrip, 'continuous');
+  upsertGame({
+    id: nonoId,
+    name: 'Nonogram',
+    isPaid: true,
+    serverScoring: true,
+    sessionTimeoutSeconds: 3600,
+    questionsPerSession: 1
+  });
+
+  // Kakuro — continuous (single puzzle, timed session)
+  registerGame(kakId, null, kakEval, kakSelect, kakStrip, 'continuous');
+  upsertGame({
+    id: kakId,
+    name: 'Kakuro',
+    isPaid: true,
+    serverScoring: true,
+    sessionTimeoutSeconds: 3600,
+    questionsPerSession: 1
+  });
+
+  console.log('Registered games:', [estId, sudId, pocId, seqId, cdnId, kenId, nonoId, kakId].join(', '));
 }

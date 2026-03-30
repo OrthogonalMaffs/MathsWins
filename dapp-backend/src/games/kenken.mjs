@@ -18,7 +18,7 @@
  *   easy:   4×4, +/- only, 2-cell cages
  *   medium: 6×6, +/-/×, 2-3 cell cages
  *   hard:   6×6, +/-/×/÷, 2-4 cell cages (competitive default)
- *   expert: 9×9, +/-/×/÷, 2-5 cell cages
+ *   expert: 7×7, +/-/×/÷, 2-5 cell cages
  */
 
 export const GAME_ID = 'kenken';

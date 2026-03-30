@@ -464,15 +464,15 @@ var G = (function() {
       if (data.cells && Array.isArray(data.cells)) {
         if (direction === 'row') {
           hintedRows.add(index);
-          for (var c = 0; c < SIZE; c++) {
-            var idx = index * SIZE + c;
-            grid[idx] = data.cells[c] ? 1 : 0;
+          for (var c = 0; c < data.cells.length; c++) {
+            var idx = data.cells[c].row * SIZE + data.cells[c].col;
+            grid[idx] = data.cells[c].filled ? 1 : 0;
           }
         } else {
           hintedCols.add(index);
-          for (var r = 0; r < SIZE; r++) {
-            var idx = r * SIZE + index;
-            grid[idx] = data.cells[r] ? 1 : 0;
+          for (var c = 0; c < data.cells.length; c++) {
+            var idx = data.cells[c].row * SIZE + data.cells[c].col;
+            grid[idx] = data.cells[c].filled ? 1 : 0;
           }
         }
       }
@@ -517,15 +517,13 @@ var G = (function() {
         mistakes += errorCount;
         document.getElementById('sv-m').textContent = mistakes;
 
-        if (data.wrongCells && Array.isArray(data.wrongCells)) {
-          data.wrongCells.forEach(function(idx) {
-            var cells = document.querySelectorAll('.nono-cell');
-            // Offset by row-clue column position
-            var cellIdx = Math.floor(idx / SIZE) + 1; // row in table (after clue rows)
-            var cellEl = document.getElementById('board-table')
-              .querySelectorAll('tr')[maxColClueLen() + Math.floor(idx / SIZE)];
-            if (cellEl) {
-              var td = cellEl.children[1 + (idx % SIZE)];
+        if (data.errors && Array.isArray(data.errors)) {
+          var mccl = maxColClueLen();
+          data.errors.forEach(function(err) {
+            var tableRow = document.getElementById('board-table')
+              .querySelectorAll('tr')[mccl + err.row];
+            if (tableRow) {
+              var td = tableRow.children[1 + err.col];
               if (td) {
                 td.classList.add('wrong-flash');
                 setTimeout(function() { td.classList.remove('wrong-flash'); }, 800);
