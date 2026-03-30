@@ -25,6 +25,13 @@ app.use(cors({
 }));
 app.use(express.json({ limit: '16kb' }));
 
+// Prevent Cloudflare edge from caching any API response
+app.use((req, res, next) => {
+  res.set('Cache-Control', 'no-store, no-cache, must-revalidate, proxy-revalidate');
+  res.set('Surrogate-Control', 'no-store');
+  next();
+});
+
 // ── Rate limiting (simple in-memory, replace with Redis for production) ─────
 const rateLimits = new Map();
 app.use('/api/dapp', (req, res, next) => {

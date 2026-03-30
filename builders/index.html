@@ -54,72 +54,76 @@ body::before{content:'';position:fixed;top:0;left:0;right:0;height:100vh;pointer
 .wb-network.wrong{color:var(--red)}
 
 /* ── Hero ── */
-.hero{text-align:center;padding:3rem 0 2rem;position:relative;z-index:1}
+.hero{text-align:center;padding:4rem 0 3rem;position:relative;z-index:1}
 .hero::after{content:'';position:absolute;bottom:0;left:10%;right:10%;height:1px;background:linear-gradient(90deg,transparent,var(--border2),transparent)}
-h1{font-family:'Bebas Neue',sans-serif;font-size:3rem;letter-spacing:.03em;color:var(--text-white);line-height:1}
+h1{font-family:'Bebas Neue',sans-serif;font-size:3.5rem;letter-spacing:4px;color:var(--text-white);line-height:1}
 h1 span{color:var(--gold)}
-.tagline{font-size:.9rem;color:var(--text);margin-top:.4rem;max-width:460px;margin-left:auto;margin-right:auto}
-.hero-stats{display:flex;justify-content:center;gap:2.5rem;margin-top:1.5rem;flex-wrap:wrap}
+.tagline{font-size:1rem;font-weight:300;color:var(--text);margin-top:.6rem;max-width:520px;margin-left:auto;margin-right:auto;line-height:1.6}
+.hero-stats{display:flex;justify-content:center;gap:3.5rem;margin-top:2rem;flex-wrap:wrap}
 .hs{text-align:center}
-.hs-num{font-family:'DM Mono',monospace;font-size:1.4rem;font-weight:500;color:var(--gold)}
-.hs-label{font-family:'Outfit',sans-serif;font-size:9px;color:var(--muted);text-transform:uppercase;letter-spacing:2px;margin-top:.1rem}
+.hs-num{font-family:'DM Mono',monospace;font-size:1.6rem;font-weight:500;color:var(--gold)}
+.hs-label{font-family:'Outfit',sans-serif;font-size:9px;color:var(--muted);text-transform:uppercase;letter-spacing:2px;margin-top:4px}
 
 /* ── Week Countdown ── */
 .week-bar{
-  background:var(--surface);border:1px solid var(--border);border-radius:10px;
-  padding:.8rem 1.2rem;margin:1.5rem 0;display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:.5rem;
+  background:var(--surface);border:1px solid var(--border);border-radius:6px;
+  padding:16px 24px;margin:2rem 0;display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:12px;
 }
 .week-label{font-family:'Outfit',sans-serif;font-size:9px;color:var(--muted);text-transform:uppercase;letter-spacing:2px}
-.week-countdown{font-family:'DM Mono',monospace;font-size:1rem;color:var(--gold)}
-.week-id{font-family:'DM Mono',monospace;font-size:.7rem;color:var(--muted)}
+.week-countdown{font-family:'DM Mono',monospace;font-size:1.1rem;color:var(--gold);letter-spacing:1px}
+.week-id{font-family:'DM Mono',monospace;font-size:12px;color:var(--muted)}
 
 /* ── Filter ── */
-.filter{display:flex;gap:.4rem;margin:1rem 0;flex-wrap:wrap;justify-content:center}
-.filter-pill{padding:.35rem 1rem;border-radius:20px;border:1px solid var(--border);background:transparent;color:var(--muted);font-family:'Outfit',sans-serif;font-size:.75rem;font-weight:600;cursor:pointer;transition:all .15s}
-.filter-pill:hover{border-color:var(--gold);color:var(--text)}
+.filter{display:flex;gap:8px;margin:1.5rem 0 0.5rem;flex-wrap:wrap;justify-content:center}
+.filter-pill{padding:8px 20px;border-radius:4px;border:1px solid var(--border);background:transparent;color:var(--muted);font-family:'Outfit',sans-serif;font-size:13px;font-weight:600;cursor:pointer;transition:all .15s}
+.filter-pill:hover{border-color:var(--border2);color:var(--text)}
 .filter-pill.active{border-color:var(--gold);background:var(--gold-dim);color:var(--gold)}
 
 /* ── Game Cards ── */
-.game-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(280px,1fr));gap:12px;margin:1.5rem 0 3rem}
+.game-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(300px,1fr));gap:16px;margin:1.5rem 0 3rem}
 .game-card{
-  background:var(--surface);border:1px solid var(--border);border-radius:10px;
-  padding:1rem 1.1rem;transition:border-color .15s,background .15s;cursor:pointer;position:relative;overflow:hidden;
+  background:var(--surface);border:1px solid var(--border);border-radius:6px;
+  padding:20px 24px;transition:border-color .15s,background .15s;cursor:pointer;position:relative;overflow:hidden;
 }
 .game-card::before{content:'';position:absolute;left:0;right:0;top:0;height:2px;background:var(--gold);opacity:0;transition:opacity .15s}
 .game-card:hover{border-color:var(--border2);background:var(--surface2)}
 .game-card:hover::before{opacity:1}
 
-.gc-top{display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:.3rem}
-.gc-title{font-family:'Bebas Neue',sans-serif;font-size:20px;color:var(--text-white);letter-spacing:.02em}
-.gc-badge{font-family:'DM Mono',monospace;font-size:.5rem;padding:2px 8px;border-radius:10px;letter-spacing:.03em;white-space:nowrap}
+.gc-top{display:flex;justify-content:space-between;align-items:center;margin-bottom:8px}
+.gc-title{font-family:'Bebas Neue',sans-serif;font-size:22px;color:var(--text-white);letter-spacing:1px}
+.gc-badge{font-family:'DM Mono',monospace;font-size:10px;padding:3px 10px;border-radius:3px;letter-spacing:1px;text-transform:uppercase;white-space:nowrap}
 .gc-badge.free{background:transparent;color:var(--text);border:1px solid var(--border)}
 .gc-badge.paid{background:var(--gold-dim);color:var(--gold);border:1px solid var(--gold-border)}
-.gc-desc{font-family:'Outfit',sans-serif;font-size:12px;color:var(--text);line-height:1.4;margin-bottom:.5rem;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.gc-desc{font-family:'Outfit',sans-serif;font-size:13px;font-weight:300;color:var(--text);line-height:1.5;margin-bottom:12px}
 
-.gc-pot{display:flex;align-items:center;gap:.4rem;font-family:'DM Mono',monospace;font-size:11px;color:var(--gold);margin-top:.4rem}
-.gc-pot .pot-icon{font-size:.8rem}
-.gc-entries{font-family:'DM Mono',monospace;font-size:11px;color:var(--muted);margin-top:.2rem}
+.gc-pot{display:flex;align-items:center;gap:6px;font-family:'DM Mono',monospace;font-size:12px;color:var(--gold);margin-top:12px}
+.gc-pot .pot-icon{font-size:1rem}
+.gc-entries{font-family:'DM Mono',monospace;font-size:11px;color:var(--muted);margin-top:4px}
 
-.gc-tags{display:flex;gap:.3rem;margin-top:.4rem;flex-wrap:wrap}
-.gc-tag{font-family:'DM Mono',monospace;font-size:10px;padding:1px 6px;border-radius:4px;background:var(--border);color:var(--muted);letter-spacing:.03em}
+.gc-tags{display:flex;gap:6px;margin-top:12px;flex-wrap:wrap}
+.gc-tag{font-family:'DM Mono',monospace;font-size:10px;padding:3px 8px;border-radius:3px;background:var(--border);color:var(--muted);letter-spacing:.5px}
 
 /* ── Academy Section ── */
-.section-head{text-align:center;margin:2rem 0 1rem}
+.section-head{text-align:center;margin:3rem 0 1.5rem}
 .section-head h2{font-family:'Outfit',sans-serif;font-size:11px;color:var(--muted);text-transform:uppercase;letter-spacing:2px;font-weight:400}
-.section-head p{font-size:.8rem;color:var(--muted);margin-top:.2rem}
+.section-head p{font-size:14px;font-weight:300;color:var(--text);margin-top:6px}
 
 /* ── Footer ── */
-footer{text-align:center;padding:2rem 0;font-size:.65rem;color:var(--muted);border-top:1px solid var(--border)}
+footer{text-align:center;padding:3rem 0;font-size:12px;color:var(--muted);border-top:1px solid var(--border)}
 footer a{color:var(--muted);text-decoration:none;transition:color .15s}
 footer a:hover{color:var(--text-bright)}
 
 /* ── Mobile ── */
 @media(max-width:600px){
-  h1{font-size:2.2rem}
-  .hero-stats{gap:1.5rem}
-  .game-grid{grid-template-columns:1fr}
+  h1{font-size:2.4rem}
+  .hero{padding:2.5rem 0 2rem}
+  .hero-stats{gap:2rem}
+  .game-grid{grid-template-columns:1fr;gap:12px}
+  .game-card{padding:16px 20px}
   .wallet-bar{flex-wrap:wrap;gap:.4rem}
   .wb-balance{font-size:.7rem}
+  .filter{gap:6px}
+  .filter-pill{padding:6px 14px;font-size:12px}
 }
 </style>
 </head>
@@ -166,13 +170,9 @@ footer a:hover{color:var(--text-bright)}
 
 <!-- FILTER -->
 <div class="filter">
-  <button class="filter-pill active" onclick="filterGames('all')">All Games</button>
-  <button class="filter-pill" onclick="filterGames('paid')">Paid</button>
-  <button class="filter-pill" onclick="filterGames('free')">Free</button>
-  <button class="filter-pill" onclick="filterGames('number')">Number</button>
-  <button class="filter-pill" onclick="filterGames('puzzle')">Puzzle</button>
-  <button class="filter-pill" onclick="filterGames('logic')">Logic</button>
-  <button class="filter-pill" onclick="filterGames('speed')">Speed</button>
+  <button class="filter-pill active" onclick="filterGames('paid')">Competitive</button>
+  <button class="filter-pill" onclick="filterGames('free')">Free Play</button>
+  <button class="filter-pill" onclick="filterGames('all')">All Games</button>
 </div>
 
 <!-- GAME GRID -->
@@ -356,7 +356,7 @@ function updateCountdown() {
 }
 
 // ── Init ────────────────────────────────────────────────────────────────────
-renderGames('all');
+renderGames('paid');
 updateCountdown();
 setInterval(updateCountdown, 1000);
 
