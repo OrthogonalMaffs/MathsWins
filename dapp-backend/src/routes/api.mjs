@@ -1,6 +1,6 @@
 import { Router } from 'express';
 import { getLeaderboard, getEntry, getPaidGames } from '../db/index.mjs';
-import { startSession, evaluate, getCurrentWeekId } from '../scoring.mjs';
+import { startSession, startFreeSession, evaluate, getCurrentWeekId } from '../scoring.mjs';
 import { ethers } from 'ethers';
 import { getDb } from '../db/index.mjs';
 
@@ -46,12 +46,38 @@ router.get('/pot/:gameId', async (req, res) => {
 
 // ── Game session ────────────────────────────────────────────────────────────
 
-router.post('/session/start', requireWallet, (req, res) => {
+// Optional wallet — allows free play without a connected wallet
+function optionalWallet(req, res, next) {
+  const wallet = req.headers['x-wallet-address'];
+  if (wallet && ethers.isAddress(wallet)) {
+    req.wallet = wallet.toLowerCase();
+  } else {
+    req.wallet = null;
+  }
+  next();
+}
+
+router.post('/session/start', optionalWallet, (req, res) => {
   try {
     const { gameId } = req.body;
     if (!gameId) return res.status(400).json({ error: 'gameId required' });
 
     const weekId = getCurrentWeekId();
+
+    // Free play: no wallet or no on-chain entry — guest session
+    if (!req.wallet) {
+      const result = startFreeSession(gameId, weekId);
+      return res.json(result);
+    }
+
+    // Check for paid entry
+    const entry = getEntry(req.wallet, gameId, weekId);
+    if (!entry) {
+      // Wallet connected but no entry — allow free play anyway
+      const result = startFreeSession(gameId, weekId);
+      return res.json(result);
+    }
+
     const result = startSession(req.wallet, gameId, weekId);
     res.json(result);
   } catch (e) {

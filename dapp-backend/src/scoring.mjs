@@ -125,6 +125,64 @@ export function startSession(wallet, gameId, weekId) {
 }
 
 /**
+ * Start a free-play session (no wallet, no on-chain entry required).
+ * Works identically to paid sessions but does not record to leaderboard.
+ */
+export function startFreeSession(gameId, weekId) {
+  const bank = questionBanks.get(gameId);
+  if (!bank) throw new Error('Game not registered: ' + gameId);
+
+  const sessionId = SESSION_PREFIX + 'free_' + randomUUID();
+  const guestWallet = '0x' + randomUUID().replace(/-/g, '').slice(0, 40);
+
+  const sessionQuestions = bank.selectQuestions
+    ? bank.selectQuestions()
+    : (() => {
+        const all = Array.isArray(bank.questions) ? bank.questions : [];
+        const shuffled = [...all].sort(() => Math.random() - 0.5);
+        return shuffled.slice(0, Math.min(all.length, 10));
+      })();
+
+  const totalQuestions = sessionQuestions.length;
+  const isContinuous = bank.mode === 'continuous';
+  const timeout = isContinuous ? 3600 : (totalQuestions * 70);
+
+  const now = Date.now();
+  activeSessions.set(sessionId, {
+    wallet: guestWallet,
+    gameId,
+    weekId,
+    attempt: 1,
+    questions: sessionQuestions,
+    currentQ: 0,
+    score: 0,
+    startedAt: now,
+    questionStartedAt: now,
+    timeout: timeout * 1000,
+    mode: bank.mode || 'sequential',
+    freePlay: true
+  });
+
+  const token = jwt.sign({ sid: sessionId, wallet: guestWallet, gameId, weekId }, JWT_SECRET, { expiresIn: timeout + 60 });
+
+  const q = sessionQuestions[0];
+  const clientQuestion = bank.stripQuestion
+    ? bank.stripQuestion(q)
+    : defaultStripAnswer(q, 0);
+
+  return {
+    token,
+    sessionId,
+    attempt: 1,
+    maxAttempts: 1,
+    totalQuestions,
+    mode: bank.mode || 'sequential',
+    question: clientQuestion,
+    freePlay: true
+  };
+}
+
+/**
  * Evaluate a player's answer/action.
  */
 export function evaluate(sessionToken, answer) {
@@ -163,22 +221,26 @@ export function evaluate(sessionToken, answer) {
     // If this was a final submit with points, complete the session
     if (result.action === 'submit' && result.correct) {
       session.score = result.points;
-      completeSession(payload.sid, session.score);
-      upsertBestScore(session.wallet, session.gameId, session.weekId, session.score);
+      if (!session.freePlay) {
+        completeSession(payload.sid, session.score);
+        upsertBestScore(session.wallet, session.gameId, session.weekId, session.score);
+      }
       activeSessions.delete(payload.sid);
       response.totalScore = session.score;
       response.finalScore = session.score;
       response.finished = true;
+      if (session.freePlay) response.freePlay = true;
     }
 
     // If game over (3 mistakes reported by client via submit with 0 points)
     if (result.action === 'submit' && !result.correct) {
       session.score = 0;
-      completeSession(payload.sid, 0);
+      if (!session.freePlay) completeSession(payload.sid, 0);
       activeSessions.delete(payload.sid);
       response.totalScore = 0;
       response.finalScore = 0;
       response.finished = true;
+      if (session.freePlay) response.freePlay = true;
     }
 
     return response;
@@ -210,10 +272,13 @@ export function evaluate(sessionToken, answer) {
   };
 
   if (finished) {
-    completeSession(payload.sid, session.score);
-    upsertBestScore(session.wallet, session.gameId, session.weekId, session.score);
+    if (!session.freePlay) {
+      completeSession(payload.sid, session.score);
+      upsertBestScore(session.wallet, session.gameId, session.weekId, session.score);
+    }
     activeSessions.delete(payload.sid);
     response.finalScore = session.score;
+    if (session.freePlay) response.freePlay = true;
   } else {
     const nextQ = session.questions[session.currentQ];
     response.question = bank.stripQuestion
