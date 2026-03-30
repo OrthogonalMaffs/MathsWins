@@ -26,103 +26,94 @@
 <link rel="icon" type="image/svg+xml" href="../../schools/assets/favicon.svg">
 <title>Higher or Lower · MathsWins</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
-<link href="https://fonts.googleapis.com/css2?family=DM+Mono:ital,wght@0,300;0,400;0,500&family=Bebas+Neue&family=Inter:wght@300;400;500&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=DM+Mono:wght@400;500&family=Bebas+Neue&family=Outfit:wght@300;400;600;700&display=swap" rel="stylesheet">
 <style>
-:root{--ink:#070d1a;--navy:#0b1629;--navy-mid:#0f1f3d;--navy-light:#162847;--gold:#c9a84c;--gold-warm:#e2b96a;--gold-dim:#7a5e28;--teal:#2dd4bf;--teal-dim:#134e4a;--body:#a8b8d0;--muted:#4a6080;--border:#1a2e4a;--border-dim:#111f33;--success:#2dd4a0;--danger:#ef5350;--warn:#d4a847}
+:root{--bg:#050709;--surface:#0a0d12;--surface2:#0f1218;--surface3:#13171e;--border:#1a1f2a;--border2:#242b38;--gold:#c9a84c;--gold-dim:rgba(201,168,76,0.08);--gold-glow:rgba(201,168,76,0.15);--gold-border:rgba(201,168,76,0.20);--gold-hover:#d4b050;--text-white:#eaecf0;--text-bright:#d4d8e0;--text:#9ca3b0;--muted:#3e4555;--red:#c0392b;--green:#27ae60}
 *,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
-body{background:var(--ink);color:var(--body);font-family:'Inter',sans-serif;min-height:100vh;display:flex;flex-direction:column;align-items:center;overflow-x:hidden}
-body::before{content:'';position:fixed;inset:0;background-image:linear-gradient(rgba(201,168,76,0.03) 1px,transparent 1px),linear-gradient(90deg,rgba(201,168,76,0.03) 1px,transparent 1px);background-size:40px 40px;pointer-events:none;z-index:0}
-nav{position:sticky;top:0;z-index:100;width:100%;display:flex;align-items:center;justify-content:space-between;padding:0 2rem;height:52px;background:rgba(7,13,26,0.92);backdrop-filter:blur(12px);border-bottom:1px solid var(--border-dim)}
-.nav-logo{font-family:'Bebas Neue',sans-serif;font-size:1.2rem;letter-spacing:0.15em;color:var(--gold);text-decoration:none}
-.nav-back{font-family:'DM Mono',monospace;font-size:0.6rem;letter-spacing:0.12em;color:var(--muted);text-decoration:none;transition:color 0.2s}
-.nav-back:hover{color:var(--gold)}
+body{background:var(--bg);color:var(--text);font-family:'Outfit',sans-serif;min-height:100vh;display:flex;flex-direction:column;align-items:center;overflow-x:hidden}
 .page{position:relative;z-index:1;width:100%;max-width:480px;padding:2rem 1rem 4rem;display:flex;flex-direction:column;align-items:center;gap:1.2rem}
 .game-header{text-align:center}
-.game-kicker{font-family:'DM Mono',monospace;font-size:0.6rem;letter-spacing:0.2em;text-transform:uppercase;color:var(--teal);margin-bottom:0.4rem}
-.game-title{font-family:'Bebas Neue',sans-serif;font-size:3rem;letter-spacing:0.06em;color:var(--gold-warm);line-height:1}
+.game-kicker{font-family:'DM Mono',monospace;font-size:0.6rem;letter-spacing:0.2em;text-transform:uppercase;color:var(--gold);margin-bottom:0.4rem}
+.game-title{font-family:'Bebas Neue',sans-serif;font-size:3rem;letter-spacing:0.06em;color:var(--gold);line-height:1}
 .game-sub{font-size:0.75rem;color:var(--muted);line-height:1.6;margin-top:0.4rem}
-.status-bar{display:flex;gap:0.8rem;width:100%;background:var(--navy-mid);border:1px solid var(--border);border-radius:4px;padding:0.75rem 1rem;justify-content:space-around}
+.status-bar{display:flex;gap:0.8rem;width:100%;background:var(--surface2);border:1px solid var(--border);border-radius:4px;padding:0.75rem 1rem;justify-content:space-around}
 .si{display:flex;flex-direction:column;align-items:center;gap:0.15rem}
 .si-val{font-family:'DM Mono',monospace;font-size:1.1rem;font-weight:500;color:var(--gold)}
 .si-lbl{font-family:'DM Mono',monospace;font-size:0.45rem;letter-spacing:0.12em;text-transform:uppercase;color:var(--muted)}
 
 .card-arena{width:100%;display:flex;flex-direction:column;gap:0.8rem}
 .number-card{
-  width:100%;background:var(--navy-mid);border:1px solid var(--border);border-radius:4px;
+  width:100%;background:var(--surface2);border:1px solid var(--border);border-radius:4px;
   padding:2rem 1rem;text-align:center;position:relative;overflow:hidden;
-  transition:border-color 0.3s;
+  transition:border-color 0.15s;
 }
-.number-card::before{content:'';position:absolute;inset:0;background:radial-gradient(ellipse at 50% 50%,rgba(201,168,76,0.05),transparent 70%);pointer-events:none}
-.number-card.correct{border-color:var(--success)}
-.number-card.wrong{border-color:var(--danger)}
+.number-card.correct{border-color:var(--green)}
+.number-card.wrong{border-color:var(--red)}
 .nc-label{font-family:'DM Mono',monospace;font-size:0.5rem;letter-spacing:0.15em;text-transform:uppercase;color:var(--muted);margin-bottom:0.6rem}
-.nc-number{font-family:'Bebas Neue',sans-serif;font-size:clamp(2.5rem,12vw,5rem);letter-spacing:0.04em;color:var(--body);line-height:1;transition:color 0.3s}
-.nc-number.correct{color:var(--success)}
-.nc-number.wrong{color:var(--danger)}
+.nc-number{font-family:'Bebas Neue',sans-serif;font-size:clamp(2.5rem,12vw,5rem);letter-spacing:0.04em;color:var(--text-bright);line-height:1;transition:color 0.15s}
+.nc-number.correct{color:var(--green)}
+.nc-number.wrong{color:var(--red)}
 .nc-source{font-family:'DM Mono',monospace;font-size:0.5rem;color:var(--muted);margin-top:0.4rem;font-style:italic}
 
 .vs-row{display:flex;align-items:center;gap:0.8rem;width:100%}
-.vs-line{flex:1;height:1px;background:var(--border-dim)}
+.vs-line{flex:1;height:1px;background:var(--border)}
 .vs-label{font-family:'Bebas Neue',sans-serif;font-size:1rem;letter-spacing:0.1em;color:var(--muted)}
 
 .next-card{
-  width:100%;background:var(--navy-mid);border:2px dashed var(--gold-dim);border-radius:4px;
+  width:100%;background:var(--surface2);border:2px dashed var(--border2);border-radius:4px;
   padding:2rem 1rem;text-align:center;position:relative;overflow:hidden;
 }
-.next-card::before{content:'';position:absolute;inset:0;background:radial-gradient(ellipse at 50% 50%,rgba(45,212,191,0.04),transparent 70%);pointer-events:none}
-.nc-hidden{font-family:'Bebas Neue',sans-serif;font-size:clamp(2.5rem,12vw,5rem);letter-spacing:0.04em;color:var(--gold-dim);line-height:1}
+.nc-hidden{font-family:'Bebas Neue',sans-serif;font-size:clamp(2.5rem,12vw,5rem);letter-spacing:0.04em;color:var(--muted);line-height:1}
 
-.multiplier-bar{width:100%;background:var(--navy-mid);border:1px solid var(--border);border-radius:4px;padding:0.7rem 1rem;display:flex;align-items:center;justify-content:space-between}
+.multiplier-bar{width:100%;background:var(--surface2);border:1px solid var(--border);border-radius:4px;padding:0.7rem 1rem;display:flex;align-items:center;justify-content:space-between}
 .mb-label{font-family:'DM Mono',monospace;font-size:0.5rem;letter-spacing:0.12em;text-transform:uppercase;color:var(--muted)}
 .mb-val{font-family:'Bebas Neue',sans-serif;font-size:1.4rem;letter-spacing:0.06em;color:var(--gold)}
-.mb-streak{font-family:'DM Mono',monospace;font-size:0.52rem;color:var(--teal)}
+.mb-streak{font-family:'DM Mono',monospace;font-size:0.52rem;color:var(--gold)}
 
 .answer-btns{display:grid;grid-template-columns:1fr 1fr;gap:0.8rem;width:100%}
 .ans-btn{padding:1.2rem 1rem;font-family:'Bebas Neue',sans-serif;font-size:1.8rem;letter-spacing:0.1em;cursor:pointer;border-radius:4px;border:2px solid;transition:all 0.15s}
-.ans-higher{background:rgba(34,197,94,0.08);border-color:rgba(34,197,94,0.3);color:var(--success)}
-.ans-higher:hover{background:rgba(34,197,94,0.18);border-color:var(--success)}
-.ans-lower{background:rgba(239,68,68,0.08);border-color:rgba(239,68,68,0.3);color:var(--danger)}
-.ans-lower:hover{background:rgba(239,68,68,0.18);border-color:var(--danger)}
+.ans-higher{background:rgba(39,174,96,0.08);border-color:rgba(39,174,96,0.3);color:var(--green)}
+.ans-higher:hover{background:rgba(39,174,96,0.18);border-color:var(--green)}
+.ans-lower{background:rgba(192,57,43,0.08);border-color:rgba(192,57,43,0.3);color:var(--red)}
+.ans-lower:hover{background:rgba(192,57,43,0.18);border-color:var(--red)}
 .ans-btn:disabled{pointer-events:none;opacity:0.5}
-.ans-btn.flash-correct{background:rgba(34,197,94,0.25);border-color:var(--success)}
-.ans-btn.flash-wrong{background:rgba(239,68,68,0.25);border-color:var(--danger)}
+.ans-btn.flash-correct{background:rgba(39,174,96,0.25);border-color:var(--green)}
+.ans-btn.flash-wrong{background:rgba(192,57,43,0.25);border-color:var(--red)}
 
 .streak-dots{display:flex;gap:0.3rem;justify-content:center;flex-wrap:wrap}
-.sd{width:10px;height:10px;border-radius:50%;background:var(--border);border:1px solid var(--muted);transition:all 0.2s}
-.sd.hit{background:var(--success);border-color:var(--success);box-shadow:0 0 5px rgba(34,197,94,0.4)}
-.sd.miss{background:var(--danger);border-color:var(--danger)}
+.sd{width:10px;height:10px;border-radius:50%;background:var(--border);border:1px solid var(--muted);transition:all 0.15s}
+.sd.hit{background:var(--green);border-color:var(--green)}
+.sd.miss{background:var(--red);border-color:var(--red)}
 
-.btn{padding:0.65rem 1.2rem;font-family:'DM Mono',monospace;font-size:0.62rem;letter-spacing:0.1em;text-transform:uppercase;cursor:pointer;border-radius:3px;border:none;transition:all 0.2s;width:100%}
-.btn-gold{background:var(--gold);color:var(--ink);font-weight:500}.btn-gold:hover{background:var(--gold-warm)}
-.btn-ghost{background:transparent;border:1px solid var(--border);color:var(--muted)}.btn-ghost:hover{border-color:var(--gold-dim);color:var(--gold)}
+.btn{padding:0.65rem 1.2rem;font-family:'DM Mono',monospace;font-size:0.62rem;letter-spacing:0.1em;text-transform:uppercase;cursor:pointer;border-radius:4px;border:none;transition:all 0.15s;width:100%}
+.btn-gold{background:var(--gold);color:var(--bg);font-weight:500}.btn-gold:hover{background:var(--gold-hover)}
+.btn-ghost{background:var(--surface2);border:1px solid var(--border);color:var(--text)}.btn-ghost:hover{border-color:var(--gold-border);color:var(--gold)}
 
-.lb-section{width:100%;background:var(--navy-mid);border:1px solid var(--border);border-radius:4px;overflow:hidden}
-.lb-header{padding:0.75rem 1rem;border-bottom:1px solid var(--border-dim)}
+.lb-section{width:100%;background:var(--surface2);border:1px solid var(--border);border-radius:4px;overflow:hidden}
+.lb-header{padding:0.75rem 1rem;border-bottom:1px solid var(--border)}
 .lb-title{font-family:'DM Mono',monospace;font-size:0.55rem;letter-spacing:0.15em;text-transform:uppercase;color:var(--muted)}
 .lb-body{padding:0.5rem 0}
 .lb-empty{font-family:'DM Mono',monospace;font-size:0.6rem;color:var(--muted);text-align:center;padding:1.2rem;font-style:italic}
-.lb-row{display:grid;grid-template-columns:1.5rem 1fr auto auto;gap:0.5rem;align-items:center;padding:0.4rem 1rem;border-bottom:1px solid var(--border-dim);font-family:'DM Mono',monospace;font-size:0.6rem}
+.lb-row{display:grid;grid-template-columns:1.5rem 1fr auto auto;gap:0.5rem;align-items:center;padding:0.4rem 1rem;border-bottom:1px solid var(--border);font-family:'DM Mono',monospace;font-size:0.6rem}
 .lb-row:last-child{border-bottom:none}
-.lb-row.hl{background:rgba(201,168,76,0.06)}
-.lb-rank{color:var(--muted)}.lb-name{color:var(--body)}.lb-score{color:var(--gold);text-align:right}.lb-streak{color:var(--teal);font-size:0.52rem;text-align:right}
+.lb-row.hl{background:var(--gold-dim)}
+.lb-rank{color:var(--muted)}.lb-name{color:var(--text-bright)}.lb-score{color:var(--gold);text-align:right}.lb-streak{color:var(--gold);font-size:0.52rem;text-align:right}
 
-.modal-overlay{position:fixed;inset:0;background:rgba(7,13,26,0.88);backdrop-filter:blur(8px);z-index:200;display:flex;align-items:center;justify-content:center;padding:1rem}
+.modal-overlay{position:fixed;inset:0;background:rgba(5,7,9,0.88);backdrop-filter:blur(8px);z-index:200;display:flex;align-items:center;justify-content:center;padding:1rem}
 .modal-overlay.hidden{display:none}
-.modal{background:var(--navy-mid);border:1px solid var(--border);border-radius:4px;width:100%;max-width:380px;overflow:hidden}
+.modal{background:var(--surface2);border:1px solid var(--border);border-radius:6px;width:100%;max-width:380px;overflow:hidden}
 .modal-header{padding:1.4rem 1.4rem 0;text-align:center}
-.modal-result{font-family:'Bebas Neue',sans-serif;font-size:2rem;letter-spacing:0.1em;color:var(--gold-warm)}
-.modal-score{margin:1rem 1.4rem;background:var(--navy-light);border:1px solid var(--border-dim);border-radius:3px;padding:0.8rem;display:grid;grid-template-columns:1fr 1fr;gap:0.5rem}
+.modal-result{font-family:'Bebas Neue',sans-serif;font-size:2rem;letter-spacing:0.1em;color:var(--gold)}
+.modal-score{margin:1rem 1.4rem;background:var(--surface3);border:1px solid var(--border);border-radius:4px;padding:0.8rem;display:grid;grid-template-columns:1fr 1fr;gap:0.5rem}
 .ms-item{display:flex;flex-direction:column;gap:0.1rem}
 .ms-val{font-family:'DM Mono',monospace;font-size:0.9rem;color:var(--gold)}
 .ms-lbl{font-family:'DM Mono',monospace;font-size:0.45rem;letter-spacing:0.1em;text-transform:uppercase;color:var(--muted)}
 .modal-name{padding:0 1.4rem;display:flex;flex-direction:column;gap:0.4rem}
 .modal-name label{font-family:'DM Mono',monospace;font-size:0.52rem;letter-spacing:0.1em;text-transform:uppercase;color:var(--muted)}
-.name-input{background:var(--navy);border:1px solid var(--border);border-radius:3px;padding:0.6rem 0.8rem;font-family:'DM Mono',monospace;font-size:0.8rem;color:var(--body);outline:none;width:100%}
-.name-input:focus{border-color:var(--gold-dim)}
+.name-input{background:var(--surface);border:1px solid var(--border);border-radius:4px;padding:0.6rem 0.8rem;font-family:'DM Mono',monospace;font-size:0.8rem;color:var(--text-bright);outline:none;width:100%}
+.name-input:focus{border-color:var(--gold-border)}
 .modal-acts{display:flex;gap:0.5rem;padding:1rem 1.4rem 1.4rem}
 .modal-acts .btn{flex:1}
-@keyframes shake{0%,100%{transform:translateX(0)}20%{transform:translateX(-6px)}40%{transform:translateX(6px)}60%{transform:translateX(-3px)}80%{transform:translateX(3px)}}
-.shake{animation:shake 0.35s ease}
 </style>
 <meta name="twitter:card" content="summary_large_image">
 <meta name="twitter:title" content="MathsWins">
@@ -133,15 +124,10 @@ nav{position:sticky;top:0;z-index:100;width:100%;display:flex;align-items:center
 <body>
 <script src="../dapp-wallet.js"></script>
 
-<nav>
-  <a class="nav-logo" href="/builders/">MathsWins</a>
-  <span style="font-family:'DM Mono',monospace;font-size:0.48rem;letter-spacing:0.1em;text-transform:uppercase;padding:0.2rem 0.6rem;border:1px solid #134e4a;border-radius:2px;color:#2dd4bf">Hosted on QF Network</span>
-  <a class="nav-back" href="../../">← Back</a>
-</nav>
 <div class="page">
   <div class="game-header">
     <p class="game-kicker">Maths · Number Sense</p>
-    <h1 class="game-title">Higher or <strong style="color:var(--teal)">Lower</strong></h1>
+    <h1 class="game-title">Higher or <strong style="color:var(--gold)">Lower</strong></h1>
     <p class="game-sub">Numbers drawn from mathematical constants, primes, and QF Network values. Guess whether the next is higher or lower. Streaks multiply your score.</p>
   </div>
 

@@ -17,15 +17,15 @@
 <style>
 *{margin:0;padding:0;box-sizing:border-box}
 :root{
-  --bg:#050709;--surface:#0a0d14;--surface2:#0f1319;--border:#161c28;--border2:#1e2638;
-  --gold:#d4a847;--gold-dim:rgba(212,168,71,.06);--gold-glow:rgba(212,168,71,.12);
-  --teal:#0d9488;--teal-bright:#2dd4bf;--teal-dim:rgba(13,148,136,.08);
-  --green:#2dd4a0;--red:#ef5350;--blue:#2563eb;--purple:#7c3aed;
-  --text:#c8cdd8;--text-bright:#e8ecf4;--muted:#4a5568;--muted2:#2d3748;
-  --qf:#d4a847;
+  --bg:#050709;--surface:#0a0d12;--surface2:#0f1218;--surface3:#13171e;
+  --border:#1a1f2a;--border2:#242b38;
+  --gold:#c9a84c;--gold-dim:rgba(201,168,76,0.08);--gold-glow:rgba(201,168,76,0.15);--gold-border:rgba(201,168,76,0.20);--gold-hover:#d4b050;
+  --text-white:#eaecf0;--text-bright:#d4d8e0;--text:#9ca3b0;--muted:#3e4555;
+  --red:#c0392b;--green:#27ae60;--teal:#2bb5a0;
 }
-body{font-family:'Outfit',sans-serif;background:var(--bg);color:var(--text);min-height:100vh;-webkit-font-smoothing:antialiased}
-.outer{max-width:900px;margin:0 auto;padding:0 1.25rem}
+body{font-family:'Outfit',sans-serif;background:var(--bg);color:var(--text);min-height:100vh;-webkit-font-smoothing:antialiased;position:relative}
+body::before{content:'';position:fixed;top:0;left:0;right:0;height:100vh;pointer-events:none;z-index:0;background:radial-gradient(ellipse at 50% -20%,rgba(201,168,76,0.04) 0%,transparent 70%)}
+.outer{max-width:1100px;margin:0 auto;padding:0 2rem;position:relative;z-index:1}
 
 /* ── Wallet Bar (sticky) ── */
 .wallet-bar{
@@ -36,87 +36,82 @@ body{font-family:'Outfit',sans-serif;background:var(--bg);color:var(--text);min-
   display:flex;align-items:center;justify-content:space-between;
 }
 .wb-brand{display:flex;align-items:center;gap:.5rem;text-decoration:none}
-.wb-logo{font-family:'Bebas Neue',sans-serif;font-size:1.3rem;color:var(--text-bright);letter-spacing:.03em}
-.wb-logo span{color:var(--gold)}
-.wb-badge{font-family:'DM Mono',monospace;font-size:.55rem;padding:2px 8px;border-radius:10px;background:var(--gold-dim);color:var(--gold);border:1px solid rgba(212,168,71,.2);letter-spacing:.05em}
+.wb-logo{font-family:'Bebas Neue',sans-serif;font-size:18px;color:var(--gold);letter-spacing:3px}
+.wb-badge{font-family:'DM Mono',monospace;font-size:.55rem;padding:2px 8px;border-radius:10px;background:var(--gold-dim);color:var(--gold);border:1px solid var(--gold-border);letter-spacing:.05em}
 .wb-right{display:flex;align-items:center;gap:.75rem}
 .wb-balance{font-family:'DM Mono',monospace;font-size:.8rem;color:var(--gold)}
-.wb-address{font-family:'DM Mono',monospace;font-size:.75rem;color:var(--muted);background:var(--surface);border:1px solid var(--border);padding:.3rem .6rem;border-radius:6px}
+.wb-address{font-family:'DM Mono',monospace;font-size:.75rem;color:var(--text);background:var(--surface);border:1px solid var(--border);padding:.3rem .6rem;border-radius:20px;display:flex;align-items:center;gap:.4rem}
+.wb-address .dot-green{width:6px;height:6px;border-radius:50%;background:var(--green);display:inline-block}
 .wb-connect{
   font-family:'Outfit',sans-serif;font-weight:600;font-size:.8rem;
-  padding:.45rem 1.2rem;border-radius:6px;border:1px solid var(--gold);
-  background:var(--gold-dim);color:var(--gold);cursor:pointer;transition:all .15s;
+  padding:.45rem 1.2rem;border-radius:6px;border:1px solid var(--border2);
+  background:transparent;color:var(--text);cursor:pointer;transition:all .15s;
 }
-.wb-connect:hover{background:var(--gold);color:var(--bg)}
-.wb-network{font-family:'DM Mono',monospace;font-size:.55rem;color:var(--teal-bright);display:flex;align-items:center;gap:.3rem}
-.wb-network .dot{width:6px;height:6px;border-radius:50%;background:var(--teal-bright)}
+.wb-connect:hover{border-color:var(--text-bright);color:var(--text-white)}
+.wb-network{font-family:'DM Mono',monospace;font-size:.55rem;color:var(--green);display:flex;align-items:center;gap:.3rem}
+.wb-network .dot{width:6px;height:6px;border-radius:50%;background:var(--green)}
 .wb-network.wrong .dot{background:var(--red)}
 .wb-network.wrong{color:var(--red)}
 
 /* ── Hero ── */
-.hero{text-align:center;padding:3rem 0 2rem;position:relative}
+.hero{text-align:center;padding:3rem 0 2rem;position:relative;z-index:1}
 .hero::after{content:'';position:absolute;bottom:0;left:10%;right:10%;height:1px;background:linear-gradient(90deg,transparent,var(--border2),transparent)}
-h1{font-family:'Bebas Neue',sans-serif;font-size:3rem;letter-spacing:.03em;color:var(--text-bright);line-height:1}
+h1{font-family:'Bebas Neue',sans-serif;font-size:3rem;letter-spacing:.03em;color:var(--text-white);line-height:1}
 h1 span{color:var(--gold)}
-.tagline{font-size:.9rem;color:var(--muted);margin-top:.4rem;max-width:460px;margin-left:auto;margin-right:auto}
+.tagline{font-size:.9rem;color:var(--text);margin-top:.4rem;max-width:460px;margin-left:auto;margin-right:auto}
 .hero-stats{display:flex;justify-content:center;gap:2.5rem;margin-top:1.5rem;flex-wrap:wrap}
 .hs{text-align:center}
 .hs-num{font-family:'DM Mono',monospace;font-size:1.4rem;font-weight:500;color:var(--gold)}
-.hs-label{font-size:.55rem;color:var(--muted);text-transform:uppercase;letter-spacing:.08em;margin-top:.1rem}
+.hs-label{font-family:'Outfit',sans-serif;font-size:9px;color:var(--muted);text-transform:uppercase;letter-spacing:2px;margin-top:.1rem}
 
 /* ── Week Countdown ── */
 .week-bar{
   background:var(--surface);border:1px solid var(--border);border-radius:10px;
   padding:.8rem 1.2rem;margin:1.5rem 0;display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:.5rem;
 }
-.week-label{font-size:.7rem;color:var(--muted);text-transform:uppercase;letter-spacing:.08em}
-.week-countdown{font-family:'DM Mono',monospace;font-size:1rem;color:var(--teal-bright)}
+.week-label{font-family:'Outfit',sans-serif;font-size:9px;color:var(--muted);text-transform:uppercase;letter-spacing:2px}
+.week-countdown{font-family:'DM Mono',monospace;font-size:1rem;color:var(--gold)}
 .week-id{font-family:'DM Mono',monospace;font-size:.7rem;color:var(--muted)}
 
 /* ── Filter ── */
 .filter{display:flex;gap:.4rem;margin:1rem 0;flex-wrap:wrap;justify-content:center}
-.filter-pill{padding:.35rem 1rem;border-radius:20px;border:1px solid var(--border2);background:transparent;color:var(--muted);font-family:'Outfit',sans-serif;font-size:.75rem;font-weight:600;cursor:pointer;transition:all .15s}
+.filter-pill{padding:.35rem 1rem;border-radius:20px;border:1px solid var(--border);background:transparent;color:var(--muted);font-family:'Outfit',sans-serif;font-size:.75rem;font-weight:600;cursor:pointer;transition:all .15s}
 .filter-pill:hover{border-color:var(--gold);color:var(--text)}
 .filter-pill.active{border-color:var(--gold);background:var(--gold-dim);color:var(--gold)}
 
 /* ── Game Cards ── */
-.game-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(260px,1fr));gap:.7rem;margin:1rem 0 3rem}
+.game-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(280px,1fr));gap:12px;margin:1.5rem 0 3rem}
 .game-card{
   background:var(--surface);border:1px solid var(--border);border-radius:10px;
-  padding:1rem 1.1rem;transition:all .15s;cursor:pointer;position:relative;overflow:hidden;
+  padding:1rem 1.1rem;transition:border-color .15s,background .15s;cursor:pointer;position:relative;overflow:hidden;
 }
-.game-card:hover{border-color:var(--gold);transform:translateY(-2px);box-shadow:0 8px 24px rgba(0,0,0,.3)}
-.game-card::before{content:'';position:absolute;left:0;top:0;bottom:0;width:3px;border-radius:3px 0 0 3px}
-.game-card.cat-number::before{background:var(--teal)}
-.game-card.cat-puzzle::before{background:var(--gold)}
-.game-card.cat-strategy::before{background:var(--blue)}
-.game-card.cat-logic::before{background:var(--purple)}
-.game-card.cat-speed::before{background:var(--green)}
-.game-card.cat-memory::before{background:var(--red)}
+.game-card::before{content:'';position:absolute;left:0;right:0;top:0;height:2px;background:var(--gold);opacity:0;transition:opacity .15s}
+.game-card:hover{border-color:var(--border2);background:var(--surface2)}
+.game-card:hover::before{opacity:1}
 
 .gc-top{display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:.3rem}
-.gc-title{font-size:.88rem;font-weight:700;color:var(--text-bright)}
+.gc-title{font-family:'Bebas Neue',sans-serif;font-size:20px;color:var(--text-white);letter-spacing:.02em}
 .gc-badge{font-family:'DM Mono',monospace;font-size:.5rem;padding:2px 8px;border-radius:10px;letter-spacing:.03em;white-space:nowrap}
-.gc-badge.free{background:rgba(45,212,160,.08);color:var(--green);border:1px solid rgba(45,212,160,.15)}
-.gc-badge.paid{background:var(--gold-dim);color:var(--gold);border:1px solid rgba(212,168,71,.2)}
-.gc-desc{font-size:.7rem;color:var(--muted);line-height:1.4;margin-bottom:.5rem}
+.gc-badge.free{background:transparent;color:var(--text);border:1px solid var(--border)}
+.gc-badge.paid{background:var(--gold-dim);color:var(--gold);border:1px solid var(--gold-border)}
+.gc-desc{font-family:'Outfit',sans-serif;font-size:12px;color:var(--text);line-height:1.4;margin-bottom:.5rem;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
 
-.gc-pot{display:flex;align-items:center;gap:.4rem;font-family:'DM Mono',monospace;font-size:.7rem;color:var(--gold);margin-top:.4rem}
+.gc-pot{display:flex;align-items:center;gap:.4rem;font-family:'DM Mono',monospace;font-size:11px;color:var(--gold);margin-top:.4rem}
 .gc-pot .pot-icon{font-size:.8rem}
-.gc-entries{font-family:'DM Mono',monospace;font-size:.6rem;color:var(--muted);margin-top:.2rem}
+.gc-entries{font-family:'DM Mono',monospace;font-size:11px;color:var(--muted);margin-top:.2rem}
 
 .gc-tags{display:flex;gap:.3rem;margin-top:.4rem;flex-wrap:wrap}
-.gc-tag{font-family:'DM Mono',monospace;font-size:.5rem;padding:1px 6px;border-radius:4px;background:var(--border);color:var(--muted);letter-spacing:.03em}
+.gc-tag{font-family:'DM Mono',monospace;font-size:10px;padding:1px 6px;border-radius:4px;background:var(--border);color:var(--muted);letter-spacing:.03em}
 
 /* ── Academy Section ── */
 .section-head{text-align:center;margin:2rem 0 1rem}
-.section-head h2{font-family:'Bebas Neue',sans-serif;font-size:1.6rem;color:var(--text-bright);letter-spacing:.04em}
+.section-head h2{font-family:'Outfit',sans-serif;font-size:11px;color:var(--muted);text-transform:uppercase;letter-spacing:2px;font-weight:400}
 .section-head p{font-size:.8rem;color:var(--muted);margin-top:.2rem}
 
 /* ── Footer ── */
 footer{text-align:center;padding:2rem 0;font-size:.65rem;color:var(--muted);border-top:1px solid var(--border)}
-footer a{color:var(--muted);text-decoration:none}
-footer a:hover{color:var(--gold)}
+footer a{color:var(--muted);text-decoration:none;transition:color .15s}
+footer a:hover{color:var(--text-bright)}
 
 /* ── Mobile ── */
 @media(max-width:600px){
@@ -133,7 +128,7 @@ footer a:hover{color:var(--gold)}
 <!-- WALLET BAR -->
 <div class="wallet-bar">
   <a href="/builders/" class="wb-brand">
-    <span class="wb-logo">MATHS<span>WINS</span></span>
+    <span class="wb-logo">MATHSWINS</span>
     <span class="wb-badge">QF NETWORK</span>
   </a>
   <div class="wb-right">
@@ -189,7 +184,7 @@ footer a:hover{color:var(--gold)}
   <p>Pay with QF tokens for half-price access to all MathsWins courses. Stripe fallback at full price.</p>
 </div>
 <div style="text-align:center;margin-bottom:3rem">
-  <a href="/academy/" style="display:inline-block;padding:.6rem 2rem;border:1px solid var(--gold);border-radius:8px;color:var(--gold);text-decoration:none;font-weight:600;font-size:.85rem;transition:all .15s" onmouseover="this.style.background='var(--gold-dim)'" onmouseout="this.style.background='transparent'">Browse Academy Courses →</a>
+  <a href="/academy/" style="display:inline-block;padding:.6rem 2rem;border:1px solid var(--gold);border-radius:8px;color:var(--gold);background:transparent;text-decoration:none;font-family:'Outfit',sans-serif;font-weight:600;font-size:.85rem;transition:all .15s" onmouseover="this.style.borderColor='var(--gold-hover)';this.style.color='var(--gold-hover)'" onmouseout="this.style.borderColor='var(--gold)';this.style.color='var(--gold)'">Browse Academy Courses →</a>
 </div>
 
 </div>
@@ -256,7 +251,7 @@ function updateWalletUI() {
   if (!wallet.address) return;
   document.getElementById('connectBtn').style.display = 'none';
   document.getElementById('walletAddress').style.display = '';
-  document.getElementById('walletAddress').textContent = wallet.address.slice(0, 6) + '...' + wallet.address.slice(-4);
+  document.getElementById('walletAddress').innerHTML = '<span class="dot-green"></span>' + wallet.address.slice(0, 6) + '...' + wallet.address.slice(-4);
   document.getElementById('walletBalance').style.display = '';
   document.getElementById('walletBalance').textContent = parseFloat(ethers.formatEther(wallet.balance)).toFixed(2) + ' QF';
 
@@ -295,16 +290,15 @@ function renderGames(filter) {
       if (filter === 'free' && g.paid) return;
       if (filter !== 'paid' && filter !== 'free' && g.cat !== filter) return;
     }
-    var catClass = 'cat-' + (g.cat === 'strategy' ? 'strategy' : g.cat);
     var card = document.createElement('div');
-    card.className = 'game-card ' + catClass;
+    card.className = 'game-card';
     card.dataset.cat = g.cat;
     card.dataset.paid = g.paid ? '1' : '0';
     card.onclick = function() { openGame(g.id); };
 
     var badge = g.paid
-      ? '<span class="gc-badge paid">10 QF</span>'
-      : '<span class="gc-badge free">FREE</span>';
+      ? '<span class="gc-badge paid">COMPETITIVE</span>'
+      : '<span class="gc-badge free">FREE PLAY</span>';
 
     var potHtml = g.paid
       ? '<div class="gc-pot"><span class="pot-icon">🏆</span> <span class="pot-val" data-game="' + g.id + '">—</span> QF pot</div><div class="gc-entries"><span class="entry-count" data-game="' + g.id + '">0</span> entries this week</div>'

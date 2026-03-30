@@ -29,22 +29,20 @@
 <script src="https://cdn.jsdelivr.net/npm/ethers@6/dist/ethers.umd.min.js"></script>
 <style>
 :root {
-  --ink:#050709;--surface:#0a0d14;--surface2:#0f1319;
-  --gold:#d4a847;--gold-warm:#e2b96a;--gold-dim:#7a5e28;
-  --teal:#2dd4bf;--teal-dim:#134e4a;
-  --text:#c8cdd8;--text-bright:#e8ecf4;--muted:#4a5568;
-  --border:#161c28;--border2:#1e2638;
-  --green:#2dd4a0;--red:#ef5350;--warn:#d4a847;
+  --bg:#050709;--surface:#0a0d12;--surface2:#0f1218;--surface3:#13171e;
+  --border:#1a1f2a;--border2:#242b38;
+  --gold:#c9a84c;--gold-dim:rgba(201,168,76,0.08);--gold-glow:rgba(201,168,76,0.15);--gold-border:rgba(201,168,76,0.20);--gold-hover:#d4b050;
+  --text-white:#eaecf0;--text-bright:#d4d8e0;--text:#9ca3b0;--muted:#3e4555;
+  --red:#c0392b;--green:#27ae60;
   --prime:#60a5fa;--composite:#f97316;
 }
 *,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
-body{background:var(--ink);color:var(--text);font-family:'Outfit',sans-serif;min-height:100vh;display:flex;flex-direction:column;align-items:center;overflow-x:hidden}
-body::before{content:'';position:fixed;inset:0;background-image:linear-gradient(rgba(212,168,71,0.03) 1px,transparent 1px),linear-gradient(90deg,rgba(212,168,71,0.03) 1px,transparent 1px);background-size:40px 40px;pointer-events:none;z-index:0}
+body{background:var(--bg);color:var(--text);font-family:'Outfit',sans-serif;min-height:100vh;display:flex;flex-direction:column;align-items:center;overflow-x:hidden}
 
 .page{position:relative;z-index:1;width:100%;max-width:480px;padding:2rem 1rem 4rem;display:flex;flex-direction:column;align-items:center;gap:1.2rem}
 .game-header{text-align:center}
-.game-kicker{font-family:'DM Mono',monospace;font-size:0.6rem;letter-spacing:0.2em;text-transform:uppercase;color:var(--teal);margin-bottom:0.4rem}
-.game-title{font-family:'Bebas Neue',sans-serif;font-size:3rem;letter-spacing:0.06em;color:var(--gold-warm);line-height:1}
+.game-kicker{font-family:'DM Mono',monospace;font-size:0.6rem;letter-spacing:0.2em;text-transform:uppercase;color:var(--muted);margin-bottom:0.4rem}
+.game-title{font-family:'Bebas Neue',sans-serif;font-size:3rem;letter-spacing:0.06em;color:var(--gold);line-height:1}
 .game-sub{font-size:0.75rem;color:var(--muted);line-height:1.6;margin-top:0.4rem}
 
 /* Scoring info panel */
@@ -52,7 +50,7 @@ body::before{content:'';position:fixed;inset:0;background-image:linear-gradient(
 .scoring-info h3{font-family:'Bebas Neue',sans-serif;font-size:1.1rem;color:var(--gold);letter-spacing:0.05em;margin-bottom:0.5rem}
 .scoring-info .si-row{display:flex;justify-content:space-between;padding:0.15rem 0}
 .scoring-info .si-label{color:var(--text)}
-.scoring-info .si-val{color:var(--gold)}
+.scoring-info .si-val{color:var(--gold);font-family:'DM Mono',monospace}
 .scoring-info .si-note{color:var(--muted);font-size:0.55rem;margin-top:0.5rem;font-style:italic}
 
 .status-bar{display:flex;gap:0.8rem;width:100%;background:var(--surface2);border:1px solid var(--border);border-radius:8px;padding:0.75rem 1rem;justify-content:space-around}
@@ -69,7 +67,7 @@ body::before{content:'';position:fixed;inset:0;background-image:linear-gradient(
 }
 .number-arena::before{
   content:'';position:absolute;inset:0;
-  background:radial-gradient(ellipse at 50% 50%,rgba(212,168,71,0.04) 0%,transparent 70%);
+  background:radial-gradient(ellipse at 50% 50%,rgba(201,168,76,0.04) 0%,transparent 70%);
   pointer-events:none;
 }
 .round-label{font-family:'DM Mono',monospace;font-size:0.52rem;letter-spacing:0.15em;text-transform:uppercase;color:var(--muted)}
@@ -77,15 +75,15 @@ body::before{content:'';position:fixed;inset:0;background-image:linear-gradient(
   font-family:'Bebas Neue',sans-serif;font-size:clamp(3rem,15vw,6rem);
   letter-spacing:0.05em;color:var(--text);
   transition:transform 0.15s,opacity 0.15s;
-  text-shadow:0 0 40px rgba(212,168,71,0.15);
+  text-shadow:0 0 40px rgba(201,168,76,0.15);
 }
 .big-number.flash-correct{color:var(--green);transform:scale(1.05)}
-.big-number.flash-wrong{color:var(--red);animation:shake 0.35s ease}
+.big-number.flash-wrong{color:var(--red)}
 
 /* Timer bar */
 .timer-track{width:90%;height:4px;background:var(--border);border-radius:2px;overflow:hidden}
-.timer-fill{height:100%;background:var(--gold);border-radius:2px;transition:width 0.1s linear,background 0.3s}
-.timer-fill.warn{background:var(--warn)}
+.timer-fill{height:100%;background:var(--gold);border-radius:2px;transition:width 0.1s linear,background 0.15s}
+.timer-fill.warn{background:var(--gold)}
 .timer-fill.danger{background:var(--red)}
 
 /* Answer buttons */

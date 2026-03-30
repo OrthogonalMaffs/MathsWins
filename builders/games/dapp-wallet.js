@@ -15,13 +15,13 @@
   var bar = document.createElement('div');
   bar.className = 'dapp-bar';
   bar.innerHTML = '<div class="dapp-bar-left">'
-    + '<a href="/builders/" class="dapp-back">← Lobby</a>'
-    + '<a href="/builders/" class="dapp-logo">MATHS<span>WINS</span></a>'
+    + '<a href="/builders/" class="dapp-back">Lobby</a>'
+    + '<a href="/builders/" class="dapp-logo">MATHSWINS</a>'
     + '<span class="dapp-badge">QF NETWORK</span>'
     + '</div>'
     + '<div class="dapp-bar-right">'
     + '<span class="dapp-balance" id="dappBalance" style="display:none"></span>'
-    + '<span class="dapp-addr" id="dappAddr" style="display:none"></span>'
+    + '<span class="dapp-addr" id="dappAddr" style="display:none"><span class="dapp-dot"></span><span id="dappAddrText"></span></span>'
     + '<button class="dapp-connect" id="dappConnectBtn">Connect Wallet</button>'
     + '</div>';
   document.body.insertBefore(bar, document.body.firstChild);
@@ -76,7 +76,7 @@
     document.getElementById('dappConnectBtn').style.display = 'none';
     var addr = document.getElementById('dappAddr');
     addr.style.display = '';
-    addr.textContent = state.address.slice(0,6) + '...' + state.address.slice(-4);
+    document.getElementById('dappAddrText').textContent = state.address.slice(0,6) + '...' + state.address.slice(-4);
     var bal = document.getElementById('dappBalance');
     bal.style.display = '';
     bal.textContent = parseFloat(ethers.formatEther(state.balance)).toFixed(2) + ' QF';

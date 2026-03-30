@@ -26,19 +26,18 @@
 <meta name="twitter:image" content="https://mathswins.co.uk/assets/og-image.png">
 <style>
 :root {
-  --ink:#050709;--surface:#0a0d14;--surface2:#0f1319;
-  --gold:#d4a847;--gold-warm:#e2b96a;--gold-dim:#7a5e28;
-  --teal:#2dd4bf;--teal-dim:#134e4a;
-  --text:#c8cdd8;--text-bright:#e8ecf4;--muted:#4a5568;
-  --border:#161c28;--border2:#1e2638;
-  --green:#2dd4a0;--red:#ef5350;--warn:#d4a847;
+  --bg:#050709;--surface:#0a0d12;--surface2:#0f1218;--surface3:#13171e;
+  --border:#1a1f2a;--border2:#242b38;
+  --gold:#c9a84c;--gold-dim:rgba(201,168,76,0.08);--gold-glow:rgba(201,168,76,0.15);--gold-border:rgba(201,168,76,0.20);--gold-hover:#d4b050;
+  --text-white:#eaecf0;--text-bright:#d4d8e0;--text:#9ca3b0;--muted:#3e4555;
+  --red:#c0392b;--green:#27ae60;
 }
 *,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
-body{background:var(--ink);color:var(--text);font-family:'Outfit',sans-serif;min-height:100vh;display:flex;flex-direction:column;align-items:center}
-.page{width:100%;max-width:560px;padding:2rem 1rem 4rem;display:flex;flex-direction:column;align-items:center;gap:1.2rem}
+body{background:var(--bg);color:var(--text);font-family:'Outfit',sans-serif;min-height:100vh;display:flex;flex-direction:column;align-items:center}
+.page{width:100%;max-width:800px;padding:2rem 1.5rem 4rem;display:flex;flex-direction:column;align-items:center;gap:1.2rem}
 .game-header{text-align:center}
-.game-kicker{font-family:'DM Mono',monospace;font-size:0.6rem;letter-spacing:0.2em;text-transform:uppercase;color:var(--teal);margin-bottom:0.4rem}
-.game-title{font-family:'Bebas Neue',sans-serif;font-size:3rem;letter-spacing:0.08em;color:var(--gold-warm);line-height:1}
+.game-kicker{font-family:'DM Mono',monospace;font-size:0.6rem;letter-spacing:0.2em;text-transform:uppercase;color:var(--muted);margin-bottom:0.4rem}
+.game-title{font-family:'Bebas Neue',sans-serif;font-size:3rem;letter-spacing:0.08em;color:var(--gold);line-height:1}
 .game-sub{font-size:0.75rem;color:var(--muted);line-height:1.6;margin-top:0.4rem}
 .scoring-info{width:100%;background:var(--surface2);border:1px solid var(--border);border-radius:8px;padding:1.2rem;font-family:'DM Mono',monospace;font-size:0.65rem;color:var(--muted);line-height:1.8}
 .scoring-info h3{font-family:'Bebas Neue',sans-serif;font-size:1.1rem;color:var(--gold);letter-spacing:0.05em;margin-bottom:0.5rem}
@@ -55,57 +54,57 @@ body{background:var(--ink);color:var(--text);font-family:'Outfit',sans-serif;min
 
 /* ── Kakuro board ────────────────────────────── */
 .board-wrap{width:100%;display:flex;justify-content:center}
-.board{display:grid;gap:0;width:min(100%,450px);aspect-ratio:1;border:2px solid var(--gold-dim);border-radius:4px;overflow:hidden;grid-template-columns:repeat(10,1fr)}
+.board{display:grid;gap:0;width:min(100%,520px);aspect-ratio:1;border:2px solid var(--gold);border-radius:4px;overflow:hidden;grid-template-columns:repeat(10,1fr)}
 
 .cell{position:relative;display:flex;align-items:center;justify-content:center;border:1px solid var(--border2);aspect-ratio:1}
 
 /* Black cells */
-.cell.black{background:var(--ink);cursor:default}
+.cell.black{background:var(--bg);cursor:default}
 
 /* Clue cells — diagonal split */
 .cell.clue{background:var(--surface);cursor:default;overflow:hidden}
 .clue-diag{position:absolute;inset:0;pointer-events:none}
 .clue-diag::after{
   content:'';position:absolute;top:0;left:0;width:141%;height:1px;
-  background:var(--border2);transform-origin:0 0;transform:rotate(45deg);
+  background:var(--border);transform-origin:0 0;transform:rotate(45deg);
 }
-.clue-down{position:absolute;top:2px;left:3px;font-family:'DM Mono',monospace;font-size:clamp(0.4rem,1.2vw,0.55rem);color:var(--teal);line-height:1;pointer-events:none}
+.clue-down{position:absolute;top:2px;left:3px;font-family:'DM Mono',monospace;font-size:clamp(0.4rem,1.2vw,0.55rem);color:var(--text);line-height:1;pointer-events:none}
 .clue-across{position:absolute;bottom:2px;right:3px;font-family:'DM Mono',monospace;font-size:clamp(0.4rem,1.2vw,0.55rem);color:var(--gold);line-height:1;pointer-events:none}
 
 /* White (input) cells */
-.cell.white{background:var(--surface2);cursor:pointer;transition:background 0.1s}
-.cell.white:hover{background:rgba(212,168,71,0.08)}
-.cell.white.selected{background:rgba(212,168,71,0.18)}
-.cell.white.same-num{background:rgba(212,168,71,0.07)}
-.cell.white.conflict{background:rgba(239,68,68,0.12)}
-.cell.white.hint-cell{background:rgba(45,212,191,0.12)}
-.cell.white.run-highlight{background:rgba(45,212,191,0.06)}
+.cell.white{background:var(--surface);cursor:pointer;transition:background 0.1s}
+.cell.white:hover{background:var(--gold-dim)}
+.cell.white.selected{background:var(--gold-glow)}
+.cell.white.same-num{background:rgba(201,168,76,0.07)}
+.cell.white.conflict{background:rgba(192,57,43,0.12)}
+.cell.white.hint-cell{background:rgba(201,168,76,0.08)}
+.cell.white.run-highlight{background:rgba(201,168,76,0.04)}
 
 .cell .cell-val{font-family:'DM Mono',monospace;font-size:clamp(0.9rem,3vw,1.3rem);font-weight:500;color:var(--text-bright);user-select:none}
-.cell.hint-cell .cell-val{color:var(--teal)}
+.cell.hint-cell .cell-val{color:var(--muted);font-style:italic}
 .cell .notes-grid{display:grid;grid-template-columns:repeat(3,1fr);width:100%;height:100%;padding:1px}
-.cell .note-num{font-family:'DM Mono',monospace;font-size:clamp(0.22rem,0.7vw,0.34rem);color:var(--teal);display:flex;align-items:center;justify-content:center;line-height:1}
+.cell .note-num{font-family:'DM Mono',monospace;font-size:clamp(0.22rem,0.7vw,0.34rem);color:var(--muted);display:flex;align-items:center;justify-content:center;line-height:1}
 .cell .note-num.hidden{opacity:0}
 
 /* Sum helper panel */
-.helper-panel{width:100%;background:var(--surface2);border:1px solid var(--border);border-radius:8px;padding:0.8rem;display:none;flex-direction:column;gap:0.4rem}
+.helper-panel{width:100%;background:var(--surface);border:1px solid var(--border);border-radius:8px;padding:0.8rem;display:none;flex-direction:column;gap:0.4rem}
 .helper-title{font-family:'DM Mono',monospace;font-size:0.55rem;letter-spacing:0.1em;text-transform:uppercase;color:var(--muted)}
 .helper-combos{font-family:'DM Mono',monospace;font-size:0.6rem;color:var(--text);line-height:1.6}
-.helper-warn{font-family:'DM Mono',monospace;font-size:0.5rem;color:var(--warn);font-style:italic}
+.helper-warn{font-family:'DM Mono',monospace;font-size:0.5rem;color:var(--muted);font-style:italic}
 
 .numpad{display:grid;grid-template-columns:repeat(10,1fr);gap:0.4rem;width:100%}
 .num-btn{aspect-ratio:1;background:var(--surface2);border:1px solid var(--border);border-radius:6px;font-family:'DM Mono',monospace;font-size:clamp(0.8rem,2.5vw,1.1rem);color:var(--text);cursor:pointer;display:flex;align-items:center;justify-content:center;transition:all 0.15s}
-.num-btn:hover{background:var(--surface);border-color:var(--gold-dim);color:var(--gold)}
+.num-btn:hover{background:var(--surface);border-color:var(--gold-border);color:var(--gold)}
 .controls{display:flex;gap:0.5rem;width:100%;flex-wrap:wrap}
 .btn{padding:0.6rem 1rem;font-family:'DM Mono',monospace;font-size:0.6rem;letter-spacing:0.1em;text-transform:uppercase;cursor:pointer;border-radius:6px;border:none;transition:all 0.2s;flex:1;min-width:0}
-.btn-gold{background:var(--gold);color:var(--ink);font-weight:500}
-.btn-gold:hover{background:var(--gold-warm)}
+.btn-gold{background:var(--gold);color:var(--bg);font-weight:500}
+.btn-gold:hover{background:var(--gold-hover)}
 .btn-gold:disabled{background:var(--muted);cursor:not-allowed;opacity:0.5}
-.btn-ghost{background:transparent;border:1px solid var(--border);color:var(--muted)}
-.btn-ghost:hover{border-color:var(--gold-dim);color:var(--gold)}
-.btn-teal{background:transparent;border:1px solid var(--teal-dim);color:var(--teal)}
-.btn-teal:hover{background:var(--teal-dim)}
-.btn-teal.active{background:var(--teal-dim)}
+.btn-ghost{background:var(--surface2);border:1px solid var(--border);color:var(--muted)}
+.btn-ghost:hover{border-color:var(--gold-border);color:var(--gold)}
+.btn-teal{background:var(--surface2);border:1px solid var(--border);color:var(--muted)}
+.btn-teal:hover{border-color:var(--gold-border);color:var(--gold)}
+.btn-teal.active{border-color:var(--gold-border);color:var(--gold);background:var(--gold-dim)}
 .msg{font-family:'DM Mono',monospace;font-size:0.62rem;text-align:center;min-height:1rem;color:var(--red)}
 .msg.ok{color:var(--green)}
 .modal-overlay{position:fixed;inset:0;background:rgba(5,7,9,0.92);backdrop-filter:blur(8px);z-index:200;display:flex;align-items:center;justify-content:center;padding:1rem}
@@ -121,8 +120,6 @@ body{background:var(--ink);color:var(--text);font-family:'Outfit',sans-serif;min
 .ms-lbl{font-family:'DM Mono',monospace;font-size:0.45rem;letter-spacing:0.1em;text-transform:uppercase;color:var(--muted)}
 .modal-acts{display:flex;gap:0.5rem;padding:1rem 1.4rem 1.4rem}
 .modal-acts .btn{flex:1}
-@keyframes shake{0%,100%{transform:translateX(0)}20%{transform:translateX(-6px)}40%{transform:translateX(6px)}60%{transform:translateX(-4px)}80%{transform:translateX(4px)}}
-.shake{animation:shake 0.35s ease}
 @media(max-width:480px){.page{padding:1.5rem 0.5rem 3rem}.game-title{font-size:2.4rem}}
 </style>
 <script src="https://cdn.jsdelivr.net/npm/ethers@6/dist/ethers.umd.min.js"></script>
@@ -132,7 +129,7 @@ body{background:var(--ink);color:var(--text);font-family:'Outfit',sans-serif;min
 <div class="page">
   <div class="game-header">
     <p class="game-kicker">Number Logic</p>
-    <h1 class="game-title">Ka<strong style="color:var(--teal)">kuro</strong></h1>
+    <h1 class="game-title">Ka<strong style="color:var(--gold)">kuro</strong></h1>
     <p class="game-sub">Crossword meets Sudoku. Fill white cells with digits 1-9 so each run sums to its clue. No repeats in a run.</p>
   </div>
 
@@ -173,7 +170,7 @@ body{background:var(--ink);color:var(--text);font-family:'Outfit',sans-serif;min
     <button class="btn btn-ghost" onclick="G.undo()">Undo</button>
     <button class="btn btn-teal" id="notes-btn" onclick="G.toggleNotes()">Notes</button>
     <button class="btn btn-teal" id="helper-btn" onclick="G.toggleHelper()">Sums</button>
-    <button class="btn btn-teal" onclick="G.useHint()">Hint (-500)</button>
+    <button class="btn btn-ghost" onclick="G.useHint()">Hint (-500)</button>
     <button class="btn btn-gold" onclick="G.submitGrid()">Submit</button>
   </div>
 
