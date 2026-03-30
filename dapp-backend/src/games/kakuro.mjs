@@ -9,8 +9,8 @@
  * + backtracking -> compute clues -> validate unique solution.
  * Solution NEVER sent to client.
  *
- * Templates use runs of length 2-4 for good kakuro gameplay.
- * Every white cell belongs to exactly one across run and one down run.
+ * Templates defined as explicit run lists. Every white cell is in exactly one
+ * across run and one down run (both length 2-4).
  *
  * Scoring:
  *   Base: 5000
@@ -50,7 +50,6 @@ function shuffle(arr, rng) {
 }
 
 // ── Sum decomposition helper ────────────────────────────────────────────
-// For a given (sum, length), list all valid sets of digits 1-9 with no repeats.
 const _decompCache = new Map();
 
 export function sumDecompositions(targetSum, length) {
@@ -77,389 +76,241 @@ export function sumDecompositions(targetSum, length) {
   return results;
 }
 
-// ── Min/max sum for a run of given length with no repeats ───────────────
-// min: 1+2+...+len, max: 9+8+...+(10-len)
-function minRunSum(len) {
-  return (len * (len + 1)) / 2;
-}
-function maxRunSum(len) {
-  return (len * (19 - len)) / 2;
-}
-
 // ── Template definitions ────────────────────────────────────────────────
-// '#' = black, '.' = white. 10 chars per row, 10 rows.
-// Every run of consecutive white cells (horizontally or vertically) must be 2-4.
-// Isolated white cells (run of 1) are avoided by design.
+// Each template is defined as explicit run lists.
+// R(dir, row, col, len) where dir='A' (across) or 'D' (down).
+//
+// Every white cell must appear in exactly one across run and one down run.
+// All runs are length 2-4.
+//
+// Templates use a "block" approach: overlapping rectangular regions of
+// white cells where across and down runs cross at every white cell.
 
-function parseMask(str) {
-  const lines = str.trim().split('\n').map(l => l.trim());
-  return lines.map(line => [...line].map(ch => ch === '#'));
-}
+function R(dir, r, c, len) { return { dir, r, c, len }; }
 
-function runsFromMask(mask) {
+// Programmatic template generation: create grid patterns where
+// rectangular blocks of white cells are placed so that every cell
+// has both an across and down run crossing through it.
+//
+// Strategy: place 2x2, 2x3, 3x2, 3x3, 2x4, 4x2 blocks of white cells.
+// Each block naturally creates across runs (rows) and down runs (cols).
+
+function blockToRuns(topR, topC, rows, cols) {
   const runs = [];
-  const SIZE = 10;
-
-  for (let r = 0; r < SIZE; r++) {
-    let start = -1;
-    for (let c = 0; c <= SIZE; c++) {
-      const isBlack = c === SIZE || mask[r][c];
-      if (!isBlack && start === -1) {
-        start = c;
-      } else if (isBlack && start !== -1) {
-        const len = c - start;
-        if (len >= 2) runs.push({ dir: 'A', r, c: start, len });
-        start = -1;
-      }
-    }
+  // Across runs: one per row of the block
+  for (let r = topR; r < topR + rows; r++) {
+    runs.push(R('A', r, topC, cols));
   }
-
-  for (let c = 0; c < SIZE; c++) {
-    let start = -1;
-    for (let r = 0; r <= SIZE; r++) {
-      const isBlack = r === SIZE || mask[r][c];
-      if (!isBlack && start === -1) {
-        start = r;
-      } else if (isBlack && start !== -1) {
-        const len = r - start;
-        if (len >= 2) runs.push({ dir: 'D', r: start, c, len });
-        start = -1;
-      }
-    }
+  // Down runs: one per column of the block
+  for (let c = topC; c < topC + cols; c++) {
+    runs.push(R('D', topR, c, rows));
   }
-
   return runs;
 }
 
-// All templates verified: every horizontal and vertical run is 2-4 cells.
-// ~30-40 white cells per template for good kakuro density.
-const TEMPLATE_STRINGS = [
-  // 0
-  `#..#..#..#
-#..#..#..#
-..#..#..#.
-..#..#..#.
-#..#..#..#
-#..#..#..#
-..#..#..#.
-..#..#..#.
-#..#..#..#
-#..#..#..#`,
+// Verify no cell conflicts (no cell in two across or two down runs)
+function validateRuns(runs) {
+  const acrossMap = new Map(); // "r,c" => runIndex
+  const downMap = new Map();
 
-  // 1
-  `#..#.##..#
-...#..#...
-..#..#..#.
-.#..#..#..
-#..#..#..#
-#..#..#..#
-..#..#..#.
-.#..#..#..
-...#..#...
-#..##.#..#`,
-
-  // 2
-  `##..#..#.#
-#...#..#..
-..#..#..#.
-.#..#..#..
-#..#..#..#
-#..#..#..#
-..#..#..#.
-.#..#..#..
-..#..#...#
-#.#..#..##`,
-
-  // 3
-  `#.#..#.#.#
-...#...#..
-.#..#..#..
-#..#..#..#
-..#..#..#.
-.#..#..#..
-#..#..#..#
-..#..#..#.
-..#...#...
-#.#.#..#.#`,
-
-  // 4
-  `##.#..#.##
-#..#..#..#
-..#..#..#.
-.#..##..#.
-#..#..#..#
-#..#..#..#
-.#..##..#.
-.#..#..#..
-#..#..#..#
-##.#..#.##`,
-
-  // 5
-  `#..##..#.#
-...#...#..
-..#..#..#.
-.#..#..#..
-#..#..#..#
-#..#..#..#
-..#..#..#.
-.#..#..#..
-..#...#...
-#.#..##..#`,
-
-  // 6
-  `#.#.#..#.#
-..#..#..#.
-.#..#..#..
-#..#..#..#
-..#..#..#.
-.#..#..#..
-#..#..#..#
-..#..#..#.
-.#..#..#..
-#.#..#.#.#`,
-
-  // 7
-  `##..#..###
-#..#..#..#
-..#..#..#.
-.#..#..#..
-#..#..#..#
-#..#..#..#
-..#..#..#.
-.#..#..#..
-#..#..#..#
-###..#..##`,
-
-  // 8
-  `#..#.#..##
-...#..#..#
-..#..#..#.
-.#..#..#..
-#..#..#..#
-#..#..#..#
-..#..#..#.
-.#..#..#..
-#..#..#...
-##..#.#..#`,
-
-  // 9
-  `#.##..#..#
-..#..#..#.
-.#..#..#..
-#..#..#..#
-..#..##..#
-#..##..#..
-#..#..#..#
-..#..#..#.
-.#..#..#..
-#..#..##.#`,
-
-  // 10
-  `##..#.#..#
-#..#..#..#
-..#..#..#.
-.#..#..#..
-#..#..#.##
-##.#..#..#
-..#..#..#.
-.#..#..#..
-#..#..#..#
-#..#.#..##`,
-
-  // 11
-  `#..#..##.#
-..#..#..#.
-.#..#..#..
-#..#..#..#
-..#..#..#.
-.#..#..#..
-#..#..#..#
-..#..#..#.
-.#..#..#..
-#.##..#..#`,
-
-  // 12
-  `#.#..##..#
-..#..#..#.
-.#..#..#..
-#..#..#..#
-..##..#..#
-#..#..##..
-#..#..#..#
-..#..#..#.
-.#..#..#..
-#..##..#.#`,
-
-  // 13
-  `##..#..#..
-#..#..#..#
-..#..#..#.
-.#..#..#.#
-#..#..#..#
-#..#..#..#
-#.#..#..#.
-.#..#..#..
-#..#..#..#
-..#..#..##`,
-
-  // 14
-  `#..#..#.##
-..#..#..#.
-.#..#..#..
-#..#..#..#
-..#..#..#.
-.#..#..#..
-#..#..#..#
-..#..#..#.
-.#..#..#..
-##.#..#..#`,
-
-  // 15
-  `##.#..#..#
-#..#..#..#
-..#..#..#.
-.#..##..#.
-#..#..#..#
-#..#..#..#
-.#..##..#.
-.#..#..#..
-#..#..#..#
-#..#..#.##`,
-
-  // 16
-  `#..#..#..#
-..#..#..#.
-.#..#..#..
-#..#..#..#
-..#..#..#.
-.#..#..#..
-#..#..#..#
-..#..#..#.
-.#..#..#..
-#..#..#..#`,
-
-  // 17
-  `#.#..#..##
-..#..#..#.
-.#..#..#..
-#..#..#..#
-..#..#..#.
-.#..#..#..
-#..#..#..#
-..#..#..#.
-.#..#..#..
-##..#..#.#`,
-
-  // 18
-  `##..##..##
-#..#..#..#
-..#..#..#.
-.#..#..#..
-##..##..##
-##..##..##
-..#..#..#.
-.#..#..#..
-#..#..#..#
-##..##..##`,
-
-  // 19
-  `#..#..#..#
-..#..#..#.
-.#..#..#..
-#..#..#..#
-..#..##..#
-#..##..#..
-#..#..#..#
-..#..#..#.
-.#..#..#..
-#..#..#..#`,
-
-  // 20
-  `#..##..#..
-..#..#..#.
-.#..#..#..
-#..#..#..#
-..#..#..#.
-.#..#..#..
-#..#..#..#
-..#..#..#.
-.#..#..#..
-..#..##..#`,
-
-  // 21
-  `##..#..#.#
-#..#..#..#
-..#..#..#.
-.#..#..#..
-#..#..#..#
-#..#..#..#
-..#..#..#.
-.#..#..#..
-#..#..#..#
-#.#..#..##`,
-
-  // 22
-  `#.#..#.#..
-..#..#..#.
-.#..#..#..
-#..#..#..#
-..#..#..#.
-.#..#..#..
-#..#..#..#
-..#..#..#.
-.#..#..#..
-..#.#..#.#`,
-
-  // 23
-  `#..#.#.#.#
-..#..#..#.
-.#..#..#..
-#..#..#..#
-..#..#..#.
-.#..#..#..
-#..#..#..#
-..#..#..#.
-.#..#..#..
-#.#.#.#..#`,
-];
-
-// Parse and validate templates at load time
-const TEMPLATES = TEMPLATE_STRINGS.map((str, ti) => {
-  const mask = parseMask(str);
-  const runs = runsFromMask(mask);
-
-  // Validate: every run must be 2-9 cells
-  for (const run of runs) {
-    if (run.len < 2 || run.len > 9) {
-      throw new Error(`Template ${ti}: run at (${run.r},${run.c}) dir=${run.dir} has invalid length ${run.len}`);
-    }
-  }
-
-  // Validate: every white cell must belong to at least one across AND one down run
-  const inAcross = new Set();
-  const inDown = new Set();
-  for (const run of runs) {
+  for (let ri = 0; ri < runs.length; ri++) {
+    const run = runs[ri];
     for (let i = 0; i < run.len; i++) {
       const r = run.dir === 'A' ? run.r : run.r + i;
       const c = run.dir === 'A' ? run.c + i : run.c;
       const key = `${r},${c}`;
-      if (run.dir === 'A') inAcross.add(key);
-      else inDown.add(key);
+      const map = run.dir === 'A' ? acrossMap : downMap;
+      if (map.has(key)) return false; // cell in two runs of same direction
+      map.set(key, ri);
     }
   }
 
-  // Only keep templates where every white cell is in both an across and down run
-  const allWhite = new Set([...inAcross, ...inDown]);
-  let valid = true;
-  for (const key of allWhite) {
-    if (!inAcross.has(key) || !inDown.has(key)) {
-      valid = false;
-      break;
-    }
+  // Every cell must be in both an across and a down run
+  const allKeys = new Set([...acrossMap.keys(), ...downMap.keys()]);
+  for (const key of allKeys) {
+    if (!acrossMap.has(key) || !downMap.has(key)) return false;
   }
 
-  return { runs, valid, whiteCellCount: allWhite.size };
-});
+  return allKeys.size >= 20;
+}
+
+// Build templates from block arrangements
+// Each block: [topRow, topCol, blockRows, blockCols]
+// Blocks must not share cells.
+const BLOCK_LAYOUTS = [
+  // Layout 0: 4 blocks in corners + 1 centre
+  [[0, 0, 3, 3], [0, 5, 3, 3], [5, 0, 3, 3], [5, 5, 3, 3], [3, 3, 2, 2]],
+
+  // Layout 1: 3x3 grid of 2x2 blocks
+  [[0, 0, 2, 2], [0, 4, 2, 2], [0, 8, 2, 2],
+   [4, 0, 2, 2], [4, 4, 2, 2], [4, 8, 2, 2],
+   [8, 0, 2, 2], [8, 4, 2, 2], [8, 8, 2, 2]],
+
+  // Layout 2: Large L-shapes
+  [[0, 0, 4, 2], [0, 4, 4, 2], [0, 8, 4, 2],
+   [6, 0, 4, 2], [6, 4, 4, 2], [6, 8, 4, 2]],
+
+  // Layout 3: Horizontal bars
+  [[0, 0, 2, 4], [0, 6, 2, 4],
+   [3, 1, 2, 4], [3, 6, 2, 4],
+   [6, 0, 2, 4], [6, 6, 2, 4],
+   [9, 2, 1, 1]], // dummy to avoid, will be filtered
+
+  // Layout 4: Mixed sizes
+  [[0, 0, 3, 4], [0, 6, 3, 4],
+   [5, 0, 3, 4], [5, 6, 3, 4],
+   [3, 3, 2, 4]],
+
+  // Layout 5: Staircase
+  [[0, 0, 3, 3], [0, 5, 2, 3],
+   [3, 2, 3, 3], [3, 7, 2, 3],
+   [6, 0, 2, 3], [6, 5, 3, 3],
+   [8, 3, 2, 2]],
+
+  // Layout 6: Compact cross
+  [[0, 2, 3, 2], [0, 6, 3, 2],
+   [2, 0, 2, 3], [2, 5, 2, 3],
+   [5, 0, 2, 3], [5, 5, 2, 3],
+   [7, 2, 3, 2], [7, 6, 3, 2]],
+
+  // Layout 7: Big corners + cross centre
+  [[0, 0, 4, 3], [0, 7, 4, 3],
+   [6, 0, 4, 3], [6, 7, 4, 3],
+   [4, 4, 2, 2]],
+
+  // Layout 8: Five 2x4 bars
+  [[0, 0, 2, 4], [0, 6, 2, 4],
+   [3, 3, 2, 4],
+   [6, 0, 2, 4], [6, 6, 2, 4],
+   [9, 3, 1, 1]], // filtered
+
+  // Layout 9: 3-row arrangement
+  [[0, 0, 3, 3], [0, 4, 3, 2], [0, 7, 3, 3],
+   [4, 1, 2, 3], [4, 5, 2, 4],
+   [7, 0, 3, 3], [7, 4, 3, 2], [7, 7, 3, 3]],
+
+  // Layout 10: 4x2 columns
+  [[0, 0, 4, 2], [0, 3, 4, 2], [0, 6, 4, 2],
+   [5, 1, 4, 2], [5, 4, 4, 2], [5, 7, 4, 2]],
+
+  // Layout 11: Checkerboard of 2x2
+  [[0, 0, 2, 2], [0, 3, 2, 2], [0, 6, 2, 2],
+   [3, 1, 2, 2], [3, 4, 2, 2], [3, 7, 2, 2],
+   [6, 0, 2, 2], [6, 3, 2, 2], [6, 6, 2, 2],
+   [8, 1, 2, 2], [8, 4, 2, 2], [8, 8, 2, 2]],
+
+  // Layout 12: T-shapes
+  [[0, 0, 2, 4], [2, 1, 3, 2],
+   [0, 6, 2, 4], [2, 7, 3, 2],
+   [6, 0, 3, 2], [8, 0, 2, 4],
+   [6, 7, 3, 2], [8, 6, 2, 4]],
+
+  // Layout 13: Vertical stripes
+  [[0, 0, 3, 2], [4, 0, 3, 2], [8, 0, 2, 2],
+   [0, 4, 3, 2], [4, 4, 3, 2], [8, 4, 2, 2],
+   [0, 8, 3, 2], [4, 8, 3, 2], [8, 8, 2, 2]],
+
+  // Layout 14: Diagonal blocks
+  [[0, 0, 3, 3],
+   [1, 4, 3, 3],
+   [2, 7, 3, 3],
+   [5, 0, 3, 3],
+   [6, 4, 3, 3],
+   [7, 7, 3, 3]],
+
+  // Layout 15: Quad + centre
+  [[0, 0, 2, 3], [0, 5, 2, 3],
+   [3, 0, 2, 3], [3, 5, 2, 3],
+   [6, 0, 2, 3], [6, 5, 2, 3],
+   [4, 3, 2, 2], [8, 2, 2, 3], [8, 7, 2, 3]],
+
+  // Layout 16: Wide middle
+  [[0, 1, 2, 3], [0, 6, 2, 3],
+   [3, 0, 4, 3], [3, 5, 4, 3],
+   [8, 1, 2, 3], [8, 6, 2, 3]],
+
+  // Layout 17: Dense 2x3 grid
+  [[0, 0, 2, 3], [0, 4, 2, 3], [0, 8, 2, 2],
+   [3, 0, 2, 3], [3, 4, 2, 3], [3, 8, 2, 2],
+   [6, 0, 2, 3], [6, 4, 2, 3], [6, 8, 2, 2],
+   [9, 1, 1, 1]], // filtered
+
+  // Layout 18: Big H
+  [[0, 0, 4, 2], [0, 8, 4, 2],
+   [3, 2, 2, 4],
+   [6, 0, 4, 2], [6, 8, 4, 2],
+   [6, 4, 2, 2]],
+
+  // Layout 19: Scattered 3x2
+  [[0, 1, 3, 2], [0, 5, 3, 2],
+   [1, 8, 3, 2],
+   [4, 0, 3, 2], [4, 4, 3, 2],
+   [5, 8, 3, 2],
+   [8, 1, 2, 2], [8, 5, 2, 2]],
+
+  // Layout 20: Row-paired
+  [[0, 0, 2, 4], [0, 5, 2, 4],
+   [3, 1, 2, 3], [3, 5, 2, 4],
+   [6, 0, 2, 4], [6, 5, 2, 4],
+   [9, 2, 1, 1]], // filtered
+
+  // Layout 21: Offset 3x3
+  [[0, 1, 3, 3], [0, 6, 3, 3],
+   [4, 0, 3, 3], [4, 5, 3, 3],
+   [8, 1, 2, 3], [8, 6, 2, 3]],
+
+  // Layout 22: Six pack of 3x2
+  [[0, 0, 3, 2], [0, 4, 3, 2], [0, 8, 3, 2],
+   [5, 0, 3, 2], [5, 4, 3, 2], [5, 8, 3, 2],
+   [3, 2, 2, 2], [3, 6, 2, 2]],
+
+  // Layout 23: Asymmetric cluster
+  [[0, 0, 4, 3], [0, 5, 2, 4],
+   [3, 6, 3, 3],
+   [5, 0, 2, 4],
+   [6, 5, 4, 3],
+   [8, 0, 2, 3]],
+];
+
+// Convert block layouts to run lists and validate
+const TEMPLATES = [];
+
+for (let li = 0; li < BLOCK_LAYOUTS.length; li++) {
+  const blocks = BLOCK_LAYOUTS[li];
+  const allRuns = [];
+  let hasConflict = false;
+  const occupiedCells = new Set();
+
+  for (const [tr, tc, rows, cols] of blocks) {
+    // Skip dummy blocks
+    if (rows < 2 || cols < 2) continue;
+    // Skip out-of-bounds
+    if (tr + rows > 10 || tc + cols > 10) continue;
+
+    // Check for cell conflicts with existing blocks
+    let conflict = false;
+    for (let r = tr; r < tr + rows; r++) {
+      for (let c = tc; c < tc + cols; c++) {
+        if (occupiedCells.has(`${r},${c}`)) { conflict = true; break; }
+      }
+      if (conflict) break;
+    }
+    if (conflict) { hasConflict = true; continue; }
+
+    // Mark cells as occupied
+    for (let r = tr; r < tr + rows; r++) {
+      for (let c = tc; c < tc + cols; c++) {
+        occupiedCells.add(`${r},${c}`);
+      }
+    }
+
+    allRuns.push(...blockToRuns(tr, tc, rows, cols));
+  }
+
+  if (validateRuns(allRuns)) {
+    TEMPLATES.push({ runs: allRuns, whiteCellCount: occupiedCells.size });
+  }
+}
 
 // ── Helper: get cells in a run ──────────────────────────────────────────
 function getRunCells(run) {
@@ -489,7 +340,6 @@ function fillGrid(runs, rng, maxNodes) {
     }
   });
 
-  // Collect white cells (row-major order)
   const whiteCells = [];
   const isWhite = Array.from({ length: SIZE }, () => new Array(SIZE).fill(false));
   for (const rc of runCells) {
@@ -515,11 +365,9 @@ function fillGrid(runs, rng, maxNodes) {
 
     const [r, c] = whiteCells[idx];
 
-    // Compute forbidden digits
     let forbidden = 0;
     for (const ri of cellToRuns[r][c]) forbidden |= runUsed[ri];
 
-    // Build and shuffle allowed digits
     const allowed = [];
     for (let d = 1; d <= 9; d++) {
       if (!(forbidden & (1 << d))) allowed.push(d);
@@ -605,7 +453,6 @@ function hasUniqueSolution(runs, clues, maxNodes) {
     for (let d = 1; d <= 9; d++) {
       if (forbidden & (1 << d)) continue;
 
-      // Pruning: check sum constraints for each run this cell is in
       let valid = true;
       for (const ri of myRuns) {
         const newSum = runPartialSum[ri] + d;
@@ -614,16 +461,12 @@ function hasUniqueSolution(runs, clues, maxNodes) {
         const targetSum = clues[ri].sum;
 
         if (newFilled === runLen) {
-          // Run complete — exact match required
           if (newSum !== targetSum) { valid = false; break; }
         } else {
-          // Run incomplete — compute tight bounds on remaining sum
           const remaining = runLen - newFilled;
           const usedMask = runUsed[ri] | (1 << d);
 
-          // Minimum: sum of smallest 'remaining' unused digits
-          let minRem = 0;
-          let count = 0;
+          let minRem = 0, count = 0;
           for (let v = 1; v <= 9 && count < remaining; v++) {
             if (!(usedMask & (1 << v))) { minRem += v; count++; }
           }
@@ -631,9 +474,7 @@ function hasUniqueSolution(runs, clues, maxNodes) {
             valid = false; break;
           }
 
-          // Maximum: sum of largest 'remaining' unused digits
-          let maxRem = 0;
-          count = 0;
+          let maxRem = 0; count = 0;
           for (let v = 9; v >= 1 && count < remaining; v--) {
             if (!(usedMask & (1 << v))) { maxRem += v; count++; }
           }
@@ -690,13 +531,11 @@ function buildLayout(runs) {
 function generatePuzzle(seed) {
   const rng = mulberry32(seed);
 
-  // Only use valid templates (every white cell in both across + down run)
-  const validIndices = TEMPLATES
-    .map((t, i) => ({ i, ...t }))
-    .filter(t => t.valid && t.whiteCellCount >= 20)
-    .map(t => t.i);
+  if (TEMPLATES.length === 0) {
+    throw new Error('Kakuro: no valid templates available');
+  }
 
-  const templateOrder = shuffle(validIndices, rng);
+  const templateOrder = shuffle([...Array(TEMPLATES.length).keys()], rng);
 
   for (const ti of templateOrder) {
     const { runs } = TEMPLATES[ti];
