@@ -1,29 +1,103 @@
 /**
  * Game registry — imports all game question banks and registers them
  * with the scoring engine at startup.
- *
- * To add a new paid game:
- * 1. Create src/games/your-game.mjs with questions array + evaluator function
- * 2. Import and register it here
- * 3. Add it to the games table via upsertGame()
  */
 
 import { registerGame } from '../scoring.mjs';
 import { upsertGame } from '../db/index.mjs';
 
-import { GAME_ID as estId, questions as estQ, evaluator as estEval } from './estimation-engine.mjs';
+import {
+  GAME_ID as estId,
+  questions as estQ,
+  evaluator as estEval,
+  selectQuestions as estSelect,
+  QUESTIONS_PER_SESSION as estQPS
+} from './estimation-engine.mjs';
+
+import {
+  GAME_ID as sudId,
+  evaluator as sudEval,
+  selectQuestions as sudSelect,
+  stripQuestion as sudStrip,
+} from './sudoku-duel.mjs';
+
+import {
+  GAME_ID as pocId,
+  evaluator as pocEval,
+  selectQuestions as pocSelect,
+  QUESTIONS_PER_SESSION as pocQPS
+} from './prime-or-composite.mjs';
+
+import {
+  GAME_ID as seqId,
+  evaluator as seqEval,
+  selectQuestions as seqSelect,
+  QUESTIONS_PER_SESSION as seqQPS
+} from './sequence-solver.mjs';
+
+import {
+  GAME_ID as cdnId,
+  evaluator as cdnEval,
+  selectQuestions as cdnSelect,
+  stripQuestion as cdnStrip,
+  QUESTIONS_PER_SESSION as cdnQPS,
+} from './countdown-numbers.mjs';
 
 export function registerAllGames() {
-  // Estimation Engine — paid competitive game
-  registerGame(estId, estQ, estEval);
+  // Estimation Engine — sequential (10 questions, 60s each)
+  registerGame(estId, estQ, estEval, estSelect, null, 'sequential');
   upsertGame({
     id: estId,
     name: 'Estimation Engine',
     isPaid: true,
     serverScoring: true,
-    sessionTimeoutSeconds: 300,
-    questionsPerSession: 10
+    sessionTimeoutSeconds: 660,
+    questionsPerSession: estQPS
   });
 
-  console.log('Registered games:', [estId].join(', '));
+  // Sudoku Duel — continuous (single puzzle, timed session)
+  registerGame(sudId, null, sudEval, sudSelect, sudStrip, 'continuous');
+  upsertGame({
+    id: sudId,
+    name: 'Sudoku Duel',
+    isPaid: true,
+    serverScoring: true,
+    sessionTimeoutSeconds: 3600,
+    questionsPerSession: 1
+  });
+
+  // Prime or Composite — sequential (20 questions, 5s each, speed-only)
+  registerGame(pocId, null, pocEval, pocSelect, null, 'sequential');
+  upsertGame({
+    id: pocId,
+    name: 'Prime or Composite',
+    isPaid: true,
+    serverScoring: true,
+    sessionTimeoutSeconds: 150,
+    questionsPerSession: pocQPS
+  });
+
+  // Sequence Solver — sequential (20 questions, no hard limit, time decay)
+  registerGame(seqId, null, seqEval, seqSelect, null, 'sequential');
+  upsertGame({
+    id: seqId,
+    name: 'Sequence Solver',
+    isPaid: true,
+    serverScoring: true,
+    sessionTimeoutSeconds: 600,
+    questionsPerSession: seqQPS
+  });
+
+  // Countdown Numbers — sequential (5 rounds, 120s each)
+  registerGame(cdnId, null, cdnEval, cdnSelect, cdnStrip, 'sequential');
+  upsertGame({
+    id: cdnId,
+    name: 'Countdown Numbers',
+    isPaid: true,
+    serverScoring: true,
+    sessionTimeoutSeconds: 660,
+    questionsPerSession: cdnQPS
+  });
+
+  console.log('Registered games:', [estId, sudId, pocId, seqId, cdnId].join(', '));
 }

@@ -16,6 +16,7 @@ app.use(cors({
   origin: [
     'https://mathswins.co.uk',
     'https://www.mathswins.co.uk',
+    'https://dapp-api.mathswins.co.uk',
     'http://localhost:8080',
     'http://127.0.0.1:8080'
   ],
