@@ -1,0 +1,8 @@
+node_modules/
+contracts/node_modules/
+contracts/broadcast/
+contracts/cache/
+contracts/out-pvm/
+contracts/out/
+.env
+*.log

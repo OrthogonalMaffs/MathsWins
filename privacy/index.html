@@ -1,0 +1,340 @@
+<!DOCTYPE html>
+<html lang="en-GB">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Privacy Notice | MathsWins</title>
+    <meta name="description" content="How MathsWins collects, uses, and protects your data. Clear, honest, no legalese.">
+    <meta name="robots" content="noindex">
+    <link rel="canonical" href="https://mathswins.co.uk/privacy/">
+    <meta property="og:title" content="Privacy Notice | MathsWins">
+    <meta property="og:description" content="How MathsWins collects, uses, and protects your data.">
+    <meta property="og:url" content="https://mathswins.co.uk/privacy/">
+    <meta property="og:type" content="website">
+    <meta name="twitter:card" content="summary">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=DM+Mono:wght@400;500&family=Outfit:wght@300;400;600;700&display=swap" rel="stylesheet">
+    <style>
+        *, *::before, *::after { margin: 0; padding: 0; box-sizing: border-box; }
+
+        :root {
+            --bg: #050709;
+            --surface: #0a0d14;
+            --surface2: #0f1319;
+            --border: #161c28;
+            --border2: #1e2638;
+            --gold: #d4a847;
+            --gold-dim: rgba(212, 168, 71, 0.1);
+            --teal: #2dd4bf;
+            --text: #c8cdd8;
+            --text-bright: #e8ecf4;
+            --muted: #4a5568;
+        }
+
+        html { scroll-behavior: smooth; }
+
+        body {
+            font-family: 'Outfit', sans-serif;
+            background: var(--bg);
+            color: var(--text);
+            line-height: 1.7;
+            min-height: 100vh;
+        }
+
+        /* NAV */
+        .nav {
+            position: sticky;
+            top: 0;
+            z-index: 100;
+            background: rgba(5, 7, 9, 0.95);
+            backdrop-filter: blur(10px);
+            border-bottom: 1px solid var(--border);
+            padding: 0.75rem 1.5rem;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+        }
+        .nav-brand {
+            font-family: 'Bebas Neue', sans-serif;
+            font-size: 1.5rem;
+            color: var(--gold);
+            text-decoration: none;
+            letter-spacing: 2px;
+        }
+        .nav-links { display: flex; gap: 1.5rem; }
+        .nav-links a {
+            color: var(--muted);
+            text-decoration: none;
+            font-size: 0.85rem;
+            font-weight: 400;
+            transition: color 0.2s;
+        }
+        .nav-links a:hover { color: var(--text-bright); }
+
+        /* CONTENT */
+        .container {
+            max-width: 720px;
+            margin: 0 auto;
+            padding: 3rem 1.5rem 4rem;
+        }
+
+        h1 {
+            font-family: 'Bebas Neue', sans-serif;
+            font-size: 2.5rem;
+            color: var(--gold);
+            letter-spacing: 2px;
+            margin-bottom: 0.25rem;
+        }
+
+        .last-updated {
+            color: var(--muted);
+            font-size: 0.8rem;
+            margin-bottom: 2.5rem;
+            padding-bottom: 1.5rem;
+            border-bottom: 1px solid var(--border);
+        }
+
+        /* FLAG: Items Jon needs to review/confirm */
+        .jon-review {
+            background: rgba(212, 168, 71, 0.08);
+            border-left: 3px solid var(--gold);
+            padding: 0.75rem 1rem;
+            margin: 0.5rem 0 1rem;
+            font-size: 0.85rem;
+            color: var(--gold);
+            border-radius: 0 6px 6px 0;
+            display: none; /* Hidden on live site — visible in source for Jon/CC */
+        }
+
+        h2 {
+            font-family: 'Bebas Neue', sans-serif;
+            font-size: 1.5rem;
+            color: var(--text-bright);
+            letter-spacing: 1px;
+            margin-top: 2.5rem;
+            margin-bottom: 0.75rem;
+        }
+
+        p { margin-bottom: 1rem; }
+
+        .data-table {
+            width: 100%;
+            border-collapse: collapse;
+            margin: 1rem 0 1.5rem;
+            font-size: 0.9rem;
+        }
+        .data-table th,
+        .data-table td {
+            text-align: left;
+            padding: 0.6rem 0.75rem;
+            border-bottom: 1px solid var(--border);
+        }
+        .data-table th {
+            color: var(--gold);
+            font-weight: 600;
+            font-size: 0.8rem;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+        .data-table td { color: var(--text); }
+        .data-table tr:last-child td { border-bottom: none; }
+
+        .highlight-box {
+            background: var(--surface);
+            border: 1px solid var(--border);
+            border-radius: 8px;
+            padding: 1.25rem;
+            margin: 1.5rem 0;
+        }
+        .highlight-box p:last-child { margin-bottom: 0; }
+
+        a { color: var(--teal); text-decoration: none; }
+        a:hover { text-decoration: underline; }
+
+        ul {
+            margin: 0.5rem 0 1rem 1.25rem;
+            list-style: disc;
+        }
+        ul li {
+            margin-bottom: 0.4rem;
+            font-size: 0.95rem;
+        }
+
+        .footer {
+            border-top: 1px solid var(--border);
+            padding: 2rem 1.5rem;
+            text-align: center;
+            color: var(--muted);
+            font-size: 0.8rem;
+        }
+
+        @media (max-width: 600px) {
+            h1 { font-size: 2rem; }
+            .container { padding: 2rem 1rem 3rem; }
+            .data-table { font-size: 0.8rem; }
+            .data-table th, .data-table td { padding: 0.5rem; }
+        }
+    </style>
+</head>
+<body>
+
+<nav class="nav">
+    <a href="/" class="nav-brand">MathsWins</a>
+    <div class="nav-links">
+        <a href="/tools/">Tools</a>
+        <a href="/games/">Games</a>
+        <a href="/academy/">Academy</a>
+        <a href="/about/">About</a>
+    </div>
+</nav>
+
+<div class="container">
+
+    <h1>Privacy Notice</h1>
+    <p class="last-updated">Last updated: March 2026</p>
+    <!-- JON: Update this date whenever the notice changes -->
+
+    <p>MathsWins is a mathematical education platform. This notice explains what data we collect, why, and what we do with it. No legalese, no hiding behind walls of text.</p>
+
+    <p>This notice covers the main MathsWins site (mathswins.co.uk). Our competitive games platform at <a href="/dapp/privacy/">/dapp/</a> has its own separate privacy notice.</p>
+
+    <h2>What We Collect</h2>
+
+    <table class="data-table">
+        <thead>
+            <tr>
+                <th>Data</th>
+                <th>Why</th>
+                <th>Stored Where</th>
+            </tr>
+        </thead>
+        <tbody>
+            <tr>
+                <td>Google account info (name, email, Google ID)</td>
+                <td>To sign you in and link your purchases</td>
+                <td>Cloudflare KV</td>
+            </tr>
+            <tr>
+                <td>Purchase history</td>
+                <td>So you can access what you've paid for, on any device</td>
+                <td>Cloudflare KV</td>
+            </tr>
+            <tr>
+                <td>Analytics (pages visited, traffic source, device type, region)</td>
+                <td>To understand which content is useful</td>
+                <td>Google Analytics (cookieless)</td>
+            </tr>
+        </tbody>
+    </table>
+
+    <h2>What We Don't Collect</h2>
+
+    <ul>
+        <li>Passwords — Google handles your authentication, not us</li>
+        <li>Payment card details — Stripe processes all payments; we never see your card number</li>
+        <li>Tracking cookies — our analytics run in cookieless mode, setting zero cookies on your device</li>
+        <li>Browsing history outside this site</li>
+    </ul>
+
+    <h2>Cookies</h2>
+
+    <p>We use one cookie: a session cookie set when you sign in with Google. This is a strictly necessary functional cookie (it keeps you logged in) and does not require consent under UK PECR. It expires after 90 days, or 365 days if you hold a lifetime subscription.</p>
+
+    <p>We do not use advertising cookies, tracking cookies, or third-party cookies. No cookie banner is needed because there's nothing to consent to.</p>
+
+    <h2>Lawful Basis</h2>
+
+    <p>Under UK GDPR, we process your data on two bases:</p>
+
+    <ul>
+        <li><strong>Contract</strong> — your email and purchase history are necessary to deliver the courses you've paid for and restore access across devices</li>
+        <li><strong>Legitimate interests</strong> — cookieless analytics help us understand which tools and courses are useful, so we can build better ones</li>
+    </ul>
+
+    <h2>How Long We Keep It</h2>
+
+    <!-- JON REVIEW: Confirm these retention periods are what you want -->
+    <table class="data-table">
+        <thead>
+            <tr>
+                <th>Data</th>
+                <th>Retention</th>
+            </tr>
+        </thead>
+        <tbody>
+            <tr>
+                <td>Lifetime subscriber accounts</td>
+                <td>Indefinitely (the purchase is permanent)</td>
+            </tr>
+            <tr>
+                <td>Annual subscriber accounts</td>
+                <td>12 months after subscription lapses</td>
+            </tr>
+            <tr>
+                <td>Individual course purchase records</td>
+                <td>24 months after last login</td>
+            </tr>
+            <tr>
+                <td>Google Analytics data</td>
+                <td>14 months (Google's default retention)</td>
+            </tr>
+        </tbody>
+    </table>
+
+    <p>If you want your account deleted sooner, email us and we'll remove it within 30 days.</p>
+
+    <h2>Who Sees Your Data</h2>
+
+    <p>Your data is shared only with the services needed to run the site:</p>
+
+    <ul>
+        <li><strong>Google</strong> — authentication (OAuth) and analytics (GA4)</li>
+        <li><strong>Stripe</strong> — payment processing</li>
+        <li><strong>Cloudflare</strong> — hosting, CDN, and our backend worker</li>
+    </ul>
+
+    <p>We do not sell, rent, or share your data with anyone else. There is no advertising on MathsWins.</p>
+
+    <h2>Your Rights</h2>
+
+    <p>Under UK GDPR, you have the right to:</p>
+
+    <ul>
+        <li>Access the data we hold about you</li>
+        <li>Correct any inaccurate data</li>
+        <li>Request deletion of your data</li>
+        <li>Object to processing based on legitimate interests</li>
+        <li>Lodge a complaint with the ICO (<a href="https://ico.org.uk" target="_blank" rel="noopener">ico.org.uk</a>)</li>
+    </ul>
+
+    <!-- JON REVIEW: Add your preferred contact email here -->
+    <div class="highlight-box">
+        <p>To exercise any of these rights, email <strong>contact@mathswins.co.uk</strong>. We'll respond within 30 days.</p>
+    </div>
+
+    <h2>Changes to This Notice</h2>
+
+    <p>If we change what data we collect or how we use it, we'll update this page and the date at the top. No surprises.</p>
+
+</div>
+
+<footer class="footer">
+    &copy; 2026 MathsWins. All rights reserved.
+</footer>
+
+<!-- GA4 — CC: Replace CURRENT_LIVE_ID with the actual measurement ID from the live site -->
+<script async src="https://www.googletagmanager.com/gtag/js?id=CURRENT_LIVE_ID"></script>
+<script>
+    window.dataLayer = window.dataLayer || [];
+    function gtag(){dataLayer.push(arguments);}
+    gtag('js', new Date());
+    gtag('config', 'CURRENT_LIVE_ID', {
+        send_page_view: true,
+        storage: 'none',
+        anonymize_ip: true
+    });
+</script>
+
+</body>
+</html>
