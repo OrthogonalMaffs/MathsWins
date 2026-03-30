@@ -26,47 +26,42 @@
 <link rel="icon" type="image/svg+xml" href="../../schools/assets/favicon.svg">
 <title>Towers of Hanoi · MathsWins</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
-<link href="https://fonts.googleapis.com/css2?family=DM+Mono:ital,wght@0,300;0,400;0,500&family=Bebas+Neue&family=Inter:wght@300;400;500&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=DM+Mono:wght@400;500&family=Bebas+Neue&family=Outfit:wght@300;400;600;700&display=swap" rel="stylesheet">
 <style>
 :root{
-  --ink:#070d1a;--navy:#0b1629;--navy-mid:#0f1f3d;--navy-light:#162847;
-  --gold:#c9a84c;--gold-warm:#e2b96a;--gold-dim:#7a5e28;
-  --teal:#2dd4bf;--teal-dim:#134e4a;
-  --body:#a8b8d0;--muted:#4a6080;--border:#1a2e4a;--border-dim:#111f33;
-  --success:#2dd4a0;--danger:#ef5350;--warn:#d4a847;
-  --disk1:#ef5350;--disk2:#f97316;--disk3:#eab308;--disk4:#2dd4a0;--disk5:#3b82f6;--disk6:#8b5cf6;--disk7:#ec4899;
+  --bg:#050709;--surface:#0a0d12;--surface2:#0f1218;--surface3:#13171e;
+  --border:#1a1f2a;--border2:#242b38;
+  --gold:#c9a84c;--gold-dim:rgba(201,168,76,0.08);--gold-glow:rgba(201,168,76,0.15);--gold-border:rgba(201,168,76,0.20);--gold-hover:#d4b050;
+  --text-white:#eaecf0;--text-bright:#d4d8e0;--text:#9ca3b0;--muted:#3e4555;
+  --red:#c0392b;--green:#27ae60;
+  --disk1:#ef5350;--disk2:#f97316;--disk3:#eab308;--disk4:#27ae60;--disk5:#3b82f6;--disk6:#8b5cf6;--disk7:#ec4899;
 }
 *,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
-body{background:var(--ink);color:var(--body);font-family:'Inter',sans-serif;min-height:100vh;display:flex;flex-direction:column;align-items:center;overflow-x:hidden}
-body::before{content:'';position:fixed;inset:0;background-image:linear-gradient(rgba(201,168,76,0.03) 1px,transparent 1px),linear-gradient(90deg,rgba(201,168,76,0.03) 1px,transparent 1px);background-size:40px 40px;pointer-events:none;z-index:0}
-nav{position:sticky;top:0;z-index:100;width:100%;display:flex;align-items:center;justify-content:space-between;padding:0 2rem;height:52px;background:rgba(7,13,26,0.92);backdrop-filter:blur(12px);border-bottom:1px solid var(--border-dim)}
-.nav-logo{font-family:'Bebas Neue',sans-serif;font-size:1.2rem;letter-spacing:0.15em;color:var(--gold);text-decoration:none}
-.nav-back{font-family:'DM Mono',monospace;font-size:0.6rem;letter-spacing:0.12em;color:var(--muted);text-decoration:none;transition:color 0.2s}
-.nav-back:hover{color:var(--gold)}
+body{background:var(--bg);color:var(--text);font-family:'Outfit',sans-serif;min-height:100vh;display:flex;flex-direction:column;align-items:center;overflow-x:hidden}
 .page{position:relative;z-index:1;width:100%;max-width:580px;padding:2rem 1rem 4rem;display:flex;flex-direction:column;align-items:center;gap:1.2rem}
 .game-header{text-align:center}
-.game-kicker{font-family:'DM Mono',monospace;font-size:0.6rem;letter-spacing:0.2em;text-transform:uppercase;color:var(--teal);margin-bottom:0.4rem}
-.game-title{font-family:'Bebas Neue',sans-serif;font-size:3rem;letter-spacing:0.06em;color:var(--gold-warm);line-height:1}
+.game-kicker{font-family:'DM Mono',monospace;font-size:0.6rem;letter-spacing:0.2em;text-transform:uppercase;color:var(--gold);margin-bottom:0.4rem}
+.game-title{font-family:'Bebas Neue',sans-serif;font-size:3rem;letter-spacing:0.06em;color:var(--text-white);line-height:1}
 .game-sub{font-size:0.75rem;color:var(--muted);line-height:1.6;margin-top:0.4rem}
-.status-bar{display:flex;gap:0.8rem;width:100%;background:var(--navy-mid);border:1px solid var(--border);border-radius:4px;padding:0.75rem 1rem;justify-content:space-around}
+.status-bar{display:flex;gap:0.8rem;width:100%;background:var(--surface2);border:1px solid var(--border);border-radius:4px;padding:0.75rem 1rem;justify-content:space-around}
 .si{display:flex;flex-direction:column;align-items:center;gap:0.15rem}
 .si-val{font-family:'DM Mono',monospace;font-size:1.1rem;font-weight:500;color:var(--gold)}
 .si-lbl{font-family:'DM Mono',monospace;font-size:0.45rem;letter-spacing:0.12em;text-transform:uppercase;color:var(--muted)}
 
 /* Tower arena */
 .tower-arena{
-  width:100%;background:var(--navy-mid);border:1px solid var(--border);border-radius:4px;
+  width:100%;background:var(--surface2);border:1px solid var(--border);border-radius:4px;
   padding:1.5rem 1rem 1rem;position:relative;
 }
 .arena-inner{display:flex;justify-content:space-around;align-items:flex-end;gap:0.5rem;height:220px}
 .tower-col{
   flex:1;display:flex;flex-direction:column;align-items:center;justify-content:flex-end;
   position:relative;cursor:pointer;padding:0 4px;
-  border-radius:3px;transition:background 0.2s;
+  border-radius:4px;transition:background 0.15s;
 }
-.tower-col:hover{background:rgba(201,168,76,0.04)}
-.tower-col.selected{background:rgba(201,168,76,0.08);outline:1px dashed var(--gold-dim)}
-.tower-col.valid-target{background:rgba(34,197,94,0.06);outline:1px dashed rgba(34,197,94,0.4)}
+.tower-col:hover{background:var(--gold-dim)}
+.tower-col.selected{background:var(--gold-dim);outline:1px dashed var(--gold-border)}
+.tower-col.valid-target{background:rgba(39,174,96,0.06);outline:1px dashed rgba(39,174,96,0.4)}
 .tower-label{
   position:absolute;bottom:-1.6rem;
   font-family:'DM Mono',monospace;font-size:0.6rem;letter-spacing:0.12em;text-transform:uppercase;color:var(--muted);
@@ -75,21 +70,20 @@ nav{position:sticky;top:0;z-index:100;width:100%;display:flex;align-items:center
 .peg{
   position:absolute;bottom:0;left:50%;transform:translateX(-50%);
   width:6px;height:100%;
-  background:var(--border);border-radius:3px;z-index:0;
+  background:var(--border);border-radius:4px;z-index:0;
 }
 .base{
   position:absolute;bottom:-2px;left:50%;transform:translateX(-50%);
   width:85%;height:6px;
-  background:var(--muted);border-radius:3px;
+  background:var(--muted);border-radius:4px;
 }
 .disk{
   position:relative;z-index:1;
-  height:22px;border-radius:3px;
+  height:22px;border-radius:4px;
   margin-bottom:2px;
   display:flex;align-items:center;justify-content:center;
   font-family:'DM Mono',monospace;font-size:0.52rem;font-weight:500;color:rgba(0,0,0,0.6);
-  transition:all 0.2s;cursor:pointer;
-  box-shadow:0 2px 4px rgba(0,0,0,0.3);
+  transition:all 0.15s;cursor:pointer;
 }
 .disk:hover{filter:brightness(1.15)}
 .disk.selected-disk{outline:2px solid white;filter:brightness(1.2);transform:translateY(-3px)}
@@ -106,59 +100,57 @@ nav{position:sticky;top:0;z-index:100;width:100%;display:flex;align-items:center
 
 /* Controls */
 .controls{display:flex;gap:0.5rem;width:100%}
-.btn{padding:0.65rem 1rem;font-family:'DM Mono',monospace;font-size:0.6rem;letter-spacing:0.1em;text-transform:uppercase;cursor:pointer;border-radius:3px;border:none;transition:all 0.2s;flex:1}
-.btn-gold{background:var(--gold);color:var(--ink);font-weight:500}
-.btn-gold:hover{background:var(--gold-warm)}
-.btn-ghost{background:transparent;border:1px solid var(--border);color:var(--muted)}
-.btn-ghost:hover{border-color:var(--gold-dim);color:var(--gold)}
+.btn{padding:0.65rem 1rem;font-family:'DM Mono',monospace;font-size:0.6rem;letter-spacing:0.1em;text-transform:uppercase;cursor:pointer;border-radius:4px;border:none;transition:all 0.15s;flex:1}
+.btn-gold{background:var(--gold);color:var(--bg);font-weight:500}
+.btn-gold:hover{background:var(--gold-hover)}
+.btn-ghost{background:var(--surface2);border:1px solid var(--border);color:var(--text)}
+.btn-ghost:hover{border-color:var(--gold-border);color:var(--gold)}
 
 /* Difficulty selector */
 .diff-selector{display:flex;gap:0.4rem;width:100%}
-.diff-btn{flex:1;padding:0.5rem;font-family:'DM Mono',monospace;font-size:0.55rem;letter-spacing:0.08em;text-transform:uppercase;cursor:pointer;border-radius:3px;border:1px solid var(--border);background:var(--navy-mid);color:var(--muted);transition:all 0.2s;text-align:center}
-.diff-btn:hover{border-color:var(--gold-dim);color:var(--gold)}
-.diff-btn.active{background:rgba(201,168,76,0.1);border-color:var(--gold-dim);color:var(--gold)}
+.diff-btn{flex:1;padding:0.5rem;font-family:'DM Mono',monospace;font-size:0.55rem;letter-spacing:0.08em;text-transform:uppercase;cursor:pointer;border-radius:4px;border:1px solid var(--border);background:var(--surface2);color:var(--muted);transition:all 0.15s;text-align:center}
+.diff-btn:hover{border-color:var(--gold-border);color:var(--gold)}
+.diff-btn.active{background:var(--gold-dim);border-color:var(--gold-border);color:var(--gold)}
 
 /* Move efficiency */
 .efficiency-bar{
-  width:100%;background:var(--navy-mid);border:1px solid var(--border);border-radius:4px;padding:0.8rem 1rem;
+  width:100%;background:var(--surface2);border:1px solid var(--border);border-radius:4px;padding:0.8rem 1rem;
 }
 .eff-label{font-family:'DM Mono',monospace;font-size:0.52rem;letter-spacing:0.12em;text-transform:uppercase;color:var(--muted);margin-bottom:0.5rem;text-align:center}
 .eff-track{height:8px;background:var(--border);border-radius:4px;overflow:hidden}
-.eff-fill{height:100%;background:var(--success);border-radius:4px;transition:width 0.3s,background 0.3s}
+.eff-fill{height:100%;background:var(--green);border-radius:4px;transition:width 0.15s,background 0.15s}
 .eff-labels{display:flex;justify-content:space-between;margin-top:0.3rem;font-family:'DM Mono',monospace;font-size:0.48rem;color:var(--muted)}
 
-.msg{font-family:'DM Mono',monospace;font-size:0.62rem;text-align:center;min-height:1rem;color:var(--danger)}
-.msg.ok{color:var(--success)}
+.msg{font-family:'DM Mono',monospace;font-size:0.62rem;text-align:center;min-height:1rem;color:var(--red)}
+.msg.ok{color:var(--green)}
 
 /* LB */
-.lb-section{width:100%;background:var(--navy-mid);border:1px solid var(--border);border-radius:4px;overflow:hidden}
-.lb-header{padding:0.75rem 1rem;border-bottom:1px solid var(--border-dim);display:flex;align-items:center}
+.lb-section{width:100%;background:var(--surface2);border:1px solid var(--border);border-radius:4px;overflow:hidden}
+.lb-header{padding:0.75rem 1rem;border-bottom:1px solid var(--border);display:flex;align-items:center}
 .lb-title{font-family:'DM Mono',monospace;font-size:0.55rem;letter-spacing:0.15em;text-transform:uppercase;color:var(--muted)}
 .lb-body{padding:0.5rem 0}
 .lb-empty{font-family:'DM Mono',monospace;font-size:0.6rem;color:var(--muted);text-align:center;padding:1.2rem;font-style:italic}
-.lb-row{display:grid;grid-template-columns:1.5rem 1fr auto auto auto;gap:0.5rem;align-items:center;padding:0.4rem 1rem;border-bottom:1px solid var(--border-dim);font-family:'DM Mono',monospace;font-size:0.6rem}
+.lb-row{display:grid;grid-template-columns:1.5rem 1fr auto auto auto;gap:0.5rem;align-items:center;padding:0.4rem 1rem;border-bottom:1px solid var(--border);font-family:'DM Mono',monospace;font-size:0.6rem}
 .lb-row:last-child{border-bottom:none}
-.lb-row.hl{background:rgba(201,168,76,0.06)}
-.lb-rank{color:var(--muted)}.lb-name{color:var(--body)}.lb-score{color:var(--gold);text-align:right}.lb-discs{color:var(--muted);font-size:0.52rem;text-align:right}.lb-eff{color:var(--teal);font-size:0.52rem;text-align:right}
+.lb-row.hl{background:var(--gold-dim)}
+.lb-rank{color:var(--muted)}.lb-name{color:var(--text)}.lb-score{color:var(--gold);text-align:right}.lb-discs{color:var(--muted);font-size:0.52rem;text-align:right}.lb-eff{color:var(--gold);font-size:0.52rem;text-align:right}
 
 /* Modal */
-.modal-overlay{position:fixed;inset:0;background:rgba(7,13,26,0.88);backdrop-filter:blur(8px);z-index:200;display:flex;align-items:center;justify-content:center;padding:1rem}
+.modal-overlay{position:fixed;inset:0;background:rgba(5,7,9,0.88);backdrop-filter:blur(8px);z-index:200;display:flex;align-items:center;justify-content:center;padding:1rem}
 .modal-overlay.hidden{display:none}
-.modal{background:var(--navy-mid);border:1px solid var(--border);border-radius:4px;width:100%;max-width:380px;overflow:hidden}
+.modal{background:var(--surface2);border:1px solid var(--border);border-radius:6px;width:100%;max-width:380px;overflow:hidden}
 .modal-header{padding:1.4rem 1.4rem 0;text-align:center}
-.modal-result{font-family:'Bebas Neue',sans-serif;font-size:2rem;letter-spacing:0.1em;color:var(--gold-warm);margin-bottom:0.3rem}
-.modal-score{margin:1rem 1.4rem;background:var(--navy-light);border:1px solid var(--border-dim);border-radius:3px;padding:0.8rem;display:grid;grid-template-columns:1fr 1fr;gap:0.5rem}
+.modal-result{font-family:'Bebas Neue',sans-serif;font-size:2rem;letter-spacing:0.1em;color:var(--gold);margin-bottom:0.3rem}
+.modal-score{margin:1rem 1.4rem;background:var(--surface3);border:1px solid var(--border);border-radius:4px;padding:0.8rem;display:grid;grid-template-columns:1fr 1fr;gap:0.5rem}
 .ms-item{display:flex;flex-direction:column;gap:0.1rem}
 .ms-val{font-family:'DM Mono',monospace;font-size:0.9rem;color:var(--gold)}
 .ms-lbl{font-family:'DM Mono',monospace;font-size:0.45rem;letter-spacing:0.1em;text-transform:uppercase;color:var(--muted)}
 .modal-name{padding:0 1.4rem;display:flex;flex-direction:column;gap:0.4rem}
 .modal-name label{font-family:'DM Mono',monospace;font-size:0.52rem;letter-spacing:0.1em;text-transform:uppercase;color:var(--muted)}
-.name-input{background:var(--navy);border:1px solid var(--border);border-radius:3px;padding:0.6rem 0.8rem;font-family:'DM Mono',monospace;font-size:0.8rem;color:var(--body);outline:none;width:100%}
-.name-input:focus{border-color:var(--gold-dim)}
+.name-input{background:var(--surface);border:1px solid var(--border);border-radius:4px;padding:0.6rem 0.8rem;font-family:'DM Mono',monospace;font-size:0.8rem;color:var(--text);outline:none;width:100%}
+.name-input:focus{border-color:var(--gold-border)}
 .modal-acts{display:flex;gap:0.5rem;padding:1rem 1.4rem 1.4rem}
 .modal-acts .btn{flex:1}
-@keyframes bounce{0%,100%{transform:translateY(0)}50%{transform:translateY(-6px)}}
-.celebrate{animation:bounce 0.4s ease}
 </style>
 <meta name="twitter:card" content="summary_large_image">
 <meta name="twitter:title" content="MathsWins">
@@ -169,15 +161,10 @@ nav{position:sticky;top:0;z-index:100;width:100%;display:flex;align-items:center
 <body>
 <script src="../dapp-wallet.js"></script>
 
-<nav>
-  <a class="nav-logo" href="/builders/">MathsWins</a>
-  <span style="font-family:'DM Mono',monospace;font-size:0.48rem;letter-spacing:0.1em;text-transform:uppercase;padding:0.2rem 0.6rem;border:1px solid #134e4a;border-radius:2px;color:#2dd4bf">Hosted on QF Network</span>
-  <a class="nav-back" href="../../">← Back</a>
-</nav>
 <div class="page">
   <div class="game-header">
     <p class="game-kicker">Recursive Logic · Optimisation</p>
-    <h1 class="game-title">Towers of <strong style="color:var(--teal)">Hanoi</strong></h1>
+    <h1 class="game-title">Towers of <strong style="color:var(--gold)">Hanoi</strong></h1>
     <p class="game-sub">Move all disks to peg C. Optimal score requires the minimum possible moves: 2ⁿ − 1.</p>
   </div>
 
@@ -345,7 +332,7 @@ function updateStatus(){
   document.getElementById('sv-score').textContent=calcScore();
   const fill=document.getElementById('eff-fill');
   fill.style.width=Math.min(100,eff)+'%';
-  fill.style.background=eff>=100?'var(--success)':eff>=75?'var(--warn)':'var(--danger)';
+  fill.style.background=eff>=100?'var(--green)':eff>=75?'var(--gold)':'var(--red)';
 }
 
 function calcScore(){

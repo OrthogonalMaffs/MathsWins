@@ -246,7 +246,7 @@ function startCountdown(seconds){
     const elapsed=Date.now()-start;
     const pct=Math.max(0,1-elapsed/total);
     fill.style.strokeDashoffset=(1-pct)*circ;
-    fill.style.stroke=pct>0.4?'var(--gold)':pct>0.2?'var(--warn)':'var(--danger)';
+    fill.style.stroke=pct>0.4?'var(--gold)':pct>0.2?'var(--gold-hover)':'var(--red)';
     text.textContent=Math.ceil(pct*seconds);
     if(pct<=0){clearInterval(crTimer);}
   },50);

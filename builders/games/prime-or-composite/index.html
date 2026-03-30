@@ -98,54 +98,50 @@ body{background:var(--bg);color:var(--text);font-family:'Outfit',sans-serif;min-
 .ans-prime:hover{background:rgba(96,165,250,0.18);border-color:var(--prime)}
 .ans-composite{background:rgba(249,115,22,0.08);border-color:rgba(249,115,22,0.3);color:var(--composite)}
 .ans-composite:hover{background:rgba(249,115,22,0.18);border-color:var(--composite)}
-.ans-btn.correct{background:rgba(45,212,160,0.2);border-color:var(--green)}
-.ans-btn.wrong{background:rgba(239,68,68,0.2);border-color:var(--red)}
+.ans-btn.correct{background:rgba(39,174,96,0.2);border-color:var(--green)}
+.ans-btn.wrong{background:rgba(192,57,43,0.2);border-color:var(--red)}
 .ans-btn:disabled{pointer-events:none;opacity:0.5}
 
 /* Score dots */
 .score-history{width:100%;display:flex;gap:0.3rem;justify-content:center;flex-wrap:wrap}
 .sh-dot{width:10px;height:10px;border-radius:50%;background:var(--border);border:1px solid var(--muted);transition:all 0.2s}
-.sh-dot.hit{background:var(--green);border-color:var(--green);box-shadow:0 0 6px rgba(45,212,160,0.4)}
+.sh-dot.hit{background:var(--green);border-color:var(--green);box-shadow:0 0 6px rgba(39,174,96,0.4)}
 .sh-dot.miss{background:var(--red);border-color:var(--red)}
-.sh-dot.timeout{background:var(--warn);border-color:var(--warn)}
+.sh-dot.timeout{background:var(--gold);border-color:var(--gold)}
 
 /* Result flash */
 .result-flash{
   width:100%;background:var(--surface2);border:1px solid var(--border);
-  border-left:3px solid var(--teal-dim);border-radius:6px;
+  border-left:3px solid var(--muted);border-radius:6px;
   padding:0.8rem 1rem;
-  font-family:'DM Mono',monospace;font-size:0.62rem;color:var(--teal);line-height:1.6;
-  animation:slideIn 0.2s ease;display:none;
+  font-family:'DM Mono',monospace;font-size:0.62rem;color:var(--text);line-height:1.6;
+  display:none;
 }
 .result-flash.correct{border-left-color:var(--green);color:var(--green)}
 .result-flash.wrong{border-left-color:var(--red);color:var(--red)}
-.result-flash.timeout{border-left-color:var(--warn);color:var(--warn)}
-@keyframes slideIn{from{opacity:0;transform:translateY(-4px)}to{opacity:1;transform:translateY(0)}}
+.result-flash.timeout{border-left-color:var(--gold);color:var(--gold)}
 
 .btn{padding:0.65rem 1.2rem;font-family:'DM Mono',monospace;font-size:0.62rem;letter-spacing:0.1em;text-transform:uppercase;cursor:pointer;border-radius:6px;border:none;transition:all 0.2s;width:100%}
-.btn-gold{background:var(--gold);color:var(--ink);font-weight:500}
-.btn-gold:hover{background:var(--gold-warm)}
+.btn-gold{background:var(--gold);color:var(--bg);font-weight:500}
+.btn-gold:hover{background:var(--gold-hover)}
 .btn-gold:disabled{background:var(--muted);cursor:not-allowed;opacity:0.5}
-.btn-ghost{background:transparent;border:1px solid var(--border);color:var(--muted)}
-.btn-ghost:hover{border-color:var(--gold-dim);color:var(--gold)}
+.btn-ghost{background:var(--surface2);border:1px solid var(--border);color:var(--text)}
+.btn-ghost:hover{border-color:var(--border2);color:var(--text-bright)}
 
 .msg{font-family:'DM Mono',monospace;font-size:0.62rem;text-align:center;min-height:1rem;color:var(--red)}
 
 /* Modal */
-.modal-overlay{position:fixed;inset:0;background:rgba(5,7,9,0.88);backdrop-filter:blur(8px);z-index:200;display:flex;align-items:center;justify-content:center;padding:1rem;animation:fadeIn 0.2s ease}
-@keyframes fadeIn{from{opacity:0}to{opacity:1}}
+.modal-overlay{position:fixed;inset:0;background:rgba(5,7,9,0.92);backdrop-filter:blur(8px);z-index:200;display:flex;align-items:center;justify-content:center;padding:1rem}
 .modal-overlay.hidden{display:none}
-.modal{background:var(--surface2);border:1px solid var(--border);border-radius:8px;width:100%;max-width:380px;overflow:hidden;animation:popIn 0.25s ease}
-@keyframes popIn{from{transform:scale(0.95);opacity:0}to{transform:scale(1);opacity:1}}
+.modal{background:var(--surface2);border:1px solid var(--border);border-radius:8px;width:100%;max-width:380px;overflow:hidden}
 .modal-header{padding:1.4rem 1.4rem 0;text-align:center}
-.modal-result{font-family:'Bebas Neue',sans-serif;font-size:2rem;letter-spacing:0.1em;color:var(--gold-warm);margin-bottom:0.3rem}
+.modal-result{font-family:'Bebas Neue',sans-serif;font-size:2rem;letter-spacing:0.1em;color:var(--gold);margin-bottom:0.3rem}
 .modal-score{margin:1rem 1.4rem;background:var(--surface);border:1px solid var(--border);border-radius:6px;padding:0.8rem;display:grid;grid-template-columns:1fr 1fr;gap:0.5rem}
 .ms-item{display:flex;flex-direction:column;gap:0.1rem}
 .ms-val{font-family:'DM Mono',monospace;font-size:0.9rem;color:var(--gold)}
 .ms-lbl{font-family:'DM Mono',monospace;font-size:0.45rem;letter-spacing:0.1em;text-transform:uppercase;color:var(--muted)}
 .modal-acts{display:flex;gap:0.5rem;padding:1rem 1.4rem 1.4rem}
 .modal-acts .btn{flex:1}
-@keyframes shake{0%,100%{transform:translateX(0)}20%{transform:translateX(-6px)}40%{transform:translateX(6px)}60%{transform:translateX(-4px)}80%{transform:translateX(4px)}}
 </style>
 </head>
 <body>
@@ -154,7 +150,7 @@ body{background:var(--bg);color:var(--text);font-family:'Outfit',sans-serif;min-
 <div class="page">
   <div class="game-header">
     <p class="game-kicker">Speed · Number Theory</p>
-    <h1 class="game-title">Prime or <strong style="color:var(--teal)">Composite</strong></h1>
+    <h1 class="game-title">Prime or <strong style="color:var(--gold)">Composite</strong></h1>
     <p class="game-sub">20 numbers. 5 seconds each. Classify correctly — speed scores.</p>
   </div>
 
@@ -202,6 +198,7 @@ body{background:var(--bg);color:var(--text);font-family:'Outfit',sans-serif;min-
     <div class="modal-score" id="modal-score"></div>
     <div class="modal-acts">
       <button class="btn btn-ghost" id="modal-again">Play Again</button>
+      <button class="btn btn-gold" onclick="window.location='/builders/'">Back to Lobby</button>
     </div>
   </div>
 </div>
