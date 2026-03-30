@@ -1,0 +1,549 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<script async src="https://www.googletagmanager.com/gtag/js?id=G-7GTLYCZMXN"></script>
+<script>
+  window.dataLayer = window.dataLayer || [];
+  function gtag(){dataLayer.push(arguments);}
+  gtag('js', new Date());
+  gtag('config', 'G-7GTLYCZMXN', { send_page_view: true, storage: 'none', anonymize_ip: true });
+</script>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="description" content="KenKen — fill the grid using arithmetic and logic. No repeats in rows or columns. Cages must hit their target.">
+<title>KenKen · MathsWins</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=DM+Mono:ital,wght@0,300;0,400;0,500&family=Bebas+Neue&family=Outfit:wght@300;400;600;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="../dapp-shell.css">
+<style>
+:root {
+  --ink:#050709;--surface:#0a0d14;--surface2:#0f1319;
+  --gold:#d4a847;--gold-warm:#e2b96a;--gold-dim:#7a5e28;
+  --teal:#2dd4bf;--teal-dim:#134e4a;
+  --text:#c8cdd8;--text-bright:#e8ecf4;--muted:#4a5568;
+  --border:#161c28;--border2:#1e2638;
+  --green:#2dd4a0;--red:#ef5350;--warn:#d4a847;
+  --cage-a:rgba(212,168,71,0.06);--cage-b:rgba(45,212,191,0.06);
+}
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+body{background:var(--ink);color:var(--text);font-family:'Outfit',sans-serif;min-height:100vh;display:flex;flex-direction:column;align-items:center}
+.page{width:100%;max-width:560px;padding:2rem 1rem 4rem;display:flex;flex-direction:column;align-items:center;gap:1.2rem}
+.game-header{text-align:center}
+.game-kicker{font-family:'DM Mono',monospace;font-size:0.6rem;letter-spacing:0.2em;text-transform:uppercase;color:var(--teal);margin-bottom:0.4rem}
+.game-title{font-family:'Bebas Neue',sans-serif;font-size:3rem;letter-spacing:0.08em;color:var(--gold-warm);line-height:1}
+.game-sub{font-size:0.75rem;color:var(--muted);line-height:1.6;margin-top:0.4rem}
+.scoring-info{width:100%;background:var(--surface2);border:1px solid var(--border);border-radius:8px;padding:1.2rem;font-family:'DM Mono',monospace;font-size:0.65rem;color:var(--muted);line-height:1.8}
+.scoring-info h3{font-family:'Bebas Neue',sans-serif;font-size:1.1rem;color:var(--gold);letter-spacing:0.05em;margin-bottom:0.5rem}
+.si-row{display:flex;justify-content:space-between;padding:0.15rem 0}
+.si-label{color:var(--text)}.si-val{color:var(--gold)}
+.si-note{color:var(--muted);font-size:0.55rem;margin-top:0.5rem;font-style:italic}
+.diff-select{display:flex;gap:0.4rem;width:100%;flex-wrap:wrap}
+.diff-btn{flex:1;min-width:70px;padding:0.6rem;font-family:'DM Mono',monospace;font-size:0.6rem;text-transform:uppercase;letter-spacing:0.1em;border:1px solid var(--border);border-radius:6px;background:transparent;color:var(--muted);cursor:pointer;text-align:center;transition:all 0.2s}
+.diff-btn:hover{border-color:var(--gold-dim);color:var(--gold)}
+.diff-btn.active{border-color:var(--gold);color:var(--gold);background:rgba(212,168,71,0.1)}
+.status-bar{display:flex;gap:0.8rem;width:100%;background:var(--surface2);border:1px solid var(--border);border-radius:8px;padding:0.75rem 1rem;justify-content:space-around}
+.si{display:flex;flex-direction:column;align-items:center;gap:0.15rem}
+.sv{font-family:'DM Mono',monospace;font-size:1rem;font-weight:500;color:var(--gold)}
+.sl{font-family:'DM Mono',monospace;font-size:0.45rem;letter-spacing:0.12em;text-transform:uppercase;color:var(--muted)}
+.mistake-dots{display:flex;gap:0.35rem}
+.dot{width:8px;height:8px;border-radius:50%;background:var(--border);border:1px solid var(--muted);transition:background 0.3s}
+.dot.active{background:var(--red);border-color:var(--red)}
+.board-wrap{width:100%;display:flex;justify-content:center}
+.board{display:grid;gap:0;width:min(100%,450px);aspect-ratio:1;border:2px solid var(--gold-dim);border-radius:4px;overflow:hidden}
+.cell{position:relative;display:flex;align-items:center;justify-content:center;cursor:pointer;transition:background 0.1s;border:1px solid var(--border2)}
+.cell:hover{background:rgba(212,168,71,0.08)}
+.cell.selected{background:rgba(212,168,71,0.18)}
+.cell.same-num{background:rgba(212,168,71,0.07)}
+.cell.conflict{background:rgba(239,68,68,0.12)}
+.cell.hint-cell{background:rgba(45,212,191,0.12)}
+.cell .cage-label{position:absolute;top:1px;left:3px;font-family:'DM Mono',monospace;font-size:clamp(0.4rem,1.3vw,0.6rem);color:var(--muted);line-height:1;pointer-events:none;white-space:nowrap}
+.cell .cell-val{font-family:'DM Mono',monospace;font-size:clamp(0.9rem,3vw,1.3rem);font-weight:500;color:var(--text-bright);user-select:none}
+.cell.hint-cell .cell-val{color:var(--teal)}
+.cell .notes-grid{display:grid;grid-template-columns:repeat(3,1fr);width:100%;height:100%;padding:1px}
+.cell .note-num{font-family:'DM Mono',monospace;font-size:clamp(0.25rem,0.8vw,0.38rem);color:var(--teal);display:flex;align-items:center;justify-content:center;line-height:1}
+.cell .note-num.hidden{opacity:0}
+/* Cage borders */
+.cage-top{border-top:2px solid var(--gold-dim)!important}
+.cage-bottom{border-bottom:2px solid var(--gold-dim)!important}
+.cage-left{border-left:2px solid var(--gold-dim)!important}
+.cage-right{border-right:2px solid var(--gold-dim)!important}
+.numpad{display:grid;gap:0.4rem;width:100%}
+.num-btn{aspect-ratio:1;background:var(--surface2);border:1px solid var(--border);border-radius:6px;font-family:'DM Mono',monospace;font-size:clamp(0.8rem,2.5vw,1.1rem);color:var(--text);cursor:pointer;display:flex;align-items:center;justify-content:center;transition:all 0.15s}
+.num-btn:hover{background:var(--surface);border-color:var(--gold-dim);color:var(--gold)}
+.num-btn.used{opacity:0.35}
+.controls{display:flex;gap:0.5rem;width:100%;flex-wrap:wrap}
+.btn{padding:0.6rem 1rem;font-family:'DM Mono',monospace;font-size:0.6rem;letter-spacing:0.1em;text-transform:uppercase;cursor:pointer;border-radius:6px;border:none;transition:all 0.2s;flex:1;min-width:0}
+.btn-gold{background:var(--gold);color:var(--ink);font-weight:500}
+.btn-gold:hover{background:var(--gold-warm)}
+.btn-gold:disabled{background:var(--muted);cursor:not-allowed;opacity:0.5}
+.btn-ghost{background:transparent;border:1px solid var(--border);color:var(--muted)}
+.btn-ghost:hover{border-color:var(--gold-dim);color:var(--gold)}
+.btn-teal{background:transparent;border:1px solid var(--teal-dim);color:var(--teal)}
+.btn-teal:hover{background:var(--teal-dim)}
+.btn-teal.active{background:var(--teal-dim)}
+.msg{font-family:'DM Mono',monospace;font-size:0.62rem;text-align:center;min-height:1rem;color:var(--red)}
+.msg.ok{color:var(--green)}
+.modal-overlay{position:fixed;inset:0;background:rgba(5,7,9,0.92);backdrop-filter:blur(8px);z-index:200;display:flex;align-items:center;justify-content:center;padding:1rem}
+.modal-overlay.hidden{display:none}
+.modal{background:var(--surface2);border:1px solid var(--border);border-radius:12px;width:100%;max-width:380px;overflow:hidden}
+.modal-header{padding:1.4rem 1.4rem 0;text-align:center}
+.modal-result{font-family:'Bebas Neue',sans-serif;font-size:2.2rem;letter-spacing:0.1em;margin-bottom:0.3rem}
+.modal-result.win{color:var(--green)}.modal-result.lose{color:var(--red)}
+.modal-sub{font-family:'DM Mono',monospace;font-size:0.62rem;color:var(--muted)}
+.modal-score{margin:1rem 1.4rem;background:var(--surface);border:1px solid var(--border);border-radius:8px;padding:0.8rem;display:grid;grid-template-columns:1fr 1fr;gap:0.5rem}
+.ms-item{display:flex;flex-direction:column;gap:0.1rem}
+.ms-val{font-family:'DM Mono',monospace;font-size:0.9rem;color:var(--gold)}
+.ms-lbl{font-family:'DM Mono',monospace;font-size:0.45rem;letter-spacing:0.1em;text-transform:uppercase;color:var(--muted)}
+.modal-acts{display:flex;gap:0.5rem;padding:1rem 1.4rem 1.4rem}
+.modal-acts .btn{flex:1}
+@keyframes shake{0%,100%{transform:translateX(0)}20%{transform:translateX(-6px)}40%{transform:translateX(6px)}60%{transform:translateX(-4px)}80%{transform:translateX(4px)}}
+.shake{animation:shake 0.35s ease}
+@media(max-width:480px){.page{padding:1.5rem 0.5rem 3rem}.game-title{font-size:2.4rem}}
+</style>
+<script src="https://cdn.jsdelivr.net/npm/ethers@6/dist/ethers.umd.min.js"></script>
+</head>
+<body>
+<script src="../dapp-wallet.js"></script>
+<div class="page">
+  <div class="game-header">
+    <p class="game-kicker">Arithmetic Logic</p>
+    <h1 class="game-title">Ken<strong style="color:var(--teal)">Ken</strong></h1>
+    <p class="game-sub">Fill the grid with 1-N. No repeats in rows or columns. Cages must hit their arithmetic target.</p>
+  </div>
+
+  <div class="scoring-info" id="scoring-panel">
+    <h3>How Scoring Works</h3>
+    <div class="si-row"><span class="si-label">Base score</span><span class="si-val">5,000 pts</span></div>
+    <div class="si-row"><span class="si-label">Grace period</span><span class="si-val">60 seconds</span></div>
+    <div class="si-row"><span class="si-label">After grace</span><span class="si-val">-1 pt/second</span></div>
+    <div class="si-row"><span class="si-label">Per wrong submission</span><span class="si-val">-300 pts</span></div>
+    <div class="si-row"><span class="si-label">Per hint used</span><span class="si-val">-500 pts</span></div>
+    <p class="si-note">Complete the grid correctly. Fewer mistakes + faster time = higher score.</p>
+  </div>
+
+  <div class="diff-select" id="diff-select">
+    <button class="diff-btn" data-diff="easy">Easy 4×4</button>
+    <button class="diff-btn" data-diff="medium">Medium 6×6</button>
+    <button class="diff-btn active" data-diff="hard">Hard 6×6</button>
+    <button class="diff-btn" data-diff="expert">Expert 7×7</button>
+  </div>
+
+  <div class="status-bar" style="display:none" id="status-bar">
+    <div class="si"><span class="sv" id="sv-t">0:00</span><span class="sl">Time</span></div>
+    <div class="si">
+      <div class="mistake-dots" id="mistake-dots"></div>
+      <span class="sl">Mistakes</span>
+    </div>
+    <div class="si"><span class="sv" id="sv-h">0</span><span class="sl">Hints</span></div>
+    <div class="si"><span class="sv" id="sv-s">5000</span><span class="sl">Est. Score</span></div>
+  </div>
+
+  <div class="board-wrap" style="display:none" id="board-wrap">
+    <div class="board" id="board"></div>
+  </div>
+
+  <div class="numpad" id="numpad" style="display:none"></div>
+
+  <div class="controls" id="controls" style="display:none">
+    <button class="btn btn-ghost" onclick="G.undo()">Undo</button>
+    <button class="btn btn-teal" id="notes-btn" onclick="G.toggleNotes()">Notes</button>
+    <button class="btn btn-teal" onclick="G.useHint()">Hint (-500)</button>
+    <button class="btn btn-gold" onclick="G.submitGrid()">Submit</button>
+  </div>
+
+  <div class="msg" id="msg-bar"></div>
+  <button class="btn btn-gold" id="start-btn" style="width:100%;padding:1rem">Start Game</button>
+</div>
+
+<div class="modal-overlay hidden" id="modal">
+  <div class="modal">
+    <div class="modal-header"><div class="modal-result" id="modal-result">--</div><div class="modal-sub" id="modal-sub"></div></div>
+    <div class="modal-score" id="modal-score"></div>
+    <div class="modal-acts">
+      <button class="btn btn-ghost" onclick="location.reload()">Play Again</button>
+      <button class="btn btn-gold" onclick="window.location='/dapp/'">Lobby</button>
+    </div>
+  </div>
+</div>
+
+<script>
+var G = (function() {
+  'use strict';
+  var API_BASE = 'https://dapp-api.mathswins.co.uk/api/dapp';
+  if (location.hostname === 'localhost' || location.hostname === '127.0.0.1') API_BASE = 'http://127.0.0.1:3860/api/dapp';
+
+  var GAME_ID = 'kenken';
+  var sessionToken = null;
+  var n = 6, difficulty = 'hard';
+  var cages = [], grid = [], notes = [], hintCells = new Set();
+  var selected = null, mistakes = 0, hintsUsed = 0, maxHints = 6;
+  var notesMode = false, done = false;
+  var startTime = null, timerInterval = null;
+  var history = [];
+
+  // Difficulty selection
+  document.querySelectorAll('.diff-btn').forEach(function(btn) {
+    btn.addEventListener('click', function() {
+      document.querySelectorAll('.diff-btn').forEach(function(b) { b.classList.remove('active'); });
+      btn.classList.add('active');
+      difficulty = btn.dataset.diff;
+    });
+  });
+
+  async function api(url, body) {
+    var h = { 'Content-Type': 'application/json' };
+    if (typeof dappWallet !== 'undefined' && dappWallet.address) h['X-Wallet-Address'] = dappWallet.address;
+    var res = await fetch(API_BASE + url, { method: 'POST', headers: h, body: JSON.stringify(body) });
+    return res.json();
+  }
+
+  // ── Start ─────────────────────────────────────────────────────────
+  async function startGame() {
+    document.getElementById('start-btn').disabled = true;
+    document.getElementById('start-btn').textContent = 'Loading...';
+    try {
+      var data = await api('/session/start', { gameId: GAME_ID, difficulty: difficulty });
+      if (data.error) { setMsg(data.error); document.getElementById('start-btn').disabled = false; document.getElementById('start-btn').textContent = 'Start Game'; return; }
+
+      sessionToken = data.token;
+      var q = data.question;
+      n = q.size;
+      cages = q.cages;
+      maxHints = q.scoring.maxHints;
+      grid = Array.from({ length: n }, function() { return new Array(n).fill(0); });
+      notes = Array.from({ length: n }, function() { return Array.from({ length: n }, function() { return new Set(); }); });
+      hintCells = new Set();
+      mistakes = 0; hintsUsed = 0; done = false; history = []; selected = null;
+
+      document.getElementById('scoring-panel').style.display = 'none';
+      document.getElementById('diff-select').style.display = 'none';
+      document.getElementById('start-btn').style.display = 'none';
+      document.getElementById('status-bar').style.display = 'flex';
+      document.getElementById('board-wrap').style.display = 'flex';
+      document.getElementById('numpad').style.display = 'grid';
+      document.getElementById('controls').style.display = 'flex';
+
+      buildNumpad();
+      buildMistakeDots();
+      renderBoard();
+      startTimer();
+    } catch (e) {
+      setMsg('Connection error');
+      document.getElementById('start-btn').disabled = false;
+      document.getElementById('start-btn').textContent = 'Start Game';
+    }
+  }
+
+  document.getElementById('start-btn').addEventListener('click', startGame);
+
+  // ── Timer ─────────────────────────────────────────────────────────
+  function startTimer() {
+    startTime = Date.now();
+    timerInterval = setInterval(updateTimer, 1000);
+    updateTimer();
+  }
+  function updateTimer() {
+    var secs = getSecs();
+    var m = Math.floor(secs / 60), s = secs % 60;
+    document.getElementById('sv-t').textContent = m + ':' + (s < 10 ? '0' : '') + s;
+    var pen = Math.max(0, secs - 60) + mistakes * 300 + hintsUsed * 500;
+    document.getElementById('sv-s').textContent = Math.max(0, 5000 - pen);
+  }
+  function getSecs() { return startTime ? Math.floor((Date.now() - startTime) / 1000) : 0; }
+
+  // ── Board ─────────────────────────────────────────────────────────
+  function renderBoard() {
+    var boardEl = document.getElementById('board');
+    boardEl.style.gridTemplateColumns = 'repeat(' + n + ', 1fr)';
+    boardEl.innerHTML = '';
+
+    // Build cage lookup: cellKey → cageIndex
+    var cellCageMap = {};
+    cages.forEach(function(cage, ci) {
+      cage.cells.forEach(function(idx) { cellCageMap[idx] = ci; });
+    });
+
+    // Find first cell of each cage (top-left in reading order)
+    var cageFirstCell = {};
+    cages.forEach(function(cage, ci) {
+      var sorted = cage.cells.slice().sort(function(a, b) { return a - b; });
+      cageFirstCell[sorted[0]] = ci;
+    });
+
+    for (var i = 0; i < n * n; i++) {
+      var r = Math.floor(i / n), c = i % n;
+      var cell = document.createElement('div');
+      cell.className = 'cell';
+      cell.dataset.idx = i;
+
+      // Cage borders
+      var ci = cellCageMap[i];
+      var cage = cages[ci];
+      if (cage) {
+        // Alternating cage backgrounds
+        cell.style.background = ci % 2 === 0 ? 'var(--cage-a)' : 'var(--cage-b)';
+
+        var cellSet = new Set(cage.cells);
+        if (r === 0 || !cellSet.has(i - n)) cell.classList.add('cage-top');
+        if (r === n - 1 || !cellSet.has(i + n)) cell.classList.add('cage-bottom');
+        if (c === 0 || !cellSet.has(i - 1)) cell.classList.add('cage-left');
+        if (c === n - 1 || !cellSet.has(i + 1)) cell.classList.add('cage-right');
+      }
+
+      // Cage label on first cell
+      if (cageFirstCell[i] !== undefined) {
+        var cg = cages[cageFirstCell[i]];
+        var label = document.createElement('span');
+        label.className = 'cage-label';
+        label.textContent = cg.target + (cg.op || '');
+        cell.appendChild(label);
+      }
+
+      // Selection
+      if (i === selected) cell.classList.add('selected');
+      if (hintCells.has(i)) cell.classList.add('hint-cell');
+
+      // Highlight same number
+      if (selected !== null && grid[Math.floor(selected / n)][selected % n] !== 0 &&
+          grid[r][c] === grid[Math.floor(selected / n)][selected % n] && i !== selected) {
+        cell.classList.add('same-num');
+      }
+
+      // Conflict detection (row/col duplicate)
+      if (grid[r][c] !== 0) {
+        var conflict = false;
+        for (var k = 0; k < n; k++) {
+          if (k !== c && grid[r][k] === grid[r][c]) conflict = true;
+          if (k !== r && grid[k][c] === grid[r][c]) conflict = true;
+        }
+        if (conflict) cell.classList.add('conflict');
+      }
+
+      // Value or notes
+      var val = grid[r][c];
+      if (val !== 0) {
+        var span = document.createElement('span');
+        span.className = 'cell-val';
+        span.textContent = val;
+        cell.appendChild(span);
+      } else if (notes[r][c].size > 0) {
+        var ng = document.createElement('div');
+        ng.className = 'notes-grid';
+        for (var nn = 1; nn <= n; nn++) {
+          var nd = document.createElement('div');
+          nd.className = 'note-num' + (notes[r][c].has(nn) ? '' : ' hidden');
+          nd.textContent = nn;
+          ng.appendChild(nd);
+        }
+        cell.appendChild(ng);
+      }
+
+      (function(idx) { cell.addEventListener('click', function() { selectCell(idx); }); })(i);
+      boardEl.appendChild(cell);
+    }
+  }
+
+  function selectCell(idx) { if (!done) { selected = idx; renderBoard(); } }
+
+  // ── Number input ──────────────────────────────────────────────────
+  async function inputNum(v) {
+    if (done || selected === null) return;
+    var r = Math.floor(selected / n), c = selected % n;
+    if (hintCells.has(selected)) return; // can't modify hint cells
+
+    if (notesMode && v !== 0) {
+      if (notes[r][c].has(v)) notes[r][c].delete(v); else notes[r][c].add(v);
+      renderBoard(); return;
+    }
+
+    history.push({ idx: selected, val: grid[r][c], notes: new Set(notes[r][c]) });
+
+    if (v === 0) { grid[r][c] = 0; notes[r][c] = new Set(); renderBoard(); return; }
+
+    // Validate placement server-side
+    try {
+      var data = await api('/session/evaluate', {
+        sessionToken: sessionToken,
+        answer: JSON.stringify({ action: 'place', row: r, col: c, value: v })
+      });
+      if (data.error) { setMsg(data.error); return; }
+
+      grid[r][c] = v;
+      notes[r][c] = new Set();
+
+      if (!data.isCorrect) {
+        mistakes++;
+        updateMistakes();
+        var cellEl = document.querySelector('.cell[data-idx="' + selected + '"]');
+        if (cellEl) cellEl.classList.add('shake');
+      } else {
+        setMsg('');
+      }
+      renderBoard();
+    } catch (e) { setMsg('Connection error'); }
+  }
+
+  // ── Hint ──────────────────────────────────────────────────────────
+  async function useHint() {
+    if (done || selected === null || hintsUsed >= maxHints) return;
+    var r = Math.floor(selected / n), c = selected % n;
+    if (hintCells.has(selected)) return;
+
+    try {
+      var data = await api('/session/evaluate', {
+        sessionToken: sessionToken,
+        answer: JSON.stringify({ action: 'hint', row: r, col: c })
+      });
+      if (data.error) { setMsg(data.error); return; }
+
+      hintsUsed++;
+      grid[r][c] = data.value;
+      notes[r][c] = new Set();
+      hintCells.add(selected);
+      document.getElementById('sv-h').textContent = hintsUsed;
+      renderBoard();
+    } catch (e) { setMsg('Connection error'); }
+  }
+
+  // ── Submit ────────────────────────────────────────────────────────
+  async function submitGrid() {
+    if (done) return;
+    // Check all cells filled
+    for (var r = 0; r < n; r++) {
+      for (var c = 0; c < n; c++) {
+        if (grid[r][c] === 0) { setMsg('Fill all cells before submitting.'); return; }
+      }
+    }
+
+    try {
+      var data = await api('/session/evaluate', {
+        sessionToken: sessionToken,
+        answer: JSON.stringify({ action: 'submit', grid: grid, mistakes: mistakes, hints: hintsUsed })
+      });
+
+      if (data.error) { setMsg(data.error); return; }
+
+      if (data.correct) {
+        done = true;
+        clearInterval(timerInterval);
+        showModal(true, data.points);
+      } else {
+        mistakes++;
+        updateMistakes();
+        setMsg('Incorrect — ' + (data.errors ? data.errors.length + ' cells wrong' : 'check your solution'));
+        // Highlight errors
+        if (data.errors) {
+          data.errors.forEach(function(e) {
+            var idx = e.row * n + e.col;
+            var cellEl = document.querySelector('.cell[data-idx="' + idx + '"]');
+            if (cellEl) cellEl.classList.add('conflict', 'shake');
+          });
+        }
+      }
+    } catch (e) { setMsg('Connection error'); }
+  }
+
+  // ── Undo / Notes ──────────────────────────────────────────────────
+  function undo() {
+    if (!history.length || done) return;
+    var h = history.pop();
+    var r = Math.floor(h.idx / n), c = h.idx % n;
+    grid[r][c] = h.val;
+    notes[r][c] = h.notes;
+    renderBoard();
+  }
+  function toggleNotes() {
+    notesMode = !notesMode;
+    var btn = document.getElementById('notes-btn');
+    btn.textContent = notesMode ? 'Notes ON' : 'Notes';
+    btn.classList.toggle('active', notesMode);
+  }
+
+  // ── UI helpers ────────────────────────────────────────────────────
+  function buildNumpad() {
+    var np = document.getElementById('numpad');
+    np.style.gridTemplateColumns = 'repeat(' + (n + 1) + ', 1fr)';
+    np.innerHTML = '<button class="num-btn" onclick="G.inputNum(0)" title="Erase">✕</button>';
+    for (var i = 1; i <= n; i++) {
+      var btn = document.createElement('button');
+      btn.className = 'num-btn';
+      btn.textContent = i;
+      (function(v) { btn.onclick = function() { G.inputNum(v); }; })(i);
+      np.appendChild(btn);
+    }
+  }
+  function buildMistakeDots() {
+    var el = document.getElementById('mistake-dots');
+    el.innerHTML = '';
+    for (var i = 0; i < 3; i++) {
+      var d = document.createElement('div');
+      d.className = 'dot';
+      d.id = 'mdot' + i;
+      el.appendChild(d);
+    }
+  }
+  function updateMistakes() {
+    for (var i = 0; i < 3; i++) {
+      var d = document.getElementById('mdot' + i);
+      if (d) d.classList.toggle('active', i < mistakes);
+    }
+  }
+  function setMsg(t, ok) {
+    var el = document.getElementById('msg-bar');
+    el.textContent = t;
+    el.className = 'msg' + (ok ? ' ok' : '');
+  }
+  function showModal(won, score) {
+    document.getElementById('modal').classList.remove('hidden');
+    document.getElementById('modal-result').textContent = won ? 'Grid Solved!' : 'Game Over';
+    document.getElementById('modal-result').className = 'modal-result ' + (won ? 'win' : 'lose');
+    document.getElementById('modal-sub').textContent = won ? 'Score recorded.' : '';
+    var secs = getSecs(), m = Math.floor(secs / 60), s = secs % 60;
+    document.getElementById('modal-score').innerHTML =
+      '<div class="ms-item"><span class="ms-val">' + (score || 0) + '</span><span class="ms-lbl">Final Score</span></div>' +
+      '<div class="ms-item"><span class="ms-val">' + m + ':' + (s < 10 ? '0' : '') + s + '</span><span class="ms-lbl">Time</span></div>' +
+      '<div class="ms-item"><span class="ms-val">' + mistakes + '</span><span class="ms-lbl">Mistakes</span></div>' +
+      '<div class="ms-item"><span class="ms-val">' + hintsUsed + '</span><span class="ms-lbl">Hints</span></div>';
+  }
+
+  // ── Keyboard ──────────────────────────────────────────────────────
+  document.addEventListener('keydown', function(e) {
+    if (done) return;
+    var v = parseInt(e.key);
+    if (v >= 0 && v <= n) { inputNum(v); return; }
+    if (e.key === 'Backspace' || e.key === 'Delete') { inputNum(0); return; }
+    if (e.key === 'n' || e.key === 'N') { toggleNotes(); return; }
+    if (e.key === 'z' && (e.ctrlKey || e.metaKey)) { undo(); return; }
+    if (selected === null) return;
+    if (e.key === 'ArrowUp' && selected >= n) { selectCell(selected - n); e.preventDefault(); }
+    if (e.key === 'ArrowDown' && selected < n * (n - 1)) { selectCell(selected + n); e.preventDefault(); }
+    if (e.key === 'ArrowLeft' && selected % n > 0) { selectCell(selected - 1); e.preventDefault(); }
+    if (e.key === 'ArrowRight' && selected % n < n - 1) { selectCell(selected + 1); e.preventDefault(); }
+  });
+
+  // ── dApp paid session ─────────────────────────────────────────────
+  window.addEventListener('dapp-session-ready', function(e) {
+    sessionToken = e.detail.token;
+    if (e.detail.question) {
+      var q = e.detail.question;
+      n = q.size; cages = q.cages; maxHints = q.scoring.maxHints;
+      grid = Array.from({ length: n }, function() { return new Array(n).fill(0); });
+      notes = Array.from({ length: n }, function() { return Array.from({ length: n }, function() { return new Set(); }); });
+      hintCells = new Set(); mistakes = 0; hintsUsed = 0; done = false; history = [];
+      document.getElementById('scoring-panel').style.display = 'none';
+      document.getElementById('diff-select').style.display = 'none';
+      document.getElementById('start-btn').style.display = 'none';
+      document.getElementById('status-bar').style.display = 'flex';
+      document.getElementById('board-wrap').style.display = 'flex';
+      document.getElementById('numpad').style.display = 'grid';
+      document.getElementById('controls').style.display = 'flex';
+      buildNumpad(); buildMistakeDots(); renderBoard(); startTimer();
+    }
+  });
+
+  return { inputNum: inputNum, undo: undo, toggleNotes: toggleNotes, useHint: useHint, submitGrid: submitGrid };
+})();
+</script>
+<script src="../dapp-entry.js"></script>
+</body>
+</html>

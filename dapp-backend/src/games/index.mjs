@@ -43,6 +43,13 @@ import {
   QUESTIONS_PER_SESSION as cdnQPS,
 } from './countdown-numbers.mjs';
 
+import {
+  GAME_ID as kenId,
+  evaluator as kenEval,
+  selectQuestions as kenSelect,
+  stripQuestion as kenStrip,
+} from './kenken.mjs';
+
 export function registerAllGames() {
   // Estimation Engine — sequential (10 questions, 60s each)
   registerGame(estId, estQ, estEval, estSelect, null, 'sequential');
@@ -99,5 +106,16 @@ export function registerAllGames() {
     questionsPerSession: cdnQPS
   });
 
-  console.log('Registered games:', [estId, sudId, pocId, seqId, cdnId].join(', '));
+  // KenKen — continuous (single puzzle, timed session)
+  registerGame(kenId, null, kenEval, kenSelect, kenStrip, 'continuous');
+  upsertGame({
+    id: kenId,
+    name: 'KenKen',
+    isPaid: true,
+    serverScoring: true,
+    sessionTimeoutSeconds: 3600,
+    questionsPerSession: 1
+  });
+
+  console.log('Registered games:', [estId, sudId, pocId, seqId, cdnId, kenId].join(', '));
 }
