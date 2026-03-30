@@ -5,9 +5,10 @@ pragma solidity ^0.8.26;
  * @title PrizePot
  * @notice Holds prize pots for MathsWins dApp games.
  *         Receives 95% of entry fees from GameEntry.
- *         Splits internally: 50% pot (4.75 QF), 50% treasury (4.75 QF).
+ *         Splits internally: 50% pot, 50% treasury.
  *         batchSettle pays winners and treasury weekly.
  *         Under 10 entries: pot AND treasury roll to next week.
+ *         Failed winner payments go to pendingWithdrawals (pull pattern).
  */
 contract PrizePot {
     // ── Constants ────────────────────────────────────────────────────────────
@@ -28,28 +29,36 @@ contract PrizePot {
     address public operator;          // hot wallet that calls batchSettle
     address public treasuryWallet;    // Ledger — receives treasury payouts
     address public gameEntry;         // only GameEntry can deposit
+    bool public paused;
 
     // gameId => weekId => WeekData
     mapping(uint256 => mapping(uint256 => WeekData)) public weekData;
 
+    // Pull pattern: failed winner payments stored here
+    mapping(address => uint256) public pendingWithdrawals;
+
     // ── Events ──────────────────────────────────────────────────────────────
     event Deposited(uint256 indexed gameId, uint256 indexed weekId, uint256 amount);
     event PotPaid(uint256 indexed gameId, uint256 indexed weekId, address indexed winner, uint256 amount);
+    event PotPaymentFailed(uint256 indexed gameId, uint256 indexed weekId, address indexed winner, uint256 amount);
     event PotRolledOver(uint256 indexed gameId, uint256 fromWeekId, uint256 toWeekId, uint256 potAmount, uint256 treasuryAmount);
-    event TreasuryPaid(uint256 indexed weekId, address indexed treasury, uint256 amount);
+    event TreasuryPaid(address indexed treasury, uint256 amount);
+    event Withdrawn(address indexed recipient, uint256 amount);
     event OperatorUpdated(address indexed newOperator);
     event TreasuryWalletUpdated(address indexed newTreasury);
     event GameEntryUpdated(address indexed newGameEntry);
     event OwnerTransferred(address indexed newOwner);
+    event Paused(bool isPaused);
 
     // ── Errors ──────────────────────────────────────────────────────────────
     error NotOwner();
     error NotOperator();
     error NotGameEntry();
-    error AlreadySettled();
     error ArrayLengthMismatch();
     error TransferFailed();
     error TreasuryNotSet();
+    error ContractPaused();
+    error NothingToWithdraw();
 
     // ── Modifiers ───────────────────────────────────────────────────────────
     modifier onlyOwner() {
@@ -67,6 +76,11 @@ contract PrizePot {
         _;
     }
 
+    modifier whenNotPaused() {
+        if (paused) revert ContractPaused();
+        _;
+    }
+
     // ── Constructor ─────────────────────────────────────────────────────────
     constructor(address _operator, address _treasuryWallet) {
         owner = msg.sender;
@@ -75,12 +89,7 @@ contract PrizePot {
     }
 
     // ── Deposit (called by GameEntry) ───────────────────────────────────────
-    /**
-     * @notice Receive funds from GameEntry. Split 50/50 into pot and treasury.
-     * @param gameId The game identifier
-     * @param weekId The week identifier
-     */
-    function deposit(uint256 gameId, uint256 weekId) external payable onlyGameEntry {
+    function deposit(uint256 gameId, uint256 weekId) external payable onlyGameEntry whenNotPaused {
         uint256 potShare = (msg.value * POT_BPS) / BPS_BASE;
         uint256 treasuryShare = msg.value - potShare;
 
@@ -93,15 +102,6 @@ contract PrizePot {
     }
 
     // ── Settlement ──────────────────────────────────────────────────────────
-    /**
-     * @notice Settle multiple games for a week. Called by operator (cron).
-     *         If >= MIN_ENTRIES: pay winner, accumulate treasury.
-     *         If < MIN_ENTRIES: roll pot + treasury to next week.
-     *         After all games: single treasury transfer.
-     * @param gameIds Array of game IDs to settle
-     * @param weekIds Array of week IDs (must match gameIds length)
-     * @param winners Array of winner addresses (address(0) for rollover games)
-     */
     function batchSettle(
         uint256[] calldata gameIds,
         uint256[] calldata weekIds,
@@ -115,11 +115,13 @@ contract PrizePot {
 
         for (uint256 i = 0; i < gameIds.length; i++) {
             WeekData storage w = weekData[gameIds[i]][weekIds[i]];
-            if (w.settled) revert AlreadySettled();
+
+            // Skip already settled games instead of reverting
+            if (w.settled) continue;
             w.settled = true;
 
             if (w.entryCount >= MIN_ENTRIES && winners[i] != address(0)) {
-                // Pay winner
+                // Pay winner via try/catch — failed payments go to pendingWithdrawals
                 uint256 winnings = w.potBalance;
                 w.potBalance = 0;
                 totalTreasury += w.treasuryBalance;
@@ -127,10 +129,13 @@ contract PrizePot {
 
                 if (winnings > 0) {
                     (bool ok,) = winners[i].call{value: winnings}("");
-                    if (!ok) revert TransferFailed();
+                    if (ok) {
+                        emit PotPaid(gameIds[i], weekIds[i], winners[i], winnings);
+                    } else {
+                        pendingWithdrawals[winners[i]] += winnings;
+                        emit PotPaymentFailed(gameIds[i], weekIds[i], winners[i], winnings);
+                    }
                 }
-
-                emit PotPaid(gameIds[i], weekIds[i], winners[i], winnings);
             } else {
                 // Rollover: pot + treasury both move to next week
                 uint256 nextWeek = weekIds[i] + 1;
@@ -151,8 +156,34 @@ contract PrizePot {
         if (totalTreasury > 0) {
             (bool ok,) = treasuryWallet.call{value: totalTreasury}("");
             if (!ok) revert TransferFailed();
-            emit TreasuryPaid(weekIds[0], treasuryWallet, totalTreasury);
+            emit TreasuryPaid(treasuryWallet, totalTreasury);
         }
+    }
+
+    // ── Pull pattern: winners claim failed payments ─────────────────────────
+    function withdraw() external {
+        uint256 amount = pendingWithdrawals[msg.sender];
+        if (amount == 0) revert NothingToWithdraw();
+
+        pendingWithdrawals[msg.sender] = 0;
+
+        (bool ok,) = msg.sender.call{value: amount}("");
+        if (!ok) revert TransferFailed();
+
+        emit Withdrawn(msg.sender, amount);
+    }
+
+    // ── Emergency: owner can push a stuck pending withdrawal to any address ─
+    function emergencyWithdrawFor(address recipient, address destination) external onlyOwner {
+        uint256 amount = pendingWithdrawals[recipient];
+        if (amount == 0) revert NothingToWithdraw();
+
+        pendingWithdrawals[recipient] = 0;
+
+        (bool ok,) = destination.call{value: amount}("");
+        if (!ok) revert TransferFailed();
+
+        emit Withdrawn(destination, amount);
     }
 
     // ── Views ───────────────────────────────────────────────────────────────
@@ -179,13 +210,13 @@ contract PrizePot {
         emit GameEntryUpdated(_gameEntry);
     }
 
+    function setPaused(bool _paused) external onlyOwner {
+        paused = _paused;
+        emit Paused(_paused);
+    }
+
     function transferOwnership(address _newOwner) external onlyOwner {
         owner = _newOwner;
         emit OwnerTransferred(_newOwner);
-    }
-
-    // ── Receive ─────────────────────────────────────────────────────────────
-    receive() external payable {
-        // Accept plain QF transfers (from GameEntry)
     }
 }

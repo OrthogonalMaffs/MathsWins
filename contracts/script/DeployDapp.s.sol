@@ -9,7 +9,6 @@ contract DeployDapp is Script {
     function run() external {
         address operator = vm.envAddress("OPERATOR");
         address treasury = vm.envAddress("TREASURY");
-        uint256 minWalletAge = vm.envOr("MIN_WALLET_AGE", uint256(0));
 
         vm.startBroadcast();
 
@@ -18,7 +17,7 @@ contract DeployDapp is Script {
         console.log("PrizePot deployed at:", address(pot));
 
         // Deploy GameEntry, pointing to PrizePot
-        GameEntry entry = new GameEntry(address(pot), minWalletAge);
+        GameEntry entry = new GameEntry(address(pot));
         console.log("GameEntry deployed at:", address(entry));
 
         // Wire: PrizePot accepts deposits from GameEntry
