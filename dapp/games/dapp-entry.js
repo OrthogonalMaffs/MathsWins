@@ -12,7 +12,7 @@
 (function() {
   'use strict';
 
-  var API_BASE = 'https://mathswins.co.uk/api/dapp'; // Update when tunnel is live
+  var API_BASE = 'https://dapp-api.mathswins.co.uk/api/dapp';
   // Dev fallback
   if (location.hostname === 'localhost' || location.hostname === '127.0.0.1') {
     API_BASE = 'http://127.0.0.1:3860/api/dapp';
@@ -25,7 +25,7 @@
     'function getEntry(address player, uint256 gameId, uint256 weekId) view returns (uint8)'
   ];
 
-  var GAME_ENTRY_ADDRESS = ''; // Set after deployment
+  var GAME_ENTRY_ADDRESS = '0x6e1d573A8e40BaCb2ccC0A913a2989e35bE1151d';
   var gameId = '';
   var gameIdUint = 0n;
   var weekId = 0;

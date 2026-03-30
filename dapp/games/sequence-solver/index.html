@@ -12,85 +12,140 @@
 <link rel="icon" type="image/svg+xml" href="../../schools/assets/favicon.svg">
 <title>Sequence Solver · MathsWins</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
-<link href="https://fonts.googleapis.com/css2?family=Outfit:wght@400;600;700&family=JetBrains+Mono:wght@400;700&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Outfit:wght@400;600;700&family=DM+Mono:wght@400;500&family=Bebas+Neue&display=swap" rel="stylesheet">
 <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/katex.min.css">
 <script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/katex.min.js"></script>
 <script async src="https://www.googletagmanager.com/gtag/js?id=G-7GTLYCZMXN"></script>
 <script>window.dataLayer=window.dataLayer||[];function gtag(){dataLayer.push(arguments);}gtag('js',new Date());gtag('consent','default',{analytics_storage:'denied',ad_storage:'denied',ad_user_data:'denied',ad_personalization:'denied'});gtag('config','G-7GTLYCZMXN',{send_page_view:true,anonymize_ip:true});</script>
-<style>
-*{margin:0;padding:0;box-sizing:border-box}
-:root{--bg:#070b18;--surface:#101828;--border:#1e2d45;--primary:#2dd4a0;--accent:#60a5fa;--wrong:#f43f5e;--text:#edf2f7;--muted:#7a8ba6}
-body{font-family:'Outfit',sans-serif;background:var(--bg);color:var(--text);min-height:100vh;display:flex;flex-direction:column;align-items:center}
-.container{max-width:700px;width:100%;padding:1rem}
-.header{text-align:center;padding:1.5rem 0 1rem}
-.header h1{font-size:1.8rem;font-weight:700;background:linear-gradient(135deg,var(--primary),var(--accent));-webkit-background-clip:text;-webkit-text-fill-color:transparent}
-.header .sub{font-size:.85rem;color:var(--muted);margin-top:.3rem}
-.level-select{display:flex;gap:.5rem;justify-content:center;margin:1rem 0;flex-wrap:wrap}
-.level-btn{padding:.5rem 1.2rem;border-radius:8px;border:2px solid var(--border);background:var(--surface);color:var(--text);font-family:'Outfit',sans-serif;font-size:.9rem;font-weight:600;cursor:pointer;transition:all .2s}
-.level-btn:hover{border-color:var(--primary)}
-.level-btn.active{border-color:var(--primary);background:var(--primary);color:#fff}
-.level-btn[data-level="ks3"].active{background:#2dd4a0;border-color:#2dd4a0}
-.level-btn[data-level="gcse"].active{background:#3b82f6;border-color:#3b82f6}
-.level-btn[data-level="alevel"].active{background:#f97316;border-color:#f97316}
-.hud{display:flex;justify-content:space-between;align-items:center;padding:.8rem 1rem;background:var(--surface);border-radius:10px;border:1px solid var(--border);margin-bottom:1rem}
-.hud-item{text-align:center}.hud-label{font-size:.7rem;color:var(--muted);text-transform:uppercase;letter-spacing:.05em}.hud-val{font-family:'JetBrains Mono',monospace;font-size:1.2rem;font-weight:700}
-.q-card{background:var(--surface);border:1px solid var(--border);border-radius:14px;padding:1.5rem;margin-bottom:1rem;text-align:center;min-height:130px;display:flex;flex-direction:column;justify-content:center;align-items:center;gap:.6rem}
-.q-card .seq{font-family:'JetBrains Mono',monospace;font-size:1.3rem;letter-spacing:.05em;color:var(--accent)}
-.q-card .prompt{font-size:.85rem;color:var(--primary);font-weight:600;margin-top:.3rem}
-.options{display:grid;grid-template-columns:1fr 1fr;gap:.6rem;margin-bottom:1rem}
-.opt-btn{padding:1rem;border-radius:10px;border:2px solid var(--border);background:var(--surface);color:var(--text);font-family:'JetBrains Mono',monospace;font-size:1rem;cursor:pointer;transition:all .15s;text-align:center;min-height:56px;display:flex;align-items:center;justify-content:center}
-.opt-btn:hover{border-color:var(--primary);box-shadow:0 0 16px rgba(34,197,94,.2)}
-.opt-btn.correct{border-color:var(--primary);background:rgba(34,197,94,.1);animation:pop .3s}
-.opt-btn.wrong{border-color:var(--wrong);background:rgba(244,63,94,.1);animation:shake .3s}
-.opt-btn.reveal{border-color:var(--primary);opacity:.7}.opt-btn.disabled{pointer-events:none;opacity:.5}
-@keyframes pop{0%{transform:scale(1)}50%{transform:scale(1.04)}100%{transform:scale(1)}}
-@keyframes shake{0%,100%{transform:translateX(0)}25%{transform:translateX(-5px)}75%{transform:translateX(5px)}}
-.timer-wrap{height:4px;background:var(--border);border-radius:2px;margin-bottom:1rem;overflow:hidden}
-.timer-bar{height:100%;background:linear-gradient(90deg,var(--primary),var(--accent));transition:width .1s linear;border-radius:2px}
-.progress{display:flex;gap:3px;justify-content:center;flex-wrap:wrap;margin-bottom:1rem}
-.pip{width:10px;height:10px;border-radius:50%;background:var(--border);transition:background .3s}
-.pip.done{background:var(--primary)}.pip.fail{background:var(--wrong)}.pip.current{background:var(--accent);box-shadow:0 0 6px var(--accent)}
-.results{text-align:center;padding:2rem 1rem}
-.results h2{font-size:1.6rem;margin-bottom:.5rem}
-.results .final-score{font-family:'JetBrains Mono',monospace;font-size:3rem;font-weight:700;background:linear-gradient(135deg,var(--primary),var(--accent));-webkit-background-clip:text;-webkit-text-fill-color:transparent;margin:1rem 0}
-.results .stats{color:var(--muted);margin-bottom:1.5rem}
-.play-again{padding:.8rem 2rem;border-radius:10px;border:none;background:var(--primary);color:#fff;font-family:'Outfit',sans-serif;font-size:1rem;font-weight:600;cursor:pointer;transition:transform .15s}
-.play-again:hover{transform:scale(1.05)}
-.screen{display:none}.screen.active{display:block}
-.katex{font-size:1.05em!important}.q-card .katex{font-size:1.25em!important}
-.back-link{display:inline-block;margin:1rem 0;color:var(--muted);text-decoration:none;font-size:.85rem}.back-link:hover{color:var(--text)}
-</style>
+<link rel="stylesheet" href="../dapp-shell.css">
+<script src="https://cdn.jsdelivr.net/npm/ethers@6/dist/ethers.umd.min.js"></script>
 <meta name="twitter:card" content="summary_large_image">
 <meta name="twitter:title" content="MathsWins">
 <meta name="twitter:image" content="https://mathswins.co.uk/assets/og-image.png">
-<link rel="stylesheet" href="../dapp-shell.css">
-<script src="https://cdn.jsdelivr.net/npm/ethers@6/dist/ethers.umd.min.js"></script>
+<style>
+*{margin:0;padding:0;box-sizing:border-box}
+:root{
+  --ink:#050709;--surface:#0a0d14;--gold:#d4a847;--teal:#2dd4bf;
+  --green:#2dd4a0;--red:#ef5350;--border:#161c28;--text:#c8cdd8;
+  --text-bright:#e8ecf4;--muted:#4a5568;--gold-dim:rgba(212,168,71,.06);
+  --gold-glow:rgba(212,168,71,.12);--green-dim:rgba(45,212,160,.08);
+  --red-dim:rgba(239,83,80,.08);
+}
+body{font-family:'Outfit',sans-serif;background:var(--ink);color:var(--text);min-height:100vh;display:flex;flex-direction:column;align-items:center}
+.container{max-width:700px;width:100%;padding:1rem}
+
+/* ── Header ── */
+.header{text-align:center;padding:1.5rem 0 1rem}
+.header h1{font-family:'Bebas Neue',sans-serif;font-size:2.4rem;letter-spacing:.04em;color:var(--gold)}
+.header .sub{font-size:.85rem;color:var(--muted);margin-top:.3rem}
+
+/* ── Info Panel ── */
+.info-panel{background:var(--surface);border:1px solid var(--border);border-radius:12px;padding:1.2rem 1.4rem;margin-bottom:1.2rem;line-height:1.6;font-size:.88rem;color:var(--text)}
+.info-panel strong{color:var(--gold)}
+
+/* ── HUD ── */
+.hud{display:flex;justify-content:space-between;align-items:center;padding:.8rem 1rem;background:var(--surface);border-radius:10px;border:1px solid var(--border);margin-bottom:1rem}
+.hud-item{text-align:center}
+.hud-label{font-size:.7rem;color:var(--muted);text-transform:uppercase;letter-spacing:.05em}
+.hud-val{font-family:'DM Mono',monospace;font-size:1.2rem;font-weight:500;color:var(--text-bright)}
+
+/* ── Question Card ── */
+.q-card{background:var(--surface);border:1px solid var(--border);border-radius:14px;padding:1.5rem;margin-bottom:1rem;text-align:center;min-height:130px;display:flex;flex-direction:column;justify-content:center;align-items:center;gap:.6rem}
+.q-card .seq{font-family:'DM Mono',monospace;font-size:1.3rem;letter-spacing:.05em;color:var(--teal)}
+.q-card .prompt{font-size:.85rem;color:var(--gold);font-weight:600;margin-top:.3rem}
+
+/* ── Options (vertical stack) ── */
+.options{display:flex;flex-direction:column;gap:.5rem;margin-bottom:1rem}
+.opt-btn{
+  width:100%;padding:1rem 1.2rem;border-radius:10px;
+  border:2px solid var(--border);background:var(--surface);
+  color:var(--text);font-family:'DM Mono',monospace;font-size:1rem;
+  cursor:pointer;transition:all .15s;text-align:center;
+  min-height:52px;display:flex;align-items:center;justify-content:center
+}
+.opt-btn:hover{border-color:var(--gold);box-shadow:0 0 16px var(--gold-glow)}
+.opt-btn:active{background:var(--gold-dim);border-color:var(--gold)}
+.opt-btn.correct{border-color:var(--green);background:var(--green-dim);animation:pop .3s}
+.opt-btn.wrong{border-color:var(--red);background:var(--red-dim);animation:shake .3s}
+.opt-btn.reveal{border-color:var(--green);opacity:.7}
+.opt-btn.disabled{pointer-events:none;opacity:.5}
+@keyframes pop{0%{transform:scale(1)}50%{transform:scale(1.04)}100%{transform:scale(1)}}
+@keyframes shake{0%,100%{transform:translateX(0)}25%{transform:translateX(-5px)}75%{transform:translateX(5px)}}
+
+/* ── Score Dots ── */
+.progress{display:flex;gap:3px;justify-content:center;flex-wrap:wrap;margin-bottom:1rem}
+.pip{width:10px;height:10px;border-radius:50%;background:var(--border);transition:background .3s}
+.pip.done{background:var(--green)}.pip.fail{background:var(--red)}.pip.current{background:var(--gold);box-shadow:0 0 6px var(--gold)}
+
+/* ── Result Flash ── */
+.result-flash{
+  text-align:center;padding:.8rem;border-radius:10px;margin-bottom:1rem;
+  font-family:'DM Mono',monospace;font-size:.9rem;font-weight:500;display:none
+}
+.result-flash.correct{background:var(--green-dim);color:var(--green);border:1px solid var(--green);display:block}
+.result-flash.wrong{background:var(--red-dim);color:var(--red);border:1px solid var(--red);display:block}
+
+/* ── End Modal ── */
+.modal-overlay{
+  position:fixed;inset:0;background:rgba(5,7,9,.85);backdrop-filter:blur(8px);
+  display:none;align-items:center;justify-content:center;z-index:200
+}
+.modal-overlay.active{display:flex}
+.modal{
+  background:var(--surface);border:1px solid var(--border);border-radius:16px;
+  padding:2rem;text-align:center;max-width:420px;width:90%
+}
+.modal h2{font-family:'Bebas Neue',sans-serif;font-size:1.8rem;color:var(--gold);margin-bottom:.5rem}
+.modal .final-score{
+  font-family:'DM Mono',monospace;font-size:3rem;font-weight:500;
+  background:linear-gradient(135deg,var(--gold),var(--teal));
+  -webkit-background-clip:text;-webkit-text-fill-color:transparent;margin:1rem 0
+}
+.modal .stats{color:var(--muted);margin-bottom:1.5rem;font-size:.9rem}
+.modal-acts{display:flex;gap:.75rem;justify-content:center;flex-wrap:wrap}
+
+/* ── Buttons ── */
+.btn{
+  padding:.75rem 1.8rem;border-radius:10px;border:none;
+  font-family:'Outfit',sans-serif;font-size:1rem;font-weight:600;
+  cursor:pointer;transition:transform .15s
+}
+.btn:hover{transform:scale(1.05)}
+.btn-gold{background:var(--gold);color:var(--ink)}
+.btn-ghost{background:transparent;border:1px solid var(--border);color:var(--text)}
+
+/* ── Screens ── */
+.screen{display:none}.screen.active{display:block}
+.katex{font-size:1.05em!important}.q-card .katex{font-size:1.25em!important}
+</style>
 </head>
 <body>
 <script src="../dapp-wallet.js"></script>
 
 <div class="container">
-  
+
+  <!-- ── Menu Screen ── -->
   <div id="menu" class="screen active">
-    <div class="header"><h1>Sequence Solver</h1><div class="sub">Spot the pattern. Find the rule. What comes next?</div></div>
-    <div class="level-select">
-      <button class="level-btn active" data-level="ks3">KS3</button>
-      <button class="level-btn" data-level="gcse">GCSE</button>
-      <button class="level-btn" data-level="alevel">A-Level</button>
+    <div class="header">
+      <h1>Sequence Solver</h1>
+      <div class="sub">Spot the pattern. Find the rule. What comes next?</div>
     </div>
-    <p style="text-align:center;color:var(--muted);font-size:.82rem;margin:.8rem 0;line-height:1.5">
-      <strong>KS3:</strong> Arithmetic sequences, find the next term, term-to-term rules<br>
-      <strong>GCSE:</strong> nth term (linear + quadratic), geometric sequences<br>
-      <strong>A-Level:</strong> AP/GP formulae, sigma notation, sum to infinity, convergence
-    </p>
-    <div style="text-align:center;margin-top:1.5rem"><button class="play-again" onclick="startGame()">Start</button></div>
+    <div class="info-panel">
+      <strong>100 points</strong> base per correct answer.<br>
+      Time decay — faster answers score higher.<br>
+      No hard time limit. <strong>20 questions</strong> across 3 difficulty tiers.
+    </div>
+    <div style="text-align:center;margin-top:1.5rem">
+      <button class="btn btn-gold" id="start-btn">Start</button>
+    </div>
   </div>
+
+  <!-- ── Game Screen ── -->
   <div id="game" class="screen">
     <div class="hud">
       <div class="hud-item"><div class="hud-label">Question</div><div class="hud-val" id="qNum">1/20</div></div>
       <div class="hud-item"><div class="hud-label">Score</div><div class="hud-val" id="score">0</div></div>
-      <div class="hud-item"><div class="hud-label">Streak</div><div class="hud-val" id="streak">0</div></div>
-      <div class="hud-item"><div class="hud-label">Time</div><div class="hud-val" id="timer">0</div></div>
+      <div class="hud-item"><div class="hud-label">Time</div><div class="hud-val" id="timer">0s</div></div>
     </div>
     <div class="progress" id="progress"></div>
     <div class="q-card">
@@ -98,237 +153,319 @@ body{font-family:'Outfit',sans-serif;background:var(--bg);color:var(--text);min-
       <div id="question"></div>
       <div class="prompt" id="prompt"></div>
     </div>
+    <div class="result-flash" id="result-flash"></div>
     <div class="options" id="options"></div>
   </div>
-  <div id="results" class="screen"><div class="results"><h2 id="resultTitle"></h2><div class="final-score" id="finalScore">0</div><div class="stats" id="statsLine"></div><button class="play-again" onclick="showMenu()">Play Again</button></div></div>
 </div>
+
+<!-- ── End Modal ── -->
+<div class="modal-overlay" id="modal-overlay">
+  <div class="modal">
+    <h2 id="modal-title">--</h2>
+    <div class="final-score" id="modal-score">0</div>
+    <div class="stats" id="modal-stats"></div>
+    <div class="modal-acts">
+      <button class="btn btn-ghost" id="modal-again">Play Again</button>
+      <button class="btn btn-gold" onclick="window.location='/dapp/'">Back to Lobby</button>
+    </div>
+  </div>
+</div>
+
 <script>
-const QUESTIONS={
-ks3:[
-  // Next term — arithmetic (Q1-18)
-  {seq:'2, 4, 6, 8, __',ask:'Find the next term',correct:'10',d:['12','9','11']},
-  {seq:'5, 10, 15, 20, __',ask:'Find the next term',correct:'25',d:['30','22','24']},
-  {seq:'3, 7, 11, 15, __',ask:'Find the next term',correct:'19',d:['17','20','21']},
-  {seq:'1, 4, 7, 10, __',ask:'Find the next term',correct:'13',d:['12','14','11']},
-  {seq:'100, 95, 90, 85, __',ask:'Find the next term',correct:'80',d:['75','82','84']},
-  {seq:'50, 43, 36, 29, __',ask:'Find the next term',correct:'22',d:['21','23','15']},
-  {seq:'2, 5, 8, 11, __',ask:'Find the next term',correct:'14',d:['13','15','12']},
-  {seq:'-3, -1, 1, 3, __',ask:'Find the next term',correct:'5',d:['4','6','7']},
-  {seq:'10, 7, 4, 1, __',ask:'Find the next term',correct:'-2',d:['-1','0','-3']},
-  {seq:'0.5, 1, 1.5, 2, __',ask:'Find the next term',correct:'2.5',d:['3','2.2','2.8']},
-  {seq:'-10, -6, -2, 2, __',ask:'Find the next term',correct:'6',d:['4','8','3']},
-  {seq:'1, 3, 5, 7, 9, __',ask:'Find the next term',correct:'11',d:['10','12','13']},
-  // Common difference (Q13-18)
-  {seq:'4, 9, 14, 19, 24',ask:'What is the common difference?',correct:'5',d:['4','6','9']},
-  {seq:'20, 17, 14, 11, 8',ask:'What is the common difference?',correct:'-3',d:['3','-4','-2']},
-  {seq:'1, 4, 7, 10, 13',ask:'What is the common difference?',correct:'3',d:['4','2','1']},
-  {seq:'100, 88, 76, 64',ask:'What is the common difference?',correct:'-12',d:['12','-10','-14']},
-  {seq:'0.2, 0.5, 0.8, 1.1',ask:'What is the common difference?',correct:'0.3',d:['0.2','0.5','0.1']},
-  {seq:'-7, -3, 1, 5, 9',ask:'What is the common difference?',correct:'4',d:['3','-4','5']},
-  // Find a specific term (Q19-28)
-  {seq:'3, 6, 9, 12, ...',q:'',ask:'Find the 10th term',correct:'30',d:['27','33','36']},
-  {seq:'5, 8, 11, 14, ...',q:'',ask:'Find the 8th term',correct:'26',d:['23','29','24']},
-  {seq:'2, 7, 12, 17, ...',q:'',ask:'Find the 20th term',correct:'97',d:['100','92','102']},
-  {seq:'1, 4, 7, 10, ...',q:'',ask:'Find the 50th term',correct:'148',d:['150','147','151']},
-  {seq:'10, 8, 6, 4, ...',q:'',ask:'Find the 15th term',correct:'-18',d:['-16','-20','-14']},
-  {seq:'100, 93, 86, 79, ...',q:'',ask:'Find the 12th term',correct:'23',d:['30','16','21']},
-  {seq:'0, 3, 6, 9, ...',q:'',ask:'Find the 100th term',correct:'297',d:['300','303','294']},
-  {seq:'-5, -2, 1, 4, ...',q:'',ask:'Find the 7th term',correct:'13',d:['10','16','12']},
-  {seq:'1, 5, 9, 13, ...',q:'',ask:'Which term equals 41?',correct:'11th',d:['10th','12th','9th']},
-  {seq:'3, 8, 13, 18, ...',q:'',ask:'Which term equals 53?',correct:'11th',d:['10th','12th','9th']},
-  // Geometric — next term (Q29-38)
-  {seq:'2, 4, 8, 16, __',ask:'Find the next term',correct:'32',d:['24','20','64']},
-  {seq:'3, 9, 27, 81, __',ask:'Find the next term',correct:'243',d:['162','108','729']},
-  {seq:'1, 5, 25, 125, __',ask:'Find the next term',correct:'625',d:['250','500','1000']},
-  {seq:'64, 32, 16, 8, __',ask:'Find the next term',correct:'4',d:['2','6','0']},
-  {seq:'1000, 100, 10, 1, __',ask:'Find the next term',correct:'0.1',d:['0','0.01','-1']},
-  {seq:'2, 6, 18, 54, __',ask:'Find the next term',correct:'162',d:['108','72','216']},
-  {seq:'1, -2, 4, -8, __',ask:'Find the next term',correct:'16',d:['-16','10','-10']},
-  {seq:'5, 10, 20, 40, __',ask:'Find the next term',correct:'80',d:['60','50','160']},
-  {seq:'81, 27, 9, 3, __',ask:'Find the next term',correct:'1',d:['0','\\dfrac{1}{3}','-3']},
-  {seq:'7, 14, 28, 56, __',ask:'Find the next term',correct:'112',d:['84','98','224']},
-  // Identify type (Q39-44)
-  {seq:'3, 6, 9, 12, 15',ask:'What type of sequence?',correct:'Arithmetic',d:['Geometric','Quadratic','Fibonacci']},
-  {seq:'2, 6, 18, 54',ask:'What type of sequence?',correct:'Geometric',d:['Arithmetic','Quadratic','Fibonacci']},
-  {seq:'1, 1, 2, 3, 5, 8',ask:'What type of sequence?',correct:'Fibonacci',d:['Arithmetic','Geometric','Quadratic']},
-  {seq:'1, 4, 9, 16, 25',ask:'What type of sequence?',correct:'Square numbers',d:['Arithmetic','Geometric','Triangular']},
-  {seq:'1, 3, 6, 10, 15',ask:'What type of sequence?',correct:'Triangular numbers',d:['Arithmetic','Square numbers','Fibonacci']},
-  {seq:'1, 8, 27, 64, 125',ask:'What type of sequence?',correct:'Cube numbers',d:['Square numbers','Geometric','Powers of 2']},
-  // Pattern spotting (Q45-50)
-  {seq:'2, 3, 5, 7, 11, 13, __',ask:'Find the next term',correct:'17',d:['15','19','14']},
-  {seq:'1, 1, 2, 3, 5, 8, 13, __',ask:'Find the next term',correct:'21',d:['18','20','26']},
-  {seq:'1, 4, 9, 16, 25, __',ask:'Find the next term',correct:'36',d:['30','35','49']},
-  {seq:'1, 3, 6, 10, 15, __',ask:'Find the next term',correct:'21',d:['18','20','25']},
-  {seq:'2, 6, 12, 20, 30, __',ask:'Find the next term',correct:'42',d:['40','36','44']},
-  {seq:'0, 1, 1, 2, 3, 5, 8, 13, 21, __',ask:'Find the next term',correct:'34',d:['29','32','42']},
-],
-gcse:[
-  // nth term — linear (Q1-15)
-  {seq:'3, 5, 7, 9, ...',q:'',ask:'Find the nth term',correct:'2n + 1',d:['n + 2','3n','2n - 1']},
-  {seq:'4, 7, 10, 13, ...',q:'',ask:'Find the nth term',correct:'3n + 1',d:['n + 3','3n - 1','4n']},
-  {seq:'5, 9, 13, 17, ...',q:'',ask:'Find the nth term',correct:'4n + 1',d:['4n - 1','5n','n + 4']},
-  {seq:'2, 7, 12, 17, ...',q:'',ask:'Find the nth term',correct:'5n - 3',d:['5n + 3','5n - 2','5n']},
-  {seq:'1, 5, 9, 13, ...',q:'',ask:'Find the nth term',correct:'4n - 3',d:['4n + 3','4n - 1','3n - 2']},
-  {seq:'6, 11, 16, 21, ...',q:'',ask:'Find the nth term',correct:'5n + 1',d:['5n - 1','6n','5n + 6']},
-  {seq:'10, 7, 4, 1, ...',q:'',ask:'Find the nth term',correct:'13 - 3n',d:['-3n + 10','10 - 3n','-3n + 7']},
-  {seq:'20, 18, 16, 14, ...',q:'',ask:'Find the nth term',correct:'22 - 2n',d:['20 - 2n','-2n + 22','2n + 20']},
-  {seq:'0, 3, 6, 9, ...',q:'',ask:'Find the nth term',correct:'3n - 3',d:['3n','3(n-1)','n + 3']},
-  {seq:'-1, 2, 5, 8, ...',q:'',ask:'Find the nth term',correct:'3n - 4',d:['3n - 1','3n + 1','-n + 3']},
-  {seq:'7, 12, 17, 22, ...',q:'T_n = 5n + 2',ask:'Find the 40th term',correct:'202',d:['200','207','197']},
-  {seq:'T_n = 4n - 1',q:'',ask:'Is 83 a term in this sequence?',correct:'Yes (n = 21)',d:['No','Yes (n = 20)','Yes (n = 22)']},
-  {seq:'T_n = 3n + 7',q:'',ask:'Is 50 a term in this sequence?',correct:'No',d:['Yes (n = 14)','Yes (n = 15)','Yes (n = 13)']},
-  {seq:'T_n = 6n - 5',q:'',ask:'Find the first term above 100',correct:'103 (n = 18)',d:['101 (n = 17)','97 (n = 17)','109 (n = 19)']},
-  {seq:'T_n = 2n + 3',q:'',ask:'Which term equals 25?',correct:'n = 11',d:['n = 10','n = 12','n = 13']},
-  // nth term — quadratic (Q16-30)
-  {seq:'2, 5, 10, 17, 26, ...',ask:'What are the second differences?',correct:'2',d:['3','1','5']},
-  {seq:'1, 4, 9, 16, 25',q:'',ask:'Find the nth term',correct:'n^2',d:['2n','n^2 + 1','n(n+1)']},
-  {seq:'3, 6, 11, 18, 27',q:'',ask:'Find the nth term',correct:'n^2 + 2',d:['n^2 + 3','n^2 - 1','2n^2']},
-  {seq:'0, 3, 8, 15, 24',q:'',ask:'Find the nth term',correct:'n^2 - 1',d:['n^2','n^2 + 1','n^2 - 2']},
-  {seq:'2, 8, 18, 32, 50',q:'',ask:'Find the nth term',correct:'2n^2',d:['n^2 + n','4n','n^2 + 2']},
-  {seq:'4, 7, 12, 19, 28',q:'',ask:'Find the nth term',correct:'n^2 + 3',d:['n^2 + 2','n^2 + 4','2n^2 - 1']},
-  {seq:'-1, 2, 7, 14, 23',q:'',ask:'Find the nth term',correct:'n^2 - 2',d:['n^2 - 1','n^2 - 3','n^2']},
-  {seq:'5, 8, 13, 20, 29',q:'',ask:'Find the nth term',correct:'n^2 + 4',d:['n^2 + 5','n^2 + 3','2n^2']},
-  {seq:'2, 6, 12, 20, 30',q:'',ask:'Find the nth term',correct:'n^2 + n',d:['n(n+1)','2n^2','n^2 + 2n']},
-  {seq:'3, 8, 15, 24, 35',q:'',ask:'Find the nth term',correct:'n^2 + 2n',d:['n^2 + n + 1','n(n+2)','2n^2 + 1']},
-  {seq:'0, 6, 16, 30, 48',q:'',ask:'Second differences',correct:'4',d:['2','6','8']},
-  {seq:'T_n = n^2 + 3n',q:'',ask:'Find the 10th term',correct:'130',d:['103','113','133']},
-  {seq:'T_n = 2n^2 - 1',q:'',ask:'Find the 5th term',correct:'49',d:['50','39','51']},
-  {seq:'T_n = n^2 - n + 1',q:'',ask:'Find the 8th term',correct:'57',d:['56','58','65']},
-  {seq:'T_n = n^2 + 1',q:'',ask:'Is 50 a term?',correct:'Yes (n = 7)',d:['No','Yes (n = 8)','Yes (n = 6)']},
-  // Geometric sequences (Q31-42)
-  {seq:'3, 6, 12, 24, ...',ask:'What is the common ratio?',correct:'2',d:['3','4','6']},
-  {seq:'5, 15, 45, 135, ...',ask:'What is the common ratio?',correct:'3',d:['5','10','15']},
-  {seq:'64, 16, 4, 1, ...',ask:'What is the common ratio?',correct:'\\dfrac{1}{4}',d:['4','\\dfrac{1}{2}','-4']},
-  {seq:'1, -3, 9, -27, ...',ask:'What is the common ratio?',correct:'-3',d:['3','-9','9']},
-  {seq:'2, 10, 50, 250, ...',ask:'Find the next term',correct:'1250',d:['500','750','2500']},
-  {seq:'T_n = 3 \\times 2^{n-1}',q:'',ask:'Find the 6th term',correct:'96',d:['64','48','192']},
-  {seq:'T_n = 5 \\times 3^{n-1}',q:'',ask:'Find the 4th term',correct:'135',d:['45','405','60']},
-  {seq:'a = 4, r = 3',q:'T_n = ar^{n-1}',ask:'Find the 5th term',correct:'324',d:['108','972','243']},
-  {seq:'a = 100, r = 0.5',q:'T_n = ar^{n-1}',ask:'Find the 5th term',correct:'6.25',d:['12.5','3.125','25']},
-  {seq:'a = 2, r = -2',q:'',ask:'Find the 6th term',correct:'-64',d:['64','-32','32']},
-  {seq:'The 3rd term is 12, the 6th term is 96.',q:'',ask:'Find the common ratio',correct:'2',d:['3','4','8']},
-  {seq:'The 2nd term is 6, the 5th term is 162.',q:'',ask:'Find the common ratio',correct:'3',d:['6','27','9']},
-  // Recognise and generate (Q43-50)
-  {seq:'T_n = 2n + 5',q:'',ask:'Generate the first 4 terms',correct:'7, 9, 11, 13',d:['5, 7, 9, 11','2, 5, 7, 9','7, 12, 17, 22']},
-  {seq:'T_n = n^2 + 1',q:'',ask:'Generate the first 4 terms',correct:'2, 5, 10, 17',d:['1, 4, 9, 16','3, 5, 10, 17','2, 4, 8, 16']},
-  {seq:'T_n = 3 \\times 2^n',q:'',ask:'Generate the first 4 terms',correct:'6, 12, 24, 48',d:['3, 6, 12, 24','6, 9, 12, 15','2, 6, 18, 54']},
-  {seq:'T_n = 100 - 4n',q:'',ask:'Generate the first 4 terms',correct:'96, 92, 88, 84',d:['100, 96, 92, 88','96, 84, 72, 60','94, 88, 82, 76']},
-  {seq:'The first term is 5, the common difference is -3.',q:'',ask:'Find the 10th term',correct:'-22',d:['-25','-19','-20']},
-  {seq:'T_n = (-1)^n \\times n',q:'',ask:'Generate the first 4 terms',correct:'-1, 2, -3, 4',d:['1, -2, 3, -4','-1, -2, -3, -4','1, 2, 3, 4']},
-  {seq:'3, __, 12, __, 21',ask:'Fill in the gaps',correct:'3, 7.5, 12, 16.5, 21',d:['3, 6, 12, 18, 21','3, 8, 12, 17, 21','3, 7, 12, 17, 21']},
-  {seq:'1, __, __, 64',ask:'If geometric, fill the gaps',correct:'1, 4, 16, 64',d:['1, 8, 32, 64','1, 21, 43, 64','1, 16, 32, 64']},
-],
-alevel:[
-  // AP formulae (Q1-12)
-  {seq:'',q:'S_n = \\dfrac{n}{2}(2a + (n-1)d)',ask:'Find S₁₀ when a = 3, d = 4',correct:'210',d:['200','220','195']},
-  {seq:'',q:'S_n = \\dfrac{n}{2}(a + l)',ask:'Sum of first 20 terms if a = 5, l = 62',correct:'670',d:['640','700','635']},
-  {seq:'',q:'a = 2, d = 3',ask:'Find S₂₀',correct:'610',d:['620','600','590']},
-  {seq:'',q:'a = 10, d = -2',ask:'Find S₁₅',correct:'-60',d:['-30','-90','60']},
-  {seq:'',q:'S_{10} = 200, a = 2',ask:'Find d',correct:'4',d:['3','5','\\dfrac{36}{9}']},
-  {seq:'',q:'\\text{AP: } 5 + 8 + 11 + \\cdots',ask:'Find S₃₀',correct:'1455',d:['1305','1500','1350']},
-  {seq:'',q:'a = 1, d = 1',ask:'Find S₁₀₀ (sum of first 100 natural numbers)',correct:'5050',d:['5000','5100','10000']},
-  {seq:'',q:'\\text{AP with } a = 7, d = 5',ask:'Which term first exceeds 100?',correct:'n = 20',d:['n = 19','n = 21','n = 18']},
-  {seq:'',q:'u_n = a + (n-1)d. \\; u_5 = 17, \\; u_{12} = 38.',ask:'Find d',correct:'3',d:['4','2','5']},
-  {seq:'',q:'u_5 = 17, d = 3',ask:'Find a',correct:'5',d:['2','8','14']},
-  {seq:'',q:'\\text{AP: first term } a, \\text{ last term } l, \\text{ n terms}',ask:'Which formula gives the sum?',correct:'S_n = \\dfrac{n}{2}(a + l)',d:['S_n = \\dfrac{n}{2}(2a + nd)','S_n = n(a + l)','S_n = \\dfrac{n}{2}(a + d)']},
-  {seq:'',q:'\\text{Sum of integers from 1 to } n',ask:'Formula',correct:'\\dfrac{n(n+1)}{2}',d:['\\dfrac{n^2}{2}','n(n+1)','\\dfrac{n(n-1)}{2}']},
-  // GP formulae (Q13-24)
-  {seq:'',q:'S_n = \\dfrac{a(1 - r^n)}{1 - r}',ask:'Find S₅ when a = 3, r = 2',correct:'93',d:['96','90','63']},
-  {seq:'',q:'a = 1, r = 3',ask:'Find S₆',correct:'364',d:['363','365','729']},
-  {seq:'',q:'a = 100, r = 0.5',ask:'Find S₈ (2 d.p.)',correct:'199.22',d:['200','198.44','199.61']},
-  {seq:'',q:'a = 4, r = -2',ask:'Find S₆',correct:'-84',d:['84','-80','252']},
-  {seq:'',q:'a = 10, r = \\dfrac{1}{2}',ask:'Find S₄',correct:'18.75',d:['15','20','17.5']},
-  {seq:'',q:'\\text{GP: } 2 + 6 + 18 + 54 + \\cdots',ask:'Find S₈',correct:'6560',d:['6561','6562','3280']},
-  {seq:'',q:'u_n = ar^{n-1}. \\; u_1 = 5, \\; u_4 = 40.',ask:'Find r',correct:'2',d:['3','4','8']},
-  {seq:'',q:'u_3 = 12, \\; u_6 = 96',ask:'Find r',correct:'2',d:['3','4','8']},
-  {seq:'',q:'u_3 = 12, r = 2',ask:'Find a',correct:'3',d:['6','1.5','24']},
-  {seq:'',q:'\\text{GP with } a = 5, r = 3',ask:'Which term first exceeds 1000?',correct:'n = 6',d:['n = 5','n = 7','n = 8']},
-  {seq:'',q:'a = 8, r = \\dfrac{1}{4}',ask:'Find the 4th term',correct:'\\dfrac{1}{8}',d:['\\dfrac{1}{2}','\\dfrac{1}{4}','\\dfrac{1}{16}']},
-  {seq:'',q:'\\text{Sum of GP}',ask:'Which formula when |r| < 1?',correct:'S_n = \\dfrac{a(1-r^n)}{1-r}',d:['S_n = \\dfrac{a(r^n-1)}{r-1}','S_n = \\dfrac{a}{1-r}','S_n = ar^n']},
-  // Sum to infinity (Q25-34)
-  {seq:'',q:'S_\\infty = \\dfrac{a}{1-r}, \\; |r| < 1',ask:'Find S∞ when a = 10, r = 0.5',correct:'20',d:['10','15','40']},
-  {seq:'',q:'a = 6, r = \\dfrac{1}{3}',ask:'Find S∞',correct:'9',d:['18','6','12']},
-  {seq:'',q:'a = 100, r = 0.1',ask:'Find S∞',correct:'\\dfrac{1000}{9}',d:['1000','110','\\dfrac{100}{9}']},
-  {seq:'',q:'a = 4, r = -\\dfrac{1}{2}',ask:'Find S∞',correct:'\\dfrac{8}{3}',d:['8','2','\\dfrac{4}{3}']},
-  {seq:'',q:'a = 1, r = \\dfrac{2}{3}',ask:'Find S∞',correct:'3',d:['\\dfrac{3}{2}','\\dfrac{2}{3}','\\infty']},
-  {seq:'',q:'S_\\infty = 12, \\; a = 4',ask:'Find r',correct:'\\dfrac{2}{3}',d:['\\dfrac{1}{3}','3','\\dfrac{1}{2}']},
-  {seq:'',q:'S_\\infty = 20, \\; r = 0.5',ask:'Find a',correct:'10',d:['5','40','15']},
-  {seq:'',q:'a = 5, r = 0.9',ask:'Does the sum converge?',correct:'Yes, |r| < 1',d:['No, r > 0','No, r is too large','Only if n > 100']},
-  {seq:'',q:'a = 3, r = 1.1',ask:'Does the sum converge?',correct:'No, |r| \\geq 1',d:['Yes','Yes, r is close to 1','Only for large n']},
-  {seq:'',q:'a = 2, r = -0.8',ask:'Does the sum converge?',correct:'Yes, |r| < 1',d:['No, r is negative','No','Only if r > 0']},
-  // Sigma notation (Q35-44)
-  {seq:'',q:'\\displaystyle\\sum_{r=1}^{5} r',ask:'Evaluate',correct:'15',d:['10','20','5']},
-  {seq:'',q:'\\displaystyle\\sum_{r=1}^{4} r^2',ask:'Evaluate',correct:'30',d:['16','10','20']},
-  {seq:'',q:'\\displaystyle\\sum_{r=1}^{5} 2r',ask:'Evaluate',correct:'30',d:['20','10','25']},
-  {seq:'',q:'\\displaystyle\\sum_{r=1}^{4} (3r + 1)',ask:'Evaluate',correct:'34',d:['30','28','40']},
-  {seq:'',q:'\\displaystyle\\sum_{r=0}^{3} 2^r',ask:'Evaluate',correct:'15',d:['8','16','14']},
-  {seq:'',q:'\\displaystyle\\sum_{r=1}^{100} 1',ask:'Evaluate',correct:'100',d:['1','0','99']},
-  {seq:'',q:'\\displaystyle\\sum_{r=1}^{n} r = ',ask:'Formula',correct:'\\dfrac{n(n+1)}{2}',d:['\\dfrac{n^2}{2}','n(n+1)','\\dfrac{n(n-1)}{2}']},
-  {seq:'',q:'\\displaystyle\\sum_{r=1}^{10} (2r - 1)',ask:'Evaluate (sum of first 10 odd numbers)',correct:'100',d:['90','110','81']},
-  {seq:'',q:'\\displaystyle\\sum_{r=1}^{\\infty} \\left(\\dfrac{1}{2}\\right)^r',ask:'Evaluate',correct:'1',d:['2','\\dfrac{1}{2}','\\infty']},
-  {seq:'',q:'\\displaystyle\\sum_{r=1}^{\\infty} 3 \\left(\\dfrac{1}{4}\\right)^r',ask:'Evaluate',correct:'1',d:['3','\\dfrac{3}{4}','4']},
-  // Recurrence relations and mixed (Q45-55)
-  {seq:'',q:'u_{n+1} = u_n + 3, \\; u_1 = 5',ask:'Find u₄',correct:'14',d:['17','11','20']},
-  {seq:'',q:'u_{n+1} = 2u_n, \\; u_1 = 3',ask:'Find u₅',correct:'48',d:['24','96','30']},
-  {seq:'',q:'u_{n+1} = u_n + n, \\; u_1 = 1',ask:'Find u₄',correct:'7',d:['6','10','4']},
-  {seq:'',q:'u_{n+1} = u_n^2 - 1, \\; u_1 = 2',ask:'Find u₃',correct:'8',d:['3','15','7']},
-  {seq:'',q:'\\text{AP with } S_n = \\dfrac{n}{2}(2a + (n-1)d)',ask:'Prove S_n for a = 1, d = 1 gives \\dfrac{n(n+1)}{2}',correct:'Substitute: \\dfrac{n}{2}(2 + n - 1) = \\dfrac{n(n+1)}{2}',d:['Cannot be proved','Only true for even n','Requires induction']},
-  {seq:'',q:'0.\\dot{9} = \\displaystyle\\sum_{r=1}^{\\infty} 9 \\times 10^{-r}',ask:'What does this sum equal?',correct:'1',d:['0.999...','\\dfrac{9}{10}','\\infty']},
-  {seq:'',q:'a = 12, \\; S_\\infty = 36',ask:'Find r',correct:'\\dfrac{2}{3}',d:['\\dfrac{1}{3}','3','\\dfrac{1}{2}']},
-  {seq:'',q:'\\text{GP: } a + ar + ar^2 + \\cdots = \\dfrac{a}{1-r}',ask:'This requires',correct:'|r| < 1',d:['r < 1','r > 0','r \\neq 1']},
-  {seq:'',q:'\\displaystyle\\sum_{r=1}^{20} (3r - 2)',ask:'Evaluate',correct:'590',d:['600','570','610']},
-  {seq:'',q:'\\text{An AP has } S_{10} = 120 \\text{ and } S_{20} = 440',ask:'Find S₃₀',correct:'960',d:['880','1000','660']},
-]
-};
+(function() {
+  'use strict';
 
-let level='ks3',questions=[],qIdx=0,score=0,streak=0,bestStreak=0,correctCount=0,totalQ=20,qStartTime=0;
-const BASE=100,T_K=0.15;
-function shuffle(a){for(let i=a.length-1;i>0;i--){const j=Math.floor(Math.random()*(i+1));[a[i],a[j]]=[a[j],a[i]]}return a}
-function rk(el,tex){katex.render(tex,el,{throwOnError:false,displayMode:false})}
-function show(id){document.querySelectorAll('.screen').forEach(s=>s.classList.remove('active'));document.getElementById(id).classList.add('active')}
-document.querySelectorAll('.level-btn').forEach(b=>{b.addEventListener('click',()=>{document.querySelectorAll('.level-btn').forEach(x=>x.classList.remove('active'));b.classList.add('active');level=b.dataset.level})});
-const pa=new URLSearchParams(location.search);if(pa.get('level')&&QUESTIONS[pa.get('level')]){level=pa.get('level');document.querySelectorAll('.level-btn').forEach(b=>b.classList.toggle('active',b.dataset.level===level))}
+  var API_BASE = 'https://dapp-api.mathswins.co.uk/api/dapp';
+  if (location.hostname === 'localhost' || location.hostname === '127.0.0.1') {
+    API_BASE = 'http://127.0.0.1:3860/api/dapp';
+  }
 
-function startGame(){questions=shuffle([...QUESTIONS[level]]).slice(0,totalQ);qIdx=0;score=0;streak=0;bestStreak=0;correctCount=0;document.getElementById('score').textContent='0';document.getElementById('streak').textContent='0';const pr=document.getElementById('progress');pr.innerHTML='';for(let i=0;i<totalQ;i++){const d=document.createElement('div');d.className='pip'+(i===0?' current':'');pr.appendChild(d)}show('game');showQ()}
+  var GAME_ID = 'sequence-solver';
+  var sessionToken = null;
+  var totalQuestions = 20;
+  var questionNum = 0;
+  var totalScore = 0;
+  var correctCount = 0;
+  var gameActive = false;
+  var timerStart = 0;
+  var timerRaf = null;
 
-function showQ(){
-  const q=questions[qIdx];
-  document.getElementById('qNum').textContent=`${qIdx+1}/${totalQ}`;
-  // Sequence display
-  const seqEl=document.getElementById('seq');
-  seqEl.textContent=q.seq||'';
-  // Question (KaTeX if present)
-  const qEl=document.getElementById('question');qEl.innerHTML='';
-  if(q.q)rk(qEl,q.q);
-  document.getElementById('prompt').textContent=q.ask;
-  // Options
-  const opts=shuffle([q.correct,...q.d]);
-  const oEl=document.getElementById('options');oEl.innerHTML='';
-  opts.forEach(v=>{const b=document.createElement('button');b.className='opt-btn';b.dataset.val=v;
-    if(v.includes('\\')||v.includes('^')||v.includes('{')){rk(b,v)}else{b.textContent=v}
-    b.addEventListener('click',()=>handle(b,q));oEl.appendChild(b)});
-  // Count-up timer
-  qStartTime=Date.now();
-  updateTimer();
-}
+  // ── DOM refs ──────────────────────────────────────────────────────────
+  var startBtn = document.getElementById('start-btn');
+  var seqEl = document.getElementById('seq');
+  var questionEl = document.getElementById('question');
+  var promptEl = document.getElementById('prompt');
+  var optionsEl = document.getElementById('options');
+  var qNumEl = document.getElementById('qNum');
+  var scoreEl = document.getElementById('score');
+  var timerEl = document.getElementById('timer');
+  var progressEl = document.getElementById('progress');
+  var flashEl = document.getElementById('result-flash');
+  var modalOverlay = document.getElementById('modal-overlay');
+  var modalTitle = document.getElementById('modal-title');
+  var modalScore = document.getElementById('modal-score');
+  var modalStats = document.getElementById('modal-stats');
+  var modalAgain = document.getElementById('modal-again');
 
-function updateTimer(){
-  const el=document.getElementById('timer');
-  const tick=()=>{const s=Math.floor((Date.now()-qStartTime)/1000);el.textContent=s;requestAnimationFrame(tick)};
-  requestAnimationFrame(tick);
-}
+  // ── Helpers ───────────────────────────────────────────────────────────
+  function rk(el, tex) {
+    if (typeof katex !== 'undefined') {
+      katex.render(tex, el, { throwOnError: false, displayMode: false });
+    } else {
+      el.textContent = tex;
+    }
+  }
 
-function handle(btn,q){
-  const s=(Date.now()-qStartTime)/1000;const ok=btn.dataset.val===q.correct;
-  document.querySelectorAll('.opt-btn').forEach(b=>{b.classList.add('disabled');if(b.dataset.val===q.correct)b.classList.add('correct')});
-  if(ok){btn.classList.add('correct');const m=1/(1+T_K*Math.log(1+s));score+=Math.max(1,Math.round(BASE*m));streak++;correctCount++;if(streak>bestStreak)bestStreak=streak;pip('done')}
-  else{btn.classList.add('wrong');streak=0;pip('fail')}
-  document.getElementById('score').textContent=score;document.getElementById('streak').textContent=streak;setTimeout(adv,1000)
-}
-function pip(c){const ps=document.querySelectorAll('.pip');if(ps[qIdx]){ps[qIdx].classList.remove('current');ps[qIdx].classList.add(c)}}
-function adv(){qIdx++;if(qIdx>=totalQ){end();return}document.querySelectorAll('.pip')[qIdx]?.classList.add('current');showQ()}
-function end(){const pct=Math.round(correctCount/totalQ*100);let t='Keep Practising!';if(pct>=90)t='Outstanding!';else if(pct>=70)t='Well Done!';else if(pct>=50)t='Good Effort!';document.getElementById('resultTitle').textContent=t;document.getElementById('finalScore').textContent=score;document.getElementById('statsLine').textContent=`${correctCount}/${totalQ} correct (${pct}%) · Best streak: ${bestStreak}`;show('results')}
-function showMenu(){show('menu')}
+  function show(id) {
+    document.querySelectorAll('.screen').forEach(function(s) { s.classList.remove('active'); });
+    document.getElementById(id).classList.add('active');
+  }
+
+  function buildPips() {
+    progressEl.innerHTML = '';
+    for (var i = 0; i < totalQuestions; i++) {
+      var d = document.createElement('div');
+      d.className = 'pip' + (i === 0 ? ' current' : '');
+      progressEl.appendChild(d);
+    }
+  }
+
+  function setPip(idx, cls) {
+    var pips = progressEl.querySelectorAll('.pip');
+    if (pips[idx]) {
+      pips[idx].classList.remove('current');
+      pips[idx].classList.add(cls);
+    }
+  }
+
+  function setCurrentPip(idx) {
+    var pips = progressEl.querySelectorAll('.pip');
+    if (pips[idx]) {
+      pips[idx].classList.add('current');
+    }
+  }
+
+  // ── Timer (count-up) ─────────────────────────────────────────────────
+  function startTimer() {
+    timerStart = Date.now();
+    cancelAnimationFrame(timerRaf);
+    (function tick() {
+      if (!gameActive) return;
+      var s = Math.floor((Date.now() - timerStart) / 1000);
+      timerEl.textContent = s + 's';
+      timerRaf = requestAnimationFrame(tick);
+    })();
+  }
+
+  function stopTimer() {
+    cancelAnimationFrame(timerRaf);
+  }
+
+  // ── Start session ─────────────────────────────────────────────────────
+  startBtn.addEventListener('click', function() {
+    startSession();
+  });
+
+  async function startSession() {
+    startBtn.disabled = true;
+    startBtn.textContent = 'Loading...';
+
+    try {
+      var headers = { 'Content-Type': 'application/json' };
+      if (typeof dappWallet !== 'undefined' && dappWallet && dappWallet.address) {
+        headers['X-Wallet-Address'] = dappWallet.address;
+      }
+
+      var res = await fetch(API_BASE + '/session/start', {
+        method: 'POST',
+        headers: headers,
+        body: JSON.stringify({ gameId: GAME_ID })
+      });
+      var data = await res.json();
+
+      if (data.error) {
+        startBtn.disabled = false;
+        startBtn.textContent = 'Try Again';
+        return;
+      }
+
+      sessionToken = data.token;
+      totalQuestions = data.totalQuestions || 20;
+      questionNum = 0;
+      totalScore = 0;
+      correctCount = 0;
+      gameActive = true;
+
+      scoreEl.textContent = '0';
+      buildPips();
+      show('game');
+      showQuestion(data.question);
+    } catch (e) {
+      startBtn.disabled = false;
+      startBtn.textContent = 'Try Again';
+    }
+  }
+
+  // ── Show question ─────────────────────────────────────────────────────
+  function showQuestion(q) {
+    if (!q) return;
+    questionNum = q.num;
+    qNumEl.textContent = questionNum + '/' + totalQuestions;
+
+    // Sequence line
+    seqEl.textContent = '';
+    questionEl.innerHTML = '';
+    promptEl.textContent = '';
+
+    if (q.text) {
+      // The server sends text which may contain a sequence, a formula, and/or a prompt
+      // Split on the last question mark or "Find"/"Evaluate"/"What" to separate prompt from content
+      var text = q.text;
+
+      // Check for KaTeX-renderable content (backslashes, ^, {})
+      var hasLatex = /[\\^{}]/.test(text);
+      if (hasLatex) {
+        rk(seqEl, text);
+      } else {
+        seqEl.textContent = text;
+      }
+    }
+
+    // Build option buttons
+    optionsEl.innerHTML = '';
+    flashEl.style.display = 'none';
+    flashEl.className = 'result-flash';
+
+    if (q.options && q.options.length > 0) {
+      q.options.forEach(function(opt) {
+        var btn = document.createElement('button');
+        btn.className = 'opt-btn';
+        btn.dataset.val = opt;
+
+        if (/[\\^{}]/.test(opt)) {
+          rk(btn, opt);
+        } else {
+          btn.textContent = opt;
+        }
+
+        btn.addEventListener('click', function() { submitAnswer(btn, opt); });
+        optionsEl.appendChild(btn);
+      });
+    }
+
+    // Update pip
+    setCurrentPip(questionNum - 1);
+    startTimer();
+  }
+
+  // ── Submit answer ─────────────────────────────────────────────────────
+  async function submitAnswer(btn, answer) {
+    if (!gameActive) return;
+    stopTimer();
+
+    // Disable all buttons
+    optionsEl.querySelectorAll('.opt-btn').forEach(function(b) {
+      b.classList.add('disabled');
+    });
+
+    try {
+      var res = await fetch(API_BASE + '/session/evaluate', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          sessionToken: sessionToken,
+          answer: answer
+        })
+      });
+      var data = await res.json();
+
+      if (data.error) {
+        flashEl.className = 'result-flash wrong';
+        flashEl.textContent = data.error;
+        flashEl.style.display = 'block';
+        gameActive = false;
+        return;
+      }
+
+      totalScore = data.totalScore;
+      scoreEl.textContent = totalScore;
+
+      if (data.correct) {
+        correctCount++;
+        btn.classList.add('correct');
+        setPip(questionNum - 1, 'done');
+        flashEl.className = 'result-flash correct';
+        flashEl.textContent = 'Correct! +' + data.points + ' pts';
+        flashEl.style.display = 'block';
+      } else {
+        btn.classList.add('wrong');
+        setPip(questionNum - 1, 'fail');
+        // Highlight the correct answer
+        optionsEl.querySelectorAll('.opt-btn').forEach(function(b) {
+          if (b.dataset.val === data.correctAnswer) {
+            b.classList.add('correct');
+            b.classList.add('reveal');
+          }
+        });
+        flashEl.className = 'result-flash wrong';
+        flashEl.textContent = 'Wrong. Answer: ' + data.correctAnswer;
+        flashEl.style.display = 'block';
+      }
+
+      if (data.finished) {
+        gameActive = false;
+        setTimeout(function() { showFinalModal(data); }, 1500);
+      } else {
+        setTimeout(function() { showQuestion(data.question); }, 1500);
+      }
+    } catch (e) {
+      flashEl.className = 'result-flash wrong';
+      flashEl.textContent = 'Connection error';
+      flashEl.style.display = 'block';
+    }
+  }
+
+  // ── Final modal ───────────────────────────────────────────────────────
+  function showFinalModal(data) {
+    var pct = Math.round(correctCount / totalQuestions * 100);
+    var title = 'Keep Practising!';
+    if (pct >= 90) title = 'Outstanding!';
+    else if (pct >= 70) title = 'Well Done!';
+    else if (pct >= 50) title = 'Good Effort!';
+
+    modalTitle.textContent = title;
+    modalScore.textContent = totalScore;
+    modalStats.textContent = correctCount + '/' + totalQuestions + ' correct (' + pct + '%) — Max possible: 2000';
+    modalOverlay.classList.add('active');
+  }
+
+  // ── Play again ────────────────────────────────────────────────────────
+  modalAgain.addEventListener('click', function() {
+    modalOverlay.classList.remove('active');
+    startBtn.disabled = false;
+    startBtn.textContent = 'Start';
+    show('menu');
+  });
+
+  // ── Listen for dApp session (paid mode) ───────────────────────────────
+  window.addEventListener('dapp-session-ready', function(e) {
+    sessionToken = e.detail.token;
+    totalQuestions = e.detail.totalQuestions || 20;
+    questionNum = 0;
+    totalScore = 0;
+    correctCount = 0;
+    gameActive = true;
+
+    scoreEl.textContent = '0';
+    buildPips();
+    show('game');
+
+    if (e.detail.question) {
+      showQuestion(e.detail.question);
+    }
+  });
+
+})();
 </script>
 
 <script src="../dapp-entry.js"></script>

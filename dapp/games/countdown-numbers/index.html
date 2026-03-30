@@ -4,9 +4,9 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Countdown Numbers — Reach the Target | MathsWins</title>
-<meta name="description" content="The classic Countdown numbers game. Six numbers, one target, 30 seconds. Use addition, subtraction, multiplication and division to hit the target. Free to play.">
+<meta name="description" content="The classic Countdown numbers game. Six numbers, one target — use addition, subtraction, multiplication and division to hit the target. Server-scored with speed multiplier.">
 <meta property="og:title" content="Countdown Numbers — Can You Reach the Target?">
-<meta property="og:description" content="Six numbers. One target. Thirty seconds. The classic arithmetic challenge from the UK's longest-running game show. Free, no sign-up.">
+<meta property="og:description" content="Six numbers. One target. The classic arithmetic challenge. Accuracy scoring with speed multiplier. Free to play.">
 <meta property="og:url" content="https://mathswins.co.uk/dapp/games/countdown-numbers/">
 <meta property="og:image" content="https://mathswins.co.uk/assets/og-image.png">
 <link rel="canonical" href="https://mathswins.co.uk/dapp/games/countdown-numbers/">
@@ -31,56 +31,57 @@ h1{font-family:'Bebas Neue',sans-serif;font-size:2.5rem;color:var(--text-bright)
 /* Timer */
 .timer-text{font-family:'DM Mono',monospace;font-size:1.2rem;text-align:center;color:var(--text-bright);margin:.75rem 0}
 
-/* Number tiles */
+/* Round indicator */
+.round-indicator{font-family:'DM Mono',monospace;font-size:.85rem;text-align:center;color:var(--muted);margin-bottom:.5rem}
+.round-indicator span{color:var(--gold)}
+
+/* Number pills */
 .tiles{display:flex;gap:.5rem;justify-content:center;flex-wrap:wrap;margin:1.5rem 0}
-.tile{font-family:'DM Mono',monospace;font-size:1.4rem;font-weight:500;width:70px;height:56px;display:flex;align-items:center;justify-content:center;background:var(--surface);border:2px solid var(--border2);border-radius:8px;color:var(--text-bright);user-select:none}
+.tile{font-family:'DM Mono',monospace;font-size:1.4rem;font-weight:500;padding:.5rem 1.1rem;display:flex;align-items:center;justify-content:center;background:var(--surface);border:2px solid var(--border2);border-radius:20px;color:var(--text-bright);user-select:none}
 
 /* Expression input */
 .expr-area{margin:1.5rem 0}
-.expr-input{font-family:'DM Mono',monospace;font-size:1.3rem;width:100%;padding:.75rem 1rem;background:var(--surface);border:2px solid var(--border2);border-radius:8px;color:var(--text-bright);outline:none;text-align:center}
+.expr-input{font-family:'DM Mono',monospace;font-size:1.5rem;width:100%;padding:1rem 1.25rem;background:var(--surface);border:2px solid var(--border2);border-radius:8px;color:var(--text-bright);outline:none;text-align:center}
 .expr-input:focus{border-color:var(--teal-bright)}
-.expr-input::placeholder{color:var(--muted);font-size:.95rem}
-.expr-hint{font-size:.75rem;color:var(--muted);text-align:center;margin-top:.5rem}
-.expr-result{font-family:'DM Mono',monospace;font-size:1.3rem;text-align:center;padding:.75rem;margin-top:.75rem;border-radius:8px;display:none}
-.expr-result.valid{display:block;background:rgba(45,212,160,.08);border:1px solid rgba(45,212,160,.25);color:var(--teal-bright)}
-.expr-result.exact{display:block;background:rgba(45,212,160,.15);border:1px solid rgba(45,212,160,.4);color:var(--green-bright)}
-.expr-result.error{display:block;background:rgba(239,83,80,.08);border:1px solid rgba(239,83,80,.2);color:var(--red-bright);font-size:.9rem}
+.expr-input::placeholder{color:var(--muted);font-size:1rem}
+.expr-input:disabled{opacity:.5;cursor:not-allowed}
 
-/* Working area */
-.working{background:var(--surface);border:1px solid var(--border);border-radius:10px;padding:1.25rem;margin:1.5rem 0;min-height:120px}
-.working-title{font-family:'Outfit',sans-serif;font-size:.7rem;text-transform:uppercase;letter-spacing:.12em;color:var(--muted);margin-bottom:.75rem}
-.step{font-family:'DM Mono',monospace;font-size:1rem;padding:.35rem 0;color:var(--text-bright);display:flex;align-items:center;gap:.5rem}
-.step .step-result{color:var(--teal-bright)}
-.step .undo-step{font-size:.7rem;color:var(--red-bright);cursor:pointer;opacity:.5;margin-left:auto}.step .undo-step:hover{opacity:1}
+/* Result flash */
+.result-flash{text-align:center;padding:1rem;margin:1rem 0;border-radius:8px;display:none}
+.result-flash.exact{display:block;background:rgba(45,212,160,.12);border:1px solid rgba(45,212,160,.35);color:var(--green-bright)}
+.result-flash.close{display:block;background:rgba(212,168,71,.1);border:1px solid rgba(212,168,71,.3);color:var(--gold)}
+.result-flash.miss{display:block;background:rgba(239,83,80,.08);border:1px solid rgba(239,83,80,.2);color:var(--red-bright)}
+.result-flash .flash-title{font-family:'Bebas Neue',sans-serif;font-size:1.5rem;letter-spacing:.03em}
+.result-flash .flash-detail{font-family:'DM Mono',monospace;font-size:.9rem;margin-top:.35rem;color:var(--text)}
+.result-flash .flash-points{font-family:'DM Mono',monospace;font-size:1.1rem;margin-top:.25rem}
 
-/* Result display */
-.result-display{text-align:center;padding:1rem;margin:1rem 0;border-radius:8px;display:none}
-.result-display.exact{background:rgba(45,212,160,.1);border:1px solid rgba(45,212,160,.3)}
-.result-display.close{background:rgba(212,168,71,.1);border:1px solid rgba(212,168,71,.3)}
-.result-display.miss{background:rgba(239,83,80,.08);border:1px solid rgba(239,83,80,.2)}
-.result-label{font-family:'Bebas Neue',sans-serif;font-size:1.5rem;letter-spacing:.03em}
-.result-score{font-family:'DM Mono',monospace;font-size:1.1rem;margin-top:.25rem}
+/* Score bar */
+.score-bar{display:flex;gap:1.5rem;justify-content:center;margin:1rem 0;font-size:.8rem;color:var(--muted)}
+.score-bar .stat-item{text-align:center}
+.score-bar .stat-val{font-family:'DM Mono',monospace;font-size:1.1rem;color:var(--text-bright);display:block}
 
 /* Controls */
 .controls{display:flex;gap:.75rem;justify-content:center;flex-wrap:wrap;margin:1.5rem 0}
 .btn{font-family:'Outfit',sans-serif;font-weight:600;font-size:.85rem;padding:.65rem 1.5rem;border:none;border-radius:6px;cursor:pointer;transition:all .15s}
 .btn-primary{background:var(--teal-bright);color:var(--bg)}.btn-primary:hover{opacity:.85}
 .btn-secondary{background:var(--surface);border:1px solid var(--border);color:var(--text)}.btn-secondary:hover{border-color:var(--teal-bright)}
-.btn-danger{background:var(--surface);border:1px solid var(--red-bright);color:var(--red-bright)}.btn-danger:hover{background:rgba(239,83,80,.1)}
+.btn:disabled{opacity:.4;cursor:not-allowed}
 
-/* Setup screen */
-.setup{text-align:center}
-.setup h2{font-family:'Bebas Neue',sans-serif;font-size:1.5rem;color:var(--text-bright);margin-bottom:1rem}
-.large-select{display:flex;gap:.5rem;justify-content:center;margin:1rem 0}
-.large-opt{font-family:'DM Mono',monospace;font-size:1.2rem;width:48px;height:44px;display:flex;align-items:center;justify-content:center;background:var(--surface);border:2px solid var(--border2);border-radius:8px;color:var(--text);cursor:pointer;transition:all .15s}
-.large-opt:hover{border-color:var(--teal-bright)}
-.large-opt.selected{border-color:var(--gold);color:var(--gold);background:rgba(212,168,71,.1)}
+/* Info panel */
+.info-panel{background:var(--surface);border:1px solid var(--border);border-radius:10px;padding:1.25rem;margin:1.5rem 0}
+.info-panel h2{font-family:'Bebas Neue',sans-serif;font-size:1.5rem;color:var(--text-bright);margin-bottom:.75rem;text-align:center}
+.info-panel p{font-size:.85rem;color:var(--text);line-height:1.6;margin-bottom:.5rem}
+.info-panel .highlight{color:var(--gold);font-family:'DM Mono',monospace;font-weight:500}
 
-/* Solution display */
-.solution{background:var(--surface2);border:1px solid var(--border2);border-radius:8px;padding:1.25rem;margin:1rem 0}
-.solution-title{font-family:'Outfit',sans-serif;font-size:.7rem;text-transform:uppercase;letter-spacing:.12em;color:var(--muted);margin-bottom:.5rem}
-.solution-step{font-family:'DM Mono',monospace;font-size:.95rem;padding:.25rem 0;color:var(--teal-bright)}
-.no-solution{font-family:'Outfit',sans-serif;font-size:.9rem;color:var(--muted);font-style:italic}
+/* Final modal */
+.modal-overlay{position:fixed;inset:0;z-index:300;background:rgba(5,7,9,.92);display:flex;align-items:center;justify-content:center;padding:1rem}
+.modal{max-width:420px;width:100%;background:var(--surface);border:1px solid var(--border2);border-radius:12px;padding:2rem;text-align:center}
+.modal h2{font-family:'Bebas Neue',sans-serif;font-size:2rem;color:var(--text-bright);margin-bottom:1rem}
+.modal .final-score{font-family:'DM Mono',monospace;font-size:3rem;color:var(--gold);margin:.75rem 0}
+.modal .final-detail{font-family:'DM Mono',monospace;font-size:.85rem;color:var(--muted);margin-bottom:1.5rem}
+
+/* Error display */
+.error-msg{font-size:.85rem;color:var(--red-bright);text-align:center;margin:.75rem 0}
 
 /* Stats */
 .stats{display:flex;gap:1.5rem;justify-content:center;margin:1rem 0;font-size:.8rem;color:var(--muted)}
@@ -102,34 +103,30 @@ footer a{color:var(--muted);text-decoration:none}footer a:hover{color:var(--teal
 <div class="game-container">
 
 <header>
-  
   <h1>COUNTDOWN NUMBERS</h1>
   <p class="tagline">Six numbers. One target. Pure arithmetic.</p>
 </header>
 
-<!-- SETUP SCREEN -->
-<div id="setupScreen" class="setup">
-  <h2>HOW MANY LARGE NUMBERS?</h2>
-  <p style="font-size:.85rem;color:var(--muted);margin-bottom:1rem">Large: 25, 50, 75, 100 — Small: 1–10 (two of each)</p>
-  <div class="large-select">
-    <div class="large-opt" data-large="0" onclick="setLarge(0)">0</div>
-    <div class="large-opt selected" data-large="1" onclick="setLarge(1)">1</div>
-    <div class="large-opt" data-large="2" onclick="setLarge(2)">2</div>
-    <div class="large-opt" data-large="3" onclick="setLarge(3)">3</div>
-    <div class="large-opt" data-large="4" onclick="setLarge(4)">4</div>
+<!-- START SCREEN -->
+<div id="startScreen">
+  <div class="info-panel">
+    <h2>HOW IT WORKS</h2>
+    <p><span class="highlight">5 rounds.</span> Each round you get 6 numbers and a target.</p>
+    <p><strong>Accuracy scoring:</strong> closer to target = more points. Exact match = <span class="highlight">100</span> accuracy.</p>
+    <p><strong>Speed multiplier:</strong> flat <span class="highlight">1.3x</span> for the first 5 seconds, decays to <span class="highlight">1.0x</span> at 120s.</p>
+    <p>Max per round: <span class="highlight">130 pts</span>. Max per session: <span class="highlight">650 pts</span>.</p>
+    <p style="margin-top:.75rem;font-size:.8rem;color:var(--muted)">Type a mathematical expression using +, -, *, / and brackets. No calculator — pure mental arithmetic.</p>
   </div>
-  <button class="btn btn-primary" onclick="startGame()" style="margin-top:1rem;font-size:1rem;padding:.8rem 2.5rem">START GAME</button>
-  
-  <div class="stats" id="lifetimeStats" style="margin-top:2rem">
-    <div class="stat-item"><span class="stat-val" id="sGames">0</span>Games</div>
-    <div class="stat-item"><span class="stat-val" id="sExact">0</span>Exact</div>
-    <div class="stat-item"><span class="stat-val" id="sClose">0</span>Close</div>
-    <div class="stat-item"><span class="stat-val" id="sPoints">0</span>Points</div>
+  <div class="controls">
+    <button class="btn btn-primary" id="startBtn" onclick="startSession()" style="font-size:1rem;padding:.8rem 2.5rem">START GAME</button>
   </div>
+  <div id="startError" class="error-msg" style="display:none"></div>
 </div>
 
 <!-- GAME SCREEN -->
 <div id="gameScreen" style="display:none">
+  <div class="round-indicator">Round <span id="roundNum">1</span> of <span id="totalRounds">5</span></div>
+
   <div class="target-display">
     <div class="target-label">TARGET</div>
     <div class="target-num" id="targetNum">---</div>
@@ -140,24 +137,22 @@ footer a{color:var(--muted);text-decoration:none}footer a:hover{color:var(--teal
   <div class="tiles" id="tilesContainer"></div>
 
   <div class="expr-area">
-    <input type="text" class="expr-input" id="exprInput" placeholder="e.g. (100 + 25) × 4" autocomplete="off" spellcheck="false">
-    <div class="expr-hint">Use your numbers with + − × ÷ and brackets. Press Enter or Calculate to evaluate.</div>
-    <div class="expr-result" id="exprResult"></div>
+    <input type="text" class="expr-input" id="exprInput" placeholder="e.g. (100 + 75) * 3" autocomplete="off" spellcheck="false">
   </div>
 
-  <div class="result-display" id="resultDisplay">
-    <div class="result-label" id="resultLabel"></div>
-    <div class="result-score" id="resultScore"></div>
-  </div>
+  <div id="resultFlash" class="result-flash"></div>
 
-  <div id="solutionArea"></div>
+  <div class="score-bar">
+    <div class="stat-item"><span class="stat-val" id="currentScore">0</span>Score</div>
+    <div class="stat-item"><span class="stat-val" id="roundsCorrect">0</span>Exact</div>
+  </div>
 
   <div class="controls">
-    <button class="btn btn-primary" id="calcBtn" onclick="evaluateExpr()">Calculate</button>
+    <button class="btn btn-primary" id="submitBtn" onclick="submitExpression()">Submit</button>
     <button class="btn btn-secondary" id="clearBtn" onclick="clearExpr()">Clear</button>
-    <button class="btn btn-primary" id="submitBtn" onclick="submitAnswer()" style="display:none">Submit</button>
-    <button class="btn btn-primary" id="newGameBtn" onclick="showSetup()" style="display:none">New Game</button>
+    <button class="btn btn-secondary" id="skipBtn" onclick="submitExpression(true)">Skip</button>
   </div>
+  <div id="gameError" class="error-msg" style="display:none"></div>
 </div>
 
 </div>
@@ -167,402 +162,287 @@ footer a{color:var(--muted);text-decoration:none}footer a:hover{color:var(--teal
 </footer>
 
 <script>
-// Game state
-let G = {
-  numbers: [], target: 0, largeCount: 1,
-  timer: null, elapsed: 0, gameOver: false, lastResult: null,
-  stats: JSON.parse(localStorage.getItem('mw_countdown_stats') || '{"games":0,"exact":0,"close":0,"points":0}')
-};
+(function() {
+  'use strict';
 
-function updateStatsDisplay() {
-  document.getElementById('sGames').textContent = G.stats.games;
-  document.getElementById('sExact').textContent = G.stats.exact;
-  document.getElementById('sClose').textContent = G.stats.close;
-  document.getElementById('sPoints').textContent = G.stats.points;
-}
+  var API_BASE = 'https://dapp-api.mathswins.co.uk/api/dapp';
+  if (location.hostname === 'localhost' || location.hostname === '127.0.0.1') {
+    API_BASE = 'http://127.0.0.1:3860/api/dapp';
+  }
 
-function setLarge(n) {
-  G.largeCount = n;
-  document.querySelectorAll('.large-opt').forEach(o => o.classList.toggle('selected', parseInt(o.dataset.large) === n));
-}
+  // Game state
+  var G = {
+    sessionToken: null,
+    numbers: [],
+    target: 0,
+    questionNum: 0,
+    totalQuestions: 5,
+    totalScore: 0,
+    roundsExact: 0,
+    timer: null,
+    elapsed: 0,
+    submitting: false,
+    paidMode: false,
+    paidSessionData: null
+  };
 
-function generateNumbers(largeCount) {
-  const large = [25, 50, 75, 100];
-  const small = [1,1,2,2,3,3,4,4,5,5,6,6,7,7,8,8,9,9,10,10];
-  for (let i = large.length - 1; i > 0; i--) { const j = Math.floor(Math.random() * (i+1)); [large[i],large[j]] = [large[j],large[i]]; }
-  for (let i = small.length - 1; i > 0; i--) { const j = Math.floor(Math.random() * (i+1)); [small[i],small[j]] = [small[j],small[i]]; }
-  const nums = [];
-  for (let i = 0; i < largeCount; i++) nums.push(large[i]);
-  for (let i = 0; i < 6 - largeCount; i++) nums.push(small[i]);
-  return nums;
-}
+  // API helpers
+  function apiHeaders() {
+    var h = { 'Content-Type': 'application/json' };
+    if (window.dappWallet && dappWallet.address) {
+      h['X-Wallet-Address'] = dappWallet.address;
+    }
+    return h;
+  }
 
-function generateTarget() {
-  return Math.floor(Math.random() * 899) + 101;
-}
+  async function apiPost(path, body) {
+    var res = await fetch(API_BASE + path, {
+      method: 'POST',
+      headers: apiHeaders(),
+      body: JSON.stringify(body)
+    });
+    var data = await res.json();
+    if (data.error) throw new Error(data.error);
+    return data;
+  }
 
-function showSetup() {
-  document.getElementById('setupScreen').style.display = '';
-  document.getElementById('gameScreen').style.display = 'none';
-  if (G.timer) clearInterval(G.timer);
-  updateStatsDisplay();
-}
-
-function startGame() {
-  G.numbers = generateNumbers(G.largeCount);
-  G.target = generateTarget();
-  G.gameOver = false;
-  G.lastResult = null;
-  G.elapsed = 0;
-
-  document.getElementById('setupScreen').style.display = 'none';
-  document.getElementById('gameScreen').style.display = '';
-  document.getElementById('targetNum').textContent = G.target;
-  document.getElementById('resultDisplay').style.display = 'none';
-  document.getElementById('solutionArea').innerHTML = '';
-  document.getElementById('newGameBtn').style.display = 'none';
-  document.getElementById('submitBtn').style.display = 'none';
-  document.getElementById('calcBtn').style.display = '';
-  document.getElementById('clearBtn').style.display = '';
-  document.getElementById('exprInput').value = '';
-  document.getElementById('exprInput').disabled = false;
-  document.getElementById('exprResult').className = 'expr-result';
-  document.getElementById('exprResult').textContent = '';
-
-  renderTiles();
-  startTimer();
-  document.getElementById('exprInput').focus();
-}
-
-function renderTiles() {
-  const container = document.getElementById('tilesContainer');
-  container.innerHTML = '';
-  G.numbers.forEach(n => {
-    const div = document.createElement('div');
-    div.className = 'tile';
-    div.textContent = n;
-    container.appendChild(div);
-  });
-}
-
-// --- Expression parser (BODMAS-safe, recursive descent) ---
-
-function tokenise(expr) {
-  // Normalise operator characters
-  expr = expr.replace(/×/g, '*').replace(/÷/g, '/').replace(/−/g, '-').replace(/\u2013/g, '-').replace(/x/gi, function(m, offset, str) {
-    // Only treat 'x' as multiply if between number/paren and number/paren
-    var before = str[offset - 1];
-    var after = str[offset + 1];
-    if (before && after && /[\d)]/.test(before) && /[\d(]/.test(after)) return '*';
-    return m;
+  // Listen for paid session from dapp-entry.js
+  window.addEventListener('dapp-session-ready', function(e) {
+    G.paidMode = true;
+    G.paidSessionData = e.detail;
+    startSessionWithData(e.detail);
   });
 
-  var tokens = [];
-  var i = 0;
-  while (i < expr.length) {
-    if (expr[i] === ' ') { i++; continue; }
-    if ('0123456789'.indexOf(expr[i]) >= 0) {
-      var num = '';
-      while (i < expr.length && '0123456789'.indexOf(expr[i]) >= 0) { num += expr[i]; i++; }
-      // Implied multiply: number followed by ( e.g. 75(3+2)
-      if (i < expr.length && expr[i] === '(') {
-        tokens.push({ type: 'num', value: parseInt(num, 10) });
-        tokens.push({ type: 'op', value: '*' });
+  // Start session (free mode — request from server)
+  window.startSession = async function() {
+    var startBtn = document.getElementById('startBtn');
+    var errorEl = document.getElementById('startError');
+    startBtn.disabled = true;
+    startBtn.textContent = 'Starting...';
+    errorEl.style.display = 'none';
+
+    try {
+      var data = await apiPost('/session/start', { gameId: 'countdown-numbers' });
+      startSessionWithData(data);
+    } catch (e) {
+      errorEl.textContent = 'Failed to start session: ' + e.message;
+      errorEl.style.display = '';
+      startBtn.disabled = false;
+      startBtn.textContent = 'START GAME';
+    }
+  };
+
+  function startSessionWithData(data) {
+    G.sessionToken = data.token;
+    G.totalQuestions = data.totalQuestions || 5;
+    G.totalScore = 0;
+    G.roundsExact = 0;
+    G.questionNum = 1;
+
+    document.getElementById('startScreen').style.display = 'none';
+    document.getElementById('gameScreen').style.display = '';
+
+    loadRound(data.question);
+  }
+
+  function loadRound(question) {
+    G.numbers = question.numbers;
+    G.target = question.target;
+    G.elapsed = 0;
+    G.submitting = false;
+
+    // Update UI
+    document.getElementById('roundNum').textContent = G.questionNum;
+    document.getElementById('totalRounds').textContent = G.totalQuestions;
+    document.getElementById('targetNum').textContent = G.target;
+    document.getElementById('currentScore').textContent = G.totalScore;
+    document.getElementById('roundsCorrect').textContent = G.roundsExact;
+    document.getElementById('exprInput').value = '';
+    document.getElementById('exprInput').disabled = false;
+    document.getElementById('submitBtn').disabled = false;
+    document.getElementById('skipBtn').disabled = false;
+    document.getElementById('clearBtn').disabled = false;
+    document.getElementById('gameError').style.display = 'none';
+
+    // Hide result flash
+    var flash = document.getElementById('resultFlash');
+    flash.className = 'result-flash';
+    flash.style.display = 'none';
+
+    // Render number pills
+    var container = document.getElementById('tilesContainer');
+    container.innerHTML = '';
+    G.numbers.forEach(function(n) {
+      var div = document.createElement('div');
+      div.className = 'tile';
+      div.textContent = n;
+      container.appendChild(div);
+    });
+
+    // Start count-up timer
+    startTimer();
+    document.getElementById('exprInput').focus();
+  }
+
+  function startTimer() {
+    var text = document.getElementById('timerText');
+    G.elapsed = 0;
+    if (G.timer) clearInterval(G.timer);
+    G.timer = setInterval(function() {
+      G.elapsed += 0.1;
+      var secs = Math.floor(G.elapsed);
+      var mins = Math.floor(secs / 60);
+      secs = secs % 60;
+      text.textContent = mins + ':' + (secs < 10 ? '0' : '') + secs;
+    }, 100);
+  }
+
+  // Submit expression to server
+  window.submitExpression = async function(skip) {
+    if (G.submitting) return;
+
+    var expr = skip ? '' : document.getElementById('exprInput').value.trim();
+    if (!skip && !expr) {
+      document.getElementById('gameError').textContent = 'Type an expression or click Skip.';
+      document.getElementById('gameError').style.display = '';
+      return;
+    }
+
+    G.submitting = true;
+    clearInterval(G.timer);
+    document.getElementById('submitBtn').disabled = true;
+    document.getElementById('skipBtn').disabled = true;
+    document.getElementById('clearBtn').disabled = true;
+    document.getElementById('exprInput').disabled = true;
+    document.getElementById('gameError').style.display = 'none';
+
+    try {
+      var answer = skip ? JSON.stringify({ expression: '' }) : JSON.stringify({ expression: expr });
+      var data;
+
+      // Use dappEntry.evaluate if in paid mode, otherwise call directly
+      if (G.paidMode && window.dappEntry) {
+        data = await dappEntry.evaluate(answer);
       } else {
-        tokens.push({ type: 'num', value: parseInt(num, 10) });
+        data = await apiPost('/session/evaluate', {
+          sessionToken: G.sessionToken,
+          answer: answer
+        });
       }
-    } else if ('+-*/'.indexOf(expr[i]) >= 0) {
-      tokens.push({ type: 'op', value: expr[i] });
-      i++;
-    } else if (expr[i] === '(') {
-      tokens.push({ type: 'lparen' });
-      i++;
-    } else if (expr[i] === ')') {
-      tokens.push({ type: 'rparen' });
-      i++;
-      // Implied multiply: ) followed by number or ( e.g. (3+2)75 or (3+2)(4+1)
-      if (i < expr.length && ('0123456789'.indexOf(expr[i]) >= 0 || expr[i] === '(')) {
-        tokens.push({ type: 'op', value: '*' });
+
+      G.totalScore = data.totalScore || 0;
+      G.questionNum = (data.questionNum || G.questionNum) + (data.finished ? 0 : 1);
+
+      // Show result flash
+      showResultFlash(data, skip);
+
+      // Update score display
+      document.getElementById('currentScore').textContent = G.totalScore;
+      if (data.correct) G.roundsExact++;
+      document.getElementById('roundsCorrect').textContent = G.roundsExact;
+
+      if (data.finished) {
+        // Session complete — show final modal after a brief pause
+        setTimeout(function() { showFinalModal(data); }, 2000);
+      } else {
+        // Load next round after showing result
+        setTimeout(function() {
+          G.questionNum = data.questionNum + 1;
+          loadRound(data.question);
+        }, 2000);
       }
+
+    } catch (e) {
+      document.getElementById('gameError').textContent = 'Server error: ' + e.message;
+      document.getElementById('gameError').style.display = '';
+      G.submitting = false;
+      document.getElementById('submitBtn').disabled = false;
+      document.getElementById('skipBtn').disabled = false;
+      document.getElementById('clearBtn').disabled = false;
+      document.getElementById('exprInput').disabled = false;
+    }
+  };
+
+  function showResultFlash(data, skipped) {
+    var flash = document.getElementById('resultFlash');
+    var cls, title;
+
+    if (skipped || !data.points) {
+      cls = 'miss';
+      title = skipped ? 'SKIPPED' : 'NO POINTS';
+    } else if (data.correct) {
+      cls = 'exact';
+      title = 'EXACT!';
+    } else if (data.accuracy >= 80) {
+      cls = 'close';
+      title = 'CLOSE!';
     } else {
-      throw new Error('Unexpected character: ' + expr[i]);
+      cls = 'miss';
+      title = 'OFF TARGET';
     }
-  }
-  return tokens;
-}
 
-function parseExpr(tokens, pos) {
-  // expression = term (('+' | '-') term)*
-  var result = parseTerm(tokens, pos);
-  var val = result.value;
-  pos = result.pos;
-  while (pos < tokens.length && tokens[pos].type === 'op' && (tokens[pos].value === '+' || tokens[pos].value === '-')) {
-    var op = tokens[pos].value;
-    pos++;
-    result = parseTerm(tokens, pos);
-    pos = result.pos;
-    if (op === '+') val += result.value;
-    else val -= result.value;
-  }
-  return { value: val, pos: pos };
-}
-
-function parseTerm(tokens, pos) {
-  // term = factor (('*' | '/') factor)*
-  var result = parseFactor(tokens, pos);
-  var val = result.value;
-  pos = result.pos;
-  while (pos < tokens.length && tokens[pos].type === 'op' && (tokens[pos].value === '*' || tokens[pos].value === '/')) {
-    var op = tokens[pos].value;
-    pos++;
-    result = parseFactor(tokens, pos);
-    pos = result.pos;
-    if (op === '*') val *= result.value;
-    else {
-      if (result.value === 0) throw new Error('Division by zero');
-      val = val / result.value;
+    var detailParts = [];
+    if (!skipped && data.result !== undefined) {
+      detailParts.push('Your answer: ' + data.result + ' (target: ' + data.target + ')');
     }
-  }
-  return { value: val, pos: pos };
-}
-
-function parseFactor(tokens, pos) {
-  if (pos >= tokens.length) throw new Error('Unexpected end of expression');
-  // Handle negative sign at start or after open paren
-  if (tokens[pos].type === 'op' && tokens[pos].value === '-') {
-    pos++;
-    var result = parseFactor(tokens, pos);
-    return { value: -result.value, pos: result.pos };
-  }
-  if (tokens[pos].type === 'num') {
-    return { value: tokens[pos].value, pos: pos + 1 };
-  }
-  if (tokens[pos].type === 'lparen') {
-    pos++;
-    var result = parseExpr(tokens, pos);
-    if (pos >= tokens.length || tokens[result.pos] === undefined || tokens[result.pos].type !== 'rparen') {
-      throw new Error('Missing closing bracket');
+    if (data.accuracy !== undefined && !skipped) {
+      detailParts.push('Accuracy: ' + data.accuracy + '%');
     }
-    return { value: result.value, pos: result.pos + 1 };
-  }
-  throw new Error('Unexpected token');
-}
-
-function evaluateExpression(expr) {
-  var tokens = tokenise(expr);
-  if (tokens.length === 0) throw new Error('Empty expression');
-  var result = parseExpr(tokens, 0);
-  if (result.pos !== tokens.length) throw new Error('Unexpected content after expression');
-  return result.value;
-}
-
-function extractNumbers(expr) {
-  // Extract all integer numbers from expression
-  var cleaned = expr.replace(/×/g, '*').replace(/÷/g, '/').replace(/−/g, '-');
-  var matches = cleaned.match(/\d+/g);
-  return matches ? matches.map(Number) : [];
-}
-
-function validateNumbers(usedNums, available) {
-  // Check each used number appears in the available pool (respecting duplicates)
-  var pool = available.slice();
-  for (var i = 0; i < usedNums.length; i++) {
-    var idx = pool.indexOf(usedNums[i]);
-    if (idx === -1) return { valid: false, bad: usedNums[i] };
-    pool.splice(idx, 1);
-  }
-  return { valid: true };
-}
-
-function evaluateExpr() {
-  if (G.gameOver) return;
-  var input = document.getElementById('exprInput');
-  var resultDiv = document.getElementById('exprResult');
-  var expr = input.value.trim();
-
-  if (!expr) {
-    resultDiv.className = 'expr-result error';
-    resultDiv.textContent = 'Type an expression using your numbers.';
-    return;
-  }
-
-  // Validate numbers used
-  var usedNums = extractNumbers(expr);
-  var check = validateNumbers(usedNums, G.numbers);
-  if (!check.valid) {
-    resultDiv.className = 'expr-result error';
-    resultDiv.textContent = check.bad + ' is not available (or used too many times). Your numbers: ' + G.numbers.join(', ');
-    return;
-  }
-
-  // Evaluate
-  var result;
-  try {
-    result = evaluateExpression(expr);
-  } catch (e) {
-    resultDiv.className = 'expr-result error';
-    resultDiv.textContent = e.message;
-    return;
-  }
-
-  // Check result is a positive integer
-  if (!Number.isFinite(result)) {
-    resultDiv.className = 'expr-result error';
-    resultDiv.textContent = 'Result is not a valid number.';
-    return;
-  }
-
-  if (!Number.isInteger(result)) {
-    resultDiv.className = 'expr-result error';
-    resultDiv.textContent = '= ' + result.toFixed(4) + ' — not a whole number. In Countdown, all intermediate results must be whole numbers.';
-    return;
-  }
-
-  if (result <= 0) {
-    resultDiv.className = 'expr-result error';
-    resultDiv.textContent = '= ' + result + ' — results must be positive.';
-    return;
-  }
-
-  G.lastResult = result;
-  var diff = Math.abs(result - G.target);
-
-  if (diff === 0) {
-    resultDiv.className = 'expr-result exact';
-    resultDiv.textContent = '= ' + result + ' — EXACT!';
-  } else {
-    resultDiv.className = 'expr-result valid';
-    resultDiv.textContent = '= ' + result + '  (' + diff + ' away from ' + G.target + ')';
-  }
-
-  // Show submit button
-  document.getElementById('submitBtn').style.display = '';
-}
-
-function clearExpr() {
-  if (G.gameOver) return;
-  document.getElementById('exprInput').value = '';
-  document.getElementById('exprResult').className = 'expr-result';
-  document.getElementById('exprResult').textContent = '';
-  document.getElementById('submitBtn').style.display = 'none';
-  G.lastResult = null;
-  document.getElementById('exprInput').focus();
-}
-
-// Timer (counts UP)
-function startTimer() {
-  var text = document.getElementById('timerText');
-  G.elapsed = 0;
-  if (G.timer) clearInterval(G.timer);
-  G.timer = setInterval(function() {
-    G.elapsed += 0.1;
-    var secs = Math.floor(G.elapsed);
-    var mins = Math.floor(secs / 60);
-    secs = secs % 60;
-    text.textContent = mins + ':' + (secs < 10 ? '0' : '') + secs;
-  }, 100);
-}
-
-function submitAnswer() {
-  if (G.gameOver) return;
-  clearInterval(G.timer);
-  endGame();
-}
-
-function endGame() {
-  G.gameOver = true;
-  document.getElementById('submitBtn').style.display = 'none';
-  document.getElementById('calcBtn').style.display = 'none';
-  document.getElementById('clearBtn').style.display = 'none';
-  document.getElementById('newGameBtn').style.display = '';
-  document.getElementById('exprInput').disabled = true;
-
-  var answer = G.lastResult;
-  var diff = answer !== null ? Math.abs(answer - G.target) : Infinity;
-
-  // Score
-  var points = 0, cls = 'miss', label = '';
-  if (diff === 0) { points = 10; cls = 'exact'; label = 'EXACT!'; }
-  else if (diff <= 5) { points = 7; cls = 'close'; label = diff + ' AWAY'; }
-  else if (diff <= 10) { points = 5; cls = 'close'; label = diff + ' AWAY'; }
-  else { label = answer !== null ? diff + ' AWAY' : 'NO ANSWER'; }
-
-  var elapsed = Math.floor(G.elapsed);
-  var mins = Math.floor(elapsed / 60);
-  var secs = elapsed % 60;
-  var timeStr = mins + ':' + (secs < 10 ? '0' : '') + secs;
-
-  var disp = document.getElementById('resultDisplay');
-  disp.className = 'result-display ' + cls;
-  disp.style.display = '';
-  document.getElementById('resultLabel').textContent = label;
-  document.getElementById('resultLabel').style.color = cls === 'exact' ? 'var(--green-bright)' : cls === 'close' ? 'var(--gold)' : 'var(--red-bright)';
-  document.getElementById('resultScore').textContent = (points > 0 ? points + ' points' : '') + (answer !== null ? ' (your answer: ' + answer + ')' : '') + ' — Time: ' + timeStr;
-
-  // Update stats
-  G.stats.games++;
-  if (cls === 'exact') G.stats.exact++;
-  else if (cls === 'close') G.stats.close++;
-  G.stats.points += points;
-  localStorage.setItem('mw_countdown_stats', JSON.stringify(G.stats));
-
-  // Show solution
-  showSolution();
-}
-
-// Solver (brute force, finds one solution)
-function solve(numbers, target) {
-  if (numbers.length === 0) return null;
-  for (var i = 0; i < numbers.length; i++) {
-    if (numbers[i].value === target) return [];
-  }
-  for (var i = 0; i < numbers.length; i++) {
-    for (var j = 0; j < numbers.length; j++) {
-      if (i === j) continue;
-      var a = numbers[i].value, b = numbers[j].value;
-      var remaining = numbers.filter(function(_, k) { return k !== i && k !== j; });
-      var ops = [
-        { symbol: '+', result: a + b },
-        { symbol: '−', result: a - b },
-        { symbol: '×', result: a * b }
-      ];
-      if (b !== 0 && a % b === 0) ops.push({ symbol: '÷', result: a / b });
-      for (var o = 0; o < ops.length; o++) {
-        if (ops[o].result <= 0) continue;
-        var newNums = remaining.concat([{ value: ops[o].result }]);
-        var sub = solve(newNums, target);
-        if (sub !== null) {
-          return [{ a: a, op: ops[o].symbol, b: b, result: ops[o].result }].concat(sub);
-        }
-      }
+    if (data.multiplier !== undefined && !skipped) {
+      detailParts.push('Speed: ' + data.multiplier + 'x');
     }
+
+    flash.className = 'result-flash ' + cls;
+    flash.style.display = '';
+    flash.innerHTML = '<div class="flash-title">' + title + '</div>'
+      + (detailParts.length > 0 ? '<div class="flash-detail">' + detailParts.join(' &middot; ') + '</div>' : '')
+      + '<div class="flash-points" style="color:' + (cls === 'exact' ? 'var(--green-bright)' : cls === 'close' ? 'var(--gold)' : 'var(--red-bright)') + '">'
+      + (data.points ? '+' + data.points + ' pts' : '0 pts') + '</div>';
   }
-  return null;
-}
 
-function showSolution() {
-  var nums = G.numbers.map(function(v) { return { value: v }; });
-  var solution = solve(nums, G.target);
-  var area = document.getElementById('solutionArea');
+  function showFinalModal(data) {
+    // Hide game screen content behind modal
+    var overlay = document.createElement('div');
+    overlay.className = 'modal-overlay';
+    overlay.id = 'finalModal';
 
-  if (solution && solution.length > 0) {
-    area.innerHTML = '<div class="solution"><div class="solution-title">ONE POSSIBLE SOLUTION</div>' +
-      solution.map(function(s) { return '<div class="solution-step">' + s.a + ' ' + s.op + ' ' + s.b + ' = ' + s.result + '</div>'; }).join('') +
-      '</div>';
-  } else if (solution && solution.length === 0) {
-    area.innerHTML = '<div class="solution"><div class="solution-title">SOLUTION</div><div class="solution-step">' + G.target + ' is one of your numbers!</div></div>';
-  } else {
-    area.innerHTML = '<div class="solution"><div class="no-solution">No exact solution exists for this combination.</div></div>';
+    var maxScore = G.totalQuestions * 130;
+    overlay.innerHTML = '<div class="modal">'
+      + '<h2>GAME COMPLETE</h2>'
+      + '<div class="final-score">' + G.totalScore + '</div>'
+      + '<div class="final-detail">' + G.roundsExact + ' exact out of ' + G.totalQuestions + ' rounds</div>'
+      + '<div class="final-detail" style="margin-bottom:1.5rem">Max possible: ' + maxScore + '</div>'
+      + '<div class="controls">'
+      + '<button class="btn btn-primary" onclick="playAgain()" style="font-size:1rem;padding:.8rem 2rem">Play Again</button>'
+      + '</div>'
+      + '</div>';
+
+    document.body.appendChild(overlay);
   }
-}
 
-// Enter key submits
-document.getElementById('exprInput').addEventListener('keydown', function(e) {
-  if (e.key === 'Enter') { e.preventDefault(); evaluateExpr(); }
-});
+  window.playAgain = function() {
+    var modal = document.getElementById('finalModal');
+    if (modal) modal.remove();
+    document.getElementById('gameScreen').style.display = 'none';
+    document.getElementById('startScreen').style.display = '';
+    var startBtn = document.getElementById('startBtn');
+    startBtn.disabled = false;
+    startBtn.textContent = 'START GAME';
+    if (G.timer) clearInterval(G.timer);
+  };
 
-// Init
-updateStatsDisplay();
+  window.clearExpr = function() {
+    if (G.submitting) return;
+    document.getElementById('exprInput').value = '';
+    document.getElementById('gameError').style.display = 'none';
+    document.getElementById('exprInput').focus();
+  };
+
+  // Enter key submits
+  document.getElementById('exprInput').addEventListener('keydown', function(e) {
+    if (e.key === 'Enter') { e.preventDefault(); submitExpression(); }
+  });
+})();
 </script>
 
 <script src="../dapp-entry.js"></script>
