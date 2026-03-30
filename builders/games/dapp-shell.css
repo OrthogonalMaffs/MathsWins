@@ -1,0 +1,150 @@
+/* ── MathsWins dApp — Shared Game Shell ──
+   Include in every /builders/games/{id}/index.html
+   Provides: unified colour scheme, fonts, wallet bar, back nav
+*/
+
+@import url('https://fonts.googleapis.com/css2?family=DM+Mono:wght@400;500&family=Bebas+Neue&family=Outfit:wght@300;400;600;700&display=swap');
+
+:root {
+  --bg: #050709;
+  --surface: #0a0d14;
+  --surface2: #0f1319;
+  --border: #161c28;
+  --border2: #1e2638;
+  --gold: #d4a847;
+  --gold-dim: rgba(212,168,71,.06);
+  --gold-glow: rgba(212,168,71,.12);
+  --teal: #0d9488;
+  --teal-bright: #2dd4bf;
+  --teal-dim: rgba(13,148,136,.08);
+  --green: #2dd4a0;
+  --green-dim: rgba(45,212,160,.08);
+  --red: #ef5350;
+  --red-dim: rgba(239,83,80,.08);
+  --blue: #2563eb;
+  --purple: #7c3aed;
+  --text: #c8cdd8;
+  --text-bright: #e8ecf4;
+  --muted: #4a5568;
+  --muted2: #2d3748;
+}
+
+* { margin: 0; padding: 0; box-sizing: border-box; }
+
+body {
+  font-family: 'Outfit', sans-serif;
+  background: var(--bg);
+  color: var(--text);
+  min-height: 100vh;
+  -webkit-font-smoothing: antialiased;
+}
+
+/* ── Wallet Bar ── */
+.dapp-bar {
+  position: sticky; top: 0; z-index: 100;
+  background: rgba(5,7,9,.92); backdrop-filter: blur(12px);
+  border-bottom: 1px solid var(--border);
+  padding: .5rem 1.25rem;
+  display: flex; align-items: center; justify-content: space-between;
+}
+.dapp-bar-left { display: flex; align-items: center; gap: .75rem; }
+.dapp-back {
+  font-size: .75rem; color: var(--muted); text-decoration: none;
+  padding: .3rem .7rem; border: 1px solid var(--border); border-radius: 6px;
+  transition: all .15s;
+}
+.dapp-back:hover { border-color: var(--gold); color: var(--text); }
+.dapp-logo { font-family: 'Bebas Neue', sans-serif; font-size: 1.1rem; color: var(--text-bright); letter-spacing: .03em; text-decoration: none; }
+.dapp-logo span { color: var(--gold); }
+.dapp-badge {
+  font-family: 'DM Mono', monospace; font-size: .5rem;
+  padding: 2px 6px; border-radius: 10px;
+  background: var(--gold-dim); color: var(--gold); border: 1px solid rgba(212,168,71,.2);
+}
+.dapp-bar-right { display: flex; align-items: center; gap: .6rem; }
+.dapp-balance { font-family: 'DM Mono', monospace; font-size: .75rem; color: var(--gold); }
+.dapp-addr {
+  font-family: 'DM Mono', monospace; font-size: .7rem; color: var(--muted);
+  background: var(--surface); border: 1px solid var(--border);
+  padding: .25rem .5rem; border-radius: 6px;
+}
+.dapp-connect {
+  font-family: 'Outfit', sans-serif; font-weight: 600; font-size: .75rem;
+  padding: .4rem 1rem; border-radius: 6px; border: 1px solid var(--gold);
+  background: var(--gold-dim); color: var(--gold); cursor: pointer; transition: all .15s;
+}
+.dapp-connect:hover { background: var(--gold); color: var(--bg); }
+
+/* ── Game Container ── */
+.game-container {
+  max-width: 700px;
+  margin: 0 auto;
+  padding: 1.5rem 1.25rem 3rem;
+}
+
+/* ── Common Headings ── */
+.game-title {
+  font-family: 'Bebas Neue', sans-serif;
+  font-size: 2.2rem;
+  color: var(--text-bright);
+  letter-spacing: .04em;
+  text-align: center;
+  margin-bottom: .25rem;
+}
+.game-subtitle {
+  font-size: .85rem;
+  color: var(--muted);
+  text-align: center;
+  margin-bottom: 1.5rem;
+}
+
+/* ── Buttons ── */
+.btn {
+  font-family: 'Outfit', sans-serif; font-weight: 600; font-size: .85rem;
+  padding: .65rem 1.5rem; border: none; border-radius: 6px;
+  cursor: pointer; transition: all .15s;
+}
+.btn-gold { background: var(--gold); color: var(--bg); }
+.btn-gold:hover { opacity: .85; }
+.btn-teal { background: var(--teal-bright); color: var(--bg); }
+.btn-teal:hover { opacity: .85; }
+.btn-outline {
+  background: transparent; border: 1px solid var(--border); color: var(--text);
+}
+.btn-outline:hover { border-color: var(--gold); color: var(--gold); }
+
+/* ── Cards/Panels ── */
+.panel {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: 10px;
+  padding: 1.25rem;
+  margin-bottom: 1rem;
+}
+
+/* ── Mono text ── */
+.mono { font-family: 'DM Mono', monospace; }
+
+/* ── Score/stat display ── */
+.stat-row { display: flex; gap: 1.5rem; justify-content: center; margin: 1rem 0; }
+.stat { text-align: center; }
+.stat-val { font-family: 'DM Mono', monospace; font-size: 1.3rem; color: var(--text-bright); }
+.stat-label { font-size: .6rem; color: var(--muted); text-transform: uppercase; letter-spacing: .08em; }
+
+/* ── Timer ── */
+.timer { font-family: 'DM Mono', monospace; font-size: 1.2rem; text-align: center; color: var(--text-bright); margin: .75rem 0; }
+
+/* ── Result ── */
+.result-box {
+  text-align: center; padding: 1rem; margin: 1rem 0; border-radius: 8px;
+}
+.result-box.exact { background: rgba(45,212,160,.1); border: 1px solid rgba(45,212,160,.3); }
+.result-box.close { background: rgba(212,168,71,.1); border: 1px solid rgba(212,168,71,.3); }
+.result-box.miss { background: rgba(239,83,80,.08); border: 1px solid rgba(239,83,80,.2); }
+
+/* ── Mobile ── */
+@media (max-width: 600px) {
+  .game-title { font-size: 1.8rem; }
+  .dapp-bar { flex-wrap: wrap; gap: .3rem; }
+  .dapp-badge { display: none; }
+}

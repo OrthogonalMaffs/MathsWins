@@ -1,0 +1,474 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="robots" content="noindex, nofollow">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="description" content="Spot the pattern and find the rule. Sequence Solver covers arithmetic, geometric, quadratic, and sigma notation across KS3, GCSE, and A-Level.">
+<meta property="og:title" content="Sequence Solver · MathsWins">
+<meta property="og:description" content="Spot the pattern and find the rule. Covers arithmetic, geometric, quadratic sequences and sigma notation.">
+<meta property="og:url" content="https://mathswins.co.uk/builders/games/sequence-solver/">
+<meta property="og:image" content="https://mathswins.co.uk/assets/og-image.png">
+<link rel="canonical" href="https://mathswins.co.uk/builders/games/sequence-solver/">
+<link rel="icon" type="image/svg+xml" href="../../schools/assets/favicon.svg">
+<title>Sequence Solver · MathsWins</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Outfit:wght@400;600;700&family=DM+Mono:wght@400;500&family=Bebas+Neue&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/katex.min.css">
+<script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/katex.min.js"></script>
+<script async src="https://www.googletagmanager.com/gtag/js?id=G-7GTLYCZMXN"></script>
+<script>window.dataLayer=window.dataLayer||[];function gtag(){dataLayer.push(arguments);}gtag('js',new Date());gtag('consent','default',{analytics_storage:'denied',ad_storage:'denied',ad_user_data:'denied',ad_personalization:'denied'});gtag('config','G-7GTLYCZMXN',{send_page_view:true,anonymize_ip:true});</script>
+<link rel="stylesheet" href="../dapp-shell.css">
+<script src="https://cdn.jsdelivr.net/npm/ethers@6/dist/ethers.umd.min.js"></script>
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:title" content="MathsWins">
+<meta name="twitter:image" content="https://mathswins.co.uk/assets/og-image.png">
+<style>
+*{margin:0;padding:0;box-sizing:border-box}
+:root{
+  --ink:#050709;--surface:#0a0d14;--gold:#d4a847;--teal:#2dd4bf;
+  --green:#2dd4a0;--red:#ef5350;--border:#161c28;--text:#c8cdd8;
+  --text-bright:#e8ecf4;--muted:#4a5568;--gold-dim:rgba(212,168,71,.06);
+  --gold-glow:rgba(212,168,71,.12);--green-dim:rgba(45,212,160,.08);
+  --red-dim:rgba(239,83,80,.08);
+}
+body{font-family:'Outfit',sans-serif;background:var(--ink);color:var(--text);min-height:100vh;display:flex;flex-direction:column;align-items:center}
+.container{max-width:700px;width:100%;padding:1rem}
+
+/* ── Header ── */
+.header{text-align:center;padding:1.5rem 0 1rem}
+.header h1{font-family:'Bebas Neue',sans-serif;font-size:2.4rem;letter-spacing:.04em;color:var(--gold)}
+.header .sub{font-size:.85rem;color:var(--muted);margin-top:.3rem}
+
+/* ── Info Panel ── */
+.info-panel{background:var(--surface);border:1px solid var(--border);border-radius:12px;padding:1.2rem 1.4rem;margin-bottom:1.2rem;line-height:1.6;font-size:.88rem;color:var(--text)}
+.info-panel strong{color:var(--gold)}
+
+/* ── HUD ── */
+.hud{display:flex;justify-content:space-between;align-items:center;padding:.8rem 1rem;background:var(--surface);border-radius:10px;border:1px solid var(--border);margin-bottom:1rem}
+.hud-item{text-align:center}
+.hud-label{font-size:.7rem;color:var(--muted);text-transform:uppercase;letter-spacing:.05em}
+.hud-val{font-family:'DM Mono',monospace;font-size:1.2rem;font-weight:500;color:var(--text-bright)}
+
+/* ── Question Card ── */
+.q-card{background:var(--surface);border:1px solid var(--border);border-radius:14px;padding:1.5rem;margin-bottom:1rem;text-align:center;min-height:130px;display:flex;flex-direction:column;justify-content:center;align-items:center;gap:.6rem}
+.q-card .seq{font-family:'DM Mono',monospace;font-size:1.3rem;letter-spacing:.05em;color:var(--teal)}
+.q-card .prompt{font-size:.85rem;color:var(--gold);font-weight:600;margin-top:.3rem}
+
+/* ── Options (vertical stack) ── */
+.options{display:flex;flex-direction:column;gap:.5rem;margin-bottom:1rem}
+.opt-btn{
+  width:100%;padding:1rem 1.2rem;border-radius:10px;
+  border:2px solid var(--border);background:var(--surface);
+  color:var(--text);font-family:'DM Mono',monospace;font-size:1rem;
+  cursor:pointer;transition:all .15s;text-align:center;
+  min-height:52px;display:flex;align-items:center;justify-content:center
+}
+.opt-btn:hover{border-color:var(--gold);box-shadow:0 0 16px var(--gold-glow)}
+.opt-btn:active{background:var(--gold-dim);border-color:var(--gold)}
+.opt-btn.correct{border-color:var(--green);background:var(--green-dim);animation:pop .3s}
+.opt-btn.wrong{border-color:var(--red);background:var(--red-dim);animation:shake .3s}
+.opt-btn.reveal{border-color:var(--green);opacity:.7}
+.opt-btn.disabled{pointer-events:none;opacity:.5}
+@keyframes pop{0%{transform:scale(1)}50%{transform:scale(1.04)}100%{transform:scale(1)}}
+@keyframes shake{0%,100%{transform:translateX(0)}25%{transform:translateX(-5px)}75%{transform:translateX(5px)}}
+
+/* ── Score Dots ── */
+.progress{display:flex;gap:3px;justify-content:center;flex-wrap:wrap;margin-bottom:1rem}
+.pip{width:10px;height:10px;border-radius:50%;background:var(--border);transition:background .3s}
+.pip.done{background:var(--green)}.pip.fail{background:var(--red)}.pip.current{background:var(--gold);box-shadow:0 0 6px var(--gold)}
+
+/* ── Result Flash ── */
+.result-flash{
+  text-align:center;padding:.8rem;border-radius:10px;margin-bottom:1rem;
+  font-family:'DM Mono',monospace;font-size:.9rem;font-weight:500;display:none
+}
+.result-flash.correct{background:var(--green-dim);color:var(--green);border:1px solid var(--green);display:block}
+.result-flash.wrong{background:var(--red-dim);color:var(--red);border:1px solid var(--red);display:block}
+
+/* ── End Modal ── */
+.modal-overlay{
+  position:fixed;inset:0;background:rgba(5,7,9,.85);backdrop-filter:blur(8px);
+  display:none;align-items:center;justify-content:center;z-index:200
+}
+.modal-overlay.active{display:flex}
+.modal{
+  background:var(--surface);border:1px solid var(--border);border-radius:16px;
+  padding:2rem;text-align:center;max-width:420px;width:90%
+}
+.modal h2{font-family:'Bebas Neue',sans-serif;font-size:1.8rem;color:var(--gold);margin-bottom:.5rem}
+.modal .final-score{
+  font-family:'DM Mono',monospace;font-size:3rem;font-weight:500;
+  background:linear-gradient(135deg,var(--gold),var(--teal));
+  -webkit-background-clip:text;-webkit-text-fill-color:transparent;margin:1rem 0
+}
+.modal .stats{color:var(--muted);margin-bottom:1.5rem;font-size:.9rem}
+.modal-acts{display:flex;gap:.75rem;justify-content:center;flex-wrap:wrap}
+
+/* ── Buttons ── */
+.btn{
+  padding:.75rem 1.8rem;border-radius:10px;border:none;
+  font-family:'Outfit',sans-serif;font-size:1rem;font-weight:600;
+  cursor:pointer;transition:transform .15s
+}
+.btn:hover{transform:scale(1.05)}
+.btn-gold{background:var(--gold);color:var(--ink)}
+.btn-ghost{background:transparent;border:1px solid var(--border);color:var(--text)}
+
+/* ── Screens ── */
+.screen{display:none}.screen.active{display:block}
+.katex{font-size:1.05em!important}.q-card .katex{font-size:1.25em!important}
+</style>
+</head>
+<body>
+<script src="../dapp-wallet.js"></script>
+
+<div class="container">
+
+  <!-- ── Menu Screen ── -->
+  <div id="menu" class="screen active">
+    <div class="header">
+      <h1>Sequence Solver</h1>
+      <div class="sub">Spot the pattern. Find the rule. What comes next?</div>
+    </div>
+    <div class="info-panel">
+      <strong>100 points</strong> base per correct answer.<br>
+      Time decay — faster answers score higher.<br>
+      No hard time limit. <strong>20 questions</strong> across 3 difficulty tiers.
+    </div>
+    <div style="text-align:center;margin-top:1.5rem">
+      <button class="btn btn-gold" id="start-btn">Start</button>
+    </div>
+  </div>
+
+  <!-- ── Game Screen ── -->
+  <div id="game" class="screen">
+    <div class="hud">
+      <div class="hud-item"><div class="hud-label">Question</div><div class="hud-val" id="qNum">1/20</div></div>
+      <div class="hud-item"><div class="hud-label">Score</div><div class="hud-val" id="score">0</div></div>
+      <div class="hud-item"><div class="hud-label">Time</div><div class="hud-val" id="timer">0s</div></div>
+    </div>
+    <div class="progress" id="progress"></div>
+    <div class="q-card">
+      <div class="seq" id="seq"></div>
+      <div id="question"></div>
+      <div class="prompt" id="prompt"></div>
+    </div>
+    <div class="result-flash" id="result-flash"></div>
+    <div class="options" id="options"></div>
+  </div>
+</div>
+
+<!-- ── End Modal ── -->
+<div class="modal-overlay" id="modal-overlay">
+  <div class="modal">
+    <h2 id="modal-title">--</h2>
+    <div class="final-score" id="modal-score">0</div>
+    <div class="stats" id="modal-stats"></div>
+    <div class="modal-acts">
+      <button class="btn btn-ghost" id="modal-again">Play Again</button>
+      <button class="btn btn-gold" onclick="window.location='/builders/'">Back to Lobby</button>
+    </div>
+  </div>
+</div>
+
+<script>
+(function() {
+  'use strict';
+
+  var API_BASE = 'https://dapp-api.mathswins.co.uk/api/dapp';
+  if (location.hostname === 'localhost' || location.hostname === '127.0.0.1') {
+    API_BASE = 'http://127.0.0.1:3860/api/dapp';
+  }
+
+  var GAME_ID = 'sequence-solver';
+  var sessionToken = null;
+  var totalQuestions = 20;
+  var questionNum = 0;
+  var totalScore = 0;
+  var correctCount = 0;
+  var gameActive = false;
+  var timerStart = 0;
+  var timerRaf = null;
+
+  // ── DOM refs ──────────────────────────────────────────────────────────
+  var startBtn = document.getElementById('start-btn');
+  var seqEl = document.getElementById('seq');
+  var questionEl = document.getElementById('question');
+  var promptEl = document.getElementById('prompt');
+  var optionsEl = document.getElementById('options');
+  var qNumEl = document.getElementById('qNum');
+  var scoreEl = document.getElementById('score');
+  var timerEl = document.getElementById('timer');
+  var progressEl = document.getElementById('progress');
+  var flashEl = document.getElementById('result-flash');
+  var modalOverlay = document.getElementById('modal-overlay');
+  var modalTitle = document.getElementById('modal-title');
+  var modalScore = document.getElementById('modal-score');
+  var modalStats = document.getElementById('modal-stats');
+  var modalAgain = document.getElementById('modal-again');
+
+  // ── Helpers ───────────────────────────────────────────────────────────
+  function rk(el, tex) {
+    if (typeof katex !== 'undefined') {
+      katex.render(tex, el, { throwOnError: false, displayMode: false });
+    } else {
+      el.textContent = tex;
+    }
+  }
+
+  function show(id) {
+    document.querySelectorAll('.screen').forEach(function(s) { s.classList.remove('active'); });
+    document.getElementById(id).classList.add('active');
+  }
+
+  function buildPips() {
+    progressEl.innerHTML = '';
+    for (var i = 0; i < totalQuestions; i++) {
+      var d = document.createElement('div');
+      d.className = 'pip' + (i === 0 ? ' current' : '');
+      progressEl.appendChild(d);
+    }
+  }
+
+  function setPip(idx, cls) {
+    var pips = progressEl.querySelectorAll('.pip');
+    if (pips[idx]) {
+      pips[idx].classList.remove('current');
+      pips[idx].classList.add(cls);
+    }
+  }
+
+  function setCurrentPip(idx) {
+    var pips = progressEl.querySelectorAll('.pip');
+    if (pips[idx]) {
+      pips[idx].classList.add('current');
+    }
+  }
+
+  // ── Timer (count-up) ─────────────────────────────────────────────────
+  function startTimer() {
+    timerStart = Date.now();
+    cancelAnimationFrame(timerRaf);
+    (function tick() {
+      if (!gameActive) return;
+      var s = Math.floor((Date.now() - timerStart) / 1000);
+      timerEl.textContent = s + 's';
+      timerRaf = requestAnimationFrame(tick);
+    })();
+  }
+
+  function stopTimer() {
+    cancelAnimationFrame(timerRaf);
+  }
+
+  // ── Start session ─────────────────────────────────────────────────────
+  startBtn.addEventListener('click', function() {
+    startSession();
+  });
+
+  async function startSession() {
+    startBtn.disabled = true;
+    startBtn.textContent = 'Loading...';
+
+    try {
+      var headers = { 'Content-Type': 'application/json' };
+      if (typeof dappWallet !== 'undefined' && dappWallet && dappWallet.address) {
+        headers['X-Wallet-Address'] = dappWallet.address;
+      }
+
+      var res = await fetch(API_BASE + '/session/start', {
+        method: 'POST',
+        headers: headers,
+        body: JSON.stringify({ gameId: GAME_ID })
+      });
+      var data = await res.json();
+
+      if (data.error) {
+        startBtn.disabled = false;
+        startBtn.textContent = 'Try Again';
+        return;
+      }
+
+      sessionToken = data.token;
+      totalQuestions = data.totalQuestions || 20;
+      questionNum = 0;
+      totalScore = 0;
+      correctCount = 0;
+      gameActive = true;
+
+      scoreEl.textContent = '0';
+      buildPips();
+      show('game');
+      showQuestion(data.question);
+    } catch (e) {
+      startBtn.disabled = false;
+      startBtn.textContent = 'Try Again';
+    }
+  }
+
+  // ── Show question ─────────────────────────────────────────────────────
+  function showQuestion(q) {
+    if (!q) return;
+    questionNum = q.num;
+    qNumEl.textContent = questionNum + '/' + totalQuestions;
+
+    // Sequence line
+    seqEl.textContent = '';
+    questionEl.innerHTML = '';
+    promptEl.textContent = '';
+
+    if (q.text) {
+      // The server sends text which may contain a sequence, a formula, and/or a prompt
+      // Split on the last question mark or "Find"/"Evaluate"/"What" to separate prompt from content
+      var text = q.text;
+
+      // Check for KaTeX-renderable content (backslashes, ^, {})
+      var hasLatex = /[\\^{}]/.test(text);
+      if (hasLatex) {
+        rk(seqEl, text);
+      } else {
+        seqEl.textContent = text;
+      }
+    }
+
+    // Build option buttons
+    optionsEl.innerHTML = '';
+    flashEl.style.display = 'none';
+    flashEl.className = 'result-flash';
+
+    if (q.options && q.options.length > 0) {
+      q.options.forEach(function(opt) {
+        var btn = document.createElement('button');
+        btn.className = 'opt-btn';
+        btn.dataset.val = opt;
+
+        if (/[\\^{}]/.test(opt)) {
+          rk(btn, opt);
+        } else {
+          btn.textContent = opt;
+        }
+
+        btn.addEventListener('click', function() { submitAnswer(btn, opt); });
+        optionsEl.appendChild(btn);
+      });
+    }
+
+    // Update pip
+    setCurrentPip(questionNum - 1);
+    startTimer();
+  }
+
+  // ── Submit answer ─────────────────────────────────────────────────────
+  async function submitAnswer(btn, answer) {
+    if (!gameActive) return;
+    stopTimer();
+
+    // Disable all buttons
+    optionsEl.querySelectorAll('.opt-btn').forEach(function(b) {
+      b.classList.add('disabled');
+    });
+
+    try {
+      var res = await fetch(API_BASE + '/session/evaluate', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          sessionToken: sessionToken,
+          answer: answer
+        })
+      });
+      var data = await res.json();
+
+      if (data.error) {
+        flashEl.className = 'result-flash wrong';
+        flashEl.textContent = data.error;
+        flashEl.style.display = 'block';
+        gameActive = false;
+        return;
+      }
+
+      totalScore = data.totalScore;
+      scoreEl.textContent = totalScore;
+
+      if (data.correct) {
+        correctCount++;
+        btn.classList.add('correct');
+        setPip(questionNum - 1, 'done');
+        flashEl.className = 'result-flash correct';
+        flashEl.textContent = 'Correct! +' + data.points + ' pts';
+        flashEl.style.display = 'block';
+      } else {
+        btn.classList.add('wrong');
+        setPip(questionNum - 1, 'fail');
+        // Highlight the correct answer
+        optionsEl.querySelectorAll('.opt-btn').forEach(function(b) {
+          if (b.dataset.val === data.correctAnswer) {
+            b.classList.add('correct');
+            b.classList.add('reveal');
+          }
+        });
+        flashEl.className = 'result-flash wrong';
+        flashEl.textContent = 'Wrong. Answer: ' + data.correctAnswer;
+        flashEl.style.display = 'block';
+      }
+
+      if (data.finished) {
+        gameActive = false;
+        setTimeout(function() { showFinalModal(data); }, 1500);
+      } else {
+        setTimeout(function() { showQuestion(data.question); }, 1500);
+      }
+    } catch (e) {
+      flashEl.className = 'result-flash wrong';
+      flashEl.textContent = 'Connection error';
+      flashEl.style.display = 'block';
+    }
+  }
+
+  // ── Final modal ───────────────────────────────────────────────────────
+  function showFinalModal(data) {
+    var pct = Math.round(correctCount / totalQuestions * 100);
+    var title = 'Keep Practising!';
+    if (pct >= 90) title = 'Outstanding!';
+    else if (pct >= 70) title = 'Well Done!';
+    else if (pct >= 50) title = 'Good Effort!';
+
+    modalTitle.textContent = title;
+    modalScore.textContent = totalScore;
+    modalStats.textContent = correctCount + '/' + totalQuestions + ' correct (' + pct + '%) — Max possible: 2000';
+    modalOverlay.classList.add('active');
+  }
+
+  // ── Play again ────────────────────────────────────────────────────────
+  modalAgain.addEventListener('click', function() {
+    modalOverlay.classList.remove('active');
+    startBtn.disabled = false;
+    startBtn.textContent = 'Start';
+    show('menu');
+  });
+
+  // ── Listen for dApp session (paid mode) ───────────────────────────────
+  window.addEventListener('dapp-session-ready', function(e) {
+    sessionToken = e.detail.token;
+    totalQuestions = e.detail.totalQuestions || 20;
+    questionNum = 0;
+    totalScore = 0;
+    correctCount = 0;
+    gameActive = true;
+
+    scoreEl.textContent = '0';
+    buildPips();
+    show('game');
+
+    if (e.detail.question) {
+      showQuestion(e.detail.question);
+    }
+  });
+
+})();
+</script>
+
+<script src="../dapp-entry.js"></script>
+</body>
+</html>

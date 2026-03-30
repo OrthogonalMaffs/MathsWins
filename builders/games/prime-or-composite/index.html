@@ -1,0 +1,539 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<!-- Google tag (gtag.js) -->
+<script async src="https://www.googletagmanager.com/gtag/js?id=G-7GTLYCZMXN"></script>
+<script>
+  window.dataLayer = window.dataLayer || [];
+  function gtag(){dataLayer.push(arguments);}
+  gtag('js', new Date());
+  gtag('config', 'G-7GTLYCZMXN', { send_page_view: true, storage: 'none', anonymize_ip: true });
+</script>
+<meta charset="UTF-8">
+<meta name="robots" content="noindex, nofollow">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="description" content="Classify 20 numbers as prime or composite in 5 seconds each. Test your number theory speed and accuracy with increasingly tricky numbers.">
+<meta property="og:title" content="Prime or Composite · MathsWins">
+<meta property="og:description" content="Classify 20 numbers as prime or composite in 5 seconds each. Test your number theory speed and accuracy.">
+<meta property="og:url" content="https://mathswins.co.uk/builders/games/prime-or-composite/">
+<meta property="og:image" content="https://mathswins.co.uk/assets/og-image.png">
+<link rel="canonical" href="https://mathswins.co.uk/builders/games/prime-or-composite/">
+<link rel="icon" type="image/svg+xml" href="../../schools/assets/favicon.svg">
+<title>Prime or Composite · MathsWins</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=DM+Mono:ital,wght@0,300;0,400;0,500&family=Bebas+Neue&family=Outfit:wght@300;400;600;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="../dapp-shell.css">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:title" content="MathsWins">
+<meta name="twitter:image" content="https://mathswins.co.uk/assets/og-image.png">
+<script src="https://cdn.jsdelivr.net/npm/ethers@6/dist/ethers.umd.min.js"></script>
+<style>
+:root {
+  --ink:#050709;--surface:#0a0d14;--surface2:#0f1319;
+  --gold:#d4a847;--gold-warm:#e2b96a;--gold-dim:#7a5e28;
+  --teal:#2dd4bf;--teal-dim:#134e4a;
+  --text:#c8cdd8;--text-bright:#e8ecf4;--muted:#4a5568;
+  --border:#161c28;--border2:#1e2638;
+  --green:#2dd4a0;--red:#ef5350;--warn:#d4a847;
+  --prime:#60a5fa;--composite:#f97316;
+}
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+body{background:var(--ink);color:var(--text);font-family:'Outfit',sans-serif;min-height:100vh;display:flex;flex-direction:column;align-items:center;overflow-x:hidden}
+body::before{content:'';position:fixed;inset:0;background-image:linear-gradient(rgba(212,168,71,0.03) 1px,transparent 1px),linear-gradient(90deg,rgba(212,168,71,0.03) 1px,transparent 1px);background-size:40px 40px;pointer-events:none;z-index:0}
+
+.page{position:relative;z-index:1;width:100%;max-width:480px;padding:2rem 1rem 4rem;display:flex;flex-direction:column;align-items:center;gap:1.2rem}
+.game-header{text-align:center}
+.game-kicker{font-family:'DM Mono',monospace;font-size:0.6rem;letter-spacing:0.2em;text-transform:uppercase;color:var(--teal);margin-bottom:0.4rem}
+.game-title{font-family:'Bebas Neue',sans-serif;font-size:3rem;letter-spacing:0.06em;color:var(--gold-warm);line-height:1}
+.game-sub{font-size:0.75rem;color:var(--muted);line-height:1.6;margin-top:0.4rem}
+
+/* Scoring info panel */
+.scoring-info{width:100%;background:var(--surface2);border:1px solid var(--border);border-radius:8px;padding:1.2rem;font-family:'DM Mono',monospace;font-size:0.65rem;color:var(--muted);line-height:1.8}
+.scoring-info h3{font-family:'Bebas Neue',sans-serif;font-size:1.1rem;color:var(--gold);letter-spacing:0.05em;margin-bottom:0.5rem}
+.scoring-info .si-row{display:flex;justify-content:space-between;padding:0.15rem 0}
+.scoring-info .si-label{color:var(--text)}
+.scoring-info .si-val{color:var(--gold)}
+.scoring-info .si-note{color:var(--muted);font-size:0.55rem;margin-top:0.5rem;font-style:italic}
+
+.status-bar{display:flex;gap:0.8rem;width:100%;background:var(--surface2);border:1px solid var(--border);border-radius:8px;padding:0.75rem 1rem;justify-content:space-around}
+.si{display:flex;flex-direction:column;align-items:center;gap:0.15rem}
+.si-val{font-family:'DM Mono',monospace;font-size:1.1rem;font-weight:500;color:var(--gold)}
+.si-lbl{font-family:'DM Mono',monospace;font-size:0.45rem;letter-spacing:0.12em;text-transform:uppercase;color:var(--muted)}
+
+/* Main number display */
+.number-arena{
+  width:100%;min-height:200px;
+  background:var(--surface2);border:1px solid var(--border);border-radius:8px;
+  display:flex;flex-direction:column;align-items:center;justify-content:center;gap:0.8rem;
+  position:relative;overflow:hidden;
+}
+.number-arena::before{
+  content:'';position:absolute;inset:0;
+  background:radial-gradient(ellipse at 50% 50%,rgba(212,168,71,0.04) 0%,transparent 70%);
+  pointer-events:none;
+}
+.round-label{font-family:'DM Mono',monospace;font-size:0.52rem;letter-spacing:0.15em;text-transform:uppercase;color:var(--muted)}
+.big-number{
+  font-family:'Bebas Neue',sans-serif;font-size:clamp(3rem,15vw,6rem);
+  letter-spacing:0.05em;color:var(--text);
+  transition:transform 0.15s,opacity 0.15s;
+  text-shadow:0 0 40px rgba(212,168,71,0.15);
+}
+.big-number.flash-correct{color:var(--green);transform:scale(1.05)}
+.big-number.flash-wrong{color:var(--red);animation:shake 0.35s ease}
+
+/* Timer bar */
+.timer-track{width:90%;height:4px;background:var(--border);border-radius:2px;overflow:hidden}
+.timer-fill{height:100%;background:var(--gold);border-radius:2px;transition:width 0.1s linear,background 0.3s}
+.timer-fill.warn{background:var(--warn)}
+.timer-fill.danger{background:var(--red)}
+
+/* Answer buttons */
+.answer-btns{display:grid;grid-template-columns:1fr 1fr;gap:0.8rem;width:100%}
+.ans-btn{
+  padding:1.2rem 1rem;
+  font-family:'Bebas Neue',sans-serif;font-size:1.8rem;letter-spacing:0.1em;
+  cursor:pointer;border-radius:8px;border:2px solid;
+  transition:all 0.15s;
+}
+.ans-prime{background:rgba(96,165,250,0.08);border-color:rgba(96,165,250,0.3);color:var(--prime)}
+.ans-prime:hover{background:rgba(96,165,250,0.18);border-color:var(--prime)}
+.ans-composite{background:rgba(249,115,22,0.08);border-color:rgba(249,115,22,0.3);color:var(--composite)}
+.ans-composite:hover{background:rgba(249,115,22,0.18);border-color:var(--composite)}
+.ans-btn.correct{background:rgba(45,212,160,0.2);border-color:var(--green)}
+.ans-btn.wrong{background:rgba(239,68,68,0.2);border-color:var(--red)}
+.ans-btn:disabled{pointer-events:none;opacity:0.5}
+
+/* Score dots */
+.score-history{width:100%;display:flex;gap:0.3rem;justify-content:center;flex-wrap:wrap}
+.sh-dot{width:10px;height:10px;border-radius:50%;background:var(--border);border:1px solid var(--muted);transition:all 0.2s}
+.sh-dot.hit{background:var(--green);border-color:var(--green);box-shadow:0 0 6px rgba(45,212,160,0.4)}
+.sh-dot.miss{background:var(--red);border-color:var(--red)}
+.sh-dot.timeout{background:var(--warn);border-color:var(--warn)}
+
+/* Result flash */
+.result-flash{
+  width:100%;background:var(--surface2);border:1px solid var(--border);
+  border-left:3px solid var(--teal-dim);border-radius:6px;
+  padding:0.8rem 1rem;
+  font-family:'DM Mono',monospace;font-size:0.62rem;color:var(--teal);line-height:1.6;
+  animation:slideIn 0.2s ease;display:none;
+}
+.result-flash.correct{border-left-color:var(--green);color:var(--green)}
+.result-flash.wrong{border-left-color:var(--red);color:var(--red)}
+.result-flash.timeout{border-left-color:var(--warn);color:var(--warn)}
+@keyframes slideIn{from{opacity:0;transform:translateY(-4px)}to{opacity:1;transform:translateY(0)}}
+
+.btn{padding:0.65rem 1.2rem;font-family:'DM Mono',monospace;font-size:0.62rem;letter-spacing:0.1em;text-transform:uppercase;cursor:pointer;border-radius:6px;border:none;transition:all 0.2s;width:100%}
+.btn-gold{background:var(--gold);color:var(--ink);font-weight:500}
+.btn-gold:hover{background:var(--gold-warm)}
+.btn-gold:disabled{background:var(--muted);cursor:not-allowed;opacity:0.5}
+.btn-ghost{background:transparent;border:1px solid var(--border);color:var(--muted)}
+.btn-ghost:hover{border-color:var(--gold-dim);color:var(--gold)}
+
+.msg{font-family:'DM Mono',monospace;font-size:0.62rem;text-align:center;min-height:1rem;color:var(--red)}
+
+/* Modal */
+.modal-overlay{position:fixed;inset:0;background:rgba(5,7,9,0.88);backdrop-filter:blur(8px);z-index:200;display:flex;align-items:center;justify-content:center;padding:1rem;animation:fadeIn 0.2s ease}
+@keyframes fadeIn{from{opacity:0}to{opacity:1}}
+.modal-overlay.hidden{display:none}
+.modal{background:var(--surface2);border:1px solid var(--border);border-radius:8px;width:100%;max-width:380px;overflow:hidden;animation:popIn 0.25s ease}
+@keyframes popIn{from{transform:scale(0.95);opacity:0}to{transform:scale(1);opacity:1}}
+.modal-header{padding:1.4rem 1.4rem 0;text-align:center}
+.modal-result{font-family:'Bebas Neue',sans-serif;font-size:2rem;letter-spacing:0.1em;color:var(--gold-warm);margin-bottom:0.3rem}
+.modal-score{margin:1rem 1.4rem;background:var(--surface);border:1px solid var(--border);border-radius:6px;padding:0.8rem;display:grid;grid-template-columns:1fr 1fr;gap:0.5rem}
+.ms-item{display:flex;flex-direction:column;gap:0.1rem}
+.ms-val{font-family:'DM Mono',monospace;font-size:0.9rem;color:var(--gold)}
+.ms-lbl{font-family:'DM Mono',monospace;font-size:0.45rem;letter-spacing:0.1em;text-transform:uppercase;color:var(--muted)}
+.modal-acts{display:flex;gap:0.5rem;padding:1rem 1.4rem 1.4rem}
+.modal-acts .btn{flex:1}
+@keyframes shake{0%,100%{transform:translateX(0)}20%{transform:translateX(-6px)}40%{transform:translateX(6px)}60%{transform:translateX(-4px)}80%{transform:translateX(4px)}}
+</style>
+</head>
+<body>
+<script src="../dapp-wallet.js"></script>
+
+<div class="page">
+  <div class="game-header">
+    <p class="game-kicker">Speed · Number Theory</p>
+    <h1 class="game-title">Prime or <strong style="color:var(--teal)">Composite</strong></h1>
+    <p class="game-sub">20 numbers. 5 seconds each. Classify correctly — speed scores.</p>
+  </div>
+
+  <div class="scoring-info" id="scoring-panel">
+    <h3>Scoring</h3>
+    <div class="si-row"><span class="si-label">Mode</span><span class="si-val">Speed-only</span></div>
+    <div class="si-row"><span class="si-label">Time per question</span><span class="si-val">5 seconds</span></div>
+    <div class="si-row"><span class="si-label">Correct answer</span><span class="si-val">Up to 130 pts</span></div>
+    <div class="si-row"><span class="si-label">Wrong or timeout</span><span class="si-val">0 pts</span></div>
+    <div class="si-row"><span class="si-label">Questions</span><span class="si-val">20</span></div>
+    <p class="si-note">Faster correct answers earn more points. Max possible: 2,600.</p>
+  </div>
+
+  <div class="status-bar" id="status-bar" style="display:none">
+    <div class="si"><span class="si-val" id="sv-q">--</span><span class="si-lbl">Question</span></div>
+    <div class="si"><span class="si-val" id="sv-score">0</span><span class="si-lbl">Score</span></div>
+    <div class="si"><span class="si-val" id="sv-correct">0</span><span class="si-lbl">Correct</span></div>
+  </div>
+
+  <div class="number-arena" id="arena" style="display:none">
+    <span class="round-label" id="round-label">Question 1 of 20</span>
+    <div class="big-number" id="big-number">?</div>
+    <div class="timer-track"><div class="timer-fill" id="timer-fill" style="width:100%"></div></div>
+  </div>
+
+  <div class="score-history" id="score-history"></div>
+
+  <div class="answer-btns" id="answer-btns" style="display:none">
+    <button class="ans-btn ans-prime" id="btn-prime" disabled>PRIME</button>
+    <button class="ans-btn ans-composite" id="btn-composite" disabled>COMPOSITE</button>
+  </div>
+
+  <div class="result-flash" id="result-flash"></div>
+  <div class="msg" id="msg"></div>
+
+  <button class="btn btn-gold" id="start-btn">Start Game</button>
+</div>
+
+<!-- Modal -->
+<div class="modal-overlay hidden" id="modal">
+  <div class="modal">
+    <div class="modal-header">
+      <div class="modal-result" id="modal-result">Game Over</div>
+    </div>
+    <div class="modal-score" id="modal-score"></div>
+    <div class="modal-acts">
+      <button class="btn btn-ghost" id="modal-again">Play Again</button>
+    </div>
+  </div>
+</div>
+
+<script>
+(function() {
+  'use strict';
+
+  var API_BASE = 'https://dapp-api.mathswins.co.uk/api/dapp';
+  if (location.hostname === 'localhost' || location.hostname === '127.0.0.1') {
+    API_BASE = 'http://127.0.0.1:3860/api/dapp';
+  }
+
+  var GAME_ID = 'prime-or-composite';
+  var TIME_PER_Q = 5000;
+
+  var sessionToken = null;
+  var totalQuestions = 20;
+  var questionNum = 0;
+  var totalScore = 0;
+  var correctCount = 0;
+  var gameActive = false;
+  var timerStart = null;
+  var timerInterval = null;
+  var animFrame = null;
+
+  // ── DOM refs ──────────────────────────────────────────────────────────
+  var bigNumber = document.getElementById('big-number');
+  var roundLabel = document.getElementById('round-label');
+  var timerFill = document.getElementById('timer-fill');
+  var flashEl = document.getElementById('result-flash');
+  var startBtn = document.getElementById('start-btn');
+  var btnPrime = document.getElementById('btn-prime');
+  var btnComposite = document.getElementById('btn-composite');
+  var svQ = document.getElementById('sv-q');
+  var svScore = document.getElementById('sv-score');
+  var svCorrect = document.getElementById('sv-correct');
+  var msgEl = document.getElementById('msg');
+
+  // ── API helper ────────────────────────────────────────────────────────
+  async function api(url, body) {
+    var headers = { 'Content-Type': 'application/json' };
+    if (typeof dappWallet !== 'undefined' && dappWallet.address) {
+      headers['X-Wallet-Address'] = dappWallet.address;
+    }
+    var res = await fetch(API_BASE + url, {
+      method: 'POST',
+      headers: headers,
+      body: JSON.stringify(body)
+    });
+    return res.json();
+  }
+
+  function setMsg(txt) { msgEl.textContent = txt; }
+
+  // ── Start game ────────────────────────────────────────────────────────
+  startBtn.addEventListener('click', startSession);
+
+  async function startSession() {
+    startBtn.disabled = true;
+    startBtn.textContent = 'Loading...';
+    setMsg('');
+
+    try {
+      var data = await api('/session/start', { gameId: GAME_ID });
+
+      if (data.error) {
+        setMsg(data.error);
+        startBtn.disabled = false;
+        startBtn.textContent = 'Start Game';
+        return;
+      }
+
+      sessionToken = data.token;
+      totalQuestions = data.totalQuestions;
+      questionNum = 0;
+      totalScore = 0;
+      correctCount = 0;
+      gameActive = true;
+
+      document.getElementById('scoring-panel').style.display = 'none';
+      startBtn.style.display = 'none';
+      document.getElementById('status-bar').style.display = 'flex';
+      document.getElementById('arena').style.display = 'flex';
+      document.getElementById('answer-btns').style.display = 'grid';
+
+      buildScoreHistory();
+      showQuestion(data.question);
+    } catch (e) {
+      setMsg('Connection error');
+      startBtn.disabled = false;
+      startBtn.textContent = 'Start Game';
+    }
+  }
+
+  // ── Show question ─────────────────────────────────────────────────────
+  function showQuestion(q) {
+    questionNum = q.num || (questionNum + 1);
+
+    roundLabel.textContent = 'Question ' + questionNum + ' of ' + totalQuestions;
+    bigNumber.textContent = q.text || q.num;
+    bigNumber.className = 'big-number';
+    flashEl.style.display = 'none';
+
+    btnPrime.disabled = false;
+    btnComposite.disabled = false;
+    btnPrime.className = 'ans-btn ans-prime';
+    btnComposite.className = 'ans-btn ans-composite';
+
+    updateStatus();
+    startTimer();
+  }
+
+  // ── Timer ─────────────────────────────────────────────────────────────
+  function startTimer() {
+    stopTimer();
+    timerStart = Date.now();
+
+    function tick() {
+      var elapsed = Date.now() - timerStart;
+      var pct = Math.max(0, 100 - (elapsed / TIME_PER_Q) * 100);
+      timerFill.style.width = pct + '%';
+      timerFill.className = 'timer-fill' + (pct < 30 ? ' danger' : pct < 50 ? ' warn' : '');
+      if (pct > 0 && gameActive) {
+        animFrame = requestAnimationFrame(tick);
+      }
+    }
+    tick();
+
+    timerInterval = setTimeout(function() {
+      cancelAnimationFrame(animFrame);
+      submitAnswer('TIMEOUT');
+    }, TIME_PER_Q);
+  }
+
+  function stopTimer() {
+    clearTimeout(timerInterval);
+    cancelAnimationFrame(animFrame);
+  }
+
+  // ── Answer ────────────────────────────────────────────────────────────
+  btnPrime.addEventListener('click', function() { submitAnswer('prime'); });
+  btnComposite.addEventListener('click', function() { submitAnswer('composite'); });
+
+  async function submitAnswer(answer) {
+    if (!gameActive) return;
+    stopTimer();
+
+    btnPrime.disabled = true;
+    btnComposite.disabled = true;
+
+    var isTimeout = (answer === 'TIMEOUT');
+
+    try {
+      var data = await api('/session/evaluate', {
+        sessionToken: sessionToken,
+        answer: answer
+      });
+
+      if (data.error) {
+        flashEl.className = 'result-flash timeout';
+        flashEl.textContent = data.error;
+        flashEl.style.display = 'block';
+        gameActive = false;
+        startBtn.style.display = 'block';
+        startBtn.textContent = 'Try Again';
+        startBtn.disabled = false;
+        return;
+      }
+
+      totalScore = data.totalScore;
+      showResult(data, isTimeout);
+
+      if (data.finished) {
+        gameActive = false;
+        setTimeout(function() { showFinalModal(data); }, 1800);
+      } else {
+        setTimeout(function() { showQuestion(data.question); }, 1800);
+      }
+    } catch (e) {
+      flashEl.className = 'result-flash timeout';
+      flashEl.textContent = 'Connection error';
+      flashEl.style.display = 'block';
+    }
+  }
+
+  // ── Show result ───────────────────────────────────────────────────────
+  function showResult(data, isTimeout) {
+    var correctAnswer = data.correctAnswer || '';
+
+    if (isTimeout) {
+      flashEl.className = 'result-flash timeout';
+      flashEl.textContent = 'Time\'s up! Answer: ' + correctAnswer + ' | +0 pts';
+      bigNumber.className = 'big-number flash-wrong';
+      updateScoreDot(questionNum - 1, 'timeout');
+    } else if (data.correct) {
+      correctCount++;
+      flashEl.className = 'result-flash correct';
+      flashEl.textContent = 'Correct! +' + data.points + ' pts | Answer: ' + correctAnswer;
+      bigNumber.className = 'big-number flash-correct';
+      highlightCorrectBtn(correctAnswer, true);
+      updateScoreDot(questionNum - 1, 'hit');
+    } else {
+      flashEl.className = 'result-flash wrong';
+      flashEl.textContent = 'Wrong. +0 pts | Answer: ' + correctAnswer;
+      bigNumber.className = 'big-number flash-wrong';
+      highlightCorrectBtn(correctAnswer, false);
+      updateScoreDot(questionNum - 1, 'miss');
+    }
+    flashEl.style.display = 'block';
+
+    svScore.textContent = totalScore;
+    svCorrect.textContent = correctCount;
+  }
+
+  function highlightCorrectBtn(correctAnswer, wasCorrect) {
+    var lower = (correctAnswer || '').toLowerCase();
+    if (lower === 'prime') {
+      btnPrime.classList.add(wasCorrect ? 'correct' : 'correct');
+      if (!wasCorrect) btnComposite.classList.add('wrong');
+    } else {
+      btnComposite.classList.add(wasCorrect ? 'correct' : 'correct');
+      if (!wasCorrect) btnPrime.classList.add('wrong');
+    }
+  }
+
+  // ── Final modal ───────────────────────────────────────────────────────
+  function showFinalModal(data) {
+    var score = data.finalScore || totalScore;
+    var maxPossible = totalQuestions * 130;
+    var pct = Math.round(score / maxPossible * 100);
+
+    var verdict;
+    if (pct >= 80) verdict = 'Number Theorist';
+    else if (pct >= 60) verdict = 'Well Played';
+    else if (pct >= 40) verdict = 'Solid Effort';
+    else if (pct >= 20) verdict = 'Keep Practising';
+    else verdict = 'Room to Grow';
+
+    document.getElementById('modal-result').textContent = verdict;
+    document.getElementById('modal-score').innerHTML =
+      '<div class="ms-item"><span class="ms-val">' + score + '</span><span class="ms-lbl">Final Score</span></div>' +
+      '<div class="ms-item"><span class="ms-val">' + correctCount + '/' + totalQuestions + '</span><span class="ms-lbl">Correct</span></div>' +
+      '<div class="ms-item"><span class="ms-val">' + pct + '%</span><span class="ms-lbl">Of Max Score</span></div>' +
+      '<div class="ms-item"><span class="ms-val">' + maxPossible + '</span><span class="ms-lbl">Max Possible</span></div>';
+
+    document.getElementById('modal').classList.remove('hidden');
+
+    bigNumber.textContent = 'Done';
+    bigNumber.className = 'big-number flash-correct';
+    roundLabel.textContent = 'Complete!';
+    timerFill.style.width = '100%';
+    timerFill.className = 'timer-fill';
+  }
+
+  // ── Score dots ────────────────────────────────────────────────────────
+  function buildScoreHistory() {
+    var el = document.getElementById('score-history');
+    el.innerHTML = '';
+    for (var i = 0; i < totalQuestions; i++) {
+      var d = document.createElement('div');
+      d.className = 'sh-dot';
+      d.id = 'sh' + i;
+      el.appendChild(d);
+    }
+  }
+
+  function updateScoreDot(i, cls) {
+    var d = document.getElementById('sh' + i);
+    if (d) d.className = 'sh-dot ' + cls;
+  }
+
+  function updateStatus() {
+    svQ.textContent = questionNum + '/' + totalQuestions;
+    svScore.textContent = totalScore;
+    svCorrect.textContent = correctCount;
+  }
+
+  // ── Reset ─────────────────────────────────────────────────────────────
+  document.getElementById('modal-again').addEventListener('click', function() {
+    document.getElementById('modal').classList.add('hidden');
+    bigNumber.textContent = '?';
+    bigNumber.className = 'big-number';
+    roundLabel.textContent = 'Ready';
+    flashEl.style.display = 'none';
+    timerFill.style.width = '100%';
+    timerFill.className = 'timer-fill';
+    document.getElementById('score-history').innerHTML = '';
+    document.getElementById('arena').style.display = 'none';
+    document.getElementById('answer-btns').style.display = 'none';
+    document.getElementById('status-bar').style.display = 'none';
+    document.getElementById('scoring-panel').style.display = 'block';
+    svQ.textContent = '--';
+    svScore.textContent = '0';
+    svCorrect.textContent = '0';
+    startBtn.style.display = 'block';
+    startBtn.textContent = 'Play Again';
+    startBtn.disabled = false;
+  });
+
+  // ── Keyboard: P = prime, C = composite ────────────────────────────────
+  document.addEventListener('keydown', function(e) {
+    if (!gameActive) return;
+    if (btnPrime.disabled) return;
+    if (e.key === 'p' || e.key === 'P') submitAnswer('prime');
+    if (e.key === 'c' || e.key === 'C') submitAnswer('composite');
+  });
+
+  // ── Listen for dApp session (paid mode) ───────────────────────────────
+  window.addEventListener('dapp-session-ready', function(e) {
+    sessionToken = e.detail.token;
+    totalQuestions = e.detail.totalQuestions;
+    questionNum = 0;
+    totalScore = 0;
+    correctCount = 0;
+    gameActive = true;
+
+    document.getElementById('scoring-panel').style.display = 'none';
+    startBtn.style.display = 'none';
+    document.getElementById('status-bar').style.display = 'flex';
+    document.getElementById('arena').style.display = 'flex';
+    document.getElementById('answer-btns').style.display = 'grid';
+
+    buildScoreHistory();
+    showQuestion(e.detail.question);
+  });
+
+})();
+</script>
+
+<script src="../dapp-entry.js"></script>
+</body>
+</html>

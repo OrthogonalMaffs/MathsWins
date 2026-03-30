@@ -1,0 +1,406 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<!-- Google tag (gtag.js) -->
+<script async src="https://www.googletagmanager.com/gtag/js?id=G-7GTLYCZMXN"></script>
+<script>
+  window.dataLayer = window.dataLayer || [];
+  function gtag(){dataLayer.push(arguments);}
+  gtag('js', new Date());
+
+  gtag('config', 'G-7GTLYCZMXN', {
+    send_page_view: true,
+    storage: 'none',
+    anonymize_ip: true
+  });
+</script>
+<meta charset="UTF-8">
+<meta name="robots" content="noindex, nofollow">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="description" content="Play rock paper scissors against a Markov-chain AI that learns your patterns. Humans are terrible at randomness — can you prove the machine wrong?">
+<meta property="og:title" content="RPS vs Machine · MathsWins">
+<meta property="og:description" content="Play rock paper scissors against a Markov-chain AI that learns your patterns. Can you stay unpredictable?">
+<meta property="og:url" content="https://mathswins.co.uk/builders/games/rps-vs-machine/">
+<meta property="og:image" content="https://mathswins.co.uk/assets/og-image.png">
+<link rel="canonical" href="https://mathswins.co.uk/builders/games/rps-vs-machine/">
+<link rel="icon" type="image/svg+xml" href="../../schools/assets/favicon.svg">
+<title>RPS vs Machine · MathsWins</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=DM+Mono:ital,wght@0,300;0,400;0,500&family=Bebas+Neue&family=Inter:wght@300;400;500&display=swap" rel="stylesheet">
+<style>
+:root{--ink:#070d1a;--navy:#0b1629;--navy-mid:#0f1f3d;--navy-light:#162847;--gold:#c9a84c;--gold-warm:#e2b96a;--gold-dim:#7a5e28;--teal:#2dd4bf;--teal-dim:#134e4a;--body:#a8b8d0;--muted:#4a6080;--border:#1a2e4a;--border-dim:#111f33;--success:#2dd4a0;--danger:#ef5350;--warn:#d4a847}
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+body{background:var(--ink);color:var(--body);font-family:'Inter',sans-serif;min-height:100vh;display:flex;flex-direction:column;align-items:center;overflow-x:hidden}
+body::before{content:'';position:fixed;inset:0;background-image:linear-gradient(rgba(201,168,76,0.03) 1px,transparent 1px),linear-gradient(90deg,rgba(201,168,76,0.03) 1px,transparent 1px);background-size:40px 40px;pointer-events:none;z-index:0}
+nav{position:sticky;top:0;z-index:100;width:100%;display:flex;align-items:center;justify-content:space-between;padding:0 2rem;height:52px;background:rgba(7,13,26,0.92);backdrop-filter:blur(12px);border-bottom:1px solid var(--border-dim)}
+.nav-logo{font-family:'Bebas Neue',sans-serif;font-size:1.2rem;letter-spacing:0.15em;color:var(--gold);text-decoration:none}
+.nav-back{font-family:'DM Mono',monospace;font-size:0.6rem;letter-spacing:0.12em;color:var(--muted);text-decoration:none;transition:color 0.2s}
+.nav-back:hover{color:var(--gold)}
+.page{position:relative;z-index:1;width:100%;max-width:480px;padding:2rem 1rem 4rem;display:flex;flex-direction:column;align-items:center;gap:1.2rem}
+.game-header{text-align:center}
+.game-kicker{font-family:'DM Mono',monospace;font-size:0.6rem;letter-spacing:0.2em;text-transform:uppercase;color:var(--teal);margin-bottom:0.4rem}
+.game-title{font-family:'Bebas Neue',sans-serif;font-size:2.8rem;letter-spacing:0.06em;color:var(--gold-warm);line-height:1}
+.game-sub{font-size:0.75rem;color:var(--muted);line-height:1.6;margin-top:0.4rem}
+
+.status-bar{display:flex;gap:0.8rem;width:100%;background:var(--navy-mid);border:1px solid var(--border);border-radius:4px;padding:0.75rem 1rem;justify-content:space-around}
+.si{display:flex;flex-direction:column;align-items:center;gap:0.15rem}
+.si-val{font-family:'DM Mono',monospace;font-size:1.1rem;font-weight:500;color:var(--gold)}
+.si-lbl{font-family:'DM Mono',monospace;font-size:0.45rem;letter-spacing:0.12em;text-transform:uppercase;color:var(--muted)}
+
+/* Arena */
+.arena{
+  width:100%;background:var(--navy-mid);border:1px solid var(--border);border-radius:4px;
+  padding:1.5rem 1rem;position:relative;overflow:hidden;
+}
+.arena::before{content:'';position:absolute;inset:0;background:radial-gradient(ellipse at 50% 50%,rgba(45,212,191,0.03),transparent 70%);pointer-events:none}
+
+.versus-row{display:grid;grid-template-columns:1fr auto 1fr;gap:0.5rem;align-items:center;margin-bottom:1rem}
+.player-side,.machine-side{display:flex;flex-direction:column;align-items:center;gap:0.4rem}
+.p-label{font-family:'DM Mono',monospace;font-size:0.48rem;letter-spacing:0.14em;text-transform:uppercase;color:var(--muted)}
+.p-move{font-size:clamp(2.5rem,12vw,4rem);line-height:1;min-height:4rem;display:flex;align-items:center;justify-content:center;transition:all 0.2s}
+.p-move.win{filter:drop-shadow(0 0 12px rgba(34,197,94,0.6))}
+.p-move.lose{filter:drop-shadow(0 0 12px rgba(239,68,68,0.4));opacity:0.6}
+.vs-label{font-family:'Bebas Neue',sans-serif;font-size:1.2rem;letter-spacing:0.1em;color:var(--muted);text-align:center}
+
+.result-flash{
+  font-family:'Bebas Neue',sans-serif;font-size:1.6rem;letter-spacing:0.1em;
+  text-align:center;min-height:2rem;transition:color 0.2s;margin-bottom:0.8rem;
+}
+.result-flash.win{color:var(--success)}
+.result-flash.lose{color:var(--danger)}
+.result-flash.draw{color:var(--warn)}
+
+.intel-bar{
+  display:flex;align-items:center;justify-content:space-between;
+  background:var(--navy-light);border:1px solid var(--border-dim);border-radius:3px;
+  padding:0.5rem 0.8rem;margin-top:0.5rem;
+}
+.intel-label{font-family:'DM Mono',monospace;font-size:0.48rem;letter-spacing:0.12em;text-transform:uppercase;color:var(--muted)}
+.intel-val{font-family:'DM Mono',monospace;font-size:0.58rem;color:var(--teal)}
+
+/* Move buttons */
+.move-btns{display:grid;grid-template-columns:repeat(3,1fr);gap:0.6rem;width:100%}
+.move-btn{
+  padding:1.2rem 0.5rem 0.8rem;
+  background:var(--navy-mid);border:2px solid var(--border);border-radius:4px;
+  font-family:'DM Mono',monospace;font-size:0.52rem;letter-spacing:0.1em;text-transform:uppercase;
+  color:var(--muted);cursor:pointer;
+  display:flex;flex-direction:column;align-items:center;gap:0.4rem;
+  transition:all 0.15s;
+}
+.move-btn:hover{border-color:var(--gold-dim);background:var(--navy-light);color:var(--gold)}
+.move-btn:disabled{opacity:0.4;cursor:not-allowed}
+.move-btn .emoji{font-size:2rem;line-height:1}
+.move-btn.rock:hover{border-color:rgba(239,68,68,0.5)}
+.move-btn.scissors:hover{border-color:rgba(245,158,11,0.5)}
+.move-btn.paper:hover{border-color:rgba(45,212,191,0.5)}
+
+/* History */
+.history-row{display:flex;gap:0.25rem;width:100%;flex-wrap:wrap;justify-content:flex-start}
+.hr-dot{
+  width:22px;height:22px;border-radius:3px;font-size:0.8rem;
+  display:flex;align-items:center;justify-content:center;
+  border:1px solid var(--border-dim);background:var(--navy-mid);
+}
+.hr-dot.win{background:rgba(34,197,94,0.15);border-color:rgba(34,197,94,0.4)}
+.hr-dot.lose{background:rgba(239,68,68,0.1);border-color:rgba(239,68,68,0.3)}
+.hr-dot.draw{background:rgba(245,158,11,0.1);border-color:rgba(245,158,11,0.3)}
+
+.btn{padding:0.65rem 1.2rem;font-family:'DM Mono',monospace;font-size:0.62rem;letter-spacing:0.1em;text-transform:uppercase;cursor:pointer;border-radius:3px;border:none;transition:all 0.2s;width:100%}
+.btn-gold{background:var(--gold);color:var(--ink);font-weight:500}.btn-gold:hover{background:var(--gold-warm)}
+.btn-ghost{background:transparent;border:1px solid var(--border);color:var(--muted)}.btn-ghost:hover{border-color:var(--gold-dim);color:var(--gold)}
+
+.lb-section{width:100%;background:var(--navy-mid);border:1px solid var(--border);border-radius:4px;overflow:hidden}
+.lb-header{padding:0.75rem 1rem;border-bottom:1px solid var(--border-dim)}
+.lb-title{font-family:'DM Mono',monospace;font-size:0.55rem;letter-spacing:0.15em;text-transform:uppercase;color:var(--muted)}
+.lb-body{padding:0.5rem 0}
+.lb-empty{font-family:'DM Mono',monospace;font-size:0.6rem;color:var(--muted);text-align:center;padding:1.2rem;font-style:italic}
+.lb-row{display:grid;grid-template-columns:1.5rem 1fr auto auto;gap:0.5rem;align-items:center;padding:0.4rem 1rem;border-bottom:1px solid var(--border-dim);font-family:'DM Mono',monospace;font-size:0.6rem}
+.lb-row:last-child{border-bottom:none}
+.lb-row.hl{background:rgba(201,168,76,0.06)}
+.lb-rank{color:var(--muted)}.lb-name{color:var(--body)}.lb-score{color:var(--gold);text-align:right}.lb-wr{color:var(--teal);font-size:0.52rem;text-align:right}
+.modal-overlay{position:fixed;inset:0;background:rgba(7,13,26,0.88);backdrop-filter:blur(8px);z-index:200;display:flex;align-items:center;justify-content:center;padding:1rem}
+.modal-overlay.hidden{display:none}
+.modal{background:var(--navy-mid);border:1px solid var(--border);border-radius:4px;width:100%;max-width:380px;overflow:hidden}
+.modal-header{padding:1.4rem 1.4rem 0;text-align:center}
+.modal-result{font-family:'Bebas Neue',sans-serif;font-size:2rem;letter-spacing:0.1em;color:var(--gold-warm)}
+.modal-score{margin:1rem 1.4rem;background:var(--navy-light);border:1px solid var(--border-dim);border-radius:3px;padding:0.8rem;display:grid;grid-template-columns:1fr 1fr;gap:0.5rem}
+.ms-item{display:flex;flex-direction:column;gap:0.1rem}
+.ms-val{font-family:'DM Mono',monospace;font-size:0.9rem;color:var(--gold)}
+.ms-lbl{font-family:'DM Mono',monospace;font-size:0.45rem;letter-spacing:0.1em;text-transform:uppercase;color:var(--muted)}
+.modal-name{padding:0 1.4rem;display:flex;flex-direction:column;gap:0.4rem}
+.modal-name label{font-family:'DM Mono',monospace;font-size:0.52rem;letter-spacing:0.1em;text-transform:uppercase;color:var(--muted)}
+.name-input{background:var(--navy);border:1px solid var(--border);border-radius:3px;padding:0.6rem 0.8rem;font-family:'DM Mono',monospace;font-size:0.8rem;color:var(--body);outline:none;width:100%}
+.name-input:focus{border-color:var(--gold-dim)}
+.modal-acts{display:flex;gap:0.5rem;padding:1rem 1.4rem 1.4rem}
+.modal-acts .btn{flex:1}
+</style>
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:title" content="MathsWins">
+<meta name="twitter:image" content="https://mathswins.co.uk/assets/og-image.png">
+<link rel="stylesheet" href="../dapp-shell.css">
+<script src="https://cdn.jsdelivr.net/npm/ethers@6/dist/ethers.umd.min.js"></script>
+</head>
+<body>
+<script src="../dapp-wallet.js"></script>
+
+<nav>
+  <a class="nav-logo" href="/builders/">MathsWins</a>
+  <span style="font-family:'DM Mono',monospace;font-size:0.48rem;letter-spacing:0.1em;text-transform:uppercase;padding:0.2rem 0.6rem;border:1px solid #134e4a;border-radius:2px;color:#2dd4bf">Hosted on QF Network</span>
+  <a class="nav-back" href="../../">← Back</a>
+</nav>
+<div class="page">
+  <div class="game-header">
+    <p class="game-kicker">Silly · Psychology</p>
+    <h1 class="game-title">RPS vs <strong style="color:var(--teal)">Machine</strong></h1>
+    <p class="game-sub">The machine watches your patterns and predicts your next move. Humans are terrible at randomness. Prove it wrong — if you can.</p>
+  </div>
+
+  <div class="status-bar">
+    <div class="si"><span class="si-val" id="sv-round">0</span><span class="si-lbl">Rounds</span></div>
+    <div class="si"><span class="si-val" id="sv-w">0</span><span class="si-lbl">Wins</span></div>
+    <div class="si"><span class="si-val" id="sv-l">0</span><span class="si-lbl">Losses</span></div>
+    <div class="si"><span class="si-val" id="sv-wr">—</span><span class="si-lbl">Win Rate</span></div>
+  </div>
+
+  <div class="arena">
+    <div class="versus-row">
+      <div class="player-side">
+        <div class="p-label">You</div>
+        <div class="p-move" id="player-move">🤔</div>
+      </div>
+      <div class="vs-label">VS</div>
+      <div class="machine-side">
+        <div class="p-label">Machine</div>
+        <div class="p-move" id="machine-move">🤖</div>
+      </div>
+    </div>
+    <div class="result-flash" id="result-flash">Make your first move.</div>
+    <div class="intel-bar">
+      <span class="intel-label">Machine confidence</span>
+      <span class="intel-val" id="intel-val">Learning your patterns…</span>
+    </div>
+  </div>
+
+  <div class="move-btns">
+    <button class="move-btn rock" onclick="play('rock')">
+      <span class="emoji">🪨</span><span>Rock</span>
+    </button>
+    <button class="move-btn paper" onclick="play('paper')">
+      <span class="emoji">📄</span><span>Paper</span>
+    </button>
+    <button class="move-btn scissors" onclick="play('scissors')">
+      <span class="emoji">✂️</span><span>Scissors</span>
+    </button>
+  </div>
+
+  <div class="history-row" id="history-row"></div>
+
+  <button class="btn btn-ghost" id="end-btn" onclick="endGame()" style="display:none">End &amp; Submit (20+ rounds)</button>
+  <button class="btn btn-ghost" onclick="resetGame()">Reset</button>
+
+  <div class="lb-section">
+    <div class="lb-header"><span class="lb-title">Leaderboard — Win Rate (min. 20 rounds)</span></div>
+    <div class="lb-body" id="lb-out"><div class="lb-empty">No entries yet.</div></div>
+  </div>
+</div>
+
+<div class="modal-overlay hidden" id="modal">
+  <div class="modal">
+    <div class="modal-header"><div class="modal-result" id="modal-result">—</div></div>
+    <div class="modal-score" id="modal-score"></div>
+    <div class="modal-name">
+      <label>Your name for the leaderboard</label>
+      <input class="name-input" id="name-input" type="text" maxlength="20" placeholder="Anonymous">
+    </div>
+    <div class="modal-acts">
+      <button class="btn btn-ghost" onclick="closeModal()">Play Again</button>
+      <button class="btn btn-gold" onclick="submitToLB()">Submit</button>
+    </div>
+  </div>
+</div>
+
+<script>
+const MOVES = ['rock','paper','scissors'];
+const EMOJI = {rock:'🪨',paper:'📄',scissors:'✂️'};
+const BEATS = {rock:'scissors',paper:'rock',scissors:'paper'}; // key beats value
+const LOSES_TO = {rock:'paper',paper:'scissors',scissors:'rock'};
+
+// ── MARKOV PREDICTOR ─────────────────────────────────────────────────
+// Tracks frequencies of: last move → next move, last two moves → next move
+// Picks whichever model has more data, falls back to random.
+let history = []; // player move history
+let wins=0, losses=0, draws=0;
+
+const freq1 = {}; // {move: {rock:0, paper:0, scissors:0}}
+const freq2 = {}; // {move+move: {rock:0, paper:0, scissors:0}}
+MOVES.forEach(m=>{ freq1[m]={rock:0,paper:0,scissors:0}; });
+
+function recordMove(prev1, prev2, current){
+  if(prev1){ freq1[prev1][current]++; }
+  if(prev1&&prev2){
+    const key=prev2+','+prev1;
+    if(!freq2[key])freq2[key]={rock:0,paper:0,scissors:0};
+    freq2[key][current]++;
+  }
+}
+
+function predict(){
+  const n = history.length;
+  if(n === 0) return MOVES[Math.floor(Math.random()*3)];
+
+  let predicted = null;
+  let confidence = 'Learning…';
+
+  // Try 2nd order Markov
+  if(n >= 2){
+    const key = history[n-2]+','+history[n-1];
+    if(freq2[key]){
+      const total=Object.values(freq2[key]).reduce((a,b)=>a+b,0);
+      if(total>=2){
+        predicted = argmax(freq2[key]);
+        const pct=Math.round(freq2[key][predicted]/total*100);
+        confidence = `${pct}% sure you'll play ${predicted}`;
+      }
+    }
+  }
+  // Fall back to 1st order
+  if(!predicted && n >= 1){
+    const last = history[n-1];
+    const total=Object.values(freq1[last]).reduce((a,b)=>a+b,0);
+    if(total>=2){
+      predicted = argmax(freq1[last]);
+      const pct=Math.round(freq1[last][predicted]/total*100);
+      confidence = `${pct}% sure after ${last}`;
+    }
+  }
+  // Random fallback
+  if(!predicted) predicted = MOVES[Math.floor(Math.random()*3)];
+
+  // Machine plays what beats predicted
+  const machinePlay = LOSES_TO[predicted];
+  return {machinePlay, confidence, predicted};
+}
+
+function argmax(obj){
+  return Object.entries(obj).sort((a,b)=>b[1]-a[1])[0][0];
+}
+
+function play(playerMove){
+  const n=history.length;
+  const prev1=n>=1?history[n-1]:null;
+  const prev2=n>=2?history[n-2]:null;
+
+  const result = predict();
+  const machineMove = typeof result==='object'?result.machinePlay:result;
+  const confidence = typeof result==='object'?result.confidence:'Still learning…';
+
+  recordMove(prev1, prev2, playerMove);
+  history.push(playerMove);
+
+  // Resolve
+  let outcome;
+  if(BEATS[playerMove]===machineMove) { outcome='win'; wins++; }
+  else if(BEATS[machineMove]===playerMove) { outcome='lose'; losses++; }
+  else { outcome='draw'; draws++; }
+
+  // Display
+  document.getElementById('player-move').textContent = EMOJI[playerMove];
+  document.getElementById('machine-move').textContent = EMOJI[machineMove];
+  const rf=document.getElementById('result-flash');
+  rf.className='result-flash '+outcome;
+  rf.textContent=outcome==='win'?'YOU WIN THIS ROUND.':outcome==='lose'?'MACHINE WINS.':'DRAW.';
+  document.getElementById('player-move').className='p-move '+(outcome==='win'?'win':outcome==='lose'?'lose':'');
+  document.getElementById('machine-move').className='p-move '+(outcome==='lose'?'win':outcome==='win'?'lose':'');
+
+  // Intel update
+  document.getElementById('intel-val').textContent=confidence;
+
+  updateStatus();
+  addHistoryDot(outcome, playerMove);
+
+  // Show end button after 20 rounds
+  if(history.length>=20) document.getElementById('end-btn').style.display='block';
+}
+
+function updateStatus(){
+  const total=wins+losses+draws;
+  const wr=total?Math.round(wins/total*100):0;
+  document.getElementById('sv-round').textContent=total;
+  document.getElementById('sv-w').textContent=wins;
+  document.getElementById('sv-l').textContent=losses;
+  document.getElementById('sv-wr').textContent=total?wr+'%':'—';
+}
+
+function addHistoryDot(outcome, move){
+  const row=document.getElementById('history-row');
+  const d=document.createElement('div');
+  d.className='hr-dot '+outcome;
+  d.title=EMOJI[move]+' '+(outcome==='win'?'Win':outcome==='lose'?'Loss':'Draw');
+  d.textContent=EMOJI[move];
+  row.appendChild(d);
+  row.scrollLeft=row.scrollWidth;
+}
+
+function endGame(){
+  const total=wins+losses+draws;
+  if(total<20){alert('Play at least 20 rounds to submit a score.');return;}
+  const wr=Math.round(wins/total*100);
+  document.getElementById('modal').classList.remove('hidden');
+  const v=wr>=60?'Unpredictable.':wr>=50?'Competitive.':wr>=40?'Readable.':'Transparent.';
+  document.getElementById('modal-result').textContent=v;
+  document.getElementById('modal-score').innerHTML=`
+    <div class="ms-item"><span class="ms-val">${wr}%</span><span class="ms-lbl">Win Rate</span></div>
+    <div class="ms-item"><span class="ms-val">${total}</span><span class="ms-lbl">Rounds</span></div>
+    <div class="ms-item"><span class="ms-val">${wins}</span><span class="ms-lbl">Wins</span></div>
+    <div class="ms-item"><span class="ms-val">${losses}</span><span class="ms-lbl">Losses</span></div>
+  `;
+}
+
+function resetGame(){
+  history=[];wins=0;losses=0;draws=0;
+  MOVES.forEach(m=>{ freq1[m]={rock:0,paper:0,scissors:0}; });
+  Object.keys(freq2).forEach(k=>delete freq2[k]);
+  document.getElementById('player-move').textContent='🤔';
+  document.getElementById('machine-move').textContent='🤖';
+  document.getElementById('result-flash').textContent='Make your first move.';
+  document.getElementById('result-flash').className='result-flash';
+  document.getElementById('intel-val').textContent='Learning your patterns…';
+  document.getElementById('history-row').innerHTML='';
+  document.getElementById('end-btn').style.display='none';
+  updateStatus();
+}
+
+function closeModal(){ document.getElementById('modal').classList.add('hidden'); }
+
+const LKEY=()=>'rps_lb_';
+function loadLB(){try{return JSON.parse(localStorage.getItem(LKEY()))||[];}catch{return[]}}
+function renderLB(hl){
+  const arr=loadLB(),el=document.getElementById('lb-out');
+  if(!arr.length){el.innerHTML='<div class="lb-empty">No entries yet.</div>';return}
+  el.innerHTML=arr.slice(0,10).map((e,i)=>`
+    <div class="lb-row ${e.name===hl?'hl':''}">
+      <span class="lb-rank">${i+1}</span>
+      <span class="lb-name">${escHtml(e.name)}</span>
+      <span class="lb-score">${e.wr}% win rate</span>
+      <span class="lb-wr">${e.rounds}r</span>
+    </div>`).join('')
+}
+function escHtml(s){return s.replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;')}
+function submitToLB(){
+  const name=document.getElementById('name-input').value.trim().slice(0,20)||'Anonymous';
+  const total=wins+losses+draws;
+  const wr=Math.round(wins/total*100);
+  const arr=loadLB();
+  arr.push({name,wr,rounds:total,ts:Date.now()});
+  arr.sort((a,b)=>b.wr-a.wr||b.rounds-a.rounds);
+  localStorage.setItem(LKEY(),JSON.stringify(arr));
+  document.getElementById('modal').classList.add('hidden');
+  renderLB(name);
+}
+
+renderLB('');
+</script>
+
+</body>
+</html>
