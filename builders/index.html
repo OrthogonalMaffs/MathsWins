@@ -80,7 +80,7 @@ h1 span{color:var(--gold)}
 .filter-pill.active{border-color:var(--gold);background:var(--gold-dim);color:var(--gold)}
 
 /* ── Game Cards ── */
-.game-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(300px,1fr));gap:16px;margin:1.5rem 0 3rem}
+.game-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(300px,1fr));gap:24px;margin:1.5rem 0 3rem}
 .game-card{
   background:var(--surface);border:1px solid var(--border);border-radius:6px;
   padding:20px 24px;transition:border-color .15s,background .15s;cursor:pointer;position:relative;overflow:hidden;
@@ -199,9 +199,12 @@ var GAMES = [
   { id:'estimation-engine', name:'Estimation Engine', desc:'Estimate complex calculations under time pressure. Pure mental arithmetic.', cat:'number', paid:true, tags:['mental maths','speed'] },
   { id:'sequence-solver', name:'Sequence Solver', desc:'Identify patterns in number sequences. Escalating difficulty across KS3 to A-Level.', cat:'number', paid:true, tags:['sequences','patterns'] },
   { id:'prime-or-composite', name:'Prime or Composite', desc:'Classify numbers as prime or composite in 5 seconds. Speed and number sense.', cat:'speed', paid:true, tags:['primes','speed'] },
-  { id:'sudoku-duel', name:'Sudoku Duel', desc:'Daily Sudoku puzzle. Same board for all players. Fastest clean solve wins.', cat:'puzzle', paid:true, tags:['logic','daily'] },
-  { id:'towers-of-hanoi', name:'Towers of Hanoi', desc:'Move all discs to the target peg. Scored on efficiency vs optimal solution.', cat:'logic', paid:true, tags:['logic','efficiency'] },
   { id:'countdown-numbers', name:'Countdown Numbers', desc:'Six numbers, one target. Use arithmetic and brackets to hit the target.', cat:'number', paid:true, tags:['arithmetic','BODMAS'] },
+  { id:'sudoku-duel', name:'Sudoku Duel', desc:'Daily Sudoku puzzle. Same board for all players. Fastest clean solve wins.', cat:'puzzle', paid:true, tags:['logic','daily'] },
+  { id:'kenken', name:'KenKen', desc:'Fill the grid using arithmetic and logic. No repeats in rows or columns. Cages must hit their target.', cat:'puzzle', paid:true, tags:['arithmetic','logic'] },
+  { id:'nonogram', name:'Nonogram', desc:'Fill cells to reveal a hidden Greek letter. Use row and column clues to solve the grid.', cat:'logic', paid:true, tags:['logic','pixel art'] },
+  { id:'kakuro', name:'Kakuro', desc:'Crossword meets Sudoku. Fill white cells with digits 1-9 so each run sums to its clue. No repeats.', cat:'puzzle', paid:true, tags:['sums','logic'] },
+  { id:'towers-of-hanoi', name:'Towers of Hanoi', desc:'Move all discs to the target peg. Scored on efficiency vs optimal solution.', cat:'logic', paid:true, tags:['logic','efficiency'] },
   { id:'higher-or-lower', name:'Higher or Lower', desc:'Is the next mathematical number higher or lower? Build streaks for multipliers.', cat:'number', paid:false, tags:['number sense','streaks'] },
   { id:'equatle', name:'Equatle', desc:'Wordle-style equation guessing. Deduce the hidden 8-character equation in 6 tries.', cat:'puzzle', paid:false, tags:['deduction','daily'] },
   { id:'52dle', name:'52-dle', desc:'Daily number deduction. Use mathematical clues to guess the hidden number.', cat:'puzzle', paid:false, tags:['deduction','daily'] },
@@ -209,9 +212,6 @@ var GAMES = [
   { id:'dont-press-it', name:"Don't Press It", desc:'How long can you resist? The button gets more tempting. A test of willpower.', cat:'strategy', paid:false, tags:['psychology','fun'] },
   { id:'memory-matrix', name:'Memory Matrix', desc:'Memorise the grid of digits, then reproduce it. Grids grow each round.', cat:'memory', paid:false, tags:['memory','visual'] },
   { id:'rps-vs-machine', name:'RPS vs Machine', desc:'Rock Paper Scissors against a pattern-learning AI. Can you stay unpredictable?', cat:'strategy', paid:false, tags:['strategy','AI'] },
-  { id:'kenken', name:'KenKen', desc:'Fill the grid using arithmetic and logic. No repeats in rows or columns. Cages must hit their target.', cat:'puzzle', paid:true, tags:['arithmetic','logic'] },
-  { id:'nonogram', name:'Nonogram', desc:'Fill cells to reveal a hidden Greek letter. Use row and column clues to solve the grid.', cat:'logic', paid:true, tags:['logic','pixel art'] },
-  { id:'kakuro', name:'Kakuro', desc:'Crossword meets Sudoku. Fill white cells with digits 1-9 so each run sums to its clue. No repeats.', cat:'puzzle', paid:true, tags:['sums','logic'] },
 ];
 
 // ── Wallet State ────────────────────────────────────────────────────────────

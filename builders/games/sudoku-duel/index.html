@@ -22,11 +22,13 @@
 <link rel="stylesheet" href="../dapp-shell.css">
 <style>
 :root {
-  --bg:#050709;--surface:#0a0d12;--surface2:#0f1218;--surface3:#13171e;
-  --border:#1a1f2a;--border2:#242b38;
+  --bg:#0e1013;--surface:#16181c;--surface2:#1e2025;--surface3:#26282e;
+  --border:#1e2228;--border2:#2a2e36;
+  --silver:#b8bcc6;--silver-bright:#d4d8e2;--silver-dim:rgba(184,188,198,0.08);--silver-glow:rgba(184,188,198,0.12);--silver-border:rgba(184,188,198,0.15);
+  --grid-border:#3a3e48;--grid-box:#5a5e68;
   --gold:#c9a84c;--gold-dim:rgba(201,168,76,0.08);--gold-glow:rgba(201,168,76,0.15);--gold-border:rgba(201,168,76,0.20);--gold-hover:#d4b050;
-  --text-white:#eaecf0;--text-bright:#d4d8e0;--text:#9ca3b0;--muted:#3e4555;
-  --red:#c0392b;--green:#27ae60;--teal:#2bb5a0;
+  --text-white:#e8eaf0;--text-bright:#d4d8e2;--text:#8a8f9c;--muted:#4a4e5a;
+  --red:#b03a3a;--green:#3a8a5c;--blue:#3a6a9c;
 }
 *,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
 body{background:var(--bg);color:var(--text);font-family:'Outfit',sans-serif;min-height:100vh;display:flex;flex-direction:column;align-items:center}
@@ -40,10 +42,10 @@ body{background:var(--bg);color:var(--text);font-family:'Outfit',sans-serif;min-
 
 /* ── Scoring info (pre-game) ── */
 .scoring-info{width:100%;max-width:600px;margin:0 auto;background:var(--surface);border:1px solid var(--border);border-radius:6px;padding:20px 24px;font-family:'DM Mono',monospace;font-size:12px;color:var(--muted);line-height:2}
-.scoring-info h3{font-family:'Bebas Neue',sans-serif;font-size:20px;color:var(--gold);letter-spacing:2px;margin-bottom:12px}
+.scoring-info h3{font-family:'Bebas Neue',sans-serif;font-size:20px;color:var(--silver-bright);letter-spacing:2px;margin-bottom:12px}
 .scoring-info .si-row{display:flex;justify-content:space-between;padding:2px 0}
 .scoring-info .si-label{color:var(--text)}
-.scoring-info .si-val{color:var(--gold)}
+.scoring-info .si-val{color:var(--silver)}
 .scoring-info .si-note{color:var(--muted);font-size:11px;margin-top:10px;font-style:italic}
 
 /* ── Two-column game layout (desktop) ── */
@@ -54,13 +56,13 @@ body{background:var(--bg);color:var(--text);font-family:'Outfit',sans-serif;min-
 /* ── Stats row ── */
 .stats-row{display:grid;grid-template-columns:repeat(4,1fr);gap:1px;background:var(--border);border:1px solid var(--border);border-radius:6px;overflow:hidden;width:100%;margin-bottom:20px}
 .stat-cell{background:var(--surface);padding:14px 12px;text-align:center}
-.stat-val{font-family:'DM Mono',monospace;font-size:18px;font-weight:500;color:var(--gold);line-height:1}
+.stat-val{font-family:'DM Mono',monospace;font-size:18px;font-weight:500;color:var(--silver-bright);line-height:1}
 .stat-label{font-family:'Outfit',sans-serif;font-size:9px;color:var(--muted);text-transform:uppercase;letter-spacing:1.5px;margin-top:6px}
 
 /* ── Old status bar (hidden on desktop, shown on mobile fallback) ── */
 .status-bar{display:none;gap:0.8rem;width:100%;background:var(--surface);border:1px solid var(--border);border-radius:6px;padding:12px 16px;justify-content:space-around}
 .si{display:flex;flex-direction:column;align-items:center;gap:4px}
-.si-val{font-family:'DM Mono',monospace;font-size:18px;font-weight:500;color:var(--gold)}
+.si-val{font-family:'DM Mono',monospace;font-size:18px;font-weight:500;color:var(--silver-bright)}
 .si-lbl{font-family:'Outfit',sans-serif;font-size:9px;letter-spacing:1.5px;text-transform:uppercase;color:var(--muted)}
 .mistake-dots{display:flex;gap:5px}
 .dot{width:10px;height:10px;border-radius:50%;background:var(--border);border:1px solid var(--muted);transition:background 0.15s}
@@ -68,13 +70,13 @@ body{background:var(--bg);color:var(--text);font-family:'Outfit',sans-serif;min-
 
 /* ── Board ── */
 .board-wrap{width:100%;display:flex;justify-content:center}
-.board{display:grid;grid-template-columns:repeat(9,1fr);gap:1px;background:var(--muted);border:2px solid var(--gold);border-radius:4px;overflow:hidden;width:100%;max-width:560px;aspect-ratio:1}
+.board{display:grid;grid-template-columns:repeat(9,1fr);gap:1px;background:var(--grid-border);border:2px solid var(--grid-box);border-radius:4px;overflow:hidden;width:100%;max-width:560px;aspect-ratio:1}
 .cell{background:var(--surface);display:flex;align-items:center;justify-content:center;cursor:pointer;position:relative;transition:background 0.15s;border:none;outline:none}
-.cell[data-col="2"],.cell[data-col="5"]{border-right:2px solid var(--gold-border)}
-.cell[data-row="2"],.cell[data-row="5"]{border-bottom:2px solid var(--gold-border)}
-.cell:hover{background:var(--gold-dim)}
-.cell.selected{background:var(--gold-glow)}
-.cell.same-num{background:var(--gold-dim)}
+.cell[data-col="2"],.cell[data-col="5"]{border-right:2px solid var(--grid-box)}
+.cell[data-row="2"],.cell[data-row="5"]{border-bottom:2px solid var(--grid-box)}
+.cell:hover{background:var(--silver-dim)}
+.cell.selected{background:var(--silver-glow)}
+.cell.same-num{background:var(--silver-dim)}
 .cell.given{cursor:default}
 .cell.error{background:rgba(192,57,43,0.15)}
 .cell.hint-reveal{background:rgba(201,168,76,0.08)}
@@ -94,7 +96,7 @@ body{background:var(--bg);color:var(--text);font-family:'Outfit',sans-serif;min-
 /* ── Side panel: Numpad (3x3+1 on side) ── */
 .side-numpad{display:grid;grid-template-columns:repeat(3,1fr);gap:6px}
 .side-numpad .num-btn{aspect-ratio:1;background:var(--surface2);border:1px solid var(--border);border-radius:4px;font-family:'DM Mono',monospace;font-size:18px;font-weight:500;color:var(--text-bright);cursor:pointer;display:flex;align-items:center;justify-content:center;transition:all 0.15s}
-.side-numpad .num-btn:hover{background:var(--gold-dim);border-color:var(--gold-border);color:var(--gold)}
+.side-numpad .num-btn:hover{background:var(--silver-dim);border-color:var(--silver-border);color:var(--silver-bright)}
 .side-numpad .num-btn.used{opacity:0.3}
 
 /* ── Side panel: Action buttons ── */
@@ -102,7 +104,7 @@ body{background:var(--bg);color:var(--text);font-family:'Outfit',sans-serif;min-
 .act-btn{display:flex;align-items:center;justify-content:center;gap:6px;padding:12px;font-family:'Outfit',sans-serif;font-size:12px;font-weight:600;letter-spacing:0.5px;border-radius:4px;cursor:pointer;transition:all 0.15s;border:none;width:100%}
 .act-btn.secondary{background:var(--surface2);border:1px solid var(--border);color:var(--text)}
 .act-btn.secondary:hover{border-color:var(--border2);color:var(--text-bright)}
-.act-btn.secondary.active{border-color:var(--gold-border);color:var(--gold);background:var(--gold-dim)}
+.act-btn.secondary.active{border-color:var(--silver-border);color:var(--silver-bright);background:var(--silver-dim)}
 .act-btn .cost{font-family:'DM Mono',monospace;font-size:10px;opacity:0.6}
 
 /* ── Old flat controls/numpad (kept for JS compatibility, hidden on desktop) ── */
@@ -114,10 +116,27 @@ body{background:var(--bg);color:var(--text);font-family:'Outfit',sans-serif;min-
 .btn-gold:disabled{background:var(--muted);cursor:not-allowed;opacity:0.5}
 .btn-ghost{background:var(--surface2);border:1px solid var(--border);color:var(--text)}
 .btn-ghost:hover{border-color:var(--border2);color:var(--text-bright)}
-.btn-ghost.active{border-color:var(--gold-border);color:var(--gold);background:var(--gold-dim)}
+.btn-ghost.active{border-color:var(--silver-border);color:var(--silver-bright);background:var(--silver-dim)}
 .num-btn{aspect-ratio:1;background:var(--surface2);border:1px solid var(--border);border-radius:4px;font-family:'DM Mono',monospace;font-size:16px;color:var(--text-bright);cursor:pointer;display:flex;align-items:center;justify-content:center;transition:all 0.15s}
-.num-btn:hover{background:var(--gold-dim);border-color:var(--gold-border);color:var(--gold)}
+.num-btn:hover{background:var(--silver-dim);border-color:var(--silver-border);color:var(--silver-bright)}
 .num-btn.used{opacity:0.3}
+
+/* ── Help Section ── */
+.help-section{width:100%;max-width:600px;margin:0 auto 16px}
+.help-toggle{width:100%;display:flex;align-items:center;justify-content:space-between;padding:14px 20px;font-family:'Outfit',sans-serif;font-size:13px;font-weight:600;color:var(--silver);background:var(--surface);border:1px solid var(--border);border-radius:6px;cursor:pointer;transition:all 0.15s;letter-spacing:0.5px}
+.help-toggle:hover{border-color:var(--border2);color:var(--silver-bright)}
+.help-toggle.open{border-radius:6px 6px 0 0;border-bottom-color:transparent}
+.help-toggle.open .help-arrow{transform:rotate(180deg)}
+.help-arrow{font-size:10px;transition:transform 0.15s}
+.help-body{background:var(--surface);border:1px solid var(--border);border-top:none;border-radius:0 0 6px 6px;padding:20px 24px}
+.help-body.hidden{display:none}
+.help-group{margin-bottom:16px}
+.help-group:last-child{margin-bottom:0}
+.help-group h4{font-family:'Bebas Neue',sans-serif;font-size:16px;letter-spacing:2px;color:var(--silver-bright);margin-bottom:8px}
+.help-group p{font-size:12px;color:var(--text);line-height:1.6}
+.help-row{display:flex;justify-content:space-between;align-items:baseline;padding:4px 0;font-size:12px;gap:12px}
+.help-key{font-family:'DM Mono',monospace;font-size:11px;color:var(--silver);white-space:nowrap;flex-shrink:0}
+.help-row span:last-child{color:var(--text);text-align:right}
 
 .msg{font-family:'DM Mono',monospace;font-size:12px;text-align:center;min-height:1.2rem;color:var(--red);margin-top:8px}
 .msg.ok{color:var(--green)}
@@ -134,6 +153,7 @@ body{background:var(--bg);color:var(--text);font-family:'Outfit',sans-serif;min-
 .modal-score{margin:16px 24px;display:grid;grid-template-columns:1fr 1fr;gap:1px;background:var(--border);border:1px solid var(--border);border-radius:6px;overflow:hidden}
 .ms-item{background:var(--surface);padding:12px;text-align:center}
 .ms-val{font-family:'DM Mono',monospace;font-size:18px;color:var(--gold)}
+.ms-val.silver{color:var(--silver)}
 .ms-lbl{font-family:'Outfit',sans-serif;font-size:9px;letter-spacing:1.5px;text-transform:uppercase;color:var(--muted);margin-top:4px}
 .modal-acts{display:flex;gap:8px;padding:16px 24px 24px}
 .modal-acts .btn{flex:1}
@@ -175,6 +195,36 @@ body{background:var(--bg);color:var(--text);font-family:'Outfit',sans-serif;min-
     <p class="game-kicker">Logic Puzzle</p>
     <h1 class="game-title">Sudoku <strong style="color:var(--gold)">Duel</strong></h1>
     <p class="game-sub">Solve the board. Fewest mistakes, fastest time, highest score. Server-validated.</p>
+  </div>
+
+  <div class="help-section" id="help-section">
+    <button class="help-toggle" id="help-toggle" onclick="document.getElementById('help-body').classList.toggle('hidden');this.classList.toggle('open')">
+      Controls &amp; Help <span class="help-arrow">&#9662;</span>
+    </button>
+    <div class="help-body hidden" id="help-body">
+      <div class="help-group">
+        <h4>Placing Numbers</h4>
+        <div class="help-row"><span class="help-key">Click cell</span><span>Select it</span></div>
+        <div class="help-row"><span class="help-key">Click numpad / press 1-9</span><span>Place a number</span></div>
+        <div class="help-row"><span class="help-key">Click X / press 0 or Delete</span><span>Erase a cell</span></div>
+      </div>
+      <div class="help-group">
+        <h4>Notes Mode</h4>
+        <div class="help-row"><span class="help-key">Click Notes button / press N</span><span>Toggle notes on/off</span></div>
+        <div class="help-row"><span class="help-key">Tap a number in notes mode</span><span>Add or remove a pencil mark</span></div>
+        <div class="help-row"><span class="help-key">Notes auto-clear</span><span>When you place a correct number, related notes are removed</span></div>
+      </div>
+      <div class="help-group">
+        <h4>Other Controls</h4>
+        <div class="help-row"><span class="help-key">Undo / Ctrl+Z</span><span>Undo last action</span></div>
+        <div class="help-row"><span class="help-key">Hint</span><span>Reveal the correct value for the selected cell (-200 pts, max 5)</span></div>
+        <div class="help-row"><span class="help-key">Arrow keys</span><span>Navigate between cells</span></div>
+      </div>
+      <div class="help-group">
+        <h4>Rules</h4>
+        <p>Fill every row, column, and 3x3 box with the digits 1-9. Each digit appears exactly once per row, column, and box. Three mistakes and the game is over.</p>
+      </div>
+    </div>
   </div>
 
   <div class="scoring-info" id="scoring-panel">
