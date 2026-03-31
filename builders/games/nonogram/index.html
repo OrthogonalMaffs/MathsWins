@@ -130,6 +130,30 @@ body{background:var(--bg);color:var(--text);font-family:'Outfit',sans-serif;min-
 
 @keyframes flash-wrong{0%{background:var(--red)}100%{background:var(--surface2)}}
 
+/* ── Tutorial ── */
+.tut-section{width:100%;margin-bottom:0.4rem}
+.tut-toggle{width:100%;display:flex;align-items:center;justify-content:space-between;padding:14px 20px;font-family:'Outfit',sans-serif;font-size:13px;font-weight:600;color:var(--text);background:var(--surface2);border:1px solid var(--border);border-radius:8px;cursor:pointer;transition:all 0.15s;letter-spacing:0.5px}
+.tut-toggle:hover{border-color:var(--border2);color:var(--text-bright)}
+.tut-toggle.open{border-radius:8px 8px 0 0;border-bottom-color:transparent}
+.tut-toggle.open .tut-arrow{transform:rotate(180deg)}
+.tut-arrow{font-size:10px;transition:transform 0.15s}
+.tut-body{background:var(--surface2);border:1px solid var(--border);border-top:none;border-radius:0 0 8px 8px;padding:20px 24px}
+.tut-body.hidden{display:none}
+.tut-step{margin-bottom:20px}
+.tut-step:last-child{margin-bottom:0}
+.tut-step h4{font-family:'Bebas Neue',sans-serif;font-size:16px;letter-spacing:2px;color:var(--gold);margin-bottom:8px}
+.tut-step p{font-size:12px;color:var(--text);line-height:1.7;margin-bottom:8px}
+.tut-step p:last-child{margin-bottom:0}
+.tut-step strong{color:var(--text-bright)}
+.tut-mini{display:inline-grid;gap:0;margin:8px 0 12px}
+.tut-mini-cell{width:28px;height:28px;display:flex;align-items:center;justify-content:center;border:1px solid var(--border2);font-family:'DM Mono',monospace;font-size:10px;color:var(--muted);background:var(--surface2)}
+.tut-mini-cell.filled{background:var(--gold)}
+.tut-mini-cell.marked{position:relative}
+.tut-mini-cell.marked::after{content:'';position:absolute;width:5px;height:5px;border-radius:50%;background:var(--muted)}
+.tut-mini-cell.clue{background:transparent;border:none;font-size:10px;color:var(--muted)}
+.tut-mini-cell.clue-stack{flex-direction:column;gap:0;line-height:1.2}
+.tut-label{font-family:'DM Mono',monospace;font-size:10px;color:var(--muted);margin-top:4px;font-style:italic}
+
 @media(max-width:480px){.page{padding:1.5rem 0.5rem 3rem}.game-title{font-size:2.4rem}}
 </style>
 <script src="https://cdn.jsdelivr.net/npm/ethers@6/dist/ethers.umd.min.js"></script>
@@ -141,6 +165,54 @@ body{background:var(--bg);color:var(--text);font-family:'Outfit',sans-serif;min-
     <p class="game-kicker">Logic Puzzle</p>
     <h1 class="game-title">Nono<strong style="color:var(--gold)">gram</strong></h1>
     <p class="game-sub">Fill cells to reveal a hidden Greek letter. Use row and column clues to deduce which cells are filled.</p>
+  </div>
+
+  <div class="tut-section">
+    <button class="tut-toggle" onclick="document.getElementById('tut-body').classList.toggle('hidden');this.classList.toggle('open')">
+      How to Play Nonogram <span class="tut-arrow">&#9662;</span>
+    </button>
+    <div class="tut-body hidden" id="tut-body">
+      <div class="tut-step">
+        <h4>What Is a Nonogram?</h4>
+        <p>A nonogram (also called Picross or Griddlers) is a <strong>picture logic puzzle</strong>. You use number clues along the edges to work out which cells to fill in. When solved correctly, the filled cells reveal a hidden image — in our case, a <strong>Greek letter</strong>.</p>
+      </div>
+      <div class="tut-step">
+        <h4>Reading the Clues</h4>
+        <p>Each <strong>row</strong> and <strong>column</strong> has a set of numbers. These tell you the lengths of <strong>consecutive filled groups</strong> in that line, reading left-to-right (rows) or top-to-bottom (columns).</p>
+        <div class="tut-mini" style="grid-template-columns:repeat(7,28px)">
+          <div class="tut-mini-cell clue"></div><div class="tut-mini-cell clue"></div><div class="tut-mini-cell clue">1</div><div class="tut-mini-cell clue">3</div><div class="tut-mini-cell clue">1</div><div class="tut-mini-cell clue">1</div><div class="tut-mini-cell clue">1</div>
+          <div class="tut-mini-cell clue"></div><div class="tut-mini-cell clue"></div><div class="tut-mini-cell clue">1</div><div class="tut-mini-cell clue">1</div><div class="tut-mini-cell clue">3</div><div class="tut-mini-cell clue">1</div><div class="tut-mini-cell clue">1</div>
+          <div class="tut-mini-cell clue">1</div><div class="tut-mini-cell clue">1</div><div class="tut-mini-cell filled"></div><div class="tut-mini-cell"></div><div class="tut-mini-cell filled"></div><div class="tut-mini-cell"></div><div class="tut-mini-cell"></div>
+          <div class="tut-mini-cell clue"></div><div class="tut-mini-cell clue">5</div><div class="tut-mini-cell filled"></div><div class="tut-mini-cell filled"></div><div class="tut-mini-cell filled"></div><div class="tut-mini-cell filled"></div><div class="tut-mini-cell filled"></div>
+          <div class="tut-mini-cell clue">1</div><div class="tut-mini-cell clue">1</div><div class="tut-mini-cell filled"></div><div class="tut-mini-cell"></div><div class="tut-mini-cell"></div><div class="tut-mini-cell"></div><div class="tut-mini-cell filled"></div>
+          <div class="tut-mini-cell clue">1</div><div class="tut-mini-cell clue">1</div><div class="tut-mini-cell filled"></div><div class="tut-mini-cell"></div><div class="tut-mini-cell"></div><div class="tut-mini-cell"></div><div class="tut-mini-cell filled"></div>
+          <div class="tut-mini-cell clue">1</div><div class="tut-mini-cell clue">1</div><div class="tut-mini-cell filled"></div><div class="tut-mini-cell"></div><div class="tut-mini-cell"></div><div class="tut-mini-cell"></div><div class="tut-mini-cell filled"></div>
+        </div>
+        <p class="tut-label">A solved 5x5 nonogram revealing the Greek letter Pi.</p>
+        <p>Row 2 has the clue <strong>"5"</strong> — meaning all 5 cells in that row are filled (one group of 5). Row 1 has <strong>"1 1"</strong> — meaning two separate filled cells with at least one empty cell between them.</p>
+        <p>Column 1 has clues <strong>"1 3 1 1 1"</strong> at the top — reading downward: 1 filled, gap, 3 filled, gap, 1 filled, gap, 1 filled, gap, 1 filled.</p>
+      </div>
+      <div class="tut-step">
+        <h4>The Rules</h4>
+        <p><strong>1.</strong> Each cell is either <strong>filled</strong> (gold) or <strong>empty</strong>.</p>
+        <p><strong>2.</strong> The numbers for each row/column describe the <strong>groups of consecutive filled cells</strong> in order.</p>
+        <p><strong>3.</strong> Between each group there must be <strong>at least one empty cell</strong>.</p>
+        <p><strong>4.</strong> The clues tell you the <strong>exact</strong> pattern — there are no extra filled cells beyond what the clues describe.</p>
+      </div>
+      <div class="tut-step">
+        <h4>Strategy Tips</h4>
+        <p>Start with <strong>large clues</strong>. If a row is 10 cells wide and the clue is "8", the middle 6 cells must be filled regardless of where the group starts.</p>
+        <p>If a line's clues <strong>add up to the full width</strong> (plus minimum gaps), the entire line is determined. For example, clue "3 3" in a 7-cell row must be: filled, filled, filled, empty, filled, filled, filled.</p>
+        <p>Use <strong>marking</strong> (the dot) to flag cells you have confirmed are empty — this helps you track your deductions.</p>
+      </div>
+      <div class="tut-step">
+        <h4>Controls</h4>
+        <p><strong>Click a cell</strong> to fill it (turns gold). <strong>Click again</strong> to mark it as confirmed empty (shows a dot). <strong>Click a third time</strong> to clear it back to unknown.</p>
+        <p>You can also <strong>click and drag</strong> to fill or mark multiple cells in a row.</p>
+        <p><strong>Hint</strong> — reveals an entire row or column. Choose which one using the hint picker (-400 pts per hint, max 10).</p>
+        <p>When you have filled the entire grid, press <strong>Submit</strong> to check your solution.</p>
+      </div>
+    </div>
   </div>
 
   <div class="scoring-info" id="scoring-panel">

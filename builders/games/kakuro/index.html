@@ -120,6 +120,36 @@ body{background:var(--bg);color:var(--text);font-family:'Outfit',sans-serif;min-
 .ms-lbl{font-family:'DM Mono',monospace;font-size:0.45rem;letter-spacing:0.1em;text-transform:uppercase;color:var(--muted)}
 .modal-acts{display:flex;gap:0.5rem;padding:1rem 1.4rem 1.4rem}
 .modal-acts .btn{flex:1}
+/* ── Tutorial ── */
+.tut-section{width:100%;margin-bottom:0.4rem}
+.tut-toggle{width:100%;display:flex;align-items:center;justify-content:space-between;padding:14px 20px;font-family:'Outfit',sans-serif;font-size:13px;font-weight:600;color:var(--text);background:var(--surface2);border:1px solid var(--border);border-radius:8px;cursor:pointer;transition:all 0.15s;letter-spacing:0.5px}
+.tut-toggle:hover{border-color:var(--border2);color:var(--text-bright)}
+.tut-toggle.open{border-radius:8px 8px 0 0;border-bottom-color:transparent}
+.tut-toggle.open .tut-arrow{transform:rotate(180deg)}
+.tut-arrow{font-size:10px;transition:transform 0.15s}
+.tut-body{background:var(--surface2);border:1px solid var(--border);border-top:none;border-radius:0 0 8px 8px;padding:20px 24px}
+.tut-body.hidden{display:none}
+.tut-step{margin-bottom:20px}
+.tut-step:last-child{margin-bottom:0}
+.tut-step h4{font-family:'Bebas Neue',sans-serif;font-size:16px;letter-spacing:2px;color:var(--gold);margin-bottom:8px}
+.tut-step p{font-size:12px;color:var(--text);line-height:1.7;margin-bottom:8px}
+.tut-step p:last-child{margin-bottom:0}
+.tut-step strong{color:var(--text-bright)}
+.tut-diagram{display:inline-grid;gap:0;border:2px solid var(--gold);border-radius:3px;overflow:hidden;margin:8px 0 12px}
+.tut-cell{width:36px;height:36px;display:flex;align-items:center;justify-content:center;border:1px solid var(--border2);font-family:'DM Mono',monospace;font-size:13px;font-weight:500}
+.tut-cell.black{background:var(--bg)}
+.tut-cell.clue{background:var(--surface);position:relative;overflow:hidden}
+.tut-cell.clue::after{content:'';position:absolute;top:0;left:0;width:141%;height:1px;background:var(--border);transform-origin:0 0;transform:rotate(45deg)}
+.tut-cell .cd{position:absolute;top:1px;left:3px;font-size:9px;color:var(--text);line-height:1}
+.tut-cell .ca{position:absolute;bottom:1px;right:3px;font-size:9px;color:var(--gold);line-height:1}
+.tut-cell.white{background:var(--surface);color:var(--text-bright)}
+.tut-cell.white.correct{color:var(--green)}
+.tut-cell.white.empty{color:var(--muted)}
+.tut-highlight{background:rgba(201,168,76,0.08)}
+.tut-label{font-family:'DM Mono',monospace;font-size:10px;color:var(--muted);margin-top:4px;font-style:italic}
+.tut-keys{display:flex;gap:6px;flex-wrap:wrap;margin:6px 0}
+.tut-key{font-family:'DM Mono',monospace;font-size:11px;color:var(--text-bright);background:var(--surface);border:1px solid var(--border2);padding:3px 8px;border-radius:3px}
+
 @media(max-width:480px){.page{padding:1.5rem 0.5rem 3rem}.game-title{font-size:2.4rem}}
 </style>
 <script src="https://cdn.jsdelivr.net/npm/ethers@6/dist/ethers.umd.min.js"></script>
@@ -131,6 +161,58 @@ body{background:var(--bg);color:var(--text);font-family:'Outfit',sans-serif;min-
     <p class="game-kicker">Number Logic</p>
     <h1 class="game-title">Ka<strong style="color:var(--gold)">kuro</strong></h1>
     <p class="game-sub">Crossword meets Sudoku. Fill white cells with digits 1-9 so each run sums to its clue. No repeats in a run.</p>
+  </div>
+
+  <div class="tut-section">
+    <button class="tut-toggle" onclick="document.getElementById('tut-body').classList.toggle('hidden');this.classList.toggle('open')">
+      How to Play Kakuro <span class="tut-arrow">&#9662;</span>
+    </button>
+    <div class="tut-body hidden" id="tut-body">
+      <div class="tut-step">
+        <h4>What Is Kakuro?</h4>
+        <p>Think of it as a <strong>crossword puzzle with numbers</strong>. Instead of words, you fill in digits 1-9. Instead of word clues, each "run" has a <strong>target sum</strong> that its digits must add up to.</p>
+      </div>
+      <div class="tut-step">
+        <h4>Reading the Board</h4>
+        <p>The board has three types of cell:</p>
+        <p><strong>Black cells</strong> — empty, just borders. <strong>Clue cells</strong> — split diagonally with two numbers. <strong>White cells</strong> — where you place your digits.</p>
+        <div class="tut-diagram" style="grid-template-columns:repeat(4,36px)">
+          <div class="tut-cell black"></div>
+          <div class="tut-cell clue"><span class="cd">16</span><span class="ca"></span></div>
+          <div class="tut-cell clue"><span class="cd">8</span><span class="ca"></span></div>
+          <div class="tut-cell black"></div>
+          <div class="tut-cell clue"><span class="cd"></span><span class="ca">17</span></div>
+          <div class="tut-cell white correct">9</div>
+          <div class="tut-cell white correct">8</div>
+          <div class="tut-cell black"></div>
+          <div class="tut-cell clue"><span class="cd"></span><span class="ca">7</span></div>
+          <div class="tut-cell white correct">7</div>
+          <div class="tut-cell white empty">?</div>
+          <div class="tut-cell black"></div>
+        </div>
+        <p class="tut-label">Top-left number = clue for the column below. Bottom-right number = clue for the row to the right.</p>
+        <p>In this example: the row clue <strong>17</strong> means the two white cells to its right must sum to 17 (9 + 8). The column clue <strong>16</strong> means the cells below must sum to 16 (9 + 7).</p>
+      </div>
+      <div class="tut-step">
+        <h4>The Rules</h4>
+        <p><strong>1.</strong> Fill every white cell with a digit from <strong>1 to 9</strong>.</p>
+        <p><strong>2.</strong> Each "run" (horizontal or vertical group of white cells next to a clue) must <strong>add up to the clue number</strong>.</p>
+        <p><strong>3.</strong> Within a single run, <strong>no digit may repeat</strong>. A run of 3 cells summing to 6 must be {1,2,3} — you cannot use {2,2,2}.</p>
+        <p><strong>4.</strong> The same digit CAN appear in the same row or column, as long as it is in a <strong>different run</strong>.</p>
+      </div>
+      <div class="tut-step">
+        <h4>Strategy Tips</h4>
+        <p>Some sums have <strong>only one possible combination</strong>. For example, a 2-cell run summing to <strong>3</strong> must be {1,2} and a 2-cell run summing to <strong>17</strong> must be {8,9}. Start with these.</p>
+        <p>The <strong>Sums</strong> button shows you all valid digit combinations for the selected run — useful when you are stuck.</p>
+      </div>
+      <div class="tut-step">
+        <h4>Controls</h4>
+        <p><strong>Click a white cell</strong> to select it, then use the numpad or keyboard <span class="tut-key">1</span>-<span class="tut-key">9</span> to place a digit. Press <span class="tut-key">0</span> or <span class="tut-key">Delete</span> to erase.</p>
+        <p><strong>Notes mode</strong> — toggle with the Notes button or press <span class="tut-key">N</span>. In notes mode, tapping a number adds/removes a pencil mark instead of placing a digit.</p>
+        <p><strong>Undo</strong> — reverses your last action. <strong>Hint</strong> — reveals the correct digit for the selected cell (-500 pts). <strong>Sums</strong> — shows valid combinations for the selected run (-10% score penalty, once only).</p>
+        <p>When you have filled every white cell, press <strong>Submit</strong> to check your solution.</p>
+      </div>
+    </div>
   </div>
 
   <div class="scoring-info" id="scoring-panel">

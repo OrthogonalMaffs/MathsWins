@@ -96,6 +96,33 @@ body{background:var(--bg);color:var(--text);font-family:'Outfit',sans-serif;min-
 .ms-lbl{font-family:'DM Mono',monospace;font-size:0.45rem;letter-spacing:0.1em;text-transform:uppercase;color:var(--muted)}
 .modal-acts{display:flex;gap:0.5rem;padding:1rem 1.4rem 1.4rem}
 .modal-acts .btn{flex:1}
+/* ── Tutorial ── */
+.tut-section{width:100%;margin-bottom:0.4rem}
+.tut-toggle{width:100%;display:flex;align-items:center;justify-content:space-between;padding:14px 20px;font-family:'Outfit',sans-serif;font-size:13px;font-weight:600;color:var(--text);background:var(--surface2);border:1px solid var(--border);border-radius:8px;cursor:pointer;transition:all 0.15s;letter-spacing:0.5px}
+.tut-toggle:hover{border-color:var(--border2);color:var(--text-bright)}
+.tut-toggle.open{border-radius:8px 8px 0 0;border-bottom-color:transparent}
+.tut-toggle.open .tut-arrow{transform:rotate(180deg)}
+.tut-arrow{font-size:10px;transition:transform 0.15s}
+.tut-body{background:var(--surface2);border:1px solid var(--border);border-top:none;border-radius:0 0 8px 8px;padding:20px 24px}
+.tut-body.hidden{display:none}
+.tut-step{margin-bottom:20px}
+.tut-step:last-child{margin-bottom:0}
+.tut-step h4{font-family:'Bebas Neue',sans-serif;font-size:16px;letter-spacing:2px;color:var(--gold);margin-bottom:8px}
+.tut-step p{font-size:12px;color:var(--text);line-height:1.7;margin-bottom:8px}
+.tut-step p:last-child{margin-bottom:0}
+.tut-step strong{color:var(--text-bright)}
+.tut-diagram{display:inline-grid;gap:0;border:2px solid var(--gold);border-radius:3px;overflow:hidden;margin:8px 0 12px}
+.tut-cell{width:42px;height:42px;display:flex;align-items:center;justify-content:center;border:1px solid var(--border2);font-family:'DM Mono',monospace;font-size:14px;font-weight:500;color:var(--text-bright);background:var(--surface);position:relative}
+.tut-cell .cage-lbl{position:absolute;top:1px;left:3px;font-size:8px;color:var(--text);line-height:1}
+.tut-cell.cage-a{background:rgba(201,168,76,0.04)}
+.tut-cell.cage-b{background:rgba(201,168,76,0.02)}
+.tut-cell.cage-top{border-top:2px solid var(--border2)}
+.tut-cell.cage-bottom{border-bottom:2px solid var(--border2)}
+.tut-cell.cage-left{border-left:2px solid var(--border2)}
+.tut-cell.cage-right{border-right:2px solid var(--border2)}
+.tut-label{font-family:'DM Mono',monospace;font-size:10px;color:var(--muted);margin-top:4px;font-style:italic}
+.tut-key{font-family:'DM Mono',monospace;font-size:11px;color:var(--text-bright);background:var(--surface);border:1px solid var(--border2);padding:3px 8px;border-radius:3px}
+
 @media(max-width:480px){.page{padding:1.5rem 0.5rem 3rem}.game-title{font-size:2.4rem}}
 </style>
 <script src="https://cdn.jsdelivr.net/npm/ethers@6/dist/ethers.umd.min.js"></script>
@@ -107,6 +134,63 @@ body{background:var(--bg);color:var(--text);font-family:'Outfit',sans-serif;min-
     <p class="game-kicker">Arithmetic Logic</p>
     <h1 class="game-title">Ken<strong style="color:var(--gold)">Ken</strong></h1>
     <p class="game-sub">Fill the grid with 1-N. No repeats in rows or columns. Cages must hit their arithmetic target.</p>
+  </div>
+
+  <div class="tut-section">
+    <button class="tut-toggle" onclick="document.getElementById('tut-body').classList.toggle('hidden');this.classList.toggle('open')">
+      How to Play KenKen <span class="tut-arrow">&#9662;</span>
+    </button>
+    <div class="tut-body hidden" id="tut-body">
+      <div class="tut-step">
+        <h4>What Is KenKen?</h4>
+        <p>KenKen is a <strong>number puzzle that combines Sudoku-style logic with arithmetic</strong>. You fill an N x N grid with the digits 1 to N, following two rules: no repeats in any row or column, and groups of cells ("cages") must produce a target number using a given operation.</p>
+      </div>
+      <div class="tut-step">
+        <h4>Reading the Board</h4>
+        <p>The grid is divided into <strong>cages</strong> — groups of cells outlined with thicker borders. Each cage has a <strong>label</strong> in the top-left cell showing a target number and an operation (e.g., "12x", "3+", "2-", "2/").</p>
+        <div class="tut-diagram" style="grid-template-columns:repeat(4,42px)">
+          <div class="tut-cell cage-a cage-top cage-left cage-right"><span class="cage-lbl">6x</span>3</div>
+          <div class="tut-cell cage-b cage-top cage-left cage-right cage-bottom"><span class="cage-lbl">2/</span>4</div>
+          <div class="tut-cell cage-a cage-top cage-left cage-bottom"><span class="cage-lbl">8+</span>1</div>
+          <div class="tut-cell cage-a cage-top cage-right cage-bottom">3</div>
+          <div class="tut-cell cage-a cage-left cage-bottom"><span class="cage-lbl"></span>2</div>
+          <div class="tut-cell cage-b cage-left cage-top"><span class="cage-lbl">1-</span>2</div>
+          <div class="tut-cell cage-b cage-top cage-bottom cage-right">3</div>
+          <div class="tut-cell cage-a cage-top cage-right cage-bottom"><span class="cage-lbl">8+</span>4</div>
+          <div class="tut-cell cage-b cage-top cage-left cage-bottom"><span class="cage-lbl">3+</span>1</div>
+          <div class="tut-cell cage-b cage-top cage-right cage-bottom">1</div>
+          <div class="tut-cell cage-a cage-top cage-left cage-bottom"><span class="cage-lbl">2-</span>4</div>
+          <div class="tut-cell cage-a cage-right cage-bottom">2</div>
+          <div class="tut-cell cage-a cage-left cage-bottom"><span class="cage-lbl">12x</span>4</div>
+          <div class="tut-cell cage-a cage-bottom">3</div>
+          <div class="tut-cell cage-b cage-bottom"><span class="cage-lbl">2-</span>2</div>
+          <div class="tut-cell cage-b cage-right cage-bottom">1</div>
+        </div>
+        <p class="tut-label">A solved 4x4 KenKen. Each cage satisfies its arithmetic target.</p>
+        <p><strong>"6x" cage</strong> (top-left): contains 3 and 2. 3 x 2 = 6. Correct.</p>
+        <p><strong>"2/" cage</strong>: contains 4 and 2. 4 / 2 = 2. Correct.</p>
+        <p><strong>"8+" cage</strong> (top-right): contains 1, 3, 4. 1 + 3 + 4 = 8. Correct.</p>
+      </div>
+      <div class="tut-step">
+        <h4>The Rules</h4>
+        <p><strong>1.</strong> Fill every cell with a digit from <strong>1 to N</strong> (where N is the grid size — 4, 6, or 7 depending on difficulty).</p>
+        <p><strong>2.</strong> Each row and each column must contain <strong>every digit exactly once</strong> (like Sudoku).</p>
+        <p><strong>3.</strong> The digits in each cage must produce the <strong>target number</strong> using the given operation (+, -, x, /).</p>
+        <p><strong>4.</strong> For subtraction and division, the order matters: the larger number comes first. A "2-" cage with cells 5 and 3 means 5 - 3 = 2.</p>
+      </div>
+      <div class="tut-step">
+        <h4>Strategy Tips</h4>
+        <p>Start with <strong>single-cell cages</strong> — they just tell you the answer directly. Then look for cages with <strong>only one possible combination</strong> (e.g., "1-" in a 4x4 can only be {1,2}, {2,3}, or {3,4}).</p>
+        <p>Use <strong>process of elimination</strong>: if a row already has digits 1, 2, 3 filled, the remaining cell must be 4.</p>
+      </div>
+      <div class="tut-step">
+        <h4>Controls</h4>
+        <p><strong>Click a cell</strong> to select it, then use the numpad or keyboard <span class="tut-key">1</span>-<span class="tut-key">9</span> to place a digit. Press <span class="tut-key">0</span> or <span class="tut-key">Delete</span> to erase.</p>
+        <p><strong>Notes mode</strong> — toggle with the Notes button or <span class="tut-key">N</span>. In notes mode, tapping a number adds/removes a pencil mark.</p>
+        <p><strong>Undo</strong> — reverses your last action. <strong>Hint</strong> — reveals the correct digit for the selected cell (-500 pts).</p>
+        <p>When every cell is filled, press <strong>Submit</strong> to check your solution.</p>
+      </div>
+    </div>
   </div>
 
   <div class="scoring-info" id="scoring-panel">
