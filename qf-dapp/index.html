@@ -92,6 +92,13 @@ h1 span{background:linear-gradient(135deg,var(--silver-bright),var(--silver),#8a
 .week-label{font-size:.65rem;color:var(--muted);text-transform:uppercase;letter-spacing:.08em}
 .week-countdown{font-family:'JetBrains Mono',monospace;font-size:1rem;color:var(--silver-bright)}
 .week-id{font-family:'JetBrains Mono',monospace;font-size:.65rem;color:var(--muted)}
+.week-help{
+  display:inline-flex;align-items:center;justify-content:center;
+  width:14px;height:14px;border-radius:50%;font-size:.5rem;
+  background:var(--surface2);border:1px solid var(--border2);color:var(--muted);
+  cursor:help;vertical-align:middle;margin-left:.3rem;position:relative;
+}
+.week-help:hover{color:var(--silver);border-color:var(--silver-border)}
 
 /* ── Duel Banner ── */
 .duel-banner{
@@ -127,7 +134,18 @@ h1 span{background:linear-gradient(135deg,var(--silver-bright),var(--silver),#8a
 .filter-pill.active{border-color:var(--silver);background:var(--silver-dim);color:var(--silver-bright)}
 
 /* ── Game Cards ── */
-.game-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(300px,1fr));gap:24px;margin:1.5rem 0 3rem}
+.game-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:24px;margin:1.5rem 0 3rem}
+.game-grid.free-grid{grid-template-columns:repeat(auto-fill,minmax(260px,1fr))}
+
+/* ── Featured card (Sudoku Duel centre tile) ── */
+.game-card.featured{
+  border-color:var(--silver-border);
+  box-shadow:0 0 20px rgba(184,188,198,0.06),0 0 40px rgba(184,188,198,0.03);
+  background:linear-gradient(135deg,var(--surface),var(--surface2));
+}
+.game-card.featured::before{background:linear-gradient(180deg,var(--silver-bright),var(--silver)) !important}
+.game-card.featured .gc-title{color:var(--silver-bright)}
+.game-card.featured:hover{box-shadow:0 0 28px rgba(184,188,198,0.1),0 4px 24px rgba(0,0,0,.4)}
 .game-card{
   background:var(--surface);border:1px solid var(--border);border-radius:10px;
   padding:20px 24px;transition:all .2s;cursor:pointer;position:relative;overflow:hidden;
@@ -160,7 +178,7 @@ h1 span{background:linear-gradient(135deg,var(--silver-bright),var(--silver),#8a
   display:inline-flex;align-items:center;gap:.3rem;
   font-family:'JetBrains Mono',monospace;font-size:.5rem;
   padding:2px 8px;border-radius:10px;margin-top:.4rem;
-  background:rgba(201,168,76,.06);color:var(--gold);border:1px solid rgba(201,168,76,.15);
+  background:var(--silver-dim);color:var(--silver);border:1px solid var(--silver-border);
 }
 
 /* ── Footer ── */
@@ -179,7 +197,7 @@ footer a:hover{color:var(--silver-bright)}
 @media(max-width:600px){
   h1{font-size:2rem}
   .hero-stats{gap:1.5rem}
-  .game-grid{grid-template-columns:1fr}
+  .game-grid,.game-grid.free-grid{grid-template-columns:1fr;gap:12px}
   .wallet-bar{flex-wrap:wrap;gap:.4rem}
   .wb-balance{font-size:.7rem}
   .duel-banner{flex-direction:column;text-align:center}
@@ -236,7 +254,7 @@ footer a:hover{color:var(--silver-bright)}
 <!-- WEEK COUNTDOWN -->
 <div class="week-bar">
   <div>
-    <div class="week-label">Settlement Countdown</div>
+    <div class="week-label">Settlement Countdown <span class="week-help" id="weekHelp" title="Each week runs Monday to Sunday. At the end of the week, scores are finalised and prizes distributed to top players. Your best score across the week counts.">?</span></div>
     <div class="week-countdown" id="countdown">&mdash;</div>
   </div>
   <div class="week-id" id="weekId"></div>
@@ -261,12 +279,15 @@ footer a:hover{color:var(--silver-bright)}
 <script>
 // ── Game Data ───────────────────────────────────────────────────────────────
 var GAMES = [
-  { id:'sudoku-duel', name:'Sudoku Duel', desc:'Daily Sudoku puzzle. Same board for all players. Fastest clean solve wins. Challenge anyone to a 1v1 duel.', cat:'puzzle', paid:true, duel:true, tags:['logic','daily','duel'] },
+  // Row 1
   { id:'estimation-engine', name:'Estimation Engine', desc:'Estimate complex calculations under time pressure. Pure mental arithmetic.', cat:'number', paid:true, tags:['mental maths','speed'] },
   { id:'sequence-solver', name:'Sequence Solver', desc:'Identify patterns in number sequences. Escalating difficulty across KS3 to A-Level.', cat:'number', paid:true, tags:['sequences','patterns'] },
-  { id:'prime-or-composite', name:'Prime or Composite', desc:'Classify numbers as prime or composite in 5 seconds. Speed and number sense.', cat:'speed', paid:true, tags:['primes','speed'] },
-  { id:'towers-of-hanoi', name:'Towers of Hanoi', desc:'Move all discs to the target peg. Scored on efficiency vs optimal solution.', cat:'logic', paid:true, tags:['logic','efficiency'] },
   { id:'countdown-numbers', name:'Countdown Numbers', desc:'Six numbers, one target. Use arithmetic and brackets to hit the target.', cat:'number', paid:true, tags:['arithmetic','BODMAS'] },
+  // Row 2 — Sudoku Duel centre
+  { id:'prime-or-composite', name:'Prime or Composite', desc:'Classify numbers as prime or composite in 5 seconds. Speed and number sense.', cat:'speed', paid:true, tags:['primes','speed'] },
+  { id:'sudoku-duel', name:'Sudoku Duel', desc:'Challenge anyone to a 1v1. Same puzzle, same conditions. Fastest clean solve wins.', cat:'puzzle', paid:true, duel:true, featured:true, tags:['logic','daily','duel'] },
+  { id:'towers-of-hanoi', name:'Towers of Hanoi', desc:'Move all discs to the target peg. Scored on efficiency vs optimal solution.', cat:'logic', paid:true, tags:['logic','efficiency'] },
+  // Row 3
   { id:'kenken', name:'KenKen', desc:'Fill the grid using arithmetic and logic. No repeats in rows or columns. Cages must hit their target.', cat:'puzzle', paid:true, tags:['arithmetic','logic'] },
   { id:'nonogram', name:'Nonogram', desc:'Fill cells to reveal a hidden Greek letter. Use row and column clues to solve the grid.', cat:'logic', paid:true, tags:['logic','pixel art'] },
   { id:'kakuro', name:'Kakuro', desc:'Crossword meets Sudoku. Fill white cells with digits 1-9 so each run sums to its clue. No repeats.', cat:'puzzle', paid:true, tags:['sums','logic'] },
@@ -322,6 +343,10 @@ document.getElementById('duelCodeInput').addEventListener('keydown', function(e)
 function renderGames(filter) {
   var grid = document.getElementById('gameGrid');
   grid.innerHTML = '';
+
+  // Use fixed 3x3 for competitive, flexible for free/all
+  grid.classList.toggle('free-grid', filter === 'free' || filter === 'all');
+
   GAMES.forEach(function(g) {
     if (filter && filter !== 'all') {
       if (filter === 'paid' && !g.paid) return;
@@ -331,6 +356,7 @@ function renderGames(filter) {
     var catClass = 'cat-' + (g.cat === 'strategy' ? 'strategy' : g.cat);
     var card = document.createElement('div');
     card.className = 'game-card ' + catClass;
+    if (g.featured) card.classList.add('featured');
     card.dataset.cat = g.cat;
     card.dataset.paid = g.paid ? '1' : '0';
     card.onclick = function() { openGame(g.id); };
