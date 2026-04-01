@@ -297,6 +297,84 @@
     }
   }
 
+  // ── Disconnect ────────────────────────────────────────────────────
+  function disconnect() {
+    state.address = null;
+    state.balance = null;
+    state.chainId = null;
+    state.provider = null;
+    state.signer = null;
+    state.qfName = null;
+    state.walletType = null;
+    // Clear any persisted connection preference
+    try { localStorage.removeItem('qf-wallet-connected'); } catch (e) {}
+    location.reload();
+  }
+
+  // ── Wallet Menu (dropdown on connected wallet click) ──────────────
+  function showWalletMenu(anchorEl) {
+    // Remove existing menu if any
+    var existing = document.getElementById('qf-wallet-menu');
+    if (existing) { existing.remove(); return; }
+
+    var rect = anchorEl.getBoundingClientRect();
+    var menu = document.createElement('div');
+    menu.id = 'qf-wallet-menu';
+    menu.style.cssText = 'position:fixed;top:' + (rect.bottom + 4) + 'px;right:' + (window.innerWidth - rect.right) + 'px;'
+      + 'background:#1e2025;border:1px solid #2a2e36;border-radius:8px;padding:.3rem 0;z-index:9999;'
+      + 'box-shadow:0 8px 24px rgba(0,0,0,.5);min-width:160px;';
+
+    var addrItem = document.createElement('div');
+    addrItem.style.cssText = "padding:.5rem .8rem;font-family:'JetBrains Mono',monospace;font-size:.58rem;color:#4a4e5a;border-bottom:1px solid #2a2e36;word-break:break-all;";
+    addrItem.textContent = state.address;
+    menu.appendChild(addrItem);
+
+    if (state.qfName) {
+      var nameItem = document.createElement('div');
+      nameItem.style.cssText = "padding:.4rem .8rem;font-family:'JetBrains Mono',monospace;font-size:.65rem;color:#d4d8e2;border-bottom:1px solid #2a2e36;";
+      nameItem.textContent = state.qfName;
+      menu.appendChild(nameItem);
+    }
+
+    var switchBtn = document.createElement('div');
+    switchBtn.style.cssText = "padding:.5rem .8rem;font-family:'Inter',sans-serif;font-size:.7rem;color:#b8bcc6;cursor:pointer;transition:background .1s;";
+    switchBtn.textContent = 'Switch Wallet';
+    switchBtn.onmouseover = function() { switchBtn.style.background = '#26282e'; };
+    switchBtn.onmouseout = function() { switchBtn.style.background = 'none'; };
+    switchBtn.onclick = function() {
+      menu.remove();
+      // Try to trigger wallet's own account switcher
+      if (window.ethereum && window.ethereum.request) {
+        window.ethereum.request({ method: 'wallet_requestPermissions', params: [{ eth_accounts: {} }] })
+          .then(function() { location.reload(); })
+          .catch(function() { connect(); });
+      } else {
+        connect();
+      }
+    };
+    menu.appendChild(switchBtn);
+
+    var disconnectBtn = document.createElement('div');
+    disconnectBtn.style.cssText = "padding:.5rem .8rem;font-family:'Inter',sans-serif;font-size:.7rem;color:#b03a3a;cursor:pointer;transition:background .1s;";
+    disconnectBtn.textContent = 'Disconnect';
+    disconnectBtn.onmouseover = function() { disconnectBtn.style.background = '#26282e'; };
+    disconnectBtn.onmouseout = function() { disconnectBtn.style.background = 'none'; };
+    disconnectBtn.onclick = function() { menu.remove(); disconnect(); };
+    menu.appendChild(disconnectBtn);
+
+    document.body.appendChild(menu);
+
+    // Close on click outside
+    setTimeout(function() {
+      document.addEventListener('click', function closeMenu(e) {
+        if (!menu.contains(e.target) && e.target !== anchorEl) {
+          menu.remove();
+          document.removeEventListener('click', closeMenu);
+        }
+      });
+    }, 10);
+  }
+
   // ── Auto-connect (if previously connected) ────────────────────────
   function autoConnect() {
     // Check for any injected provider that's already authorised
@@ -330,6 +408,8 @@
     resolveAny: resolveQfName,
     formatAddr: formatAddr,
     onConnect: onConnect,
+    disconnect: disconnect,
+    showMenu: showWalletMenu,
     nameCache: nameCache
   };
 })();

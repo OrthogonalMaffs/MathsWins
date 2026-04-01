@@ -153,8 +153,8 @@ body{background:var(--bg);color:var(--text);font-family:'Inter',sans-serif;min-h
     <a href="/qf-dapp/" class="top-logo">QF <span>Games</span></a>
   </div>
   <div class="top-bar-right">
-    <span class="top-qf-name" id="topQfName" style="display:none"></span>
-    <span class="top-addr" id="topAddr" style="display:none"></span>
+    <span class="top-qf-name" id="topQfName" style="display:none;cursor:pointer" onclick="qfWallet.showMenu(this)"></span>
+    <span class="top-addr" id="topAddr" style="display:none;cursor:pointer" onclick="qfWallet.showMenu(this)"></span>
     <button class="top-connect" id="topConnectBtn" onclick="qfWallet.connect()">Connect Wallet</button>
   </div>
 </div>

@@ -205,6 +205,19 @@ body{background:var(--bg);color:var(--text);font-family:'Inter',sans-serif;min-h
   .btn{padding:0.5rem 0.5rem;font-size:0.5rem}
   .share-code-display{font-size:1.8rem;padding:.8rem 1.2rem}
 }
+
+/* How to Play — collapsible */
+.htp{width:100%;background:var(--surface,#16181c);border:1px solid var(--border,#1e2228);border-radius:10px;overflow:hidden;margin-bottom:1rem}
+.htp-toggle{width:100%;padding:.8rem 1rem;display:flex;justify-content:space-between;align-items:center;cursor:pointer;background:none;border:none;color:var(--text,#8a8f9c);font-family:'Inter','Outfit',sans-serif;font-size:.75rem;font-weight:600;text-align:left}
+.htp-toggle:hover{color:var(--silver-bright,#e8eaf0)}
+.htp-arrow{transition:transform .2s;font-size:.6rem}
+.htp.open .htp-arrow{transform:rotate(180deg)}
+.htp-body{display:none;padding:0 1rem .8rem;font-size:.65rem;color:var(--muted,#4a4e5a);line-height:1.7}
+.htp.open .htp-body{display:block}
+.htp-body p{margin-bottom:.5rem}
+.htp-body ul{margin:.3rem 0 .5rem 1.2rem}
+.htp-body li{margin-bottom:.2rem}
+.htp-body strong{color:var(--text,#8a8f9c)}
 </style>
 <script src="https://cdn.jsdelivr.net/npm/ethers@6/dist/ethers.umd.min.js"></script>
 </head>
@@ -218,8 +231,8 @@ body{background:var(--bg);color:var(--text);font-family:'Inter',sans-serif;min-h
     <a href="/qf-dapp/" class="top-logo">QF <span>Games</span></a>
   </div>
   <div class="top-bar-right">
-    <span class="top-qf-name" id="topQfName" style="display:none"></span>
-    <span class="top-addr" id="topAddr" style="display:none"></span>
+    <span class="top-qf-name" id="topQfName" style="display:none;cursor:pointer" onclick="qfWallet.showMenu(this)"></span>
+    <span class="top-addr" id="topAddr" style="display:none;cursor:pointer" onclick="qfWallet.showMenu(this)"></span>
     <button class="top-connect" id="topConnectBtn" onclick="qfWallet.connect()">Connect Wallet</button>
   </div>
 </div>
@@ -248,6 +261,21 @@ body{background:var(--bg);color:var(--text);font-family:'Inter',sans-serif;min-h
       <h3>Leagues</h3>
       <p>Enter a Bronze or Silver league. Play 10 puzzles over 14 days. Top 4 share the prize pool.</p>
     </a>
+  </div>
+
+  <div class="htp">
+    <button class="htp-toggle">How to Play <span class="htp-arrow">&#9660;</span></button>
+    <div class="htp-body">
+      <p>Fill the 9x9 grid so every <strong>row, column, and 3x3 box</strong> contains the digits 1-9 exactly once.</p>
+      <ul>
+        <li>Given numbers (bright) are fixed — fill the empty cells</li>
+        <li>Each placement is <strong>validated by the server</strong> — no guessing</li>
+        <li><strong>3 mistakes</strong> and it's game over</li>
+        <li>Up to <strong>5 hints</strong> available (each costs 200 points)</li>
+        <li>Use <strong>Notes mode</strong> to pencil in candidates</li>
+      </ul>
+      <p>Scoring: 5,000 base points minus penalties for mistakes (-300) and hints (-200), multiplied by a time factor. Faster clean solves score highest.</p>
+    </div>
   </div>
 
   <div class="scoring-info" id="scoring-panel">
@@ -1038,6 +1066,11 @@ var G = (function() {
     copyCode: copyCode, shareDuel: shareDuel
   };
 })();
+</script>
+<script>
+document.querySelectorAll('.htp-toggle').forEach(function(btn){
+  btn.addEventListener('click',function(){this.closest('.htp').classList.toggle('open')});
+});
 </script>
 </body>
 </html>

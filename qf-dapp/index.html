@@ -278,8 +278,8 @@ footer a:hover{color:var(--silver-bright)}
       <span id="networkName">QF Network</span>
     </div>
     <span class="wb-balance" id="walletBalance" style="display:none"></span>
-    <span class="wb-qf-name" id="walletQfName" style="display:none"></span>
-    <span class="wb-address" id="walletAddress" style="display:none"></span>
+    <span class="wb-qf-name" id="walletQfName" style="display:none;cursor:pointer" onclick="qfWallet.showMenu(this)"></span>
+    <span class="wb-address" id="walletAddress" style="display:none;cursor:pointer" onclick="qfWallet.showMenu(this)"></span>
     <button class="wb-connect" id="connectBtn" onclick="qfWallet.connect()">Connect Wallet</button>
   </div>
 </div>
