@@ -231,11 +231,10 @@
 
   async function connectWithProvider(ethProvider, walletId) {
     try {
-      // Mark as connected, clear disconnected flag
+      // Force MetaMask to show account picker (not just return the active one)
       try {
-        localStorage.setItem('qf-wallet-connected', '1');
-        localStorage.removeItem('qf-wallet-disconnected');
-      } catch (e) {}
+        await ethProvider.request({ method: 'wallet_requestPermissions', params: [{ eth_accounts: {} }] });
+      } catch (e) { /* user cancelled or method not supported — fall through */ }
       var provider = new ethers.BrowserProvider(ethProvider);
       await provider.send('eth_requestAccounts', []);
       var signer = await provider.getSigner();
