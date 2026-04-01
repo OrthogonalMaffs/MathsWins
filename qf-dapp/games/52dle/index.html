@@ -17,15 +17,15 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <meta name="description" content="Play 52-dle, a daily number-guessing game. Use maths clues and deduction to identify the hidden number in six guesses or fewer.">
-<meta property="og:title" content="52-dle · MathsWins">
+<meta property="og:title" content="52-dle · QF Games">
 <meta property="og:description" content="Play 52-dle, a daily number-guessing game. Use maths clues and deduction to identify the hidden number in six guesses or fewer.">
-<meta property="og:url" content="https://mathswins.co.uk/dapp/games/52dle/">
+<meta property="og:url" content="https://mathswins.co.uk/qf-dapp/games/52dle/">
 <meta property="og:image" content="https://mathswins.co.uk/assets/og-image.png">
-<link rel="canonical" href="https://mathswins.co.uk/dapp/games/52dle/">
+<link rel="canonical" href="https://mathswins.co.uk/qf-dapp/games/52dle/">
 <link rel="icon" type="image/svg+xml" href="../../schools/assets/favicon.svg">
-<title>52-dle · MathsWins</title>
+<title>52-dle · QF Games</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
-<link href="https://fonts.googleapis.com/css2?family=DM+Mono:ital,wght@0,300;0,400;0,500;1,300&family=Bebas+Neue&family=Inter:wght@300;400;500&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;700&family=JetBrains+Mono:wght@400;500&family=Playfair+Display:wght@700&display=swap" rel="stylesheet">
 <style>
 :root {
   --ink:        #070d1a;
@@ -33,17 +33,17 @@
   --navy-mid:   #0f1f3d;
   --navy-light: #162847;
   --gold:       #c9a84c;
-  --gold-warm:  #e2b96a;
-  --gold-dim:   #7a5e28;
-  --teal:       #2dd4bf;
-  --teal-dim:   #134e4a;
+  --gold-warm:  #d4d8e2;
+  --gold-dim:   rgba(184,188,198,0.08);
+  --teal:       #b8bcc6;
+  --teal-dim:   rgba(184,188,198,0.08);
   --body:       #a8b8d0;
   --muted:      #4a6080;
   --border:     #1a2e4a;
   --border-dim: #111f33;
   --success:    #2dd4a0;
   --danger:     #ef5350;
-  --warn:       #d4a847;
+  --warn:       #c9a84c;
   --higher:     #60a5fa;
   --lower:      #ef5350;
 }
@@ -90,14 +90,14 @@ nav {
   border-bottom: 1px solid var(--border-dim);
 }
 .nav-logo {
-  font-family: 'Bebas Neue', sans-serif;
+  font-family: 'Playfair Display', sans-serif;
   font-size: 1.2rem;
   letter-spacing: 0.15em;
   color: var(--gold);
   text-decoration: none;
 }
 .nav-back {
-  font-family: 'DM Mono', monospace;
+  font-family: 'JetBrains Mono', monospace;
   font-size: 0.6rem;
   letter-spacing: 0.12em;
   color: var(--muted);
@@ -122,7 +122,7 @@ nav {
 /* Header */
 .game-header { text-align: center; }
 .game-kicker {
-  font-family: 'DM Mono', monospace;
+  font-family: 'JetBrains Mono', monospace;
   font-size: 0.6rem;
   letter-spacing: 0.2em;
   text-transform: uppercase;
@@ -130,7 +130,7 @@ nav {
   margin-bottom: 0.4rem;
 }
 .game-title {
-  font-family: 'Bebas Neue', sans-serif;
+  font-family: 'Playfair Display', sans-serif;
   font-size: 3.5rem;
   letter-spacing: 0.08em;
   color: var(--gold-warm);
@@ -156,13 +156,13 @@ nav {
 }
 .si { display: flex; flex-direction: column; align-items: center; gap: 0.15rem; }
 .si-val {
-  font-family: 'DM Mono', monospace;
+  font-family: 'JetBrains Mono', monospace;
   font-size: 1.1rem;
   font-weight: 500;
   color: var(--gold);
 }
 .si-lbl {
-  font-family: 'DM Mono', monospace;
+  font-family: 'JetBrains Mono', monospace;
   font-size: 0.48rem;
   letter-spacing: 0.12em;
   text-transform: uppercase;
@@ -191,14 +191,14 @@ nav {
   to   { opacity: 1; transform: translateY(0); }
 }
 .guess-num {
-  font-family: 'DM Mono', monospace;
+  font-family: 'JetBrains Mono', monospace;
   font-size: 1.1rem;
   font-weight: 500;
   color: var(--body);
   min-width: 60px;
 }
 .guess-feedback {
-  font-family: 'DM Mono', monospace;
+  font-family: 'JetBrains Mono', monospace;
   font-size: 0.65rem;
   flex: 1;
 }
@@ -237,7 +237,7 @@ nav {
   border: 1px solid var(--border);
   border-radius: 3px;
   padding: 0.7rem 1rem;
-  font-family: 'DM Mono', monospace;
+  font-family: 'JetBrains Mono', monospace;
   font-size: 1rem;
   color: var(--body);
   outline: none;
@@ -248,7 +248,7 @@ nav {
 
 .btn {
   padding: 0.7rem 1.2rem;
-  font-family: 'DM Mono', monospace;
+  font-family: 'JetBrains Mono', monospace;
   font-size: 0.62rem;
   letter-spacing: 0.1em;
   text-transform: uppercase;
@@ -291,7 +291,7 @@ nav {
   border: 1px solid var(--teal-dim);
   border-radius: 3px;
   padding: 0.6rem 1rem;
-  font-family: 'DM Mono', monospace;
+  font-family: 'JetBrains Mono', monospace;
   font-size: 0.65rem;
   color: var(--teal);
   line-height: 1.5;
@@ -310,7 +310,7 @@ nav {
   gap: 0.75rem;
 }
 .hint-cost {
-  font-family: 'DM Mono', monospace;
+  font-family: 'JetBrains Mono', monospace;
   font-size: 0.55rem;
   color: var(--muted);
 }
@@ -319,7 +319,7 @@ nav {
 .cat-badge {
   display: inline-block;
   padding: 0.15rem 0.5rem;
-  font-family: 'DM Mono', monospace;
+  font-family: 'JetBrains Mono', monospace;
   font-size: 0.48rem;
   letter-spacing: 0.1em;
   text-transform: uppercase;
@@ -345,7 +345,7 @@ nav {
   margin-bottom: 0.5rem;
 }
 .clue-label {
-  font-family: 'DM Mono', monospace;
+  font-family: 'JetBrains Mono', monospace;
   font-size: 0.48rem;
   letter-spacing: 0.15em;
   text-transform: uppercase;
@@ -360,7 +360,7 @@ nav {
 
 /* Message */
 .msg {
-  font-family: 'DM Mono', monospace;
+  font-family: 'JetBrains Mono', monospace;
   font-size: 0.65rem;
   text-align: center;
   min-height: 1.2rem;
@@ -402,7 +402,7 @@ nav {
   text-align: center;
 }
 .modal-result {
-  font-family: 'Bebas Neue', sans-serif;
+  font-family: 'Playfair Display', sans-serif;
   font-size: 2.2rem;
   letter-spacing: 0.1em;
   margin-bottom: 0.3rem;
@@ -410,7 +410,7 @@ nav {
 .modal-result.win  { color: var(--success); }
 .modal-result.lose { color: var(--danger); }
 .modal-answer {
-  font-family: 'DM Mono', monospace;
+  font-family: 'JetBrains Mono', monospace;
   font-size: 0.65rem;
   color: var(--muted);
 }
@@ -428,12 +428,12 @@ nav {
 }
 .ms-item { display: flex; flex-direction: column; gap: 0.1rem; }
 .ms-val {
-  font-family: 'DM Mono', monospace;
+  font-family: 'JetBrains Mono', monospace;
   font-size: 0.9rem;
   color: var(--gold);
 }
 .ms-lbl {
-  font-family: 'DM Mono', monospace;
+  font-family: 'JetBrains Mono', monospace;
   font-size: 0.45rem;
   letter-spacing: 0.1em;
   text-transform: uppercase;
@@ -448,7 +448,7 @@ nav {
   gap: 0.4rem;
 }
 .modal-name label {
-  font-family: 'DM Mono', monospace;
+  font-family: 'JetBrains Mono', monospace;
   font-size: 0.52rem;
   letter-spacing: 0.1em;
   text-transform: uppercase;
@@ -459,7 +459,7 @@ nav {
   border: 1px solid var(--border);
   border-radius: 3px;
   padding: 0.6rem 0.8rem;
-  font-family: 'DM Mono', monospace;
+  font-family: 'JetBrains Mono', monospace;
   font-size: 0.8rem;
   color: var(--body);
   outline: none;
@@ -490,7 +490,7 @@ nav {
   justify-content: space-between;
 }
 .lb-title {
-  font-family: 'DM Mono', monospace;
+  font-family: 'JetBrains Mono', monospace;
   font-size: 0.55rem;
   letter-spacing: 0.15em;
   text-transform: uppercase;
@@ -498,7 +498,7 @@ nav {
 }
 .lb-body { padding: 0.5rem 0; }
 .lb-empty {
-  font-family: 'DM Mono', monospace;
+  font-family: 'JetBrains Mono', monospace;
   font-size: 0.6rem;
   color: var(--muted);
   text-align: center;
@@ -512,7 +512,7 @@ nav {
   align-items: center;
   padding: 0.4rem 1rem;
   border-bottom: 1px solid var(--border-dim);
-  font-family: 'DM Mono', monospace;
+  font-family: 'JetBrains Mono', monospace;
   font-size: 0.6rem;
 }
 .lb-row:last-child { border-bottom: none; }
@@ -525,7 +525,7 @@ nav {
 /* Next puzzle */
 .next-box {
   text-align: center;
-  font-family: 'DM Mono', monospace;
+  font-family: 'JetBrains Mono', monospace;
   font-size: 0.55rem;
   color: var(--muted);
   padding: 0.75rem 0 0.25rem;
@@ -544,7 +544,7 @@ nav {
 
 /* Share grid */
 .share-grid {
-  font-family: 'DM Mono', monospace;
+  font-family: 'JetBrains Mono', monospace;
   font-size: 1.1rem;
   letter-spacing: 0.05em;
   padding: 0.5rem 1.4rem;
@@ -561,18 +561,18 @@ nav {
 }
 </style>
 <meta name="twitter:card" content="summary_large_image">
-<meta name="twitter:title" content="MathsWins">
+<meta name="twitter:title" content="QF Games">
 <meta name="twitter:image" content="https://mathswins.co.uk/assets/og-image.png">
-<link rel="stylesheet" href="../dapp-shell.css">
+<link rel="stylesheet" href="../qf-shell.css">
 <script src="https://cdn.jsdelivr.net/npm/ethers@6/dist/ethers.umd.min.js"></script>
 </head>
 <body>
-<script src="../dapp-wallet.js"></script>
+<script src="../qf-wallet.js"></script>
 
 
 <nav>
-  <a class="nav-logo" href="/dapp/">MathsWins</a>
-  <span style="font-family:'DM Mono',monospace;font-size:0.48rem;letter-spacing:0.1em;text-transform:uppercase;padding:0.2rem 0.6rem;border:1px solid #134e4a;border-radius:2px;color:#2dd4bf">Hosted on QF Network</span>
+  <a class="nav-logo" href="/qf-dapp/">QF Games</a>
+  <span style="font-family:'JetBrains Mono',monospace;font-size:0.48rem;letter-spacing:0.1em;text-transform:uppercase;padding:0.2rem 0.6rem;border:1px solid #134e4a;border-radius:2px;color:#2dd4bf">Hosted on QF Network</span>
   <a class="nav-back" href="../../">← Back</a>
 </nav>
 

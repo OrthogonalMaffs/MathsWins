@@ -17,28 +17,28 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <meta name="description" content="How long can you resist? Your score climbs every second you don't press the button. A test of self-control, patience, and probability.">
-<meta property="og:title" content="Don't Press It · MathsWins">
+<meta property="og:title" content="Don't Press It · QF Games">
 <meta property="og:description" content="How long can you resist? Your score climbs every second you don't press the button. A test of self-control, patience, and probability.">
-<meta property="og:url" content="https://mathswins.co.uk/dapp/games/dont-press-it/">
+<meta property="og:url" content="https://mathswins.co.uk/qf-dapp/games/dont-press-it/">
 <meta property="og:image" content="https://mathswins.co.uk/assets/og-image.png">
-<link rel="canonical" href="https://mathswins.co.uk/dapp/games/dont-press-it/">
+<link rel="canonical" href="https://mathswins.co.uk/qf-dapp/games/dont-press-it/">
 <link rel="icon" type="image/svg+xml" href="../../schools/assets/favicon.svg">
-<title>Don't Press It · MathsWins</title>
+<title>Don't Press It · QF Games</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
-<link href="https://fonts.googleapis.com/css2?family=DM+Mono:ital,wght@0,300;0,400;0,500&family=Bebas+Neue&family=Inter:wght@300;400;500&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;700&family=JetBrains+Mono:wght@400;500&family=Playfair+Display:wght@700&display=swap" rel="stylesheet">
 <style>
-:root{--ink:#070d1a;--navy:#0b1629;--navy-mid:#0f1f3d;--navy-light:#162847;--gold:#c9a84c;--gold-warm:#e2b96a;--gold-dim:#7a5e28;--teal:#2dd4bf;--teal-dim:#134e4a;--body:#a8b8d0;--muted:#4a6080;--border:#1a2e4a;--border-dim:#111f33;--success:#2dd4a0;--danger:#ef5350;--warn:#d4a847}
+:root{--ink:#070d1a;--navy:#0b1629;--navy-mid:#0f1f3d;--navy-light:#162847;--gold:#c9a84c;--gold-warm:#d4d8e2;--gold-dim:rgba(184,188,198,0.08);--teal:#b8bcc6;--teal-dim:rgba(184,188,198,0.08);--body:#a8b8d0;--muted:#4a6080;--border:#1a2e4a;--border-dim:#111f33;--success:#2dd4a0;--danger:#ef5350;--warn:#c9a84c}
 *,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
 body{background:var(--ink);color:var(--body);font-family:'Inter',sans-serif;min-height:100vh;display:flex;flex-direction:column;align-items:center;overflow-x:hidden}
 body::before{content:'';position:fixed;inset:0;background-image:linear-gradient(rgba(201,168,76,0.03) 1px,transparent 1px),linear-gradient(90deg,rgba(201,168,76,0.03) 1px,transparent 1px);background-size:40px 40px;pointer-events:none;z-index:0}
 nav{position:sticky;top:0;z-index:100;width:100%;display:flex;align-items:center;justify-content:space-between;padding:0 2rem;height:52px;background:rgba(7,13,26,0.92);backdrop-filter:blur(12px);border-bottom:1px solid var(--border-dim)}
-.nav-logo{font-family:'Bebas Neue',sans-serif;font-size:1.2rem;letter-spacing:0.15em;color:var(--gold);text-decoration:none}
-.nav-back{font-family:'DM Mono',monospace;font-size:0.6rem;letter-spacing:0.12em;color:var(--muted);text-decoration:none;transition:color 0.2s}
+.nav-logo{font-family:'Playfair Display',sans-serif;font-size:1.2rem;letter-spacing:0.15em;color:var(--gold);text-decoration:none}
+.nav-back{font-family:'JetBrains Mono',monospace;font-size:0.6rem;letter-spacing:0.12em;color:var(--muted);text-decoration:none;transition:color 0.2s}
 .nav-back:hover{color:var(--gold)}
 .page{position:relative;z-index:1;width:100%;max-width:440px;padding:2rem 1rem 4rem;display:flex;flex-direction:column;align-items:center;gap:1.4rem}
 .game-header{text-align:center}
-.game-kicker{font-family:'DM Mono',monospace;font-size:0.6rem;letter-spacing:0.2em;text-transform:uppercase;color:var(--teal);margin-bottom:0.4rem}
-.game-title{font-family:'Bebas Neue',sans-serif;font-size:3.2rem;letter-spacing:0.06em;color:var(--gold-warm);line-height:1}
+.game-kicker{font-family:'JetBrains Mono',monospace;font-size:0.6rem;letter-spacing:0.2em;text-transform:uppercase;color:var(--teal);margin-bottom:0.4rem}
+.game-title{font-family:'Playfair Display',sans-serif;font-size:3.2rem;letter-spacing:0.06em;color:var(--gold-warm);line-height:1}
 .game-sub{font-size:0.75rem;color:var(--muted);line-height:1.6;margin-top:0.4rem}
 
 /* Score display */
@@ -47,14 +47,14 @@ nav{position:sticky;top:0;z-index:100;width:100%;display:flex;align-items:center
   padding:2rem 1rem;text-align:center;position:relative;overflow:hidden;
 }
 .score-display::before{content:'';position:absolute;inset:0;background:radial-gradient(ellipse at 50% 50%,rgba(201,168,76,0.05),transparent 70%);pointer-events:none}
-.sd-label{font-family:'DM Mono',monospace;font-size:0.5rem;letter-spacing:0.18em;text-transform:uppercase;color:var(--muted);margin-bottom:0.5rem}
-.sd-score{font-family:'Bebas Neue',sans-serif;font-size:clamp(3rem,16vw,6rem);letter-spacing:0.04em;color:var(--gold);line-height:1;transition:color 0.5s}
+.sd-label{font-family:'JetBrains Mono',monospace;font-size:0.5rem;letter-spacing:0.18em;text-transform:uppercase;color:var(--muted);margin-bottom:0.5rem}
+.sd-score{font-family:'Playfair Display',sans-serif;font-size:clamp(3rem,16vw,6rem);letter-spacing:0.04em;color:var(--gold);line-height:1;transition:color 0.5s}
 .sd-score.danger{color:var(--danger);animation:pulse 0.5s ease infinite alternate}
-.sd-time{font-family:'DM Mono',monospace;font-size:0.6rem;color:var(--muted);margin-top:0.3rem}
+.sd-time{font-family:'JetBrains Mono',monospace;font-size:0.6rem;color:var(--muted);margin-top:0.3rem}
 
 /* Temptation meter */
 .tempt-bar{width:100%;background:var(--navy-mid);border:1px solid var(--border);border-radius:4px;padding:0.8rem 1rem}
-.tb-label{font-family:'DM Mono',monospace;font-size:0.5rem;letter-spacing:0.14em;text-transform:uppercase;color:var(--muted);margin-bottom:0.5rem;display:flex;justify-content:space-between}
+.tb-label{font-family:'JetBrains Mono',monospace;font-size:0.5rem;letter-spacing:0.14em;text-transform:uppercase;color:var(--muted);margin-bottom:0.5rem;display:flex;justify-content:space-between}
 .tb-track{height:8px;background:var(--border);border-radius:4px;overflow:hidden}
 .tb-fill{height:100%;width:0%;border-radius:4px;transition:width 0.5s linear,background 0.5s}
 
@@ -64,7 +64,7 @@ nav{position:sticky;top:0;z-index:100;width:100%;display:flex;align-items:center
   background:var(--navy-mid);border:1px solid var(--border-dim);
   border-left:3px solid var(--gold-dim);
   border-radius:3px;padding:0.7rem 1rem;
-  font-family:'DM Mono',monospace;font-size:0.6rem;color:var(--gold);
+  font-family:'JetBrains Mono',monospace;font-size:0.6rem;color:var(--gold);
   font-style:italic;line-height:1.5;text-align:center;
   transition:opacity 0.4s;
 }
@@ -80,7 +80,7 @@ nav{position:sticky;top:0;z-index:100;width:100%;display:flex;align-items:center
   border:4px solid var(--danger);
   background:rgba(239,68,68,0.08);
   color:var(--danger);
-  font-family:'Bebas Neue',sans-serif;font-size:1.3rem;letter-spacing:0.12em;
+  font-family:'Playfair Display',sans-serif;font-size:1.3rem;letter-spacing:0.12em;
   cursor:pointer;
   display:flex;align-items:center;justify-content:center;
   transition:all 0.2s;
@@ -105,21 +105,21 @@ nav{position:sticky;top:0;z-index:100;width:100%;display:flex;align-items:center
   border:1px solid rgba(239,68,68,0.2);
   pointer-events:none;
 }
-.start-prompt{font-family:'DM Mono',monospace;font-size:0.55rem;letter-spacing:0.12em;text-transform:uppercase;color:var(--muted);text-align:center}
+.start-prompt{font-family:'JetBrains Mono',monospace;font-size:0.55rem;letter-spacing:0.12em;text-transform:uppercase;color:var(--muted);text-align:center}
 
 @keyframes btnPulse{0%,100%{box-shadow:0 0 20px rgba(239,68,68,0.1)}50%{box-shadow:0 0 60px rgba(239,68,68,0.35)}}
 @keyframes pulse{from{opacity:1}to{opacity:0.6}}
 
-.btn{padding:0.65rem 1.2rem;font-family:'DM Mono',monospace;font-size:0.62rem;letter-spacing:0.1em;text-transform:uppercase;cursor:pointer;border-radius:3px;border:none;transition:all 0.2s;width:100%}
+.btn{padding:0.65rem 1.2rem;font-family:'JetBrains Mono',monospace;font-size:0.62rem;letter-spacing:0.1em;text-transform:uppercase;cursor:pointer;border-radius:3px;border:none;transition:all 0.2s;width:100%}
 .btn-gold{background:var(--gold);color:var(--ink);font-weight:500}.btn-gold:hover{background:var(--gold-warm)}
 .btn-ghost{background:transparent;border:1px solid var(--border);color:var(--muted)}.btn-ghost:hover{border-color:var(--gold-dim);color:var(--gold)}
 
 .lb-section{width:100%;background:var(--navy-mid);border:1px solid var(--border);border-radius:4px;overflow:hidden}
 .lb-header{padding:0.75rem 1rem;border-bottom:1px solid var(--border-dim)}
-.lb-title{font-family:'DM Mono',monospace;font-size:0.55rem;letter-spacing:0.15em;text-transform:uppercase;color:var(--muted)}
+.lb-title{font-family:'JetBrains Mono',monospace;font-size:0.55rem;letter-spacing:0.15em;text-transform:uppercase;color:var(--muted)}
 .lb-body{padding:0.5rem 0}
-.lb-empty{font-family:'DM Mono',monospace;font-size:0.6rem;color:var(--muted);text-align:center;padding:1.2rem;font-style:italic}
-.lb-row{display:grid;grid-template-columns:1.5rem 1fr auto auto;gap:0.5rem;align-items:center;padding:0.4rem 1rem;border-bottom:1px solid var(--border-dim);font-family:'DM Mono',monospace;font-size:0.6rem}
+.lb-empty{font-family:'JetBrains Mono',monospace;font-size:0.6rem;color:var(--muted);text-align:center;padding:1.2rem;font-style:italic}
+.lb-row{display:grid;grid-template-columns:1.5rem 1fr auto auto;gap:0.5rem;align-items:center;padding:0.4rem 1rem;border-bottom:1px solid var(--border-dim);font-family:'JetBrains Mono',monospace;font-size:0.6rem}
 .lb-row:last-child{border-bottom:none}
 .lb-row.hl{background:rgba(201,168,76,0.06)}
 .lb-rank{color:var(--muted)}.lb-name{color:var(--body)}.lb-score{color:var(--gold);text-align:right}.lb-time{color:var(--teal);font-size:0.52rem;text-align:right}
@@ -127,30 +127,30 @@ nav{position:sticky;top:0;z-index:100;width:100%;display:flex;align-items:center
 .modal-overlay.hidden{display:none}
 .modal{background:var(--navy-mid);border:1px solid var(--border);border-radius:4px;width:100%;max-width:380px;overflow:hidden}
 .modal-header{padding:1.4rem 1.4rem 0;text-align:center}
-.modal-result{font-family:'Bebas Neue',sans-serif;font-size:2rem;letter-spacing:0.1em;color:var(--danger)}
+.modal-result{font-family:'Playfair Display',sans-serif;font-size:2rem;letter-spacing:0.1em;color:var(--danger)}
 .modal-score{margin:1rem 1.4rem;background:var(--navy-light);border:1px solid var(--border-dim);border-radius:3px;padding:0.8rem;display:grid;grid-template-columns:1fr 1fr;gap:0.5rem}
 .ms-item{display:flex;flex-direction:column;gap:0.1rem}
-.ms-val{font-family:'DM Mono',monospace;font-size:0.9rem;color:var(--gold)}
-.ms-lbl{font-family:'DM Mono',monospace;font-size:0.45rem;letter-spacing:0.1em;text-transform:uppercase;color:var(--muted)}
+.ms-val{font-family:'JetBrains Mono',monospace;font-size:0.9rem;color:var(--gold)}
+.ms-lbl{font-family:'JetBrains Mono',monospace;font-size:0.45rem;letter-spacing:0.1em;text-transform:uppercase;color:var(--muted)}
 .modal-name{padding:0 1.4rem;display:flex;flex-direction:column;gap:0.4rem}
-.modal-name label{font-family:'DM Mono',monospace;font-size:0.52rem;letter-spacing:0.1em;text-transform:uppercase;color:var(--muted)}
-.name-input{background:var(--navy);border:1px solid var(--border);border-radius:3px;padding:0.6rem 0.8rem;font-family:'DM Mono',monospace;font-size:0.8rem;color:var(--body);outline:none;width:100%}
+.modal-name label{font-family:'JetBrains Mono',monospace;font-size:0.52rem;letter-spacing:0.1em;text-transform:uppercase;color:var(--muted)}
+.name-input{background:var(--navy);border:1px solid var(--border);border-radius:3px;padding:0.6rem 0.8rem;font-family:'JetBrains Mono',monospace;font-size:0.8rem;color:var(--body);outline:none;width:100%}
 .name-input:focus{border-color:var(--gold-dim)}
 .modal-acts{display:flex;gap:0.5rem;padding:1rem 1.4rem 1.4rem}
 .modal-acts .btn{flex:1}
 </style>
 <meta name="twitter:card" content="summary_large_image">
-<meta name="twitter:title" content="MathsWins">
+<meta name="twitter:title" content="QF Games">
 <meta name="twitter:image" content="https://mathswins.co.uk/assets/og-image.png">
-<link rel="stylesheet" href="../dapp-shell.css">
+<link rel="stylesheet" href="../qf-shell.css">
 <script src="https://cdn.jsdelivr.net/npm/ethers@6/dist/ethers.umd.min.js"></script>
 </head>
 <body>
-<script src="../dapp-wallet.js"></script>
+<script src="../qf-wallet.js"></script>
 
 <nav>
-  <a class="nav-logo" href="/dapp/">MathsWins</a>
-  <span style="font-family:'DM Mono',monospace;font-size:0.48rem;letter-spacing:0.1em;text-transform:uppercase;padding:0.2rem 0.6rem;border:1px solid #134e4a;border-radius:2px;color:#2dd4bf">Hosted on QF Network</span>
+  <a class="nav-logo" href="/qf-dapp/">QF Games</a>
+  <span style="font-family:'JetBrains Mono',monospace;font-size:0.48rem;letter-spacing:0.1em;text-transform:uppercase;padding:0.2rem 0.6rem;border:1px solid #134e4a;border-radius:2px;color:#2dd4bf">Hosted on QF Network</span>
   <a class="nav-back" href="../../">← Back</a>
 </nav>
 <div class="page">
