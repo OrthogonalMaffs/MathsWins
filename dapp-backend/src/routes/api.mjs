@@ -266,6 +266,11 @@ router.get('/duels/history', (req, res) => {
 
 // ── League Endpoints ──────────────────────────────────────────────────
 
+// Builder whitelist: these wallets can join leagues without payment (testing)
+var BUILDER_WHITELIST = new Set(
+  (process.env.BUILDER_WALLETS || '').split(',').map(w => w.trim().toLowerCase()).filter(Boolean)
+);
+
 var LEAGUE_TIERS = {
   bronze: { fee: 100, label: 'Bronze League' },
   silver: { fee: 250, label: 'Silver League' }
@@ -350,8 +355,12 @@ router.post('/league/:leagueId/join', (req, res) => {
   // Check not already joined
   if (isLeaguePlayer(league.id, wallet)) return res.status(400).json({ error: 'Already joined this league' });
 
+  const isBuilder = BUILDER_WHITELIST.has(wallet.toLowerCase());
   const { txHash } = req.body;
-  addLeaguePlayer(league.id, wallet, txHash || null, now);
+  if (!isBuilder && !txHash) {
+    return res.status(400).json({ error: 'Payment transaction hash required' });
+  }
+  addLeaguePlayer(league.id, wallet, isBuilder ? 'builder-whitelist' : txHash, now);
 
   const newCount = getLeaguePlayerCount(league.id);
 

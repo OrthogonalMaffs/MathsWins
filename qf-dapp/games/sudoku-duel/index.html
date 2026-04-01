@@ -385,6 +385,11 @@ var G = (function() {
   var duelData = null;
   var duelPollTimer = null;
 
+  // League state
+  var leagueMode = false;
+  var leagueId = null;
+  var leaguePuzzleIndex = null;
+
   // ── API helper ──────────────────────────────────────────────────────
   async function api(url, body, method) {
     var headers = { 'Content-Type': 'application/json' };
@@ -396,9 +401,24 @@ var G = (function() {
     return res.json();
   }
 
-  // ── Check for duel code in URL ──────────────────────────────────────
-  function checkDuelParam() {
+  // ── Check for URL params (duel or league) ───────────────────────────
+  function checkUrlParams() {
     var params = new URLSearchParams(window.location.search);
+
+    // League mode: ?league=ID&puzzle=INDEX&seed=SEED
+    var lid = params.get('league');
+    var pidx = params.get('puzzle');
+    var seed = params.get('seed');
+    if (lid && pidx != null && seed) {
+      leagueMode = true;
+      leagueId = lid;
+      leaguePuzzleIndex = parseInt(pidx);
+      hidePreGame();
+      startGameSession(parseInt(seed));
+      return true;
+    }
+
+    // Duel mode: ?duel=CODE
     var code = params.get('duel');
     if (code) {
       code = code.toUpperCase().trim();
@@ -790,6 +810,13 @@ var G = (function() {
           });
         }
 
+        // If league mode, submit score to league endpoint
+        if (leagueMode && leagueId) {
+          await api('/league/' + leagueId + '/submit', {
+            puzzleIndex: leaguePuzzleIndex, score: finalScore, timeMs: timeMs, mistakes: mistakes, hints: hintsUsed
+          });
+        }
+
         showModal(true, secs, finalScore);
       } catch (e) {
         setMsg('Connection error during submission');
@@ -810,6 +837,14 @@ var G = (function() {
         } catch (e) { /* ignore */ }
       }
 
+      if (leagueMode && leagueId) {
+        try {
+          await api('/league/' + leagueId + '/submit', {
+            puzzleIndex: leaguePuzzleIndex, score: 0, timeMs: timeMs, mistakes: mistakes, hints: hintsUsed
+          });
+        } catch (e) { /* ignore */ }
+      }
+
       showModal(false, secs, 0);
     }
   }
@@ -818,7 +853,16 @@ var G = (function() {
   function showModal(won, secs, score) {
     document.getElementById('modal').classList.remove('hidden');
 
-    if (duelMode) {
+    if (leagueMode) {
+      document.getElementById('modal-result').textContent = won ? 'Puzzle Complete' : 'Game Over';
+      document.getElementById('modal-result').className = 'modal-result ' + (won ? 'win' : 'lose');
+      document.getElementById('modal-sub').textContent = won
+        ? 'Score submitted to the league. Puzzle ' + (leaguePuzzleIndex + 1) + ' of 10.'
+        : 'Too many mistakes. Score of 0 recorded.';
+      // Override buttons for league
+      document.querySelector('.modal-acts').innerHTML =
+        '<button class="btn btn-silver" onclick="window.location=\'/qf-dapp/games/sudoku-duel/league/?view=' + leagueId + '\'">Back to League</button>';
+    } else if (duelMode) {
       document.getElementById('modal-result').textContent = won ? 'Score Submitted' : 'Game Over';
       document.getElementById('modal-result').className = 'modal-result ' + (won ? 'win' : 'lose');
       document.getElementById('modal-sub').textContent = won ? 'Your score has been recorded. Waiting for opponent.' : 'Too many mistakes.';
@@ -978,8 +1022,8 @@ var G = (function() {
   });
 
   // ── Init ────────────────────────────────────────────────────────────
-  // Check for duel code in URL first
-  if (!checkDuelParam()) {
+  // Check for league or duel params in URL first
+  if (!checkUrlParams()) {
     // Show normal mode selection
   }
 
