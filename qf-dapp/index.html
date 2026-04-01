@@ -99,6 +99,19 @@ h1 span{background:linear-gradient(135deg,var(--silver-bright),var(--silver),#8a
   cursor:help;vertical-align:middle;margin-left:.3rem;position:relative;
 }
 .week-help:hover{color:var(--silver);border-color:var(--silver-border)}
+.week-help .week-tooltip{
+  display:none;position:absolute;bottom:calc(100% + 8px);left:50%;transform:translateX(-50%);
+  width:260px;padding:.7rem .8rem;border-radius:8px;
+  background:var(--surface2);border:1px solid var(--border2);
+  font-family:'JetBrains Mono',monospace;font-size:.55rem;font-weight:400;
+  color:var(--text);line-height:1.6;letter-spacing:0;text-transform:none;
+  box-shadow:0 8px 24px rgba(0,0,0,.4);z-index:50;pointer-events:none;
+}
+.week-help .week-tooltip::after{
+  content:'';position:absolute;top:100%;left:50%;transform:translateX(-50%);
+  border:5px solid transparent;border-top-color:var(--border2);
+}
+.week-help:hover .week-tooltip{display:block}
 
 /* ── Duel Banner ── */
 .duel-banner{
@@ -275,7 +288,7 @@ footer a:hover{color:var(--silver-bright)}
 <!-- WEEK COUNTDOWN -->
 <div class="week-bar">
   <div>
-    <div class="week-label">Settlement Countdown <span class="week-help" id="weekHelp" title="Each week runs Monday to Sunday. At the end of the week, scores are finalised and prizes distributed to top players. Your best score across the week counts.">?</span></div>
+    <div class="week-label">Settlement Countdown <span class="week-help">?<span class="week-tooltip">Each week runs Monday to Sunday. At the end of the week, scores are finalised and prizes distributed to top players. Your best score across the week counts.</span></span></div>
     <div class="week-countdown" id="countdown">&mdash;</div>
   </div>
   <div class="week-id" id="weekId"></div>
