@@ -278,7 +278,7 @@ footer a:hover{color:var(--silver-bright)}
       <span id="networkName">QF Network</span>
     </div>
     <span class="wb-balance" id="walletBalance" style="display:none"></span>
-    <span class="wb-qf-name" id="walletQfName" style="display:none;cursor:pointer" onclick="qfWallet.showMenu(this)"></span>
+    <span class="wb-qf-name" id="walletQfName" style="display:none"></span>
     <span class="wb-address" id="walletAddress" style="display:none;cursor:pointer" onclick="qfWallet.showMenu(this)"></span>
     <button class="wb-connect" id="connectBtn" onclick="qfWallet.connect()">Connect Wallet</button>
   </div>
@@ -328,7 +328,7 @@ footer a:hover{color:var(--silver-bright)}
     <p>Enter a duel code or promo code (like <strong>#MAFFS</strong>) to play a challenge.</p>
   </div>
   <div class="duel-code-entry">
-    <input type="text" class="duel-code-input" id="duelCodeInput" maxlength="10" placeholder="#MAFFS" spellcheck="false" autocomplete="off">
+    <input type="text" class="duel-code-input" id="duelCodeInput" maxlength="10" placeholder="Enter code" spellcheck="false" autocomplete="off">
     <button class="btn-accept" onclick="acceptCode()">Play</button>
   </div>
 </div>
@@ -377,8 +377,12 @@ var GAMES = [
 qfWallet.onConnect(function(w) {
   if (!w.address) return;
   document.getElementById('connectBtn').style.display = 'none';
-  document.getElementById('walletAddress').style.display = '';
-  document.getElementById('walletAddress').textContent = w.address.slice(0, 6) + '...' + w.address.slice(-4);
+
+  // Always show the truncated address (clickable for menu)
+  var addrEl = document.getElementById('walletAddress');
+  addrEl.style.display = '';
+  addrEl.textContent = w.address.slice(0, 6) + '...' + w.address.slice(-4);
+
   document.getElementById('walletBalance').style.display = '';
   document.getElementById('walletBalance').textContent = parseFloat(ethers.formatEther(w.balance)).toFixed(2) + ' QF';
 
@@ -392,14 +396,13 @@ qfWallet.onConnect(function(w) {
     document.getElementById('networkName').textContent = 'Wrong Network';
   }
 
-  // Show .qf name if resolved, otherwise show address
+  // Show .qf name alongside address if resolved
+  var nameEl = document.getElementById('walletQfName');
   if (w.qfName) {
-    document.getElementById('walletQfName').textContent = w.qfName;
-    document.getElementById('walletQfName').style.display = '';
-    document.getElementById('walletAddress').style.display = 'none';
+    nameEl.textContent = w.qfName;
+    nameEl.style.display = '';
   } else {
-    document.getElementById('walletQfName').style.display = 'none';
-    document.getElementById('walletAddress').style.display = '';
+    nameEl.style.display = 'none';
   }
 });
 

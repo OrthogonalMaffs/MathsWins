@@ -270,8 +270,17 @@
   }
 
   // ── Disconnect ────────────────────────────────────────────────────
-  function disconnect() {
-    // Remove listeners from the raw provider
+  async function disconnect() {
+    // Revoke site authorization so next connect shows fresh account picker
+    if (state.rawProvider && state.rawProvider.request) {
+      try {
+        await state.rawProvider.request({ method: 'wallet_revokePermissions', params: [{ eth_accounts: {} }] });
+      } catch (e) {
+        // wallet_revokePermissions not supported (older MetaMask / Talisman)
+        // Nothing we can do — MetaMask will remember the authorization
+      }
+    }
+    // Remove listeners
     if (state.rawProvider && state.rawProvider.removeAllListeners) {
       state.rawProvider.removeAllListeners('accountsChanged');
       state.rawProvider.removeAllListeners('chainChanged');
