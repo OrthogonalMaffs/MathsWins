@@ -64,3 +64,30 @@ CREATE INDEX IF NOT EXISTS idx_entries_wallet_game ON entries(wallet, game_id, w
 CREATE INDEX IF NOT EXISTS idx_sessions_wallet_game ON sessions(wallet, game_id, week_id);
 CREATE INDEX IF NOT EXISTS idx_best_scores_leaderboard ON best_scores(game_id, week_id, score DESC);
 CREATE INDEX IF NOT EXISTS idx_settlements_week ON settlements(week_id);
+
+-- Duels (1v1 challenges)
+CREATE TABLE IF NOT EXISTS duels (
+    id              TEXT PRIMARY KEY,
+    game_id         TEXT NOT NULL,
+    puzzle_seed     INTEGER NOT NULL,
+    difficulty      TEXT DEFAULT 'medium',
+    creator_wallet  TEXT NOT NULL,
+    creator_score   INTEGER,
+    creator_time_ms INTEGER,
+    creator_mistakes INTEGER,
+    creator_hints   INTEGER,
+    opponent_wallet TEXT,
+    opponent_score  INTEGER,
+    opponent_time_ms INTEGER,
+    opponent_mistakes INTEGER,
+    opponent_hints  INTEGER,
+    share_code      TEXT UNIQUE NOT NULL,
+    status          TEXT DEFAULT 'created',
+    winner_wallet   TEXT,
+    created_at      INTEGER NOT NULL,
+    expires_at      INTEGER NOT NULL
+);
+
+CREATE INDEX IF NOT EXISTS idx_duels_share_code ON duels(share_code);
+CREATE INDEX IF NOT EXISTS idx_duels_creator ON duels(creator_wallet);
+CREATE INDEX IF NOT EXISTS idx_duels_status ON duels(status, expires_at);

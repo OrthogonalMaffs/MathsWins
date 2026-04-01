@@ -147,3 +147,56 @@ export function recordSettlement(weekId, gameId, winnerWallet, potAmount, treasu
     VALUES (?, ?, ?, ?, ?, ?, ?)
   `).run(weekId, gameId, winnerWallet, potAmount, treasuryAmount, rolledOver ? 1 : 0, txHash);
 }
+
+// ── Duel queries ──────────────────────────────────────────────────────
+export function createDuel(id, gameId, puzzleSeed, difficulty, creatorWallet, shareCode, createdAt, expiresAt) {
+  const db = getDb();
+  db.prepare(`INSERT INTO duels (id, game_id, puzzle_seed, difficulty, creator_wallet, share_code, status, created_at, expires_at)
+    VALUES (?, ?, ?, ?, ?, ?, 'created', ?, ?)`).run(id, gameId, puzzleSeed, difficulty, creatorWallet, shareCode, createdAt, expiresAt);
+}
+
+export function getDuelByCode(code) {
+  const db = getDb();
+  return db.prepare('SELECT * FROM duels WHERE share_code = ?').get(code);
+}
+
+export function getDuelById(id) {
+  const db = getDb();
+  return db.prepare('SELECT * FROM duels WHERE id = ?').get(id);
+}
+
+export function updateDuelCreatorScore(duelId, score, timeMs, mistakes, hints) {
+  const db = getDb();
+  db.prepare(`UPDATE duels SET creator_score = ?, creator_time_ms = ?, creator_mistakes = ?, creator_hints = ? WHERE id = ?`)
+    .run(score, timeMs, mistakes, hints, duelId);
+}
+
+export function acceptDuel(duelId, opponentWallet) {
+  const db = getDb();
+  db.prepare(`UPDATE duels SET opponent_wallet = ?, status = 'accepted' WHERE id = ? AND status = 'created'`)
+    .run(opponentWallet, duelId);
+}
+
+export function updateDuelOpponentScore(duelId, score, timeMs, mistakes, hints) {
+  const db = getDb();
+  db.prepare(`UPDATE duels SET opponent_score = ?, opponent_time_ms = ?, opponent_mistakes = ?, opponent_hints = ? WHERE id = ?`)
+    .run(score, timeMs, mistakes, hints, duelId);
+}
+
+export function completeDuel(duelId, winnerWallet) {
+  const db = getDb();
+  db.prepare(`UPDATE duels SET status = 'completed', winner_wallet = ? WHERE id = ?`)
+    .run(winnerWallet, duelId);
+}
+
+export function expireOldDuels() {
+  const db = getDb();
+  const now = Date.now();
+  db.prepare(`UPDATE duels SET status = 'expired' WHERE status IN ('created', 'accepted') AND expires_at < ?`).run(now);
+}
+
+export function getDuelsByWallet(wallet, limit) {
+  const db = getDb();
+  return db.prepare(`SELECT * FROM duels WHERE (creator_wallet = ? OR opponent_wallet = ?) ORDER BY created_at DESC LIMIT ?`)
+    .all(wallet, wallet, limit || 20);
+}

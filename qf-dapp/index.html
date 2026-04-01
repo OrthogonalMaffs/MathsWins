@@ -1,0 +1,411 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>QF Games — Competitive Play on QF Network</title>
+<meta name="description" content="Competitive maths games on QF Network. Duels, leagues, cups. Pure skill, no luck. Connect your wallet and compete.">
+<meta property="og:title" content="QF Games — Competitive Play on QF Network">
+<meta property="og:description" content="Competitive maths games on QF Network. Duels, leagues, cups. Pure skill.">
+<meta property="og:url" content="https://mathswins.co.uk/qf-dapp/">
+<meta property="og:image" content="https://mathswins.co.uk/assets/og-image.png">
+<meta name="twitter:card" content="summary_large_image">
+<link rel="canonical" href="https://mathswins.co.uk/qf-dapp/">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;700&family=JetBrains+Mono:wght@400;500&family=Playfair+Display:wght@700&display=swap" rel="stylesheet">
+<script src="https://cdn.jsdelivr.net/npm/ethers@6/dist/ethers.umd.min.js"></script>
+<style>
+*{margin:0;padding:0;box-sizing:border-box}
+:root{
+  /* Sabre palette — charcoal + brushed silver */
+  --bg:            #0e1013;
+  --surface:       #16181c;
+  --surface2:      #1e2025;
+  --surface3:      #26282e;
+
+  --silver:        #b8bcc6;
+  --silver-bright: #d4d8e2;
+  --silver-dim:    rgba(184,188,198,0.08);
+  --silver-glow:   rgba(184,188,198,0.12);
+  --silver-border: rgba(184,188,198,0.15);
+
+  --text-white:    #e8eaf0;
+  --text:          #8a8f9c;
+  --muted:         #4a4e5a;
+
+  --border:        #1e2228;
+  --border2:       #2a2e36;
+
+  --gold:          #c9a84c;
+  --green:         #3a8a5c;
+  --red:           #b03a3a;
+  --blue:          #3a6a9c;
+
+  --qf:            #c9a84c;
+}
+body{font-family:'Inter',sans-serif;background:var(--bg);color:var(--text);min-height:100vh;-webkit-font-smoothing:antialiased}
+.outer{max-width:900px;margin:0 auto;padding:0 1.25rem}
+
+/* ── Wallet Bar (sticky) ── */
+.wallet-bar{
+  position:sticky;top:0;z-index:100;
+  background:rgba(14,16,19,.94);backdrop-filter:blur(12px);
+  border-bottom:1px solid var(--border);
+  padding:.6rem 1.25rem;
+  display:flex;align-items:center;justify-content:space-between;
+}
+.wb-brand{display:flex;align-items:center;gap:.5rem;text-decoration:none}
+.wb-logo{font-family:'Playfair Display',serif;font-size:1.2rem;color:var(--text-white);letter-spacing:.02em}
+.wb-logo span{color:var(--silver-bright)}
+.wb-badge{font-family:'JetBrains Mono',monospace;font-size:.5rem;padding:2px 8px;border-radius:10px;background:var(--silver-dim);color:var(--silver);border:1px solid var(--silver-border);letter-spacing:.05em}
+.wb-right{display:flex;align-items:center;gap:.75rem}
+.wb-balance{font-family:'JetBrains Mono',monospace;font-size:.8rem;color:var(--silver-bright)}
+.wb-address{font-family:'JetBrains Mono',monospace;font-size:.72rem;color:var(--muted);background:var(--surface);border:1px solid var(--border);padding:.3rem .6rem;border-radius:6px}
+.wb-connect{
+  font-family:'Inter',sans-serif;font-weight:600;font-size:.78rem;
+  padding:.45rem 1.2rem;border-radius:6px;border:1px solid var(--silver-border);
+  background:var(--silver-dim);color:var(--silver-bright);cursor:pointer;transition:all .15s;
+}
+.wb-connect:hover{background:var(--silver-bright);color:var(--bg)}
+.wb-network{font-family:'JetBrains Mono',monospace;font-size:.55rem;color:var(--green);display:flex;align-items:center;gap:.3rem}
+.wb-network .dot{width:6px;height:6px;border-radius:50%;background:var(--green)}
+.wb-network.wrong .dot{background:var(--red)}
+.wb-network.wrong{color:var(--red)}
+.wb-qf-name{font-family:'JetBrains Mono',monospace;font-size:.72rem;color:var(--silver-bright);background:var(--surface2);border:1px solid var(--silver-border);padding:.3rem .6rem;border-radius:6px}
+
+/* ── Hero ── */
+.hero{text-align:center;padding:3.5rem 0 2.5rem;position:relative}
+.hero::after{content:'';position:absolute;bottom:0;left:10%;right:10%;height:1px;background:linear-gradient(90deg,transparent,var(--border2),transparent)}
+h1{font-family:'Playfair Display',serif;font-size:2.8rem;color:var(--text-white);line-height:1;letter-spacing:.01em}
+h1 span{background:linear-gradient(135deg,var(--silver-bright),var(--silver),#8a8f9c);-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text}
+.tagline{font-size:.85rem;color:var(--muted);margin-top:.6rem;max-width:440px;margin-left:auto;margin-right:auto;line-height:1.5}
+.hero-stats{display:flex;justify-content:center;gap:2.5rem;margin-top:1.8rem;flex-wrap:wrap}
+.hs{text-align:center}
+.hs-num{font-family:'JetBrains Mono',monospace;font-size:1.4rem;font-weight:500;color:var(--silver-bright)}
+.hs-label{font-size:.52rem;color:var(--muted);text-transform:uppercase;letter-spacing:.1em;margin-top:.15rem}
+
+/* ── Week Countdown ── */
+.week-bar{
+  background:var(--surface);border:1px solid var(--border);border-radius:10px;
+  padding:.8rem 1.2rem;margin:1.5rem 0;display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:.5rem;
+}
+.week-label{font-size:.65rem;color:var(--muted);text-transform:uppercase;letter-spacing:.08em}
+.week-countdown{font-family:'JetBrains Mono',monospace;font-size:1rem;color:var(--silver-bright)}
+.week-id{font-family:'JetBrains Mono',monospace;font-size:.65rem;color:var(--muted)}
+
+/* ── Duel Banner ── */
+.duel-banner{
+  background:var(--surface);border:1px solid var(--silver-border);border-radius:10px;
+  padding:1rem 1.2rem;margin:0 0 1.5rem;display:flex;align-items:center;justify-content:space-between;gap:1rem;flex-wrap:wrap;
+}
+.duel-banner-left{flex:1}
+.duel-banner h3{font-family:'Playfair Display',serif;font-size:1rem;color:var(--text-white);margin-bottom:.2rem}
+.duel-banner p{font-size:.7rem;color:var(--muted);line-height:1.4}
+.duel-code-entry{display:flex;gap:.4rem;align-items:center}
+.duel-code-input{
+  font-family:'JetBrains Mono',monospace;font-size:.85rem;width:8ch;text-align:center;
+  padding:.45rem .6rem;border-radius:6px;border:1px solid var(--border2);
+  background:var(--surface2);color:var(--text-white);letter-spacing:.15em;text-transform:uppercase;
+}
+.duel-code-input::placeholder{color:var(--muted);letter-spacing:.05em;font-size:.7rem}
+.duel-code-input:focus{outline:none;border-color:var(--silver)}
+.btn-accept{
+  font-family:'Inter',sans-serif;font-weight:600;font-size:.72rem;
+  padding:.45rem 1rem;border-radius:6px;border:1px solid var(--silver-border);
+  background:var(--silver-dim);color:var(--silver-bright);cursor:pointer;transition:all .15s;
+}
+.btn-accept:hover{background:var(--silver-bright);color:var(--bg)}
+
+/* ── Filter ── */
+.filter{display:flex;gap:.4rem;margin:1rem 0;flex-wrap:wrap;justify-content:center}
+.filter-pill{
+  padding:.35rem 1rem;border-radius:20px;border:1px solid var(--border2);
+  background:transparent;color:var(--muted);font-family:'Inter',sans-serif;
+  font-size:.72rem;font-weight:500;cursor:pointer;transition:all .15s;
+}
+.filter-pill:hover{border-color:var(--silver-border);color:var(--text)}
+.filter-pill.active{border-color:var(--silver);background:var(--silver-dim);color:var(--silver-bright)}
+
+/* ── Game Cards ── */
+.game-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(260px,1fr));gap:.7rem;margin:1rem 0 3rem}
+.game-card{
+  background:var(--surface);border:1px solid var(--border);border-radius:10px;
+  padding:1rem 1.1rem;transition:all .2s;cursor:pointer;position:relative;overflow:hidden;
+}
+.game-card:hover{border-color:var(--silver-border);transform:translateY(-2px);box-shadow:0 8px 32px rgba(0,0,0,.4)}
+.game-card::before{content:'';position:absolute;left:0;top:0;bottom:0;width:3px;border-radius:3px 0 0 3px}
+.game-card.cat-number::before{background:var(--silver)}
+.game-card.cat-puzzle::before{background:linear-gradient(180deg,var(--silver-bright),var(--silver))}
+.game-card.cat-strategy::before{background:var(--blue)}
+.game-card.cat-logic::before{background:var(--silver)}
+.game-card.cat-speed::before{background:var(--green)}
+.game-card.cat-memory::before{background:var(--red)}
+
+.gc-top{display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:.3rem}
+.gc-title{font-size:.88rem;font-weight:700;color:var(--text-white)}
+.gc-badge{font-family:'JetBrains Mono',monospace;font-size:.48rem;padding:2px 8px;border-radius:10px;letter-spacing:.03em;white-space:nowrap}
+.gc-badge.free{background:rgba(58,138,92,.1);color:var(--green);border:1px solid rgba(58,138,92,.2)}
+.gc-badge.paid{background:var(--silver-dim);color:var(--silver);border:1px solid var(--silver-border)}
+.gc-badge.duel{background:rgba(201,168,76,.08);color:var(--gold);border:1px solid rgba(201,168,76,.2)}
+.gc-desc{font-size:.68rem;color:var(--muted);line-height:1.5;margin-bottom:.5rem}
+
+.gc-pot{display:flex;align-items:center;gap:.4rem;font-family:'JetBrains Mono',monospace;font-size:.7rem;color:var(--silver-bright);margin-top:.4rem}
+.gc-pot .pot-icon{font-size:.8rem}
+.gc-entries{font-family:'JetBrains Mono',monospace;font-size:.55rem;color:var(--muted);margin-top:.2rem}
+
+.gc-tags{display:flex;gap:.3rem;margin-top:.4rem;flex-wrap:wrap}
+.gc-tag{font-family:'JetBrains Mono',monospace;font-size:.48rem;padding:1px 6px;border-radius:4px;background:var(--surface2);color:var(--muted);letter-spacing:.03em;border:1px solid var(--border)}
+
+.gc-duel-tag{
+  display:inline-flex;align-items:center;gap:.3rem;
+  font-family:'JetBrains Mono',monospace;font-size:.5rem;
+  padding:2px 8px;border-radius:10px;margin-top:.4rem;
+  background:rgba(201,168,76,.06);color:var(--gold);border:1px solid rgba(201,168,76,.15);
+}
+
+/* ── Footer ── */
+footer{text-align:center;padding:2rem 0;font-size:.6rem;color:var(--muted);border-top:1px solid var(--border)}
+footer a{color:var(--muted);text-decoration:none;transition:color .15s}
+footer a:hover{color:var(--silver-bright)}
+
+/* ── Subtle metallic sheen on hero ── */
+.hero h1::after{
+  content:'';display:block;width:80px;height:2px;margin:.8rem auto 0;
+  background:linear-gradient(90deg,transparent,var(--silver-border),var(--silver),var(--silver-border),transparent);
+  border-radius:1px;
+}
+
+/* ── Mobile ── */
+@media(max-width:600px){
+  h1{font-size:2rem}
+  .hero-stats{gap:1.5rem}
+  .game-grid{grid-template-columns:1fr}
+  .wallet-bar{flex-wrap:wrap;gap:.4rem}
+  .wb-balance{font-size:.7rem}
+  .duel-banner{flex-direction:column;text-align:center}
+  .duel-code-entry{justify-content:center}
+}
+</style>
+</head>
+<body>
+
+<!-- WALLET BAR -->
+<div class="wallet-bar">
+  <a href="/qf-dapp/" class="wb-brand">
+    <span class="wb-logo">QF <span>Games</span></span>
+    <span class="wb-badge">QF NETWORK</span>
+  </a>
+  <div class="wb-right">
+    <div class="wb-network" id="networkStatus" style="display:none">
+      <span class="dot"></span>
+      <span id="networkName">QF Network</span>
+    </div>
+    <span class="wb-balance" id="walletBalance" style="display:none"></span>
+    <span class="wb-qf-name" id="walletQfName" style="display:none"></span>
+    <span class="wb-address" id="walletAddress" style="display:none"></span>
+    <button class="wb-connect" id="connectBtn" onclick="qfWallet.connect()">Connect Wallet</button>
+  </div>
+</div>
+<script src="games/qf-wallet.js"></script>
+
+<div class="outer">
+
+<!-- HERO -->
+<div class="hero">
+  <h1>QF <span>Games</span></h1>
+  <p class="tagline">Competitive maths games on QF Network. Duel your rivals, climb leagues, earn trophies. Pure skill.</p>
+  <div class="hero-stats">
+    <div class="hs"><div class="hs-num" id="totalGames">16</div><div class="hs-label">Games</div></div>
+    <div class="hs"><div class="hs-num" id="totalPot">&mdash;</div><div class="hs-label">Total Pot</div></div>
+    <div class="hs"><div class="hs-num" id="totalPlayers">&mdash;</div><div class="hs-label">This Week</div></div>
+  </div>
+</div>
+
+<!-- DUEL BANNER -->
+<div class="duel-banner">
+  <div class="duel-banner-left">
+    <h3>Got a Duel Code?</h3>
+    <p>Enter the 6-character code to accept a challenge and play the same puzzle as your opponent.</p>
+  </div>
+  <div class="duel-code-entry">
+    <input type="text" class="duel-code-input" id="duelCodeInput" maxlength="6" placeholder="ABC123" spellcheck="false" autocomplete="off">
+    <button class="btn-accept" onclick="acceptDuelCode()">Accept</button>
+  </div>
+</div>
+
+<!-- WEEK COUNTDOWN -->
+<div class="week-bar">
+  <div>
+    <div class="week-label">Settlement Countdown</div>
+    <div class="week-countdown" id="countdown">&mdash;</div>
+  </div>
+  <div class="week-id" id="weekId"></div>
+</div>
+
+<!-- FILTER -->
+<div class="filter">
+  <button class="filter-pill active" onclick="filterGames('all')">All Games</button>
+  <button class="filter-pill" onclick="filterGames('paid')">Paid</button>
+  <button class="filter-pill" onclick="filterGames('free')">Free</button>
+  <button class="filter-pill" onclick="filterGames('number')">Number</button>
+  <button class="filter-pill" onclick="filterGames('puzzle')">Puzzle</button>
+  <button class="filter-pill" onclick="filterGames('logic')">Logic</button>
+  <button class="filter-pill" onclick="filterGames('speed')">Speed</button>
+</div>
+
+<!-- GAME GRID -->
+<div class="game-grid" id="gameGrid"></div>
+
+</div>
+
+<footer>
+  <p><a href="/">MathsWins</a> &middot; <a href="/qf-dapp/">QF Games</a> &middot; <a href="/games/">Free Games</a> &middot; <a href="/academy/">Academy</a> &middot; Powered by <a href="https://qfnetwork.org" target="_blank">QF Network</a> &middot; <a href="https://dotqf.xyz" target="_blank">Get your .qf name</a></p>
+</footer>
+
+<script>
+// ── Game Data ───────────────────────────────────────────────────────────────
+var GAMES = [
+  { id:'sudoku-duel', name:'Sudoku Duel', desc:'Daily Sudoku puzzle. Same board for all players. Fastest clean solve wins. Challenge anyone to a 1v1 duel.', cat:'puzzle', paid:true, duel:true, tags:['logic','daily','duel'] },
+  { id:'estimation-engine', name:'Estimation Engine', desc:'Estimate complex calculations under time pressure. Pure mental arithmetic.', cat:'number', paid:true, tags:['mental maths','speed'] },
+  { id:'sequence-solver', name:'Sequence Solver', desc:'Identify patterns in number sequences. Escalating difficulty across KS3 to A-Level.', cat:'number', paid:true, tags:['sequences','patterns'] },
+  { id:'prime-or-composite', name:'Prime or Composite', desc:'Classify numbers as prime or composite in 5 seconds. Speed and number sense.', cat:'speed', paid:true, tags:['primes','speed'] },
+  { id:'towers-of-hanoi', name:'Towers of Hanoi', desc:'Move all discs to the target peg. Scored on efficiency vs optimal solution.', cat:'logic', paid:true, tags:['logic','efficiency'] },
+  { id:'countdown-numbers', name:'Countdown Numbers', desc:'Six numbers, one target. Use arithmetic and brackets to hit the target.', cat:'number', paid:true, tags:['arithmetic','BODMAS'] },
+  { id:'kenken', name:'KenKen', desc:'Fill the grid using arithmetic and logic. No repeats in rows or columns. Cages must hit their target.', cat:'puzzle', paid:true, tags:['arithmetic','logic'] },
+  { id:'nonogram', name:'Nonogram', desc:'Fill cells to reveal a hidden Greek letter. Use row and column clues to solve the grid.', cat:'logic', paid:true, tags:['logic','pixel art'] },
+  { id:'kakuro', name:'Kakuro', desc:'Crossword meets Sudoku. Fill white cells with digits 1-9 so each run sums to its clue. No repeats.', cat:'puzzle', paid:true, tags:['sums','logic'] },
+  { id:'higher-or-lower', name:'Higher or Lower', desc:'Is the next mathematical number higher or lower? Build streaks for multipliers.', cat:'number', paid:false, tags:['number sense','streaks'] },
+  { id:'equatle', name:'Equatle', desc:'Wordle-style equation guessing. Deduce the hidden 8-character equation in 6 tries.', cat:'puzzle', paid:false, tags:['deduction','daily'] },
+  { id:'52dle', name:'52-dle', desc:'Daily number deduction. Use mathematical clues to guess the hidden number.', cat:'puzzle', paid:false, tags:['deduction','daily'] },
+  { id:'cryptarithmetic-club', name:'Cryptarithmetic Club', desc:'Each letter is a digit. Solve the substitution puzzle within the time limit.', cat:'puzzle', paid:false, tags:['logic','substitution'] },
+  { id:'dont-press-it', name:"Don't Press It", desc:'How long can you resist? The button gets more tempting. A test of willpower.', cat:'strategy', paid:false, tags:['psychology','fun'] },
+  { id:'memory-matrix', name:'Memory Matrix', desc:'Memorise the grid of digits, then reproduce it. Grids grow each round.', cat:'memory', paid:false, tags:['memory','visual'] },
+  { id:'rps-vs-machine', name:'RPS vs Machine', desc:'Rock Paper Scissors against a pattern-learning AI. Can you stay unpredictable?', cat:'strategy', paid:false, tags:['strategy','AI'] },
+];
+
+// ── Wallet UI (powered by qf-wallet.js) ────────────────────────────────────
+qfWallet.onConnect(function(w) {
+  if (!w.address) return;
+  document.getElementById('connectBtn').style.display = 'none';
+  document.getElementById('walletAddress').style.display = '';
+  document.getElementById('walletAddress').textContent = w.address.slice(0, 6) + '...' + w.address.slice(-4);
+  document.getElementById('walletBalance').style.display = '';
+  document.getElementById('walletBalance').textContent = parseFloat(ethers.formatEther(w.balance)).toFixed(2) + ' QF';
+
+  var netEl = document.getElementById('networkStatus');
+  netEl.style.display = 'flex';
+  if (w.chainId === 3426) {
+    netEl.className = 'wb-network';
+    document.getElementById('networkName').textContent = 'QF Network';
+  } else {
+    netEl.className = 'wb-network wrong';
+    document.getElementById('networkName').textContent = 'Wrong Network';
+  }
+
+  // Show .qf name if resolved
+  if (w.qfName) {
+    document.getElementById('walletQfName').textContent = w.qfName;
+    document.getElementById('walletQfName').style.display = '';
+    document.getElementById('walletAddress').style.display = 'none';
+  }
+});
+
+// ── Accept duel code ───────────────────────────────────────────────────────
+function acceptDuelCode() {
+  var code = document.getElementById('duelCodeInput').value.trim().toUpperCase();
+  if (code.length !== 6) { alert('Enter a 6-character duel code.'); return; }
+  // Navigate to sudoku duel (for now — will become game-agnostic later)
+  window.location.href = '/qf-dapp/games/sudoku-duel/?duel=' + code;
+}
+
+document.getElementById('duelCodeInput').addEventListener('keydown', function(e) {
+  if (e.key === 'Enter') acceptDuelCode();
+});
+
+// ── Render Games ────────────────────────────────────────────────────────────
+function renderGames(filter) {
+  var grid = document.getElementById('gameGrid');
+  grid.innerHTML = '';
+  GAMES.forEach(function(g) {
+    if (filter && filter !== 'all') {
+      if (filter === 'paid' && !g.paid) return;
+      if (filter === 'free' && g.paid) return;
+      if (filter !== 'paid' && filter !== 'free' && g.cat !== filter) return;
+    }
+    var catClass = 'cat-' + (g.cat === 'strategy' ? 'strategy' : g.cat);
+    var card = document.createElement('div');
+    card.className = 'game-card ' + catClass;
+    card.dataset.cat = g.cat;
+    card.dataset.paid = g.paid ? '1' : '0';
+    card.onclick = function() { openGame(g.id); };
+
+    var badge = g.paid
+      ? '<span class="gc-badge paid">10 QF</span>'
+      : '<span class="gc-badge free">FREE</span>';
+
+    var potHtml = g.paid
+      ? '<div class="gc-pot"><span class="pot-icon">&#9876;</span> <span class="pot-val" data-game="' + g.id + '">&mdash;</span> QF pot</div><div class="gc-entries"><span class="entry-count" data-game="' + g.id + '">0</span> entries this week</div>'
+      : '';
+
+    var duelHtml = g.duel
+      ? '<div class="gc-duel-tag">&#9876; 1v1 Duels Live</div>'
+      : '';
+
+    var tags = g.tags.map(function(t) { return '<span class="gc-tag">' + t + '</span>'; }).join('');
+
+    card.innerHTML = '<div class="gc-top"><span class="gc-title">' + g.name + '</span>' + badge + '</div>'
+      + '<div class="gc-desc">' + g.desc + '</div>'
+      + potHtml
+      + duelHtml
+      + '<div class="gc-tags">' + tags + '</div>';
+
+    grid.appendChild(card);
+  });
+}
+
+function filterGames(f) {
+  document.querySelectorAll('.filter-pill').forEach(function(b) { b.classList.remove('active'); });
+  event.target.classList.add('active');
+  renderGames(f);
+}
+
+function openGame(id) {
+  window.location.href = '/qf-dapp/games/' + id + '/';
+}
+
+// ── Countdown Timer ─────────────────────────────────────────────────────────
+function updateCountdown() {
+  var now = new Date();
+  var day = now.getUTCDay();
+  var daysUntilSunday = day === 0 ? 0 : 7 - day;
+  var sunday = new Date(Date.UTC(
+    now.getUTCFullYear(), now.getUTCMonth(), now.getUTCDate() + daysUntilSunday,
+    23, 59, 59
+  ));
+  var diff = Math.max(0, Math.floor((sunday - now) / 1000));
+  var d = Math.floor(diff / 86400);
+  var h = Math.floor((diff % 86400) / 3600);
+  var m = Math.floor((diff % 3600) / 60);
+  var s = diff % 60;
+  var parts = [];
+  if (d > 0) parts.push(d + 'd');
+  parts.push(h + 'h');
+  parts.push(m + 'm');
+  parts.push(s + 's');
+  document.getElementById('countdown').textContent = parts.join(' ');
+
+  var jan1 = new Date(Date.UTC(now.getUTCFullYear(), 0, 1));
+  var dayOfYear = Math.floor((now - jan1) / 86400000);
+  var weekNum = Math.ceil((dayOfYear + jan1.getUTCDay() + 1) / 7);
+  document.getElementById('weekId').textContent = 'Week ' + now.getUTCFullYear() + '-' + weekNum;
+}
+
+// ── Init ────────────────────────────────────────────────────────────────────
+renderGames('all');
+updateCountdown();
+setInterval(updateCountdown, 1000);
+
+// Auto-connect handled by qf-wallet.js
+</script>
+</body>
+</html>

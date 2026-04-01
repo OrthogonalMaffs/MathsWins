@@ -1,0 +1,403 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<!-- Google tag (gtag.js) -->
+<script async src="https://www.googletagmanager.com/gtag/js?id=G-7GTLYCZMXN"></script>
+<script>
+  window.dataLayer = window.dataLayer || [];
+  function gtag(){dataLayer.push(arguments);}
+  gtag('js', new Date());
+
+  gtag('config', 'G-7GTLYCZMXN', {
+    send_page_view: true,
+    storage: 'none',
+    anonymize_ip: true
+  });
+</script>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="description" content="Guess whether the next mathematical number is higher or lower. Numbers drawn from primes, Fibonacci, and famous constants. Build streaks to multiply your score.">
+<meta property="og:title" content="Higher or Lower · MathsWins">
+<meta property="og:description" content="Guess whether the next mathematical number is higher or lower. Build streaks to multiply your score.">
+<meta property="og:url" content="https://mathswins.co.uk/dapp/games/higher-or-lower/">
+<meta property="og:image" content="https://mathswins.co.uk/assets/og-image.png">
+<link rel="canonical" href="https://mathswins.co.uk/dapp/games/higher-or-lower/">
+<link rel="icon" type="image/svg+xml" href="../../schools/assets/favicon.svg">
+<title>Higher or Lower · MathsWins</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=DM+Mono:ital,wght@0,300;0,400;0,500&family=Bebas+Neue&family=Inter:wght@300;400;500&display=swap" rel="stylesheet">
+<style>
+:root{--ink:#070d1a;--navy:#0b1629;--navy-mid:#0f1f3d;--navy-light:#162847;--gold:#c9a84c;--gold-warm:#e2b96a;--gold-dim:#7a5e28;--teal:#2dd4bf;--teal-dim:#134e4a;--body:#a8b8d0;--muted:#4a6080;--border:#1a2e4a;--border-dim:#111f33;--success:#2dd4a0;--danger:#ef5350;--warn:#d4a847}
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+body{background:var(--ink);color:var(--body);font-family:'Inter',sans-serif;min-height:100vh;display:flex;flex-direction:column;align-items:center;overflow-x:hidden}
+body::before{content:'';position:fixed;inset:0;background-image:linear-gradient(rgba(201,168,76,0.03) 1px,transparent 1px),linear-gradient(90deg,rgba(201,168,76,0.03) 1px,transparent 1px);background-size:40px 40px;pointer-events:none;z-index:0}
+nav{position:sticky;top:0;z-index:100;width:100%;display:flex;align-items:center;justify-content:space-between;padding:0 2rem;height:52px;background:rgba(7,13,26,0.92);backdrop-filter:blur(12px);border-bottom:1px solid var(--border-dim)}
+.nav-logo{font-family:'Bebas Neue',sans-serif;font-size:1.2rem;letter-spacing:0.15em;color:var(--gold);text-decoration:none}
+.nav-back{font-family:'DM Mono',monospace;font-size:0.6rem;letter-spacing:0.12em;color:var(--muted);text-decoration:none;transition:color 0.2s}
+.nav-back:hover{color:var(--gold)}
+.page{position:relative;z-index:1;width:100%;max-width:480px;padding:2rem 1rem 4rem;display:flex;flex-direction:column;align-items:center;gap:1.2rem}
+.game-header{text-align:center}
+.game-kicker{font-family:'DM Mono',monospace;font-size:0.6rem;letter-spacing:0.2em;text-transform:uppercase;color:var(--teal);margin-bottom:0.4rem}
+.game-title{font-family:'Bebas Neue',sans-serif;font-size:3rem;letter-spacing:0.06em;color:var(--gold-warm);line-height:1}
+.game-sub{font-size:0.75rem;color:var(--muted);line-height:1.6;margin-top:0.4rem}
+.status-bar{display:flex;gap:0.8rem;width:100%;background:var(--navy-mid);border:1px solid var(--border);border-radius:4px;padding:0.75rem 1rem;justify-content:space-around}
+.si{display:flex;flex-direction:column;align-items:center;gap:0.15rem}
+.si-val{font-family:'DM Mono',monospace;font-size:1.1rem;font-weight:500;color:var(--gold)}
+.si-lbl{font-family:'DM Mono',monospace;font-size:0.45rem;letter-spacing:0.12em;text-transform:uppercase;color:var(--muted)}
+
+.card-arena{width:100%;display:flex;flex-direction:column;gap:0.8rem}
+.number-card{
+  width:100%;background:var(--navy-mid);border:1px solid var(--border);border-radius:4px;
+  padding:2rem 1rem;text-align:center;position:relative;overflow:hidden;
+  transition:border-color 0.3s;
+}
+.number-card::before{content:'';position:absolute;inset:0;background:radial-gradient(ellipse at 50% 50%,rgba(201,168,76,0.05),transparent 70%);pointer-events:none}
+.number-card.correct{border-color:var(--success)}
+.number-card.wrong{border-color:var(--danger)}
+.nc-label{font-family:'DM Mono',monospace;font-size:0.5rem;letter-spacing:0.15em;text-transform:uppercase;color:var(--muted);margin-bottom:0.6rem}
+.nc-number{font-family:'Bebas Neue',sans-serif;font-size:clamp(2.5rem,12vw,5rem);letter-spacing:0.04em;color:var(--body);line-height:1;transition:color 0.3s}
+.nc-number.correct{color:var(--success)}
+.nc-number.wrong{color:var(--danger)}
+.nc-source{font-family:'DM Mono',monospace;font-size:0.5rem;color:var(--muted);margin-top:0.4rem;font-style:italic}
+
+.vs-row{display:flex;align-items:center;gap:0.8rem;width:100%}
+.vs-line{flex:1;height:1px;background:var(--border-dim)}
+.vs-label{font-family:'Bebas Neue',sans-serif;font-size:1rem;letter-spacing:0.1em;color:var(--muted)}
+
+.next-card{
+  width:100%;background:var(--navy-mid);border:2px dashed var(--gold-dim);border-radius:4px;
+  padding:2rem 1rem;text-align:center;position:relative;overflow:hidden;
+}
+.next-card::before{content:'';position:absolute;inset:0;background:radial-gradient(ellipse at 50% 50%,rgba(45,212,191,0.04),transparent 70%);pointer-events:none}
+.nc-hidden{font-family:'Bebas Neue',sans-serif;font-size:clamp(2.5rem,12vw,5rem);letter-spacing:0.04em;color:var(--gold-dim);line-height:1}
+
+.multiplier-bar{width:100%;background:var(--navy-mid);border:1px solid var(--border);border-radius:4px;padding:0.7rem 1rem;display:flex;align-items:center;justify-content:space-between}
+.mb-label{font-family:'DM Mono',monospace;font-size:0.5rem;letter-spacing:0.12em;text-transform:uppercase;color:var(--muted)}
+.mb-val{font-family:'Bebas Neue',sans-serif;font-size:1.4rem;letter-spacing:0.06em;color:var(--gold)}
+.mb-streak{font-family:'DM Mono',monospace;font-size:0.52rem;color:var(--teal)}
+
+.answer-btns{display:grid;grid-template-columns:1fr 1fr;gap:0.8rem;width:100%}
+.ans-btn{padding:1.2rem 1rem;font-family:'Bebas Neue',sans-serif;font-size:1.8rem;letter-spacing:0.1em;cursor:pointer;border-radius:4px;border:2px solid;transition:all 0.15s}
+.ans-higher{background:rgba(34,197,94,0.08);border-color:rgba(34,197,94,0.3);color:var(--success)}
+.ans-higher:hover{background:rgba(34,197,94,0.18);border-color:var(--success)}
+.ans-lower{background:rgba(239,68,68,0.08);border-color:rgba(239,68,68,0.3);color:var(--danger)}
+.ans-lower:hover{background:rgba(239,68,68,0.18);border-color:var(--danger)}
+.ans-btn:disabled{pointer-events:none;opacity:0.5}
+.ans-btn.flash-correct{background:rgba(34,197,94,0.25);border-color:var(--success)}
+.ans-btn.flash-wrong{background:rgba(239,68,68,0.25);border-color:var(--danger)}
+
+.streak-dots{display:flex;gap:0.3rem;justify-content:center;flex-wrap:wrap}
+.sd{width:10px;height:10px;border-radius:50%;background:var(--border);border:1px solid var(--muted);transition:all 0.2s}
+.sd.hit{background:var(--success);border-color:var(--success);box-shadow:0 0 5px rgba(34,197,94,0.4)}
+.sd.miss{background:var(--danger);border-color:var(--danger)}
+
+.btn{padding:0.65rem 1.2rem;font-family:'DM Mono',monospace;font-size:0.62rem;letter-spacing:0.1em;text-transform:uppercase;cursor:pointer;border-radius:3px;border:none;transition:all 0.2s;width:100%}
+.btn-gold{background:var(--gold);color:var(--ink);font-weight:500}.btn-gold:hover{background:var(--gold-warm)}
+.btn-ghost{background:transparent;border:1px solid var(--border);color:var(--muted)}.btn-ghost:hover{border-color:var(--gold-dim);color:var(--gold)}
+
+.lb-section{width:100%;background:var(--navy-mid);border:1px solid var(--border);border-radius:4px;overflow:hidden}
+.lb-header{padding:0.75rem 1rem;border-bottom:1px solid var(--border-dim)}
+.lb-title{font-family:'DM Mono',monospace;font-size:0.55rem;letter-spacing:0.15em;text-transform:uppercase;color:var(--muted)}
+.lb-body{padding:0.5rem 0}
+.lb-empty{font-family:'DM Mono',monospace;font-size:0.6rem;color:var(--muted);text-align:center;padding:1.2rem;font-style:italic}
+.lb-row{display:grid;grid-template-columns:1.5rem 1fr auto auto;gap:0.5rem;align-items:center;padding:0.4rem 1rem;border-bottom:1px solid var(--border-dim);font-family:'DM Mono',monospace;font-size:0.6rem}
+.lb-row:last-child{border-bottom:none}
+.lb-row.hl{background:rgba(201,168,76,0.06)}
+.lb-rank{color:var(--muted)}.lb-name{color:var(--body)}.lb-score{color:var(--gold);text-align:right}.lb-streak{color:var(--teal);font-size:0.52rem;text-align:right}
+
+.modal-overlay{position:fixed;inset:0;background:rgba(7,13,26,0.88);backdrop-filter:blur(8px);z-index:200;display:flex;align-items:center;justify-content:center;padding:1rem}
+.modal-overlay.hidden{display:none}
+.modal{background:var(--navy-mid);border:1px solid var(--border);border-radius:4px;width:100%;max-width:380px;overflow:hidden}
+.modal-header{padding:1.4rem 1.4rem 0;text-align:center}
+.modal-result{font-family:'Bebas Neue',sans-serif;font-size:2rem;letter-spacing:0.1em;color:var(--gold-warm)}
+.modal-score{margin:1rem 1.4rem;background:var(--navy-light);border:1px solid var(--border-dim);border-radius:3px;padding:0.8rem;display:grid;grid-template-columns:1fr 1fr;gap:0.5rem}
+.ms-item{display:flex;flex-direction:column;gap:0.1rem}
+.ms-val{font-family:'DM Mono',monospace;font-size:0.9rem;color:var(--gold)}
+.ms-lbl{font-family:'DM Mono',monospace;font-size:0.45rem;letter-spacing:0.1em;text-transform:uppercase;color:var(--muted)}
+.modal-name{padding:0 1.4rem;display:flex;flex-direction:column;gap:0.4rem}
+.modal-name label{font-family:'DM Mono',monospace;font-size:0.52rem;letter-spacing:0.1em;text-transform:uppercase;color:var(--muted)}
+.name-input{background:var(--navy);border:1px solid var(--border);border-radius:3px;padding:0.6rem 0.8rem;font-family:'DM Mono',monospace;font-size:0.8rem;color:var(--body);outline:none;width:100%}
+.name-input:focus{border-color:var(--gold-dim)}
+.modal-acts{display:flex;gap:0.5rem;padding:1rem 1.4rem 1.4rem}
+.modal-acts .btn{flex:1}
+@keyframes shake{0%,100%{transform:translateX(0)}20%{transform:translateX(-6px)}40%{transform:translateX(6px)}60%{transform:translateX(-3px)}80%{transform:translateX(3px)}}
+.shake{animation:shake 0.35s ease}
+</style>
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:title" content="MathsWins">
+<meta name="twitter:image" content="https://mathswins.co.uk/assets/og-image.png">
+<link rel="stylesheet" href="../dapp-shell.css">
+<script src="https://cdn.jsdelivr.net/npm/ethers@6/dist/ethers.umd.min.js"></script>
+</head>
+<body>
+<script src="../dapp-wallet.js"></script>
+
+<nav>
+  <a class="nav-logo" href="/dapp/">MathsWins</a>
+  <span style="font-family:'DM Mono',monospace;font-size:0.48rem;letter-spacing:0.1em;text-transform:uppercase;padding:0.2rem 0.6rem;border:1px solid #134e4a;border-radius:2px;color:#2dd4bf">Hosted on QF Network</span>
+  <a class="nav-back" href="../../">← Back</a>
+</nav>
+<div class="page">
+  <div class="game-header">
+    <p class="game-kicker">Maths · Number Sense</p>
+    <h1 class="game-title">Higher or <strong style="color:var(--teal)">Lower</strong></h1>
+    <p class="game-sub">Numbers drawn from mathematical constants, primes, and QF Network values. Guess whether the next is higher or lower. Streaks multiply your score.</p>
+  </div>
+
+  <div class="status-bar">
+    <div class="si"><span class="si-val" id="sv-score">0</span><span class="si-lbl">Score</span></div>
+    <div class="si"><span class="si-val" id="sv-streak">0</span><span class="si-lbl">Streak</span></div>
+    <div class="si"><span class="si-val" id="sv-best">0</span><span class="si-lbl">Best Streak</span></div>
+    <div class="si"><span class="si-val" id="sv-round">—</span><span class="si-lbl">Round</span></div>
+  </div>
+
+  <div class="card-arena">
+    <div class="number-card" id="current-card">
+      <div class="nc-label">Current Number</div>
+      <div class="nc-number" id="current-num">—</div>
+      <div class="nc-source" id="current-src">Press Start</div>
+    </div>
+    <div class="vs-row"><div class="vs-line"></div><span class="vs-label">vs</span><div class="vs-line"></div></div>
+    <div class="next-card" id="next-card">
+      <div class="nc-label">Next Number — Higher or Lower?</div>
+      <div class="nc-hidden" id="next-hidden">?</div>
+    </div>
+  </div>
+
+  <div class="multiplier-bar">
+    <span class="mb-label">Streak Multiplier</span>
+    <span class="mb-val" id="mb-val">×1</span>
+    <span class="mb-streak" id="mb-streak">+100 pts per correct</span>
+  </div>
+
+  <div class="streak-dots" id="streak-dots"></div>
+
+  <div class="answer-btns">
+    <button class="ans-btn ans-higher" id="btn-higher" onclick="guess('higher')" disabled>▲ Higher</button>
+    <button class="ans-btn ans-lower"  id="btn-lower"  onclick="guess('lower')"  disabled>▼ Lower</button>
+  </div>
+
+  <button class="btn btn-gold" id="start-btn" onclick="startGame()">Start Game</button>
+
+  <div class="lb-section">
+    <div class="lb-header"><span class="lb-title">Leaderboard</span></div>
+    <div class="lb-body" id="lb-out"><div class="lb-empty">No scores yet.</div></div>
+  </div>
+</div>
+
+<div class="modal-overlay hidden" id="modal">
+  <div class="modal">
+    <div class="modal-header"><div class="modal-result" id="modal-result">Game Over</div></div>
+    <div class="modal-score" id="modal-score"></div>
+    <div class="modal-name">
+      <label>Your name for the leaderboard</label>
+      <input class="name-input" id="name-input" type="text" maxlength="20" placeholder="Anonymous">
+    </div>
+    <div class="modal-acts">
+      <button class="btn btn-ghost" onclick="closeModal()">Play Again</button>
+      <button class="btn btn-gold" onclick="submitToLB()">Submit Score</button>
+    </div>
+  </div>
+</div>
+
+<script>
+// Curated number pool — all from recognisable mathematical/QF sources
+const NUMBERS = [
+  {val:2,        src:'First prime'},
+  {val:3,        src:'Second prime'},
+  {val:5,        src:'Fifth Fibonacci'},
+  {val:7,        src:'Fourth prime'},
+  {val:11,       src:'Fifth prime'},
+  {val:13,       src:'Sixth prime'},
+  {val:17,       src:'Seventh prime'},
+  {val:23,       src:'Ninth prime'},
+  {val:31,       src:'11th prime'},
+  {val:42,       src:'QF Network Chain ID'},
+  {val:52,       src:'Project 52F'},
+  {val:71,       src:'√5041'},
+  {val:89,       src:'11th Fibonacci'},
+  {val:97,       src:'Largest 2-digit prime'},
+  {val:100,      src:'10²'},
+  {val:127,      src:'Mersenne prime (2⁷−1)'},
+  {val:137,      src:'Fine structure constant ≈ 1/137'},
+  {val:144,      src:'12th Fibonacci (12²)'},
+  {val:163,      src:'Largest Heegner number'},
+  {val:180,      src:'Degrees in a triangle'},
+  {val:233,      src:'13th Fibonacci'},
+  {val:256,      src:'2⁸'},
+  {val:271,      src:'e × 100 ≈ 271'},
+  {val:314,      src:'π × 100 ≈ 314'},
+  {val:360,      src:'Degrees in a circle'},
+  {val:377,      src:'14th Fibonacci'},
+  {val:496,      src:'Third perfect number'},
+  {val:512,      src:'2⁹'},
+  {val:618,      src:'φ × 1000 − 1000 ≈ 618'},
+  {val:720,      src:'6! (720)'},
+  {val:1024,     src:'2¹⁰'},
+  {val:1597,     src:'17th Fibonacci'},
+  {val:1618,     src:'φ × 1000 ≈ 1618'},
+  {val:2718,     src:'e × 1000 ≈ 2718'},
+  {val:3141,     src:'π × 1000 ≈ 3141'},
+  {val:4096,     src:'2¹²'},
+  {val:5040,     src:'7! (highly composite)'},
+  {val:8128,     src:'Fourth perfect number'},
+  {val:28657,    src:'24th Fibonacci'},
+  {val:40320,    src:'8!'},
+];
+
+function dayStr(){const d=new Date();return`${d.getFullYear()}_${d.getMonth()}_${d.getDate()}`}
+function seededRng(seed){let s=seed;return()=>{s=(s*1664525+1013904223)&0xffffffff;return(s>>>0)/0xffffffff}}
+function shuffle(arr,rng){const a=[...arr];for(let i=a.length-1;i>0;i--){const j=Math.floor(rng()*(i+1));[a[i],a[j]]=[a[j],a[i]]}return a}
+
+const TOTAL_ROUNDS = 20;
+const LKEY = () => 'hol_lb_' + dayStr();
+let sequence, round, score, streak, bestStreak, gameActive=false;
+
+function startGame(){
+  const seed = parseInt(dayStr().replace(/_/g,''));
+  sequence = shuffle([...NUMBERS], seededRng(seed)).slice(0, TOTAL_ROUNDS + 1);
+  round=0; score=0; streak=0; bestStreak=0; gameActive=true;
+  document.getElementById('start-btn').style.display='none';
+  buildDots();
+  updateStatus();
+  showCurrent();
+}
+
+function showCurrent(){
+  const cur = sequence[round];
+  document.getElementById('current-num').textContent = cur.val.toLocaleString();
+  document.getElementById('current-src').textContent = cur.src;
+  document.getElementById('current-card').className = 'number-card';
+  document.getElementById('current-num').className = 'nc-number';
+  document.getElementById('next-hidden').textContent = '?';
+  document.getElementById('btn-higher').disabled = false;
+  document.getElementById('btn-lower').disabled = false;
+  document.getElementById('btn-higher').className = 'ans-btn ans-higher';
+  document.getElementById('btn-lower').className = 'ans-btn ans-lower';
+}
+
+function guess(dir){
+  if(!gameActive) return;
+  document.getElementById('btn-higher').disabled = true;
+  document.getElementById('btn-lower').disabled = true;
+
+  const cur = sequence[round];
+  const nxt = sequence[round + 1];
+  const correct = (dir === 'higher' && nxt.val > cur.val) || (dir === 'lower' && nxt.val < cur.val);
+  // Edge: equal counts as correct (rare)
+  const actuallyCorrect = nxt.val !== cur.val ? correct : true;
+
+  // Reveal next number
+  document.getElementById('next-hidden').textContent = nxt.val.toLocaleString();
+
+  if(actuallyCorrect){
+    streak++;
+    if(streak > bestStreak) bestStreak = streak;
+    const mult = Math.min(5, 1 + Math.floor(streak / 3));
+    const pts = 100 * mult;
+    score += pts;
+    document.getElementById('current-card').classList.add('correct');
+    document.getElementById('current-num').classList.add('correct');
+    document.getElementById('btn-' + dir).classList.add('flash-correct');
+    markDot(round, true);
+  } else {
+    streak = 0;
+    document.getElementById('current-card').classList.add('wrong');
+    document.getElementById('current-num').classList.add('wrong');
+    document.getElementById('btn-' + dir).classList.add('flash-wrong');
+    markDot(round, false);
+  }
+
+  updateStatus();
+  round++;
+
+  if(round >= TOTAL_ROUNDS){
+    setTimeout(endGame, 900);
+  } else {
+    setTimeout(()=>{
+      sequence[round] = nxt; // slide window — next becomes current
+      // Actually just advance: showCurrent reads sequence[round]
+      showCurrent();
+    }, 900);
+  }
+}
+
+function buildDots(){
+  const el = document.getElementById('streak-dots');
+  el.innerHTML = '';
+  for(let i=0;i<TOTAL_ROUNDS;i++){
+    const d = document.createElement('div');
+    d.className='sd'; d.id='sd'+i;
+    el.appendChild(d);
+  }
+}
+function markDot(i, ok){
+  const d = document.getElementById('sd'+i);
+  if(d) d.className = 'sd ' + (ok ? 'hit' : 'miss');
+}
+
+function updateStatus(){
+  const mult = Math.min(5, 1 + Math.floor(streak/3));
+  document.getElementById('sv-score').textContent = score.toLocaleString();
+  document.getElementById('sv-streak').textContent = streak;
+  document.getElementById('sv-best').textContent = bestStreak;
+  document.getElementById('sv-round').textContent = round + '/' + TOTAL_ROUNDS;
+  document.getElementById('mb-val').textContent = '×' + mult;
+  document.getElementById('mb-streak').textContent = '+' + (100*mult) + ' pts per correct';
+}
+
+function endGame(){
+  gameActive = false;
+  setTimeout(()=>{
+    document.getElementById('modal').classList.remove('hidden');
+    const correct = document.querySelectorAll('.sd.hit').length;
+    const v = score >= 1500 ? 'Exceptional.' : score >= 1000 ? 'Sharp Mind.' : score >= 500 ? 'Decent.' : 'Keep Practising.';
+    document.getElementById('modal-result').textContent = v;
+    document.getElementById('modal-score').innerHTML = `
+      <div class="ms-item"><span class="ms-val">${score.toLocaleString()}</span><span class="ms-lbl">Final Score</span></div>
+      <div class="ms-item"><span class="ms-val">${correct}/${TOTAL_ROUNDS}</span><span class="ms-lbl">Correct</span></div>
+      <div class="ms-item"><span class="ms-val">${bestStreak}</span><span class="ms-lbl">Best Streak</span></div>
+      <div class="ms-item"><span class="ms-val">×${Math.min(5,1+Math.floor(bestStreak/3))}</span><span class="ms-lbl">Peak Multiplier</span></div>
+    `;
+  }, 300);
+}
+
+function closeModal(){
+  document.getElementById('modal').classList.add('hidden');
+  document.getElementById('start-btn').style.display='block';
+  document.getElementById('start-btn').textContent='Play Again';
+  document.getElementById('current-num').textContent='—';
+  document.getElementById('current-src').textContent='Press Start';
+  document.getElementById('next-hidden').textContent='?';
+  buildDots();
+}
+
+function loadLB(){try{return JSON.parse(localStorage.getItem(LKEY()))||[];}catch{return[]}}
+function renderLB(hl){
+  const arr=loadLB(), el=document.getElementById('lb-out');
+  if(!arr.length){el.innerHTML='<div class="lb-empty">No scores yet.</div>';return}
+  el.innerHTML=arr.slice(0,10).map((e,i)=>`
+    <div class="lb-row ${e.name===hl?'hl':''}">
+      <span class="lb-rank">${i+1}</span>
+      <span class="lb-name">${escHtml(e.name)}</span>
+      <span class="lb-score">${e.sc.toLocaleString()}</span>
+      <span class="lb-streak">🔥${e.best}</span>
+    </div>`).join('')
+}
+function escHtml(s){return s.replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;')}
+function submitToLB(){
+  const name=document.getElementById('name-input').value.trim().slice(0,20)||'Anonymous';
+  const arr=loadLB();
+  arr.push({name,sc:score,best:bestStreak,ts:Date.now()});
+  arr.sort((a,b)=>b.sc-a.sc);
+  localStorage.setItem(LKEY(),JSON.stringify(arr));
+  document.getElementById('modal').classList.add('hidden');
+  renderLB(name);
+  closeModal();
+}
+
+renderLB('');
+</script>
+
+</body>
+</html>

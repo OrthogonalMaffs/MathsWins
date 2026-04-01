@@ -2,6 +2,7 @@ import express from 'express';
 import cors from 'cors';
 import helmet from 'helmet';
 import { getDb } from './db/index.mjs';
+import { expireOldDuels } from './db/index.mjs';
 import apiRoutes from './routes/api.mjs';
 import { registerAllGames } from './games/index.mjs';
 import { startListener } from './chain-listener.mjs';
@@ -78,6 +79,9 @@ console.log('Game banks loaded');
 
 startListener();
 console.log('Chain listener started');
+
+// Expire stale duels every 5 minutes
+setInterval(() => { try { expireOldDuels(); } catch (e) { console.error('Duel expiry sweep error:', e); } }, 5 * 60 * 1000);
 
 app.listen(PORT, '127.0.0.1', () => {
   console.log(`MathsWins dApp backend listening on port ${PORT}`);
