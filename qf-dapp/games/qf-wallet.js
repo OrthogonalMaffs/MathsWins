@@ -19,7 +19,9 @@
   var QF_CHAIN_ID = 3426;
   var QF_CHAIN_HEX = '0xd62';
   var QF_RPC = 'https://archive.mainnet.qfnode.net/eth';
-  var QNS_RESOLVER = '0xd5d12431b2956248861dbec5e8a9bc6023114e80';
+  // Try both resolvers — old has existing registrations, new may not have reverse mappings yet
+  var QNS_RESOLVER_OLD = '0xd78e5b5779ed7bdf70dad0061fbeb189836022fb';
+  var QNS_RESOLVER_NEW = '0xd5d12431b2956248861dbec5e8a9bc6023114e80';
   var QNS_ABI = ['function reverseResolve(address _addr) view returns (string)'];
 
   var state = {
@@ -32,28 +34,33 @@
   var qnsResolver = null;
 
   // ── QNS Resolution ────────────────────────────────────────────────
-  function getResolver() {
-    if (!qnsResolver) {
-      var rpcProvider = new ethers.JsonRpcProvider(QF_RPC);
-      qnsResolver = new ethers.Contract(QNS_RESOLVER, QNS_ABI, rpcProvider);
-    }
-    return qnsResolver;
+  var rpcProvider = null;
+
+  function getRpcProvider() {
+    if (!rpcProvider) rpcProvider = new ethers.JsonRpcProvider(QF_RPC);
+    return rpcProvider;
   }
 
   async function resolveQfName(addr) {
     if (!addr) return null;
     var key = addr.toLowerCase();
     if (nameCache[key] !== undefined) return nameCache[key];
-    try {
-      var resolver = getResolver();
-      var name = await resolver.reverseResolve(addr);
-      var result = (name && name.length > 0) ? name : null;
-      nameCache[key] = result;
-      return result;
-    } catch (e) {
-      nameCache[key] = null;
-      return null;
+    var provider = getRpcProvider();
+
+    // Try new resolver first, then old
+    var resolvers = [QNS_RESOLVER_NEW, QNS_RESOLVER_OLD];
+    for (var i = 0; i < resolvers.length; i++) {
+      try {
+        var contract = new ethers.Contract(resolvers[i], QNS_ABI, provider);
+        var name = await contract.reverseResolve(addr);
+        if (name && name.length > 0) {
+          nameCache[key] = name;
+          return name;
+        }
+      } catch (e) { /* try next resolver */ }
     }
+    nameCache[key] = null;
+    return null;
   }
 
   function formatAddr(addr) {
@@ -228,6 +235,7 @@
       await provider.send('eth_requestAccounts', []);
       var signer = await provider.getSigner();
       var address = await signer.getAddress();
+      console.log('[qf-wallet] Connected:', address, 'via', walletId);
       var network = await provider.getNetwork();
       var chainId = Number(network.chainId);
 
