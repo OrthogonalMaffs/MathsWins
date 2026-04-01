@@ -2,6 +2,7 @@ import { Router } from 'express';
 import crypto from 'crypto';
 import { getLeaderboard, getEntry, getPaidGames } from '../db/index.mjs';
 import { createDuel, getDuelByCode, getDuelById, updateDuelCreatorScore, acceptDuel, updateDuelOpponentScore, completeDuel, expireOldDuels, getDuelsByWallet } from '../db/index.mjs';
+import { createLeague, getLeagueById, getActiveLeagues, getAllLeagues, updateLeagueStatus, startLeague, settleLeague, cancelLeague, addLeaguePlayer, getLeaguePlayers, getLeaguePlayerCount, isLeaguePlayer, markRefunded, addLeaguePuzzle, getLeaguePuzzles, addLeagueScore, getLeagueScore, getLeagueScoresByWallet, getLeagueLeaderboard, addLeaguePrize, getLeaguePrizes } from '../db/index.mjs';
 import { startSession, startFreeSession, evaluate, getCurrentWeekId } from '../scoring.mjs';
 import { ethers } from 'ethers';
 import { getDb } from '../db/index.mjs';
@@ -262,5 +263,271 @@ router.get('/duels/history', (req, res) => {
   const duels = getDuelsByWallet(wallet, 20);
   res.json(duels);
 });
+
+// ── League Endpoints ──────────────────────────────────────────────────
+
+var LEAGUE_TIERS = {
+  bronze: { fee: 100, label: 'Bronze League' },
+  silver: { fee: 250, label: 'Silver League' }
+};
+var PRIZE_SPLITS = [0.50, 0.25, 0.15, 0.10]; // top 4
+var BURN_PCT = 0.05;
+var TEAM_PCT = 0.05;
+var REG_WINDOW_MS = 7 * 24 * 60 * 60 * 1000;   // 7 days
+var JOIN_WINDOW_MS = 24 * 60 * 60 * 1000;       // 24 hours after start
+var PLAY_WINDOW_MS = 14 * 24 * 60 * 60 * 1000;  // 14 days
+
+// List active leagues for a game
+router.get('/leagues/:gameId', (req, res) => {
+  const leagues = getActiveLeagues(req.params.gameId);
+  const result = leagues.map(l => {
+    const playerCount = getLeaguePlayerCount(l.id);
+    return { ...l, player_count: playerCount };
+  });
+  res.json(result);
+});
+
+// List all leagues (including settled) for a game
+router.get('/leagues/:gameId/all', (req, res) => {
+  const leagues = getAllLeagues(req.params.gameId);
+  const result = leagues.map(l => {
+    const playerCount = getLeaguePlayerCount(l.id);
+    return { ...l, player_count: playerCount };
+  });
+  res.json(result);
+});
+
+// Get single league details
+router.get('/league/:leagueId', (req, res) => {
+  const league = getLeagueById(req.params.leagueId);
+  if (!league) return res.status(404).json({ error: 'League not found' });
+
+  const playerCount = getLeaguePlayerCount(league.id);
+  const players = getLeaguePlayers(league.id);
+  const wallet = req.headers['x-wallet-address'];
+  const isPlayer = wallet ? !!isLeaguePlayer(league.id, wallet) : false;
+
+  // Leaderboard: only show if join window closed
+  let leaderboard = [];
+  if (league.join_closes_at && Date.now() > league.join_closes_at) {
+    leaderboard = getLeagueLeaderboard(league.id);
+  }
+
+  // Prizes if settled
+  const prizes = league.status === 'settled' ? getLeaguePrizes(league.id) : [];
+
+  res.json({
+    ...league,
+    player_count: playerCount,
+    players: players.map(p => ({ wallet: p.wallet, joined_at: p.joined_at })),
+    is_player: isPlayer,
+    leaderboard,
+    prizes
+  });
+});
+
+// Join a league
+router.post('/league/:leagueId/join', (req, res) => {
+  const wallet = req.headers['x-wallet-address'];
+  if (!wallet) return res.status(401).json({ error: 'Wallet required' });
+
+  const league = getLeagueById(req.params.leagueId);
+  if (!league) return res.status(404).json({ error: 'League not found' });
+
+  const now = Date.now();
+
+  // Check if registration or late join window
+  const inRegistration = league.status === 'registration' && now <= league.reg_closes_at;
+  const inLateJoin = league.status === 'active' && league.join_closes_at && now <= league.join_closes_at;
+  if (!inRegistration && !inLateJoin) {
+    return res.status(400).json({ error: 'League is not accepting entries' });
+  }
+
+  // Check capacity
+  const count = getLeaguePlayerCount(league.id);
+  if (count >= league.max_players) return res.status(400).json({ error: 'League is full' });
+
+  // Check not already joined
+  if (isLeaguePlayer(league.id, wallet)) return res.status(400).json({ error: 'Already joined this league' });
+
+  const { txHash } = req.body;
+  addLeaguePlayer(league.id, wallet, txHash || null, now);
+
+  const newCount = getLeaguePlayerCount(league.id);
+
+  // Auto-start if hit max during registration
+  if (league.status === 'registration' && newCount >= league.max_players) {
+    activateLeague(league);
+  }
+
+  res.json({ joined: true, player_count: newCount });
+});
+
+// Get league puzzles (only if player and league active)
+router.get('/league/:leagueId/puzzles', (req, res) => {
+  const wallet = req.headers['x-wallet-address'];
+  if (!wallet) return res.status(401).json({ error: 'Wallet required' });
+
+  const league = getLeagueById(req.params.leagueId);
+  if (!league) return res.status(404).json({ error: 'League not found' });
+  if (league.status !== 'active' && league.status !== 'settled') {
+    return res.status(400).json({ error: 'League not yet started' });
+  }
+  if (!isLeaguePlayer(league.id, wallet)) {
+    return res.status(403).json({ error: 'Not a league participant' });
+  }
+
+  const puzzles = getLeaguePuzzles(league.id);
+  const myScores = getLeagueScoresByWallet(league.id, wallet);
+  const scoreMap = {};
+  myScores.forEach(s => { scoreMap[s.puzzle_index] = s; });
+
+  const result = puzzles.map(p => ({
+    puzzle_index: p.puzzle_index,
+    puzzle_seed: p.puzzle_seed,
+    completed: !!scoreMap[p.puzzle_index],
+    score: scoreMap[p.puzzle_index] ? scoreMap[p.puzzle_index].score : null
+  }));
+
+  res.json(result);
+});
+
+// Submit a league puzzle score
+router.post('/league/:leagueId/submit', (req, res) => {
+  const wallet = req.headers['x-wallet-address'];
+  if (!wallet) return res.status(401).json({ error: 'Wallet required' });
+
+  const league = getLeagueById(req.params.leagueId);
+  if (!league) return res.status(404).json({ error: 'League not found' });
+  if (league.status !== 'active') return res.status(400).json({ error: 'League not active' });
+  if (league.play_closes_at && Date.now() > league.play_closes_at) {
+    return res.status(400).json({ error: 'Play window has closed' });
+  }
+  if (!isLeaguePlayer(league.id, wallet)) {
+    return res.status(403).json({ error: 'Not a league participant' });
+  }
+
+  const { puzzleIndex, score, timeMs, mistakes, hints } = req.body;
+  if (puzzleIndex == null || score == null) {
+    return res.status(400).json({ error: 'puzzleIndex and score required' });
+  }
+
+  // Check puzzle exists
+  const puzzles = getLeaguePuzzles(league.id);
+  if (puzzleIndex < 0 || puzzleIndex >= puzzles.length) {
+    return res.status(400).json({ error: 'Invalid puzzle index' });
+  }
+
+  // Check not already submitted
+  const existing = getLeagueScore(league.id, wallet, puzzleIndex);
+  if (existing) return res.status(400).json({ error: 'Already submitted this puzzle' });
+
+  addLeagueScore(league.id, wallet, puzzleIndex, score, timeMs || 0, mistakes || 0, hints || 0, Date.now());
+
+  // Return player's own scores
+  const myScores = getLeagueScoresByWallet(league.id, wallet);
+  const total = myScores.reduce((sum, s) => sum + s.score, 0);
+
+  res.json({ submitted: true, puzzle_index: puzzleIndex, score, cumulative: total, puzzles_played: myScores.length });
+});
+
+// Get player's own scores in a league (always visible)
+router.get('/league/:leagueId/my-scores', (req, res) => {
+  const wallet = req.headers['x-wallet-address'];
+  if (!wallet) return res.status(401).json({ error: 'Wallet required' });
+
+  const league = getLeagueById(req.params.leagueId);
+  if (!league) return res.status(404).json({ error: 'League not found' });
+
+  const scores = getLeagueScoresByWallet(league.id, wallet);
+  const total = scores.reduce((sum, s) => sum + s.score, 0);
+  res.json({ scores, cumulative: total, puzzles_played: scores.length });
+});
+
+// ── League lifecycle helpers ──────────────────────────────────────────
+
+function activateLeague(league) {
+  const now = Date.now();
+  const joinClosesAt = now + JOIN_WINDOW_MS;
+  const playClosesAt = now + PLAY_WINDOW_MS;
+  const playerCount = getLeaguePlayerCount(league.id);
+  const totalPot = playerCount * league.entry_fee;
+  const burnAmount = Math.floor(totalPot * BURN_PCT);
+  const teamAmount = Math.floor(totalPot * TEAM_PCT);
+  const prizePool = totalPot - burnAmount - teamAmount;
+
+  startLeague(league.id, joinClosesAt, playClosesAt, totalPot, prizePool, burnAmount, teamAmount);
+
+  // Generate puzzle seeds
+  for (let i = 0; i < league.puzzle_count; i++) {
+    const seed = (now + i * 7919) ^ (Math.random() * 0xFFFFFFFF >>> 0);
+    addLeaguePuzzle(league.id, i, seed);
+  }
+}
+
+// Recalculate pot when late joiner enters (called from join endpoint indirectly via league check timer)
+function recalculateLeaguePot(leagueId) {
+  const league = getLeagueById(leagueId);
+  if (!league || league.status !== 'active') return;
+  const playerCount = getLeaguePlayerCount(leagueId);
+  const totalPot = playerCount * league.entry_fee;
+  const burnAmount = Math.floor(totalPot * BURN_PCT);
+  const teamAmount = Math.floor(totalPot * TEAM_PCT);
+  const prizePool = totalPot - burnAmount - teamAmount;
+  const db = getDb();
+  db.prepare('UPDATE leagues SET total_pot = ?, prize_pool = ?, burn_amount = ?, team_amount = ? WHERE id = ?')
+    .run(totalPot, prizePool, burnAmount, teamAmount, leagueId);
+}
+
+// ── League lifecycle check (called periodically from server.mjs) ─────
+export function checkLeagueLifecycles() {
+  const now = Date.now();
+
+  // Get all leagues that need checking
+  const db = getDb();
+  const leagues = db.prepare(`SELECT * FROM leagues WHERE status IN ('registration', 'active')`).all();
+
+  for (const league of leagues) {
+    // Registration closed, check threshold
+    if (league.status === 'registration' && now > league.reg_closes_at) {
+      const count = getLeaguePlayerCount(league.id);
+      if (count >= league.min_players) {
+        activateLeague(league);
+      } else {
+        cancelLeague(league.id);
+        // Mark all players for refund
+        const players = getLeaguePlayers(league.id);
+        for (const p of players) {
+          markRefunded(league.id, p.wallet);
+        }
+      }
+    }
+
+    // Active league: recalculate pot if still in join window (late joiners)
+    if (league.status === 'active' && league.join_closes_at && now <= league.join_closes_at) {
+      recalculateLeaguePot(league.id);
+    }
+
+    // Active league: play window closed, settle
+    if (league.status === 'active' && league.play_closes_at && now > league.play_closes_at) {
+      settleLeagueNow(league.id);
+    }
+  }
+}
+
+function settleLeagueNow(leagueId) {
+  const league = getLeagueById(leagueId);
+  if (!league || league.status !== 'active') return;
+
+  const leaderboard = getLeagueLeaderboard(leagueId);
+
+  // Award prizes to top 4
+  for (let i = 0; i < Math.min(4, leaderboard.length); i++) {
+    const amount = Math.floor(league.prize_pool * PRIZE_SPLITS[i]);
+    addLeaguePrize(leagueId, i + 1, leaderboard[i].wallet, amount);
+  }
+
+  settleLeague(leagueId);
+}
 
 export default router;

@@ -4,6 +4,7 @@ import helmet from 'helmet';
 import { getDb } from './db/index.mjs';
 import { expireOldDuels } from './db/index.mjs';
 import apiRoutes from './routes/api.mjs';
+import { checkLeagueLifecycles } from './routes/api.mjs';
 import { registerAllGames } from './games/index.mjs';
 import { startListener } from './chain-listener.mjs';
 
@@ -82,6 +83,9 @@ console.log('Chain listener started');
 
 // Expire stale duels every 5 minutes
 setInterval(() => { try { expireOldDuels(); } catch (e) { console.error('Duel expiry sweep error:', e); } }, 5 * 60 * 1000);
+
+// Check league lifecycles every 2 minutes
+setInterval(() => { try { checkLeagueLifecycles(); } catch (e) { console.error('League lifecycle check error:', e); } }, 2 * 60 * 1000);
 
 app.listen(PORT, '127.0.0.1', () => {
   console.log(`MathsWins dApp backend listening on port ${PORT}`);

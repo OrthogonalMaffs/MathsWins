@@ -91,3 +91,68 @@ CREATE TABLE IF NOT EXISTS duels (
 CREATE INDEX IF NOT EXISTS idx_duels_share_code ON duels(share_code);
 CREATE INDEX IF NOT EXISTS idx_duels_creator ON duels(creator_wallet);
 CREATE INDEX IF NOT EXISTS idx_duels_status ON duels(status, expires_at);
+
+-- Leagues
+CREATE TABLE IF NOT EXISTS leagues (
+    id              TEXT PRIMARY KEY,
+    game_id         TEXT NOT NULL,
+    tier            TEXT NOT NULL,
+    entry_fee       INTEGER NOT NULL,
+    max_players     INTEGER DEFAULT 16,
+    min_players     INTEGER DEFAULT 8,
+    puzzle_count    INTEGER DEFAULT 10,
+    status          TEXT DEFAULT 'registration',
+    reg_opens_at    INTEGER NOT NULL,
+    reg_closes_at   INTEGER NOT NULL,
+    join_closes_at  INTEGER,
+    play_closes_at  INTEGER,
+    settled_at      INTEGER,
+    total_pot       INTEGER DEFAULT 0,
+    prize_pool      INTEGER DEFAULT 0,
+    burn_amount     INTEGER DEFAULT 0,
+    team_amount     INTEGER DEFAULT 0,
+    created_at      INTEGER NOT NULL
+);
+
+CREATE TABLE IF NOT EXISTS league_players (
+    league_id       TEXT NOT NULL,
+    wallet          TEXT NOT NULL,
+    tx_hash         TEXT,
+    joined_at       INTEGER NOT NULL,
+    refunded        INTEGER DEFAULT 0,
+    PRIMARY KEY (league_id, wallet)
+);
+
+CREATE TABLE IF NOT EXISTS league_puzzles (
+    league_id       TEXT NOT NULL,
+    puzzle_index    INTEGER NOT NULL,
+    puzzle_seed     INTEGER NOT NULL,
+    PRIMARY KEY (league_id, puzzle_index)
+);
+
+CREATE TABLE IF NOT EXISTS league_scores (
+    league_id       TEXT NOT NULL,
+    wallet          TEXT NOT NULL,
+    puzzle_index    INTEGER NOT NULL,
+    score           INTEGER NOT NULL,
+    time_ms         INTEGER,
+    mistakes        INTEGER,
+    hints           INTEGER,
+    submitted_at    INTEGER NOT NULL,
+    PRIMARY KEY (league_id, wallet, puzzle_index)
+);
+
+CREATE TABLE IF NOT EXISTS league_prizes (
+    league_id       TEXT NOT NULL,
+    position        INTEGER NOT NULL,
+    wallet          TEXT NOT NULL,
+    amount          INTEGER NOT NULL,
+    tx_hash         TEXT,
+    paid_at         INTEGER,
+    PRIMARY KEY (league_id, position)
+);
+
+CREATE INDEX IF NOT EXISTS idx_leagues_status ON leagues(status);
+CREATE INDEX IF NOT EXISTS idx_leagues_game ON leagues(game_id, status);
+CREATE INDEX IF NOT EXISTS idx_league_players_wallet ON league_players(wallet);
+CREATE INDEX IF NOT EXISTS idx_league_scores_league ON league_scores(league_id, wallet);

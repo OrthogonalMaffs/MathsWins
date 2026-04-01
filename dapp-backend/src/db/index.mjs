@@ -200,3 +200,124 @@ export function getDuelsByWallet(wallet, limit) {
   return db.prepare(`SELECT * FROM duels WHERE (creator_wallet = ? OR opponent_wallet = ?) ORDER BY created_at DESC LIMIT ?`)
     .all(wallet, wallet, limit || 20);
 }
+
+// ── League queries ────────────────────────────────────────────────────
+
+export function createLeague(id, gameId, tier, entryFee, puzzleCount, regOpensAt, regClosesAt, createdAt) {
+  const db = getDb();
+  db.prepare(`INSERT INTO leagues (id, game_id, tier, entry_fee, puzzle_count, status, reg_opens_at, reg_closes_at, created_at)
+    VALUES (?, ?, ?, ?, ?, 'registration', ?, ?, ?)`).run(id, gameId, tier, entryFee, puzzleCount, regOpensAt, regClosesAt, createdAt);
+}
+
+export function getLeagueById(id) {
+  const db = getDb();
+  return db.prepare('SELECT * FROM leagues WHERE id = ?').get(id);
+}
+
+export function getActiveLeagues(gameId) {
+  const db = getDb();
+  return db.prepare(`SELECT * FROM leagues WHERE game_id = ? AND status IN ('registration', 'active') ORDER BY created_at DESC`).all(gameId);
+}
+
+export function getAllLeagues(gameId) {
+  const db = getDb();
+  return db.prepare('SELECT * FROM leagues WHERE game_id = ? ORDER BY created_at DESC LIMIT 20').all(gameId);
+}
+
+export function updateLeagueStatus(leagueId, status) {
+  const db = getDb();
+  db.prepare('UPDATE leagues SET status = ? WHERE id = ?').run(status, leagueId);
+}
+
+export function startLeague(leagueId, joinClosesAt, playClosesAt, totalPot, prizePool, burnAmount, teamAmount) {
+  const db = getDb();
+  db.prepare(`UPDATE leagues SET status = 'active', join_closes_at = ?, play_closes_at = ?, total_pot = ?, prize_pool = ?, burn_amount = ?, team_amount = ? WHERE id = ?`)
+    .run(joinClosesAt, playClosesAt, totalPot, prizePool, burnAmount, teamAmount, leagueId);
+}
+
+export function settleLeague(leagueId) {
+  const db = getDb();
+  db.prepare(`UPDATE leagues SET status = 'settled', settled_at = ? WHERE id = ?`).run(Date.now(), leagueId);
+}
+
+export function cancelLeague(leagueId) {
+  const db = getDb();
+  db.prepare(`UPDATE leagues SET status = 'cancelled' WHERE id = ?`).run(leagueId);
+}
+
+export function addLeaguePlayer(leagueId, wallet, txHash, joinedAt) {
+  const db = getDb();
+  db.prepare(`INSERT INTO league_players (league_id, wallet, tx_hash, joined_at) VALUES (?, ?, ?, ?)`)
+    .run(leagueId, wallet.toLowerCase(), txHash, joinedAt);
+}
+
+export function getLeaguePlayers(leagueId) {
+  const db = getDb();
+  return db.prepare('SELECT * FROM league_players WHERE league_id = ? AND refunded = 0 ORDER BY joined_at ASC').all(leagueId);
+}
+
+export function getLeaguePlayerCount(leagueId) {
+  const db = getDb();
+  const row = db.prepare('SELECT COUNT(*) as count FROM league_players WHERE league_id = ? AND refunded = 0').get(leagueId);
+  return row.count;
+}
+
+export function isLeaguePlayer(leagueId, wallet) {
+  const db = getDb();
+  return db.prepare('SELECT * FROM league_players WHERE league_id = ? AND wallet = ? AND refunded = 0').get(leagueId, wallet.toLowerCase());
+}
+
+export function markRefunded(leagueId, wallet) {
+  const db = getDb();
+  db.prepare('UPDATE league_players SET refunded = 1 WHERE league_id = ? AND wallet = ?').run(leagueId, wallet.toLowerCase());
+}
+
+export function addLeaguePuzzle(leagueId, puzzleIndex, puzzleSeed) {
+  const db = getDb();
+  db.prepare('INSERT INTO league_puzzles (league_id, puzzle_index, puzzle_seed) VALUES (?, ?, ?)').run(leagueId, puzzleIndex, puzzleSeed);
+}
+
+export function getLeaguePuzzles(leagueId) {
+  const db = getDb();
+  return db.prepare('SELECT * FROM league_puzzles WHERE league_id = ? ORDER BY puzzle_index ASC').all(leagueId);
+}
+
+export function addLeagueScore(leagueId, wallet, puzzleIndex, score, timeMs, mistakes, hints, submittedAt) {
+  const db = getDb();
+  db.prepare(`INSERT INTO league_scores (league_id, wallet, puzzle_index, score, time_ms, mistakes, hints, submitted_at)
+    VALUES (?, ?, ?, ?, ?, ?, ?, ?)`).run(leagueId, wallet.toLowerCase(), puzzleIndex, score, timeMs, mistakes, hints, submittedAt);
+}
+
+export function getLeagueScore(leagueId, wallet, puzzleIndex) {
+  const db = getDb();
+  return db.prepare('SELECT * FROM league_scores WHERE league_id = ? AND wallet = ? AND puzzle_index = ?')
+    .get(leagueId, wallet.toLowerCase(), puzzleIndex);
+}
+
+export function getLeagueScoresByWallet(leagueId, wallet) {
+  const db = getDb();
+  return db.prepare('SELECT * FROM league_scores WHERE league_id = ? AND wallet = ? ORDER BY puzzle_index ASC')
+    .all(leagueId, wallet.toLowerCase());
+}
+
+export function getLeagueLeaderboard(leagueId) {
+  const db = getDb();
+  return db.prepare(`
+    SELECT wallet, SUM(score) as total_score, COUNT(*) as puzzles_played,
+           SUM(time_ms) as total_time, SUM(mistakes) as total_mistakes, SUM(hints) as total_hints
+    FROM league_scores WHERE league_id = ?
+    GROUP BY wallet
+    ORDER BY total_score DESC, total_time ASC
+  `).all(leagueId);
+}
+
+export function addLeaguePrize(leagueId, position, wallet, amount) {
+  const db = getDb();
+  db.prepare('INSERT INTO league_prizes (league_id, position, wallet, amount) VALUES (?, ?, ?, ?)')
+    .run(leagueId, position, wallet.toLowerCase(), amount);
+}
+
+export function getLeaguePrizes(leagueId) {
+  const db = getDb();
+  return db.prepare('SELECT * FROM league_prizes WHERE league_id = ? ORDER BY position ASC').all(leagueId);
+}
