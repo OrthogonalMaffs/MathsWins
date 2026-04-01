@@ -1,0 +1,181 @@
+/* ── QF Games — Shared Game Shell (Sabre Theme) ──
+   Include in every /qf-dapp/games/{id}/index.html
+   Provides: silver/graphite colour scheme, fonts, wallet bar, back nav
+*/
+
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;700&family=JetBrains+Mono:wght@400;500&family=Playfair+Display:wght@700&display=swap');
+
+:root {
+  /* Sabre palette — charcoal + brushed silver */
+  --bg:            #0e1013;
+  --surface:       #16181c;
+  --surface2:      #1e2025;
+  --surface3:      #26282e;
+
+  --silver:        #b8bcc6;
+  --silver-bright: #d4d8e2;
+  --silver-dim:    rgba(184,188,198,0.08);
+  --silver-glow:   rgba(184,188,198,0.12);
+  --silver-border: rgba(184,188,198,0.15);
+
+  --text-white:    #e8eaf0;
+  --text:          #8a8f9c;
+  --muted:         #4a4e5a;
+
+  --border:        #1e2228;
+  --border2:       #2a2e36;
+
+  --grid-border:   #3a3e48;
+  --grid-box:      #5a5e68;
+
+  --gold:          #c9a84c;
+  --green:         #3a8a5c;
+  --green-dim:     rgba(58,138,92,0.08);
+  --red:           #b03a3a;
+  --red-dim:       rgba(176,58,58,0.08);
+  --blue:          #3a6a9c;
+
+  --note-col:      #6a7a9c;
+
+  /* Legacy aliases — games that reference old variable names */
+  --ink:           #0e1013;
+  --gold-warm:     #d4d8e2;
+  --gold-dim:      rgba(184,188,198,0.08);
+  --gold-glow:     rgba(184,188,198,0.12);
+  --teal:          #b8bcc6;
+  --teal-bright:   #d4d8e2;
+  --teal-dim:      rgba(184,188,198,0.08);
+  --text-bright:   #e8eaf0;
+  --muted2:        #2a2e36;
+  --warn:          #c9a84c;
+  --given-col:     #d4d8e2;
+  --qf:            #c9a84c;
+}
+
+* { margin: 0; padding: 0; box-sizing: border-box; }
+
+body {
+  font-family: 'Inter', sans-serif;
+  background: var(--bg);
+  color: var(--text);
+  min-height: 100vh;
+  -webkit-font-smoothing: antialiased;
+}
+
+/* ── Wallet Bar ── */
+.dapp-bar {
+  position: sticky; top: 0; z-index: 100;
+  background: rgba(14,16,19,.94); backdrop-filter: blur(12px);
+  border-bottom: 1px solid var(--border);
+  padding: .5rem 1.25rem;
+  display: flex; align-items: center; justify-content: space-between;
+}
+.dapp-bar-left { display: flex; align-items: center; gap: .75rem; }
+.dapp-back {
+  font-size: .7rem; color: var(--muted); text-decoration: none;
+  padding: .3rem .7rem; border: 1px solid var(--border); border-radius: 6px;
+  transition: all .15s;
+}
+.dapp-back:hover { border-color: var(--silver-border); color: var(--text); }
+.dapp-logo {
+  font-family: 'Playfair Display', serif; font-size: 1rem;
+  color: var(--text-white); letter-spacing: .02em; text-decoration: none;
+}
+.dapp-logo span { color: var(--silver-bright); }
+.dapp-badge {
+  font-family: 'JetBrains Mono', monospace; font-size: .5rem;
+  padding: 2px 6px; border-radius: 10px;
+  background: var(--silver-dim); color: var(--silver); border: 1px solid var(--silver-border);
+}
+.dapp-bar-right { display: flex; align-items: center; gap: .6rem; }
+.dapp-balance { font-family: 'JetBrains Mono', monospace; font-size: .75rem; color: var(--silver-bright); }
+.dapp-addr {
+  font-family: 'JetBrains Mono', monospace; font-size: .7rem; color: var(--muted);
+  background: var(--surface); border: 1px solid var(--border);
+  padding: .25rem .5rem; border-radius: 6px;
+}
+.dapp-qf-name {
+  font-family: 'JetBrains Mono', monospace; font-size: .7rem; color: var(--silver-bright);
+  background: var(--surface2); border: 1px solid var(--silver-border);
+  padding: .25rem .5rem; border-radius: 6px;
+}
+.dapp-connect {
+  font-family: 'Inter', sans-serif; font-weight: 600; font-size: .75rem;
+  padding: .4rem 1rem; border-radius: 6px; border: 1px solid var(--silver-border);
+  background: var(--silver-dim); color: var(--silver-bright); cursor: pointer; transition: all .15s;
+}
+.dapp-connect:hover { background: var(--silver-bright); color: var(--bg); }
+
+/* ── Game Container ── */
+.game-container {
+  max-width: 700px;
+  margin: 0 auto;
+  padding: 1.5rem 1.25rem 3rem;
+}
+
+/* ── Common Headings ── */
+.game-title {
+  font-family: 'Playfair Display', serif;
+  font-size: 2.2rem;
+  color: var(--text-white);
+  letter-spacing: .02em;
+  text-align: center;
+  margin-bottom: .25rem;
+}
+.game-subtitle {
+  font-size: .8rem;
+  color: var(--muted);
+  text-align: center;
+  margin-bottom: 1.5rem;
+}
+
+/* ── Buttons ── */
+.btn {
+  font-family: 'Inter', sans-serif; font-weight: 600; font-size: .82rem;
+  padding: .65rem 1.5rem; border: none; border-radius: 6px;
+  cursor: pointer; transition: all .15s;
+}
+.btn-gold, .btn-silver { background: var(--silver-bright); color: var(--bg); }
+.btn-gold:hover, .btn-silver:hover { opacity: .85; }
+.btn-teal { background: var(--silver); color: var(--bg); }
+.btn-teal:hover { opacity: .85; }
+.btn-outline {
+  background: transparent; border: 1px solid var(--border); color: var(--text);
+}
+.btn-outline:hover { border-color: var(--silver-border); color: var(--silver); }
+
+/* ── Cards/Panels ── */
+.panel {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: 10px;
+  padding: 1.25rem;
+  margin-bottom: 1rem;
+}
+
+/* ── Mono text ── */
+.mono { font-family: 'JetBrains Mono', monospace; }
+
+/* ── Score/stat display ── */
+.stat-row { display: flex; gap: 1.5rem; justify-content: center; margin: 1rem 0; }
+.stat { text-align: center; }
+.stat-val { font-family: 'JetBrains Mono', monospace; font-size: 1.3rem; color: var(--silver-bright); }
+.stat-label { font-size: .6rem; color: var(--muted); text-transform: uppercase; letter-spacing: .08em; }
+
+/* ── Timer ── */
+.timer { font-family: 'JetBrains Mono', monospace; font-size: 1.2rem; text-align: center; color: var(--silver-bright); margin: .75rem 0; }
+
+/* ── Result ── */
+.result-box {
+  text-align: center; padding: 1rem; margin: 1rem 0; border-radius: 8px;
+}
+.result-box.exact { background: rgba(58,138,92,.1); border: 1px solid rgba(58,138,92,.2); }
+.result-box.close { background: var(--silver-dim); border: 1px solid var(--silver-border); }
+.result-box.miss { background: rgba(176,58,58,.08); border: 1px solid rgba(176,58,58,.15); }
+
+/* ── Mobile ── */
+@media (max-width: 600px) {
+  .game-title { font-size: 1.8rem; }
+  .dapp-bar { flex-wrap: wrap; gap: .3rem; }
+  .dapp-badge { display: none; }
+}

@@ -84,34 +84,7 @@ h1 span{background:linear-gradient(135deg,var(--silver-bright),var(--silver),#8a
 .hs-num{font-family:'JetBrains Mono',monospace;font-size:1.4rem;font-weight:500;color:var(--silver-bright)}
 .hs-label{font-size:.52rem;color:var(--muted);text-transform:uppercase;letter-spacing:.1em;margin-top:.15rem}
 
-/* ── Week Countdown ── */
-.week-bar{
-  background:var(--surface);border:1px solid var(--border);border-radius:10px;
-  padding:.8rem 1.2rem;margin:1.5rem 0;display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:.5rem;
-}
-.week-label{font-size:.65rem;color:var(--muted);text-transform:uppercase;letter-spacing:.08em}
-.week-countdown{font-family:'JetBrains Mono',monospace;font-size:1rem;color:var(--silver-bright)}
-.week-id{font-family:'JetBrains Mono',monospace;font-size:.65rem;color:var(--muted)}
-.week-help{
-  display:inline-flex;align-items:center;justify-content:center;
-  width:14px;height:14px;border-radius:50%;font-size:.5rem;
-  background:var(--surface2);border:1px solid var(--border2);color:var(--muted);
-  cursor:help;vertical-align:middle;margin-left:.3rem;position:relative;
-}
-.week-help:hover{color:var(--silver);border-color:var(--silver-border)}
-.week-help .week-tooltip{
-  display:none;position:absolute;bottom:calc(100% + 8px);left:50%;transform:translateX(-50%);
-  width:260px;padding:.7rem .8rem;border-radius:8px;
-  background:var(--surface2);border:1px solid var(--border2);
-  font-family:'JetBrains Mono',monospace;font-size:.55rem;font-weight:400;
-  color:var(--text);line-height:1.6;letter-spacing:0;text-transform:none;
-  box-shadow:0 8px 24px rgba(0,0,0,.4);z-index:50;pointer-events:none;
-}
-.week-help .week-tooltip::after{
-  content:'';position:absolute;top:100%;left:50%;transform:translateX(-50%);
-  border:5px solid transparent;border-top-color:var(--border2);
-}
-.week-help:hover .week-tooltip{display:block}
+/* week countdown removed — leagues only */
 
 /* ── Duel Banner ── */
 .duel-banner{
@@ -222,18 +195,48 @@ h1 span{background:linear-gradient(135deg,var(--silver-bright),var(--silver),#8a
 .gc-badge.duel{background:rgba(201,168,76,.08);color:var(--gold);border:1px solid rgba(201,168,76,.2)}
 .gc-desc{font-size:.68rem;color:var(--muted);line-height:1.5;margin-bottom:.5rem}
 
-.gc-pot{display:flex;align-items:center;gap:.4rem;font-family:'JetBrains Mono',monospace;font-size:.7rem;color:var(--silver-bright);margin-top:.4rem}
-.gc-pot .pot-icon{font-size:.8rem}
-.gc-entries{font-family:'JetBrains Mono',monospace;font-size:.55rem;color:var(--muted);margin-top:.2rem}
+/* pot/entries removed — leagues only now */
 
 .gc-tags{display:flex;gap:.3rem;margin-top:.4rem;flex-wrap:wrap}
 .gc-tag{font-family:'JetBrains Mono',monospace;font-size:.48rem;padding:1px 6px;border-radius:4px;background:var(--surface2);color:var(--muted);letter-spacing:.03em;border:1px solid var(--border)}
+
+.gc-league-info{display:flex;gap:.4rem;margin-top:.4rem;flex-wrap:wrap}
+.gc-league-tier{
+  font-family:'JetBrains Mono',monospace;font-size:.48rem;
+  padding:2px 8px;border-radius:10px;letter-spacing:.03em;
+}
+.gc-league-tier.bronze{background:rgba(160,120,48,.08);color:#a07830;border:1px solid rgba(160,120,48,.2)}
+.gc-league-tier.silver{background:var(--silver-dim);color:var(--silver);border:1px solid var(--silver-border)}
 
 .gc-duel-tag{
   display:inline-flex;align-items:center;gap:.3rem;
   font-family:'JetBrains Mono',monospace;font-size:.5rem;
   padding:2px 8px;border-radius:10px;margin-top:.4rem;
   background:var(--silver-dim);color:var(--silver);border:1px solid var(--silver-border);
+}
+
+/* ── How It Works ── */
+.how-it-works{
+  background:var(--surface);border:1px solid var(--border);border-radius:10px;
+  padding:1.4rem;margin:1.5rem 0;
+}
+.how-it-works h3{
+  font-family:'Playfair Display',serif;font-size:1.1rem;color:var(--text-white);
+  text-align:center;margin-bottom:1rem;
+}
+.hiw-steps{display:grid;grid-template-columns:repeat(3,1fr);gap:1rem}
+.hiw-step{text-align:center;padding:.6rem}
+.hiw-icon{
+  font-family:'JetBrains Mono',monospace;font-size:1rem;font-weight:500;
+  width:32px;height:32px;border-radius:50%;display:inline-flex;align-items:center;justify-content:center;
+  background:var(--silver-dim);color:var(--silver-bright);border:1px solid var(--silver-border);
+  margin-bottom:.5rem;
+}
+.hiw-title{font-family:'Inter',sans-serif;font-size:.78rem;font-weight:600;color:var(--text-white);margin-bottom:.25rem}
+.hiw-desc{font-family:'JetBrains Mono',monospace;font-size:.55rem;color:var(--muted);line-height:1.6}
+.hiw-split{
+  text-align:center;margin-top:1rem;padding-top:.8rem;border-top:1px solid var(--border);
+  font-family:'JetBrains Mono',monospace;font-size:.58rem;color:var(--silver);letter-spacing:.03em;
 }
 
 /* ── Footer ── */
@@ -255,6 +258,7 @@ footer a:hover{color:var(--silver-bright)}
   .game-grid,.game-grid.free-grid{grid-template-columns:1fr;gap:12px}
   .wallet-bar{flex-wrap:wrap;gap:.4rem}
   .wb-balance{font-size:.7rem}
+  .hiw-steps{grid-template-columns:1fr;gap:.6rem}
   .duel-banner{flex-direction:column;text-align:center}
   .duel-code-entry{justify-content:center}
 }
@@ -286,12 +290,35 @@ footer a:hover{color:var(--silver-bright)}
 <!-- HERO -->
 <div class="hero">
   <h1>QF <span>Games</span></h1>
-  <p class="tagline">Competitive maths games on QF Network. Duel your rivals, climb leagues, earn trophies. Pure skill.</p>
+  <p class="tagline">Competitive maths games on QF Network. Enter leagues, duel your rivals, win prizes. Pure skill.</p>
   <div class="hero-stats">
-    <div class="hs"><div class="hs-num" id="totalGames">16</div><div class="hs-label">Games (9 Competitive)</div></div>
-    <div class="hs"><div class="hs-num" id="totalPot">&mdash;</div><div class="hs-label">Total Pot</div></div>
-    <div class="hs"><div class="hs-num" id="totalPlayers">&mdash;</div><div class="hs-label">This Week</div></div>
+    <div class="hs"><div class="hs-num">9</div><div class="hs-label">Competitive Games</div></div>
+    <div class="hs"><div class="hs-num">7</div><div class="hs-label">Free Games</div></div>
+    <div class="hs"><div class="hs-num" id="activeLeagues">&mdash;</div><div class="hs-label">Active Leagues</div></div>
   </div>
+</div>
+
+<!-- HOW IT WORKS -->
+<div class="how-it-works">
+  <h3>How It Works</h3>
+  <div class="hiw-steps">
+    <div class="hiw-step">
+      <div class="hiw-icon">1</div>
+      <div class="hiw-title">Enter a League</div>
+      <div class="hiw-desc">Join a Bronze (100 QF) or Silver (250 QF) league. 8&ndash;16 players per league.</div>
+    </div>
+    <div class="hiw-step">
+      <div class="hiw-icon">2</div>
+      <div class="hiw-title">Play 10 Puzzles</div>
+      <div class="hiw-desc">Same puzzles for every player. Play in any order over 14 days. Skill decides the score.</div>
+    </div>
+    <div class="hiw-step">
+      <div class="hiw-icon">3</div>
+      <div class="hiw-title">Top 4 Win</div>
+      <div class="hiw-desc">1st: 50% &middot; 2nd: 25% &middot; 3rd: 15% &middot; 4th: 10% of the prize pool.</div>
+    </div>
+  </div>
+  <div class="hiw-split">5% burned &middot; 5% team &middot; 90% prize pool</div>
 </div>
 
 <!-- DUEL BANNER -->
@@ -304,15 +331,6 @@ footer a:hover{color:var(--silver-bright)}
     <input type="text" class="duel-code-input" id="duelCodeInput" maxlength="6" placeholder="ABC123" spellcheck="false" autocomplete="off">
     <button class="btn-accept" onclick="acceptDuelCode()">Accept</button>
   </div>
-</div>
-
-<!-- WEEK COUNTDOWN -->
-<div class="week-bar">
-  <div>
-    <div class="week-label">Settlement Countdown <span class="week-help">?<span class="week-tooltip">Each week runs Monday to Sunday. At the end of the week, scores are finalised and prizes distributed to top players. Your best score across the week counts.</span></span></div>
-    <div class="week-countdown" id="countdown">&mdash;</div>
-  </div>
-  <div class="week-id" id="weekId"></div>
 </div>
 
 <!-- FILTER -->
@@ -417,22 +435,22 @@ function renderGames(filter) {
     card.onclick = function() { openGame(g.id); };
 
     var badge = g.paid
-      ? '<span class="gc-badge paid">25 QF</span>'
+      ? '<span class="gc-badge paid">League</span>'
       : '<span class="gc-badge free">FREE</span>';
 
-    var potHtml = g.paid
-      ? '<div class="gc-pot"><span class="pot-icon">&#9876;</span> <span class="pot-val" data-game="' + g.id + '">&mdash;</span> QF pot</div><div class="gc-entries"><span class="entry-count" data-game="' + g.id + '">0</span> entries this week</div>'
+    var leagueHtml = g.paid
+      ? '<div class="gc-league-info"><span class="gc-league-tier bronze">Bronze 100 QF</span> <span class="gc-league-tier silver">Silver 250 QF</span></div>'
       : '';
 
     var duelHtml = g.duel
-      ? '<div class="gc-duel-tag">&#9876; 1v1 Duels Live</div>'
+      ? '<div class="gc-duel-tag">&#9876; 1v1 Duels</div>'
       : '';
 
     var tags = g.tags.map(function(t) { return '<span class="gc-tag">' + t + '</span>'; }).join('');
 
     card.innerHTML = '<div class="gc-top"><span class="gc-title">' + g.name + '</span>' + badge + '</div>'
       + '<div class="gc-desc">' + g.desc + '</div>'
-      + potHtml
+      + leagueHtml
       + duelHtml
       + '<div class="gc-tags">' + tags + '</div>';
 
@@ -450,39 +468,21 @@ function openGame(id) {
   window.location.href = '/qf-dapp/games/' + id + '/';
 }
 
-// ── Countdown Timer ─────────────────────────────────────────────────────────
-function updateCountdown() {
-  var now = new Date();
-  var day = now.getUTCDay();
-  var daysUntilSunday = day === 0 ? 0 : 7 - day;
-  var sunday = new Date(Date.UTC(
-    now.getUTCFullYear(), now.getUTCMonth(), now.getUTCDate() + daysUntilSunday,
-    23, 59, 59
-  ));
-  var diff = Math.max(0, Math.floor((sunday - now) / 1000));
-  var d = Math.floor(diff / 86400);
-  var h = Math.floor((diff % 86400) / 3600);
-  var m = Math.floor((diff % 3600) / 60);
-  var s = diff % 60;
-  var parts = [];
-  if (d > 0) parts.push(d + 'd');
-  parts.push(h + 'h');
-  parts.push(m + 'm');
-  parts.push(s + 's');
-  document.getElementById('countdown').textContent = parts.join(' ');
-
-  var jan1 = new Date(Date.UTC(now.getUTCFullYear(), 0, 1));
-  var dayOfYear = Math.floor((now - jan1) / 86400000);
-  var weekNum = Math.ceil((dayOfYear + jan1.getUTCDay() + 1) / 7);
-  document.getElementById('weekId').textContent = 'Week ' + now.getUTCFullYear() + '-' + weekNum;
+// ── Fetch active league count ───────────────────────────────────────────────
+async function fetchLeagueCount() {
+  try {
+    var API = 'https://dapp-api.mathswins.co.uk/api/dapp';
+    if (location.hostname === 'localhost' || location.hostname === '127.0.0.1') API = 'http://127.0.0.1:3860/api/dapp';
+    var res = await fetch(API + '/leagues/sudoku-duel', { method: 'GET' });
+    var leagues = await res.json();
+    var el = document.getElementById('activeLeagues');
+    if (el) el.textContent = Array.isArray(leagues) ? leagues.length : '0';
+  } catch (e) { /* ignore */ }
 }
 
 // ── Init ────────────────────────────────────────────────────────────────────
 renderGames('paid');
-updateCountdown();
-setInterval(updateCountdown, 1000);
-
-// Auto-connect handled by qf-wallet.js
+fetchLeagueCount();
 </script>
 </body>
 </html>
