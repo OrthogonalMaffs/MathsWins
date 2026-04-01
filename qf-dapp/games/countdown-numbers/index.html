@@ -3,45 +3,45 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Countdown Numbers — Reach the Target | MathsWins</title>
+<title>Countdown Numbers — Reach the Target | QF Games</title>
 <meta name="description" content="The classic Countdown numbers game. Six numbers, one target — use addition, subtraction, multiplication and division to hit the target. Server-scored with speed multiplier.">
 <meta property="og:title" content="Countdown Numbers — Can You Reach the Target?">
 <meta property="og:description" content="Six numbers. One target. The classic arithmetic challenge. Accuracy scoring with speed multiplier. Free to play.">
-<meta property="og:url" content="https://mathswins.co.uk/dapp/games/countdown-numbers/">
+<meta property="og:url" content="https://mathswins.co.uk/qf-dapp/games/countdown-numbers/">
 <meta property="og:image" content="https://mathswins.co.uk/assets/og-image.png">
-<link rel="canonical" href="https://mathswins.co.uk/dapp/games/countdown-numbers/">
-<link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=DM+Mono:wght@400;500&family=Outfit:wght@300;400;600;700&display=swap" rel="stylesheet">
+<link rel="canonical" href="https://mathswins.co.uk/qf-dapp/games/countdown-numbers/">
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;700&family=JetBrains+Mono:wght@400;500&family=Playfair+Display:wght@700&display=swap" rel="stylesheet">
 <script async src="https://www.googletagmanager.com/gtag/js?id=G-7GTLYCZMXN"></script>
 <script>window.dataLayer=window.dataLayer||[];function gtag(){dataLayer.push(arguments);}gtag('js',new Date());gtag('consent','default',{analytics_storage:'denied',ad_storage:'denied',ad_user_data:'denied',ad_personalization:'denied'});gtag('config','G-7GTLYCZMXN',{send_page_view:true,anonymize_ip:true});</script>
 <style>
-:root{--bg:#050709;--surface:#0a0d14;--surface2:#0f1319;--border:#161c28;--border2:#1e2638;--gold:#d4a847;--teal:#0d9488;--teal-bright:#2dd4bf;--green-bright:#2dd4a0;--red-bright:#ef5350;--sky:#0ea5e9;--text:#c8cdd8;--text-bright:#e8ecf4;--muted:#4a5568}
+:root{--bg:#0e1013;--surface:#16181c;--surface2:#1e2025;--border:#1e2228;--border2:#2a2e36;--gold:#c9a84c;--teal:#0d9488;--teal-bright:#b8bcc6;--green-bright:#3a8a5c;--red-bright:#b03a3a;--sky:#0ea5e9;--text:#8a8f9c;--text-bright:#e8eaf0;--muted:#4a4e5a}
 *{margin:0;padding:0;box-sizing:border-box}
-body{background:var(--bg);color:var(--text);font-family:'Outfit',sans-serif;-webkit-font-smoothing:antialiased;min-height:100vh;display:flex;flex-direction:column;align-items:center;justify-content:center;padding:1.5rem}
+body{background:var(--bg);color:var(--text);font-family:'Inter',sans-serif;-webkit-font-smoothing:antialiased;min-height:100vh;display:flex;flex-direction:column;align-items:center;justify-content:center;padding:1.5rem}
 .game-container{max-width:600px;width:100%}
 header{text-align:center;margin-bottom:2rem}
 .back-link{font-size:.8rem;color:var(--muted);text-decoration:none;display:block;margin-bottom:1rem}.back-link:hover{color:var(--teal-bright)}
-h1{font-family:'Bebas Neue',sans-serif;font-size:2.5rem;color:var(--text-bright);letter-spacing:.04em}
+h1{font-family:'Playfair Display',sans-serif;font-size:2.5rem;color:var(--text-bright);letter-spacing:.04em}
 .tagline{font-size:.85rem;color:var(--muted);margin-top:.25rem}
 
 /* Target display */
 .target-display{text-align:center;margin:1.5rem 0}
-.target-label{font-family:'Outfit',sans-serif;font-size:.7rem;text-transform:uppercase;letter-spacing:.15em;color:var(--muted)}
-.target-num{font-family:'DM Mono',monospace;font-size:4rem;font-weight:500;color:var(--gold);line-height:1.1}
+.target-label{font-family:'Inter',sans-serif;font-size:.7rem;text-transform:uppercase;letter-spacing:.15em;color:var(--muted)}
+.target-num{font-family:'JetBrains Mono',monospace;font-size:4rem;font-weight:500;color:var(--gold);line-height:1.1}
 
 /* Timer */
-.timer-text{font-family:'DM Mono',monospace;font-size:1.2rem;text-align:center;color:var(--text-bright);margin:.75rem 0}
+.timer-text{font-family:'JetBrains Mono',monospace;font-size:1.2rem;text-align:center;color:var(--text-bright);margin:.75rem 0}
 
 /* Round indicator */
-.round-indicator{font-family:'DM Mono',monospace;font-size:.85rem;text-align:center;color:var(--muted);margin-bottom:.5rem}
+.round-indicator{font-family:'JetBrains Mono',monospace;font-size:.85rem;text-align:center;color:var(--muted);margin-bottom:.5rem}
 .round-indicator span{color:var(--gold)}
 
 /* Number pills */
 .tiles{display:flex;gap:.5rem;justify-content:center;flex-wrap:wrap;margin:1.5rem 0}
-.tile{font-family:'DM Mono',monospace;font-size:1.4rem;font-weight:500;padding:.5rem 1.1rem;display:flex;align-items:center;justify-content:center;background:var(--surface);border:2px solid var(--border2);border-radius:20px;color:var(--text-bright);user-select:none}
+.tile{font-family:'JetBrains Mono',monospace;font-size:1.4rem;font-weight:500;padding:.5rem 1.1rem;display:flex;align-items:center;justify-content:center;background:var(--surface);border:2px solid var(--border2);border-radius:20px;color:var(--text-bright);user-select:none}
 
 /* Expression input */
 .expr-area{margin:1.5rem 0}
-.expr-input{font-family:'DM Mono',monospace;font-size:1.5rem;width:100%;padding:1rem 1.25rem;background:var(--surface);border:2px solid var(--border2);border-radius:8px;color:var(--text-bright);outline:none;text-align:center}
+.expr-input{font-family:'JetBrains Mono',monospace;font-size:1.5rem;width:100%;padding:1rem 1.25rem;background:var(--surface);border:2px solid var(--border2);border-radius:8px;color:var(--text-bright);outline:none;text-align:center}
 .expr-input:focus{border-color:var(--teal-bright)}
 .expr-input::placeholder{color:var(--muted);font-size:1rem}
 .expr-input:disabled{opacity:.5;cursor:not-allowed}
@@ -51,34 +51,34 @@ h1{font-family:'Bebas Neue',sans-serif;font-size:2.5rem;color:var(--text-bright)
 .result-flash.exact{display:block;background:rgba(45,212,160,.12);border:1px solid rgba(45,212,160,.35);color:var(--green-bright)}
 .result-flash.close{display:block;background:rgba(212,168,71,.1);border:1px solid rgba(212,168,71,.3);color:var(--gold)}
 .result-flash.miss{display:block;background:rgba(239,83,80,.08);border:1px solid rgba(239,83,80,.2);color:var(--red-bright)}
-.result-flash .flash-title{font-family:'Bebas Neue',sans-serif;font-size:1.5rem;letter-spacing:.03em}
-.result-flash .flash-detail{font-family:'DM Mono',monospace;font-size:.9rem;margin-top:.35rem;color:var(--text)}
-.result-flash .flash-points{font-family:'DM Mono',monospace;font-size:1.1rem;margin-top:.25rem}
+.result-flash .flash-title{font-family:'Playfair Display',sans-serif;font-size:1.5rem;letter-spacing:.03em}
+.result-flash .flash-detail{font-family:'JetBrains Mono',monospace;font-size:.9rem;margin-top:.35rem;color:var(--text)}
+.result-flash .flash-points{font-family:'JetBrains Mono',monospace;font-size:1.1rem;margin-top:.25rem}
 
 /* Score bar */
 .score-bar{display:flex;gap:1.5rem;justify-content:center;margin:1rem 0;font-size:.8rem;color:var(--muted)}
 .score-bar .stat-item{text-align:center}
-.score-bar .stat-val{font-family:'DM Mono',monospace;font-size:1.1rem;color:var(--text-bright);display:block}
+.score-bar .stat-val{font-family:'JetBrains Mono',monospace;font-size:1.1rem;color:var(--text-bright);display:block}
 
 /* Controls */
 .controls{display:flex;gap:.75rem;justify-content:center;flex-wrap:wrap;margin:1.5rem 0}
-.btn{font-family:'Outfit',sans-serif;font-weight:600;font-size:.85rem;padding:.65rem 1.5rem;border:none;border-radius:6px;cursor:pointer;transition:all .15s}
+.btn{font-family:'Inter',sans-serif;font-weight:600;font-size:.85rem;padding:.65rem 1.5rem;border:none;border-radius:6px;cursor:pointer;transition:all .15s}
 .btn-primary{background:var(--teal-bright);color:var(--bg)}.btn-primary:hover{opacity:.85}
 .btn-secondary{background:var(--surface);border:1px solid var(--border);color:var(--text)}.btn-secondary:hover{border-color:var(--teal-bright)}
 .btn:disabled{opacity:.4;cursor:not-allowed}
 
 /* Info panel */
 .info-panel{background:var(--surface);border:1px solid var(--border);border-radius:10px;padding:1.25rem;margin:1.5rem 0}
-.info-panel h2{font-family:'Bebas Neue',sans-serif;font-size:1.5rem;color:var(--text-bright);margin-bottom:.75rem;text-align:center}
+.info-panel h2{font-family:'Playfair Display',sans-serif;font-size:1.5rem;color:var(--text-bright);margin-bottom:.75rem;text-align:center}
 .info-panel p{font-size:.85rem;color:var(--text);line-height:1.6;margin-bottom:.5rem}
-.info-panel .highlight{color:var(--gold);font-family:'DM Mono',monospace;font-weight:500}
+.info-panel .highlight{color:var(--gold);font-family:'JetBrains Mono',monospace;font-weight:500}
 
 /* Final modal */
 .modal-overlay{position:fixed;inset:0;z-index:300;background:rgba(5,7,9,.92);display:flex;align-items:center;justify-content:center;padding:1rem}
 .modal{max-width:420px;width:100%;background:var(--surface);border:1px solid var(--border2);border-radius:12px;padding:2rem;text-align:center}
-.modal h2{font-family:'Bebas Neue',sans-serif;font-size:2rem;color:var(--text-bright);margin-bottom:1rem}
-.modal .final-score{font-family:'DM Mono',monospace;font-size:3rem;color:var(--gold);margin:.75rem 0}
-.modal .final-detail{font-family:'DM Mono',monospace;font-size:.85rem;color:var(--muted);margin-bottom:1.5rem}
+.modal h2{font-family:'Playfair Display',sans-serif;font-size:2rem;color:var(--text-bright);margin-bottom:1rem}
+.modal .final-score{font-family:'JetBrains Mono',monospace;font-size:3rem;color:var(--gold);margin:.75rem 0}
+.modal .final-detail{font-family:'JetBrains Mono',monospace;font-size:.85rem;color:var(--muted);margin-bottom:1.5rem}
 
 /* Error display */
 .error-msg{font-size:.85rem;color:var(--red-bright);text-align:center;margin:.75rem 0}
@@ -86,19 +86,32 @@ h1{font-family:'Bebas Neue',sans-serif;font-size:2.5rem;color:var(--text-bright)
 /* Stats */
 .stats{display:flex;gap:1.5rem;justify-content:center;margin:1rem 0;font-size:.8rem;color:var(--muted)}
 .stat-item{text-align:center}
-.stat-val{font-family:'DM Mono',monospace;font-size:1.1rem;color:var(--text-bright);display:block}
+.stat-val{font-family:'JetBrains Mono',monospace;font-size:1.1rem;color:var(--text-bright);display:block}
 
 footer{margin-top:2rem;text-align:center;font-size:.7rem;color:var(--muted)}
 footer a{color:var(--muted);text-decoration:none}footer a:hover{color:var(--teal-bright)}
+
+/* How to Play — collapsible */
+.htp{width:100%;background:var(--surface,#16181c);border:1px solid var(--border,#1e2228);border-radius:10px;overflow:hidden;margin-bottom:1rem}
+.htp-toggle{width:100%;padding:.8rem 1rem;display:flex;justify-content:space-between;align-items:center;cursor:pointer;background:none;border:none;color:var(--text,#8a8f9c);font-family:'Inter','Outfit',sans-serif;font-size:.75rem;font-weight:600;text-align:left}
+.htp-toggle:hover{color:var(--silver-bright,#e8eaf0)}
+.htp-arrow{transition:transform .2s;font-size:.6rem}
+.htp.open .htp-arrow{transform:rotate(180deg)}
+.htp-body{display:none;padding:0 1rem .8rem;font-size:.65rem;color:var(--muted,#4a4e5a);line-height:1.7}
+.htp.open .htp-body{display:block}
+.htp-body p{margin-bottom:.5rem}
+.htp-body ul{margin:.3rem 0 .5rem 1.2rem}
+.htp-body li{margin-bottom:.2rem}
+.htp-body strong{color:var(--text,#8a8f9c)}
 </style>
 <meta name="twitter:card" content="summary_large_image">
-<meta name="twitter:title" content="MathsWins">
+<meta name="twitter:title" content="QF Games">
 <meta name="twitter:image" content="https://mathswins.co.uk/assets/og-image.png">
-<link rel="stylesheet" href="../dapp-shell.css">
+<link rel="stylesheet" href="../qf-shell.css">
 <script src="https://cdn.jsdelivr.net/npm/ethers@6/dist/ethers.umd.min.js"></script>
 </head>
 <body>
-<script src="../dapp-wallet.js"></script>
+<script src="../qf-wallet.js"></script>
 
 <div class="game-container">
 
@@ -106,6 +119,21 @@ footer a{color:var(--muted);text-decoration:none}footer a:hover{color:var(--teal
   <h1>COUNTDOWN NUMBERS</h1>
   <p class="tagline">Six numbers. One target. Pure arithmetic.</p>
 </header>
+
+<div class="htp">
+  <button class="htp-toggle">How to Play <span class="htp-arrow">&#9660;</span></button>
+  <div class="htp-body">
+    <p>You get <strong>6 numbers and a target</strong>. Use addition, subtraction, multiplication, and division to reach the target.</p>
+    <ul>
+      <li>Each number can only be used <strong>once</strong></li>
+      <li>You don't have to use all 6 numbers</li>
+      <li>Only whole positive numbers allowed at each step</li>
+      <li>5 rounds per session, difficulty increases</li>
+      <li>Getting within range of the target scores partial points</li>
+    </ul>
+    <p>Hitting the exact target scores maximum. Closer answers score more than distant ones.</p>
+  </div>
+</div>
 
 <!-- START SCREEN -->
 <div id="startScreen">
@@ -158,7 +186,7 @@ footer a{color:var(--muted);text-decoration:none}footer a:hover{color:var(--teal
 </div>
 
 <footer>
-  <p><a href="/dapp/">MathsWins</a> · <a href="/games/">Games</a> · Free · No data collected</p>
+  <p><a href="/qf-dapp/">QF Games</a> · <a href="/games/">Games</a> · Free · No data collected</p>
 </footer>
 
 <script>
@@ -446,5 +474,10 @@ footer a{color:var(--muted);text-decoration:none}footer a:hover{color:var(--teal
 </script>
 
 <script src="../dapp-entry.js"></script>
+<script>
+document.querySelectorAll('.htp-toggle').forEach(function(btn){
+  btn.addEventListener('click',function(){this.closest('.htp').classList.toggle('open')});
+});
+</script>
 </body>
 </html>

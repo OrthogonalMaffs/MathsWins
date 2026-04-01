@@ -4,39 +4,39 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <meta name="description" content="Spot the pattern and find the rule. Sequence Solver covers arithmetic, geometric, quadratic, and sigma notation across KS3, GCSE, and A-Level.">
-<meta property="og:title" content="Sequence Solver · MathsWins">
+<meta property="og:title" content="Sequence Solver · QF Games">
 <meta property="og:description" content="Spot the pattern and find the rule. Covers arithmetic, geometric, quadratic sequences and sigma notation.">
-<meta property="og:url" content="https://mathswins.co.uk/dapp/games/sequence-solver/">
+<meta property="og:url" content="https://mathswins.co.uk/qf-dapp/games/sequence-solver/">
 <meta property="og:image" content="https://mathswins.co.uk/assets/og-image.png">
-<link rel="canonical" href="https://mathswins.co.uk/dapp/games/sequence-solver/">
+<link rel="canonical" href="https://mathswins.co.uk/qf-dapp/games/sequence-solver/">
 <link rel="icon" type="image/svg+xml" href="../../schools/assets/favicon.svg">
-<title>Sequence Solver · MathsWins</title>
+<title>Sequence Solver · QF Games</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
-<link href="https://fonts.googleapis.com/css2?family=Outfit:wght@400;600;700&family=DM+Mono:wght@400;500&family=Bebas+Neue&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;700&family=JetBrains+Mono:wght@400;500&family=Playfair+Display:wght@700&display=swap" rel="stylesheet">
 <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/katex.min.css">
 <script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/katex.min.js"></script>
 <script async src="https://www.googletagmanager.com/gtag/js?id=G-7GTLYCZMXN"></script>
 <script>window.dataLayer=window.dataLayer||[];function gtag(){dataLayer.push(arguments);}gtag('js',new Date());gtag('consent','default',{analytics_storage:'denied',ad_storage:'denied',ad_user_data:'denied',ad_personalization:'denied'});gtag('config','G-7GTLYCZMXN',{send_page_view:true,anonymize_ip:true});</script>
-<link rel="stylesheet" href="../dapp-shell.css">
+<link rel="stylesheet" href="../qf-shell.css">
 <script src="https://cdn.jsdelivr.net/npm/ethers@6/dist/ethers.umd.min.js"></script>
 <meta name="twitter:card" content="summary_large_image">
-<meta name="twitter:title" content="MathsWins">
+<meta name="twitter:title" content="QF Games">
 <meta name="twitter:image" content="https://mathswins.co.uk/assets/og-image.png">
 <style>
 *{margin:0;padding:0;box-sizing:border-box}
 :root{
-  --ink:#050709;--surface:#0a0d14;--gold:#d4a847;--teal:#2dd4bf;
-  --green:#2dd4a0;--red:#ef5350;--border:#161c28;--text:#c8cdd8;
-  --text-bright:#e8ecf4;--muted:#4a5568;--gold-dim:rgba(212,168,71,.06);
+  --ink:#0e1013;--surface:#16181c;--gold:#c9a84c;--teal:#b8bcc6;
+  --green:#3a8a5c;--red:#b03a3a;--border:#1e2228;--text:#8a8f9c;
+  --text-bright:#e8eaf0;--muted:#4a4e5a;--gold-dim:rgba(212,168,71,.06);
   --gold-glow:rgba(212,168,71,.12);--green-dim:rgba(45,212,160,.08);
   --red-dim:rgba(239,83,80,.08);
 }
-body{font-family:'Outfit',sans-serif;background:var(--ink);color:var(--text);min-height:100vh;display:flex;flex-direction:column;align-items:center}
+body{font-family:'Inter',sans-serif;background:var(--ink);color:var(--text);min-height:100vh;display:flex;flex-direction:column;align-items:center}
 .container{max-width:700px;width:100%;padding:1rem}
 
 /* ── Header ── */
 .header{text-align:center;padding:1.5rem 0 1rem}
-.header h1{font-family:'Bebas Neue',sans-serif;font-size:2.4rem;letter-spacing:.04em;color:var(--gold)}
+.header h1{font-family:'Playfair Display',sans-serif;font-size:2.4rem;letter-spacing:.04em;color:var(--gold)}
 .header .sub{font-size:.85rem;color:var(--muted);margin-top:.3rem}
 
 /* ── Info Panel ── */
@@ -47,11 +47,11 @@ body{font-family:'Outfit',sans-serif;background:var(--ink);color:var(--text);min
 .hud{display:flex;justify-content:space-between;align-items:center;padding:.8rem 1rem;background:var(--surface);border-radius:10px;border:1px solid var(--border);margin-bottom:1rem}
 .hud-item{text-align:center}
 .hud-label{font-size:.7rem;color:var(--muted);text-transform:uppercase;letter-spacing:.05em}
-.hud-val{font-family:'DM Mono',monospace;font-size:1.2rem;font-weight:500;color:var(--text-bright)}
+.hud-val{font-family:'JetBrains Mono',monospace;font-size:1.2rem;font-weight:500;color:var(--text-bright)}
 
 /* ── Question Card ── */
 .q-card{background:var(--surface);border:1px solid var(--border);border-radius:14px;padding:1.5rem;margin-bottom:1rem;text-align:center;min-height:130px;display:flex;flex-direction:column;justify-content:center;align-items:center;gap:.6rem}
-.q-card .seq{font-family:'DM Mono',monospace;font-size:1.3rem;letter-spacing:.05em;color:var(--teal)}
+.q-card .seq{font-family:'JetBrains Mono',monospace;font-size:1.3rem;letter-spacing:.05em;color:var(--teal)}
 .q-card .prompt{font-size:.85rem;color:var(--gold);font-weight:600;margin-top:.3rem}
 
 /* ── Options (vertical stack) ── */
@@ -59,7 +59,7 @@ body{font-family:'Outfit',sans-serif;background:var(--ink);color:var(--text);min
 .opt-btn{
   width:100%;padding:1rem 1.2rem;border-radius:10px;
   border:2px solid var(--border);background:var(--surface);
-  color:var(--text);font-family:'DM Mono',monospace;font-size:1rem;
+  color:var(--text);font-family:'JetBrains Mono',monospace;font-size:1rem;
   cursor:pointer;transition:all .15s;text-align:center;
   min-height:52px;display:flex;align-items:center;justify-content:center
 }
@@ -80,7 +80,7 @@ body{font-family:'Outfit',sans-serif;background:var(--ink);color:var(--text);min
 /* ── Result Flash ── */
 .result-flash{
   text-align:center;padding:.8rem;border-radius:10px;margin-bottom:1rem;
-  font-family:'DM Mono',monospace;font-size:.9rem;font-weight:500;display:none
+  font-family:'JetBrains Mono',monospace;font-size:.9rem;font-weight:500;display:none
 }
 .result-flash.correct{background:var(--green-dim);color:var(--green);border:1px solid var(--green);display:block}
 .result-flash.wrong{background:var(--red-dim);color:var(--red);border:1px solid var(--red);display:block}
@@ -95,9 +95,9 @@ body{font-family:'Outfit',sans-serif;background:var(--ink);color:var(--text);min
   background:var(--surface);border:1px solid var(--border);border-radius:16px;
   padding:2rem;text-align:center;max-width:420px;width:90%
 }
-.modal h2{font-family:'Bebas Neue',sans-serif;font-size:1.8rem;color:var(--gold);margin-bottom:.5rem}
+.modal h2{font-family:'Playfair Display',sans-serif;font-size:1.8rem;color:var(--gold);margin-bottom:.5rem}
 .modal .final-score{
-  font-family:'DM Mono',monospace;font-size:3rem;font-weight:500;
+  font-family:'JetBrains Mono',monospace;font-size:3rem;font-weight:500;
   background:linear-gradient(135deg,var(--gold),var(--teal));
   -webkit-background-clip:text;-webkit-text-fill-color:transparent;margin:1rem 0
 }
@@ -107,7 +107,7 @@ body{font-family:'Outfit',sans-serif;background:var(--ink);color:var(--text);min
 /* ── Buttons ── */
 .btn{
   padding:.75rem 1.8rem;border-radius:10px;border:none;
-  font-family:'Outfit',sans-serif;font-size:1rem;font-weight:600;
+  font-family:'Inter',sans-serif;font-size:1rem;font-weight:600;
   cursor:pointer;transition:transform .15s
 }
 .btn:hover{transform:scale(1.05)}
@@ -117,10 +117,23 @@ body{font-family:'Outfit',sans-serif;background:var(--ink);color:var(--text);min
 /* ── Screens ── */
 .screen{display:none}.screen.active{display:block}
 .katex{font-size:1.05em!important}.q-card .katex{font-size:1.25em!important}
+
+/* How to Play — collapsible */
+.htp{width:100%;background:var(--surface,#16181c);border:1px solid var(--border,#1e2228);border-radius:10px;overflow:hidden;margin-bottom:1rem}
+.htp-toggle{width:100%;padding:.8rem 1rem;display:flex;justify-content:space-between;align-items:center;cursor:pointer;background:none;border:none;color:var(--text,#8a8f9c);font-family:'Inter','Outfit',sans-serif;font-size:.75rem;font-weight:600;text-align:left}
+.htp-toggle:hover{color:var(--silver-bright,#e8eaf0)}
+.htp-arrow{transition:transform .2s;font-size:.6rem}
+.htp.open .htp-arrow{transform:rotate(180deg)}
+.htp-body{display:none;padding:0 1rem .8rem;font-size:.65rem;color:var(--muted,#4a4e5a);line-height:1.7}
+.htp.open .htp-body{display:block}
+.htp-body p{margin-bottom:.5rem}
+.htp-body ul{margin:.3rem 0 .5rem 1.2rem}
+.htp-body li{margin-bottom:.2rem}
+.htp-body strong{color:var(--text,#8a8f9c)}
 </style>
 </head>
 <body>
-<script src="../dapp-wallet.js"></script>
+<script src="../qf-wallet.js"></script>
 
 <div class="container">
 
@@ -129,6 +142,19 @@ body{font-family:'Outfit',sans-serif;background:var(--ink);color:var(--text);min
     <div class="header">
       <h1>Sequence Solver</h1>
       <div class="sub">Spot the pattern. Find the rule. What comes next?</div>
+    </div>
+    <div class="htp">
+      <button class="htp-toggle">How to Play <span class="htp-arrow">&#9660;</span></button>
+      <div class="htp-body">
+        <p>A sequence of numbers is shown with one missing. <strong>Work out the pattern and find the next number.</strong></p>
+        <ul>
+          <li><strong>20 questions</strong> across escalating difficulty</li>
+          <li>Patterns include arithmetic, geometric, squares, cubes, Fibonacci, and combinations</li>
+          <li>Base score of 100 per question, with time decay</li>
+          <li>Faster correct answers score higher</li>
+        </ul>
+        <p>Look for the difference between terms first. If that's not constant, check the difference of the differences.</p>
+      </div>
     </div>
     <div class="info-panel">
       <strong>100 points</strong> base per correct answer.<br>
@@ -166,7 +192,7 @@ body{font-family:'Outfit',sans-serif;background:var(--ink);color:var(--text);min
     <div class="stats" id="modal-stats"></div>
     <div class="modal-acts">
       <button class="btn btn-ghost" id="modal-again">Play Again</button>
-      <button class="btn btn-gold" onclick="window.location='/dapp/'">Back to Lobby</button>
+      <button class="btn btn-gold" onclick="window.location='/qf-dapp/'">Back to Lobby</button>
     </div>
   </div>
 </div>
@@ -469,5 +495,10 @@ body{font-family:'Outfit',sans-serif;background:var(--ink);color:var(--text);min
 </script>
 
 <script src="../dapp-entry.js"></script>
+<script>
+document.querySelectorAll('.htp-toggle').forEach(function(btn){
+  btn.addEventListener('click',function(){this.closest('.htp').classList.toggle('open')});
+});
+</script>
 </body>
 </html>

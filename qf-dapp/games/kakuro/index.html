@@ -11,43 +11,43 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <meta name="description" content="Kakuro — crossword meets Sudoku. Fill white cells with digits 1-9 so each run sums to its clue. No repeats in a run.">
-<meta property="og:title" content="Kakuro · MathsWins">
+<meta property="og:title" content="Kakuro · QF Games">
 <meta property="og:description" content="Crossword meets Sudoku. Fill white cells with digits 1-9 so each run sums to its clue. No repeats.">
-<meta property="og:url" content="https://mathswins.co.uk/dapp/games/kakuro/">
+<meta property="og:url" content="https://mathswins.co.uk/qf-dapp/games/kakuro/">
 <meta property="og:image" content="https://mathswins.co.uk/assets/og-image.png">
-<link rel="canonical" href="https://mathswins.co.uk/dapp/games/kakuro/">
-<title>Kakuro · MathsWins</title>
+<link rel="canonical" href="https://mathswins.co.uk/qf-dapp/games/kakuro/">
+<title>Kakuro · QF Games</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
-<link href="https://fonts.googleapis.com/css2?family=DM+Mono:ital,wght@0,300;0,400;0,500&family=Bebas+Neue&family=Outfit:wght@300;400;600;700&display=swap" rel="stylesheet">
-<link rel="stylesheet" href="../dapp-shell.css">
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;700&family=JetBrains+Mono:wght@400;500&family=Playfair+Display:wght@700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="../qf-shell.css">
 <meta name="twitter:card" content="summary_large_image">
-<meta name="twitter:title" content="Kakuro · MathsWins">
+<meta name="twitter:title" content="Kakuro · QF Games">
 <meta name="twitter:image" content="https://mathswins.co.uk/assets/og-image.png">
 <style>
 :root {
-  --ink:#050709;--surface:#0a0d14;--surface2:#0f1319;
-  --gold:#d4a847;--gold-warm:#e2b96a;--gold-dim:#7a5e28;
-  --teal:#2dd4bf;--teal-dim:#134e4a;
-  --text:#c8cdd8;--text-bright:#e8ecf4;--muted:#4a5568;
-  --border:#161c28;--border2:#1e2638;
-  --green:#2dd4a0;--red:#ef5350;--warn:#d4a847;
+  --ink:#0e1013;--surface:#16181c;--surface2:#1e2025;
+  --gold:#c9a84c;--gold-warm:#d4d8e2;--gold-dim:rgba(184,188,198,0.08);
+  --teal:#b8bcc6;--teal-dim:rgba(184,188,198,0.08);
+  --text:#8a8f9c;--text-bright:#e8eaf0;--muted:#4a4e5a;
+  --border:#1e2228;--border2:#2a2e36;
+  --green:#3a8a5c;--red:#b03a3a;--warn:#c9a84c;
 }
 *,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
-body{background:var(--ink);color:var(--text);font-family:'Outfit',sans-serif;min-height:100vh;display:flex;flex-direction:column;align-items:center}
+body{background:var(--ink);color:var(--text);font-family:'Inter',sans-serif;min-height:100vh;display:flex;flex-direction:column;align-items:center}
 .page{width:100%;max-width:560px;padding:2rem 1rem 4rem;display:flex;flex-direction:column;align-items:center;gap:1.2rem}
 .game-header{text-align:center}
-.game-kicker{font-family:'DM Mono',monospace;font-size:0.6rem;letter-spacing:0.2em;text-transform:uppercase;color:var(--teal);margin-bottom:0.4rem}
-.game-title{font-family:'Bebas Neue',sans-serif;font-size:3rem;letter-spacing:0.08em;color:var(--gold-warm);line-height:1}
+.game-kicker{font-family:'JetBrains Mono',monospace;font-size:0.6rem;letter-spacing:0.2em;text-transform:uppercase;color:var(--teal);margin-bottom:0.4rem}
+.game-title{font-family:'Playfair Display',sans-serif;font-size:3rem;letter-spacing:0.08em;color:var(--gold-warm);line-height:1}
 .game-sub{font-size:0.75rem;color:var(--muted);line-height:1.6;margin-top:0.4rem}
-.scoring-info{width:100%;background:var(--surface2);border:1px solid var(--border);border-radius:8px;padding:1.2rem;font-family:'DM Mono',monospace;font-size:0.65rem;color:var(--muted);line-height:1.8}
-.scoring-info h3{font-family:'Bebas Neue',sans-serif;font-size:1.1rem;color:var(--gold);letter-spacing:0.05em;margin-bottom:0.5rem}
+.scoring-info{width:100%;background:var(--surface2);border:1px solid var(--border);border-radius:8px;padding:1.2rem;font-family:'JetBrains Mono',monospace;font-size:0.65rem;color:var(--muted);line-height:1.8}
+.scoring-info h3{font-family:'Playfair Display',sans-serif;font-size:1.1rem;color:var(--gold);letter-spacing:0.05em;margin-bottom:0.5rem}
 .si-row{display:flex;justify-content:space-between;padding:0.15rem 0}
 .si-label{color:var(--text)}.si-val{color:var(--gold)}
 .si-note{color:var(--muted);font-size:0.55rem;margin-top:0.5rem;font-style:italic}
 .status-bar{display:flex;gap:0.8rem;width:100%;background:var(--surface2);border:1px solid var(--border);border-radius:8px;padding:0.75rem 1rem;justify-content:space-around}
 .si{display:flex;flex-direction:column;align-items:center;gap:0.15rem}
-.sv{font-family:'DM Mono',monospace;font-size:1rem;font-weight:500;color:var(--gold)}
-.sl{font-family:'DM Mono',monospace;font-size:0.45rem;letter-spacing:0.12em;text-transform:uppercase;color:var(--muted)}
+.sv{font-family:'JetBrains Mono',monospace;font-size:1rem;font-weight:500;color:var(--gold)}
+.sl{font-family:'JetBrains Mono',monospace;font-size:0.45rem;letter-spacing:0.12em;text-transform:uppercase;color:var(--muted)}
 .mistake-dots{display:flex;gap:0.35rem}
 .dot{width:8px;height:8px;border-radius:50%;background:var(--border);border:1px solid var(--muted);transition:background 0.3s}
 .dot.active{background:var(--red);border-color:var(--red)}
@@ -68,8 +68,8 @@ body{background:var(--ink);color:var(--text);font-family:'Outfit',sans-serif;min
   content:'';position:absolute;top:0;left:0;width:141%;height:1px;
   background:var(--border2);transform-origin:0 0;transform:rotate(45deg);
 }
-.clue-down{position:absolute;top:2px;left:3px;font-family:'DM Mono',monospace;font-size:clamp(0.4rem,1.2vw,0.55rem);color:var(--teal);line-height:1;pointer-events:none}
-.clue-across{position:absolute;bottom:2px;right:3px;font-family:'DM Mono',monospace;font-size:clamp(0.4rem,1.2vw,0.55rem);color:var(--gold);line-height:1;pointer-events:none}
+.clue-down{position:absolute;top:2px;left:3px;font-family:'JetBrains Mono',monospace;font-size:clamp(0.4rem,1.2vw,0.55rem);color:var(--teal);line-height:1;pointer-events:none}
+.clue-across{position:absolute;bottom:2px;right:3px;font-family:'JetBrains Mono',monospace;font-size:clamp(0.4rem,1.2vw,0.55rem);color:var(--gold);line-height:1;pointer-events:none}
 
 /* White (input) cells */
 .cell.white{background:var(--surface2);cursor:pointer;transition:background 0.1s}
@@ -80,23 +80,23 @@ body{background:var(--ink);color:var(--text);font-family:'Outfit',sans-serif;min
 .cell.white.hint-cell{background:rgba(45,212,191,0.12)}
 .cell.white.run-highlight{background:rgba(45,212,191,0.06)}
 
-.cell .cell-val{font-family:'DM Mono',monospace;font-size:clamp(0.9rem,3vw,1.3rem);font-weight:500;color:var(--text-bright);user-select:none}
+.cell .cell-val{font-family:'JetBrains Mono',monospace;font-size:clamp(0.9rem,3vw,1.3rem);font-weight:500;color:var(--text-bright);user-select:none}
 .cell.hint-cell .cell-val{color:var(--teal)}
 .cell .notes-grid{display:grid;grid-template-columns:repeat(3,1fr);width:100%;height:100%;padding:1px}
-.cell .note-num{font-family:'DM Mono',monospace;font-size:clamp(0.22rem,0.7vw,0.34rem);color:var(--teal);display:flex;align-items:center;justify-content:center;line-height:1}
+.cell .note-num{font-family:'JetBrains Mono',monospace;font-size:clamp(0.22rem,0.7vw,0.34rem);color:var(--teal);display:flex;align-items:center;justify-content:center;line-height:1}
 .cell .note-num.hidden{opacity:0}
 
 /* Sum helper panel */
 .helper-panel{width:100%;background:var(--surface2);border:1px solid var(--border);border-radius:8px;padding:0.8rem;display:none;flex-direction:column;gap:0.4rem}
-.helper-title{font-family:'DM Mono',monospace;font-size:0.55rem;letter-spacing:0.1em;text-transform:uppercase;color:var(--muted)}
-.helper-combos{font-family:'DM Mono',monospace;font-size:0.6rem;color:var(--text);line-height:1.6}
-.helper-warn{font-family:'DM Mono',monospace;font-size:0.5rem;color:var(--warn);font-style:italic}
+.helper-title{font-family:'JetBrains Mono',monospace;font-size:0.55rem;letter-spacing:0.1em;text-transform:uppercase;color:var(--muted)}
+.helper-combos{font-family:'JetBrains Mono',monospace;font-size:0.6rem;color:var(--text);line-height:1.6}
+.helper-warn{font-family:'JetBrains Mono',monospace;font-size:0.5rem;color:var(--warn);font-style:italic}
 
 .numpad{display:grid;grid-template-columns:repeat(10,1fr);gap:0.4rem;width:100%}
-.num-btn{aspect-ratio:1;background:var(--surface2);border:1px solid var(--border);border-radius:6px;font-family:'DM Mono',monospace;font-size:clamp(0.8rem,2.5vw,1.1rem);color:var(--text);cursor:pointer;display:flex;align-items:center;justify-content:center;transition:all 0.15s}
+.num-btn{aspect-ratio:1;background:var(--surface2);border:1px solid var(--border);border-radius:6px;font-family:'JetBrains Mono',monospace;font-size:clamp(0.8rem,2.5vw,1.1rem);color:var(--text);cursor:pointer;display:flex;align-items:center;justify-content:center;transition:all 0.15s}
 .num-btn:hover{background:var(--surface);border-color:var(--gold-dim);color:var(--gold)}
 .controls{display:flex;gap:0.5rem;width:100%;flex-wrap:wrap}
-.btn{padding:0.6rem 1rem;font-family:'DM Mono',monospace;font-size:0.6rem;letter-spacing:0.1em;text-transform:uppercase;cursor:pointer;border-radius:6px;border:none;transition:all 0.2s;flex:1;min-width:0}
+.btn{padding:0.6rem 1rem;font-family:'JetBrains Mono',monospace;font-size:0.6rem;letter-spacing:0.1em;text-transform:uppercase;cursor:pointer;border-radius:6px;border:none;transition:all 0.2s;flex:1;min-width:0}
 .btn-gold{background:var(--gold);color:var(--ink);font-weight:500}
 .btn-gold:hover{background:var(--gold-warm)}
 .btn-gold:disabled{background:var(--muted);cursor:not-allowed;opacity:0.5}
@@ -105,34 +105,61 @@ body{background:var(--ink);color:var(--text);font-family:'Outfit',sans-serif;min
 .btn-teal{background:transparent;border:1px solid var(--teal-dim);color:var(--teal)}
 .btn-teal:hover{background:var(--teal-dim)}
 .btn-teal.active{background:var(--teal-dim)}
-.msg{font-family:'DM Mono',monospace;font-size:0.62rem;text-align:center;min-height:1rem;color:var(--red)}
+.msg{font-family:'JetBrains Mono',monospace;font-size:0.62rem;text-align:center;min-height:1rem;color:var(--red)}
 .msg.ok{color:var(--green)}
 .modal-overlay{position:fixed;inset:0;background:rgba(5,7,9,0.92);backdrop-filter:blur(8px);z-index:200;display:flex;align-items:center;justify-content:center;padding:1rem}
 .modal-overlay.hidden{display:none}
 .modal{background:var(--surface2);border:1px solid var(--border);border-radius:12px;width:100%;max-width:380px;overflow:hidden}
 .modal-header{padding:1.4rem 1.4rem 0;text-align:center}
-.modal-result{font-family:'Bebas Neue',sans-serif;font-size:2.2rem;letter-spacing:0.1em;margin-bottom:0.3rem}
+.modal-result{font-family:'Playfair Display',sans-serif;font-size:2.2rem;letter-spacing:0.1em;margin-bottom:0.3rem}
 .modal-result.win{color:var(--green)}.modal-result.lose{color:var(--red)}
-.modal-sub{font-family:'DM Mono',monospace;font-size:0.62rem;color:var(--muted)}
+.modal-sub{font-family:'JetBrains Mono',monospace;font-size:0.62rem;color:var(--muted)}
 .modal-score{margin:1rem 1.4rem;background:var(--surface);border:1px solid var(--border);border-radius:8px;padding:0.8rem;display:grid;grid-template-columns:1fr 1fr;gap:0.5rem}
 .ms-item{display:flex;flex-direction:column;gap:0.1rem}
-.ms-val{font-family:'DM Mono',monospace;font-size:0.9rem;color:var(--gold)}
-.ms-lbl{font-family:'DM Mono',monospace;font-size:0.45rem;letter-spacing:0.1em;text-transform:uppercase;color:var(--muted)}
+.ms-val{font-family:'JetBrains Mono',monospace;font-size:0.9rem;color:var(--gold)}
+.ms-lbl{font-family:'JetBrains Mono',monospace;font-size:0.45rem;letter-spacing:0.1em;text-transform:uppercase;color:var(--muted)}
 .modal-acts{display:flex;gap:0.5rem;padding:1rem 1.4rem 1.4rem}
 .modal-acts .btn{flex:1}
 @keyframes shake{0%,100%{transform:translateX(0)}20%{transform:translateX(-6px)}40%{transform:translateX(6px)}60%{transform:translateX(-4px)}80%{transform:translateX(4px)}}
 .shake{animation:shake 0.35s ease}
 @media(max-width:480px){.page{padding:1.5rem 0.5rem 3rem}.game-title{font-size:2.4rem}}
+
+/* How to Play — collapsible */
+.htp{width:100%;background:var(--surface,#16181c);border:1px solid var(--border,#1e2228);border-radius:10px;overflow:hidden;margin-bottom:1rem}
+.htp-toggle{width:100%;padding:.8rem 1rem;display:flex;justify-content:space-between;align-items:center;cursor:pointer;background:none;border:none;color:var(--text,#8a8f9c);font-family:'Inter','Outfit',sans-serif;font-size:.75rem;font-weight:600;text-align:left}
+.htp-toggle:hover{color:var(--silver-bright,#e8eaf0)}
+.htp-arrow{transition:transform .2s;font-size:.6rem}
+.htp.open .htp-arrow{transform:rotate(180deg)}
+.htp-body{display:none;padding:0 1rem .8rem;font-size:.65rem;color:var(--muted,#4a4e5a);line-height:1.7}
+.htp.open .htp-body{display:block}
+.htp-body p{margin-bottom:.5rem}
+.htp-body ul{margin:.3rem 0 .5rem 1.2rem}
+.htp-body li{margin-bottom:.2rem}
+.htp-body strong{color:var(--text,#8a8f9c)}
 </style>
 <script src="https://cdn.jsdelivr.net/npm/ethers@6/dist/ethers.umd.min.js"></script>
 </head>
 <body>
-<script src="../dapp-wallet.js"></script>
+<script src="../qf-wallet.js"></script>
 <div class="page">
   <div class="game-header">
     <p class="game-kicker">Number Logic</p>
     <h1 class="game-title">Ka<strong style="color:var(--teal)">kuro</strong></h1>
     <p class="game-sub">Crossword meets Sudoku. Fill white cells with digits 1-9 so each run sums to its clue. No repeats in a run.</p>
+  </div>
+
+  <div class="htp">
+    <button class="htp-toggle">How to Play <span class="htp-arrow">&#9660;</span></button>
+    <div class="htp-body">
+      <p>Fill white cells with digits 1-9 so each horizontal and vertical run <strong>sums to its clue number</strong>. No digit repeats within a run.</p>
+      <ul>
+        <li>Dark cells with numbers are clues — the top-right number is for the run going right, bottom-left is for the run going down</li>
+        <li>Each run is a consecutive group of white cells</li>
+        <li>Digits 1-9 only — no zeros, no repeats within a single run</li>
+        <li>The same digit CAN appear in the same row or column if it's in a different run</li>
+      </ul>
+      <p>Start with short runs: a 2-cell run summing to 3 must be {1,2}, a 2-cell run summing to 17 must be {8,9}. These forced combinations unlock the rest.</p>
+    </div>
   </div>
 
   <div class="scoring-info" id="scoring-panel">
@@ -186,7 +213,7 @@ body{background:var(--ink);color:var(--text);font-family:'Outfit',sans-serif;min
     <div class="modal-score" id="modal-score"></div>
     <div class="modal-acts">
       <button class="btn btn-ghost" onclick="location.reload()">Play Again</button>
-      <button class="btn btn-gold" onclick="window.location='/dapp/'">Lobby</button>
+      <button class="btn btn-gold" onclick="window.location='/qf-dapp/'">Lobby</button>
     </div>
   </div>
 </div>
@@ -714,5 +741,10 @@ var G = (function() {
 })();
 </script>
 <script src="../dapp-entry.js"></script>
+<script>
+document.querySelectorAll('.htp-toggle').forEach(function(btn){
+  btn.addEventListener('click',function(){this.closest('.htp').classList.toggle('open')});
+});
+</script>
 </body>
 </html>

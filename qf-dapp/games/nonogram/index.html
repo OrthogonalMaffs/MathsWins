@@ -11,46 +11,46 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <meta name="description" content="Nonogram — fill cells to reveal a hidden Greek letter. Use row and column clues to solve the 10x10 grid.">
-<meta property="og:title" content="Nonogram · MathsWins">
+<meta property="og:title" content="Nonogram · QF Games">
 <meta property="og:description" content="Fill cells to reveal a hidden Greek letter. Use row and column clues to solve the 10x10 grid.">
-<meta property="og:url" content="https://mathswins.co.uk/dapp/games/nonogram/">
+<meta property="og:url" content="https://mathswins.co.uk/qf-dapp/games/nonogram/">
 <meta property="og:image" content="https://mathswins.co.uk/assets/og-image.png">
-<link rel="canonical" href="https://mathswins.co.uk/dapp/games/nonogram/">
+<link rel="canonical" href="https://mathswins.co.uk/qf-dapp/games/nonogram/">
 <link rel="icon" type="image/svg+xml" href="../../schools/assets/favicon.svg">
-<title>Nonogram · MathsWins</title>
+<title>Nonogram · QF Games</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
-<link href="https://fonts.googleapis.com/css2?family=DM+Mono:ital,wght@0,300;0,400;0,500&family=Bebas+Neue&family=Outfit:wght@300;400;600;700&display=swap" rel="stylesheet">
-<link rel="stylesheet" href="../dapp-shell.css">
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;700&family=JetBrains+Mono:wght@400;500&family=Playfair+Display:wght@700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="../qf-shell.css">
 <meta name="twitter:card" content="summary_large_image">
-<meta name="twitter:title" content="Nonogram · MathsWins">
+<meta name="twitter:title" content="Nonogram · QF Games">
 <meta name="twitter:image" content="https://mathswins.co.uk/assets/og-image.png">
 <style>
 :root {
-  --ink:#050709;--surface:#0a0d14;--surface2:#0f1319;
-  --gold:#d4a847;--gold-warm:#e2b96a;--gold-dim:#7a5e28;
-  --teal:#2dd4bf;--teal-dim:#134e4a;
-  --text:#c8cdd8;--text-bright:#e8ecf4;--muted:#4a5568;
-  --border:#161c28;--border2:#1e2638;
-  --green:#2dd4a0;--red:#ef5350;--warn:#d4a847;
+  --ink:#0e1013;--surface:#16181c;--surface2:#1e2025;
+  --gold:#c9a84c;--gold-warm:#d4d8e2;--gold-dim:rgba(184,188,198,0.08);
+  --teal:#b8bcc6;--teal-dim:rgba(184,188,198,0.08);
+  --text:#8a8f9c;--text-bright:#e8eaf0;--muted:#4a4e5a;
+  --border:#1e2228;--border2:#2a2e36;
+  --green:#3a8a5c;--red:#b03a3a;--warn:#c9a84c;
 }
 *,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
-body{background:var(--ink);color:var(--text);font-family:'Outfit',sans-serif;min-height:100vh;display:flex;flex-direction:column;align-items:center}
+body{background:var(--ink);color:var(--text);font-family:'Inter',sans-serif;min-height:100vh;display:flex;flex-direction:column;align-items:center}
 .page{width:100%;max-width:620px;padding:2rem 1rem 4rem;display:flex;flex-direction:column;align-items:center;gap:1.2rem}
 .game-header{text-align:center}
-.game-kicker{font-family:'DM Mono',monospace;font-size:0.6rem;letter-spacing:0.2em;text-transform:uppercase;color:var(--teal);margin-bottom:0.4rem}
-.game-title{font-family:'Bebas Neue',sans-serif;font-size:3rem;letter-spacing:0.08em;color:var(--gold-warm);line-height:1}
+.game-kicker{font-family:'JetBrains Mono',monospace;font-size:0.6rem;letter-spacing:0.2em;text-transform:uppercase;color:var(--teal);margin-bottom:0.4rem}
+.game-title{font-family:'Playfair Display',sans-serif;font-size:3rem;letter-spacing:0.08em;color:var(--gold-warm);line-height:1}
 .game-sub{font-size:0.75rem;color:var(--muted);line-height:1.6;margin-top:0.4rem}
 
-.scoring-info{width:100%;background:var(--surface2);border:1px solid var(--border);border-radius:8px;padding:1.2rem;font-family:'DM Mono',monospace;font-size:0.65rem;color:var(--muted);line-height:1.8}
-.scoring-info h3{font-family:'Bebas Neue',sans-serif;font-size:1.1rem;color:var(--gold);letter-spacing:0.05em;margin-bottom:0.5rem}
+.scoring-info{width:100%;background:var(--surface2);border:1px solid var(--border);border-radius:8px;padding:1.2rem;font-family:'JetBrains Mono',monospace;font-size:0.65rem;color:var(--muted);line-height:1.8}
+.scoring-info h3{font-family:'Playfair Display',sans-serif;font-size:1.1rem;color:var(--gold);letter-spacing:0.05em;margin-bottom:0.5rem}
 .si-row{display:flex;justify-content:space-between;padding:0.15rem 0}
 .si-label{color:var(--text)}.si-val{color:var(--gold)}
 .si-note{color:var(--muted);font-size:0.55rem;margin-top:0.5rem;font-style:italic}
 
 .status-bar{display:flex;gap:0.8rem;width:100%;background:var(--surface2);border:1px solid var(--border);border-radius:8px;padding:0.75rem 1rem;justify-content:space-around}
 .si{display:flex;flex-direction:column;align-items:center;gap:0.15rem}
-.sv{font-family:'DM Mono',monospace;font-size:1rem;font-weight:500;color:var(--gold)}
-.sl{font-family:'DM Mono',monospace;font-size:0.45rem;letter-spacing:0.12em;text-transform:uppercase;color:var(--muted)}
+.sv{font-family:'JetBrains Mono',monospace;font-size:1rem;font-weight:500;color:var(--gold)}
+.sl{font-family:'JetBrains Mono',monospace;font-size:0.45rem;letter-spacing:0.12em;text-transform:uppercase;color:var(--muted)}
 
 /* ── Nonogram board ────────────────────────────── */
 .board-container{width:100%;display:flex;justify-content:center}
@@ -59,12 +59,12 @@ body{background:var(--ink);color:var(--text);font-family:'Outfit',sans-serif;min
 /* Column clues area */
 .col-clues-row td{vertical-align:bottom;padding:0 1px 2px}
 .col-clue-stack{display:flex;flex-direction:column;align-items:center;gap:1px;min-height:2rem}
-.col-clue-num{font-family:'DM Mono',monospace;font-size:clamp(0.5rem,1.4vw,0.7rem);color:var(--muted);line-height:1.2}
+.col-clue-num{font-family:'JetBrains Mono',monospace;font-size:clamp(0.5rem,1.4vw,0.7rem);color:var(--muted);line-height:1.2}
 
 /* Row clues area */
 .row-clue-cell{padding:0 6px 0 0;text-align:right;white-space:nowrap}
 .row-clue-nums{display:flex;gap:3px;justify-content:flex-end;align-items:center}
-.row-clue-num{font-family:'DM Mono',monospace;font-size:clamp(0.5rem,1.4vw,0.7rem);color:var(--muted);line-height:1}
+.row-clue-num{font-family:'JetBrains Mono',monospace;font-size:clamp(0.5rem,1.4vw,0.7rem);color:var(--muted);line-height:1}
 
 /* Grid cells */
 .nono-cell{
@@ -92,7 +92,7 @@ body{background:var(--ink);color:var(--text);font-family:'Outfit',sans-serif;min
 .nono-cell.thick-bottom{border-bottom:2px solid var(--muted)}
 
 .controls{display:flex;gap:0.5rem;width:100%;flex-wrap:wrap}
-.btn{padding:0.6rem 1rem;font-family:'DM Mono',monospace;font-size:0.6rem;letter-spacing:0.1em;text-transform:uppercase;cursor:pointer;border-radius:6px;border:none;transition:all 0.2s;flex:1;min-width:0}
+.btn{padding:0.6rem 1rem;font-family:'JetBrains Mono',monospace;font-size:0.6rem;letter-spacing:0.1em;text-transform:uppercase;cursor:pointer;border-radius:6px;border:none;transition:all 0.2s;flex:1;min-width:0}
 .btn-gold{background:var(--gold);color:var(--ink);font-weight:500}
 .btn-gold:hover{background:var(--gold-warm)}
 .btn-gold:disabled{background:var(--muted);cursor:not-allowed;opacity:0.5}
@@ -100,15 +100,15 @@ body{background:var(--ink);color:var(--text);font-family:'Outfit',sans-serif;min
 .btn-ghost:hover{border-color:var(--gold-dim);color:var(--gold)}
 .btn-teal{background:transparent;border:1px solid var(--teal-dim);color:var(--teal)}
 .btn-teal:hover{background:var(--teal-dim)}
-.msg{font-family:'DM Mono',monospace;font-size:0.62rem;text-align:center;min-height:1rem;color:var(--red)}
+.msg{font-family:'JetBrains Mono',monospace;font-size:0.62rem;text-align:center;min-height:1rem;color:var(--red)}
 .msg.ok{color:var(--green)}
 
 /* Hint picker */
 .hint-picker{width:100%;background:var(--surface2);border:1px solid var(--border);border-radius:8px;padding:1rem;display:flex;flex-direction:column;gap:0.6rem}
-.hint-picker-title{font-family:'DM Mono',monospace;font-size:0.6rem;letter-spacing:0.1em;text-transform:uppercase;color:var(--muted)}
+.hint-picker-title{font-family:'JetBrains Mono',monospace;font-size:0.6rem;letter-spacing:0.1em;text-transform:uppercase;color:var(--muted)}
 .hint-picker-row{display:flex;gap:0.4rem;align-items:center}
-.hint-picker-row label{font-family:'DM Mono',monospace;font-size:0.58rem;color:var(--text);min-width:30px}
-.hint-picker-row select{background:var(--surface);border:1px solid var(--border);border-radius:4px;color:var(--text);font-family:'DM Mono',monospace;font-size:0.65rem;padding:0.3rem 0.5rem;outline:none}
+.hint-picker-row label{font-family:'JetBrains Mono',monospace;font-size:0.58rem;color:var(--text);min-width:30px}
+.hint-picker-row select{background:var(--surface);border:1px solid var(--border);border-radius:4px;color:var(--text);font-family:'JetBrains Mono',monospace;font-size:0.65rem;padding:0.3rem 0.5rem;outline:none}
 .hint-picker-row select:focus{border-color:var(--teal-dim)}
 .hint-picker-acts{display:flex;gap:0.4rem}
 .hint-picker-acts .btn{flex:1;padding:0.45rem 0.6rem;font-size:0.55rem}
@@ -118,13 +118,13 @@ body{background:var(--ink);color:var(--text);font-family:'Outfit',sans-serif;min
 .modal-overlay.hidden{display:none}
 .modal{background:var(--surface2);border:1px solid var(--border);border-radius:12px;width:100%;max-width:380px;overflow:hidden}
 .modal-header{padding:1.4rem 1.4rem 0;text-align:center}
-.modal-result{font-family:'Bebas Neue',sans-serif;font-size:2.2rem;letter-spacing:0.1em;margin-bottom:0.3rem}
+.modal-result{font-family:'Playfair Display',sans-serif;font-size:2.2rem;letter-spacing:0.1em;margin-bottom:0.3rem}
 .modal-result.win{color:var(--green)}.modal-result.lose{color:var(--red)}
-.modal-sub{font-family:'DM Mono',monospace;font-size:0.62rem;color:var(--muted)}
+.modal-sub{font-family:'JetBrains Mono',monospace;font-size:0.62rem;color:var(--muted)}
 .modal-score{margin:1rem 1.4rem;background:var(--surface);border:1px solid var(--border);border-radius:8px;padding:0.8rem;display:grid;grid-template-columns:1fr 1fr;gap:0.5rem}
 .ms-item{display:flex;flex-direction:column;gap:0.1rem}
-.ms-val{font-family:'DM Mono',monospace;font-size:0.9rem;color:var(--gold)}
-.ms-lbl{font-family:'DM Mono',monospace;font-size:0.45rem;letter-spacing:0.1em;text-transform:uppercase;color:var(--muted)}
+.ms-val{font-family:'JetBrains Mono',monospace;font-size:0.9rem;color:var(--gold)}
+.ms-lbl{font-family:'JetBrains Mono',monospace;font-size:0.45rem;letter-spacing:0.1em;text-transform:uppercase;color:var(--muted)}
 .modal-acts{display:flex;gap:0.5rem;padding:1rem 1.4rem 1.4rem}
 .modal-acts .btn{flex:1}
 
@@ -133,16 +133,43 @@ body{background:var(--ink);color:var(--text);font-family:'Outfit',sans-serif;min
 @keyframes flash-wrong{0%{background:var(--red)}100%{background:var(--surface2)}}
 
 @media(max-width:480px){.page{padding:1.5rem 0.5rem 3rem}.game-title{font-size:2.4rem}}
+
+/* How to Play — collapsible */
+.htp{width:100%;background:var(--surface,#16181c);border:1px solid var(--border,#1e2228);border-radius:10px;overflow:hidden;margin-bottom:1rem}
+.htp-toggle{width:100%;padding:.8rem 1rem;display:flex;justify-content:space-between;align-items:center;cursor:pointer;background:none;border:none;color:var(--text,#8a8f9c);font-family:'Inter','Outfit',sans-serif;font-size:.75rem;font-weight:600;text-align:left}
+.htp-toggle:hover{color:var(--silver-bright,#e8eaf0)}
+.htp-arrow{transition:transform .2s;font-size:.6rem}
+.htp.open .htp-arrow{transform:rotate(180deg)}
+.htp-body{display:none;padding:0 1rem .8rem;font-size:.65rem;color:var(--muted,#4a4e5a);line-height:1.7}
+.htp.open .htp-body{display:block}
+.htp-body p{margin-bottom:.5rem}
+.htp-body ul{margin:.3rem 0 .5rem 1.2rem}
+.htp-body li{margin-bottom:.2rem}
+.htp-body strong{color:var(--text,#8a8f9c)}
 </style>
 <script src="https://cdn.jsdelivr.net/npm/ethers@6/dist/ethers.umd.min.js"></script>
 </head>
 <body>
-<script src="../dapp-wallet.js"></script>
+<script src="../qf-wallet.js"></script>
 <div class="page">
   <div class="game-header">
     <p class="game-kicker">Logic Puzzle</p>
     <h1 class="game-title">Nono<strong style="color:var(--teal)">gram</strong></h1>
     <p class="game-sub">Fill cells to reveal a hidden Greek letter. Use row and column clues to deduce which cells are filled.</p>
+  </div>
+
+  <div class="htp">
+    <button class="htp-toggle">How to Play <span class="htp-arrow">&#9660;</span></button>
+    <div class="htp-body">
+      <p><strong>Fill cells to reveal a hidden picture.</strong> Row and column clues tell you how many consecutive filled cells appear in each line.</p>
+      <ul>
+        <li>Clue "3 1" means a group of 3 filled cells, a gap, then 1 filled cell</li>
+        <li>Groups must appear in order with at least one empty cell between them</li>
+        <li>Click to fill a cell, right-click or use the X tool to mark empty</li>
+        <li>Wrong cells cost points — mark carefully</li>
+      </ul>
+      <p>Start with the longest clues — a clue of "7" on a 10-cell row means cells 4-7 must be filled regardless of position. Overlap logic is key.</p>
+    </div>
   </div>
 
   <div class="scoring-info" id="scoring-panel">
@@ -201,7 +228,7 @@ body{background:var(--ink);color:var(--text);font-family:'Outfit',sans-serif;min
     <div class="modal-score" id="modal-score"></div>
     <div class="modal-acts">
       <button class="btn btn-ghost" onclick="location.reload()">Play Again</button>
-      <button class="btn btn-gold" onclick="window.location='/dapp/'">Lobby</button>
+      <button class="btn btn-gold" onclick="window.location='/qf-dapp/'">Lobby</button>
     </div>
   </div>
 </div>
@@ -627,5 +654,10 @@ var G = (function() {
 })();
 </script>
 <script src="../dapp-entry.js"></script>
+<script>
+document.querySelectorAll('.htp-toggle').forEach(function(btn){
+  btn.addEventListener('click',function(){this.closest('.htp').classList.toggle('open')});
+});
+</script>
 </body>
 </html>
