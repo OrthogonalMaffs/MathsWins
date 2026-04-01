@@ -231,8 +231,11 @@
 
   async function connectWithProvider(ethProvider, walletId) {
     try {
-      // Clear disconnected flag — user is explicitly connecting
-      try { localStorage.removeItem('qf-wallet-disconnected'); } catch (e) {}
+      // Mark as connected, clear disconnected flag
+      try {
+        localStorage.setItem('qf-wallet-connected', '1');
+        localStorage.removeItem('qf-wallet-disconnected');
+      } catch (e) {}
       var provider = new ethers.BrowserProvider(ethProvider);
       await provider.send('eth_requestAccounts', []);
       var signer = await provider.getSigner();
@@ -316,8 +319,11 @@
     state.signer = null;
     state.qfName = null;
     state.walletType = null;
-    // Set flag so auto-connect doesn't immediately reconnect
-    try { localStorage.setItem('qf-wallet-disconnected', '1'); } catch (e) {}
+    // Clear connected flag, set disconnected flag
+    try {
+      localStorage.removeItem('qf-wallet-connected');
+      localStorage.setItem('qf-wallet-disconnected', '1');
+    } catch (e) {}
     location.reload();
   }
 
@@ -385,13 +391,12 @@
     }, 10);
   }
 
-  // ── Auto-connect (if previously connected) ────────────────────────
+  // ── Auto-connect (only if user previously connected to QF Games) ───
   function autoConnect() {
-    // Skip if user explicitly disconnected
     try {
       if (localStorage.getItem('qf-wallet-disconnected')) return;
-    } catch (e) {}
-    // Check for any injected provider that's already authorised
+      if (!localStorage.getItem('qf-wallet-connected')) return;
+    } catch (e) { return; }
     if (window.ethereum && window.ethereum.selectedAddress) {
       var wallets = detectWallets();
       if (wallets.length > 0) {
