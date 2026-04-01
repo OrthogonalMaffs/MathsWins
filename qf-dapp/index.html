@@ -392,12 +392,23 @@ qfWallet.onConnect(function(w) {
     document.getElementById('networkName').textContent = 'Wrong Network';
   }
 
-  // Show .qf name if resolved
+  // Show .qf name if resolved, otherwise show address
   if (w.qfName) {
     document.getElementById('walletQfName').textContent = w.qfName;
     document.getElementById('walletQfName').style.display = '';
     document.getElementById('walletAddress').style.display = 'none';
+  } else {
+    document.getElementById('walletQfName').style.display = 'none';
+    document.getElementById('walletAddress').style.display = '';
   }
+});
+
+qfWallet.onDisconnect(function() {
+  document.getElementById('connectBtn').style.display = '';
+  document.getElementById('walletAddress').style.display = 'none';
+  document.getElementById('walletQfName').style.display = 'none';
+  document.getElementById('walletBalance').style.display = 'none';
+  document.getElementById('networkStatus').style.display = 'none';
 });
 
 // ── Accept code (duel or promo) ───────────────────────────────────────────

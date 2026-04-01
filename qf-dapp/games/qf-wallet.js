@@ -4,7 +4,8 @@
  * Include after ethers.js CDN on any qf-dapp page.
  *
  * Usage:
- *   qfWallet.connect()          — opens wallet chooser modal
+ *   qfWallet.connect()          — opens wallet chooser or connects directly
+ *   qfWallet.disconnect()       — disconnects, resets UI
  *   qfWallet.address             — connected EVM address (H160)
  *   qfWallet.qfName              — resolved .qf name or null
  *   qfWallet.displayName()       — .qf name or truncated address
@@ -12,6 +13,8 @@
  *   qfWallet.resolveAny(addr)    — resolve any address to .qf name (async)
  *   qfWallet.formatAddr(addr)    — .qf name from cache or truncated address (sync)
  *   qfWallet.onConnect(callback) — register callback for connection events
+ *   qfWallet.onDisconnect(cb)    — register callback for disconnect events
+ *   qfWallet.showMenu(el)        — show wallet dropdown menu anchored to element
  */
 (function() {
   'use strict';
@@ -19,23 +22,22 @@
   var QF_CHAIN_ID = 3426;
   var QF_CHAIN_HEX = '0xd62';
   var QF_RPC = 'https://archive.mainnet.qfnode.net/eth';
-  // Try both resolvers — old has existing registrations, new may not have reverse mappings yet
   var QNS_RESOLVER_OLD = '0xd78e5b5779ed7bdf70dad0061fbeb189836022fb';
   var QNS_RESOLVER_NEW = '0xd5d12431b2956248861dbec5e8a9bc6023114e80';
   var QNS_ABI = ['function reverseResolve(address _addr) view returns (string)'];
 
   var state = {
     address: null, balance: null, chainId: null,
-    provider: null, signer: null, qfName: null, walletType: null
+    provider: null, signer: null, qfName: null, walletType: null,
+    rawProvider: null  // the injected provider (window.ethereum etc)
   };
 
   var nameCache = {};
   var connectCallbacks = [];
-  var qnsResolver = null;
-
-  // ── QNS Resolution ────────────────────────────────────────────────
+  var disconnectCallbacks = [];
   var rpcProvider = null;
 
+  // ── QNS Resolution ────────────────────────────────────────────────
   function getRpcProvider() {
     if (!rpcProvider) rpcProvider = new ethers.JsonRpcProvider(QF_RPC);
     return rpcProvider;
@@ -45,19 +47,17 @@
     if (!addr) return null;
     var key = addr.toLowerCase();
     if (nameCache[key] !== undefined) return nameCache[key];
-    var provider = getRpcProvider();
-
-    // Try new resolver first, then old
+    var prov = getRpcProvider();
     var resolvers = [QNS_RESOLVER_NEW, QNS_RESOLVER_OLD];
     for (var i = 0; i < resolvers.length; i++) {
       try {
-        var contract = new ethers.Contract(resolvers[i], QNS_ABI, provider);
+        var contract = new ethers.Contract(resolvers[i], QNS_ABI, prov);
         var name = await contract.reverseResolve(addr);
         if (name && name.length > 0) {
           nameCache[key] = name;
           return name;
         }
-      } catch (e) { /* try next resolver */ }
+      } catch (e) { /* try next */ }
     }
     nameCache[key] = null;
     return null;
@@ -74,83 +74,53 @@
   function detectWallets() {
     var wallets = [];
     var seen = {};
-
     function add(id, name, icon, provider) {
       if (seen[id] || !provider) return;
       seen[id] = true;
       wallets.push({ id: id, name: name, icon: icon, provider: provider });
     }
-
-    // EIP-6963: multiple providers array (MetaMask + Talisman both present)
     if (window.ethereum && window.ethereum.providers && window.ethereum.providers.length > 0) {
       window.ethereum.providers.forEach(function(p) {
         if (p.isTalisman) add('talisman', 'Talisman', '\uD83D\uDD2E', p);
         else if (p.isMetaMask) add('metamask', 'MetaMask', '\uD83E\uDD8A', p);
       });
     }
-
-    // Talisman's dedicated EVM provider
-    if (window.talismanEth) {
-      add('talisman', 'Talisman', '\uD83D\uDD2E', window.talismanEth);
-    }
-
-    // Single provider on window.ethereum
+    if (window.talismanEth) add('talisman', 'Talisman', '\uD83D\uDD2E', window.talismanEth);
     if (window.ethereum && !seen.talisman && !seen.metamask) {
-      if (window.ethereum.isTalisman) {
-        add('talisman', 'Talisman', '\uD83D\uDD2E', window.ethereum);
-      } else if (window.ethereum.isMetaMask) {
-        add('metamask', 'MetaMask', '\uD83E\uDD8A', window.ethereum);
-      } else {
-        add('browser', 'Browser Wallet', '\uD83D\uDD17', window.ethereum);
-      }
+      if (window.ethereum.isTalisman) add('talisman', 'Talisman', '\uD83D\uDD2E', window.ethereum);
+      else if (window.ethereum.isMetaMask) add('metamask', 'MetaMask', '\uD83E\uDD8A', window.ethereum);
+      else add('browser', 'Browser Wallet', '\uD83D\uDD17', window.ethereum);
     }
-
-    // Talisman on window.ethereum when it's the only extension but sets isMetaMask too
     if (window.ethereum && window.ethereum.isTalisman && !seen.talisman) {
       add('talisman', 'Talisman', '\uD83D\uDD2E', window.ethereum);
     }
-
     return wallets;
   }
 
   // ── Wallet Chooser Modal ──────────────────────────────────────────
   function createModal() {
     if (document.getElementById('qf-wallet-modal')) return;
-
     var overlay = document.createElement('div');
     overlay.id = 'qf-wallet-modal';
     overlay.style.cssText = 'position:fixed;inset:0;background:rgba(14,16,19,0.94);backdrop-filter:blur(8px);z-index:9999;display:flex;align-items:center;justify-content:center;padding:1rem;';
-
     var box = document.createElement('div');
     box.style.cssText = 'background:#16181c;border:1px solid #2a2e36;border-radius:12px;width:100%;max-width:360px;padding:1.8rem;';
-
     var title = document.createElement('h3');
     title.style.cssText = "font-family:'Playfair Display',serif;font-size:1.3rem;color:#e8eaf0;text-align:center;margin-bottom:.3rem;";
     title.textContent = 'Connect Wallet';
-
     var sub = document.createElement('p');
     sub.style.cssText = "font-family:'Inter',sans-serif;font-size:.68rem;color:#4a4e5a;text-align:center;margin-bottom:1.2rem;line-height:1.4;";
     sub.textContent = 'Choose your wallet to connect to QF Network.';
-
     var list = document.createElement('div');
     list.id = 'qf-wallet-list';
     list.style.cssText = 'display:flex;flex-direction:column;gap:.5rem;';
-
     var cancel = document.createElement('button');
     cancel.style.cssText = "margin-top:1rem;width:100%;padding:.55rem;font-family:'JetBrains Mono',monospace;font-size:.6rem;background:transparent;border:1px solid #2a2e36;color:#4a4e5a;border-radius:6px;cursor:pointer;letter-spacing:.05em;";
     cancel.textContent = 'CANCEL';
     cancel.onclick = function() { closeModal(); };
-
-    box.appendChild(title);
-    box.appendChild(sub);
-    box.appendChild(list);
-    box.appendChild(cancel);
+    box.appendChild(title); box.appendChild(sub); box.appendChild(list); box.appendChild(cancel);
     overlay.appendChild(box);
-
-    overlay.addEventListener('click', function(e) {
-      if (e.target === overlay) closeModal();
-    });
-
+    overlay.addEventListener('click', function(e) { if (e.target === overlay) closeModal(); });
     document.body.appendChild(overlay);
   }
 
@@ -164,33 +134,20 @@
     btn.style.cssText = "width:100%;padding:.8rem 1rem;display:flex;align-items:center;gap:.8rem;background:#1e2025;border:1px solid #2a2e36;border-radius:8px;cursor:pointer;transition:all .15s;";
     btn.onmouseover = function() { btn.style.borderColor = 'rgba(184,188,198,0.15)'; btn.style.background = '#26282e'; };
     btn.onmouseout = function() { btn.style.borderColor = '#2a2e36'; btn.style.background = '#1e2025'; };
-
     var icon = document.createElement('span');
     icon.style.cssText = 'font-size:1.4rem;';
     icon.textContent = wallet.icon;
-
     var info = document.createElement('div');
     info.style.cssText = 'text-align:left;flex:1;';
-
     var name = document.createElement('div');
     name.style.cssText = "font-family:'Inter',sans-serif;font-size:.82rem;font-weight:600;color:#e8eaf0;";
     name.textContent = wallet.name;
-
     var desc = document.createElement('div');
     desc.style.cssText = "font-family:'JetBrains Mono',monospace;font-size:.52rem;color:#4a4e5a;margin-top:.1rem;";
     desc.textContent = 'EVM wallet';
-
-    info.appendChild(name);
-    info.appendChild(desc);
-
-    btn.appendChild(icon);
-    btn.appendChild(info);
-
-    btn.onclick = function() {
-      closeModal();
-      connectWithProvider(wallet.provider, wallet.id);
-    };
-
+    info.appendChild(name); info.appendChild(desc);
+    btn.appendChild(icon); btn.appendChild(info);
+    btn.onclick = function() { closeModal(); connectWithProvider(wallet.provider, wallet.id); };
     return btn;
   }
 
@@ -204,66 +161,45 @@
     list.appendChild(msg);
   }
 
-  // ── Connect Flow ──────────────────────────────────────────────────
+  // ── Connect ───────────────────────────────────────────────────────
   async function connect() {
     var wallets = detectWallets();
-
     if (wallets.length === 0) {
       createModal();
       showNoWalletMessage(document.getElementById('qf-wallet-list'));
       return;
     }
-
-    // Single wallet: connect directly, skip modal
     if (wallets.length === 1) {
       await connectWithProvider(wallets[0].provider, wallets[0].id);
       return;
     }
-
-    // Multiple wallets: show chooser
     createModal();
     var list = document.getElementById('qf-wallet-list');
     list.innerHTML = '';
-    wallets.forEach(function(w) {
-      list.appendChild(walletButton(w));
-    });
+    wallets.forEach(function(w) { list.appendChild(walletButton(w)); });
   }
 
   async function connectWithProvider(ethProvider, walletId) {
     try {
-      // Force MetaMask to show account picker (not just return the active one)
-      try {
-        await ethProvider.request({ method: 'wallet_requestPermissions', params: [{ eth_accounts: {} }] });
-      } catch (e) { /* user cancelled or method not supported — fall through */ }
       var provider = new ethers.BrowserProvider(ethProvider);
       await provider.send('eth_requestAccounts', []);
       var signer = await provider.getSigner();
       var address = await signer.getAddress();
-      console.log('[qf-wallet] Connected:', address, 'via', walletId);
       var network = await provider.getNetwork();
       var chainId = Number(network.chainId);
 
       // Auto-add QF Network if wrong chain
       if (chainId !== QF_CHAIN_ID) {
         try {
-          await ethProvider.request({
-            method: 'wallet_switchEthereumChain',
-            params: [{ chainId: QF_CHAIN_HEX }]
-          });
+          await ethProvider.request({ method: 'wallet_switchEthereumChain', params: [{ chainId: QF_CHAIN_HEX }] });
         } catch (switchErr) {
-          // Chain not found — add it
           await ethProvider.request({
             method: 'wallet_addEthereumChain',
-            params: [{
-              chainId: QF_CHAIN_HEX,
-              chainName: 'QF Network Mainnet',
+            params: [{ chainId: QF_CHAIN_HEX, chainName: 'QF Network Mainnet',
               nativeCurrency: { name: 'QF', symbol: 'QF', decimals: 18 },
-              rpcUrls: [QF_RPC],
-              blockExplorerUrls: []
-            }]
+              rpcUrls: [QF_RPC], blockExplorerUrls: [] }]
           });
         }
-        // Re-read after chain switch
         network = await provider.getNetwork();
         chainId = Number(network.chainId);
       }
@@ -276,18 +212,33 @@
       state.provider = provider;
       state.signer = signer;
       state.walletType = walletId;
+      state.rawProvider = ethProvider;
+      state.qfName = null;
 
-      // Resolve .qf name in background
+      fireCallbacks();
+
+      // Resolve .qf name in background, fire callbacks again when resolved
       resolveQfName(address).then(function(name) {
         state.qfName = name;
         fireCallbacks();
       });
 
-      fireCallbacks();
-
-      // Listen for changes
-      ethProvider.on('accountsChanged', function() { location.reload(); });
-      ethProvider.on('chainChanged', function() { location.reload(); });
+      // Listen for account/chain changes — update in place, no reload
+      ethProvider.removeAllListeners && ethProvider.removeAllListeners('accountsChanged');
+      ethProvider.removeAllListeners && ethProvider.removeAllListeners('chainChanged');
+      ethProvider.on('accountsChanged', function(accounts) {
+        if (!accounts || accounts.length === 0) {
+          // User disconnected from within the wallet
+          disconnect();
+        } else {
+          // User switched account in the wallet — reconnect silently
+          connectWithProvider(ethProvider, walletId);
+        }
+      });
+      ethProvider.on('chainChanged', function() {
+        // Re-read balance and chain after switch
+        connectWithProvider(ethProvider, walletId);
+      });
 
     } catch (e) {
       console.error('Wallet connect failed:', e);
@@ -301,16 +252,30 @@
     });
   }
 
+  function fireDisconnectCallbacks() {
+    disconnectCallbacks.forEach(function(cb) {
+      try { cb(); } catch (e) { console.error('Disconnect callback error:', e); }
+    });
+  }
+
   function onConnect(cb) {
     connectCallbacks.push(cb);
-    // Fire immediately if already connected
     if (state.address) {
       try { cb(state); } catch (e) { console.error('Wallet callback error:', e); }
     }
   }
 
+  function onDisconnect(cb) {
+    disconnectCallbacks.push(cb);
+  }
+
   // ── Disconnect ────────────────────────────────────────────────────
   function disconnect() {
+    // Remove listeners from the raw provider
+    if (state.rawProvider && state.rawProvider.removeAllListeners) {
+      state.rawProvider.removeAllListeners('accountsChanged');
+      state.rawProvider.removeAllListeners('chainChanged');
+    }
     state.address = null;
     state.balance = null;
     state.chainId = null;
@@ -318,17 +283,12 @@
     state.signer = null;
     state.qfName = null;
     state.walletType = null;
-    // Clear connected flag, set disconnected flag
-    try {
-      localStorage.removeItem('qf-wallet-connected');
-      localStorage.setItem('qf-wallet-disconnected', '1');
-    } catch (e) {}
-    location.reload();
+    state.rawProvider = null;
+    fireDisconnectCallbacks();
   }
 
-  // ── Wallet Menu (dropdown on connected wallet click) ──────────────
+  // ── Wallet Menu ───────────────────────────────────────────────────
   function showWalletMenu(anchorEl) {
-    // Remove existing menu if any
     var existing = document.getElementById('qf-wallet-menu');
     if (existing) { existing.remove(); return; }
 
@@ -351,23 +311,10 @@
       menu.appendChild(nameItem);
     }
 
-    var switchBtn = document.createElement('div');
-    switchBtn.style.cssText = "padding:.5rem .8rem;font-family:'Inter',sans-serif;font-size:.7rem;color:#b8bcc6;cursor:pointer;transition:background .1s;";
-    switchBtn.textContent = 'Switch Wallet';
-    switchBtn.onmouseover = function() { switchBtn.style.background = '#26282e'; };
-    switchBtn.onmouseout = function() { switchBtn.style.background = 'none'; };
-    switchBtn.onclick = function() {
-      menu.remove();
-      // Try to trigger wallet's own account switcher
-      if (window.ethereum && window.ethereum.request) {
-        window.ethereum.request({ method: 'wallet_requestPermissions', params: [{ eth_accounts: {} }] })
-          .then(function() { location.reload(); })
-          .catch(function() { connect(); });
-      } else {
-        connect();
-      }
-    };
-    menu.appendChild(switchBtn);
+    var hint = document.createElement('div');
+    hint.style.cssText = "padding:.4rem .8rem;font-family:'JetBrains Mono',monospace;font-size:.48rem;color:#4a4e5a;border-bottom:1px solid #2a2e36;line-height:1.5;";
+    hint.textContent = 'To switch account, change it in your wallet extension — this page updates automatically.';
+    menu.appendChild(hint);
 
     var disconnectBtn = document.createElement('div');
     disconnectBtn.style.cssText = "padding:.5rem .8rem;font-family:'Inter',sans-serif;font-size:.7rem;color:#b03a3a;cursor:pointer;transition:background .1s;";
@@ -378,8 +325,6 @@
     menu.appendChild(disconnectBtn);
 
     document.body.appendChild(menu);
-
-    // Close on click outside
     setTimeout(function() {
       document.addEventListener('click', function closeMenu(e) {
         if (!menu.contains(e.target) && e.target !== anchorEl) {
@@ -390,7 +335,7 @@
     }, 10);
   }
 
-  // No auto-connect — user must click Connect Wallet every time
+  // No auto-connect — user must click Connect Wallet
 
   // ── Public API ────────────────────────────────────────────────────
   window.qfWallet = {
@@ -403,6 +348,7 @@
     get walletType() { return state.walletType; },
     isConnected: function() { return !!state.address; },
     connect: connect,
+    disconnect: disconnect,
     displayName: function() {
       if (state.qfName) return state.qfName;
       if (state.address) return state.address.slice(0, 6) + '...' + state.address.slice(-4);
@@ -411,7 +357,7 @@
     resolveAny: resolveQfName,
     formatAddr: formatAddr,
     onConnect: onConnect,
-    disconnect: disconnect,
+    onDisconnect: onDisconnect,
     showMenu: showWalletMenu,
     nameCache: nameCache
   };
