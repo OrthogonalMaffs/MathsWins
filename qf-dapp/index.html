@@ -155,14 +155,8 @@ h1 span{background:linear-gradient(135deg,var(--silver-bright),var(--silver),#8a
   cursor:pointer;position:relative;overflow:hidden;
 }
 .game-card::before{content:'';position:absolute;left:0;top:0;bottom:0;width:3px;border-radius:3px 0 0 3px;transition:opacity .4s ease}
-/* All competitive cards: silver bars */
-.game-card.cat-number::before,
-.game-card.cat-puzzle::before,
-.game-card.cat-logic::before,
-.game-card.cat-speed::before{background:var(--silver)}
-/* Free play cards: category colours */
-.game-card.cat-strategy::before{background:var(--blue)}
-.game-card.cat-memory::before{background:var(--red)}
+/* All cards: silver bars — unified premium theme */
+.game-card::before{background:var(--silver)}
 
 /* When ANY card in the grid is hovered, dim all siblings */
 .game-grid:hover .game-card{opacity:.45;filter:brightness(.7)}
