@@ -127,10 +127,10 @@ h1 span{background:linear-gradient(135deg,var(--silver-bright),var(--silver),#8a
 .filter-pill.active{border-color:var(--silver);background:var(--silver-dim);color:var(--silver-bright)}
 
 /* ── Game Cards ── */
-.game-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(260px,1fr));gap:.7rem;margin:1rem 0 3rem}
+.game-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(300px,1fr));gap:24px;margin:1.5rem 0 3rem}
 .game-card{
   background:var(--surface);border:1px solid var(--border);border-radius:10px;
-  padding:1rem 1.1rem;transition:all .2s;cursor:pointer;position:relative;overflow:hidden;
+  padding:20px 24px;transition:all .2s;cursor:pointer;position:relative;overflow:hidden;
 }
 .game-card:hover{border-color:var(--silver-border);transform:translateY(-2px);box-shadow:0 8px 32px rgba(0,0,0,.4)}
 .game-card::before{content:'';position:absolute;left:0;top:0;bottom:0;width:3px;border-radius:3px 0 0 3px}
@@ -215,7 +215,7 @@ footer a:hover{color:var(--silver-bright)}
   <h1>QF <span>Games</span></h1>
   <p class="tagline">Competitive maths games on QF Network. Duel your rivals, climb leagues, earn trophies. Pure skill.</p>
   <div class="hero-stats">
-    <div class="hs"><div class="hs-num" id="totalGames">16</div><div class="hs-label">Games</div></div>
+    <div class="hs"><div class="hs-num" id="totalGames">16</div><div class="hs-label">Games (9 Competitive)</div></div>
     <div class="hs"><div class="hs-num" id="totalPot">&mdash;</div><div class="hs-label">Total Pot</div></div>
     <div class="hs"><div class="hs-num" id="totalPlayers">&mdash;</div><div class="hs-label">This Week</div></div>
   </div>
@@ -244,13 +244,9 @@ footer a:hover{color:var(--silver-bright)}
 
 <!-- FILTER -->
 <div class="filter">
-  <button class="filter-pill active" onclick="filterGames('all')">All Games</button>
-  <button class="filter-pill" onclick="filterGames('paid')">Paid</button>
-  <button class="filter-pill" onclick="filterGames('free')">Free</button>
-  <button class="filter-pill" onclick="filterGames('number')">Number</button>
-  <button class="filter-pill" onclick="filterGames('puzzle')">Puzzle</button>
-  <button class="filter-pill" onclick="filterGames('logic')">Logic</button>
-  <button class="filter-pill" onclick="filterGames('speed')">Speed</button>
+  <button class="filter-pill active" onclick="filterGames('paid')">Competitive</button>
+  <button class="filter-pill" onclick="filterGames('free')">Free Play</button>
+  <button class="filter-pill" onclick="filterGames('all')">All Games</button>
 </div>
 
 <!-- GAME GRID -->
@@ -401,7 +397,7 @@ function updateCountdown() {
 }
 
 // ── Init ────────────────────────────────────────────────────────────────────
-renderGames('all');
+renderGames('paid');
 updateCountdown();
 setInterval(updateCountdown, 1000);
 

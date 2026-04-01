@@ -66,37 +66,41 @@
   // ── Detect available wallets ──────────────────────────────────────
   function detectWallets() {
     var wallets = [];
+    var seen = {};
 
-    // MetaMask injects window.ethereum with isMetaMask
-    if (window.ethereum && window.ethereum.isMetaMask) {
-      // Check it's not Talisman masquerading
-      if (!window.ethereum.isTalisman) {
-        wallets.push({ id: 'metamask', name: 'MetaMask', icon: '\uD83E\uDD8A', provider: window.ethereum });
-      }
+    function add(id, name, icon, provider) {
+      if (seen[id] || !provider) return;
+      seen[id] = true;
+      wallets.push({ id: id, name: name, icon: icon, provider: provider });
     }
 
-    // Talisman injects window.talismanEth or sets isTalisman on window.ethereum
-    if (window.talismanEth) {
-      wallets.push({ id: 'talisman', name: 'Talisman', icon: '\uD83D\uDD2E', provider: window.talismanEth });
-    } else if (window.ethereum && window.ethereum.isTalisman) {
-      wallets.push({ id: 'talisman', name: 'Talisman', icon: '\uD83D\uDD2E', provider: window.ethereum });
-    }
-
-    // If multiple providers via EIP-6963
+    // EIP-6963: multiple providers array (MetaMask + Talisman both present)
     if (window.ethereum && window.ethereum.providers && window.ethereum.providers.length > 0) {
       window.ethereum.providers.forEach(function(p) {
-        if (p.isMetaMask && !p.isTalisman && !wallets.find(function(w) { return w.id === 'metamask'; })) {
-          wallets.push({ id: 'metamask', name: 'MetaMask', icon: '\uD83E\uDD8A', provider: p });
-        }
-        if (p.isTalisman && !wallets.find(function(w) { return w.id === 'talisman'; })) {
-          wallets.push({ id: 'talisman', name: 'Talisman', icon: '\uD83D\uDD2E', provider: p });
-        }
+        if (p.isTalisman) add('talisman', 'Talisman', '\uD83D\uDD2E', p);
+        else if (p.isMetaMask) add('metamask', 'MetaMask', '\uD83E\uDD8A', p);
       });
     }
 
-    // Fallback: if window.ethereum exists but nothing matched above
-    if (wallets.length === 0 && window.ethereum) {
-      wallets.push({ id: 'unknown', name: 'Browser Wallet', icon: '\uD83D\uDD17', provider: window.ethereum });
+    // Talisman's dedicated EVM provider
+    if (window.talismanEth) {
+      add('talisman', 'Talisman', '\uD83D\uDD2E', window.talismanEth);
+    }
+
+    // Single provider on window.ethereum
+    if (window.ethereum && !seen.talisman && !seen.metamask) {
+      if (window.ethereum.isTalisman) {
+        add('talisman', 'Talisman', '\uD83D\uDD2E', window.ethereum);
+      } else if (window.ethereum.isMetaMask) {
+        add('metamask', 'MetaMask', '\uD83E\uDD8A', window.ethereum);
+      } else {
+        add('browser', 'Browser Wallet', '\uD83D\uDD17', window.ethereum);
+      }
+    }
+
+    // Talisman on window.ethereum when it's the only extension but sets isMetaMask too
+    if (window.ethereum && window.ethereum.isTalisman && !seen.talisman) {
+      add('talisman', 'Talisman', '\uD83D\uDD2E', window.ethereum);
     }
 
     return wallets;
