@@ -169,10 +169,6 @@
       showNoWalletMessage(document.getElementById('qf-wallet-list'));
       return;
     }
-    if (wallets.length === 1) {
-      await connectWithProvider(wallets[0].provider, wallets[0].id);
-      return;
-    }
     createModal();
     var list = document.getElementById('qf-wallet-list');
     list.innerHTML = '';
@@ -230,6 +226,13 @@
         chainId = Number(network.chainId);
       }
 
+      // Liveness check — verify wallet is actually responsive, not returning cached data
+      try {
+        await ethProvider.request({ method: 'eth_chainId' });
+      } catch (e) {
+        throw new Error('Wallet is locked or unresponsive');
+      }
+
       var balance = await provider.getBalance(address);
 
       state.address = address;
@@ -268,6 +271,12 @@
 
     } catch (e) {
       console.error('Wallet connect failed:', e);
+      var errorDiv = document.createElement('div');
+      errorDiv.id = 'qf-wallet-error';
+      errorDiv.style.cssText = 'position:fixed;top:60px;left:50%;transform:translateX(-50%);background:#1e2025;border:1px solid #b03a3a;border-radius:8px;padding:.8rem 1.2rem;z-index:9999;font-family:"Inter",sans-serif;font-size:.75rem;color:#e8eaf0;max-width:320px;text-align:center;box-shadow:0 8px 24px rgba(0,0,0,.5);';
+      errorDiv.textContent = 'Connection failed. Please unlock your wallet and try again.';
+      document.body.appendChild(errorDiv);
+      setTimeout(function() { var el = document.getElementById('qf-wallet-error'); if (el) el.remove(); }, 4000);
     }
   }
 
