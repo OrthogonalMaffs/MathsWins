@@ -274,7 +274,9 @@ router.get('/promo/:code', (req, res) => {
   if (!promo) return res.status(404).json({ error: 'Promo not found' });
 
   const wallet = req.headers['x-wallet-address'];
-  const alreadyClaimed = wallet ? !!getPromoClaim(promo.id, wallet) : false;
+  const existingClaim = wallet ? getPromoClaim(promo.id, wallet) : null;
+  const alreadyWon = existingClaim ? !!existingClaim.won : false;
+  const attemptsUsed = existingClaim ? (existingClaim.won ? 2 : 1) : 0;
   const spotsLeft = promo.max_claims - promo.claims_count;
 
   res.json({
@@ -288,7 +290,9 @@ router.get('/promo/:code', (req, res) => {
     claims_count: promo.claims_count,
     spots_left: spotsLeft,
     active: promo.active && spotsLeft > 0,
-    already_claimed: alreadyClaimed
+    already_claimed: alreadyWon,
+    attempts_used: attemptsUsed,
+    can_retry: existingClaim && !existingClaim.won && attemptsUsed < 2
   });
 });
 
@@ -304,15 +308,26 @@ router.post('/promo/:code/submit', (req, res) => {
   if (!promo.active) return res.status(400).json({ error: 'Promo is no longer active' });
   if (promo.claims_count >= promo.max_claims) return res.status(400).json({ error: 'All prizes have been claimed' });
 
-  // Check not already played
+  // Check previous attempts — allow retry if first attempt was a loss (max 2 attempts)
   const existing = getPromoClaim(promo.id, wallet);
-  if (existing) return res.status(400).json({ error: 'You have already played this challenge' });
+  if (existing && existing.won) return res.status(400).json({ error: 'You already won this challenge' });
 
-  const { score } = req.body;
+  const { score, attempt } = req.body;
   if (score == null) return res.status(400).json({ error: 'score required' });
 
   const won = score > promo.creator_score;
-  addPromoClaim(promo.id, wallet, score, won, Date.now());
+
+  if (existing) {
+    // Second attempt — update the existing claim
+    const db = getDb();
+    db.prepare('UPDATE promo_claims SET score = ?, won = ?, claimed_at = ? WHERE promo_id = ? AND wallet = ?')
+      .run(score, won ? 1 : 0, Date.now(), promo.id, wallet.toLowerCase());
+    if (won) {
+      db.prepare('UPDATE promo_challenges SET claims_count = claims_count + 1 WHERE id = ?').run(promo.id);
+    }
+  } else {
+    addPromoClaim(promo.id, wallet, score, won, Date.now());
+  }
 
   if (won) {
     res.json({

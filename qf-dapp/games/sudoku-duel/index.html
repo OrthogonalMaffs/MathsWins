@@ -1045,29 +1045,68 @@ var G = (function() {
   }
 
   // ── Promo Result ────────────────────────────────────────────────────
+  var promoAttempt = 0;
+  var PROMO_MAX_ATTEMPTS = 2;
+
   function showPromoResult(result, secs, score) {
     document.getElementById('modal').classList.remove('hidden');
+    promoAttempt++;
+
+    var m = Math.floor(secs / 60), s = secs % 60;
 
     if (result.won) {
       document.getElementById('modal-result').textContent = 'You Win!';
       document.getElementById('modal-result').className = 'modal-result win';
       document.getElementById('modal-sub').textContent = result.message;
+      document.getElementById('modal-score').innerHTML =
+        '<div class="ms-item"><span class="ms-val">' + score + '</span><span class="ms-lbl">Your Score</span></div>' +
+        '<div class="ms-item"><span class="ms-val">' + (result.target_score || '?') + '</span><span class="ms-lbl">Score to Beat</span></div>' +
+        '<div class="ms-item"><span class="ms-val">' + m + ':' + (s < 10 ? '0' : '') + s + '</span><span class="ms-lbl">Time</span></div>' +
+        '<div class="ms-item"><span class="ms-val">' + result.prize + ' QF</span><span class="ms-lbl">Prize</span></div>';
+      document.querySelector('.modal-acts').innerHTML =
+        '<button class="btn btn-silver" onclick="window.location=\'/qf-dapp/\'">Back to Lobby</button>';
+    } else if (promoAttempt < PROMO_MAX_ATTEMPTS) {
+      // First attempt failed — offer a retry
+      document.getElementById('modal-result').textContent = 'So Close!';
+      document.getElementById('modal-result').className = 'modal-result draw';
+      document.getElementById('modal-sub').textContent = 'You scored ' + score + ' but needed ' + (result.target_score + 1) + '. Have another go — same board, you know the layout now.';
+      document.getElementById('modal-score').innerHTML =
+        '<div class="ms-item"><span class="ms-val">' + score + '</span><span class="ms-lbl">Your Score</span></div>' +
+        '<div class="ms-item"><span class="ms-val">' + (result.target_score || '?') + '</span><span class="ms-lbl">Score to Beat</span></div>';
+      document.querySelector('.modal-acts').innerHTML =
+        '<button class="btn btn-silver" onclick="G.retryPromo()">Try Again</button>' +
+        '<button class="btn btn-ghost" onclick="window.location=\'/qf-dapp/\'">Back to Lobby</button>';
     } else {
+      // Second attempt also failed
       document.getElementById('modal-result').textContent = 'Not Quite';
       document.getElementById('modal-result').className = 'modal-result lose';
-      document.getElementById('modal-sub').textContent = result.message;
+      document.getElementById('modal-sub').textContent = 'You scored ' + score + ' — needed ' + (result.target_score + 1) + '. Better luck next time!';
+      document.getElementById('modal-score').innerHTML =
+        '<div class="ms-item"><span class="ms-val">' + score + '</span><span class="ms-lbl">Your Score</span></div>' +
+        '<div class="ms-item"><span class="ms-val">' + (result.target_score || '?') + '</span><span class="ms-lbl">Score to Beat</span></div>';
+      document.querySelector('.modal-acts').innerHTML =
+        '<button class="btn btn-silver" onclick="window.location=\'/qf-dapp/\'">Back to Lobby</button>';
     }
+  }
 
-    var m = Math.floor(secs / 60), s = secs % 60;
-    document.getElementById('modal-score').innerHTML =
-      '<div class="ms-item"><span class="ms-val">' + score + '</span><span class="ms-lbl">Your Score</span></div>' +
-      '<div class="ms-item"><span class="ms-val">' + (result.target_score || '?') + '</span><span class="ms-lbl">Score to Beat</span></div>' +
-      '<div class="ms-item"><span class="ms-val">' + m + ':' + (s < 10 ? '0' : '') + s + '</span><span class="ms-lbl">Time</span></div>' +
-      '<div class="ms-item"><span class="ms-val">' + (result.won ? result.prize + ' QF' : '—') + '</span><span class="ms-lbl">Prize</span></div>';
-
-    // Override buttons
-    document.querySelector('.modal-acts').innerHTML =
-      '<button class="btn btn-silver" onclick="window.location=\'/qf-dapp/\'">Back to Lobby</button>';
+  function retryPromo() {
+    // Reset game state for retry on same board
+    document.getElementById('modal').classList.add('hidden');
+    done = false;
+    mistakes = 0;
+    hintsUsed = 0;
+    selected = null;
+    history = [];
+    grid = puzzle.slice();
+    notes = [];
+    for (var i = 0; i < 81; i++) notes.push(new Set());
+    document.getElementById('sv-h').textContent = '0';
+    updateMistakes();
+    renderBoard();
+    updateNumpad();
+    setMsg('');
+    clearInterval(timerInterval);
+    startTimer();
   }
 
   // ── Copy/Share ──────────────────────────────────────────────────────
@@ -1153,7 +1192,7 @@ var G = (function() {
   return {
     inputNum: inputNum, undo: undo, toggleNotes: toggleNotes, useHint: useHint,
     startSolo: startSolo, createDuel: createDuel, acceptAndPlay: acceptAndPlay,
-    copyCode: copyCode, shareDuel: shareDuel
+    copyCode: copyCode, shareDuel: shareDuel, retryPromo: retryPromo
   };
 })();
 </script>
