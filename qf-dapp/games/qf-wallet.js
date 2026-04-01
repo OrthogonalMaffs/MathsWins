@@ -231,6 +231,8 @@
 
   async function connectWithProvider(ethProvider, walletId) {
     try {
+      // Clear disconnected flag — user is explicitly connecting
+      try { localStorage.removeItem('qf-wallet-disconnected'); } catch (e) {}
       var provider = new ethers.BrowserProvider(ethProvider);
       await provider.send('eth_requestAccounts', []);
       var signer = await provider.getSigner();
@@ -314,8 +316,8 @@
     state.signer = null;
     state.qfName = null;
     state.walletType = null;
-    // Clear any persisted connection preference
-    try { localStorage.removeItem('qf-wallet-connected'); } catch (e) {}
+    // Set flag so auto-connect doesn't immediately reconnect
+    try { localStorage.setItem('qf-wallet-disconnected', '1'); } catch (e) {}
     location.reload();
   }
 
@@ -385,6 +387,10 @@
 
   // ── Auto-connect (if previously connected) ────────────────────────
   function autoConnect() {
+    // Skip if user explicitly disconnected
+    try {
+      if (localStorage.getItem('qf-wallet-disconnected')) return;
+    } catch (e) {}
     // Check for any injected provider that's already authorised
     if (window.ethereum && window.ethereum.selectedAddress) {
       var wallets = detectWallets();
