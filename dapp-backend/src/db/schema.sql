@@ -92,6 +92,34 @@ CREATE INDEX IF NOT EXISTS idx_duels_share_code ON duels(share_code);
 CREATE INDEX IF NOT EXISTS idx_duels_creator ON duels(creator_wallet);
 CREATE INDEX IF NOT EXISTS idx_duels_status ON duels(status, expires_at);
 
+-- Promo challenges (reusable codes like #MAFFS)
+CREATE TABLE IF NOT EXISTS promo_challenges (
+    id              TEXT PRIMARY KEY,
+    code            TEXT UNIQUE NOT NULL,
+    game_id         TEXT NOT NULL,
+    puzzle_seed     INTEGER NOT NULL,
+    creator_wallet  TEXT NOT NULL,
+    creator_score   INTEGER NOT NULL,
+    prize_per_win   INTEGER NOT NULL DEFAULT 25,
+    max_claims      INTEGER NOT NULL DEFAULT 20,
+    claims_count    INTEGER NOT NULL DEFAULT 0,
+    active          INTEGER NOT NULL DEFAULT 1,
+    created_at      INTEGER NOT NULL
+);
+
+CREATE TABLE IF NOT EXISTS promo_claims (
+    promo_id        TEXT NOT NULL,
+    wallet          TEXT NOT NULL,
+    score           INTEGER NOT NULL,
+    won             INTEGER NOT NULL DEFAULT 0,
+    tx_hash         TEXT,
+    claimed_at      INTEGER NOT NULL,
+    PRIMARY KEY (promo_id, wallet)
+);
+
+CREATE INDEX IF NOT EXISTS idx_promo_code ON promo_challenges(code);
+CREATE INDEX IF NOT EXISTS idx_promo_claims_wallet ON promo_claims(wallet);
+
 -- Leagues
 CREATE TABLE IF NOT EXISTS leagues (
     id              TEXT PRIMARY KEY,

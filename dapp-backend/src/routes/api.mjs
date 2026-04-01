@@ -3,6 +3,7 @@ import crypto from 'crypto';
 import { getLeaderboard, getEntry, getPaidGames } from '../db/index.mjs';
 import { createDuel, getDuelByCode, getDuelById, updateDuelCreatorScore, acceptDuel, updateDuelOpponentScore, completeDuel, expireOldDuels, getDuelsByWallet } from '../db/index.mjs';
 import { createLeague, getLeagueById, getActiveLeagues, getAllLeagues, updateLeagueStatus, startLeague, settleLeague, cancelLeague, addLeaguePlayer, getLeaguePlayers, getLeaguePlayerCount, isLeaguePlayer, markRefunded, addLeaguePuzzle, getLeaguePuzzles, addLeagueScore, getLeagueScore, getLeagueScoresByWallet, getLeagueLeaderboard, addLeaguePrize, getLeaguePrizes } from '../db/index.mjs';
+import { createPromoChallenge, getPromoByCode, getPromoById, getPromoClaim, addPromoClaim, getPromoClaims } from '../db/index.mjs';
 import { startSession, startFreeSession, evaluate, getCurrentWeekId } from '../scoring.mjs';
 import { ethers } from 'ethers';
 import { getDb } from '../db/index.mjs';
@@ -262,6 +263,93 @@ router.get('/duels/history', (req, res) => {
   if (!wallet) return res.status(401).json({ error: 'Wallet required' });
   const duels = getDuelsByWallet(wallet, 20);
   res.json(duels);
+});
+
+// ── Promo Challenge Endpoints ─────────────────────────────────────────
+
+// Look up a promo code (used by the lobby duel code input)
+router.get('/promo/:code', (req, res) => {
+  const code = req.params.code.toUpperCase().replace(/^#/, '');
+  const promo = getPromoByCode(code);
+  if (!promo) return res.status(404).json({ error: 'Promo not found' });
+
+  const wallet = req.headers['x-wallet-address'];
+  const alreadyClaimed = wallet ? !!getPromoClaim(promo.id, wallet) : false;
+  const spotsLeft = promo.max_claims - promo.claims_count;
+
+  res.json({
+    id: promo.id,
+    code: promo.code,
+    game_id: promo.game_id,
+    puzzle_seed: promo.puzzle_seed,
+    creator_score: promo.creator_score,
+    prize_per_win: promo.prize_per_win,
+    max_claims: promo.max_claims,
+    claims_count: promo.claims_count,
+    spots_left: spotsLeft,
+    active: promo.active && spotsLeft > 0,
+    already_claimed: alreadyClaimed
+  });
+});
+
+// Submit a promo challenge score
+router.post('/promo/:code/submit', (req, res) => {
+  const wallet = req.headers['x-wallet-address'];
+  if (!wallet) return res.status(401).json({ error: 'Wallet required to claim prizes' });
+
+  const code = req.params.code.toUpperCase().replace(/^#/, '');
+  const promo = getPromoByCode(code);
+  if (!promo) return res.status(404).json({ error: 'Promo not found' });
+
+  if (!promo.active) return res.status(400).json({ error: 'Promo is no longer active' });
+  if (promo.claims_count >= promo.max_claims) return res.status(400).json({ error: 'All prizes have been claimed' });
+
+  // Check not already played
+  const existing = getPromoClaim(promo.id, wallet);
+  if (existing) return res.status(400).json({ error: 'You have already played this challenge' });
+
+  const { score } = req.body;
+  if (score == null) return res.status(400).json({ error: 'score required' });
+
+  const won = score > promo.creator_score;
+  addPromoClaim(promo.id, wallet, score, won, Date.now());
+
+  if (won) {
+    res.json({
+      won: true,
+      message: 'Well done — have a free game on me! Sending ' + promo.prize_per_win + ' QF to your wallet.',
+      prize: promo.prize_per_win,
+      your_score: score,
+      target_score: promo.creator_score
+    });
+  } else {
+    res.json({
+      won: false,
+      message: 'Not quite — you scored ' + score + ' but needed ' + (promo.creator_score + 1) + ' to win. Try a different promo next time!',
+      your_score: score,
+      target_score: promo.creator_score
+    });
+  }
+});
+
+// Create a promo (admin — requires specific wallet)
+router.post('/promo/create', (req, res) => {
+  const wallet = req.headers['x-wallet-address'];
+  if (!wallet) return res.status(401).json({ error: 'Wallet required' });
+
+  const { code, gameId, puzzleSeed, creatorScore, prizePerWin, maxClaims } = req.body;
+  if (!code || !gameId || !puzzleSeed || creatorScore == null) {
+    return res.status(400).json({ error: 'code, gameId, puzzleSeed, and creatorScore required' });
+  }
+
+  const cleanCode = code.toUpperCase().replace(/^#/, '');
+  const existingPromo = getPromoByCode(cleanCode);
+  if (existingPromo) return res.status(400).json({ error: 'Code already in use' });
+
+  const id = crypto.randomUUID();
+  createPromoChallenge(id, cleanCode, gameId, parseInt(puzzleSeed), wallet, parseInt(creatorScore), prizePerWin || 25, maxClaims || 20, Date.now());
+
+  res.json({ id, code: cleanCode, message: 'Promo challenge created' });
 });
 
 // ── League Endpoints ──────────────────────────────────────────────────

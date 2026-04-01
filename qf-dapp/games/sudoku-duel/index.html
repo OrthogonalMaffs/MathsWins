@@ -423,6 +423,11 @@ var G = (function() {
   var leagueId = null;
   var leaguePuzzleIndex = null;
 
+  // Promo state
+  var promoMode = false;
+  var promoCode = null;
+  var promoData = null;
+
   // ── API helper ──────────────────────────────────────────────────────
   async function api(url, body, method) {
     var headers = { 'Content-Type': 'application/json' };
@@ -434,9 +439,17 @@ var G = (function() {
     return res.json();
   }
 
-  // ── Check for URL params (duel or league) ───────────────────────────
+  // ── Check for URL params (duel, league, or promo) ───────────────────
   function checkUrlParams() {
     var params = new URLSearchParams(window.location.search);
+
+    // Promo mode: ?promo=CODE
+    var pcode = params.get('promo');
+    if (pcode) {
+      pcode = pcode.toUpperCase().replace(/^#/, '');
+      loadPromoChallenge(pcode);
+      return true;
+    }
 
     // League mode: ?league=ID&puzzle=INDEX&seed=SEED
     var lid = params.get('league');
@@ -461,6 +474,42 @@ var G = (function() {
       }
     }
     return false;
+  }
+
+  // ── Promo Challenge ─────────────────────────────────────────────────
+  async function loadPromoChallenge(code) {
+    promoMode = true;
+    promoCode = code;
+    hidePreGame();
+
+    try {
+      var data = await api('/promo/' + encodeURIComponent(code), null, 'GET');
+      if (data.error) { setMsg(data.error); showPreGame(); return; }
+
+      promoData = data;
+
+      if (data.already_claimed) {
+        setMsg('You have already played this challenge.');
+        showPreGame();
+        return;
+      }
+
+      if (!data.active) {
+        setMsg('This promo has ended — all prizes claimed.');
+        showPreGame();
+        return;
+      }
+
+      // Show promo info then start game
+      document.getElementById('mode-panel').style.display = 'none';
+      document.getElementById('scoring-panel').style.display = 'none';
+
+      // Start game with the promo's puzzle seed
+      await startGameSession(data.puzzle_seed);
+    } catch (e) {
+      setMsg('Could not load promo challenge.');
+      showPreGame();
+    }
   }
 
   // ── Mode: Solo ──────────────────────────────────────────────────────
@@ -850,6 +899,13 @@ var G = (function() {
           });
         }
 
+        // If promo mode, submit score and show result
+        if (promoMode && promoCode) {
+          var promoResult = await api('/promo/' + encodeURIComponent(promoCode) + '/submit', { score: finalScore });
+          showPromoResult(promoResult, secs, finalScore);
+          return;
+        }
+
         showModal(true, secs, finalScore);
       } catch (e) {
         setMsg('Connection error during submission');
@@ -875,6 +931,14 @@ var G = (function() {
           await api('/league/' + leagueId + '/submit', {
             puzzleIndex: leaguePuzzleIndex, score: 0, timeMs: timeMs, mistakes: mistakes, hints: hintsUsed
           });
+        } catch (e) { /* ignore */ }
+      }
+
+      if (promoMode && promoCode) {
+        try {
+          var promoResult = await api('/promo/' + encodeURIComponent(promoCode) + '/submit', { score: 0 });
+          showPromoResult(promoResult, secs, 0);
+          return;
         } catch (e) { /* ignore */ }
       }
 
@@ -978,6 +1042,32 @@ var G = (function() {
 
     // Hide solo score grid in duel view
     document.getElementById('modal-score').style.display = 'none';
+  }
+
+  // ── Promo Result ────────────────────────────────────────────────────
+  function showPromoResult(result, secs, score) {
+    document.getElementById('modal').classList.remove('hidden');
+
+    if (result.won) {
+      document.getElementById('modal-result').textContent = 'You Win!';
+      document.getElementById('modal-result').className = 'modal-result win';
+      document.getElementById('modal-sub').textContent = result.message;
+    } else {
+      document.getElementById('modal-result').textContent = 'Not Quite';
+      document.getElementById('modal-result').className = 'modal-result lose';
+      document.getElementById('modal-sub').textContent = result.message;
+    }
+
+    var m = Math.floor(secs / 60), s = secs % 60;
+    document.getElementById('modal-score').innerHTML =
+      '<div class="ms-item"><span class="ms-val">' + score + '</span><span class="ms-lbl">Your Score</span></div>' +
+      '<div class="ms-item"><span class="ms-val">' + (result.target_score || '?') + '</span><span class="ms-lbl">Score to Beat</span></div>' +
+      '<div class="ms-item"><span class="ms-val">' + m + ':' + (s < 10 ? '0' : '') + s + '</span><span class="ms-lbl">Time</span></div>' +
+      '<div class="ms-item"><span class="ms-val">' + (result.won ? result.prize + ' QF' : '—') + '</span><span class="ms-lbl">Prize</span></div>';
+
+    // Override buttons
+    document.querySelector('.modal-acts').innerHTML =
+      '<button class="btn btn-silver" onclick="window.location=\'/qf-dapp/\'">Back to Lobby</button>';
   }
 
   // ── Copy/Share ──────────────────────────────────────────────────────

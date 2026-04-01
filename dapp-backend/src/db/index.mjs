@@ -201,6 +201,43 @@ export function getDuelsByWallet(wallet, limit) {
     .all(wallet, wallet, limit || 20);
 }
 
+// ── Promo challenge queries ───────────────────────────────────────────
+
+export function createPromoChallenge(id, code, gameId, puzzleSeed, creatorWallet, creatorScore, prizePerWin, maxClaims, createdAt) {
+  const db = getDb();
+  db.prepare(`INSERT INTO promo_challenges (id, code, game_id, puzzle_seed, creator_wallet, creator_score, prize_per_win, max_claims, created_at)
+    VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)`).run(id, code.toUpperCase(), gameId, puzzleSeed, creatorWallet.toLowerCase(), creatorScore, prizePerWin, maxClaims, createdAt);
+}
+
+export function getPromoByCode(code) {
+  const db = getDb();
+  return db.prepare('SELECT * FROM promo_challenges WHERE code = ? AND active = 1').get(code.toUpperCase());
+}
+
+export function getPromoById(id) {
+  const db = getDb();
+  return db.prepare('SELECT * FROM promo_challenges WHERE id = ?').get(id);
+}
+
+export function getPromoClaim(promoId, wallet) {
+  const db = getDb();
+  return db.prepare('SELECT * FROM promo_claims WHERE promo_id = ? AND wallet = ?').get(promoId, wallet.toLowerCase());
+}
+
+export function addPromoClaim(promoId, wallet, score, won, claimedAt) {
+  const db = getDb();
+  db.prepare('INSERT INTO promo_claims (promo_id, wallet, score, won, claimed_at) VALUES (?, ?, ?, ?, ?)')
+    .run(promoId, wallet.toLowerCase(), score, won ? 1 : 0, claimedAt);
+  if (won) {
+    db.prepare('UPDATE promo_challenges SET claims_count = claims_count + 1 WHERE id = ?').run(promoId);
+  }
+}
+
+export function getPromoClaims(promoId) {
+  const db = getDb();
+  return db.prepare('SELECT * FROM promo_claims WHERE promo_id = ? ORDER BY claimed_at DESC').all(promoId);
+}
+
 // ── League queries ────────────────────────────────────────────────────
 
 export function createLeague(id, gameId, tier, entryFee, puzzleCount, regOpensAt, regClosesAt, createdAt) {

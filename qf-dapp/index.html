@@ -321,15 +321,15 @@ footer a:hover{color:var(--silver-bright)}
   <div class="hiw-split">5% burned &middot; 5% team &middot; 90% prize pool</div>
 </div>
 
-<!-- DUEL BANNER -->
+<!-- CODE ENTRY (duels + promo challenges) -->
 <div class="duel-banner">
   <div class="duel-banner-left">
-    <h3>Got a Duel Code?</h3>
-    <p>Enter the 6-character code to accept a challenge and play the same puzzle as your opponent.</p>
+    <h3>Got a Code?</h3>
+    <p>Enter a duel code or promo code (like <strong>#MAFFS</strong>) to play a challenge.</p>
   </div>
   <div class="duel-code-entry">
-    <input type="text" class="duel-code-input" id="duelCodeInput" maxlength="6" placeholder="ABC123" spellcheck="false" autocomplete="off">
-    <button class="btn-accept" onclick="acceptDuelCode()">Accept</button>
+    <input type="text" class="duel-code-input" id="duelCodeInput" maxlength="10" placeholder="#MAFFS" spellcheck="false" autocomplete="off">
+    <button class="btn-accept" onclick="acceptCode()">Play</button>
   </div>
 </div>
 
@@ -400,16 +400,35 @@ qfWallet.onConnect(function(w) {
   }
 });
 
-// ── Accept duel code ───────────────────────────────────────────────────────
-function acceptDuelCode() {
-  var code = document.getElementById('duelCodeInput').value.trim().toUpperCase();
-  if (code.length !== 6) { alert('Enter a 6-character duel code.'); return; }
-  // Navigate to sudoku duel (for now — will become game-agnostic later)
-  window.location.href = '/qf-dapp/games/sudoku-duel/?duel=' + code;
+// ── Accept code (duel or promo) ───────────────────────────────────────────
+async function acceptCode() {
+  var raw = document.getElementById('duelCodeInput').value.trim();
+  if (!raw) return;
+  var code = raw.toUpperCase().replace(/^#/, '');
+  if (!code) return;
+
+  // 6-char = regular duel code
+  if (code.length === 6 && /^[A-Z0-9]+$/.test(code)) {
+    window.location.href = '/qf-dapp/games/sudoku-duel/?duel=' + code;
+    return;
+  }
+
+  // Otherwise try as promo code
+  try {
+    var API = 'https://dapp-api.mathswins.co.uk/api/dapp';
+    if (location.hostname === 'localhost' || location.hostname === '127.0.0.1') API = 'http://127.0.0.1:3860/api/dapp';
+    var res = await fetch(API + '/promo/' + encodeURIComponent(code), { method: 'GET' });
+    var data = await res.json();
+    if (data.error) { alert('Code not found. Check and try again.'); return; }
+    // Navigate to the game with promo param
+    window.location.href = '/qf-dapp/games/' + data.game_id + '/?promo=' + code;
+  } catch (e) {
+    alert('Could not look up code. Check your connection.');
+  }
 }
 
 document.getElementById('duelCodeInput').addEventListener('keydown', function(e) {
-  if (e.key === 'Enter') acceptDuelCode();
+  if (e.key === 'Enter') acceptCode();
 });
 
 // ── Render Games ────────────────────────────────────────────────────────────
