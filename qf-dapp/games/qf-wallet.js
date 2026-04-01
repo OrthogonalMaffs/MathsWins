@@ -181,10 +181,36 @@
 
   async function connectWithProvider(ethProvider, walletId) {
     try {
+      // Step 1: Revoke existing authorisation (best-effort)
+      try {
+        await ethProvider.request({ method: 'wallet_revokePermissions', params: [{ eth_accounts: {} }] });
+      } catch (e) { /* Not supported on this wallet — continue */ }
+
+      // Step 2: Request fresh permissions (forces account picker popup)
+      var address;
+      try {
+        var permissions = await ethProvider.request({ method: 'wallet_requestPermissions', params: [{ eth_accounts: {} }] });
+        // Step 3: Extract account from permissions response
+        var ethAccountsPerm = permissions.find(function(p) { return p.parentCapability === 'eth_accounts'; });
+        if (ethAccountsPerm && ethAccountsPerm.caveats) {
+          var caveat = ethAccountsPerm.caveats.find(function(c) { return c.type === 'restrictReturnedAccounts'; });
+          if (caveat && caveat.value && caveat.value.length > 0) {
+            address = caveat.value[0];
+          }
+        }
+        // If couldn't extract from permissions, get it now (already re-authorised)
+        if (!address) {
+          var accounts = await ethProvider.request({ method: 'eth_requestAccounts' });
+          address = accounts[0];
+        }
+      } catch (e) {
+        // wallet_requestPermissions not supported — fall back
+        var accounts = await ethProvider.request({ method: 'eth_requestAccounts' });
+        address = accounts[0];
+      }
+
       var provider = new ethers.BrowserProvider(ethProvider);
-      await provider.send('eth_requestAccounts', []);
-      var signer = await provider.getSigner();
-      var address = await signer.getAddress();
+      var signer = await provider.getSigner(address);
       var network = await provider.getNetwork();
       var chainId = Number(network.chainId);
 
@@ -270,21 +296,13 @@
   }
 
   // ── Disconnect ────────────────────────────────────────────────────
-  async function disconnect() {
-    // Revoke site authorization so next connect shows fresh account picker
-    if (state.rawProvider && state.rawProvider.request) {
-      try {
-        await state.rawProvider.request({ method: 'wallet_revokePermissions', params: [{ eth_accounts: {} }] });
-      } catch (e) {
-        // wallet_revokePermissions not supported (older MetaMask / Talisman)
-        // Nothing we can do — MetaMask will remember the authorization
-      }
-    }
+  function disconnect() {
     // Remove listeners
     if (state.rawProvider && state.rawProvider.removeAllListeners) {
       state.rawProvider.removeAllListeners('accountsChanged');
       state.rawProvider.removeAllListeners('chainChanged');
     }
+    // Clear dApp state only — revoke happens at the start of the next connect
     state.address = null;
     state.balance = null;
     state.chainId = null;
@@ -319,11 +337,6 @@
       nameItem.textContent = state.qfName;
       menu.appendChild(nameItem);
     }
-
-    var hint = document.createElement('div');
-    hint.style.cssText = "padding:.4rem .8rem;font-family:'JetBrains Mono',monospace;font-size:.48rem;color:#4a4e5a;border-bottom:1px solid #2a2e36;line-height:1.5;";
-    hint.textContent = 'To switch account, change it in your wallet extension — this page updates automatically.';
-    menu.appendChild(hint);
 
     var disconnectBtn = document.createElement('div');
     disconnectBtn.style.cssText = "padding:.5rem .8rem;font-family:'Inter',sans-serif;font-size:.7rem;color:#b03a3a;cursor:pointer;transition:background .1s;";
