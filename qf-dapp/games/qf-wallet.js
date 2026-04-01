@@ -171,7 +171,7 @@
 
     var desc = document.createElement('div');
     desc.style.cssText = "font-family:'JetBrains Mono',monospace;font-size:.52rem;color:#4a4e5a;margin-top:.1rem;";
-    desc.textContent = wallet.id === 'talisman' ? 'Substrate & EVM wallet' : 'EVM wallet';
+    desc.textContent = 'EVM wallet';
 
     info.appendChild(name);
     info.appendChild(desc);
