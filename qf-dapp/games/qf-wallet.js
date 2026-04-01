@@ -391,22 +391,7 @@
     }, 10);
   }
 
-  // ── Auto-connect (only if user previously connected to QF Games) ───
-  function autoConnect() {
-    try {
-      if (localStorage.getItem('qf-wallet-disconnected')) return;
-      if (!localStorage.getItem('qf-wallet-connected')) return;
-    } catch (e) { return; }
-    if (window.ethereum && window.ethereum.selectedAddress) {
-      var wallets = detectWallets();
-      if (wallets.length > 0) {
-        connectWithProvider(wallets[0].provider, wallets[0].id);
-      }
-    }
-  }
-
-  // Run auto-connect after a brief delay to let extensions inject
-  setTimeout(autoConnect, 200);
+  // No auto-connect — user must click Connect Wallet every time
 
   // ── Public API ────────────────────────────────────────────────────
   window.qfWallet = {
