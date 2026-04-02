@@ -7,6 +7,8 @@ import apiRoutes from './routes/api.mjs';
 import { checkLeagueLifecycles } from './routes/api.mjs';
 import { registerAllGames } from './games/index.mjs';
 import { startListener } from './chain-listener.mjs';
+import { initEscrow, getEscrowAddress, getEscrowBalance } from './escrow.mjs';
+import { ethers } from 'ethers';
 
 const PORT = process.env.PORT || 3860;
 
@@ -67,13 +69,23 @@ setInterval(() => {
 app.use('/api/dapp', apiRoutes);
 
 // Health check
-app.get('/health', (req, res) => {
-  res.json({ status: 'ok', uptime: process.uptime() });
+app.get('/health', async (req, res) => {
+  const balance = await getEscrowBalance();
+  res.json({
+    status: 'ok',
+    uptime: process.uptime(),
+    escrow: {
+      address: getEscrowAddress(),
+      balance: ethers.formatEther(balance) + ' QF'
+    }
+  });
 });
 
 // ── Start ───────────────────────────────────────────────────────────────────
 const db = getDb(); // initialise DB + run schema
 console.log('Database initialised');
+
+const escrowAddr = initEscrow();
 
 registerAllGames();
 console.log('Game banks loaded');
