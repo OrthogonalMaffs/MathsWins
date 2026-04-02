@@ -256,6 +256,7 @@ async function loadLeagues() {
     document.getElementById('leagueCards').innerHTML = '<div class="empty-state">Could not load leagues. Check your connection.</div>';
   }
 }
+setInterval(loadLeagues, 30000);
 
 function renderLeagueCards(leagues) {
   var container = document.getElementById('leagueCards');

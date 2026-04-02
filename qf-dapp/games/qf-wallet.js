@@ -190,34 +190,37 @@
     wallets.forEach(function(w) { list.appendChild(walletButton(w)); });
   }
 
-  async function connectWithProvider(ethProvider, walletId) {
+  async function connectWithProvider(ethProvider, walletId, silent) {
     try {
-      // Step 1: Revoke existing authorisation (best-effort)
-      try {
-        await ethProvider.request({ method: 'wallet_revokePermissions', params: [{ eth_accounts: {} }] });
-      } catch (e) { /* Not supported on this wallet — continue */ }
-
-      // Step 2: Request fresh permissions (forces account picker popup)
       var address;
-      try {
-        var permissions = await ethProvider.request({ method: 'wallet_requestPermissions', params: [{ eth_accounts: {} }] });
-        // Step 3: Extract account from permissions response
-        var ethAccountsPerm = permissions.find(function(p) { return p.parentCapability === 'eth_accounts'; });
-        if (ethAccountsPerm && ethAccountsPerm.caveats) {
-          var caveat = ethAccountsPerm.caveats.find(function(c) { return c.type === 'restrictReturnedAccounts'; });
-          if (caveat && caveat.value && caveat.value.length > 0) {
-            address = caveat.value[0];
+      if (silent) {
+        // Silent reconnect — just check if already authorised
+        var accounts = await ethProvider.request({ method: 'eth_accounts' });
+        if (!accounts || accounts.length === 0) return;
+        address = accounts[0];
+      } else {
+        // Manual connect — revoke and request fresh permissions
+        try {
+          await ethProvider.request({ method: 'wallet_revokePermissions', params: [{ eth_accounts: {} }] });
+        } catch (e) { /* Not supported on this wallet — continue */ }
+
+        try {
+          var permissions = await ethProvider.request({ method: 'wallet_requestPermissions', params: [{ eth_accounts: {} }] });
+          var ethAccountsPerm = permissions.find(function(p) { return p.parentCapability === 'eth_accounts'; });
+          if (ethAccountsPerm && ethAccountsPerm.caveats) {
+            var caveat = ethAccountsPerm.caveats.find(function(c) { return c.type === 'restrictReturnedAccounts'; });
+            if (caveat && caveat.value && caveat.value.length > 0) {
+              address = caveat.value[0];
+            }
           }
-        }
-        // If couldn't extract from permissions, get it now (already re-authorised)
-        if (!address) {
+          if (!address) {
+            var accounts = await ethProvider.request({ method: 'eth_requestAccounts' });
+            address = accounts[0];
+          }
+        } catch (e) {
           var accounts = await ethProvider.request({ method: 'eth_requestAccounts' });
           address = accounts[0];
         }
-      } catch (e) {
-        // wallet_requestPermissions not supported — fall back
-        var accounts = await ethProvider.request({ method: 'eth_requestAccounts' });
-        address = accounts[0];
       }
 
       var provider = new ethers.BrowserProvider(ethProvider);
@@ -258,6 +261,8 @@
       state.walletType = walletId;
       state.rawProvider = ethProvider;
       state.qfName = null;
+
+      try { localStorage.setItem('qf_wallet_id', walletId); } catch (e) {}
 
       fireCallbacks();
 
@@ -335,6 +340,7 @@
     state.qfName = null;
     state.walletType = null;
     state.rawProvider = null;
+    try { localStorage.removeItem('qf_wallet_id'); } catch (e) {}
     fireDisconnectCallbacks();
   }
 
@@ -381,7 +387,18 @@
     }, 10);
   }
 
-  // No auto-connect — user must click Connect Wallet
+  // Auto-reconnect if previously connected
+  (function autoReconnect() {
+    var savedId;
+    try { savedId = localStorage.getItem('qf_wallet_id'); } catch (e) {}
+    if (!savedId) return;
+    // Wait briefly for wallet extensions to inject their providers
+    setTimeout(function() {
+      var wallets = detectWallets();
+      var match = wallets.find(function(w) { return w.id === savedId; });
+      if (match) connectWithProvider(match.provider, match.id, true);
+    }, 500);
+  })();
 
   // ── Public API ────────────────────────────────────────────────────
   window.qfWallet = {
