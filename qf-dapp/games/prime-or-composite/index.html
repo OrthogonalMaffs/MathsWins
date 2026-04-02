@@ -160,6 +160,11 @@ body::before{content:'';position:fixed;inset:0;background-image:linear-gradient(
 .htp-body ul{margin:.3rem 0 .5rem 1.2rem}
 .htp-body li{margin-bottom:.2rem}
 .htp-body strong{color:var(--text,#8a8f9c)}
+/* Countdown overlay */
+.countdown-overlay{position:fixed;inset:0;background:rgba(14,16,19,0.96);z-index:300;display:none;align-items:center;justify-content:center}
+.countdown-overlay.active{display:flex}
+.countdown-num{font-family:'Playfair Display','Bebas Neue',serif;font-size:6rem;color:#d4d8e2;line-height:1}
+.countdown-hint{font-family:'JetBrains Mono','DM Mono',monospace;font-size:.7rem;color:#4a4e5a;margin-top:.5rem}
 </style>
 </head>
 <body>
@@ -221,6 +226,8 @@ body::before{content:'';position:fixed;inset:0;background-image:linear-gradient(
   <button class="btn btn-gold" id="start-btn">Start Game</button>
   <a href="/qf-dapp/games/prime-or-composite/league/" style="display:block;text-align:center;margin-top:.8rem;font-family:'JetBrains Mono',monospace;font-size:.65rem;color:var(--silver,#b8bcc6);text-decoration:none;padding:.5rem;border:1px solid var(--border,#1e2228);border-radius:6px;transition:all .15s" onmouseover="this.style.borderColor='rgba(184,188,198,0.15)'" onmouseout="this.style.borderColor='var(--border,#1e2228)'">&#9813; View Leagues</a>
 </div>
+
+<div class="countdown-overlay" id="game-countdown"><div style="text-align:center"><div class="countdown-num" id="countdown-num"></div><div class="countdown-hint">Get ready...</div></div></div>
 
 <!-- Modal -->
 <div class="modal-overlay hidden" id="modal">
@@ -300,8 +307,35 @@ body::before{content:'';position:fixed;inset:0;background-image:linear-gradient(
 
   function setMsg(txt) { msgEl.textContent = txt; }
 
+  // ── Countdown ──────────────────────────────────────────────────────────
+  function showCountdown() {
+    return new Promise(function(resolve) {
+      var overlay = document.getElementById('game-countdown');
+      var numEl = document.getElementById('countdown-num');
+      overlay.classList.add('active');
+      var count = 3;
+      numEl.textContent = count;
+      var interval = setInterval(function() {
+        count--;
+        if (count > 0) {
+          numEl.textContent = count;
+        } else {
+          numEl.textContent = 'GO';
+          clearInterval(interval);
+          setTimeout(function() { overlay.classList.remove('active'); resolve(); }, 500);
+        }
+      }, 1000);
+    });
+  }
+
   // ── Start game ────────────────────────────────────────────────────────
-  startBtn.addEventListener('click', startSession);
+  startBtn.addEventListener('click', function() {
+    if (leagueMode) {
+      showCountdown().then(function() { startSession(); });
+    } else {
+      startSession();
+    }
+  });
 
   async function startSession() {
     startBtn.disabled = true;

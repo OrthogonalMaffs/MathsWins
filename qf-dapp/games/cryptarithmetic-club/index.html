@@ -209,6 +209,11 @@ nav{position:sticky;top:0;z-index:100;width:100%;display:flex;align-items:center
 .htp-body ul{margin:.3rem 0 .5rem 1.2rem}
 .htp-body li{margin-bottom:.2rem}
 .htp-body strong{color:var(--text,#8a8f9c)}
+/* Countdown overlay */
+.countdown-overlay{position:fixed;inset:0;background:rgba(14,16,19,0.96);z-index:300;display:none;align-items:center;justify-content:center}
+.countdown-overlay.active{display:flex}
+.countdown-num{font-family:'Playfair Display','Bebas Neue',serif;font-size:6rem;color:#d4d8e2;line-height:1}
+.countdown-hint{font-family:'JetBrains Mono','DM Mono',monospace;font-size:.7rem;color:#4a4e5a;margin-top:.5rem}
 </style>
 <meta name="twitter:card" content="summary_large_image">
 <meta name="twitter:title" content="QF Games">
@@ -287,6 +292,8 @@ nav{position:sticky;top:0;z-index:100;width:100%;display:flex;align-items:center
     <div class="lb-body" id="lb-out"><div class="lb-empty">No scores yet.</div></div>
   </div>
 </div>
+
+<div class="countdown-overlay" id="game-countdown"><div style="text-align:center"><div class="countdown-num" id="countdown-num"></div><div class="countdown-hint">Get ready...</div></div></div>
 
 <div class="modal-overlay hidden" id="modal">
   <div class="modal">
@@ -367,7 +374,34 @@ function wordToNum(word,assign){
   },0);
 }
 
+function showCountdown() {
+  return new Promise(function(resolve) {
+    var overlay = document.getElementById('game-countdown');
+    var numEl = document.getElementById('countdown-num');
+    overlay.classList.add('active');
+    var count = 3;
+    numEl.textContent = count;
+    var interval = setInterval(function() {
+      count--;
+      if (count > 0) {
+        numEl.textContent = count;
+      } else {
+        numEl.textContent = 'GO';
+        clearInterval(interval);
+        setTimeout(function() { overlay.classList.remove('active'); resolve(); }, 500);
+      }
+    }, 1000);
+  });
+}
+
 function startGame(){
+  if (leagueMode) {
+    showCountdown().then(function() { doStartGame(); });
+  } else {
+    doStartGame();
+  }
+}
+function doStartGame(){
   const seed=parseInt(dayStr().replace(/_/g,''));
   questions=shuffle([...PUZZLES],seededRng(seed)).slice(0,ROUNDS);
   qIdx=0;score=0;solved=0;hintsLeft=MAX_HINTS;gameActive=true;

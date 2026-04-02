@@ -130,6 +130,11 @@ body{font-family:'Inter',sans-serif;background:var(--ink);color:var(--text);min-
 .htp-body ul{margin:.3rem 0 .5rem 1.2rem}
 .htp-body li{margin-bottom:.2rem}
 .htp-body strong{color:var(--text,#8a8f9c)}
+/* Countdown overlay */
+.countdown-overlay{position:fixed;inset:0;background:rgba(14,16,19,0.96);z-index:300;display:none;align-items:center;justify-content:center}
+.countdown-overlay.active{display:flex}
+.countdown-num{font-family:'Playfair Display','Bebas Neue',serif;font-size:6rem;color:#d4d8e2;line-height:1}
+.countdown-hint{font-family:'JetBrains Mono','DM Mono',monospace;font-size:.7rem;color:#4a4e5a;margin-top:.5rem}
 </style>
 </head>
 <body>
@@ -184,6 +189,8 @@ body{font-family:'Inter',sans-serif;background:var(--ink);color:var(--text);min-
     <div class="options" id="options"></div>
   </div>
 </div>
+
+<div class="countdown-overlay" id="game-countdown"><div style="text-align:center"><div class="countdown-num" id="countdown-num"></div><div class="countdown-hint">Get ready...</div></div></div>
 
 <!-- ── End Modal ── -->
 <div class="modal-overlay" id="modal-overlay">
@@ -303,9 +310,34 @@ body{font-family:'Inter',sans-serif;background:var(--ink);color:var(--text);min-
     cancelAnimationFrame(timerRaf);
   }
 
+  // ── Countdown ──────────────────────────────────────────────────────────
+  function showCountdown() {
+    return new Promise(function(resolve) {
+      var overlay = document.getElementById('game-countdown');
+      var numEl = document.getElementById('countdown-num');
+      overlay.classList.add('active');
+      var count = 3;
+      numEl.textContent = count;
+      var interval = setInterval(function() {
+        count--;
+        if (count > 0) {
+          numEl.textContent = count;
+        } else {
+          numEl.textContent = 'GO';
+          clearInterval(interval);
+          setTimeout(function() { overlay.classList.remove('active'); resolve(); }, 500);
+        }
+      }, 1000);
+    });
+  }
+
   // ── Start session ─────────────────────────────────────────────────────
   startBtn.addEventListener('click', function() {
-    startSession();
+    if (leagueMode) {
+      showCountdown().then(function() { startSession(); });
+    } else {
+      startSession();
+    }
   });
 
   async function startSession() {
