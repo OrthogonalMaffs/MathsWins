@@ -151,6 +151,7 @@ body{background:var(--ink);color:var(--text);font-family:'Inter',sans-serif;min-
   <div class="score-history" id="score-history"></div>
 
   <button class="btn btn-ghost" id="start-btn">Start Game</button>
+  <a href="/qf-dapp/games/estimation-engine/league/" style="display:block;text-align:center;margin-top:.8rem;font-family:'JetBrains Mono',monospace;font-size:.65rem;color:var(--silver,#b8bcc6);text-decoration:none;padding:.5rem;border:1px solid var(--border,#1e2228);border-radius:6px;transition:all .15s" onmouseover="this.style.borderColor='rgba(184,188,198,0.15)'" onmouseout="this.style.borderColor='var(--border,#1e2228)'">&#9813; View Leagues</a>
 </div>
 
 <div class="modal-overlay hidden" id="modal">
@@ -175,6 +176,21 @@ body{background:var(--ink);color:var(--text);font-family:'Inter',sans-serif;min-
 
   var GAME_ID = 'estimation-engine';
   var TIME_LIMIT = 60; // seconds per question
+
+  // League mode
+  var leagueMode = false, leagueId = null, leaguePuzzleIndex = null;
+  (function checkLeagueParam() {
+    var params = new URLSearchParams(window.location.search);
+    var lid = params.get('league');
+    var pidx = params.get('puzzle');
+    var seed = params.get('seed');
+    if (lid && pidx != null && seed) {
+      leagueMode = true;
+      leagueId = lid;
+      leaguePuzzleIndex = parseInt(pidx);
+    }
+  })();
+
   var sessionToken = null;
   var totalQuestions = 10;
   var questionNum = 0;
@@ -363,6 +379,18 @@ body{background:var(--ink);color:var(--text);font-family:'Inter',sans-serif;min-
   // ── Final modal ───────────────────────────────────────────────────────
   function showFinalModal(data) {
     var score = data.finalScore || totalScore;
+
+    if (leagueMode && leagueId) {
+      try {
+        var lh = { 'Content-Type': 'application/json' };
+        if (typeof dappWallet !== 'undefined' && dappWallet && dappWallet.address) lh['X-Wallet-Address'] = dappWallet.address;
+        fetch((location.hostname === 'localhost' ? 'http://127.0.0.1:3860' : 'https://dapp-api.mathswins.co.uk') + '/api/dapp/league/' + leagueId + '/submit', {
+          method: 'POST', headers: lh,
+          body: JSON.stringify({ puzzleIndex: leaguePuzzleIndex, score: score, timeMs: 0, mistakes: totalQuestions - correctCount, hints: 0 })
+        });
+      } catch (e) { /* ignore */ }
+    }
+
     var maxPossible = totalQuestions * 130;
     var pct = Math.round(score / maxPossible * 100);
 

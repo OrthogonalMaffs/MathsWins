@@ -280,6 +280,7 @@ nav{position:sticky;top:0;z-index:100;width:100%;display:flex;align-items:center
 
   <div class="progress-row" id="progress-row"></div>
   <button class="btn btn-ghost" id="start-btn" onclick="startGame()" style="width:100%">Start Game</button>
+  <a href="/qf-dapp/games/cryptarithmetic-club/league/" style="display:block;text-align:center;margin-top:.8rem;font-family:'JetBrains Mono',monospace;font-size:.65rem;color:var(--silver,#b8bcc6);text-decoration:none;padding:.5rem;border:1px solid var(--border,#1e2228);border-radius:6px;transition:all .15s" onmouseover="this.style.borderColor='rgba(184,188,198,0.15)'" onmouseout="this.style.borderColor='var(--border,#1e2228)'">&#9813; View Leagues</a>
 
   <div class="lb-section">
     <div class="lb-header"><span class="lb-title">Leaderboard</span></div>
@@ -332,6 +333,21 @@ function seededRng(seed){let s=seed;return()=>{s=(s*1664525+1013904223)&0xffffff
 function shuffle(arr,rng){const a=[...arr];for(let i=a.length-1;i>0;i--){const j=Math.floor(rng()*(i+1));[a[i],a[j]]=[a[j],a[i]]}return a}
 
 const ROUNDS=8, MAX_HINTS=3, LKEY=()=>'crypt_lb_'+dayStr();
+
+// League mode
+var leagueMode = false, leagueId = null, leaguePuzzleIndex = null;
+(function checkLeagueParam() {
+  var params = new URLSearchParams(window.location.search);
+  var lid = params.get('league');
+  var pidx = params.get('puzzle');
+  var seed = params.get('seed');
+  if (lid && pidx != null && seed) {
+    leagueMode = true;
+    leagueId = lid;
+    leaguePuzzleIndex = parseInt(pidx);
+  }
+})();
+
 let questions,qIdx,score,solved,hintsLeft=MAX_HINTS,gameActive=false;
 let assignment={}, selectedLetter=null, qTimer, animFrame, hintUsedThisQ=false;
 
@@ -618,6 +634,18 @@ function updateStatus(){
 
 function endGame(){
   gameActive=false;clearTimeout(qTimer);cancelAnimationFrame(animFrame);
+
+  if (leagueMode && leagueId) {
+    try {
+      var lh = { 'Content-Type': 'application/json' };
+      if (typeof dappWallet !== 'undefined' && dappWallet && dappWallet.address) lh['X-Wallet-Address'] = dappWallet.address;
+      fetch((location.hostname === 'localhost' ? 'http://127.0.0.1:3860' : 'https://dapp-api.mathswins.co.uk') + '/api/dapp/league/' + leagueId + '/submit', {
+        method: 'POST', headers: lh,
+        body: JSON.stringify({ puzzleIndex: leaguePuzzleIndex, score: score, timeMs: 0, mistakes: ROUNDS - solved, hints: MAX_HINTS - hintsLeft })
+      });
+    } catch (e) { /* ignore */ }
+  }
+
   setTimeout(()=>{
     document.getElementById('modal').classList.remove('hidden');
     const v=solved>=6?'Master Cryptanalyst':solved>=4?'Skilled Solver':solved>=2?'Getting There':'Try Again';

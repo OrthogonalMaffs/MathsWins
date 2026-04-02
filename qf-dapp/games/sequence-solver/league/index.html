@@ -1,0 +1,457 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="description" content="Sequence Solver Leagues on QF Network. Enter a league, play 10 puzzles, compete for the prize pool. Bronze and Silver tiers.">
+<meta property="og:title" content="Sequence Solver Leagues — QF Games">
+<meta property="og:description" content="Enter a league, play 10 puzzles, top 4 win. Bronze and Silver tiers on QF Network.">
+<link rel="canonical" href="https://mathswins.co.uk/qf-dapp/games/sequence-solver/league/">
+<title>Sequence Solver Leagues — QF Games</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;700&family=JetBrains+Mono:wght@400;500&family=Playfair+Display:wght@700&display=swap" rel="stylesheet">
+<script src="https://cdn.jsdelivr.net/npm/ethers@6/dist/ethers.umd.min.js"></script>
+<style>
+:root{
+  --bg:#0e1013;--surface:#16181c;--surface2:#1e2025;--surface3:#26282e;
+  --silver:#b8bcc6;--silver-bright:#d4d8e2;--silver-dim:rgba(184,188,198,0.08);
+  --silver-glow:rgba(184,188,198,0.12);--silver-border:rgba(184,188,198,0.15);
+  --text-white:#e8eaf0;--text:#8a8f9c;--muted:#4a4e5a;
+  --border:#1e2228;--border2:#2a2e36;
+  --gold:#c9a84c;--green:#3a8a5c;--red:#b03a3a;--blue:#3a6a9c;
+  --bronze:#a07830;
+}
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+body{background:var(--bg);color:var(--text);font-family:'Inter',sans-serif;min-height:100vh}
+
+/* ── Top bar ── */
+.top-bar{width:100%;display:flex;justify-content:space-between;align-items:center;padding:.5rem 1rem;background:rgba(14,16,19,.94);backdrop-filter:blur(12px);border-bottom:1px solid var(--border);position:sticky;top:0;z-index:100}
+.top-bar-left{display:flex;align-items:center;gap:.6rem}
+.back-link{font-size:.7rem;color:var(--muted);text-decoration:none;padding:.25rem .6rem;border:1px solid var(--border);border-radius:6px;transition:all .15s}
+.back-link:hover{border-color:var(--silver-border);color:var(--text)}
+.top-logo{font-family:'Playfair Display',serif;font-size:1rem;color:var(--text-white);text-decoration:none}
+.top-logo span{color:var(--silver)}
+.top-bar-right{display:flex;align-items:center;gap:.5rem}
+.top-qf-name{font-family:'JetBrains Mono',monospace;font-size:.65rem;color:var(--silver-bright);background:var(--surface2);border:1px solid var(--silver-border);padding:.2rem .5rem;border-radius:5px}
+.top-addr{font-family:'JetBrains Mono',monospace;font-size:.65rem;color:var(--muted);background:var(--surface);border:1px solid var(--border);padding:.2rem .5rem;border-radius:5px}
+.top-connect{font-family:'Inter',sans-serif;font-weight:600;font-size:.7rem;padding:.35rem .8rem;border-radius:5px;border:1px solid var(--silver-border);background:var(--silver-dim);color:var(--silver-bright);cursor:pointer;transition:all .15s}
+.top-connect:hover{background:var(--silver-bright);color:var(--bg)}
+
+/* ── Page ── */
+.page{max-width:680px;margin:0 auto;padding:2rem 1rem 4rem}
+.page-header{text-align:center;margin-bottom:2rem}
+.page-kicker{font-family:'JetBrains Mono',monospace;font-size:.55rem;letter-spacing:.2em;text-transform:uppercase;color:var(--silver);margin-bottom:.4rem}
+.page-title{font-family:'Playfair Display',serif;font-size:2.2rem;color:var(--text-white);line-height:1}
+.page-title span{background:linear-gradient(135deg,var(--silver-bright),var(--silver),#8a8f9c);-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text}
+.page-sub{font-size:.72rem;color:var(--muted);line-height:1.5;margin-top:.5rem;max-width:480px;margin-left:auto;margin-right:auto}
+
+/* ── Explainer ── */
+.explainer{background:var(--surface);border:1px solid var(--border);border-radius:10px;padding:1.4rem;margin-bottom:1.5rem}
+.explainer h3{font-family:'Playfair Display',serif;font-size:1rem;color:var(--text-white);margin-bottom:.6rem}
+.explainer-grid{display:grid;grid-template-columns:1fr 1fr;gap:.8rem;margin-bottom:.8rem}
+.ex-item{display:flex;flex-direction:column;gap:.15rem}
+.ex-label{font-family:'JetBrains Mono',monospace;font-size:.5rem;letter-spacing:.1em;text-transform:uppercase;color:var(--muted)}
+.ex-val{font-family:'JetBrains Mono',monospace;font-size:.78rem;color:var(--silver-bright)}
+.explainer p{font-size:.65rem;color:var(--muted);line-height:1.6}
+.explainer .burn-note{margin-top:.6rem;padding-top:.6rem;border-top:1px solid var(--border);font-family:'JetBrains Mono',monospace;font-size:.55rem;color:var(--muted);line-height:1.7}
+.burn-note span{color:var(--silver)}
+
+/* ── Prize breakdown ── */
+.prize-table{width:100%;border-collapse:collapse;margin-top:.6rem}
+.prize-table th{font-family:'JetBrains Mono',monospace;font-size:.48rem;letter-spacing:.1em;text-transform:uppercase;color:var(--muted);text-align:left;padding:.3rem .5rem;border-bottom:1px solid var(--border)}
+.prize-table td{font-family:'JetBrains Mono',monospace;font-size:.65rem;color:var(--text);padding:.35rem .5rem;border-bottom:1px solid var(--border)}
+.prize-table .pos-1 td{color:var(--silver-bright)}
+.prize-table .pos-2 td{color:var(--silver)}
+.prize-table .pct{color:var(--muted)}
+
+/* ── League cards ── */
+.league-cards{display:grid;grid-template-columns:1fr 1fr;gap:1rem;margin-bottom:2rem}
+.league-card{
+  background:var(--surface);border-radius:10px;padding:1.2rem;
+  transition:all .2s;cursor:pointer;position:relative;overflow:hidden;
+}
+.league-card::before{content:'';position:absolute;top:0;left:0;right:0;height:2px}
+.league-card.bronze{border:1px solid rgba(160,120,48,0.2)}
+.league-card.bronze::before{background:linear-gradient(90deg,transparent,var(--bronze),transparent)}
+.league-card.bronze:hover{border-color:rgba(160,120,48,0.4)}
+.league-card.silver{border:1px solid var(--silver-border)}
+.league-card.silver::before{background:linear-gradient(90deg,transparent,var(--silver),transparent)}
+.league-card.silver:hover{border-color:rgba(184,188,198,0.3)}
+
+.lc-tier{font-family:'JetBrains Mono',monospace;font-size:.52rem;letter-spacing:.1em;text-transform:uppercase;margin-bottom:.3rem}
+.league-card.bronze .lc-tier{color:var(--bronze)}
+.league-card.silver .lc-tier{color:var(--silver)}
+.lc-name{font-family:'Playfair Display',serif;font-size:1.1rem;color:var(--text-white);margin-bottom:.4rem}
+.lc-stats{display:flex;flex-direction:column;gap:.25rem}
+.lc-stat{display:flex;justify-content:space-between;font-family:'JetBrains Mono',monospace;font-size:.6rem}
+.lc-stat-label{color:var(--muted)}
+.lc-stat-val{color:var(--text)}
+.lc-status{
+  display:inline-block;font-family:'JetBrains Mono',monospace;font-size:.48rem;
+  letter-spacing:.05em;text-transform:uppercase;padding:2px 8px;border-radius:10px;margin-top:.5rem;
+}
+.lc-status.registration{background:rgba(58,138,92,.1);color:var(--green);border:1px solid rgba(58,138,92,.2)}
+.lc-status.active{background:var(--silver-dim);color:var(--silver);border:1px solid var(--silver-border)}
+.lc-status.settled{background:rgba(74,78,90,.15);color:var(--muted);border:1px solid var(--border)}
+.lc-status.cancelled{background:rgba(176,58,58,.08);color:var(--red);border:1px solid rgba(176,58,58,.15)}
+
+.lc-join-btn{
+  width:100%;margin-top:.6rem;padding:.5rem;font-family:'JetBrains Mono',monospace;
+  font-size:.6rem;letter-spacing:.05em;text-transform:uppercase;border:none;border-radius:6px;
+  cursor:pointer;transition:all .15s;
+}
+.league-card.bronze .lc-join-btn{background:var(--bronze);color:var(--bg)}
+.league-card.bronze .lc-join-btn:hover{opacity:.85}
+.league-card.silver .lc-join-btn{background:var(--silver-bright);color:var(--bg)}
+.league-card.silver .lc-join-btn:hover{opacity:.85}
+
+/* ── Leaderboard ── */
+.leaderboard{background:var(--surface);border:1px solid var(--border);border-radius:10px;padding:1.2rem;margin-bottom:1.5rem}
+.leaderboard h3{font-family:'Playfair Display',serif;font-size:1rem;color:var(--text-white);margin-bottom:.8rem}
+.lb-hidden{font-family:'JetBrains Mono',monospace;font-size:.6rem;color:var(--muted);text-align:center;padding:1rem}
+.lb-table{width:100%;border-collapse:collapse}
+.lb-table th{font-family:'JetBrains Mono',monospace;font-size:.45rem;letter-spacing:.1em;text-transform:uppercase;color:var(--muted);text-align:left;padding:.3rem .4rem;border-bottom:1px solid var(--border)}
+.lb-table td{font-family:'JetBrains Mono',monospace;font-size:.62rem;color:var(--text);padding:.4rem .4rem;border-bottom:1px solid var(--border)}
+.lb-table tr.top-4 td{color:var(--silver-bright)}
+.lb-table tr.you td{color:var(--silver-bright);background:var(--silver-dim)}
+.lb-pos{width:2rem;text-align:center}
+
+/* ── Puzzle list ── */
+.puzzle-list{background:var(--surface);border:1px solid var(--border);border-radius:10px;padding:1.2rem;margin-bottom:1.5rem}
+.puzzle-list h3{font-family:'Playfair Display',serif;font-size:1rem;color:var(--text-white);margin-bottom:.8rem}
+.puzzle-row{display:flex;justify-content:space-between;align-items:center;padding:.5rem 0;border-bottom:1px solid var(--border)}
+.puzzle-row:last-child{border-bottom:none}
+.pr-label{font-family:'JetBrains Mono',monospace;font-size:.65rem;color:var(--text)}
+.pr-score{font-family:'JetBrains Mono',monospace;font-size:.65rem;color:var(--silver-bright)}
+.pr-play{
+  font-family:'JetBrains Mono',monospace;font-size:.55rem;letter-spacing:.05em;text-transform:uppercase;
+  padding:.3rem .7rem;border-radius:5px;border:1px solid var(--silver-border);
+  background:var(--silver-dim);color:var(--silver-bright);cursor:pointer;text-decoration:none;transition:all .15s;
+}
+.pr-play:hover{background:var(--silver-bright);color:var(--bg)}
+.pr-done{font-family:'JetBrains Mono',monospace;font-size:.55rem;color:var(--green)}
+.pr-locked{font-family:'JetBrains Mono',monospace;font-size:.55rem;color:var(--muted)}
+
+/* ── Empty state ── */
+.empty-state{text-align:center;padding:2rem 1rem;color:var(--muted);font-size:.72rem;line-height:1.6}
+
+/* ── Mobile ── */
+@media(max-width:600px){
+  .league-cards{grid-template-columns:1fr}
+  .explainer-grid{grid-template-columns:1fr}
+  .page-title{font-size:1.8rem}
+}
+</style>
+</head>
+<body>
+<script src="../../qf-wallet.js"></script>
+
+<!-- TOP BAR -->
+<div class="top-bar">
+  <div class="top-bar-left">
+    <a href="/qf-dapp/games/sequence-solver/" class="back-link">&larr; Sequence Solver</a>
+    <a href="/qf-dapp/" class="top-logo">QF <span>Games</span></a>
+  </div>
+  <div class="top-bar-right">
+    <span class="top-qf-name" id="topQfName" style="display:none;cursor:pointer" onclick="qfWallet.showMenu(this)"></span>
+    <span class="top-addr" id="topAddr" style="display:none;cursor:pointer" onclick="qfWallet.showMenu(this)"></span>
+    <button class="top-connect" id="topConnectBtn" onclick="qfWallet.connect()">Connect Wallet</button>
+  </div>
+</div>
+
+<div class="page">
+  <div class="page-header">
+    <p class="page-kicker">QF Games &middot; Sequence Solver</p>
+    <h1 class="page-title">League <span>Play</span></h1>
+    <p class="page-sub">Enter a league. Play 10 puzzles over 14 days. Same puzzles for every player. Top 4 share the prize pool.</p>
+  </div>
+
+  <!-- EXPLAINER -->
+  <div class="explainer">
+    <h3>How Leagues Work</h3>
+    <div class="explainer-grid">
+      <div class="ex-item"><span class="ex-label">Players</span><span class="ex-val">8 &ndash; 16 per league</span></div>
+      <div class="ex-item"><span class="ex-label">Puzzles</span><span class="ex-val">10 (play in any order)</span></div>
+      <div class="ex-item"><span class="ex-label">Registration</span><span class="ex-val">7 days (or fills at 16)</span></div>
+      <div class="ex-item"><span class="ex-label">Play Window</span><span class="ex-val">14 days from start</span></div>
+      <div class="ex-item"><span class="ex-label">Late Joining</span><span class="ex-val">24 hours after start</span></div>
+      <div class="ex-item"><span class="ex-label">Leaderboard</span><span class="ex-val">Hidden first 24 hours</span></div>
+    </div>
+    <p>Scoring uses the same system as duels: 5,000 base points per puzzle, minus penalties for mistakes and hints, with logarithmic time decay. Your cumulative score across all 10 puzzles determines your rank. Unplayed puzzles score 0.</p>
+    <div class="burn-note">
+      <span>5%</span> of the pot is burned (sent to 0x...dEaD)<br>
+      <span>5%</span> goes to the team<br>
+      <span>90%</span> is the prize pool, split between top 4 finishers
+    </div>
+
+    <table class="prize-table">
+      <tr><th>Position</th><th>Share</th><th>Bronze (16p)</th><th>Silver (16p)</th></tr>
+      <tr class="pos-1"><td>1st</td><td class="pct">50%</td><td>720 QF</td><td>1,800 QF</td></tr>
+      <tr class="pos-2"><td>2nd</td><td class="pct">25%</td><td>360 QF</td><td>900 QF</td></tr>
+      <tr><td>3rd</td><td class="pct">15%</td><td>216 QF</td><td>540 QF</td></tr>
+      <tr><td>4th</td><td class="pct">10%</td><td>144 QF</td><td>360 QF</td></tr>
+    </table>
+  </div>
+
+  <!-- LEAGUE CARDS -->
+  <div class="league-cards" id="leagueCards">
+    <div class="empty-state">Loading leagues...</div>
+  </div>
+
+  <!-- ACTIVE LEAGUE VIEW (shown when viewing a specific league) -->
+  <div id="leagueDetail" style="display:none">
+    <div class="puzzle-list" id="puzzleList">
+      <h3>Your Puzzles</h3>
+      <div id="puzzleRows"></div>
+    </div>
+
+    <div class="leaderboard" id="leaderboardPanel">
+      <h3>Leaderboard</h3>
+      <div id="leaderboardContent"></div>
+    </div>
+  </div>
+</div>
+
+<script>
+var API_BASE = 'https://dapp-api.mathswins.co.uk/api/dapp';
+if (location.hostname === 'localhost' || location.hostname === '127.0.0.1') {
+  API_BASE = 'http://127.0.0.1:3860/api/dapp';
+}
+var GAME_ID = 'sequence-solver';
+var currentLeagueId = null;
+
+// ── Wallet UI ───────────────────────────────────────────────────────
+qfWallet.onConnect(function(s) {
+  if (s.address) {
+    document.getElementById('topConnectBtn').style.display = 'none';
+    document.getElementById('topAddr').style.display = '';
+    document.getElementById('topAddr').textContent = s.address.slice(0, 6) + '...' + s.address.slice(-4);
+  }
+  if (s.qfName) {
+    document.getElementById('topQfName').textContent = s.qfName;
+    document.getElementById('topQfName').style.display = '';
+    document.getElementById('topAddr').style.display = 'none';
+  }
+  // Refresh leagues when wallet connects
+  loadLeagues();
+});
+
+// ── API helper ──────────────────────────────────────────────────────
+async function api(url, body, method) {
+  var headers = { 'Content-Type': 'application/json' };
+  if (qfWallet.address) headers['X-Wallet-Address'] = qfWallet.address;
+  var opts = { method: method || 'POST', headers: headers };
+  if (body && method !== 'GET') opts.body = JSON.stringify(body);
+  if (method === 'GET') opts.method = 'GET';
+  var res = await fetch(API_BASE + url, opts);
+  return res.json();
+}
+
+// ── Load leagues ────────────────────────────────────────────────────
+async function loadLeagues() {
+  try {
+    var leagues = await api('/leagues/' + GAME_ID, null, 'GET');
+    renderLeagueCards(leagues);
+  } catch (e) {
+    document.getElementById('leagueCards').innerHTML = '<div class="empty-state">Could not load leagues. Check your connection.</div>';
+  }
+}
+
+function renderLeagueCards(leagues) {
+  var container = document.getElementById('leagueCards');
+
+  if (!leagues || leagues.length === 0) {
+    container.innerHTML = '<div class="empty-state">No active leagues right now. Check back soon.</div>';
+    return;
+  }
+
+  container.innerHTML = '';
+  leagues.forEach(function(l) {
+    var tierClass = l.tier === 'silver' ? 'silver' : 'bronze';
+    var tierLabel = l.tier === 'silver' ? 'Silver League' : 'Bronze League';
+    var fee = l.entry_fee;
+    var statusClass = l.status;
+    var statusLabel = l.status.charAt(0).toUpperCase() + l.status.slice(1);
+
+    var timeLeft = '';
+    var now = Date.now();
+    if (l.status === 'registration' && l.reg_closes_at > now) {
+      timeLeft = formatCountdown(l.reg_closes_at - now) + ' to register';
+    } else if (l.status === 'active' && l.play_closes_at > now) {
+      timeLeft = formatCountdown(l.play_closes_at - now) + ' to play';
+    }
+
+    var potDisplay = l.total_pot ? l.total_pot + ' QF pot' : fee + ' QF entry';
+
+    var card = document.createElement('div');
+    card.className = 'league-card ' + tierClass;
+    card.innerHTML =
+      '<div class="lc-tier">' + tierLabel + '</div>' +
+      '<div class="lc-name">Season ' + (l.id.slice(-4) || '1') + '</div>' +
+      '<div class="lc-stats">' +
+        '<div class="lc-stat"><span class="lc-stat-label">Entry</span><span class="lc-stat-val">' + fee + ' QF</span></div>' +
+        '<div class="lc-stat"><span class="lc-stat-label">Players</span><span class="lc-stat-val">' + l.player_count + ' / ' + l.max_players + '</span></div>' +
+        '<div class="lc-stat"><span class="lc-stat-label">Pot</span><span class="lc-stat-val">' + potDisplay + '</span></div>' +
+        (timeLeft ? '<div class="lc-stat"><span class="lc-stat-label">Time</span><span class="lc-stat-val">' + timeLeft + '</span></div>' : '') +
+      '</div>' +
+      '<span class="lc-status ' + statusClass + '">' + statusLabel + '</span>';
+
+    if (l.status === 'registration' || (l.status === 'active' && l.join_closes_at && now <= l.join_closes_at)) {
+      var btn = document.createElement('button');
+      btn.className = 'lc-join-btn';
+      btn.textContent = 'Join League — ' + fee + ' QF';
+      btn.onclick = function(e) { e.stopPropagation(); joinLeague(l.id); };
+      card.appendChild(btn);
+    }
+
+    card.onclick = function() { viewLeague(l.id); };
+    container.appendChild(card);
+  });
+}
+
+// ── Join league ─────────────────────────────────────────────────────
+async function joinLeague(leagueId) {
+  if (!qfWallet.isConnected()) {
+    qfWallet.connect();
+    return;
+  }
+  try {
+    var data = await api('/league/' + leagueId + '/join', {});
+    if (data.error) { alert(data.error); return; }
+    loadLeagues();
+    viewLeague(leagueId);
+  } catch (e) {
+    alert('Failed to join league.');
+  }
+}
+
+// ── View league detail ──────────────────────────────────────────────
+async function viewLeague(leagueId) {
+  currentLeagueId = leagueId;
+  document.getElementById('leagueDetail').style.display = 'block';
+
+  try {
+    var league = await api('/league/' + leagueId, null, 'GET');
+
+    // Load puzzles if player
+    if (league.is_player && (league.status === 'active' || league.status === 'settled')) {
+      var puzzles = await api('/league/' + leagueId + '/puzzles', null, 'GET');
+      renderPuzzles(puzzles, league);
+      document.getElementById('puzzleList').style.display = 'block';
+    } else {
+      document.getElementById('puzzleList').style.display = 'none';
+    }
+
+    // Leaderboard
+    renderLeaderboard(league);
+
+  } catch (e) {
+    console.error('Failed to load league:', e);
+  }
+}
+
+function renderPuzzles(puzzles, league) {
+  var container = document.getElementById('puzzleRows');
+  container.innerHTML = '';
+
+  puzzles.forEach(function(p) {
+    var row = document.createElement('div');
+    row.className = 'puzzle-row';
+
+    var label = document.createElement('span');
+    label.className = 'pr-label';
+    label.textContent = 'Puzzle ' + (p.puzzle_index + 1);
+
+    var right;
+    if (p.completed) {
+      right = document.createElement('span');
+      right.className = 'pr-done';
+      right.textContent = p.score + ' pts';
+    } else if (league.status === 'active' && league.play_closes_at > Date.now()) {
+      right = document.createElement('a');
+      right.className = 'pr-play';
+      right.textContent = 'Play';
+      right.href = '/qf-dapp/games/sequence-solver/?league=' + league.id + '&puzzle=' + p.puzzle_index + '&seed=' + p.puzzle_seed;
+    } else {
+      right = document.createElement('span');
+      right.className = 'pr-locked';
+      right.textContent = league.status === 'settled' ? '0 pts (skipped)' : 'Locked';
+    }
+
+    row.appendChild(label);
+    row.appendChild(right);
+    container.appendChild(row);
+  });
+}
+
+function renderLeaderboard(league) {
+  var container = document.getElementById('leaderboardContent');
+
+  // Hidden during join window
+  if (league.status === 'active' && league.join_closes_at && Date.now() <= league.join_closes_at) {
+    container.innerHTML = '<div class="lb-hidden">Leaderboard is hidden during the 24-hour join window. You can see your own scores above.</div>';
+    return;
+  }
+
+  if (!league.leaderboard || league.leaderboard.length === 0) {
+    container.innerHTML = '<div class="lb-hidden">No scores submitted yet.</div>';
+    return;
+  }
+
+  var html = '<table class="lb-table"><tr><th class="lb-pos">#</th><th>Player</th><th>Score</th><th>Played</th></tr>';
+  league.leaderboard.forEach(function(entry, i) {
+    var isYou = qfWallet.address && entry.wallet.toLowerCase() === qfWallet.address.toLowerCase();
+    var rowClass = '';
+    if (isYou) rowClass = 'you';
+    else if (i < 4) rowClass = 'top-4';
+
+    var name = qfWallet.formatAddr(entry.wallet);
+    // Fire async name resolution
+    qfWallet.resolveAny(entry.wallet);
+
+    html += '<tr class="' + rowClass + '">' +
+      '<td class="lb-pos">' + (i + 1) + '</td>' +
+      '<td>' + name + (isYou ? ' (you)' : '') + '</td>' +
+      '<td>' + (entry.total_score || 0) + '</td>' +
+      '<td>' + (entry.puzzles_played || 0) + '/10</td>' +
+      '</tr>';
+  });
+  html += '</table>';
+
+  // Prize info if settled
+  if (league.status === 'settled' && league.prizes && league.prizes.length > 0) {
+    html += '<div style="margin-top:.8rem;padding-top:.8rem;border-top:1px solid var(--border)">';
+    league.prizes.forEach(function(p) {
+      var name = qfWallet.formatAddr(p.wallet);
+      html += '<div style="display:flex;justify-content:space-between;font-family:\'JetBrains Mono\',monospace;font-size:.6rem;padding:.2rem 0">' +
+        '<span style="color:var(--muted)">' + ordinal(p.position) + '</span>' +
+        '<span style="color:var(--text)">' + name + '</span>' +
+        '<span style="color:var(--silver-bright)">' + p.amount + ' QF</span></div>';
+    });
+    html += '</div>';
+  }
+
+  container.innerHTML = html;
+}
+
+// ── Helpers ─────────────────────────────────────────────────────────
+function formatCountdown(ms) {
+  var d = Math.floor(ms / 86400000);
+  var h = Math.floor((ms % 86400000) / 3600000);
+  if (d > 0) return d + 'd ' + h + 'h';
+  var m = Math.floor((ms % 3600000) / 60000);
+  return h + 'h ' + m + 'm';
+}
+
+function ordinal(n) {
+  if (n === 1) return '1st';
+  if (n === 2) return '2nd';
+  if (n === 3) return '3rd';
+  return n + 'th';
+}
+
+// ── Init ────────────────────────────────────────────────────────────
+loadLeagues();
+</script>
+</body>
+</html>
