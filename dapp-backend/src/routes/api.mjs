@@ -1,7 +1,7 @@
 import { Router } from 'express';
 import crypto from 'crypto';
 import { getLeaderboard, getEntry, getPaidGames } from '../db/index.mjs';
-import { createDuel, getDuelByCode, getDuelById, updateDuelCreatorScore, acceptDuel, updateDuelOpponentScore, completeDuel, expireOldDuels, getDuelsByWallet } from '../db/index.mjs';
+import { createDuel, getDuelByCode, getDuelById, updateDuelCreatorScore, acceptDuel, updateDuelOpponentScore, completeDuel, expireOldDuels, getDuelsByWallet, getActiveDuelCount } from '../db/index.mjs';
 import { createLeague, getLeagueById, getActiveLeagues, getAllLeagues, updateLeagueStatus, startLeague, settleLeague, cancelLeague, addLeaguePlayer, getLeaguePlayers, getLeaguePlayerCount, isLeaguePlayer, markRefunded, addLeaguePuzzle, getLeaguePuzzles, addLeagueScore, getLeagueScore, getLeagueScoresByWallet, getLeagueLeaderboard, addLeaguePrize, getLeaguePrizes } from '../db/index.mjs';
 import { createPromoChallenge, getPromoByCode, getPromoById, getPromoClaim, addPromoClaim, getPromoClaims } from '../db/index.mjs';
 import { startSession, startFreeSession, evaluate, getCurrentWeekId } from '../scoring.mjs';
@@ -154,8 +154,16 @@ router.post('/duel/create', async (req, res) => {
   const wallet = req.headers['x-wallet-address'];
   if (!wallet) return res.status(401).json({ error: 'Wallet required' });
 
-  const { gameId, difficulty } = req.body;
+  const { gameId, difficulty, stake } = req.body;
   if (!gameId) return res.status(400).json({ error: 'gameId required' });
+
+  // Validate stake
+  const stakeAmount = parseInt(stake) || 25;
+  if (stakeAmount < 25) return res.status(400).json({ error: 'Minimum stake is 25 QF' });
+
+  // Check active duel cap (max 5 unaccepted duels per wallet)
+  const activeCount = getActiveDuelCount(wallet);
+  if (activeCount >= 5) return res.status(400).json({ error: 'Maximum 5 active duels. Wait for existing duels to be accepted or expire.' });
 
   // Generate unique seed for this duel (not the daily seed)
   const puzzleSeed = Date.now() ^ (Math.random() * 0xFFFFFFFF >>> 0);
@@ -173,9 +181,9 @@ router.post('/duel/create', async (req, res) => {
   const now = Date.now();
   const expiresAt = now + 24 * 60 * 60 * 1000; // 24 hours
 
-  createDuel(id, gameId, puzzleSeed, difficulty || 'medium', wallet, shareCode, now, expiresAt);
+  createDuel(id, gameId, puzzleSeed, difficulty || 'medium', stakeAmount, wallet, shareCode, now, expiresAt);
 
-  res.json({ duelId: id, shareCode, puzzleSeed, expiresAt });
+  res.json({ duelId: id, shareCode, puzzleSeed, stake: stakeAmount, expiresAt });
 });
 
 // Get duel status by share code
@@ -248,10 +256,24 @@ router.post('/duel/:code/submit', (req, res) => {
     let winner = null;
     if (updated.creator_score > updated.opponent_score) winner = updated.creator_wallet;
     else if (updated.opponent_score > updated.creator_score) winner = updated.opponent_wallet;
-    // null winner = draw
     completeDuel(duel.id, winner);
     const final = getDuelById(duel.id);
-    return res.json({ status: 'completed', duel: final });
+
+    // Calculate settlement
+    const totalPot = (final.stake || 25) * 2;
+    const burnAmount = Math.floor(totalPot * 0.05);
+    const teamAmount = Math.floor(totalPot * 0.05);
+    const prizePool = totalPot - burnAmount - teamAmount;
+    let settlement;
+    if (winner) {
+      settlement = { winner: winner, winnerPrize: prizePool, burn: burnAmount, team: teamAmount };
+    } else {
+      // Draw — split evenly
+      const half = Math.floor(prizePool / 2);
+      settlement = { winner: null, creatorPrize: half, opponentPrize: half, burn: burnAmount, team: teamAmount };
+    }
+
+    return res.json({ status: 'completed', duel: final, settlement });
   }
 
   res.json({ status: 'waiting', message: 'Waiting for opponent to finish' });

@@ -149,10 +149,16 @@ export function recordSettlement(weekId, gameId, winnerWallet, potAmount, treasu
 }
 
 // ── Duel queries ──────────────────────────────────────────────────────
-export function createDuel(id, gameId, puzzleSeed, difficulty, creatorWallet, shareCode, createdAt, expiresAt) {
+export function createDuel(id, gameId, puzzleSeed, difficulty, stake, creatorWallet, shareCode, createdAt, expiresAt) {
   const db = getDb();
-  db.prepare(`INSERT INTO duels (id, game_id, puzzle_seed, difficulty, creator_wallet, share_code, status, created_at, expires_at)
-    VALUES (?, ?, ?, ?, ?, ?, 'created', ?, ?)`).run(id, gameId, puzzleSeed, difficulty, creatorWallet, shareCode, createdAt, expiresAt);
+  db.prepare(`INSERT INTO duels (id, game_id, puzzle_seed, difficulty, stake, creator_wallet, share_code, status, created_at, expires_at)
+    VALUES (?, ?, ?, ?, ?, ?, ?, 'created', ?, ?)`).run(id, gameId, puzzleSeed, difficulty, stake, creatorWallet, shareCode, createdAt, expiresAt);
+}
+
+export function getActiveDuelCount(wallet) {
+  const db = getDb();
+  const row = db.prepare(`SELECT COUNT(*) as count FROM duels WHERE creator_wallet = ? AND status = 'created'`).get(wallet.toLowerCase());
+  return row.count;
 }
 
 export function getDuelByCode(code) {

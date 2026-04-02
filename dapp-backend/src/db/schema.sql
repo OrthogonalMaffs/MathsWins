@@ -71,6 +71,7 @@ CREATE TABLE IF NOT EXISTS duels (
     game_id         TEXT NOT NULL,
     puzzle_seed     INTEGER NOT NULL,
     difficulty      TEXT DEFAULT 'medium',
+    stake           INTEGER NOT NULL DEFAULT 25,
     creator_wallet  TEXT NOT NULL,
     creator_score   INTEGER,
     creator_time_ms INTEGER,

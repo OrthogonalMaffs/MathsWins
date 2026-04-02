@@ -251,10 +251,10 @@ body{background:var(--bg);color:var(--text);font-family:'Inter',sans-serif;min-h
       <h3>Solo Play</h3>
       <p>Play the daily puzzle. Practice your skills, no entry fee.</p>
     </div>
-    <div class="mode-card" onclick="G.createDuel()">
+    <div class="mode-card" onclick="G.showStakePicker()">
       <div class="mode-icon">&#9876;</div>
       <h3>Create a Duel</h3>
-      <p>Get a 6-character code. Share it with your rival. Same puzzle, same conditions. Highest score wins.</p>
+      <p>Pick your stake, get a code, share with your rival. Same puzzle, same conditions. Highest score wins.</p>
     </div>
     <a class="mode-card" href="/qf-dapp/games/sudoku-duel/league/" style="text-decoration:none;color:inherit">
       <div class="mode-icon">&#9813;</div>
@@ -302,16 +302,48 @@ body{background:var(--bg);color:var(--text);font-family:'Inter',sans-serif;min-h
     <div class="duel-expire" id="duel-expire"></div>
   </div>
 
+  <!-- STAKE PICKER (create duel) -->
+  <div class="duel-stake" id="duel-stake" style="display:none">
+    <h2 style="font-family:'Playfair Display',serif;font-size:1.6rem;color:var(--text-white);text-align:center;margin-bottom:.5rem">Set Your Stake</h2>
+    <p style="font-size:.68rem;color:var(--muted);text-align:center;line-height:1.5;margin-bottom:1rem">Both players match the same stake. Winner takes 90% of the combined pot.</p>
+    <div style="display:flex;gap:.5rem;justify-content:center;flex-wrap:wrap;margin-bottom:.8rem">
+      <button class="btn btn-ghost stake-opt" onclick="G.pickStake(25)" data-stake="25" style="padding:.6rem 1.2rem">25 QF</button>
+      <button class="btn btn-ghost stake-opt" onclick="G.pickStake(100)" data-stake="100" style="padding:.6rem 1.2rem">100 QF</button>
+      <button class="btn btn-ghost stake-opt" onclick="G.pickStake(250)" data-stake="250" style="padding:.6rem 1.2rem">250 QF</button>
+    </div>
+    <div style="display:flex;gap:.4rem;align-items:center;justify-content:center;margin-bottom:1rem">
+      <input type="number" id="custom-stake" min="25" placeholder="Custom" style="width:6rem;padding:.45rem .6rem;font-family:'JetBrains Mono',monospace;font-size:.8rem;text-align:center;background:var(--surface2);border:1px solid var(--border2);border-radius:6px;color:var(--text-white)">
+      <span style="font-family:'JetBrains Mono',monospace;font-size:.65rem;color:var(--muted)">QF (min 25)</span>
+    </div>
+    <div style="font-family:'JetBrains Mono',monospace;font-size:.55rem;color:var(--muted);text-align:center;margin-bottom:1rem;line-height:1.6">
+      5% burned &middot; 5% team &middot; 90% to winner<br>
+      If your opponent doesn't accept within 24 hours, you get a full refund.
+    </div>
+    <div style="display:flex;gap:.5rem;justify-content:center">
+      <button class="btn btn-silver" id="confirm-stake-btn" onclick="G.confirmStake()" style="padding:.7rem 2rem;font-size:.68rem" disabled>Select a stake</button>
+      <button class="btn btn-ghost" onclick="G.cancelStake()" style="padding:.7rem 1rem;font-size:.68rem">Cancel</button>
+    </div>
+  </div>
+
   <!-- DUEL ACCEPT SCREEN (opponent view) -->
   <div class="duel-accept" id="duel-accept">
-    <h2>You've Been Challenged</h2>
+    <h2 style="font-family:'Playfair Display',serif;font-size:1.6rem;color:var(--text-white);text-align:center;margin-bottom:.5rem">You've Been Challenged</h2>
     <div class="challenger-info">
       <div class="challenger-name" id="challenger-name">---</div>
       <div class="challenger-sub">has challenged you to a Sudoku Duel</div>
     </div>
-    <p>Same puzzle, same conditions. Beat their score to win.</p>
-    <div style="margin-top:1rem">
-      <button class="btn btn-silver" style="padding:.8rem 2rem;font-size:.7rem" onclick="G.acceptAndPlay()">Accept &amp; Play</button>
+    <div id="accept-stake-info" style="font-family:'JetBrains Mono',monospace;font-size:.85rem;color:var(--silver-bright);text-align:center;margin:.8rem 0;padding:.6rem;background:var(--surface2);border:1px solid var(--border);border-radius:8px">Stake: -- QF</div>
+    <p style="font-size:.68rem;color:var(--muted);text-align:center;line-height:1.5">Same puzzle, same conditions. Match the stake to play. Beat their score to win.</p>
+    <div style="margin-top:1rem;text-align:center">
+      <button class="btn btn-silver" style="padding:.8rem 2rem;font-size:.7rem" onclick="G.acceptAndPlay()">Match Stake &amp; Play</button>
+    </div>
+  </div>
+
+  <!-- COUNTDOWN OVERLAY (3-2-1) -->
+  <div id="countdown-overlay" style="display:none;position:fixed;inset:0;background:rgba(14,16,19,0.96);z-index:300;display:none;align-items:center;justify-content:center">
+    <div style="text-align:center">
+      <div id="countdown-num" style="font-family:'Playfair Display',serif;font-size:6rem;color:var(--silver-bright);line-height:1"></div>
+      <div style="font-family:'JetBrains Mono',monospace;font-size:.7rem;color:var(--muted);margin-top:.5rem">Get ready...</div>
     </div>
   </div>
 
@@ -519,24 +551,101 @@ var G = (function() {
     await startGameSession();
   }
 
-  // ── Mode: Create Duel ───────────────────────────────────────────────
-  async function createDuel() {
+  // ── Stake Picker ────────────────────────────────────────────────────
+  var selectedStake = 0;
+
+  function showStakePicker() {
     if (!W.state.address) {
       alert('Connect your wallet to create a duel.');
       return;
     }
+    document.getElementById('mode-panel').style.display = 'none';
+    document.getElementById('scoring-panel').style.display = 'none';
+    document.getElementById('duel-stake').style.display = 'block';
+    selectedStake = 0;
+    document.querySelectorAll('.stake-opt').forEach(function(b) { b.classList.remove('active'); });
+    document.getElementById('custom-stake').value = '';
+    document.getElementById('confirm-stake-btn').disabled = true;
+    document.getElementById('confirm-stake-btn').textContent = 'Select a stake';
+  }
+
+  function pickStake(amount) {
+    selectedStake = amount;
+    document.querySelectorAll('.stake-opt').forEach(function(b) {
+      b.classList.toggle('active', parseInt(b.dataset.stake) === amount);
+    });
+    document.getElementById('custom-stake').value = '';
+    document.getElementById('confirm-stake-btn').disabled = false;
+    document.getElementById('confirm-stake-btn').textContent = 'Create Duel — ' + amount + ' QF';
+  }
+
+  document.addEventListener('DOMContentLoaded', function() {
+    var customInput = document.getElementById('custom-stake');
+    if (customInput) {
+      customInput.addEventListener('input', function() {
+        var val = parseInt(this.value);
+        if (val >= 25) {
+          selectedStake = val;
+          document.querySelectorAll('.stake-opt').forEach(function(b) { b.classList.remove('active'); });
+          document.getElementById('confirm-stake-btn').disabled = false;
+          document.getElementById('confirm-stake-btn').textContent = 'Create Duel — ' + val + ' QF';
+        } else {
+          selectedStake = 0;
+          document.getElementById('confirm-stake-btn').disabled = true;
+          document.getElementById('confirm-stake-btn').textContent = 'Min 25 QF';
+        }
+      });
+    }
+  });
+
+  async function confirmStake() {
+    if (selectedStake < 25) return;
+    document.getElementById('duel-stake').style.display = 'none';
+    await createDuel(selectedStake);
+  }
+
+  function cancelStake() {
+    document.getElementById('duel-stake').style.display = 'none';
+    showPreGame();
+  }
+
+  // ── Countdown Overlay ─────────────────────────────────────────────
+  function showCountdown() {
+    return new Promise(function(resolve) {
+      var overlay = document.getElementById('countdown-overlay');
+      var numEl = document.getElementById('countdown-num');
+      overlay.style.display = 'flex';
+      var count = 3;
+      numEl.textContent = count;
+      var interval = setInterval(function() {
+        count--;
+        if (count > 0) {
+          numEl.textContent = count;
+        } else {
+          numEl.textContent = 'GO';
+          clearInterval(interval);
+          setTimeout(function() {
+            overlay.style.display = 'none';
+            resolve();
+          }, 500);
+        }
+      }, 1000);
+    });
+  }
+
+  // ── Mode: Create Duel ───────────────────────────────────────────────
+  async function createDuel(stake) {
     duelMode = true;
-    hidePreGame();
 
     try {
-      var data = await api('/duel/create', { gameId: GAME_ID, difficulty: 'medium' });
+      var data = await api('/duel/create', { gameId: GAME_ID, difficulty: 'medium', stake: stake || 25 });
       if (data.error) { setMsg(data.error); showPreGame(); return; }
 
       duelCode = data.shareCode;
       duelId = data.duelId;
 
-      // Start the game for the creator with the duel seed
-      await startGameSession(data.puzzleSeed);
+      // Load the game session, then countdown, then start
+      await startGameSession(data.puzzleSeed, true); // true = don't start timer yet
 
     } catch (e) {
       setMsg('Connection error creating duel');
@@ -595,6 +704,10 @@ var G = (function() {
       });
       document.getElementById('challenger-name').textContent = creatorDisplay;
 
+      // Show stake
+      var stakeDisplay = (data.stake || 25) + ' QF';
+      document.getElementById('accept-stake-info').textContent = 'Stake: ' + stakeDisplay + ' each — Winner takes 90% of ' + ((data.stake || 25) * 2) + ' QF pot';
+
       document.getElementById('duel-accept').style.display = 'block';
     } catch (e) {
       setMsg('Could not load duel. Check your code.');
@@ -612,14 +725,14 @@ var G = (function() {
 
       document.getElementById('duel-accept').style.display = 'none';
       duelId = data.duelId;
-      await startGameSession(data.puzzleSeed);
+      await startGameSession(data.puzzleSeed, true);
     } catch (e) {
       setMsg('Connection error accepting duel');
     }
   }
 
   // ── Start game session ──────────────────────────────────────────────
-  async function startGameSession(forceSeed) {
+  async function startGameSession(forceSeed, withCountdown) {
     setMsg('');
     try {
       var body = { gameId: GAME_ID };
@@ -643,6 +756,10 @@ var G = (function() {
       renderBoard();
       updateNumpad();
       updateMistakes();
+
+      if (withCountdown) {
+        await showCountdown();
+      }
       startTimer();
 
     } catch (e) {
@@ -1192,7 +1309,8 @@ var G = (function() {
   return {
     inputNum: inputNum, undo: undo, toggleNotes: toggleNotes, useHint: useHint,
     startSolo: startSolo, createDuel: createDuel, acceptAndPlay: acceptAndPlay,
-    copyCode: copyCode, shareDuel: shareDuel, retryPromo: retryPromo
+    copyCode: copyCode, shareDuel: shareDuel, retryPromo: retryPromo,
+    showStakePicker: showStakePicker, pickStake: pickStake, confirmStake: confirmStake, cancelStake: cancelStake
   };
 })();
 </script>
