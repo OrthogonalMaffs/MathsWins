@@ -28,35 +28,42 @@
 <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;700&family=JetBrains+Mono:wght@400;500&family=Playfair+Display:wght@700&display=swap" rel="stylesheet">
 <style>
 :root{
-  --ink:#070d1a;--navy:#0b1629;--navy-mid:#0f1f3d;--navy-light:#162847;
-  --gold:#c9a84c;--gold-warm:#d4d8e2;--gold-dim:rgba(184,188,198,0.08);
-  --teal:#b8bcc6;--teal-dim:rgba(184,188,198,0.08);
-  --body:#a8b8d0;--muted:#4a6080;--border:#1a2e4a;--border-dim:#111f33;
+  --bg:#0e1013;--surface:#16181c;--surface2:#1e2025;--surface3:#26282e;
+  --silver:#b8bcc6;--silver-bright:#d4d8e2;--silver-dim:rgba(184,188,198,0.08);
+  --silver-glow:rgba(184,188,198,0.12);--silver-border:rgba(184,188,198,0.15);
+  --text-white:#e8eaf0;--text:#8a8f9c;--muted:#4a4e5a;
+  --border:#1e2228;--border2:#2a2e36;
+  --gold:#c9a84c;--green:#3a8a5c;--red:#b03a3a;
   --success:#2dd4a0;--danger:#ef5350;--warn:#c9a84c;
 }
 *,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
-body{background:var(--ink);color:var(--body);font-family:'Inter',sans-serif;min-height:100vh;display:flex;flex-direction:column;align-items:center;overflow-x:hidden}
-body::before{content:'';position:fixed;inset:0;background-image:linear-gradient(rgba(201,168,76,0.03) 1px,transparent 1px),linear-gradient(90deg,rgba(201,168,76,0.03) 1px,transparent 1px);background-size:40px 40px;pointer-events:none;z-index:0}
-nav{position:sticky;top:0;z-index:100;width:100%;display:flex;align-items:center;justify-content:space-between;padding:0 2rem;height:52px;background:rgba(7,13,26,0.92);backdrop-filter:blur(12px);border-bottom:1px solid var(--border-dim)}
-.nav-logo{font-family:'Playfair Display',sans-serif;font-size:1.2rem;letter-spacing:0.15em;color:var(--gold);text-decoration:none}
-.nav-back{font-family:'JetBrains Mono',monospace;font-size:0.6rem;letter-spacing:0.12em;color:var(--muted);text-decoration:none;transition:color 0.2s}
-.nav-back:hover{color:var(--gold)}
-.page{position:relative;z-index:1;width:100%;max-width:540px;padding:2rem 1rem 4rem;display:flex;flex-direction:column;align-items:center;gap:1.2rem}
+body{background:var(--bg);color:var(--text);font-family:'Inter',sans-serif;min-height:100vh;display:flex;flex-direction:column;align-items:center;overflow-x:hidden}
+body::before{content:'';position:fixed;inset:0;background-image:linear-gradient(rgba(184,188,198,0.03) 1px,transparent 1px),linear-gradient(90deg,rgba(184,188,198,0.03) 1px,transparent 1px);background-size:40px 40px;pointer-events:none;z-index:0}
+.top-bar{width:100%;display:flex;justify-content:space-between;align-items:center;padding:.5rem 1rem;background:rgba(14,16,19,.94);backdrop-filter:blur(12px);border-bottom:1px solid var(--border);position:sticky;top:0;z-index:100}
+.top-bar-left{display:flex;align-items:center;gap:.6rem}
+.back-link{font-size:.7rem;color:var(--muted);text-decoration:none;padding:.25rem .6rem;border:1px solid var(--border);border-radius:6px;transition:all .15s}
+.back-link:hover{border-color:var(--silver-border);color:var(--text)}
+.top-bar-right{display:flex;align-items:center;gap:.5rem}
+.top-addr{font-family:'JetBrains Mono',monospace;font-size:.65rem;color:var(--muted);background:var(--surface);border:1px solid var(--border);padding:.2rem .5rem;border-radius:5px}
+.top-qf-name{font-family:'JetBrains Mono',monospace;font-size:.65rem;color:var(--silver-bright);background:var(--surface2);border:1px solid var(--silver-border);padding:.2rem .5rem;border-radius:5px}
+.top-connect{font-family:'Inter',sans-serif;font-weight:600;font-size:.7rem;padding:.35rem .8rem;border-radius:5px;border:1px solid var(--silver-border);background:var(--silver-dim);color:var(--silver-bright);cursor:pointer;transition:all .15s}
+.top-connect:hover{background:var(--silver-bright);color:var(--bg)}
+.page{position:relative;z-index:1;width:100%;max-width:560px;padding:2rem 1rem 4rem;display:flex;flex-direction:column;align-items:center;gap:1.2rem}
 .game-header{text-align:center}
-.game-kicker{font-family:'JetBrains Mono',monospace;font-size:0.6rem;letter-spacing:0.2em;text-transform:uppercase;color:var(--teal);margin-bottom:0.4rem}
-.game-title{font-family:'Playfair Display',sans-serif;font-size:2.6rem;letter-spacing:0.06em;color:var(--gold-warm);line-height:1}
+.game-kicker{font-family:'JetBrains Mono',monospace;font-size:0.6rem;letter-spacing:0.2em;text-transform:uppercase;color:var(--silver);margin-bottom:0.4rem}
+.game-title{font-family:'Playfair Display',sans-serif;font-size:2.6rem;letter-spacing:0.06em;line-height:1;background:linear-gradient(135deg,var(--silver-bright),var(--silver),#8a8f9c);-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text}
 .game-sub{font-size:0.75rem;color:var(--muted);line-height:1.6;margin-top:0.4rem}
-.status-bar{display:flex;gap:0.8rem;width:100%;background:var(--navy-mid);border:1px solid var(--border);border-radius:4px;padding:0.75rem 1rem;justify-content:space-around}
+.status-bar{display:flex;gap:0.8rem;width:100%;background:var(--surface);border:1px solid var(--border);border-radius:4px;padding:0.75rem 1rem;justify-content:space-around}
 .si{display:flex;flex-direction:column;align-items:center;gap:0.15rem}
-.si-val{font-family:'JetBrains Mono',monospace;font-size:1.1rem;font-weight:500;color:var(--gold)}
+.si-val{font-family:'JetBrains Mono',monospace;font-size:1.1rem;font-weight:500;color:var(--silver-bright)}
 .si-lbl{font-family:'JetBrains Mono',monospace;font-size:0.45rem;letter-spacing:0.12em;text-transform:uppercase;color:var(--muted)}
 
 /* Puzzle display */
 .puzzle-card{
-  width:100%;background:var(--navy-mid);border:1px solid var(--border);border-radius:4px;
+  width:100%;background:var(--surface);border:1px solid var(--border);border-radius:4px;
   padding:1.5rem 1rem;text-align:center;position:relative;overflow:hidden;
 }
-.puzzle-card::before{content:'';position:absolute;inset:0;background:radial-gradient(ellipse at 50% 0%,rgba(201,168,76,0.04) 0%,transparent 60%);pointer-events:none}
+.puzzle-card::before{content:'';position:absolute;inset:0;background:radial-gradient(ellipse at 50% 0%,var(--silver-dim) 0%,transparent 60%);pointer-events:none}
 .puzzle-meta{display:flex;justify-content:space-between;align-items:center;margin-bottom:1rem}
 .p-round{font-family:'JetBrains Mono',monospace;font-size:0.52rem;letter-spacing:0.15em;text-transform:uppercase;color:var(--muted)}
 .p-diff{display:inline-block;padding:0.15rem 0.6rem;border-radius:2px;font-family:'JetBrains Mono',monospace;font-size:0.48rem;letter-spacing:0.1em;text-transform:uppercase}
@@ -67,7 +74,7 @@ nav{position:sticky;top:0;z-index:100;width:100%;display:flex;align-items:center
 /* Equation display */
 .equation-display{
   font-family:'JetBrains Mono',monospace;font-size:clamp(1.4rem,6vw,2.2rem);
-  font-weight:500;letter-spacing:0.08em;color:var(--body);
+  font-weight:500;letter-spacing:0.08em;color:var(--text);
   margin:1rem 0;line-height:1.6;
 }
 .eq-word{display:inline-flex;gap:0;margin:0 0.2rem}
@@ -78,21 +85,21 @@ nav{position:sticky;top:0;z-index:100;width:100%;display:flex;align-items:center
 .eq-char{
   display:block;
   font-family:'Playfair Display',sans-serif;font-size:clamp(1.4rem,5vw,2rem);
-  letter-spacing:0.05em;color:var(--body);
+  letter-spacing:0.05em;color:var(--text);
   position:relative;
   transition:color 0.2s;
 }
-.eq-char.assigned{color:var(--gold)}
+.eq-char.assigned{color:var(--silver-bright)}
 .eq-char.lead-zero{color:var(--danger)}
 .eq-digit{
   font-family:'JetBrains Mono',monospace;font-size:clamp(0.55rem,2vw,0.75rem);
-  color:var(--teal);height:1rem;
+  color:var(--silver);height:1rem;
 }
 .eq-op{font-family:'Playfair Display',sans-serif;font-size:clamp(1.4rem,5vw,2rem);color:var(--muted);margin:0 0.3rem;align-self:flex-start;padding-top:0.1rem}
 .eq-line{display:block;width:100%;height:2px;background:var(--muted);margin:0.3rem 0}
 
 .timer-track{width:80%;height:3px;background:var(--border);border-radius:2px;overflow:hidden;margin:0.5rem auto 0}
-.timer-fill{height:100%;background:var(--gold);border-radius:2px;transition:background 0.3s}
+.timer-fill{height:100%;background:var(--silver);border-radius:2px;transition:background 0.3s}
 .timer-fill.warn{background:var(--warn)}
 .timer-fill.danger{background:var(--danger)}
 
@@ -103,20 +110,20 @@ nav{position:sticky;top:0;z-index:100;width:100%;display:flex;align-items:center
   gap:0.5rem;
 }
 .letter-cell{
-  background:var(--navy-mid);border:1px solid var(--border);border-radius:3px;
+  background:var(--surface);border:1px solid var(--border);border-radius:3px;
   padding:0.5rem 0.3rem;
   display:flex;flex-direction:column;align-items:center;gap:0.25rem;
 }
-.letter-cell.selected-cell{border-color:var(--gold-dim);background:rgba(201,168,76,0.08)}
-.lc-letter{font-family:'Playfair Display',sans-serif;font-size:1.4rem;color:var(--gold-warm)}
+.letter-cell.selected-cell{border-color:var(--silver-border);background:var(--silver-dim)}
+.lc-letter{font-family:'Playfair Display',sans-serif;font-size:1.4rem;color:var(--silver-bright)}
 .lc-input{
   width:48px;height:32px;
-  background:var(--navy);border:1px solid var(--border-dim);border-radius:2px;
+  background:var(--surface2);border:1px solid var(--border);border-radius:2px;
   font-family:'JetBrains Mono',monospace;font-size:0.9rem;font-weight:500;
-  color:var(--teal);text-align:center;outline:none;
+  color:var(--silver);text-align:center;outline:none;
   transition:border-color 0.2s;
 }
-.lc-input:focus{border-color:var(--gold-dim)}
+.lc-input:focus{border-color:var(--silver-border)}
 .lc-input.conflict{border-color:var(--danger);color:var(--danger)}
 .lc-input.correct{border-color:var(--success);color:var(--success)}
 
@@ -126,13 +133,13 @@ nav{position:sticky;top:0;z-index:100;width:100%;display:flex;align-items:center
 }
 .dp-btn{
   width:36px;height:36px;
-  background:var(--navy-mid);border:1px solid var(--border);border-radius:3px;
+  background:var(--surface);border:1px solid var(--border);border-radius:3px;
   font-family:'JetBrains Mono',monospace;font-size:0.8rem;
-  color:var(--body);cursor:pointer;
+  color:var(--text);cursor:pointer;
   display:flex;align-items:center;justify-content:center;
   transition:all 0.15s;
 }
-.dp-btn:hover{background:var(--navy-light);border-color:var(--gold-dim);color:var(--gold)}
+.dp-btn:hover{background:var(--surface2);border-color:var(--silver-border);color:var(--silver-bright)}
 .dp-btn.used{opacity:0.3;pointer-events:none}
 .dp-btn.erase{color:var(--danger);border-color:rgba(239,68,68,0.3)}
 .dp-btn.erase:hover{background:rgba(239,68,68,0.1);pointer-events:all;opacity:1}
@@ -149,14 +156,14 @@ nav{position:sticky;top:0;z-index:100;width:100%;display:flex;align-items:center
 
 .controls{display:flex;gap:0.5rem;width:100%}
 .btn{padding:0.65rem 1rem;font-family:'JetBrains Mono',monospace;font-size:0.6rem;letter-spacing:0.1em;text-transform:uppercase;cursor:pointer;border-radius:3px;border:none;transition:all 0.2s;flex:1}
-.btn-gold{background:var(--gold);color:var(--ink);font-weight:500}
-.btn-gold:hover{background:var(--gold-warm)}
-.btn-gold:disabled{background:var(--muted);cursor:not-allowed;opacity:0.5}
+.btn-silver{background:var(--silver-bright);color:var(--bg);font-weight:500}
+.btn-silver:hover{opacity:.85}
+.btn-silver:disabled{background:var(--muted);cursor:not-allowed;opacity:0.5}
 .btn-ghost{background:transparent;border:1px solid var(--border);color:var(--muted)}
-.btn-ghost:hover{border-color:var(--gold-dim);color:var(--gold)}
-.btn-teal{background:transparent;border:1px solid var(--teal-dim);color:var(--teal)}
-.btn-teal:hover{background:var(--teal-dim)}
-.btn-teal:disabled{opacity:0.3;cursor:not-allowed}
+.btn-ghost:hover{border-color:var(--silver-border);color:var(--silver)}
+.btn-hint{background:transparent;border:1px solid var(--silver-border);color:var(--silver)}
+.btn-hint:hover{background:var(--silver-dim)}
+.btn-hint:disabled{opacity:0.3;cursor:not-allowed}
 
 /* Progress */
 .progress-row{display:flex;gap:0.4rem;justify-content:center;flex-wrap:wrap}
@@ -170,30 +177,30 @@ nav{position:sticky;top:0;z-index:100;width:100%;display:flex;align-items:center
 .hint-cost{font-family:'JetBrains Mono',monospace;font-size:0.52rem;color:var(--muted)}
 
 /* LB */
-.lb-section{width:100%;background:var(--navy-mid);border:1px solid var(--border);border-radius:4px;overflow:hidden}
-.lb-header{padding:0.75rem 1rem;border-bottom:1px solid var(--border-dim)}
+.lb-section{width:100%;background:var(--surface);border:1px solid var(--border);border-radius:4px;overflow:hidden}
+.lb-header{padding:0.75rem 1rem;border-bottom:1px solid var(--border)}
 .lb-title{font-family:'JetBrains Mono',monospace;font-size:0.55rem;letter-spacing:0.15em;text-transform:uppercase;color:var(--muted)}
 .lb-body{padding:0.5rem 0}
 .lb-empty{font-family:'JetBrains Mono',monospace;font-size:0.6rem;color:var(--muted);text-align:center;padding:1.2rem;font-style:italic}
-.lb-row{display:grid;grid-template-columns:1.5rem 1fr auto auto;gap:0.5rem;align-items:center;padding:0.4rem 1rem;border-bottom:1px solid var(--border-dim);font-family:'JetBrains Mono',monospace;font-size:0.6rem}
+.lb-row{display:grid;grid-template-columns:1.5rem 1fr auto auto;gap:0.5rem;align-items:center;padding:0.4rem 1rem;border-bottom:1px solid var(--border);font-family:'JetBrains Mono',monospace;font-size:0.6rem}
 .lb-row:last-child{border-bottom:none}
-.lb-row.hl{background:rgba(201,168,76,0.06)}
-.lb-rank{color:var(--muted)}.lb-name{color:var(--body)}.lb-score{color:var(--gold);text-align:right}.lb-solved{color:var(--muted);font-size:0.52rem;text-align:right}
+.lb-row.hl{background:var(--silver-dim)}
+.lb-rank{color:var(--muted)}.lb-name{color:var(--text)}.lb-score{color:var(--silver-bright);text-align:right}.lb-solved{color:var(--muted);font-size:0.52rem;text-align:right}
 
 /* Modal */
-.modal-overlay{position:fixed;inset:0;background:rgba(7,13,26,0.88);backdrop-filter:blur(8px);z-index:200;display:flex;align-items:center;justify-content:center;padding:1rem}
+.modal-overlay{position:fixed;inset:0;background:rgba(14,16,19,0.88);backdrop-filter:blur(8px);z-index:200;display:flex;align-items:center;justify-content:center;padding:1rem}
 .modal-overlay.hidden{display:none}
-.modal{background:var(--navy-mid);border:1px solid var(--border);border-radius:4px;width:100%;max-width:380px;overflow:hidden}
+.modal{background:var(--surface);border:1px solid var(--border);border-radius:4px;width:100%;max-width:380px;overflow:hidden}
 .modal-header{padding:1.4rem 1.4rem 0;text-align:center}
-.modal-result{font-family:'Playfair Display',sans-serif;font-size:2rem;letter-spacing:0.1em;color:var(--gold-warm)}
-.modal-score{margin:1rem 1.4rem;background:var(--navy-light);border:1px solid var(--border-dim);border-radius:3px;padding:0.8rem;display:grid;grid-template-columns:1fr 1fr;gap:0.5rem}
+.modal-result{font-family:'Playfair Display',sans-serif;font-size:2rem;letter-spacing:0.1em;color:var(--silver-bright)}
+.modal-score{margin:1rem 1.4rem;background:var(--surface2);border:1px solid var(--border);border-radius:3px;padding:0.8rem;display:grid;grid-template-columns:1fr 1fr;gap:0.5rem}
 .ms-item{display:flex;flex-direction:column;gap:0.1rem}
-.ms-val{font-family:'JetBrains Mono',monospace;font-size:0.9rem;color:var(--gold)}
+.ms-val{font-family:'JetBrains Mono',monospace;font-size:0.9rem;color:var(--silver-bright)}
 .ms-lbl{font-family:'JetBrains Mono',monospace;font-size:0.45rem;letter-spacing:0.1em;text-transform:uppercase;color:var(--muted)}
 .modal-name{padding:0 1.4rem;display:flex;flex-direction:column;gap:0.4rem}
 .modal-name label{font-family:'JetBrains Mono',monospace;font-size:0.52rem;letter-spacing:0.1em;text-transform:uppercase;color:var(--muted)}
-.name-input{background:var(--navy);border:1px solid var(--border);border-radius:3px;padding:0.6rem 0.8rem;font-family:'JetBrains Mono',monospace;font-size:0.8rem;color:var(--body);outline:none;width:100%}
-.name-input:focus{border-color:var(--gold-dim)}
+.name-input{background:var(--surface2);border:1px solid var(--border);border-radius:3px;padding:0.6rem 0.8rem;font-family:'JetBrains Mono',monospace;font-size:0.8rem;color:var(--text);outline:none;width:100%}
+.name-input:focus{border-color:var(--silver-border)}
 .modal-acts{display:flex;gap:0.5rem;padding:1rem 1.4rem 1.4rem}
 .modal-acts .btn{flex:1}
 
@@ -224,15 +231,20 @@ nav{position:sticky;top:0;z-index:100;width:100%;display:flex;align-items:center
 <body>
 <script src="../qf-wallet.js"></script>
 
-<nav>
-  <a class="nav-logo" href="/qf-dapp/">QF Games</a>
-  <span style="font-family:'JetBrains Mono',monospace;font-size:0.48rem;letter-spacing:0.1em;text-transform:uppercase;padding:0.2rem 0.6rem;border:1px solid #134e4a;border-radius:2px;color:#2dd4bf">Hosted on QF Network</span>
-  <a class="nav-back" href="../../">← Back</a>
-</nav>
+<div class="top-bar">
+  <div class="top-bar-left">
+    <a href="/qf-dapp/" class="back-link">&larr; Lobby</a>
+  </div>
+  <div class="top-bar-right">
+    <button id="topConnectBtn" class="top-connect" onclick="qfWallet.connect()">Connect Wallet</button>
+    <span id="topAddr" class="top-addr" style="display:none;cursor:pointer"></span>
+    <span id="topQfName" class="top-qf-name" style="display:none"></span>
+  </div>
+</div>
 <div class="page">
   <div class="game-header">
     <p class="game-kicker">Constraint Logic · Deduction</p>
-    <h1 class="game-title">Cryptarithmetic <strong style="color:var(--teal)">Club</strong></h1>
+    <h1 class="game-title">Cryptarithmetic <strong>Club</strong></h1>
     <p class="game-sub">Each letter represents a unique digit 0–9. Make the arithmetic correct. Leading letters cannot be zero.</p>
   </div>
 
@@ -271,7 +283,7 @@ nav{position:sticky;top:0;z-index:100;width:100%;display:flex;align-items:center
   <div class="digit-palette" id="digit-palette"></div>
 
   <div class="hint-row">
-    <button class="btn btn-teal" id="hint-btn" onclick="revealHint()" disabled>Reveal One Letter (−150 pts)</button>
+    <button class="btn btn-hint" id="hint-btn" onclick="revealHint()" disabled>Reveal One Letter (−150 pts)</button>
     <span class="hint-cost" id="hint-cost">3 hints remaining</span>
   </div>
 
@@ -280,7 +292,7 @@ nav{position:sticky;top:0;z-index:100;width:100%;display:flex;align-items:center
   <div class="controls">
     <button class="btn btn-ghost" onclick="clearAll()">Clear All</button>
     <button class="btn btn-ghost" id="skip-btn" onclick="skipPuzzle()">Skip</button>
-    <button class="btn btn-gold" id="check-btn" onclick="checkAnswer()">Check</button>
+    <button class="btn btn-silver" id="check-btn" onclick="checkAnswer()">Check</button>
   </div>
 
   <div class="progress-row" id="progress-row"></div>
@@ -288,19 +300,19 @@ nav{position:sticky;top:0;z-index:100;width:100%;display:flex;align-items:center
   <!-- DUEL STAKE PICKER -->
   <div id="duel-stake-panel" style="display:none;width:100%;text-align:center;margin-bottom:1rem">
     <h3 style="font-family:'Playfair Display','Bebas Neue',serif;font-size:1.3rem;color:#e8eaf0;margin-bottom:.4rem">Set Your Stake</h3>
-    <p style="font-size:.62rem;color:#4a6080;margin-bottom:.8rem;line-height:1.5">Both players match the same stake. Winner takes 90%.</p>
+    <p style="font-size:.62rem;color:#4a4e5a;margin-bottom:.8rem;line-height:1.5">Both players match the same stake. Winner takes 90%.</p>
     <div style="display:flex;gap:.4rem;justify-content:center;flex-wrap:wrap;margin-bottom:.6rem">
       <button class="btn btn-ghost stake-opt" onclick="pickDuelStake(25)" data-stake="25" style="padding:.5rem 1rem;font-size:.7rem">25 QF</button>
       <button class="btn btn-ghost stake-opt" onclick="pickDuelStake(100)" data-stake="100" style="padding:.5rem 1rem;font-size:.7rem">100 QF</button>
       <button class="btn btn-ghost stake-opt" onclick="pickDuelStake(250)" data-stake="250" style="padding:.5rem 1rem;font-size:.7rem">250 QF</button>
     </div>
     <div style="display:flex;gap:.3rem;align-items:center;justify-content:center;margin-bottom:.6rem">
-      <input type="number" id="custom-duel-stake" min="25" placeholder="Custom" style="width:5rem;padding:.35rem .5rem;font-family:'JetBrains Mono','DM Mono',monospace;font-size:.75rem;text-align:center;background:#0b1629;border:1px solid #1a2e4a;border-radius:6px;color:#e8eaf0">
-      <span style="font-family:'JetBrains Mono','DM Mono',monospace;font-size:.55rem;color:#4a6080">QF (min 25)</span>
+      <input type="number" id="custom-duel-stake" min="25" placeholder="Custom" style="width:5rem;padding:.35rem .5rem;font-family:'JetBrains Mono','DM Mono',monospace;font-size:.75rem;text-align:center;background:#16181c;border:1px solid #1e2228;border-radius:6px;color:#e8eaf0">
+      <span style="font-family:'JetBrains Mono','DM Mono',monospace;font-size:.55rem;color:#4a4e5a">QF (min 25)</span>
     </div>
-    <p style="font-family:'JetBrains Mono','DM Mono',monospace;font-size:.5rem;color:#4a6080;margin-bottom:.8rem;line-height:1.5">5% burned · 5% team · 90% to winner. Full refund if opponent doesn't accept.</p>
+    <p style="font-family:'JetBrains Mono','DM Mono',monospace;font-size:.5rem;color:#4a4e5a;margin-bottom:.8rem;line-height:1.5">5% burned · 5% team · 90% to winner. Full refund if opponent doesn't accept.</p>
     <div style="display:flex;gap:.4rem;justify-content:center">
-      <button class="btn btn-gold" id="confirm-duel-btn" onclick="confirmDuelCreate()" style="padding:.6rem 1.5rem;font-size:.65rem" disabled>Select a stake</button>
+      <button class="btn btn-silver" id="confirm-duel-btn" onclick="confirmDuelCreate()" style="padding:.6rem 1.5rem;font-size:.65rem" disabled>Select a stake</button>
       <button class="btn btn-ghost" onclick="cancelDuelCreate()" style="padding:.6rem 1rem;font-size:.65rem">Cancel</button>
     </div>
   </div>
@@ -308,22 +320,22 @@ nav{position:sticky;top:0;z-index:100;width:100%;display:flex;align-items:center
   <!-- DUEL SHARE -->
   <div id="duel-share-panel" style="display:none;width:100%;text-align:center;margin-bottom:1rem">
     <h3 style="font-family:'Playfair Display','Bebas Neue',serif;font-size:1.3rem;color:#e8eaf0;margin-bottom:.3rem">Duel Created</h3>
-    <p style="font-size:.62rem;color:#4a6080;margin-bottom:.8rem">Share this code. Opponent has 24 hours.</p>
-    <div id="duel-share-code" style="font-family:'JetBrains Mono','DM Mono',monospace;font-size:2rem;letter-spacing:.25em;color:#d4d8e2;background:#0b1629;border:2px solid rgba(184,188,198,0.15);border-radius:10px;padding:.8rem 1.5rem;display:inline-block;margin-bottom:.6rem;user-select:all">------</div>
+    <p style="font-size:.62rem;color:#4a4e5a;margin-bottom:.8rem">Share this code. Opponent has 24 hours.</p>
+    <div id="duel-share-code" style="font-family:'JetBrains Mono','DM Mono',monospace;font-size:2rem;letter-spacing:.25em;color:#d4d8e2;background:#16181c;border:2px solid rgba(184,188,198,0.15);border-radius:10px;padding:.8rem 1.5rem;display:inline-block;margin-bottom:.6rem;user-select:all">------</div>
     <div style="display:flex;gap:.4rem;justify-content:center">
-      <button class="btn btn-gold" onclick="copyDuelCode()" style="padding:.5rem 1rem;font-size:.6rem">Copy Code</button>
+      <button class="btn btn-silver" onclick="copyDuelCode()" style="padding:.5rem 1rem;font-size:.6rem">Copy Code</button>
       <button class="btn btn-ghost" onclick="shareDuelLink()" style="padding:.5rem 1rem;font-size:.6rem">Share Link</button>
     </div>
-    <div id="duel-share-status" style="font-family:'JetBrains Mono','DM Mono',monospace;font-size:.55rem;color:#4a6080;margin-top:.5rem">Waiting for opponent...</div>
+    <div id="duel-share-status" style="font-family:'JetBrains Mono','DM Mono',monospace;font-size:.55rem;color:#4a4e5a;margin-top:.5rem">Waiting for opponent...</div>
   </div>
 
   <!-- DUEL ACCEPT -->
   <div id="duel-accept-panel" style="display:none;width:100%;text-align:center;margin-bottom:1rem">
     <h3 style="font-family:'Playfair Display','Bebas Neue',serif;font-size:1.3rem;color:#e8eaf0;margin-bottom:.3rem">You've Been Challenged</h3>
     <div id="duel-challenger" style="font-family:'JetBrains Mono','DM Mono',monospace;font-size:.9rem;color:#d4d8e2;margin-bottom:.3rem">---</div>
-    <div id="duel-accept-stake" style="font-family:'JetBrains Mono','DM Mono',monospace;font-size:.75rem;color:#b8bcc6;background:#0f1f3d;border:1px solid rgba(184,188,198,0.15);border-radius:8px;padding:.5rem;display:inline-block;margin-bottom:.6rem">Stake: -- QF</div>
-    <p style="font-size:.62rem;color:#4a6080;margin-bottom:.8rem">Same puzzle, same conditions. Match the stake to play.</p>
-    <button class="btn btn-gold" onclick="acceptDuelChallenge()" style="padding:.7rem 1.5rem;font-size:.68rem">Match Stake & Play</button>
+    <div id="duel-accept-stake" style="font-family:'JetBrains Mono','DM Mono',monospace;font-size:.75rem;color:#b8bcc6;background:#1e2025;border:1px solid rgba(184,188,198,0.15);border-radius:8px;padding:.5rem;display:inline-block;margin-bottom:.6rem">Stake: -- QF</div>
+    <p style="font-size:.62rem;color:#4a4e5a;margin-bottom:.8rem">Same puzzle, same conditions. Match the stake to play.</p>
+    <button class="btn btn-silver" onclick="acceptDuelChallenge()" style="padding:.7rem 1.5rem;font-size:.68rem">Match Stake & Play</button>
   </div>
 
   <button class="btn btn-ghost" id="start-btn" onclick="startGame()" style="width:100%">Start Game</button>
@@ -348,7 +360,7 @@ nav{position:sticky;top:0;z-index:100;width:100%;display:flex;align-items:center
     </div>
     <div class="modal-acts">
       <button class="btn btn-ghost" onclick="resetGame()">Play Again</button>
-      <button class="btn btn-gold" onclick="submitToLB()">Submit Score</button>
+      <button class="btn btn-silver" onclick="submitToLB()">Submit Score</button>
     </div>
   </div>
 </div>
@@ -948,6 +960,20 @@ async function acceptDuelChallenge() {
 }
 
 if (duelCode) { loadDuelAccept(); }
+
+// ── Wallet UI ───────────────────────────────────────────────────────
+qfWallet.onConnect(function(s) {
+  if (s.address) {
+    document.getElementById('topConnectBtn').style.display = 'none';
+    document.getElementById('topAddr').style.display = '';
+    document.getElementById('topAddr').textContent = s.address.slice(0, 6) + '...' + s.address.slice(-4);
+  }
+  if (s.qfName) {
+    document.getElementById('topQfName').textContent = s.qfName;
+    document.getElementById('topQfName').style.display = '';
+    document.getElementById('topAddr').style.display = 'none';
+  }
+});
 </script>
 
 <script>

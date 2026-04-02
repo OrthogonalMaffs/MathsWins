@@ -93,16 +93,19 @@
       var rdns = (detail.info && detail.info.rdns) || '';
       if (rdns.indexOf('talisman') !== -1) add('talisman', 'Talisman', '\uD83D\uDD2E', detail.provider);
       else if (rdns.indexOf('metamask') !== -1) add('metamask', 'MetaMask', '\uD83E\uDD8A', detail.provider);
+      else if (rdns.indexOf('subwallet') !== -1) add('subwallet', 'SubWallet', '\uD83D\uDFE2', detail.provider);
     });
     // Legacy fallback: providers array
     if (window.ethereum && window.ethereum.providers && window.ethereum.providers.length > 0) {
       window.ethereum.providers.forEach(function(p) {
         if (p.isTalisman) add('talisman', 'Talisman', '\uD83D\uDD2E', p);
         if (p.isMetaMask) add('metamask', 'MetaMask', '\uD83E\uDD8A', p);
+        if (p.isSubWallet) add('subwallet', 'SubWallet', '\uD83D\uDFE2', p);
       });
     }
     // Legacy fallback: separate globals
     if (window.talismanEth) add('talisman', 'Talisman', '\uD83D\uDD2E', window.talismanEth);
+    if (window.SubWallet) add('subwallet', 'SubWallet', '\uD83D\uDFE2', window.SubWallet);
     // Last resort: window.ethereum directly
     if (window.ethereum && !seen.talisman && !seen.metamask) {
       if (window.ethereum.isTalisman) add('talisman', 'Talisman', '\uD83D\uDD2E', window.ethereum);
@@ -170,9 +173,11 @@
     var msg = document.createElement('div');
     msg.style.cssText = "text-align:center;padding:1rem;font-family:'Inter',sans-serif;font-size:.72rem;color:#8a8f9c;line-height:1.6;";
     msg.innerHTML = 'No wallet detected.<br><br>'
-      + '<a href="https://metamask.io" target="_blank" style="color:#b8bcc6;text-decoration:none;">Install MetaMask</a>'
-      + ' or '
-      + '<a href="https://talisman.xyz" target="_blank" style="color:#b8bcc6;text-decoration:none;">Install Talisman</a>';
+      + '<a href="https://metamask.io" target="_blank" style="color:#b8bcc6;text-decoration:none;">MetaMask</a>'
+      + ' · '
+      + '<a href="https://talisman.xyz" target="_blank" style="color:#b8bcc6;text-decoration:none;">Talisman</a>'
+      + ' · '
+      + '<a href="https://www.subwallet.app" target="_blank" style="color:#b8bcc6;text-decoration:none;">SubWallet</a>';
     list.appendChild(msg);
   }
 

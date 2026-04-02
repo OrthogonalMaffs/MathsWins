@@ -26,30 +26,30 @@
 <meta name="twitter:image" content="https://mathswins.co.uk/assets/og-image.png">
 <style>
 :root {
-  --ink:#0e1013;--surface:#16181c;--surface2:#1e2025;
-  --gold:#c9a84c;--gold-warm:#d4d8e2;--gold-dim:rgba(184,188,198,0.08);
-  --teal:#b8bcc6;--teal-dim:rgba(184,188,198,0.08);
-  --text:#8a8f9c;--text-bright:#e8eaf0;--muted:#4a4e5a;
+  --bg:#0e1013;--surface:#16181c;--surface2:#1e2025;--surface3:#26282e;
+  --silver:#b8bcc6;--silver-bright:#d4d8e2;--silver-dim:rgba(184,188,198,0.08);
+  --silver-glow:rgba(184,188,198,0.12);--silver-border:rgba(184,188,198,0.15);
+  --text-white:#e8eaf0;--text:#8a8f9c;--muted:#4a4e5a;
   --border:#1e2228;--border2:#2a2e36;
-  --green:#3a8a5c;--red:#b03a3a;--warn:#c9a84c;
+  --gold:#c9a84c;--green:#3a8a5c;--red:#b03a3a;
 }
 *,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
-body{background:var(--ink);color:var(--text);font-family:'Inter',sans-serif;min-height:100vh;display:flex;flex-direction:column;align-items:center}
-.page{width:100%;max-width:620px;padding:2rem 1rem 4rem;display:flex;flex-direction:column;align-items:center;gap:1.2rem}
+body{background:var(--bg);color:var(--text);font-family:'Inter',sans-serif;min-height:100vh;display:flex;flex-direction:column;align-items:center}
+.page{width:100%;max-width:560px;padding:2rem 1rem 4rem;display:flex;flex-direction:column;align-items:center;gap:1.2rem}
 .game-header{text-align:center}
-.game-kicker{font-family:'JetBrains Mono',monospace;font-size:0.6rem;letter-spacing:0.2em;text-transform:uppercase;color:var(--teal);margin-bottom:0.4rem}
-.game-title{font-family:'Playfair Display',sans-serif;font-size:3rem;letter-spacing:0.08em;color:var(--gold-warm);line-height:1}
+.game-kicker{font-family:'JetBrains Mono',monospace;font-size:0.6rem;letter-spacing:0.2em;text-transform:uppercase;color:var(--silver);margin-bottom:0.4rem}
+.game-title{font-family:'Playfair Display',sans-serif;font-size:2.6rem;letter-spacing:0.08em;background:linear-gradient(135deg,var(--silver-bright),var(--silver),#8a8f9c);-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;line-height:1}
 .game-sub{font-size:0.75rem;color:var(--muted);line-height:1.6;margin-top:0.4rem}
 
 .scoring-info{width:100%;background:var(--surface2);border:1px solid var(--border);border-radius:8px;padding:1.2rem;font-family:'JetBrains Mono',monospace;font-size:0.65rem;color:var(--muted);line-height:1.8}
-.scoring-info h3{font-family:'Playfair Display',sans-serif;font-size:1.1rem;color:var(--gold);letter-spacing:0.05em;margin-bottom:0.5rem}
+.scoring-info h3{font-family:'Playfair Display',sans-serif;font-size:1.1rem;color:var(--silver-bright);letter-spacing:0.05em;margin-bottom:0.5rem}
 .si-row{display:flex;justify-content:space-between;padding:0.15rem 0}
-.si-label{color:var(--text)}.si-val{color:var(--gold)}
+.si-label{color:var(--text)}.si-val{color:var(--silver-bright)}
 .si-note{color:var(--muted);font-size:0.55rem;margin-top:0.5rem;font-style:italic}
 
 .status-bar{display:flex;gap:0.8rem;width:100%;background:var(--surface2);border:1px solid var(--border);border-radius:8px;padding:0.75rem 1rem;justify-content:space-around}
 .si{display:flex;flex-direction:column;align-items:center;gap:0.15rem}
-.sv{font-family:'JetBrains Mono',monospace;font-size:1rem;font-weight:500;color:var(--gold)}
+.sv{font-family:'JetBrains Mono',monospace;font-size:1rem;font-weight:500;color:var(--silver-bright)}
 .sl{font-family:'JetBrains Mono',monospace;font-size:0.45rem;letter-spacing:0.12em;text-transform:uppercase;color:var(--muted)}
 
 /* ── Nonogram board ────────────────────────────── */
@@ -75,17 +75,17 @@ body{background:var(--ink);color:var(--text);font-family:'Inter',sans-serif;min-
   position:relative;
   transition:background 0.1s,border-color 0.1s;
 }
-.nono-cell:hover{border-color:var(--teal-dim)}
-.nono-cell.filled{background:var(--teal)}
+.nono-cell:hover{border-color:var(--silver-dim)}
+.nono-cell.filled{background:var(--silver)}
 .nono-cell.marked::after{
   content:'';position:absolute;top:50%;left:50%;
   width:6px;height:6px;border-radius:50%;
   background:var(--muted);
   transform:translate(-50%,-50%);
 }
-.nono-cell.focus-cell{outline:2px solid var(--gold);outline-offset:-2px;z-index:1}
+.nono-cell.focus-cell{outline:2px solid var(--silver-bright);outline-offset:-2px;z-index:1}
 .nono-cell.wrong-flash{background:var(--red);transition:background 0s}
-.nono-cell.hint-cell{background:rgba(45,212,191,0.5)}
+.nono-cell.hint-cell{background:var(--silver-glow)}
 
 /* 5-cell group borders */
 .nono-cell.thick-right{border-right:2px solid var(--muted)}
@@ -93,13 +93,11 @@ body{background:var(--ink);color:var(--text);font-family:'Inter',sans-serif;min-
 
 .controls{display:flex;gap:0.5rem;width:100%;flex-wrap:wrap}
 .btn{padding:0.6rem 1rem;font-family:'JetBrains Mono',monospace;font-size:0.6rem;letter-spacing:0.1em;text-transform:uppercase;cursor:pointer;border-radius:6px;border:none;transition:all 0.2s;flex:1;min-width:0}
-.btn-gold{background:var(--gold);color:var(--ink);font-weight:500}
-.btn-gold:hover{background:var(--gold-warm)}
-.btn-gold:disabled{background:var(--muted);cursor:not-allowed;opacity:0.5}
+.btn-silver{background:var(--silver-bright);color:var(--bg);font-weight:500}
+.btn-silver:hover{opacity:.85}
+.btn-silver:disabled{background:var(--muted);cursor:not-allowed;opacity:0.5}
 .btn-ghost{background:transparent;border:1px solid var(--border);color:var(--muted)}
-.btn-ghost:hover{border-color:var(--gold-dim);color:var(--gold)}
-.btn-teal{background:transparent;border:1px solid var(--teal-dim);color:var(--teal)}
-.btn-teal:hover{background:var(--teal-dim)}
+.btn-ghost:hover{border-color:var(--silver-border);color:var(--silver)}
 .msg{font-family:'JetBrains Mono',monospace;font-size:0.62rem;text-align:center;min-height:1rem;color:var(--red)}
 .msg.ok{color:var(--green)}
 
@@ -109,7 +107,7 @@ body{background:var(--ink);color:var(--text);font-family:'Inter',sans-serif;min-
 .hint-picker-row{display:flex;gap:0.4rem;align-items:center}
 .hint-picker-row label{font-family:'JetBrains Mono',monospace;font-size:0.58rem;color:var(--text);min-width:30px}
 .hint-picker-row select{background:var(--surface);border:1px solid var(--border);border-radius:4px;color:var(--text);font-family:'JetBrains Mono',monospace;font-size:0.65rem;padding:0.3rem 0.5rem;outline:none}
-.hint-picker-row select:focus{border-color:var(--teal-dim)}
+.hint-picker-row select:focus{border-color:var(--silver-dim)}
 .hint-picker-acts{display:flex;gap:0.4rem}
 .hint-picker-acts .btn{flex:1;padding:0.45rem 0.6rem;font-size:0.55rem}
 
@@ -123,7 +121,7 @@ body{background:var(--ink);color:var(--text);font-family:'Inter',sans-serif;min-
 .modal-sub{font-family:'JetBrains Mono',monospace;font-size:0.62rem;color:var(--muted)}
 .modal-score{margin:1rem 1.4rem;background:var(--surface);border:1px solid var(--border);border-radius:8px;padding:0.8rem;display:grid;grid-template-columns:1fr 1fr;gap:0.5rem}
 .ms-item{display:flex;flex-direction:column;gap:0.1rem}
-.ms-val{font-family:'JetBrains Mono',monospace;font-size:0.9rem;color:var(--gold)}
+.ms-val{font-family:'JetBrains Mono',monospace;font-size:0.9rem;color:var(--silver-bright)}
 .ms-lbl{font-family:'JetBrains Mono',monospace;font-size:0.45rem;letter-spacing:0.1em;text-transform:uppercase;color:var(--muted)}
 .modal-acts{display:flex;gap:0.5rem;padding:1rem 1.4rem 1.4rem}
 .modal-acts .btn{flex:1}
@@ -146,6 +144,16 @@ body{background:var(--ink);color:var(--text);font-family:'Inter',sans-serif;min-
 .htp-body ul{margin:.3rem 0 .5rem 1.2rem}
 .htp-body li{margin-bottom:.2rem}
 .htp-body strong{color:var(--text,#8a8f9c)}
+/* Top bar */
+.top-bar{width:100%;display:flex;justify-content:space-between;align-items:center;padding:.5rem 1rem;background:rgba(14,16,19,.94);backdrop-filter:blur(12px);border-bottom:1px solid var(--border);position:sticky;top:0;z-index:100}
+.top-bar-left{display:flex;align-items:center;gap:.6rem}
+.back-link{font-size:.7rem;color:var(--muted);text-decoration:none;padding:.25rem .6rem;border:1px solid var(--border);border-radius:6px;transition:all .15s}
+.back-link:hover{border-color:var(--silver-border);color:var(--text)}
+.top-bar-right{display:flex;align-items:center;gap:.5rem}
+.top-addr{font-family:'JetBrains Mono',monospace;font-size:.65rem;color:var(--muted);background:var(--surface);border:1px solid var(--border);padding:.2rem .5rem;border-radius:5px}
+.top-qf-name{font-family:'JetBrains Mono',monospace;font-size:.65rem;color:var(--silver-bright);background:var(--surface2);border:1px solid var(--silver-border);padding:.2rem .5rem;border-radius:5px}
+.top-connect{font-family:'Inter',sans-serif;font-weight:600;font-size:.7rem;padding:.35rem .8rem;border-radius:5px;border:1px solid var(--silver-border);background:var(--silver-dim);color:var(--silver-bright);cursor:pointer;transition:all .15s}
+.top-connect:hover{background:var(--silver-bright);color:var(--bg)}
 /* Countdown overlay */
 .countdown-overlay{position:fixed;inset:0;background:rgba(14,16,19,0.96);z-index:300;display:none;align-items:center;justify-content:center}
 .countdown-overlay.active{display:flex}
@@ -156,10 +164,20 @@ body{background:var(--ink);color:var(--text);font-family:'Inter',sans-serif;min-
 </head>
 <body>
 <script src="../qf-wallet.js"></script>
+<div class="top-bar">
+  <div class="top-bar-left">
+    <a href="/qf-dapp/" class="back-link">&larr; Lobby</a>
+  </div>
+  <div class="top-bar-right">
+    <button id="topConnectBtn" class="top-connect" onclick="qfWallet.connect()">Connect Wallet</button>
+    <span id="topAddr" class="top-addr" style="display:none;cursor:pointer"></span>
+    <span id="topQfName" class="top-qf-name" style="display:none"></span>
+  </div>
+</div>
 <div class="page">
   <div class="game-header">
     <p class="game-kicker">Logic Puzzle</p>
-    <h1 class="game-title">Nono<strong style="color:var(--teal)">gram</strong></h1>
+    <h1 class="game-title">Nono<strong>gram</strong></h1>
     <p class="game-sub">Fill cells to reveal a hidden Greek letter. Use row and column clues to deduce which cells are filled.</p>
   </div>
 
@@ -214,13 +232,13 @@ body{background:var(--ink);color:var(--text);font-family:'Inter',sans-serif;min-
     </div>
     <div class="hint-picker-acts">
       <button class="btn btn-ghost" onclick="G.cancelHint()">Cancel</button>
-      <button class="btn btn-teal" onclick="G.confirmHint()">Reveal</button>
+      <button class="btn btn-silver" onclick="G.confirmHint()">Reveal</button>
     </div>
   </div>
 
   <div class="controls" id="controls" style="display:none">
-    <button class="btn btn-teal" onclick="G.openHintPicker()">Hint (-400)</button>
-    <button class="btn btn-gold" onclick="G.submitGrid()">Submit</button>
+    <button class="btn btn-ghost" onclick="G.openHintPicker()">Hint (-400)</button>
+    <button class="btn btn-silver" onclick="G.submitGrid()">Submit</button>
   </div>
 
   <div class="msg" id="msg-bar"></div>
@@ -240,7 +258,7 @@ body{background:var(--ink);color:var(--text);font-family:'Inter',sans-serif;min-
     </div>
     <p style="font-family:'JetBrains Mono','DM Mono',monospace;font-size:.5rem;color:#4a4e5a;margin-bottom:.8rem;line-height:1.5">5% burned · 5% team · 90% to winner. Full refund if opponent doesn't accept.</p>
     <div style="display:flex;gap:.4rem;justify-content:center">
-      <button class="btn btn-gold btn-silver" id="confirm-duel-btn" onclick="confirmDuelCreate()" style="padding:.6rem 1.5rem;font-size:.65rem" disabled>Select a stake</button>
+      <button class="btn btn-silver" id="confirm-duel-btn" onclick="confirmDuelCreate()" style="padding:.6rem 1.5rem;font-size:.65rem" disabled>Select a stake</button>
       <button class="btn btn-ghost" onclick="cancelDuelCreate()" style="padding:.6rem 1rem;font-size:.65rem">Cancel</button>
     </div>
   </div>
@@ -251,7 +269,7 @@ body{background:var(--ink);color:var(--text);font-family:'Inter',sans-serif;min-
     <p style="font-size:.62rem;color:#4a4e5a;margin-bottom:.8rem">Share this code. Opponent has 24 hours.</p>
     <div id="duel-share-code" style="font-family:'JetBrains Mono','DM Mono',monospace;font-size:2rem;letter-spacing:.25em;color:#d4d8e2;background:#16181c;border:2px solid rgba(184,188,198,0.15);border-radius:10px;padding:.8rem 1.5rem;display:inline-block;margin-bottom:.6rem;user-select:all">------</div>
     <div style="display:flex;gap:.4rem;justify-content:center">
-      <button class="btn btn-gold btn-silver" onclick="copyDuelCode()" style="padding:.5rem 1rem;font-size:.6rem">Copy Code</button>
+      <button class="btn btn-silver" onclick="copyDuelCode()" style="padding:.5rem 1rem;font-size:.6rem">Copy Code</button>
       <button class="btn btn-ghost" onclick="shareDuelLink()" style="padding:.5rem 1rem;font-size:.6rem">Share Link</button>
     </div>
     <div id="duel-share-status" style="font-family:'JetBrains Mono','DM Mono',monospace;font-size:.55rem;color:#4a4e5a;margin-top:.5rem">Waiting for opponent...</div>
@@ -263,10 +281,10 @@ body{background:var(--ink);color:var(--text);font-family:'Inter',sans-serif;min-
     <div id="duel-challenger" style="font-family:'JetBrains Mono','DM Mono',monospace;font-size:.9rem;color:#d4d8e2;margin-bottom:.3rem">---</div>
     <div id="duel-accept-stake" style="font-family:'JetBrains Mono','DM Mono',monospace;font-size:.75rem;color:#b8bcc6;background:#1e2025;border:1px solid rgba(184,188,198,0.15);border-radius:8px;padding:.5rem;display:inline-block;margin-bottom:.6rem">Stake: -- QF</div>
     <p style="font-size:.62rem;color:#4a4e5a;margin-bottom:.8rem">Same puzzle, same conditions. Match the stake to play.</p>
-    <button class="btn btn-gold btn-silver" onclick="acceptDuelChallenge()" style="padding:.7rem 1.5rem;font-size:.68rem">Match Stake & Play</button>
+    <button class="btn btn-silver" onclick="acceptDuelChallenge()" style="padding:.7rem 1.5rem;font-size:.68rem">Match Stake & Play</button>
   </div>
 
-  <button class="btn btn-gold" id="start-btn" style="width:100%;padding:1rem">Start Game</button>
+  <button class="btn btn-silver" id="start-btn" style="width:100%;padding:1rem">Start Game</button>
   <button class="btn btn-ghost" id="create-duel-btn" onclick="showDuelStakePicker()" style="width:100%;padding:.7rem;margin-top:.5rem;font-size:.65rem">&#9876; Create a Duel</button>
   <a href="/qf-dapp/games/nonogram/league/" style="display:block;text-align:center;margin-top:.8rem;font-family:'JetBrains Mono',monospace;font-size:.65rem;color:var(--silver,#b8bcc6);text-decoration:none;padding:.5rem;border:1px solid var(--border,#1e2228);border-radius:6px;transition:all .15s" onmouseover="this.style.borderColor='rgba(184,188,198,0.15)'" onmouseout="this.style.borderColor='var(--border,#1e2228)'">&#9813; View Leagues</a>
 </div>
@@ -279,7 +297,7 @@ body{background:var(--ink);color:var(--text);font-family:'Inter',sans-serif;min-
     <div class="modal-score" id="modal-score"></div>
     <div class="modal-acts">
       <button class="btn btn-ghost" onclick="location.reload()">Play Again</button>
-      <button class="btn btn-gold" onclick="window.location='/qf-dapp/'">Lobby</button>
+      <button class="btn btn-silver" onclick="window.location='/qf-dapp/'">Lobby</button>
     </div>
   </div>
 </div>
@@ -455,7 +473,7 @@ var G = (function() {
           var span = document.createElement('span');
           span.className = 'col-clue-num';
           span.textContent = clueArr[depth - offset];
-          if (hintedCols.has(c)) span.style.color = 'var(--teal)';
+          if (hintedCols.has(c)) span.style.color = 'var(--silver)';
           td.appendChild(span);
         }
         tr.appendChild(td);
@@ -476,7 +494,7 @@ var G = (function() {
         var numSpan = document.createElement('span');
         numSpan.className = 'row-clue-num';
         numSpan.textContent = rowClues[r][ci];
-        if (hintedRows.has(r)) numSpan.style.color = 'var(--teal)';
+        if (hintedRows.has(r)) numSpan.style.color = 'var(--silver)';
         clueDiv.appendChild(numSpan);
       }
       clueTd.appendChild(clueDiv);
@@ -939,6 +957,18 @@ if (duelCode) { loadDuelAccept(); }
 <script>
 document.querySelectorAll('.htp-toggle').forEach(function(btn){
   btn.addEventListener('click',function(){this.closest('.htp').classList.toggle('open')});
+});
+qfWallet.onConnect(function(s) {
+  if (s && s.address) {
+    document.getElementById('topConnectBtn').style.display = 'none';
+    document.getElementById('topAddr').style.display = '';
+    document.getElementById('topAddr').textContent = s.address.slice(0, 6) + '...' + s.address.slice(-4);
+    if (s.qfName) {
+      document.getElementById('topQfName').textContent = s.qfName;
+      document.getElementById('topQfName').style.display = '';
+      document.getElementById('topAddr').style.display = 'none';
+    }
+  }
 });
 </script>
 </body>

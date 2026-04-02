@@ -28,35 +28,35 @@
 <script src="https://cdn.jsdelivr.net/npm/ethers@6/dist/ethers.umd.min.js"></script>
 <style>
 :root {
-  --ink:#0e1013;--surface:#16181c;--surface2:#1e2025;
-  --gold:#c9a84c;--gold-warm:#d4d8e2;--gold-dim:rgba(184,188,198,0.08);
-  --teal:#b8bcc6;--teal-dim:rgba(184,188,198,0.08);
-  --text:#8a8f9c;--text-bright:#e8eaf0;--muted:#4a4e5a;
+  --bg:#0e1013;--surface:#16181c;--surface2:#1e2025;--surface3:#26282e;
+  --silver:#b8bcc6;--silver-bright:#d4d8e2;--silver-dim:rgba(184,188,198,0.08);
+  --silver-glow:rgba(184,188,198,0.12);--silver-border:rgba(184,188,198,0.15);
+  --text-white:#e8eaf0;--text:#8a8f9c;--muted:#4a4e5a;
   --border:#1e2228;--border2:#2a2e36;
-  --green:#3a8a5c;--red:#b03a3a;--warn:#c9a84c;
+  --gold:#c9a84c;--green:#3a8a5c;--red:#b03a3a;--warn:#c9a84c;
   --prime:#60a5fa;--composite:#f97316;
 }
 *,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
-body{background:var(--ink);color:var(--text);font-family:'Inter',sans-serif;min-height:100vh;display:flex;flex-direction:column;align-items:center;overflow-x:hidden}
-body::before{content:'';position:fixed;inset:0;background-image:linear-gradient(rgba(212,168,71,0.03) 1px,transparent 1px),linear-gradient(90deg,rgba(212,168,71,0.03) 1px,transparent 1px);background-size:40px 40px;pointer-events:none;z-index:0}
+body{background:var(--bg);color:var(--text);font-family:'Inter',sans-serif;min-height:100vh;display:flex;flex-direction:column;align-items:center;overflow-x:hidden}
+body::before{content:'';position:fixed;inset:0;background-image:linear-gradient(rgba(184,188,198,0.03) 1px,transparent 1px),linear-gradient(90deg,rgba(184,188,198,0.03) 1px,transparent 1px);background-size:40px 40px;pointer-events:none;z-index:0}
 
-.page{position:relative;z-index:1;width:100%;max-width:480px;padding:2rem 1rem 4rem;display:flex;flex-direction:column;align-items:center;gap:1.2rem}
+.page{position:relative;z-index:1;width:100%;max-width:560px;padding:2rem 1rem 4rem;display:flex;flex-direction:column;align-items:center;gap:1.2rem}
 .game-header{text-align:center}
-.game-kicker{font-family:'JetBrains Mono',monospace;font-size:0.6rem;letter-spacing:0.2em;text-transform:uppercase;color:var(--teal);margin-bottom:0.4rem}
-.game-title{font-family:'Playfair Display',sans-serif;font-size:3rem;letter-spacing:0.06em;color:var(--gold-warm);line-height:1}
+.game-kicker{font-family:'JetBrains Mono',monospace;font-size:0.6rem;letter-spacing:0.2em;text-transform:uppercase;color:var(--silver);margin-bottom:0.4rem}
+.game-title{font-family:'Playfair Display',sans-serif;font-size:2.6rem;letter-spacing:0.06em;line-height:1;background:linear-gradient(135deg,var(--silver-bright),var(--silver),#8a8f9c);-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text}
 .game-sub{font-size:0.75rem;color:var(--muted);line-height:1.6;margin-top:0.4rem}
 
 /* Scoring info panel */
 .scoring-info{width:100%;background:var(--surface2);border:1px solid var(--border);border-radius:8px;padding:1.2rem;font-family:'JetBrains Mono',monospace;font-size:0.65rem;color:var(--muted);line-height:1.8}
-.scoring-info h3{font-family:'Playfair Display',sans-serif;font-size:1.1rem;color:var(--gold);letter-spacing:0.05em;margin-bottom:0.5rem}
+.scoring-info h3{font-family:'Playfair Display',sans-serif;font-size:1.1rem;color:var(--silver-bright);letter-spacing:0.05em;margin-bottom:0.5rem}
 .scoring-info .si-row{display:flex;justify-content:space-between;padding:0.15rem 0}
 .scoring-info .si-label{color:var(--text)}
-.scoring-info .si-val{color:var(--gold)}
+.scoring-info .si-val{color:var(--silver-bright)}
 .scoring-info .si-note{color:var(--muted);font-size:0.55rem;margin-top:0.5rem;font-style:italic}
 
 .status-bar{display:flex;gap:0.8rem;width:100%;background:var(--surface2);border:1px solid var(--border);border-radius:8px;padding:0.75rem 1rem;justify-content:space-around}
 .si{display:flex;flex-direction:column;align-items:center;gap:0.15rem}
-.si-val{font-family:'JetBrains Mono',monospace;font-size:1.1rem;font-weight:500;color:var(--gold)}
+.si-val{font-family:'JetBrains Mono',monospace;font-size:1.1rem;font-weight:500;color:var(--silver-bright)}
 .si-lbl{font-family:'JetBrains Mono',monospace;font-size:0.45rem;letter-spacing:0.12em;text-transform:uppercase;color:var(--muted)}
 
 /* Main number display */
@@ -68,7 +68,7 @@ body::before{content:'';position:fixed;inset:0;background-image:linear-gradient(
 }
 .number-arena::before{
   content:'';position:absolute;inset:0;
-  background:radial-gradient(ellipse at 50% 50%,rgba(212,168,71,0.04) 0%,transparent 70%);
+  background:radial-gradient(ellipse at 50% 50%,rgba(184,188,198,0.04) 0%,transparent 70%);
   pointer-events:none;
 }
 .round-label{font-family:'JetBrains Mono',monospace;font-size:0.52rem;letter-spacing:0.15em;text-transform:uppercase;color:var(--muted)}
@@ -76,14 +76,14 @@ body::before{content:'';position:fixed;inset:0;background-image:linear-gradient(
   font-family:'Playfair Display',sans-serif;font-size:clamp(3rem,15vw,6rem);
   letter-spacing:0.05em;color:var(--text);
   transition:transform 0.15s,opacity 0.15s;
-  text-shadow:0 0 40px rgba(212,168,71,0.15);
+  text-shadow:0 0 40px rgba(184,188,198,0.15);
 }
 .big-number.flash-correct{color:var(--green);transform:scale(1.05)}
 .big-number.flash-wrong{color:var(--red);animation:shake 0.35s ease}
 
 /* Timer bar */
 .timer-track{width:90%;height:4px;background:var(--border);border-radius:2px;overflow:hidden}
-.timer-fill{height:100%;background:var(--gold);border-radius:2px;transition:width 0.1s linear,background 0.3s}
+.timer-fill{height:100%;background:var(--silver);border-radius:2px;transition:width 0.1s linear,background 0.3s}
 .timer-fill.warn{background:var(--warn)}
 .timer-fill.danger{background:var(--red)}
 
@@ -113,9 +113,9 @@ body::before{content:'';position:fixed;inset:0;background-image:linear-gradient(
 /* Result flash */
 .result-flash{
   width:100%;background:var(--surface2);border:1px solid var(--border);
-  border-left:3px solid var(--teal-dim);border-radius:6px;
+  border-left:3px solid var(--silver-dim);border-radius:6px;
   padding:0.8rem 1rem;
-  font-family:'JetBrains Mono',monospace;font-size:0.62rem;color:var(--teal);line-height:1.6;
+  font-family:'JetBrains Mono',monospace;font-size:0.62rem;color:var(--silver);line-height:1.6;
   animation:slideIn 0.2s ease;display:none;
 }
 .result-flash.correct{border-left-color:var(--green);color:var(--green)}
@@ -124,11 +124,11 @@ body::before{content:'';position:fixed;inset:0;background-image:linear-gradient(
 @keyframes slideIn{from{opacity:0;transform:translateY(-4px)}to{opacity:1;transform:translateY(0)}}
 
 .btn{padding:0.65rem 1.2rem;font-family:'JetBrains Mono',monospace;font-size:0.62rem;letter-spacing:0.1em;text-transform:uppercase;cursor:pointer;border-radius:6px;border:none;transition:all 0.2s;width:100%}
-.btn-gold{background:var(--gold);color:var(--ink);font-weight:500}
-.btn-gold:hover{background:var(--gold-warm)}
-.btn-gold:disabled{background:var(--muted);cursor:not-allowed;opacity:0.5}
+.btn-silver{background:var(--silver-bright);color:var(--bg);font-weight:500}
+.btn-silver:hover{opacity:.85}
+.btn-silver:disabled{background:var(--muted);cursor:not-allowed;opacity:0.5}
 .btn-ghost{background:transparent;border:1px solid var(--border);color:var(--muted)}
-.btn-ghost:hover{border-color:var(--gold-dim);color:var(--gold)}
+.btn-ghost:hover{border-color:var(--silver-border);color:var(--silver)}
 
 .msg{font-family:'JetBrains Mono',monospace;font-size:0.62rem;text-align:center;min-height:1rem;color:var(--red)}
 
@@ -139,10 +139,10 @@ body::before{content:'';position:fixed;inset:0;background-image:linear-gradient(
 .modal{background:var(--surface2);border:1px solid var(--border);border-radius:8px;width:100%;max-width:380px;overflow:hidden;animation:popIn 0.25s ease}
 @keyframes popIn{from{transform:scale(0.95);opacity:0}to{transform:scale(1);opacity:1}}
 .modal-header{padding:1.4rem 1.4rem 0;text-align:center}
-.modal-result{font-family:'Playfair Display',sans-serif;font-size:2rem;letter-spacing:0.1em;color:var(--gold-warm);margin-bottom:0.3rem}
+.modal-result{font-family:'Playfair Display',sans-serif;font-size:2rem;letter-spacing:0.1em;color:var(--silver-bright);margin-bottom:0.3rem}
 .modal-score{margin:1rem 1.4rem;background:var(--surface);border:1px solid var(--border);border-radius:6px;padding:0.8rem;display:grid;grid-template-columns:1fr 1fr;gap:0.5rem}
 .ms-item{display:flex;flex-direction:column;gap:0.1rem}
-.ms-val{font-family:'JetBrains Mono',monospace;font-size:0.9rem;color:var(--gold)}
+.ms-val{font-family:'JetBrains Mono',monospace;font-size:0.9rem;color:var(--silver-bright)}
 .ms-lbl{font-family:'JetBrains Mono',monospace;font-size:0.45rem;letter-spacing:0.1em;text-transform:uppercase;color:var(--muted)}
 .modal-acts{display:flex;gap:0.5rem;padding:1rem 1.4rem 1.4rem}
 .modal-acts .btn{flex:1}
@@ -165,15 +165,35 @@ body::before{content:'';position:fixed;inset:0;background-image:linear-gradient(
 .countdown-overlay.active{display:flex}
 .countdown-num{font-family:'Playfair Display','Bebas Neue',serif;font-size:6rem;color:#d4d8e2;line-height:1}
 .countdown-hint{font-family:'JetBrains Mono','DM Mono',monospace;font-size:.7rem;color:#4a4e5a;margin-top:.5rem}
+.top-bar{width:100%;display:flex;justify-content:space-between;align-items:center;padding:.5rem 1rem;background:rgba(14,16,19,.94);backdrop-filter:blur(12px);border-bottom:1px solid var(--border);position:sticky;top:0;z-index:100}
+.top-bar-left{display:flex;align-items:center;gap:.6rem}
+.back-link{font-size:.7rem;color:var(--muted);text-decoration:none;padding:.25rem .6rem;border:1px solid var(--border);border-radius:6px;transition:all .15s}
+.back-link:hover{border-color:var(--silver-border);color:var(--text)}
+.top-bar-right{display:flex;align-items:center;gap:.5rem}
+.top-addr{font-family:'JetBrains Mono',monospace;font-size:.65rem;color:var(--muted);background:var(--surface);border:1px solid var(--border);padding:.2rem .5rem;border-radius:5px}
+.top-qf-name{font-family:'JetBrains Mono',monospace;font-size:.65rem;color:var(--silver-bright);background:var(--surface2);border:1px solid var(--silver-border);padding:.2rem .5rem;border-radius:5px}
+.top-connect{font-family:'Inter',sans-serif;font-weight:600;font-size:.7rem;padding:.35rem .8rem;border-radius:5px;border:1px solid var(--silver-border);background:var(--silver-dim);color:var(--silver-bright);cursor:pointer;transition:all .15s}
+.top-connect:hover{background:var(--silver-bright);color:var(--bg)}
 </style>
 </head>
 <body>
 <script src="../qf-wallet.js"></script>
 
+<div class="top-bar">
+  <div class="top-bar-left">
+    <a href="/qf-dapp/" class="back-link">&larr; Lobby</a>
+  </div>
+  <div class="top-bar-right">
+    <button id="topConnectBtn" class="top-connect" onclick="qfWallet.connect()">Connect Wallet</button>
+    <span id="topAddr" class="top-addr" style="display:none;cursor:pointer" onclick="qfWallet.showMenu(this)"></span>
+    <span id="topQfName" class="top-qf-name" style="display:none;cursor:pointer" onclick="qfWallet.showMenu(this)"></span>
+  </div>
+</div>
+
 <div class="page">
   <div class="game-header">
     <p class="game-kicker">Speed · Number Theory</p>
-    <h1 class="game-title">Prime or <strong style="color:var(--teal)">Composite</strong></h1>
+    <h1 class="game-title">Prime or <strong>Composite</strong></h1>
     <p class="game-sub">20 numbers. 5 seconds each. Classify correctly — speed scores.</p>
   </div>
 
@@ -223,7 +243,7 @@ body::before{content:'';position:fixed;inset:0;background-image:linear-gradient(
   <div class="result-flash" id="result-flash"></div>
   <div class="msg" id="msg"></div>
 
-  <button class="btn btn-gold" id="start-btn">Start Game</button>
+  <button class="btn btn-silver" id="start-btn">Start Game</button>
   <a href="/qf-dapp/games/prime-or-composite/league/" style="display:block;text-align:center;margin-top:.8rem;font-family:'JetBrains Mono',monospace;font-size:.65rem;color:var(--silver,#b8bcc6);text-decoration:none;padding:.5rem;border:1px solid var(--border,#1e2228);border-radius:6px;transition:all .15s" onmouseover="this.style.borderColor='rgba(184,188,198,0.15)'" onmouseout="this.style.borderColor='var(--border,#1e2228)'">&#9813; View Leagues</a>
 </div>
 
@@ -625,6 +645,18 @@ body::before{content:'';position:fixed;inset:0;background-image:linear-gradient(
 <script>
 document.querySelectorAll('.htp-toggle').forEach(function(btn){
   btn.addEventListener('click',function(){this.closest('.htp').classList.toggle('open')});
+});
+qfWallet.onConnect(function(s) {
+  if (s.address) {
+    document.getElementById('topConnectBtn').style.display = 'none';
+    document.getElementById('topAddr').style.display = '';
+    document.getElementById('topAddr').textContent = s.address.slice(0, 6) + '...' + s.address.slice(-4);
+  }
+  if (s.qfName) {
+    document.getElementById('topQfName').textContent = s.qfName;
+    document.getElementById('topQfName').style.display = '';
+    document.getElementById('topAddr').style.display = 'none';
+  }
 });
 </script>
 </body>

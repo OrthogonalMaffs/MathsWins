@@ -23,46 +23,46 @@
 <link rel="stylesheet" href="../qf-shell.css">
 <style>
 :root{
-  --ink:#0e1013;--surface:#16181c;--surface2:#1e2025;
-  --gold:#c9a84c;--gold-warm:#d4d8e2;--gold-dim:rgba(184,188,198,0.08);
-  --teal:#b8bcc6;--teal-dim:rgba(184,188,198,0.08);
-  --text:#8a8f9c;--text-bright:#e8eaf0;--muted:#4a4e5a;
+  --bg:#0e1013;--surface:#16181c;--surface2:#1e2025;--surface3:#26282e;
+  --silver:#b8bcc6;--silver-bright:#d4d8e2;--silver-dim:rgba(184,188,198,0.08);
+  --silver-glow:rgba(184,188,198,0.12);--silver-border:rgba(184,188,198,0.15);
+  --text-white:#e8eaf0;--text:#8a8f9c;--muted:#4a4e5a;
   --border:#1e2228;--border2:#2a2e36;
-  --green:#3a8a5c;--red:#b03a3a;--warn:#c9a84c;
+  --gold:#c9a84c;--green:#3a8a5c;--red:#b03a3a;
 }
 *,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
-body{background:var(--ink);color:var(--text);font-family:'Inter',sans-serif;min-height:100vh;display:flex;flex-direction:column;align-items:center}
+body{background:var(--bg);color:var(--text);font-family:'Inter',sans-serif;min-height:100vh;display:flex;flex-direction:column;align-items:center}
 
-.page{width:100%;max-width:500px;padding:2rem 1rem 4rem;display:flex;flex-direction:column;align-items:center;gap:1.2rem}
+.page{width:100%;max-width:560px;padding:2rem 1rem 4rem;display:flex;flex-direction:column;align-items:center;gap:1.2rem}
 .game-header{text-align:center}
-.game-kicker{font-family:'JetBrains Mono',monospace;font-size:0.6rem;letter-spacing:0.2em;text-transform:uppercase;color:var(--teal);margin-bottom:0.4rem}
-.game-title{font-family:'Playfair Display',sans-serif;font-size:3rem;letter-spacing:0.06em;color:var(--gold-warm);line-height:1}
+.game-kicker{font-family:'JetBrains Mono',monospace;font-size:0.6rem;letter-spacing:0.2em;text-transform:uppercase;color:var(--silver);margin-bottom:0.4rem}
+.game-title{font-family:'Playfair Display',sans-serif;font-size:2.6rem;letter-spacing:0.06em;background:linear-gradient(135deg,var(--silver-bright),var(--silver),#8a8f9c);-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;line-height:1}
 .game-sub{font-size:0.75rem;color:var(--muted);line-height:1.6;margin-top:0.4rem}
 
 .status-bar{display:flex;gap:0.8rem;width:100%;background:var(--surface2);border:1px solid var(--border);border-radius:8px;padding:0.75rem 1rem;justify-content:space-around}
 .si{display:flex;flex-direction:column;align-items:center;gap:0.15rem}
-.si-val{font-family:'JetBrains Mono',monospace;font-size:1.1rem;font-weight:500;color:var(--gold)}
+.si-val{font-family:'JetBrains Mono',monospace;font-size:1.1rem;font-weight:500;color:var(--silver-bright)}
 .si-lbl{font-family:'JetBrains Mono',monospace;font-size:0.45rem;letter-spacing:0.12em;text-transform:uppercase;color:var(--muted)}
 
 .question-card{width:100%;background:var(--surface2);border:1px solid var(--border);border-radius:8px;padding:1.5rem;text-align:center;position:relative;overflow:hidden}
 .q-round{font-family:'JetBrains Mono',monospace;font-size:0.52rem;letter-spacing:0.15em;text-transform:uppercase;color:var(--muted);margin-bottom:0.8rem}
-.q-expression{font-family:'Playfair Display',sans-serif;font-size:clamp(1.8rem,8vw,3rem);letter-spacing:0.05em;color:var(--text-bright);line-height:1.1;margin-bottom:0.8rem;min-height:3rem;display:flex;align-items:center;justify-content:center}
+.q-expression{font-family:'Playfair Display',sans-serif;font-size:clamp(1.8rem,8vw,3rem);letter-spacing:0.05em;color:var(--text-white);line-height:1.1;margin-bottom:0.8rem;min-height:3rem;display:flex;align-items:center;justify-content:center}
 .q-timer-track{width:80%;height:4px;background:var(--border);border-radius:2px;overflow:hidden;margin:0 auto}
 .q-timer-fill{height:100%;background:var(--gold);border-radius:2px;transition:background 0.3s}
-.q-timer-fill.warn{background:var(--warn)}
+.q-timer-fill.warn{background:var(--gold)}
 .q-timer-fill.danger{background:var(--red)}
 .q-time-label{font-family:'JetBrains Mono',monospace;font-size:0.55rem;color:var(--muted);margin-top:0.4rem}
 
 .input-row{display:flex;gap:0.5rem;width:100%}
-.est-input{flex:1;background:var(--surface2);border:1px solid var(--border);border-radius:6px;padding:0.8rem 1rem;font-family:'JetBrains Mono',monospace;font-size:1.1rem;color:var(--text-bright);outline:none;transition:border-color 0.2s;text-align:center}
-.est-input:focus{border-color:var(--gold-dim)}
+.est-input{flex:1;background:var(--surface2);border:1px solid var(--border);border-radius:6px;padding:0.8rem 1rem;font-family:'JetBrains Mono',monospace;font-size:1.1rem;color:var(--text-white);outline:none;transition:border-color 0.2s;text-align:center}
+.est-input:focus{border-color:var(--silver-dim)}
 .est-input::placeholder{color:var(--muted);font-size:0.7rem}
 .btn{padding:0.8rem 1.4rem;font-family:'JetBrains Mono',monospace;font-size:0.62rem;letter-spacing:0.1em;text-transform:uppercase;cursor:pointer;border-radius:6px;border:none;transition:all 0.2s}
-.btn-gold{background:var(--gold);color:var(--ink);font-weight:500}
-.btn-gold:hover{background:var(--gold-warm)}
-.btn-gold:disabled{background:var(--muted);cursor:not-allowed;opacity:0.5}
+.btn-silver{background:var(--silver-bright);color:var(--bg);font-weight:500}
+.btn-silver:hover{opacity:.85}
+.btn-silver:disabled{background:var(--muted);cursor:not-allowed;opacity:0.5}
 .btn-ghost{background:transparent;border:1px solid var(--border);color:var(--muted);width:100%}
-.btn-ghost:hover{border-color:var(--gold-dim);color:var(--gold)}
+.btn-ghost:hover{border-color:var(--silver-border);color:var(--silver)}
 
 /* How to Play — collapsible */
 .htp{width:100%;background:var(--surface,#16181c);border:1px solid var(--border,#1e2228);border-radius:10px;overflow:hidden;margin-bottom:1rem}
@@ -80,23 +80,23 @@ body{background:var(--ink);color:var(--text);font-family:'Inter',sans-serif;min-
 .result-flash{width:100%;padding:0.8rem 1rem;border-radius:6px;font-family:'JetBrains Mono',monospace;font-size:0.65rem;line-height:1.6;text-align:center;display:none;animation:slideIn 0.2s ease}
 .result-flash.correct{background:rgba(45,212,160,0.1);border:1px solid rgba(45,212,160,0.3);color:var(--green)}
 .result-flash.wrong{background:rgba(239,68,68,0.1);border:1px solid rgba(239,68,68,0.3);color:var(--red)}
-.result-flash.timeout{background:rgba(212,168,71,0.1);border:1px solid rgba(212,168,71,0.3);color:var(--warn)}
+.result-flash.timeout{background:rgba(212,168,71,0.1);border:1px solid rgba(212,168,71,0.3);color:var(--gold)}
 @keyframes slideIn{from{opacity:0;transform:translateY(-4px)}to{opacity:1;transform:translateY(0)}}
 
 .score-history{width:100%;display:flex;gap:0.3rem;flex-wrap:wrap;justify-content:center}
 .sh-dot{width:28px;height:28px;border-radius:6px;display:flex;align-items:center;justify-content:center;font-family:'JetBrains Mono',monospace;font-size:0.55rem;border:1px solid var(--border);background:var(--surface2);color:var(--muted);transition:all 0.3s}
 .sh-dot.hit{background:rgba(45,212,160,0.15);border-color:rgba(45,212,160,0.4);color:var(--green)}
 .sh-dot.miss{background:rgba(239,68,68,0.1);border-color:rgba(239,68,68,0.3);color:var(--red)}
-.sh-dot.timeout{background:rgba(212,168,71,0.1);border-color:rgba(212,168,71,0.3);color:var(--warn)}
+.sh-dot.timeout{background:rgba(212,168,71,0.1);border-color:rgba(212,168,71,0.3);color:var(--gold)}
 
 .modal-overlay{position:fixed;inset:0;background:rgba(5,7,9,0.92);backdrop-filter:blur(8px);z-index:200;display:flex;align-items:center;justify-content:center;padding:1rem}
 .modal-overlay.hidden{display:none}
 .modal{background:var(--surface2);border:1px solid var(--border);border-radius:12px;width:100%;max-width:380px;overflow:hidden}
 .modal-header{padding:1.4rem 1.4rem 0;text-align:center}
-.modal-result{font-family:'Playfair Display',sans-serif;font-size:2rem;letter-spacing:0.1em;color:var(--gold-warm);margin-bottom:0.3rem}
+.modal-result{font-family:'Playfair Display',sans-serif;font-size:2rem;letter-spacing:0.1em;color:var(--silver-bright);margin-bottom:0.3rem}
 .modal-score{margin:1rem 1.4rem;background:var(--surface);border:1px solid var(--border);border-radius:8px;padding:0.8rem;display:grid;grid-template-columns:1fr 1fr;gap:0.5rem}
 .ms-item{display:flex;flex-direction:column;gap:0.1rem}
-.ms-val{font-family:'JetBrains Mono',monospace;font-size:0.9rem;color:var(--gold)}
+.ms-val{font-family:'JetBrains Mono',monospace;font-size:0.9rem;color:var(--silver-bright)}
 .ms-lbl{font-family:'JetBrains Mono',monospace;font-size:0.45rem;letter-spacing:0.1em;text-transform:uppercase;color:var(--muted)}
 .modal-acts{display:flex;gap:0.5rem;padding:1rem 1.4rem 1.4rem}
 .modal-acts .btn{flex:1}
@@ -105,16 +105,36 @@ body{background:var(--ink);color:var(--text);font-family:'Inter',sans-serif;min-
 .countdown-overlay.active{display:flex}
 .countdown-num{font-family:'Playfair Display','Bebas Neue',serif;font-size:6rem;color:#d4d8e2;line-height:1}
 .countdown-hint{font-family:'JetBrains Mono','DM Mono',monospace;font-size:.7rem;color:#4a4e5a;margin-top:.5rem}
+.top-bar{width:100%;display:flex;justify-content:space-between;align-items:center;padding:.5rem 1rem;background:rgba(14,16,19,.94);backdrop-filter:blur(12px);border-bottom:1px solid var(--border);position:sticky;top:0;z-index:100}
+.top-bar-left{display:flex;align-items:center;gap:.6rem}
+.back-link{font-size:.7rem;color:var(--muted);text-decoration:none;padding:.25rem .6rem;border:1px solid var(--border);border-radius:6px;transition:all .15s}
+.back-link:hover{border-color:var(--silver-border);color:var(--text)}
+.top-bar-right{display:flex;align-items:center;gap:.5rem}
+.top-addr{font-family:'JetBrains Mono',monospace;font-size:.65rem;color:var(--muted);background:var(--surface);border:1px solid var(--border);padding:.2rem .5rem;border-radius:5px}
+.top-qf-name{font-family:'JetBrains Mono',monospace;font-size:.65rem;color:var(--silver-bright);background:var(--surface2);border:1px solid var(--silver-border);padding:.2rem .5rem;border-radius:5px}
+.top-connect{font-family:'Inter',sans-serif;font-weight:600;font-size:.7rem;padding:.35rem .8rem;border-radius:5px;border:1px solid var(--silver-border);background:var(--silver-dim);color:var(--silver-bright);cursor:pointer;transition:all .15s}
+.top-connect:hover{background:var(--silver-bright);color:var(--bg)}
 </style>
 <script src="https://cdn.jsdelivr.net/npm/ethers@6/dist/ethers.umd.min.js"></script>
 </head>
 <body>
 <script src="../qf-wallet.js"></script>
 
+<div class="top-bar">
+  <div class="top-bar-left">
+    <a href="/qf-dapp/" class="back-link">&larr; Lobby</a>
+  </div>
+  <div class="top-bar-right">
+    <button id="topConnectBtn" class="top-connect" onclick="qfWallet.connect()">Connect Wallet</button>
+    <span id="topAddr" class="top-addr" style="display:none;cursor:pointer"></span>
+    <span id="topQfName" class="top-qf-name" style="display:none"></span>
+  </div>
+</div>
+
 <div class="page">
   <div class="game-header">
     <p class="game-kicker">Mental Arithmetic</p>
-    <h1 class="game-title">Estimation <strong style="color:var(--teal)">Engine</strong></h1>
+    <h1 class="game-title">Estimation Engine</h1>
     <p class="game-sub">Estimate calculations using mental arithmetic only. Accuracy is king. Speed is a bonus. 60 seconds per question.</p>
   </div>
 
@@ -148,7 +168,7 @@ body{background:var(--ink);color:var(--text);font-family:'Inter',sans-serif;min-
 
   <div class="input-row">
     <input class="est-input" id="est-input" type="number" step="any" placeholder="Your estimate..." autocomplete="off" disabled>
-    <button class="btn btn-gold" id="submit-btn" disabled>Submit</button>
+    <button class="btn btn-silver" id="submit-btn" disabled>Submit</button>
   </div>
 
   <div class="result-flash" id="result-flash"></div>
@@ -167,7 +187,7 @@ body{background:var(--ink);color:var(--text);font-family:'Inter',sans-serif;min-
     <div class="modal-score" id="modal-score"></div>
     <div class="modal-acts">
       <button class="btn btn-ghost" id="modal-again">Play Again</button>
-      <button class="btn btn-gold" id="modal-lobby" onclick="window.location='/qf-dapp/'">Back to Lobby</button>
+      <button class="btn btn-silver" id="modal-lobby" onclick="window.location='/qf-dapp/'">Back to Lobby</button>
     </div>
   </div>
 </div>
@@ -508,6 +528,32 @@ body{background:var(--ink);color:var(--text);font-family:'Inter',sans-serif;min-
 document.querySelectorAll('.htp-toggle').forEach(function(btn){
   btn.addEventListener('click',function(){this.closest('.htp').classList.toggle('open')});
 });
+
+// Top bar wallet integration
+(function(){
+  var connectBtn = document.getElementById('topConnectBtn');
+  var addrEl = document.getElementById('topAddr');
+  var nameEl = document.getElementById('topQfName');
+
+  qfWallet.onConnect(function(s){
+    connectBtn.style.display = 'none';
+    addrEl.style.display = '';
+    addrEl.textContent = s.address.slice(0,6) + '...' + s.address.slice(-4);
+    addrEl.onclick = function(){ qfWallet.showMenu(addrEl); };
+    if (s.qfName) {
+      nameEl.style.display = '';
+      nameEl.textContent = s.qfName;
+    } else {
+      nameEl.style.display = 'none';
+    }
+  });
+
+  qfWallet.onDisconnect(function(){
+    connectBtn.style.display = '';
+    addrEl.style.display = 'none';
+    nameEl.style.display = 'none';
+  });
+})();
 </script>
 </body>
 </html>

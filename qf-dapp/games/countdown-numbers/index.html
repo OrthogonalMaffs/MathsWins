@@ -14,43 +14,54 @@
 <script async src="https://www.googletagmanager.com/gtag/js?id=G-7GTLYCZMXN"></script>
 <script>window.dataLayer=window.dataLayer||[];function gtag(){dataLayer.push(arguments);}gtag('js',new Date());gtag('consent','default',{analytics_storage:'denied',ad_storage:'denied',ad_user_data:'denied',ad_personalization:'denied'});gtag('config','G-7GTLYCZMXN',{send_page_view:true,anonymize_ip:true});</script>
 <style>
-:root{--bg:#0e1013;--surface:#16181c;--surface2:#1e2025;--border:#1e2228;--border2:#2a2e36;--gold:#c9a84c;--teal:#0d9488;--teal-bright:#b8bcc6;--green-bright:#3a8a5c;--red-bright:#b03a3a;--sky:#0ea5e9;--text:#8a8f9c;--text-bright:#e8eaf0;--muted:#4a4e5a}
+:root{--bg:#0e1013;--surface:#16181c;--surface2:#1e2025;--surface3:#26282e;--silver:#b8bcc6;--silver-bright:#d4d8e2;--silver-dim:rgba(184,188,198,0.08);--silver-glow:rgba(184,188,198,0.12);--silver-border:rgba(184,188,198,0.15);--text-white:#e8eaf0;--text:#8a8f9c;--muted:#4a4e5a;--border:#1e2228;--border2:#2a2e36;--gold:#c9a84c;--green:#3a8a5c;--red:#b03a3a}
 *{margin:0;padding:0;box-sizing:border-box}
-body{background:var(--bg);color:var(--text);font-family:'Inter',sans-serif;-webkit-font-smoothing:antialiased;min-height:100vh;display:flex;flex-direction:column;align-items:center;justify-content:center;padding:1.5rem}
-.game-container{max-width:600px;width:100%}
+body{background:var(--bg);color:var(--text);font-family:'Inter',sans-serif;-webkit-font-smoothing:antialiased;min-height:100vh;display:flex;flex-direction:column;align-items:center;padding:0}
+.game-container{max-width:560px;width:100%;padding:1.5rem}
 header{text-align:center;margin-bottom:2rem}
-.back-link{font-size:.8rem;color:var(--muted);text-decoration:none;display:block;margin-bottom:1rem}.back-link:hover{color:var(--teal-bright)}
-h1{font-family:'Playfair Display',sans-serif;font-size:2.5rem;color:var(--text-bright);letter-spacing:.04em}
+.game-kicker{font-family:'Inter',sans-serif;font-size:.7rem;text-transform:uppercase;letter-spacing:.15em;color:var(--silver);margin-bottom:.4rem}
+h1{font-family:'Playfair Display',sans-serif;font-size:2.6rem;letter-spacing:.04em;background:linear-gradient(135deg,var(--silver-bright),var(--silver),#8a8f9c);-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text}
 .tagline{font-size:.85rem;color:var(--muted);margin-top:.25rem}
+
+/* Top bar */
+.top-bar{width:100%;display:flex;justify-content:space-between;align-items:center;padding:.5rem 1rem;background:rgba(14,16,19,.94);backdrop-filter:blur(12px);border-bottom:1px solid var(--border);position:sticky;top:0;z-index:100}
+.top-bar-left{display:flex;align-items:center;gap:.6rem}
+.back-link{font-size:.7rem;color:var(--muted);text-decoration:none;padding:.25rem .6rem;border:1px solid var(--border);border-radius:6px;transition:all .15s}
+.back-link:hover{border-color:var(--silver-border);color:var(--text)}
+.top-bar-right{display:flex;align-items:center;gap:.5rem}
+.top-addr{font-family:'JetBrains Mono',monospace;font-size:.65rem;color:var(--muted);background:var(--surface);border:1px solid var(--border);padding:.2rem .5rem;border-radius:5px}
+.top-qf-name{font-family:'JetBrains Mono',monospace;font-size:.65rem;color:var(--silver-bright);background:var(--surface2);border:1px solid var(--silver-border);padding:.2rem .5rem;border-radius:5px}
+.top-connect{font-family:'Inter',sans-serif;font-weight:600;font-size:.7rem;padding:.35rem .8rem;border-radius:5px;border:1px solid var(--silver-border);background:var(--silver-dim);color:var(--silver-bright);cursor:pointer;transition:all .15s}
+.top-connect:hover{background:var(--silver-bright);color:var(--bg)}
 
 /* Target display */
 .target-display{text-align:center;margin:1.5rem 0}
 .target-label{font-family:'Inter',sans-serif;font-size:.7rem;text-transform:uppercase;letter-spacing:.15em;color:var(--muted)}
-.target-num{font-family:'JetBrains Mono',monospace;font-size:4rem;font-weight:500;color:var(--gold);line-height:1.1}
+.target-num{font-family:'JetBrains Mono',monospace;font-size:4rem;font-weight:500;color:var(--silver-bright);line-height:1.1}
 
 /* Timer */
-.timer-text{font-family:'JetBrains Mono',monospace;font-size:1.2rem;text-align:center;color:var(--text-bright);margin:.75rem 0}
+.timer-text{font-family:'JetBrains Mono',monospace;font-size:1.2rem;text-align:center;color:var(--text-white);margin:.75rem 0}
 
 /* Round indicator */
 .round-indicator{font-family:'JetBrains Mono',monospace;font-size:.85rem;text-align:center;color:var(--muted);margin-bottom:.5rem}
-.round-indicator span{color:var(--gold)}
+.round-indicator span{color:var(--silver-bright)}
 
 /* Number pills */
 .tiles{display:flex;gap:.5rem;justify-content:center;flex-wrap:wrap;margin:1.5rem 0}
-.tile{font-family:'JetBrains Mono',monospace;font-size:1.4rem;font-weight:500;padding:.5rem 1.1rem;display:flex;align-items:center;justify-content:center;background:var(--surface);border:2px solid var(--border2);border-radius:20px;color:var(--text-bright);user-select:none}
+.tile{font-family:'JetBrains Mono',monospace;font-size:1.4rem;font-weight:500;padding:.5rem 1.1rem;display:flex;align-items:center;justify-content:center;background:var(--surface);border:2px solid var(--border2);border-radius:20px;color:var(--text-white);user-select:none}
 
 /* Expression input */
 .expr-area{margin:1.5rem 0}
-.expr-input{font-family:'JetBrains Mono',monospace;font-size:1.5rem;width:100%;padding:1rem 1.25rem;background:var(--surface);border:2px solid var(--border2);border-radius:8px;color:var(--text-bright);outline:none;text-align:center}
-.expr-input:focus{border-color:var(--teal-bright)}
+.expr-input{font-family:'JetBrains Mono',monospace;font-size:1.5rem;width:100%;padding:1rem 1.25rem;background:var(--surface);border:2px solid var(--border2);border-radius:8px;color:var(--text-white);outline:none;text-align:center}
+.expr-input:focus{border-color:var(--silver-border)}
 .expr-input::placeholder{color:var(--muted);font-size:1rem}
 .expr-input:disabled{opacity:.5;cursor:not-allowed}
 
 /* Result flash */
 .result-flash{text-align:center;padding:1rem;margin:1rem 0;border-radius:8px;display:none}
-.result-flash.exact{display:block;background:rgba(45,212,160,.12);border:1px solid rgba(45,212,160,.35);color:var(--green-bright)}
+.result-flash.exact{display:block;background:rgba(45,212,160,.12);border:1px solid rgba(45,212,160,.35);color:var(--green)}
 .result-flash.close{display:block;background:rgba(212,168,71,.1);border:1px solid rgba(212,168,71,.3);color:var(--gold)}
-.result-flash.miss{display:block;background:rgba(239,83,80,.08);border:1px solid rgba(239,83,80,.2);color:var(--red-bright)}
+.result-flash.miss{display:block;background:rgba(239,83,80,.08);border:1px solid rgba(239,83,80,.2);color:var(--red)}
 .result-flash .flash-title{font-family:'Playfair Display',sans-serif;font-size:1.5rem;letter-spacing:.03em}
 .result-flash .flash-detail{font-family:'JetBrains Mono',monospace;font-size:.9rem;margin-top:.35rem;color:var(--text)}
 .result-flash .flash-points{font-family:'JetBrains Mono',monospace;font-size:1.1rem;margin-top:.25rem}
@@ -58,38 +69,38 @@ h1{font-family:'Playfair Display',sans-serif;font-size:2.5rem;color:var(--text-b
 /* Score bar */
 .score-bar{display:flex;gap:1.5rem;justify-content:center;margin:1rem 0;font-size:.8rem;color:var(--muted)}
 .score-bar .stat-item{text-align:center}
-.score-bar .stat-val{font-family:'JetBrains Mono',monospace;font-size:1.1rem;color:var(--text-bright);display:block}
+.score-bar .stat-val{font-family:'JetBrains Mono',monospace;font-size:1.1rem;color:var(--silver-bright);display:block}
 
 /* Controls */
 .controls{display:flex;gap:.75rem;justify-content:center;flex-wrap:wrap;margin:1.5rem 0}
 .btn{font-family:'Inter',sans-serif;font-weight:600;font-size:.85rem;padding:.65rem 1.5rem;border:none;border-radius:6px;cursor:pointer;transition:all .15s}
-.btn-primary{background:var(--teal-bright);color:var(--bg)}.btn-primary:hover{opacity:.85}
-.btn-secondary{background:var(--surface);border:1px solid var(--border);color:var(--text)}.btn-secondary:hover{border-color:var(--teal-bright)}
+.btn-silver{background:var(--silver-bright);color:var(--bg);font-weight:500}.btn-silver:hover{opacity:.85}
+.btn-ghost{background:var(--surface);border:1px solid var(--border);color:var(--text)}.btn-ghost:hover{border-color:var(--silver-border);color:var(--silver)}
 .btn:disabled{opacity:.4;cursor:not-allowed}
 
 /* Info panel */
 .info-panel{background:var(--surface);border:1px solid var(--border);border-radius:10px;padding:1.25rem;margin:1.5rem 0}
-.info-panel h2{font-family:'Playfair Display',sans-serif;font-size:1.5rem;color:var(--text-bright);margin-bottom:.75rem;text-align:center}
+.info-panel h2{font-family:'Playfair Display',sans-serif;font-size:1.5rem;color:var(--text-white);margin-bottom:.75rem;text-align:center}
 .info-panel p{font-size:.85rem;color:var(--text);line-height:1.6;margin-bottom:.5rem}
-.info-panel .highlight{color:var(--gold);font-family:'JetBrains Mono',monospace;font-weight:500}
+.info-panel .highlight{color:var(--silver-bright);font-family:'JetBrains Mono',monospace;font-weight:500}
 
 /* Final modal */
 .modal-overlay{position:fixed;inset:0;z-index:300;background:rgba(5,7,9,.92);display:flex;align-items:center;justify-content:center;padding:1rem}
 .modal{max-width:420px;width:100%;background:var(--surface);border:1px solid var(--border2);border-radius:12px;padding:2rem;text-align:center}
-.modal h2{font-family:'Playfair Display',sans-serif;font-size:2rem;color:var(--text-bright);margin-bottom:1rem}
-.modal .final-score{font-family:'JetBrains Mono',monospace;font-size:3rem;color:var(--gold);margin:.75rem 0}
+.modal h2{font-family:'Playfair Display',sans-serif;font-size:2rem;color:var(--text-white);margin-bottom:1rem}
+.modal .final-score{font-family:'JetBrains Mono',monospace;font-size:3rem;color:var(--silver-bright);margin:.75rem 0}
 .modal .final-detail{font-family:'JetBrains Mono',monospace;font-size:.85rem;color:var(--muted);margin-bottom:1.5rem}
 
 /* Error display */
-.error-msg{font-size:.85rem;color:var(--red-bright);text-align:center;margin:.75rem 0}
+.error-msg{font-size:.85rem;color:var(--red);text-align:center;margin:.75rem 0}
 
 /* Stats */
 .stats{display:flex;gap:1.5rem;justify-content:center;margin:1rem 0;font-size:.8rem;color:var(--muted)}
 .stat-item{text-align:center}
-.stat-val{font-family:'JetBrains Mono',monospace;font-size:1.1rem;color:var(--text-bright);display:block}
+.stat-val{font-family:'JetBrains Mono',monospace;font-size:1.1rem;color:var(--text-white);display:block}
 
 footer{margin-top:2rem;text-align:center;font-size:.7rem;color:var(--muted)}
-footer a{color:var(--muted);text-decoration:none}footer a:hover{color:var(--teal-bright)}
+footer a{color:var(--muted);text-decoration:none}footer a:hover{color:var(--silver)}
 
 /* How to Play — collapsible */
 .htp{width:100%;background:var(--surface,#16181c);border:1px solid var(--border,#1e2228);border-radius:10px;overflow:hidden;margin-bottom:1rem}
@@ -118,9 +129,21 @@ footer a{color:var(--muted);text-decoration:none}footer a:hover{color:var(--teal
 <body>
 <script src="../qf-wallet.js"></script>
 
+<div class="top-bar">
+  <div class="top-bar-left">
+    <a href="/qf-dapp/" class="back-link">&larr; Lobby</a>
+  </div>
+  <div class="top-bar-right">
+    <button id="topConnectBtn" class="top-connect" onclick="qfWallet.connect()">Connect Wallet</button>
+    <span id="topAddr" class="top-addr" style="display:none;cursor:pointer"></span>
+    <span id="topQfName" class="top-qf-name" style="display:none"></span>
+  </div>
+</div>
+
 <div class="game-container">
 
 <header>
+  <p class="game-kicker">QF Games</p>
   <h1>COUNTDOWN NUMBERS</h1>
   <p class="tagline">Six numbers. One target. Pure arithmetic.</p>
 </header>
@@ -155,9 +178,9 @@ footer a{color:var(--muted);text-decoration:none}footer a:hover{color:var(--teal
     <h3 style="font-family:'Playfair Display','Bebas Neue',serif;font-size:1.3rem;color:#e8eaf0;margin-bottom:.4rem">Set Your Stake</h3>
     <p style="font-size:.62rem;color:#4a4e5a;margin-bottom:.8rem;line-height:1.5">Both players match the same stake. Winner takes 90%.</p>
     <div style="display:flex;gap:.4rem;justify-content:center;flex-wrap:wrap;margin-bottom:.6rem">
-      <button class="btn btn-secondary stake-opt" onclick="pickDuelStake(25)" data-stake="25" style="padding:.5rem 1rem;font-size:.7rem">25 QF</button>
-      <button class="btn btn-secondary stake-opt" onclick="pickDuelStake(100)" data-stake="100" style="padding:.5rem 1rem;font-size:.7rem">100 QF</button>
-      <button class="btn btn-secondary stake-opt" onclick="pickDuelStake(250)" data-stake="250" style="padding:.5rem 1rem;font-size:.7rem">250 QF</button>
+      <button class="btn btn-ghost stake-opt" onclick="pickDuelStake(25)" data-stake="25" style="padding:.5rem 1rem;font-size:.7rem">25 QF</button>
+      <button class="btn btn-ghost stake-opt" onclick="pickDuelStake(100)" data-stake="100" style="padding:.5rem 1rem;font-size:.7rem">100 QF</button>
+      <button class="btn btn-ghost stake-opt" onclick="pickDuelStake(250)" data-stake="250" style="padding:.5rem 1rem;font-size:.7rem">250 QF</button>
     </div>
     <div style="display:flex;gap:.3rem;align-items:center;justify-content:center;margin-bottom:.6rem">
       <input type="number" id="custom-duel-stake" min="25" placeholder="Custom" style="width:5rem;padding:.35rem .5rem;font-family:'JetBrains Mono','DM Mono',monospace;font-size:.75rem;text-align:center;background:var(--surface);border:1px solid var(--border2);border-radius:6px;color:#e8eaf0">
@@ -165,8 +188,8 @@ footer a{color:var(--muted);text-decoration:none}footer a:hover{color:var(--teal
     </div>
     <p style="font-family:'JetBrains Mono','DM Mono',monospace;font-size:.5rem;color:#4a4e5a;margin-bottom:.8rem;line-height:1.5">5% burned · 5% team · 90% to winner. Full refund if opponent doesn't accept.</p>
     <div style="display:flex;gap:.4rem;justify-content:center">
-      <button class="btn btn-primary" id="confirm-duel-btn" onclick="confirmDuelCreate()" style="padding:.6rem 1.5rem;font-size:.65rem" disabled>Select a stake</button>
-      <button class="btn btn-secondary" onclick="cancelDuelCreate()" style="padding:.6rem 1rem;font-size:.65rem">Cancel</button>
+      <button class="btn btn-silver" id="confirm-duel-btn" onclick="confirmDuelCreate()" style="padding:.6rem 1.5rem;font-size:.65rem" disabled>Select a stake</button>
+      <button class="btn btn-ghost" onclick="cancelDuelCreate()" style="padding:.6rem 1rem;font-size:.65rem">Cancel</button>
     </div>
   </div>
 
@@ -176,8 +199,8 @@ footer a{color:var(--muted);text-decoration:none}footer a:hover{color:var(--teal
     <p style="font-size:.62rem;color:#4a4e5a;margin-bottom:.8rem">Share this code. Opponent has 24 hours.</p>
     <div id="duel-share-code" style="font-family:'JetBrains Mono','DM Mono',monospace;font-size:2rem;letter-spacing:.25em;color:#d4d8e2;background:var(--surface);border:2px solid rgba(184,188,198,0.15);border-radius:10px;padding:.8rem 1.5rem;display:inline-block;margin-bottom:.6rem;user-select:all">------</div>
     <div style="display:flex;gap:.4rem;justify-content:center">
-      <button class="btn btn-primary" onclick="copyDuelCode()" style="padding:.5rem 1rem;font-size:.6rem">Copy Code</button>
-      <button class="btn btn-secondary" onclick="shareDuelLink()" style="padding:.5rem 1rem;font-size:.6rem">Share Link</button>
+      <button class="btn btn-silver" onclick="copyDuelCode()" style="padding:.5rem 1rem;font-size:.6rem">Copy Code</button>
+      <button class="btn btn-ghost" onclick="shareDuelLink()" style="padding:.5rem 1rem;font-size:.6rem">Share Link</button>
     </div>
     <div id="duel-share-status" style="font-family:'JetBrains Mono','DM Mono',monospace;font-size:.55rem;color:#4a4e5a;margin-top:.5rem">Waiting for opponent...</div>
   </div>
@@ -188,13 +211,13 @@ footer a{color:var(--muted);text-decoration:none}footer a:hover{color:var(--teal
     <div id="duel-challenger" style="font-family:'JetBrains Mono','DM Mono',monospace;font-size:.9rem;color:#d4d8e2;margin-bottom:.3rem">---</div>
     <div id="duel-accept-stake" style="font-family:'JetBrains Mono','DM Mono',monospace;font-size:.75rem;color:#b8bcc6;background:var(--surface);border:1px solid rgba(184,188,198,0.15);border-radius:8px;padding:.5rem;display:inline-block;margin-bottom:.6rem">Stake: -- QF</div>
     <p style="font-size:.62rem;color:#4a4e5a;margin-bottom:.8rem">Same puzzle, same conditions. Match the stake to play.</p>
-    <button class="btn btn-primary" onclick="acceptDuelChallenge()" style="padding:.7rem 1.5rem;font-size:.68rem">Match Stake & Play</button>
+    <button class="btn btn-silver" onclick="acceptDuelChallenge()" style="padding:.7rem 1.5rem;font-size:.68rem">Match Stake & Play</button>
   </div>
 
   <div class="controls">
-    <button class="btn btn-primary" id="startBtn" onclick="startSession()" style="font-size:1rem;padding:.8rem 2.5rem">START GAME</button>
+    <button class="btn btn-silver" id="startBtn" onclick="startSession()" style="font-size:1rem;padding:.8rem 2.5rem">START GAME</button>
   </div>
-  <button class="btn btn-secondary" id="create-duel-btn" onclick="showDuelStakePicker()" style="width:100%;padding:.7rem;margin-top:.5rem;font-size:.65rem">&#9876; Create a Duel</button>
+  <button class="btn btn-ghost" id="create-duel-btn" onclick="showDuelStakePicker()" style="width:100%;padding:.7rem;margin-top:.5rem;font-size:.65rem">&#9876; Create a Duel</button>
   <a href="/qf-dapp/games/countdown-numbers/league/" style="display:block;text-align:center;margin-top:.8rem;font-family:'JetBrains Mono',monospace;font-size:.65rem;color:var(--silver,#b8bcc6);text-decoration:none;padding:.5rem;border:1px solid var(--border,#1e2228);border-radius:6px;transition:all .15s" onmouseover="this.style.borderColor='rgba(184,188,198,0.15)'" onmouseout="this.style.borderColor='var(--border,#1e2228)'">&#9813; View Leagues</a>
   <div id="startError" class="error-msg" style="display:none"></div>
 </div>
@@ -224,9 +247,9 @@ footer a{color:var(--muted);text-decoration:none}footer a:hover{color:var(--teal
   </div>
 
   <div class="controls">
-    <button class="btn btn-primary" id="submitBtn" onclick="submitExpression()">Submit</button>
-    <button class="btn btn-secondary" id="clearBtn" onclick="clearExpr()">Clear</button>
-    <button class="btn btn-secondary" id="skipBtn" onclick="submitExpression(true)">Skip</button>
+    <button class="btn btn-silver" id="submitBtn" onclick="submitExpression()">Submit</button>
+    <button class="btn btn-ghost" id="clearBtn" onclick="clearExpr()">Clear</button>
+    <button class="btn btn-ghost" id="skipBtn" onclick="submitExpression(true)">Skip</button>
   </div>
   <div id="gameError" class="error-msg" style="display:none"></div>
 </div>
@@ -513,7 +536,7 @@ footer a{color:var(--muted);text-decoration:none}footer a:hover{color:var(--teal
     flash.style.display = '';
     flash.innerHTML = '<div class="flash-title">' + title + '</div>'
       + (detailParts.length > 0 ? '<div class="flash-detail">' + detailParts.join(' &middot; ') + '</div>' : '')
-      + '<div class="flash-points" style="color:' + (cls === 'exact' ? 'var(--green-bright)' : cls === 'close' ? 'var(--gold)' : 'var(--red-bright)') + '">'
+      + '<div class="flash-points" style="color:' + (cls === 'exact' ? 'var(--green)' : cls === 'close' ? 'var(--gold)' : 'var(--red)') + '">'
       + (data.points ? '+' + data.points + ' pts' : '0 pts') + '</div>';
   }
 
@@ -548,7 +571,7 @@ footer a{color:var(--muted);text-decoration:none}footer a:hover{color:var(--teal
       + '<div class="final-detail">' + G.roundsExact + ' exact out of ' + G.totalQuestions + ' rounds</div>'
       + '<div class="final-detail" style="margin-bottom:1.5rem">Max possible: ' + maxScore + '</div>'
       + '<div class="controls">'
-      + '<button class="btn btn-primary" onclick="playAgain()" style="font-size:1rem;padding:.8rem 2rem">Play Again</button>'
+      + '<button class="btn btn-silver" onclick="playAgain()" style="font-size:1rem;padding:.8rem 2rem">Play Again</button>'
       + '</div>'
       + '</div>';
 
@@ -749,6 +772,20 @@ async function acceptDuelChallenge() {
 }
 
 if (duelCode) { loadDuelAccept(); }
+
+// Sync wallet state to top bar UI
+qfWallet.onConnect(function(s) {
+  if (s.address) {
+    document.getElementById('topConnectBtn').style.display = 'none';
+    document.getElementById('topAddr').style.display = '';
+    document.getElementById('topAddr').textContent = s.address.slice(0, 6) + '...' + s.address.slice(-4);
+  }
+  if (s.qfName) {
+    document.getElementById('topQfName').textContent = s.qfName;
+    document.getElementById('topQfName').style.display = '';
+    document.getElementById('topAddr').style.display = 'none';
+  }
+});
 </script>
 
 <script src="../dapp-entry.js"></script>

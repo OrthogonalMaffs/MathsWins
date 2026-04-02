@@ -128,7 +128,7 @@ CREATE TABLE IF NOT EXISTS leagues (
     tier            TEXT NOT NULL,
     entry_fee       INTEGER NOT NULL,
     max_players     INTEGER DEFAULT 16,
-    min_players     INTEGER DEFAULT 8,
+    min_players     INTEGER DEFAULT 4,
     puzzle_count    INTEGER DEFAULT 10,
     status          TEXT DEFAULT 'registration',
     reg_opens_at    INTEGER NOT NULL,
