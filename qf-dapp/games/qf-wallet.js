@@ -22,8 +22,8 @@
   var QF_CHAIN_ID = 3426;
   var QF_CHAIN_HEX = '0xd62';
   var QF_RPC = 'https://archive.mainnet.qfnode.net/eth';
-  var QNS_RESOLVER_OLD = '0xd78e5b5779ed7bdf70dad0061fbeb189836022fb';
-  var QNS_RESOLVER_NEW = '0xd5d12431b2956248861dbec5e8a9bc6023114e80';
+  var QNS_RESOLVER_OLD = '0xd5d12431b2956248861dbec5e8a9bc6023114e80';
+  var QNS_RESOLVER_NEW = '0x276b7e9343c19bea29d32dd4a8f84e6d1c183111';
   var QNS_ABI = ['function reverseResolve(address _addr) view returns (string)'];
 
   var state = {
