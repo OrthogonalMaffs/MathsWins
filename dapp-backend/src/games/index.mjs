@@ -32,6 +32,7 @@ import {
   GAME_ID as seqId,
   evaluator as seqEval,
   selectQuestions as seqSelect,
+  stripQuestion as seqStrip,
   QUESTIONS_PER_SESSION as seqQPS
 } from './sequence-solver.mjs';
 
@@ -99,7 +100,7 @@ export function registerAllGames() {
   });
 
   // Sequence Solver — sequential (20 questions, no hard limit, time decay)
-  registerGame(seqId, null, seqEval, seqSelect, null, 'sequential');
+  registerGame(seqId, null, seqEval, seqSelect, seqStrip, 'sequential');
   upsertGame({
     id: seqId,
     name: 'Sequence Solver',

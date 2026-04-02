@@ -14,7 +14,7 @@ export function evaluator(question, answer, elapsedMs) {
   const normalised = (typeof answer === 'string') ? answer.trim() : '';
   const correct = normalised === question.answer;
 
-  if (!correct) return { correct: false, points: 0 };
+  if (!correct) return { correct: false, points: 0, correctAnswer: question.answer, explanation: question.explanation || null };
 
   const seconds = Math.max(0, elapsedMs / 1000);
   const multiplier = 1 / (1 + 0.15 * Math.log(1 + seconds));
@@ -306,4 +306,12 @@ export function selectQuestions() {
 
   // Interleave: tier1 first, then tier2, then tier3
   return [...t1, ...t2, ...t3];
+}
+
+export function stripQuestion(q) {
+  const stripped = { text: q.text, type: q.type, tier: q.tier };
+  if (q.options) {
+    stripped.options = shuffle(q.options);
+  }
+  return stripped;
 }

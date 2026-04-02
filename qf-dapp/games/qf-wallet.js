@@ -392,4 +392,7 @@
     showMenu: showWalletMenu,
     nameCache: nameCache
   };
+
+  // Legacy alias — older game pages reference dappWallet
+  window.dappWallet = window.qfWallet;
 })();
