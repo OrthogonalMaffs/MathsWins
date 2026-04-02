@@ -37,6 +37,15 @@
   var disconnectCallbacks = [];
   var rpcProvider = null;
 
+  // EIP-6963: collect wallet providers as they announce themselves
+  var _eip6963Providers = [];
+  window.addEventListener('eip6963:announceProvider', function(event) {
+    if (event.detail && event.detail.provider) {
+      _eip6963Providers.push(event.detail);
+    }
+  });
+  window.dispatchEvent(new Event('eip6963:requestProvider'));
+
   // ── QNS Resolution ────────────────────────────────────────────────
   function getRpcProvider() {
     if (!rpcProvider) rpcProvider = new ethers.JsonRpcProvider(QF_RPC);
@@ -79,20 +88,26 @@
       seen[id] = true;
       wallets.push({ id: id, name: name, icon: icon, provider: provider });
     }
+    // EIP-6963: each wallet announces independently — no hijacking
+    _eip6963Providers.forEach(function(detail) {
+      var rdns = (detail.info && detail.info.rdns) || '';
+      if (rdns.indexOf('talisman') !== -1) add('talisman', 'Talisman', '\uD83D\uDD2E', detail.provider);
+      else if (rdns.indexOf('metamask') !== -1) add('metamask', 'MetaMask', '\uD83E\uDD8A', detail.provider);
+    });
+    // Legacy fallback: providers array
     if (window.ethereum && window.ethereum.providers && window.ethereum.providers.length > 0) {
       window.ethereum.providers.forEach(function(p) {
         if (p.isTalisman) add('talisman', 'Talisman', '\uD83D\uDD2E', p);
-        else if (p.isMetaMask) add('metamask', 'MetaMask', '\uD83E\uDD8A', p);
+        if (p.isMetaMask) add('metamask', 'MetaMask', '\uD83E\uDD8A', p);
       });
     }
+    // Legacy fallback: separate globals
     if (window.talismanEth) add('talisman', 'Talisman', '\uD83D\uDD2E', window.talismanEth);
+    // Last resort: window.ethereum directly
     if (window.ethereum && !seen.talisman && !seen.metamask) {
       if (window.ethereum.isTalisman) add('talisman', 'Talisman', '\uD83D\uDD2E', window.ethereum);
       else if (window.ethereum.isMetaMask) add('metamask', 'MetaMask', '\uD83E\uDD8A', window.ethereum);
       else add('browser', 'Browser Wallet', '\uD83D\uDD17', window.ethereum);
-    }
-    if (window.ethereum && window.ethereum.isTalisman && !seen.talisman) {
-      add('talisman', 'Talisman', '\uD83D\uDD2E', window.ethereum);
     }
     return wallets;
   }
