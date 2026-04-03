@@ -746,6 +746,12 @@ var G = (function() {
       grid = puzzle.slice();
       notes = [];
       for (var i = 0; i < 81; i++) notes.push(new Set());
+      mistakes = 0;
+      hintsUsed = 0;
+      selected = null;
+      history = [];
+      done = false;
+      inputLocked = false;
 
       document.getElementById('status-bar').style.display = 'flex';
       document.getElementById('board-wrap').style.display = 'flex';
@@ -899,7 +905,6 @@ var G = (function() {
         clearRelatedNotes(selected, n);
         setMsg('');
       } else {
-        console.warn('[DEBUG] Mistake counted — notesMode:', notesMode, 'cell:', selected, 'value:', n);
         mistakes++;
         updateMistakes();
         var cellEl = document.querySelector('.cell[data-idx="' + selected + '"]');
