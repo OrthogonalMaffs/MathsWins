@@ -732,8 +732,81 @@ var G = (function() {
   }
 
   // ── Start game session ──────────────────────────────────────────────
+  // ── Session persistence (league puzzles survive refresh) ───────────
+  function getSessionKey() {
+    if (!leagueMode || !leagueId) return null;
+    return 'sd_session_' + leagueId + '_' + leaguePuzzleIndex;
+  }
+
+  function saveSessionState() {
+    var key = getSessionKey();
+    if (!key) return;
+    var state = {
+      sessionToken: sessionToken,
+      puzzle: puzzle,
+      grid: grid,
+      notes: notes.map(function(s) { return Array.from(s); }),
+      mistakes: mistakes,
+      hintsUsed: hintsUsed,
+      startTime: startTime,
+      done: done
+    };
+    sessionStorage.setItem(key, JSON.stringify(state));
+  }
+
+  function loadSessionState() {
+    var key = getSessionKey();
+    if (!key) return null;
+    var raw = sessionStorage.getItem(key);
+    if (!raw) return null;
+    try {
+      var state = JSON.parse(raw);
+      // Validate the session is still alive on the server
+      if (!state.sessionToken || !state.puzzle) return null;
+      return state;
+    } catch (e) { return null; }
+  }
+
+  function clearSessionState() {
+    var key = getSessionKey();
+    if (key) sessionStorage.removeItem(key);
+  }
+
   async function startGameSession(forceSeed, withCountdown) {
     setMsg('');
+
+    // Try to resume a saved league session (survives page refresh)
+    var saved = loadSessionState();
+    if (saved && !saved.done) {
+      sessionToken = saved.sessionToken;
+      puzzle = saved.puzzle;
+      grid = saved.grid;
+      notes = saved.notes.map(function(a) { return new Set(a); });
+      mistakes = saved.mistakes;
+      hintsUsed = saved.hintsUsed;
+      startTime = saved.startTime;
+      selected = null;
+      history = [];
+      done = false;
+      inputLocked = false;
+
+      document.getElementById('status-bar').style.display = 'flex';
+      document.getElementById('board-wrap').style.display = 'flex';
+      document.getElementById('numpad').style.display = 'grid';
+      document.getElementById('controls').style.display = 'flex';
+
+      buildNumpad();
+      renderBoard();
+      updateNumpad();
+      updateMistakes();
+      document.getElementById('sv-h').textContent = hintsUsed;
+
+      timerStarted = true;
+      timerInterval = setInterval(updateTimer, 1000);
+      updateTimer();
+      return;
+    }
+
     try {
       var body = { gameId: GAME_ID };
       if (forceSeed != null) body.seed = forceSeed;
@@ -767,6 +840,7 @@ var G = (function() {
         await showCountdown();
       }
       startTimer();
+      saveSessionState();
 
     } catch (e) {
       setMsg('Connection error');
@@ -875,6 +949,7 @@ var G = (function() {
       if (notes[selected].has(n)) notes[selected].delete(n);
       else notes[selected].add(n);
       renderBoard();
+      saveSessionState();
       return;
     }
 
@@ -884,6 +959,7 @@ var G = (function() {
       notes[selected] = new Set();
       renderBoard();
       updateNumpad();
+      saveSessionState();
       return;
     }
 
@@ -918,6 +994,7 @@ var G = (function() {
 
       renderBoard();
       updateNumpad();
+      saveSessionState();
       checkComplete();
 
     } catch (e) {
@@ -982,6 +1059,7 @@ var G = (function() {
       var cellEl = document.querySelector('.cell[data-idx="' + selected + '"]');
       if (cellEl) cellEl.classList.add('hint-reveal');
 
+      saveSessionState();
       checkComplete();
     } catch (e) {
       setMsg('Connection error');
@@ -1000,6 +1078,7 @@ var G = (function() {
   async function endGame(won) {
     done = true;
     clearInterval(timerInterval);
+    clearSessionState();
     var secs = getSecs();
     var timeMs = secs * 1000;
 
