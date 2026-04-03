@@ -374,22 +374,26 @@ function renderPuzzles(puzzles, league) {
 
     var label = document.createElement('span');
     label.className = 'pr-label';
-    label.textContent = 'Puzzle ' + (p.puzzle_index + 1);
+    label.textContent = 'Puzzle ' + (p.sequence || (p.puzzle_index + 1));
 
     var right;
     if (p.completed) {
       right = document.createElement('span');
       right.className = 'pr-done';
       right.textContent = p.score + ' pts';
-    } else if (league.status === 'active' && league.play_closes_at > Date.now()) {
+    } else if (p.playable && league.status === 'active' && league.play_closes_at > Date.now()) {
       right = document.createElement('a');
       right.className = 'pr-play';
-      right.textContent = 'Play';
-      right.href = '/qf-dapp/games/sudoku-duel/?league=' + league.id + '&puzzle=' + p.puzzle_index + '&seed=' + p.puzzle_seed;
+      right.textContent = 'Play Next';
+      right.href = '/qf-dapp/games/sudoku-duel/?league=' + league.id;
+    } else if (league.status === 'settled') {
+      right = document.createElement('span');
+      right.className = 'pr-locked';
+      right.textContent = '0 pts (skipped)';
     } else {
       right = document.createElement('span');
       right.className = 'pr-locked';
-      right.textContent = league.status === 'settled' ? '0 pts (skipped)' : 'Locked';
+      right.textContent = 'Locked';
     }
 
     row.appendChild(label);

@@ -291,6 +291,7 @@ export function resumeSession(wallet, contextType, contextId, puzzleIndex) {
     hintsUsed: session.hintsUsed,
     elapsedMs: Date.now() - session.startedAt,
     hintCells,
+    puzzleIndex: row.puzzle_index,
     status: 'active'
   };
 }

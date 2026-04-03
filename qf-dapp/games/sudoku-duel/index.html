@@ -500,16 +500,13 @@ var G = (function() {
       return true;
     }
 
-    // League mode: ?league=ID&puzzle=INDEX&seed=SEED
+    // League mode: ?league=ID (server decides which puzzle)
     var lid = params.get('league');
-    var pidx = params.get('puzzle');
-    var seed = params.get('seed');
-    if (lid && pidx != null && seed) {
+    if (lid) {
       leagueMode = true;
       leagueId = lid;
-      leaguePuzzleIndex = parseInt(pidx);
       hidePreGame();
-      startGameSession(parseInt(seed));
+      startGameSession();
       return true;
     }
 
@@ -764,16 +761,17 @@ var G = (function() {
   async function startGameSession(forceSeed, withCountdown) {
     setMsg('');
 
-    // League mode: try server-side resume first (survives refresh + restart)
+    // League mode: try server-side resume first, then start next puzzle
     if (leagueMode && leagueId) {
       try {
         var resumeData = await api('/session/resume', {
-          contextType: 'league', contextId: leagueId, puzzleIndex: leaguePuzzleIndex
+          contextType: 'league', contextId: leagueId
         });
         if (resumeData.exists) {
           sessionToken = resumeData.token;
           puzzle = resumeData.question.puzzle;
           grid = resumeData.grid;
+          leaguePuzzleIndex = resumeData.puzzleIndex;
           notes = [];
           for (var i = 0; i < 81; i++) notes.push(new Set());
           mistakes = resumeData.mistakes || 0;
@@ -783,13 +781,9 @@ var G = (function() {
           done = false;
           inputLocked = false;
 
-          // Mark hint cells visually
-          var hintSet = new Set(resumeData.hintCells || []);
-
           showGameUI();
           document.getElementById('sv-h').textContent = hintsUsed;
 
-          // Resume timer from server-authoritative elapsed time
           var elapsed = resumeData.elapsedMs || 0;
           startTime = Date.now() - elapsed;
           timerStarted = true;
@@ -805,14 +799,16 @@ var G = (function() {
       if (forceSeed != null) body.seed = forceSeed;
       if (leagueMode && leagueId) {
         body.leagueId = leagueId;
-        body.puzzleIndex = leaguePuzzleIndex;
       }
 
       var data = await api('/session/start', body);
       if (data.error) {
-        // If active session exists, try resume
         if (data.error === 'ACTIVE_SESSION_EXISTS') {
           return startGameSession(forceSeed, withCountdown);
+        }
+        if (data.error === 'All puzzles completed') {
+          setMsg('All puzzles completed! Return to the league page.');
+          return;
         }
         setMsg(data.error); showPreGame(); return;
       }
@@ -820,6 +816,7 @@ var G = (function() {
       sessionToken = data.token;
       puzzle = data.question.puzzle;
       grid = puzzle.slice();
+      if (data.puzzleIndex !== undefined) leaguePuzzleIndex = data.puzzleIndex;
       notes = [];
       for (var i = 0; i < 81; i++) notes.push(new Set());
       mistakes = 0;

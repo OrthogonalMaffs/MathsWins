@@ -18,6 +18,9 @@ export function getDb() {
   const schema = readFileSync(join(__dirname, 'schema.sql'), 'utf-8');
   db.exec(schema);
 
+  // Migrations — add columns that may not exist on older DBs
+  try { db.exec('ALTER TABLE league_players ADD COLUMN puzzle_order TEXT'); } catch (e) { /* already exists */ }
+
   return db;
 }
 
@@ -292,6 +295,19 @@ export function addLeaguePlayer(leagueId, wallet, txHash, joinedAt) {
   const db = getDb();
   db.prepare(`INSERT INTO league_players (league_id, wallet, tx_hash, joined_at) VALUES (?, ?, ?, ?)`)
     .run(leagueId, wallet.toLowerCase(), txHash, joinedAt);
+}
+
+export function getPlayerPuzzleOrder(leagueId, wallet) {
+  const db = getDb();
+  const row = db.prepare('SELECT puzzle_order FROM league_players WHERE league_id = ? AND wallet = ?')
+    .get(leagueId, wallet.toLowerCase());
+  return row && row.puzzle_order ? JSON.parse(row.puzzle_order) : null;
+}
+
+export function setPlayerPuzzleOrder(leagueId, wallet, order) {
+  const db = getDb();
+  db.prepare('UPDATE league_players SET puzzle_order = ? WHERE league_id = ? AND wallet = ?')
+    .run(JSON.stringify(order), leagueId, wallet.toLowerCase());
 }
 
 export function getLeaguePlayers(leagueId) {

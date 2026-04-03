@@ -149,6 +149,7 @@ CREATE TABLE IF NOT EXISTS league_players (
     tx_hash         TEXT,
     joined_at       INTEGER NOT NULL,
     refunded        INTEGER DEFAULT 0,
+    puzzle_order    TEXT,
     PRIMARY KEY (league_id, wallet)
 );
 

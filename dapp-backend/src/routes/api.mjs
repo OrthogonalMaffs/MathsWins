@@ -2,13 +2,22 @@ import { Router } from 'express';
 import crypto from 'crypto';
 import { getLeaderboard, getEntry, getPaidGames } from '../db/index.mjs';
 import { createDuel, getDuelByCode, getDuelById, updateDuelCreatorScore, acceptDuel, updateDuelOpponentScore, completeDuel, expireOldDuels, getDuelsByWallet, getActiveDuelCount } from '../db/index.mjs';
-import { createLeague, getLeagueById, getActiveLeagues, getAllLeagues, updateLeagueStatus, startLeague, settleLeague, cancelLeague, addLeaguePlayer, getLeaguePlayers, getLeaguePlayerCount, isLeaguePlayer, markRefunded, addLeaguePuzzle, getLeaguePuzzles, addLeagueScore, getLeagueScore, getLeagueScoresByWallet, getLeagueLeaderboard, addLeaguePrize, getLeaguePrizes } from '../db/index.mjs';
+import { createLeague, getLeagueById, getActiveLeagues, getAllLeagues, updateLeagueStatus, startLeague, settleLeague, cancelLeague, addLeaguePlayer, getLeaguePlayers, getLeaguePlayerCount, isLeaguePlayer, markRefunded, addLeaguePuzzle, getLeaguePuzzles, addLeagueScore, getLeagueScore, getLeagueScoresByWallet, getLeagueLeaderboard, addLeaguePrize, getLeaguePrizes, getPlayerPuzzleOrder, setPlayerPuzzleOrder } from '../db/index.mjs';
 import { createPromoChallenge, getPromoByCode, getPromoById, getPromoClaim, addPromoClaim, getPromoClaims } from '../db/index.mjs';
 import { startSession, startFreeSession, evaluate, getCurrentWeekId, resumeSession } from '../scoring.mjs';
 import { ethers } from 'ethers';
 import { getDb } from '../db/index.mjs';
 
 const router = Router();
+
+function shuffleArray(arr) {
+  var a = arr.slice();
+  for (var i = a.length - 1; i > 0; i--) {
+    var j = Math.floor(Math.random() * (i + 1));
+    var tmp = a[i]; a[i] = a[j]; a[j] = tmp;
+  }
+  return a;
+}
 
 // ── Middleware: extract wallet from signed message ──────────────────────────
 function requireWallet(req, res, next) {
@@ -63,27 +72,64 @@ function optionalWallet(req, res, next) {
 
 router.post('/session/start', optionalWallet, (req, res) => {
   try {
-    const { gameId, seed, leagueId, puzzleIndex } = req.body;
+    const { gameId, seed, leagueId } = req.body;
     if (!gameId) return res.status(400).json({ error: 'gameId required' });
 
     const weekId = getCurrentWeekId();
 
     // Build context opts for persistent sessions
     const opts = { seed: seed != null ? seed : undefined };
-    if (leagueId) {
+
+    // League mode: server resolves the next puzzle — client never sees seeds
+    if (leagueId && req.wallet) {
+      const league = getLeagueById(leagueId);
+      if (!league) return res.status(404).json({ error: 'League not found' });
+      if (!isLeaguePlayer(league.id, req.wallet)) return res.status(403).json({ error: 'Not a league participant' });
+
+      const puzzles = getLeaguePuzzles(league.id);
+      const myScores = getLeagueScoresByWallet(league.id, req.wallet);
+      const completedSet = new Set(myScores.map(s => s.puzzle_index));
+
+      // Get or generate puzzle order
+      var order = getPlayerPuzzleOrder(league.id, req.wallet);
+      if (!order) {
+        order = shuffleArray([...Array(puzzles.length).keys()]);
+        var done = order.filter(i => completedSet.has(i));
+        var remaining = order.filter(i => !completedSet.has(i));
+        order = done.concat(remaining);
+        setPlayerPuzzleOrder(league.id, req.wallet, order);
+      }
+
+      // Find next unplayed puzzle in this player's order
+      var nextIdx = null;
+      for (var i = 0; i < order.length; i++) {
+        if (!completedSet.has(order[i])) { nextIdx = order[i]; break; }
+      }
+      if (nextIdx === null) return res.status(400).json({ error: 'All puzzles completed' });
+
+      // Look up the seed server-side
+      var puzzleRow = puzzles.find(p => p.puzzle_index === nextIdx);
+      if (!puzzleRow) return res.status(400).json({ error: 'Puzzle not found' });
+
       opts.contextType = 'league';
       opts.contextId = leagueId;
-      opts.puzzleIndex = puzzleIndex;
-      opts.wallet = req.wallet || null;
+      opts.puzzleIndex = nextIdx;
+      opts.wallet = req.wallet;
+      opts.seed = puzzleRow.puzzle_seed;
+
+      const result = startFreeSession(gameId, weekId, opts);
+      result.puzzleIndex = nextIdx;
+      result.puzzleSequence = order.indexOf(nextIdx) + 1;
+      result.totalPuzzles = puzzles.length;
+      return res.json(result);
     }
 
-    // Free play: no wallet or no on-chain entry — guest session
+    // Non-league: free play or paid entry
     if (!req.wallet) {
       const result = startFreeSession(gameId, weekId, opts);
       return res.json(result);
     }
 
-    // Check for paid entry
     const entry = getEntry(req.wallet, gameId, weekId);
     if (!entry) {
       const result = startFreeSession(gameId, weekId, opts);
@@ -107,7 +153,16 @@ router.post('/session/resume', optionalWallet, (req, res) => {
     const { contextType, contextId, puzzleIndex } = req.body;
     if (!contextType || contextId == null) return res.status(400).json({ error: 'contextType and contextId required' });
 
-    const result = resumeSession(req.wallet, contextType, contextId, puzzleIndex != null ? puzzleIndex : null);
+    // For league resume, find the active puzzle index if not provided
+    var pIdx = puzzleIndex != null ? puzzleIndex : null;
+    if (contextType === 'league' && pIdx === null) {
+      const db = getDb();
+      const active = db.prepare(`SELECT puzzle_index FROM active_game_state WHERE wallet = ? AND context_type = 'league' AND context_id = ? AND status = 'active' LIMIT 1`)
+        .get(req.wallet.toLowerCase(), contextId);
+      if (active) pIdx = active.puzzle_index;
+    }
+
+    const result = resumeSession(req.wallet, contextType, contextId, pIdx);
     if (!result) return res.json({ exists: false });
     res.json({ exists: true, ...result });
   } catch (e) {
@@ -544,12 +599,38 @@ router.get('/league/:leagueId/puzzles', (req, res) => {
   const scoreMap = {};
   myScores.forEach(s => { scoreMap[s.puzzle_index] = s; });
 
-  const result = puzzles.map(p => ({
-    puzzle_index: p.puzzle_index,
-    puzzle_seed: p.puzzle_seed,
-    completed: !!scoreMap[p.puzzle_index],
-    score: scoreMap[p.puzzle_index] ? scoreMap[p.puzzle_index].score : null
-  }));
+  // Get or generate this player's random puzzle order
+  var order = getPlayerPuzzleOrder(league.id, wallet);
+  if (!order) {
+    order = shuffleArray([...Array(puzzles.length).keys()]);
+    // For existing players, put already-completed puzzles first in order
+    var completed = new Set(myScores.map(s => s.puzzle_index));
+    var done = order.filter(i => completed.has(i));
+    var remaining = order.filter(i => !completed.has(i));
+    order = done.concat(remaining);
+    setPlayerPuzzleOrder(league.id, wallet, order);
+  }
+
+  // Build result: completed puzzles show scores, next puzzle is playable, rest hidden
+  var nextFound = false;
+  var result = order.map(function(puzzleIdx, seqNum) {
+    var isCompleted = !!scoreMap[puzzleIdx];
+    var entry = {
+      sequence: seqNum + 1,
+      puzzle_index: puzzleIdx,
+      completed: isCompleted,
+      score: isCompleted ? scoreMap[puzzleIdx].score : null
+    };
+    if (!isCompleted && !nextFound) {
+      entry.playable = true;
+      nextFound = true;
+    }
+    // If settled league, show all as completed/missed
+    if (league.status === 'settled') {
+      entry.playable = false;
+    }
+    return entry;
+  });
 
   res.json(result);
 });
