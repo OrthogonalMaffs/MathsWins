@@ -29,7 +29,8 @@
   var state = {
     address: null, balance: null, chainId: null,
     provider: null, signer: null, qfName: null, walletType: null,
-    rawProvider: null  // the injected provider (window.ethereum etc)
+    rawProvider: null,  // the injected provider (window.ethereum etc)
+    verified: false     // true only after wallet proves it can sign (not just cached)
   };
 
   var nameCache = {};
@@ -181,6 +182,37 @@
     list.appendChild(msg);
   }
 
+  // ── Verification Gate ──────────────────────────────────────────────
+  // Silent reconnect populates address/balance for display but the wallet
+  // may be locked.  ensureVerified() forces a real wallet interaction before
+  // any transaction or signature can proceed.
+  async function ensureVerified() {
+    if (state.verified) return;
+    if (!state.rawProvider) throw new Error('No wallet connected');
+    await state.rawProvider.request({
+      method: 'wallet_requestPermissions',
+      params: [{ eth_accounts: {} }]
+    });
+    state.verified = true;
+  }
+
+  // Wrap a signer so sendTransaction / signMessage hit the verification
+  // gate automatically — game code never needs to call ensureVerified itself.
+  function wrapSigner(signer) {
+    var realSend = signer.sendTransaction.bind(signer);
+    var realSign = signer.signMessage.bind(signer);
+
+    signer.sendTransaction = async function(tx) {
+      await ensureVerified();
+      return realSend(tx);
+    };
+    signer.signMessage = async function(msg) {
+      await ensureVerified();
+      return realSign(msg);
+    };
+    return signer;
+  }
+
   // ── Connect ───────────────────────────────────────────────────────
   async function connect() {
     var wallets = detectWallets();
@@ -262,10 +294,11 @@
       state.balance = balance;
       state.chainId = chainId;
       state.provider = provider;
-      state.signer = signer;
+      state.signer = wrapSigner(signer);
       state.walletType = walletId;
       state.rawProvider = ethProvider;
       state.qfName = null;
+      state.verified = !silent;
 
       try { localStorage.setItem('qf_wallet_id', walletId); } catch (e) {}
 
@@ -345,6 +378,7 @@
     state.qfName = null;
     state.walletType = null;
     state.rawProvider = null;
+    state.verified = false;
     try { localStorage.removeItem('qf_wallet_id'); } catch (e) {}
     fireDisconnectCallbacks();
   }
@@ -414,7 +448,9 @@
     get chainId()    { return state.chainId; },
     get qfName()     { return state.qfName; },
     get walletType() { return state.walletType; },
+    get verified()   { return state.verified; },
     isConnected: function() { return !!state.address; },
+    ensureVerified: ensureVerified,
     connect: connect,
     disconnect: disconnect,
     displayName: function() {
