@@ -53,14 +53,17 @@ body{background:var(--bg);color:var(--text);font-family:'Inter',sans-serif;min-h
 .cell{position:relative;display:flex;align-items:center;justify-content:center;cursor:pointer;transition:background 0.1s;border:1px solid var(--border2)}
 .cell:hover{background:var(--silver-dim)}
 .cell.selected{background:rgba(184,188,198,0.18)}
-.cell.same-num{background:rgba(184,188,198,0.07)}
+.cell.related{background:rgba(184,188,198,0.06)}
+.cell.same-num{background:rgba(184,188,198,0.16)}
+.cell.same-num .cell-val{color:var(--silver-bright)}
+.cell.wave{transition:background 0.3s ease}
 .cell.conflict{background:rgba(239,68,68,0.12)}
 .cell.hint-cell{background:var(--silver-glow)}
 .cell .cage-label{position:absolute;top:1px;left:3px;font-family:'JetBrains Mono',monospace;font-size:clamp(0.4rem,1.3vw,0.6rem);color:var(--muted);line-height:1;pointer-events:none;white-space:nowrap}
 .cell .cell-val{font-family:'JetBrains Mono',monospace;font-size:clamp(0.9rem,3vw,1.3rem);font-weight:500;color:var(--text-white);user-select:none}
 .cell.hint-cell .cell-val{color:var(--silver)}
 .cell .notes-grid{display:grid;grid-template-columns:repeat(3,1fr);width:100%;height:100%;padding:1px}
-.cell .note-num{font-family:'JetBrains Mono',monospace;font-size:clamp(0.25rem,0.8vw,0.38rem);color:var(--silver);display:flex;align-items:center;justify-content:center;line-height:1}
+.cell .note-num{font-family:'JetBrains Mono',monospace;font-size:clamp(0.35rem,1.2vw,0.48rem);color:var(--silver);display:flex;align-items:center;justify-content:center;line-height:1}
 .cell .note-num.hidden{opacity:0}
 /* Cage borders */
 .cage-top{border-top:2px solid var(--silver-border)!important}
@@ -68,9 +71,11 @@ body{background:var(--bg);color:var(--text);font-family:'Inter',sans-serif;min-h
 .cage-left{border-left:2px solid var(--silver-border)!important}
 .cage-right{border-right:2px solid var(--silver-border)!important}
 .numpad{display:grid;gap:0.4rem;width:100%}
-.num-btn{aspect-ratio:1;background:var(--surface2);border:1px solid var(--border);border-radius:6px;font-family:'JetBrains Mono',monospace;font-size:clamp(0.8rem,2.5vw,1.1rem);color:var(--text);cursor:pointer;display:flex;align-items:center;justify-content:center;transition:all 0.15s}
+.num-btn{aspect-ratio:1;background:var(--surface2);border:1px solid var(--border);border-radius:6px;font-family:'JetBrains Mono',monospace;color:var(--text);cursor:pointer;display:flex;flex-direction:column;align-items:center;justify-content:center;transition:all 0.15s;gap:0}
+.num-btn .nb-val{font-size:clamp(0.8rem,2.5vw,1.1rem);line-height:1}
+.num-btn .nb-rem{font-size:clamp(0.3rem,0.9vw,0.4rem);color:var(--muted);line-height:1}
 .num-btn:hover{background:var(--surface);border-color:var(--silver-border);color:var(--silver)}
-.num-btn.used{opacity:0.35}
+.num-btn.used{opacity:0.2;pointer-events:none}
 .controls{display:flex;gap:0.5rem;width:100%;flex-wrap:wrap}
 .btn{padding:0.6rem 1rem;font-family:'JetBrains Mono',monospace;font-size:0.6rem;letter-spacing:0.1em;text-transform:uppercase;cursor:pointer;border-radius:6px;border:none;transition:all 0.2s;flex:1;min-width:0}
 .btn-silver{background:var(--silver-bright);color:var(--bg);font-weight:500}
@@ -96,6 +101,9 @@ body{background:var(--bg);color:var(--text);font-family:'Inter',sans-serif;min-h
 .modal-acts .btn{flex:1}
 @keyframes shake{0%,100%{transform:translateX(0)}20%{transform:translateX(-6px)}40%{transform:translateX(6px)}60%{transform:translateX(-4px)}80%{transform:translateX(4px)}}
 .shake{animation:shake 0.35s ease}
+.error-banner{position:absolute;top:50%;left:50%;transform:translate(-50%,-50%);background:rgba(176,58,58,0.95);color:#fff;font-family:'JetBrains Mono',monospace;font-size:1rem;font-weight:700;padding:0.6rem 1.4rem;border-radius:8px;z-index:10;pointer-events:none;animation:errorPop 1.2s ease forwards}
+@keyframes errorPop{0%{opacity:1;transform:translate(-50%,-50%) scale(1)}70%{opacity:1;transform:translate(-50%,-50%) scale(1)}100%{opacity:0;transform:translate(-50%,-50%) scale(0.8)}}
+.btn-ghost:disabled{opacity:0.3;cursor:not-allowed;pointer-events:none}
 @media(max-width:480px){.page{padding:1.5rem 0.5rem 3rem}.game-title{font-size:2.4rem}}
 
 /* How to Play — collapsible */
@@ -185,6 +193,7 @@ body{background:var(--bg);color:var(--text);font-family:'Inter',sans-serif;min-h
       <span class="sl">Mistakes</span>
     </div>
     <div class="si"><span class="sv" id="sv-h">0</span><span class="sl">Hints</span></div>
+    <div class="si"><span class="sv" id="sv-p">0</span><span class="sl">Filled</span></div>
     <div class="si"><span class="sv" id="sv-s">5000</span><span class="sl">Est. Score</span></div>
   </div>
 
@@ -197,7 +206,7 @@ body{background:var(--bg);color:var(--text);font-family:'Inter',sans-serif;min-h
   <div class="controls" id="controls" style="display:none">
     <button class="btn btn-ghost" onclick="G.undo()">Undo</button>
     <button class="btn btn-ghost" id="notes-btn" onclick="G.toggleNotes()">Notes</button>
-    <button class="btn btn-ghost" onclick="G.useHint()">Hint (-500)</button>
+    <button class="btn btn-ghost" id="hint-btn" onclick="G.useHint()">Hint (-500)</button>
     <button class="btn btn-silver" onclick="G.submitGrid()">Submit</button>
   </div>
 
@@ -441,6 +450,12 @@ var G = (function() {
       if (i === selected) cell.classList.add('selected');
       if (hintCells.has(i)) cell.classList.add('hint-cell');
 
+      // Row/col highlighting
+      if (selected !== null && i !== selected) {
+        var selR = Math.floor(selected / n), selC = selected % n;
+        if (r === selR || c === selC) cell.classList.add('related');
+      }
+
       // Highlight same number
       if (selected !== null && grid[Math.floor(selected / n)][selected % n] !== 0 &&
           grid[r][c] === grid[Math.floor(selected / n)][selected % n] && i !== selected) {
@@ -479,6 +494,7 @@ var G = (function() {
       (function(idx) { cell.addEventListener('click', function() { selectCell(idx); }); })(i);
       boardEl.appendChild(cell);
     }
+    updateNumpad();
   }
 
   function selectCell(idx) { if (!done) { selected = idx; renderBoard(); } }
@@ -564,6 +580,7 @@ var G = (function() {
       if (data.correct) {
         done = true;
         clearInterval(timerInterval);
+        await playCompletionWave();
         showModal(true, data.points);
       } else {
         mistakes++;
@@ -605,10 +622,32 @@ var G = (function() {
     for (var i = 1; i <= n; i++) {
       var btn = document.createElement('button');
       btn.className = 'num-btn';
-      btn.textContent = i;
+      btn.id = 'nbtn' + i;
+      btn.innerHTML = '<span class="nb-val">' + i + '</span><span class="nb-rem" id="nrem' + i + '"></span>';
       (function(v) { btn.onclick = function() { G.inputNum(v); }; })(i);
       np.appendChild(btn);
     }
+  }
+  function updateNumpad() {
+    var filled = 0;
+    var total = n * n;
+    for (var v = 1; v <= n; v++) {
+      var count = 0;
+      for (var rr = 0; rr < n; rr++) {
+        for (var cc = 0; cc < n; cc++) { if (grid[rr][cc] === v) count++; }
+      }
+      var btn = document.getElementById('nbtn' + v);
+      var rem = document.getElementById('nrem' + v);
+      if (btn) btn.classList.toggle('used', count >= n);
+      if (rem) rem.textContent = count >= n ? '' : (n - count) + ' left';
+    }
+    for (var rr = 0; rr < n; rr++) {
+      for (var cc = 0; cc < n; cc++) { if (grid[rr][cc] !== 0) filled++; }
+    }
+    var prog = document.getElementById('sv-p');
+    if (prog) prog.textContent = filled + '/' + total;
+    var hintBtn = document.getElementById('hint-btn');
+    if (hintBtn) hintBtn.disabled = (hintsUsed >= 5);
   }
   function buildMistakeDots() {
     var el = document.getElementById('mistake-dots');
@@ -625,6 +664,23 @@ var G = (function() {
       var d = document.getElementById('mdot' + i);
       if (d) d.classList.toggle('active', i < mistakes);
     }
+  }
+  function playCompletionWave() {
+    return new Promise(function(resolve) {
+      var cells = document.querySelectorAll('.cell');
+      var maxDiag = (n - 1) * 2;
+      var delayPerDiag = 50;
+      for (var i = 0; i < cells.length; i++) {
+        var idx = parseInt(cells[i].dataset.idx);
+        var rr = Math.floor(idx / n), cc = idx % n;
+        var diag = rr + cc;
+        (function(cell, d) {
+          setTimeout(function() { cell.classList.add('wave'); cell.style.background = 'rgba(184,188,198,0.25)'; }, d * delayPerDiag);
+          setTimeout(function() { cell.style.background = ''; }, d * delayPerDiag + 400);
+        })(cells[i], diag);
+      }
+      setTimeout(resolve, maxDiag * delayPerDiag + 500);
+    });
   }
   function setMsg(t, ok) {
     var el = document.getElementById('msg-bar');

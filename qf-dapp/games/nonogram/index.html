@@ -86,6 +86,9 @@ body{background:var(--bg);color:var(--text);font-family:'Inter',sans-serif;min-h
 .nono-cell.focus-cell{outline:2px solid var(--silver-bright);outline-offset:-2px;z-index:1}
 .nono-cell.wrong-flash{background:var(--red);transition:background 0s}
 .nono-cell.hint-cell{background:var(--silver-glow)}
+.nono-cell.wave{transition:background 0.3s ease}
+.error-banner{position:absolute;top:50%;left:50%;transform:translate(-50%,-50%);background:rgba(176,58,58,0.95);color:#fff;font-family:'JetBrains Mono',monospace;font-size:1rem;font-weight:700;padding:0.6rem 1.4rem;border-radius:8px;z-index:10;pointer-events:none;animation:errorPop 1.2s ease forwards}
+@keyframes errorPop{0%{opacity:1;transform:translate(-50%,-50%) scale(1)}70%{opacity:1;transform:translate(-50%,-50%) scale(1)}100%{opacity:0;transform:translate(-50%,-50%) scale(0.8)}}
 
 /* 5-cell group borders */
 .nono-cell.thick-right{border-right:2px solid var(--muted)}
@@ -210,6 +213,7 @@ body{background:var(--bg);color:var(--text);font-family:'Inter',sans-serif;min-h
     <div class="si"><span class="sv" id="sv-t">0:00</span><span class="sl">Time</span></div>
     <div class="si"><span class="sv" id="sv-m">0</span><span class="sl">Mistakes</span></div>
     <div class="si"><span class="sv" id="sv-h">0</span><span class="sl">Hints</span></div>
+    <div class="si"><span class="sv" id="sv-p">0</span><span class="sl">Filled</span></div>
     <div class="si"><span class="sv" id="sv-s">5000</span><span class="sl">Est. Score</span></div>
   </div>
 
@@ -443,6 +447,28 @@ var G = (function() {
     var est = Math.max(0, 5000 - timePen - mistakes * 200 - hintsUsed * 400);
     document.getElementById('sv-s').textContent = est;
   }
+  function updateProgress() {
+    var filled = 0;
+    for (var i = 0; i < SIZE * SIZE; i++) { if (grid[i] === 1) filled++; }
+    var prog = document.getElementById('sv-p');
+    if (prog) prog.textContent = filled + '/' + (SIZE * SIZE);
+  }
+  function playCompletionWave() {
+    return new Promise(function(resolve) {
+      var cells = document.querySelectorAll('.nono-cell');
+      var maxDiag = (SIZE - 1) * 2;
+      var delayPerDiag = 40;
+      for (var i = 0; i < cells.length; i++) {
+        var r = Math.floor(i / SIZE), c = i % SIZE;
+        var diag = r + c;
+        (function(cell, d) {
+          setTimeout(function() { cell.classList.add('wave'); cell.style.background = 'rgba(184,188,198,0.3)'; }, d * delayPerDiag);
+          setTimeout(function() { cell.style.background = ''; }, d * delayPerDiag + 400);
+        })(cells[i], diag);
+      }
+      setTimeout(resolve, maxDiag * delayPerDiag + 500);
+    });
+  }
 
   // ── Board rendering ──────────────────────────────────────────────
   function renderBoard() {
@@ -540,6 +566,7 @@ var G = (function() {
     // Cycle: empty(0) → filled(1) → marked-empty(2) → empty(0)
     grid[idx] = (grid[idx] + 1) % 3;
     renderBoard();
+    updateProgress();
   }
 
   // ── Hint system ──────────────────────────────────────────────────
@@ -648,6 +675,7 @@ var G = (function() {
       if (data.correct) {
         done = true;
         clearInterval(timerInterval);
+        await playCompletionWave();
         showModal(true, data.points);
       } else {
         // Count and flash wrong cells

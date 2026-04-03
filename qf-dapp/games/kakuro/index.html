@@ -75,7 +75,10 @@ body{background:var(--bg);color:var(--text);font-family:'Inter',sans-serif;min-h
 .cell.white{background:var(--surface2);cursor:pointer;transition:background 0.1s}
 .cell.white:hover{background:var(--silver-dim)}
 .cell.white.selected{background:rgba(184,188,198,0.18)}
-.cell.white.same-num{background:rgba(184,188,198,0.07)}
+.cell.white.related{background:rgba(184,188,198,0.06)}
+.cell.white.same-num{background:rgba(184,188,198,0.16)}
+.cell.white.same-num .cell-val{color:var(--silver-bright)}
+.cell.wave{transition:background 0.3s ease}
 .cell.white.conflict{background:rgba(239,68,68,0.12)}
 .cell.white.hint-cell{background:var(--silver-glow)}
 .cell.white.run-highlight{background:var(--silver-dim)}
@@ -83,7 +86,7 @@ body{background:var(--bg);color:var(--text);font-family:'Inter',sans-serif;min-h
 .cell .cell-val{font-family:'JetBrains Mono',monospace;font-size:clamp(0.9rem,3vw,1.3rem);font-weight:500;color:var(--text-white);user-select:none}
 .cell.hint-cell .cell-val{color:var(--silver)}
 .cell .notes-grid{display:grid;grid-template-columns:repeat(3,1fr);width:100%;height:100%;padding:1px}
-.cell .note-num{font-family:'JetBrains Mono',monospace;font-size:clamp(0.22rem,0.7vw,0.34rem);color:var(--silver);display:flex;align-items:center;justify-content:center;line-height:1}
+.cell .note-num{font-family:'JetBrains Mono',monospace;font-size:clamp(0.32rem,1.1vw,0.45rem);color:var(--silver);display:flex;align-items:center;justify-content:center;line-height:1}
 .cell .note-num.hidden{opacity:0}
 
 /* Sum helper panel */
@@ -93,8 +96,11 @@ body{background:var(--bg);color:var(--text);font-family:'Inter',sans-serif;min-h
 .helper-warn{font-family:'JetBrains Mono',monospace;font-size:0.5rem;color:var(--warn);font-style:italic}
 
 .numpad{display:grid;grid-template-columns:repeat(10,1fr);gap:0.4rem;width:100%}
-.num-btn{aspect-ratio:1;background:var(--surface2);border:1px solid var(--border);border-radius:6px;font-family:'JetBrains Mono',monospace;font-size:clamp(0.8rem,2.5vw,1.1rem);color:var(--text);cursor:pointer;display:flex;align-items:center;justify-content:center;transition:all 0.15s}
+.num-btn{aspect-ratio:1;background:var(--surface2);border:1px solid var(--border);border-radius:6px;font-family:'JetBrains Mono',monospace;color:var(--text);cursor:pointer;display:flex;flex-direction:column;align-items:center;justify-content:center;transition:all 0.15s;gap:0}
+.num-btn .nb-val{font-size:clamp(0.8rem,2.5vw,1.1rem);line-height:1}
+.num-btn .nb-rem{font-size:clamp(0.3rem,0.9vw,0.4rem);color:var(--muted);line-height:1}
 .num-btn:hover{background:var(--surface);border-color:var(--silver-border);color:var(--silver)}
+.num-btn.used{opacity:0.2;pointer-events:none}
 .controls{display:flex;gap:0.5rem;width:100%;flex-wrap:wrap}
 .btn{padding:0.6rem 1rem;font-family:'JetBrains Mono',monospace;font-size:0.6rem;letter-spacing:0.1em;text-transform:uppercase;cursor:pointer;border-radius:6px;border:none;transition:all 0.2s;flex:1;min-width:0}
 .btn-silver{background:var(--silver-bright);color:var(--bg);font-weight:500}
@@ -120,6 +126,9 @@ body{background:var(--bg);color:var(--text);font-family:'Inter',sans-serif;min-h
 .modal-acts .btn{flex:1}
 @keyframes shake{0%,100%{transform:translateX(0)}20%{transform:translateX(-6px)}40%{transform:translateX(6px)}60%{transform:translateX(-4px)}80%{transform:translateX(4px)}}
 .shake{animation:shake 0.35s ease}
+.error-banner{position:absolute;top:50%;left:50%;transform:translate(-50%,-50%);background:rgba(176,58,58,0.95);color:#fff;font-family:'JetBrains Mono',monospace;font-size:1rem;font-weight:700;padding:0.6rem 1.4rem;border-radius:8px;z-index:10;pointer-events:none;animation:errorPop 1.2s ease forwards}
+@keyframes errorPop{0%{opacity:1;transform:translate(-50%,-50%) scale(1)}70%{opacity:1;transform:translate(-50%,-50%) scale(1)}100%{opacity:0;transform:translate(-50%,-50%) scale(0.8)}}
+.btn-ghost:disabled{opacity:0.3;cursor:not-allowed;pointer-events:none}
 @media(max-width:480px){.page{padding:1.5rem 0.5rem 3rem}.game-title{font-size:2.4rem}}
 
 /* How to Play — collapsible */
@@ -202,6 +211,7 @@ body{background:var(--bg);color:var(--text);font-family:'Inter',sans-serif;min-h
       <span class="sl">Mistakes</span>
     </div>
     <div class="si"><span class="sv" id="sv-h">0</span><span class="sl">Hints</span></div>
+    <div class="si"><span class="sv" id="sv-p">0</span><span class="sl">Filled</span></div>
     <div class="si"><span class="sv" id="sv-s">5000</span><span class="sl">Est. Score</span></div>
   </div>
 
@@ -221,7 +231,7 @@ body{background:var(--bg);color:var(--text);font-family:'Inter',sans-serif;min-h
     <button class="btn btn-ghost" onclick="G.undo()">Undo</button>
     <button class="btn btn-ghost" id="notes-btn" onclick="G.toggleNotes()">Notes</button>
     <button class="btn btn-ghost" id="helper-btn" onclick="G.toggleHelper()">Sums</button>
-    <button class="btn btn-ghost" onclick="G.useHint()">Hint (-500)</button>
+    <button class="btn btn-ghost" id="hint-btn" onclick="G.useHint()">Hint (-500)</button>
     <button class="btn btn-silver" onclick="G.submitGrid()">Submit</button>
   </div>
 
@@ -580,6 +590,7 @@ var G = (function() {
         boardEl.appendChild(cell);
       }
     }
+    updateNumpad();
   }
 
   function selectCell(r, c) {
@@ -709,6 +720,7 @@ var G = (function() {
       if (data.correct) {
         done = true;
         clearInterval(timerInterval);
+        await playCompletionWave();
         showModal(true, data.points);
       } else {
         mistakes++;
@@ -753,10 +765,34 @@ var G = (function() {
     for (var i = 1; i <= 9; i++) {
       var btn = document.createElement('button');
       btn.className = 'num-btn';
-      btn.textContent = i;
+      btn.id = 'nbtn' + i;
+      btn.innerHTML = '<span class="nb-val">' + i + '</span><span class="nb-rem" id="nrem' + i + '"></span>';
       (function(v) { btn.onclick = function() { G.inputNum(v); }; })(i);
       np.appendChild(btn);
     }
+  }
+  function updateNumpad() {
+    var filled = 0, totalWhite = 0;
+    var counts = {};
+    for (var rr = 0; rr < SIZE; rr++) {
+      for (var cc = 0; cc < SIZE; cc++) {
+        if (layout[rr][cc] === 'W') {
+          totalWhite++;
+          if (grid[rr][cc] > 0) {
+            filled++;
+            counts[grid[rr][cc]] = (counts[grid[rr][cc]] || 0) + 1;
+          }
+        }
+      }
+    }
+    for (var v = 1; v <= 9; v++) {
+      var rem = document.getElementById('nrem' + v);
+      if (rem) rem.textContent = (counts[v] || 0) > 0 ? (counts[v] || 0) + ' placed' : '';
+    }
+    var prog = document.getElementById('sv-p');
+    if (prog) prog.textContent = filled + '/' + totalWhite;
+    var hintBtn = document.getElementById('hint-btn');
+    if (hintBtn) hintBtn.disabled = (hintsUsed >= 5);
   }
   function buildMistakeDots() {
     var el = document.getElementById('mistake-dots');
@@ -773,6 +809,25 @@ var G = (function() {
       var d = document.getElementById('mdot' + i);
       if (d) d.classList.toggle('active', i < mistakes);
     }
+  }
+  function playCompletionWave() {
+    return new Promise(function(resolve) {
+      var cells = document.querySelectorAll('.cell.white');
+      var maxDiag = (SIZE - 1) * 2;
+      var delayPerDiag = 40;
+      for (var i = 0; i < cells.length; i++) {
+        var r = Math.floor(i / SIZE), c = i % SIZE;
+        // Use actual cell position from DOM order
+        var idx = Array.prototype.indexOf.call(cells[i].parentNode.children, cells[i]);
+        var cr = Math.floor(idx / SIZE), cc = idx % SIZE;
+        var diag = cr + cc;
+        (function(cell, d) {
+          setTimeout(function() { cell.classList.add('wave'); cell.style.background = 'rgba(184,188,198,0.25)'; }, d * delayPerDiag);
+          setTimeout(function() { cell.style.background = ''; }, d * delayPerDiag + 400);
+        })(cells[i], diag);
+      }
+      setTimeout(resolve, maxDiag * delayPerDiag + 500);
+    });
   }
   function setMsg(t, ok) {
     var el = document.getElementById('msg-bar');
