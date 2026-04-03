@@ -99,8 +99,11 @@ body{background:var(--bg);color:var(--text);font-family:'Inter',sans-serif;min-h
 .cell[data-col="2"],.cell[data-col="5"]{border-right:2px solid var(--grid-box)}
 .cell[data-row="2"],.cell[data-row="5"]{border-bottom:2px solid var(--grid-box)}
 .cell:hover{background:var(--surface3)}
+.cell.related{background:rgba(184,188,198,0.06)}
 .cell.selected{background:var(--silver-glow)}
-.cell.same-num{background:var(--silver-dim)}
+.cell.same-num{background:rgba(184,188,198,0.16)}
+.cell.same-num .cell-val{color:var(--silver-bright)}
+.cell.wave{background:var(--silver-glow);transition:background 0.3s ease}
 .cell.given{cursor:default}
 .cell.error{background:rgba(176,58,58,0.25);border-color:var(--red) !important}
 .cell.error-flash{background:rgba(176,58,58,0.35);border-color:var(--red) !important}
@@ -112,7 +115,7 @@ body{background:var(--bg);color:var(--text);font-family:'Inter',sans-serif;min-h
 .cell.error .cell-val{color:var(--red)}
 .cell.hint-reveal .cell-val{color:var(--blue)}
 .notes-grid{display:grid;grid-template-columns:repeat(3,1fr);grid-template-rows:repeat(3,1fr);width:100%;height:100%;padding:1px;gap:0}
-.note-num{font-family:'JetBrains Mono',monospace;font-size:clamp(0.28rem,1vw,0.4rem);color:var(--note-col);display:flex;align-items:center;justify-content:center;line-height:1;user-select:none}
+.note-num{font-family:'JetBrains Mono',monospace;font-size:clamp(0.38rem,1.4vw,0.52rem);color:var(--note-col);display:flex;align-items:center;justify-content:center;line-height:1;user-select:none}
 .note-num.hidden{opacity:0}
 
 /* ── Controls ── */
@@ -126,13 +129,16 @@ body{background:var(--bg);color:var(--text);font-family:'Inter',sans-serif;min-h
 .btn-blue{background:transparent;border:1px solid rgba(58,106,156,0.4);color:var(--blue)}
 .btn-blue:hover{background:rgba(58,106,156,0.1)}
 .btn-blue.active{background:rgba(58,106,156,0.15)}
+.btn-blue:disabled{opacity:0.3;cursor:not-allowed;pointer-events:none}
 .btn-danger{background:transparent;border:1px solid rgba(176,58,58,0.4);color:var(--red)}
 .btn-danger:hover{background:rgba(176,58,58,0.1)}
 
 .numpad{display:grid;grid-template-columns:repeat(10,1fr);gap:0.3rem;width:100%}
-.num-btn{aspect-ratio:1;background:var(--surface);border:1px solid var(--border);border-radius:6px;font-family:'JetBrains Mono',monospace;font-size:clamp(0.7rem,2.5vw,1rem);color:var(--text);cursor:pointer;display:flex;align-items:center;justify-content:center;transition:all 0.15s}
+.num-btn{aspect-ratio:1;background:var(--surface);border:1px solid var(--border);border-radius:6px;font-family:'JetBrains Mono',monospace;color:var(--text);cursor:pointer;display:flex;flex-direction:column;align-items:center;justify-content:center;transition:all 0.15s;position:relative;gap:0}
+.num-btn .nb-val{font-size:clamp(0.7rem,2.5vw,1rem);line-height:1}
+.num-btn .nb-rem{font-size:clamp(0.3rem,0.9vw,0.4rem);color:var(--muted);line-height:1}
 .num-btn:hover{background:var(--surface2);border-color:var(--silver-border);color:var(--silver-bright)}
-.num-btn.used{opacity:0.3}
+.num-btn.used{opacity:0.2;pointer-events:none}
 
 .msg{font-family:'JetBrains Mono',monospace;font-size:0.6rem;text-align:center;min-height:1rem;color:var(--red)}
 .msg.ok{color:var(--green)}
@@ -358,6 +364,7 @@ body{background:var(--bg);color:var(--text);font-family:'Inter',sans-serif;min-h
       <span class="si-lbl">Mistakes (3 max)</span>
     </div>
     <div class="si"><span class="si-val" id="sv-h">0</span><span class="si-lbl">Hints</span></div>
+    <div class="si"><span class="si-val" id="sv-p">35/81</span><span class="si-lbl">Filled</span></div>
     <div class="si"><span class="si-val" id="sv-s">--</span><span class="si-lbl">Est. Score</span></div>
   </div>
 
@@ -372,7 +379,7 @@ body{background:var(--bg);color:var(--text);font-family:'Inter',sans-serif;min-h
   <div class="controls" id="controls" style="display:none">
     <button class="btn btn-ghost" onclick="G.undo()">Undo</button>
     <button class="btn btn-blue" id="notes-btn" onclick="G.toggleNotes()">Notes</button>
-    <button class="btn btn-blue" onclick="G.useHint()">Hint (-200)</button>
+    <button class="btn btn-blue" id="hint-btn" onclick="G.useHint()">Hint (-200)</button>
   </div>
 
   <div class="msg" id="msg-bar"></div>
@@ -881,6 +888,16 @@ var G = (function() {
       if (isGiven) cell.classList.add('given');
       if (i === selected) cell.classList.add('selected');
 
+      // Row/col/box highlighting
+      if (selected !== null && i !== selected) {
+        var selRow = Math.floor(selected / 9), selCol = selected % 9;
+        var selBoxR = Math.floor(selRow / 3) * 3, selBoxC = Math.floor(selCol / 3) * 3;
+        var inRow = row === selRow;
+        var inCol = col === selCol;
+        var inBox = (Math.floor(row / 3) * 3 === selBoxR) && (Math.floor(col / 3) * 3 === selBoxC);
+        if (inRow || inCol || inBox) cell.classList.add('related');
+      }
+
       var val = grid[i];
       if (val !== 0) {
         var span = document.createElement('span');
@@ -899,6 +916,7 @@ var G = (function() {
         cell.appendChild(ng);
       }
 
+      // Same-number highlighting
       if (selected !== null && grid[selected] !== 0 && grid[i] === grid[selected] && i !== selected) {
         cell.classList.add('same-num');
       }
@@ -1082,7 +1100,36 @@ var G = (function() {
     for (var i = 0; i < 81; i++) {
       if (grid[i] === 0) return;
     }
-    endGame(true);
+    playCompletionWave();
+  }
+
+  // Silver wave from top-left to bottom-right, then endGame
+  function playCompletionWave() {
+    done = true; // prevent further input during animation
+    var cells = document.querySelectorAll('.cell');
+    var maxDiag = 16; // max (row + col) = 8 + 8
+    var delayPerDiag = 50; // ms between each diagonal
+
+    for (var i = 0; i < cells.length; i++) {
+      var r = parseInt(cells[i].dataset.row);
+      var c = parseInt(cells[i].dataset.col);
+      var diag = r + c;
+      (function(cell, d) {
+        setTimeout(function() {
+          cell.classList.add('wave');
+          cell.style.background = 'rgba(184,188,198,0.25)';
+        }, d * delayPerDiag);
+        setTimeout(function() {
+          cell.style.background = '';
+        }, d * delayPerDiag + 400);
+      })(cells[i], diag);
+    }
+
+    // After wave completes, trigger endGame
+    setTimeout(function() {
+      done = false; // reset so endGame can proceed
+      endGame(true);
+    }, maxDiag * delayPerDiag + 500);
   }
 
   // ── End game ────────────────────────────────────────────────────────
@@ -1359,19 +1406,30 @@ var G = (function() {
       var btn = document.createElement('button');
       btn.className = 'num-btn';
       btn.id = 'nbtn' + n;
-      btn.textContent = n;
+      btn.innerHTML = '<span class="nb-val">' + n + '</span><span class="nb-rem" id="nrem' + n + '"></span>';
       (function(num) { btn.onclick = function() { inputNum(num); }; })(n);
       np.appendChild(btn);
     }
   }
 
   function updateNumpad() {
+    var filled = 0;
     for (var n = 1; n <= 9; n++) {
       var count = 0;
       for (var i = 0; i < 81; i++) { if (grid[i] === n) count++; }
       var btn = document.getElementById('nbtn' + n);
+      var rem = document.getElementById('nrem' + n);
       if (btn) btn.classList.toggle('used', count >= 9);
+      if (rem) rem.textContent = count >= 9 ? '' : (9 - count) + ' left';
+      filled += count;
     }
+    // Update progress counter
+    var prog = document.getElementById('sv-p');
+    if (prog) prog.textContent = filled + '/81';
+
+    // Update hint button state
+    var hintBtn = document.getElementById('hint-btn');
+    if (hintBtn) hintBtn.disabled = (hintsUsed >= MAX_HINTS);
   }
 
   // ── Utility ─────────────────────────────────────────────────────────
