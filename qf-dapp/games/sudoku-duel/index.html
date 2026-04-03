@@ -857,9 +857,12 @@ var G = (function() {
   }
 
   // ── Number input ────────────────────────────────────────────────────
+  var inputLocked = false;
+
   async function inputNum(n) {
     if (done || selected === null || !timerStarted) return;
     if (puzzle[selected] !== 0) return;
+    if (inputLocked) return;
 
     if (notesMode && n !== 0) {
       if (!notes[selected]) notes[selected] = new Set();
@@ -880,13 +883,14 @@ var G = (function() {
 
     history.push({ idx: selected, val: grid[selected], notes: notes[selected] ? new Set(notes[selected]) : new Set() });
 
+    inputLocked = true;
     try {
       var data = await api('/session/evaluate', {
         sessionToken: sessionToken,
         answer: JSON.stringify({ action: 'place', cell: selected, value: n })
       });
 
-      if (data.error) { setMsg(data.error); return; }
+      if (data.error) { setMsg(data.error); inputLocked = false; return; }
 
       grid[selected] = n;
       notes[selected] = new Set();
@@ -914,6 +918,7 @@ var G = (function() {
     } catch (e) {
       setMsg('Connection error');
     }
+    inputLocked = false;
   }
 
   function clearRelatedNotes(idx, num) {
