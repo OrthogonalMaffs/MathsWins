@@ -232,13 +232,14 @@ export function evaluate(sessionToken, answer) {
       if (session.freePlay) response.freePlay = true;
     }
 
-    // If game over (3 mistakes reported by client via submit with 0 points)
+    // If game over (3 mistakes) — award partial credit for correct cells
     if (result.action === 'submit' && !result.correct) {
-      session.score = 0;
-      if (!session.freePlay) completeSession(payload.sid, 0);
+      const partialScore = result.points || 0;
+      session.score = partialScore;
+      if (!session.freePlay) completeSession(payload.sid, partialScore);
       activeSessions.delete(payload.sid);
-      response.totalScore = 0;
-      response.finalScore = 0;
+      response.totalScore = partialScore;
+      response.finalScore = partialScore;
       response.finished = true;
       if (session.freePlay) response.freePlay = true;
     }

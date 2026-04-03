@@ -1118,17 +1118,19 @@ var G = (function() {
         setMsg('Connection error during submission');
       }
     } else {
+      var partialScore = 0;
       try {
-        await api('/session/evaluate', {
+        var failData = await api('/session/evaluate', {
           sessionToken: sessionToken,
           answer: JSON.stringify({ action: 'submit', grid: grid, mistakes: mistakes, hints: hintsUsed })
         });
+        if (failData && failData.points) partialScore = failData.points;
       } catch (e) { /* ignore */ }
 
       if (duelMode && duelCode) {
         try {
           await api('/duel/' + duelCode + '/submit', {
-            score: 0, timeMs: timeMs, mistakes: mistakes, hints: hintsUsed
+            score: partialScore, timeMs: timeMs, mistakes: mistakes, hints: hintsUsed
           });
         } catch (e) { /* ignore */ }
       }
@@ -1136,20 +1138,20 @@ var G = (function() {
       if (leagueMode && leagueId) {
         try {
           await api('/league/' + leagueId + '/submit', {
-            puzzleIndex: leaguePuzzleIndex, score: 0, timeMs: timeMs, mistakes: mistakes, hints: hintsUsed
+            puzzleIndex: leaguePuzzleIndex, score: partialScore, timeMs: timeMs, mistakes: mistakes, hints: hintsUsed
           });
         } catch (e) { /* ignore */ }
       }
 
       if (promoMode && promoCode) {
         try {
-          var promoResult = await api('/promo/' + encodeURIComponent(promoCode) + '/submit', { score: 0 });
-          showPromoResult(promoResult, secs, 0);
+          var promoResult = await api('/promo/' + encodeURIComponent(promoCode) + '/submit', { score: partialScore });
+          showPromoResult(promoResult, secs, partialScore);
           return;
         } catch (e) { /* ignore */ }
       }
 
-      showModal(false, secs, 0);
+      showModal(false, secs, partialScore);
     }
   }
 
@@ -1162,7 +1164,7 @@ var G = (function() {
       document.getElementById('modal-result').className = 'modal-result ' + (won ? 'win' : 'lose');
       document.getElementById('modal-sub').textContent = won
         ? 'Score submitted to the league. Puzzle ' + (leaguePuzzleIndex + 1) + ' of 10.'
-        : 'Too many mistakes. Score of 0 recorded.';
+        : 'Too many mistakes.' + (score > 0 ? ' Partial credit: ' + score + ' pts.' : '');
       // Override buttons for league
       document.querySelector('.modal-acts').innerHTML =
         '<button class="btn btn-silver" onclick="window.location=\'/qf-dapp/games/sudoku-duel/league/?view=' + leagueId + '\'">Back to League</button>';

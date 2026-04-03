@@ -208,7 +208,13 @@ export function evaluator(question, answer, elapsedMs) {
     }
 
     if (!correct) {
-      return { correct: false, points: 0, error: 'Grid does not match solution' };
+      // Partial credit: 20 points per correct player-placed cell
+      let correctCells = 0;
+      for (let i = 0; i < 81; i++) {
+        if (puzzle[i] === 0 && grid[i] === solution[i]) correctCells++;
+      }
+      const partialScore = correctCells * 20;
+      return { correct: false, points: partialScore, action: 'submit', partialCredit: true, correctCells: correctCells };
     }
 
     // Calculate score
