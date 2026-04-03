@@ -409,10 +409,12 @@ var PLAY_WINDOW_MS = 14 * 24 * 60 * 60 * 1000;  // 14 days
 
 // List active leagues for a game
 router.get('/leagues/:gameId', (req, res) => {
+  const wallet = req.headers['x-wallet-address'];
   const leagues = getActiveLeagues(req.params.gameId);
   const result = leagues.map(l => {
     const playerCount = getLeaguePlayerCount(l.id);
-    return { ...l, player_count: playerCount };
+    const is_player = wallet ? !!isLeaguePlayer(l.id, wallet) : false;
+    return { ...l, player_count: playerCount, is_player };
   });
   res.json(result);
 });

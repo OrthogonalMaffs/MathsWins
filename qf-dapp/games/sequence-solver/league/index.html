@@ -296,6 +296,13 @@ function renderLeagueCards(leagues) {
       '</div>' +
       '<span class="lc-status ' + statusClass + '">' + statusLabel + '</span>';
 
+    if (l.is_player && (l.status === 'active' || l.status === 'settled')) {
+      var btn = document.createElement('button');
+      btn.className = 'lc-join-btn lc-play-btn';
+      btn.textContent = 'Play';
+      btn.onclick = function(e) { e.stopPropagation(); viewLeague(l.id); };
+      card.appendChild(btn);
+    } else
     if (l.status === 'registration' || (l.status === 'active' && l.join_closes_at && now <= l.join_closes_at)) {
       var btn = document.createElement('button');
       btn.className = 'lc-join-btn';
