@@ -192,6 +192,10 @@ export function evaluator(question, answer, elapsedMs, session) {
       return { correct: false, points: 0, error: 'Cannot modify given cell' };
     }
     if (session.grid[cell] !== 0) {
+      // Idempotent: if client re-sends the same correct value, just confirm it
+      if (session.grid[cell] === value) {
+        return { correct: true, points: 0, action: 'place', cell, isCorrect: true, mistakes: session.mistakes, hintsUsed: session.hintsUsed };
+      }
       return { correct: false, points: 0, error: 'Cell already filled' };
     }
 
