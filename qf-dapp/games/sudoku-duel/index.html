@@ -102,7 +102,10 @@ body{background:var(--bg);color:var(--text);font-family:'Inter',sans-serif;min-h
 .cell.selected{background:var(--silver-glow)}
 .cell.same-num{background:var(--silver-dim)}
 .cell.given{cursor:default}
-.cell.error{background:rgba(176,58,58,0.15)}
+.cell.error{background:rgba(176,58,58,0.25);border-color:var(--red) !important}
+.cell.error-flash{background:rgba(176,58,58,0.35);border-color:var(--red) !important}
+.error-banner{position:absolute;top:50%;left:50%;transform:translate(-50%,-50%);background:rgba(176,58,58,0.95);color:#fff;font-family:'JetBrains Mono',monospace;font-size:1rem;font-weight:700;padding:0.6rem 1.4rem;border-radius:8px;z-index:10;pointer-events:none;animation:errorPop 1.2s ease forwards}
+@keyframes errorPop{0%{opacity:1;transform:translate(-50%,-50%) scale(1)}70%{opacity:1;transform:translate(-50%,-50%) scale(1)}100%{opacity:0;transform:translate(-50%,-50%) scale(0.8)}}
 .cell.hint-reveal{background:rgba(58,106,156,0.12)}
 .cell-val{font-family:'JetBrains Mono',monospace;font-size:clamp(0.7rem,2.8vw,1.05rem);font-weight:500;color:var(--text);line-height:1;user-select:none}
 .cell.given .cell-val{color:var(--silver-bright)}
@@ -959,17 +962,47 @@ var G = (function() {
         clearRelatedNotes(selected, n);
         setMsg('');
       } else {
-        // Wrong placement — don't put it in the grid (server didn't)
+        // Wrong placement — show it briefly in red, then clear
         notes[selected] = new Set();
+        grid[selected] = n; // temporarily show the wrong value
         updateMistakes();
-        var cellEl = document.querySelector('.cell[data-idx="' + selected + '"]');
-        if (cellEl) { cellEl.classList.add('error', 'shake'); }
+        renderBoard();
+
+        var errCell = document.querySelector('.cell[data-idx="' + selected + '"]');
+        if (errCell) {
+          errCell.classList.add('error', 'error-flash', 'shake');
+          if (errCell.querySelector('.cell-val')) errCell.querySelector('.cell-val').style.color = 'var(--red)';
+        }
+
+        // Show error banner over the board
+        var boardWrap = document.getElementById('board-wrap');
+        var banner = document.createElement('div');
+        banner.className = 'error-banner';
+        banner.textContent = 'WRONG — ' + mistakes + '/' + MAX_MISTAKES;
+        boardWrap.style.position = 'relative';
+        boardWrap.appendChild(banner);
+
+        setMsg('Mistake ' + mistakes + ' of ' + MAX_MISTAKES);
 
         // Server signals game over on 3 mistakes
-        if (data.gameOver) {
-          endGame(false, data.partialScore || 0);
+        var isGameOver = data.gameOver;
+        var partialScore = data.partialScore || 0;
+
+        // Hold the error visible for 1.2 seconds
+        await new Promise(function(r) { setTimeout(r, 1200); });
+
+        // Remove the wrong value and banner
+        grid[selected] = 0;
+        if (banner.parentNode) banner.parentNode.removeChild(banner);
+
+        if (isGameOver) {
+          endGame(false, partialScore);
           return;
         }
+
+        renderBoard();
+        updateNumpad();
+        return;
       }
 
       renderBoard();
