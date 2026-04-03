@@ -895,6 +895,7 @@ var G = (function() {
         clearRelatedNotes(selected, n);
         setMsg('');
       } else {
+        console.warn('[DEBUG] Mistake counted — notesMode:', notesMode, 'cell:', selected, 'value:', n);
         mistakes++;
         updateMistakes();
         var cellEl = document.querySelector('.cell[data-idx="' + selected + '"]');
