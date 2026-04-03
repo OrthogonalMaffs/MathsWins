@@ -77,3 +77,24 @@ Split from MaffsGames in March 2025. MaffsGames = free schools games. MathsWins 
 - No wallet connection code without explicit approval
 - 10% burn on every QF payment is non-negotiable
 - No crossover with maffsgames.co.uk branding or contact
+
+
+## Task Contract
+
+All tasks arriving from Jon (relayed from Claude chat) will be structured as follows.
+Do not begin work unless all six fields are present:
+
+TASK: [one sentence description]
+ROOT CAUSE: [what is actually wrong]
+EXACT CHANGE: [file, function, what changes to what]
+DO NOT TOUCH: [explicit exclusions]
+SUCCESS CONDITION: [how to know the task is complete]
+STOP IF: [conditions that require you to halt and report back to Jon]
+
+### Behaviour rules
+
+- Before touching any file, state your understanding of the ROOT CAUSE in one sentence.
+- If you hit something unexpected, do not improvise. Invoke STOP IF and report back.
+- Do not refactor, rename, reformat, or tidy anything outside EXACT CHANGE.
+- One pass. If it isn't right, stop and report — do not attempt iterative self-correction.
+- If a task arrives without this structure, ask Jon for the missing fields before proceeding.
