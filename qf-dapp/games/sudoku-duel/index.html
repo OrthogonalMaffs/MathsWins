@@ -1014,12 +1014,14 @@ var G = (function() {
         if (banner.parentNode) banner.parentNode.removeChild(banner);
 
         if (isGameOver) {
+          inputLocked = false;
           endGame(false, partialScore);
           return;
         }
 
         renderBoard();
         updateNumpad();
+        inputLocked = false;
         return;
       }
 
