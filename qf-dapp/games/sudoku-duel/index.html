@@ -732,87 +732,73 @@ var G = (function() {
   }
 
   // ── Start game session ──────────────────────────────────────────────
-  // ── Session persistence (league puzzles survive refresh) ───────────
-  function getSessionKey() {
-    if (!leagueMode || !leagueId) return null;
-    return 'sd_session_' + leagueId + '_' + leaguePuzzleIndex;
-  }
-
-  function saveSessionState() {
-    var key = getSessionKey();
-    if (!key) return;
-    var state = {
-      sessionToken: sessionToken,
-      puzzle: puzzle,
-      grid: grid,
-      notes: notes.map(function(s) { return Array.from(s); }),
-      mistakes: mistakes,
-      hintsUsed: hintsUsed,
-      startTime: startTime,
-      done: done
-    };
-    sessionStorage.setItem(key, JSON.stringify(state));
-  }
-
-  function loadSessionState() {
-    var key = getSessionKey();
-    if (!key) return null;
-    var raw = sessionStorage.getItem(key);
-    if (!raw) return null;
-    try {
-      var state = JSON.parse(raw);
-      // Validate the session is still alive on the server
-      if (!state.sessionToken || !state.puzzle) return null;
-      return state;
-    } catch (e) { return null; }
-  }
-
-  function clearSessionState() {
-    var key = getSessionKey();
-    if (key) sessionStorage.removeItem(key);
+  // ── Shared UI setup after session load ──────────────────────────────
+  function showGameUI() {
+    document.getElementById('status-bar').style.display = 'flex';
+    document.getElementById('board-wrap').style.display = 'flex';
+    document.getElementById('numpad').style.display = 'grid';
+    document.getElementById('controls').style.display = 'flex';
+    buildNumpad();
+    renderBoard();
+    updateNumpad();
+    updateMistakes();
   }
 
   async function startGameSession(forceSeed, withCountdown) {
     setMsg('');
 
-    // Try to resume a saved league session (survives page refresh)
-    var saved = loadSessionState();
-    if (saved && !saved.done) {
-      sessionToken = saved.sessionToken;
-      puzzle = saved.puzzle;
-      grid = saved.grid;
-      notes = saved.notes.map(function(a) { return new Set(a); });
-      mistakes = saved.mistakes;
-      hintsUsed = saved.hintsUsed;
-      startTime = saved.startTime;
-      selected = null;
-      history = [];
-      done = false;
-      inputLocked = false;
+    // League mode: try server-side resume first (survives refresh + restart)
+    if (leagueMode && leagueId) {
+      try {
+        var resumeData = await api('/session/resume', {
+          contextType: 'league', contextId: leagueId, puzzleIndex: leaguePuzzleIndex
+        });
+        if (resumeData.exists) {
+          sessionToken = resumeData.token;
+          puzzle = resumeData.question.puzzle;
+          grid = resumeData.grid;
+          notes = [];
+          for (var i = 0; i < 81; i++) notes.push(new Set());
+          mistakes = resumeData.mistakes || 0;
+          hintsUsed = resumeData.hintsUsed || 0;
+          selected = null;
+          history = [];
+          done = false;
+          inputLocked = false;
 
-      document.getElementById('status-bar').style.display = 'flex';
-      document.getElementById('board-wrap').style.display = 'flex';
-      document.getElementById('numpad').style.display = 'grid';
-      document.getElementById('controls').style.display = 'flex';
+          // Mark hint cells visually
+          var hintSet = new Set(resumeData.hintCells || []);
 
-      buildNumpad();
-      renderBoard();
-      updateNumpad();
-      updateMistakes();
-      document.getElementById('sv-h').textContent = hintsUsed;
+          showGameUI();
+          document.getElementById('sv-h').textContent = hintsUsed;
 
-      timerStarted = true;
-      timerInterval = setInterval(updateTimer, 1000);
-      updateTimer();
-      return;
+          // Resume timer from server-authoritative elapsed time
+          var elapsed = resumeData.elapsedMs || 0;
+          startTime = Date.now() - elapsed;
+          timerStarted = true;
+          timerInterval = setInterval(updateTimer, 1000);
+          updateTimer();
+          return;
+        }
+      } catch (e) { /* resume failed, fall through to new session */ }
     }
 
     try {
       var body = { gameId: GAME_ID };
       if (forceSeed != null) body.seed = forceSeed;
+      if (leagueMode && leagueId) {
+        body.leagueId = leagueId;
+        body.puzzleIndex = leaguePuzzleIndex;
+      }
 
       var data = await api('/session/start', body);
-      if (data.error) { setMsg(data.error); showPreGame(); return; }
+      if (data.error) {
+        // If active session exists, try resume
+        if (data.error === 'ACTIVE_SESSION_EXISTS') {
+          return startGameSession(forceSeed, withCountdown);
+        }
+        setMsg(data.error); showPreGame(); return;
+      }
 
       sessionToken = data.token;
       puzzle = data.question.puzzle;
@@ -826,21 +812,12 @@ var G = (function() {
       done = false;
       inputLocked = false;
 
-      document.getElementById('status-bar').style.display = 'flex';
-      document.getElementById('board-wrap').style.display = 'flex';
-      document.getElementById('numpad').style.display = 'grid';
-      document.getElementById('controls').style.display = 'flex';
-
-      buildNumpad();
-      renderBoard();
-      updateNumpad();
-      updateMistakes();
+      showGameUI();
 
       if (withCountdown) {
         await showCountdown();
       }
       startTimer();
-      saveSessionState();
 
     } catch (e) {
       setMsg('Connection error');
@@ -949,7 +926,6 @@ var G = (function() {
       if (notes[selected].has(n)) notes[selected].delete(n);
       else notes[selected].add(n);
       renderBoard();
-      saveSessionState();
       return;
     }
 
@@ -959,7 +935,6 @@ var G = (function() {
       notes[selected] = new Set();
       renderBoard();
       updateNumpad();
-      saveSessionState();
       return;
     }
 
@@ -974,27 +949,31 @@ var G = (function() {
 
       if (data.error) { setMsg(data.error); inputLocked = false; return; }
 
-      grid[selected] = n;
-      notes[selected] = new Set();
+      // Use server-authoritative mistake/hint counts
+      if (data.mistakes !== undefined) mistakes = data.mistakes;
+      if (data.hintsUsed !== undefined) hintsUsed = data.hintsUsed;
 
       if (data.isCorrect) {
+        grid[selected] = n;
+        notes[selected] = new Set();
         clearRelatedNotes(selected, n);
         setMsg('');
       } else {
-        mistakes++;
+        // Wrong placement — don't put it in the grid (server didn't)
+        notes[selected] = new Set();
         updateMistakes();
         var cellEl = document.querySelector('.cell[data-idx="' + selected + '"]');
         if (cellEl) { cellEl.classList.add('error', 'shake'); }
 
-        if (mistakes >= MAX_MISTAKES) {
-          endGame(false);
+        // Server signals game over on 3 mistakes
+        if (data.gameOver) {
+          endGame(false, data.partialScore || 0);
           return;
         }
       }
 
       renderBoard();
       updateNumpad();
-      saveSessionState();
       checkComplete();
 
     } catch (e) {
@@ -1046,7 +1025,7 @@ var G = (function() {
 
       if (data.error) { setMsg(data.error); return; }
 
-      hintsUsed++;
+      if (data.hintsUsed !== undefined) hintsUsed = data.hintsUsed;
       grid[selected] = data.value;
       notes[selected] = new Set();
       document.getElementById('sv-h').textContent = hintsUsed;
@@ -1059,7 +1038,6 @@ var G = (function() {
       var cellEl = document.querySelector('.cell[data-idx="' + selected + '"]');
       if (cellEl) cellEl.classList.add('hint-reveal');
 
-      saveSessionState();
       checkComplete();
     } catch (e) {
       setMsg('Connection error');
@@ -1075,38 +1053,35 @@ var G = (function() {
   }
 
   // ── End game ────────────────────────────────────────────────────────
-  async function endGame(won) {
+  async function endGame(won, serverPartialScore) {
     done = true;
     clearInterval(timerInterval);
-    clearSessionState();
     var secs = getSecs();
     var timeMs = secs * 1000;
 
     if (won) {
       try {
+        // Server submit uses server-authoritative grid/state
         var data = await api('/session/evaluate', {
           sessionToken: sessionToken,
-          answer: JSON.stringify({ action: 'submit', grid: grid, mistakes: mistakes, hints: hintsUsed })
+          answer: JSON.stringify({ action: 'submit' })
         });
 
         if (data.error) { setMsg(data.error); return; }
         var finalScore = data.finalScore || data.points;
 
-        // If duel mode, submit score to duel endpoint
         if (duelMode && duelCode) {
           await api('/duel/' + duelCode + '/submit', {
             score: finalScore, timeMs: timeMs, mistakes: mistakes, hints: hintsUsed
           });
         }
 
-        // If league mode, submit score to league endpoint
         if (leagueMode && leagueId) {
           await api('/league/' + leagueId + '/submit', {
             puzzleIndex: leaguePuzzleIndex, score: finalScore, timeMs: timeMs, mistakes: mistakes, hints: hintsUsed
           });
         }
 
-        // If promo mode, submit score and show result
         if (promoMode && promoCode) {
           var promoResult = await api('/promo/' + encodeURIComponent(promoCode) + '/submit', { score: finalScore });
           showPromoResult(promoResult, secs, finalScore);
@@ -1118,14 +1093,9 @@ var G = (function() {
         setMsg('Connection error during submission');
       }
     } else {
-      var partialScore = 0;
-      try {
-        var failData = await api('/session/evaluate', {
-          sessionToken: sessionToken,
-          answer: JSON.stringify({ action: 'submit', grid: grid, mistakes: mistakes, hints: hintsUsed })
-        });
-        if (failData && failData.points) partialScore = failData.points;
-      } catch (e) { /* ignore */ }
+      // Game over (3 mistakes) — server already completed the session
+      // serverPartialScore comes from the placement response that triggered game over
+      var partialScore = serverPartialScore || 0;
 
       if (duelMode && duelCode) {
         try {

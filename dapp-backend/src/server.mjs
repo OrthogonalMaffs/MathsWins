@@ -6,6 +6,7 @@ import { expireOldDuels } from './db/index.mjs';
 import apiRoutes from './routes/api.mjs';
 import { checkLeagueLifecycles } from './routes/api.mjs';
 import { registerAllGames } from './games/index.mjs';
+import { recoverSessions } from './scoring.mjs';
 import { startListener } from './chain-listener.mjs';
 import { initEscrow, getEscrowAddress, getEscrowBalance } from './escrow.mjs';
 import { ethers } from 'ethers';
@@ -89,6 +90,9 @@ const escrowAddr = initEscrow();
 
 registerAllGames();
 console.log('Game banks loaded');
+
+recoverSessions();
+console.log('Session recovery complete');
 
 startListener();
 console.log('Chain listener started');

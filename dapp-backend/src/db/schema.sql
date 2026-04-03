@@ -185,3 +185,26 @@ CREATE INDEX IF NOT EXISTS idx_leagues_status ON leagues(status);
 CREATE INDEX IF NOT EXISTS idx_leagues_game ON leagues(game_id, status);
 CREATE INDEX IF NOT EXISTS idx_league_players_wallet ON league_players(wallet);
 CREATE INDEX IF NOT EXISTS idx_league_scores_league ON league_scores(league_id, wallet);
+
+-- Active game state (persistent sessions — survives server restart)
+CREATE TABLE IF NOT EXISTS active_game_state (
+    session_id   TEXT PRIMARY KEY,
+    wallet       TEXT NOT NULL,
+    game_id      TEXT NOT NULL,
+    context_type TEXT NOT NULL,
+    context_id   TEXT,
+    puzzle_index INTEGER,
+    seed         INTEGER NOT NULL,
+    started_at   INTEGER NOT NULL,
+    placements   TEXT DEFAULT '[]',
+    hints        TEXT DEFAULT '[]',
+    mistakes     INTEGER DEFAULT 0,
+    hints_used   INTEGER DEFAULT 0,
+    status       TEXT DEFAULT 'active',
+    flagged      TEXT,
+    completed_at INTEGER,
+    score        INTEGER,
+    free_play    INTEGER DEFAULT 0
+);
+CREATE INDEX IF NOT EXISTS idx_ags_wallet ON active_game_state(wallet, context_type, context_id, puzzle_index);
+CREATE INDEX IF NOT EXISTS idx_ags_status ON active_game_state(status);

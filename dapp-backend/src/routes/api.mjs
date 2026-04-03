@@ -4,7 +4,7 @@ import { getLeaderboard, getEntry, getPaidGames } from '../db/index.mjs';
 import { createDuel, getDuelByCode, getDuelById, updateDuelCreatorScore, acceptDuel, updateDuelOpponentScore, completeDuel, expireOldDuels, getDuelsByWallet, getActiveDuelCount } from '../db/index.mjs';
 import { createLeague, getLeagueById, getActiveLeagues, getAllLeagues, updateLeagueStatus, startLeague, settleLeague, cancelLeague, addLeaguePlayer, getLeaguePlayers, getLeaguePlayerCount, isLeaguePlayer, markRefunded, addLeaguePuzzle, getLeaguePuzzles, addLeagueScore, getLeagueScore, getLeagueScoresByWallet, getLeagueLeaderboard, addLeaguePrize, getLeaguePrizes } from '../db/index.mjs';
 import { createPromoChallenge, getPromoByCode, getPromoById, getPromoClaim, addPromoClaim, getPromoClaims } from '../db/index.mjs';
-import { startSession, startFreeSession, evaluate, getCurrentWeekId } from '../scoring.mjs';
+import { startSession, startFreeSession, evaluate, getCurrentWeekId, resumeSession } from '../scoring.mjs';
 import { ethers } from 'ethers';
 import { getDb } from '../db/index.mjs';
 
@@ -63,27 +63,53 @@ function optionalWallet(req, res, next) {
 
 router.post('/session/start', optionalWallet, (req, res) => {
   try {
-    const { gameId } = req.body;
+    const { gameId, seed, leagueId, puzzleIndex } = req.body;
     if (!gameId) return res.status(400).json({ error: 'gameId required' });
 
     const weekId = getCurrentWeekId();
 
+    // Build context opts for persistent sessions
+    const opts = { seed: seed != null ? seed : undefined };
+    if (leagueId) {
+      opts.contextType = 'league';
+      opts.contextId = leagueId;
+      opts.puzzleIndex = puzzleIndex;
+      opts.wallet = req.wallet || null;
+    }
+
     // Free play: no wallet or no on-chain entry — guest session
     if (!req.wallet) {
-      const result = startFreeSession(gameId, weekId);
+      const result = startFreeSession(gameId, weekId, opts);
       return res.json(result);
     }
 
     // Check for paid entry
     const entry = getEntry(req.wallet, gameId, weekId);
     if (!entry) {
-      // Wallet connected but no entry — allow free play anyway
-      const result = startFreeSession(gameId, weekId);
+      const result = startFreeSession(gameId, weekId, opts);
       return res.json(result);
     }
 
     const result = startSession(req.wallet, gameId, weekId);
     res.json(result);
+  } catch (e) {
+    if (e.message === 'ACTIVE_SESSION_EXISTS') {
+      return res.status(409).json({ error: 'ACTIVE_SESSION_EXISTS', message: 'Use /session/resume instead' });
+    }
+    res.status(400).json({ error: e.message });
+  }
+});
+
+// Resume an existing persistent session (league puzzle after refresh/restart)
+router.post('/session/resume', optionalWallet, (req, res) => {
+  try {
+    if (!req.wallet) return res.status(401).json({ error: 'Wallet required' });
+    const { contextType, contextId, puzzleIndex } = req.body;
+    if (!contextType || contextId == null) return res.status(400).json({ error: 'contextType and contextId required' });
+
+    const result = resumeSession(req.wallet, contextType, contextId, puzzleIndex != null ? puzzleIndex : null);
+    if (!result) return res.json({ exists: false });
+    res.json({ exists: true, ...result });
   } catch (e) {
     res.status(400).json({ error: e.message });
   }

@@ -364,3 +364,40 @@ export function getLeaguePrizes(leagueId) {
   const db = getDb();
   return db.prepare('SELECT * FROM league_prizes WHERE league_id = ? ORDER BY position ASC').all(leagueId);
 }
+
+// ── Active game state (persistent sessions) ──────────────────────────
+
+export function createGameState(sessionId, wallet, gameId, contextType, contextId, puzzleIndex, seed, startedAt, freePlay) {
+  const db = getDb();
+  db.prepare(`INSERT INTO active_game_state (session_id, wallet, game_id, context_type, context_id, puzzle_index, seed, started_at, free_play)
+    VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)`).run(sessionId, wallet.toLowerCase(), gameId, contextType, contextId, puzzleIndex, seed, startedAt, freePlay ? 1 : 0);
+}
+
+export function getGameState(sessionId) {
+  const db = getDb();
+  return db.prepare('SELECT * FROM active_game_state WHERE session_id = ?').get(sessionId);
+}
+
+export function getActiveGameState(wallet, contextType, contextId, puzzleIndex) {
+  const db = getDb();
+  return db.prepare(`SELECT * FROM active_game_state WHERE wallet = ? AND context_type = ? AND context_id = ? AND puzzle_index = ? AND status = 'active'`)
+    .get(wallet.toLowerCase(), contextType, contextId, puzzleIndex);
+}
+
+export function updateGameState(sessionId, placements, hints, mistakes, hintsUsed) {
+  const db = getDb();
+  db.prepare(`UPDATE active_game_state SET placements = ?, hints = ?, mistakes = ?, hints_used = ? WHERE session_id = ?`)
+    .run(placements, hints, mistakes, hintsUsed, sessionId);
+}
+
+export function completeGameState(sessionId, status, score, flagged) {
+  const db = getDb();
+  db.prepare(`UPDATE active_game_state SET status = ?, score = ?, flagged = ?, completed_at = ? WHERE session_id = ?`)
+    .run(status, score, flagged, Date.now(), sessionId);
+}
+
+export function loadActiveGameStates() {
+  const db = getDb();
+  const cutoff = Date.now() - (3600 * 1000);
+  return db.prepare(`SELECT * FROM active_game_state WHERE status = 'active' AND started_at > ?`).all(cutoff);
+}

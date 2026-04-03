@@ -3,8 +3,7 @@
  *
  * Puzzle generated from a seed (daily or per-challenge).
  * Solution NEVER sent to client. Client receives only the clue grid.
- * Hints served one cell at a time via the evaluate endpoint.
- * Final grid validated server-side before score is recorded.
+ * Server tracks all state: grid, mistakes, hints, placement timestamps.
  *
  * Scoring:
  *   Base: 5000 points
@@ -12,7 +11,12 @@
  *   Hint penalty: -200 per hint used (max 5)
  *   Time multiplier: 1 / (1 + 0.008 × ln(1 + seconds))
  *   Final = max(1, floor((base - penalties) × multiplier))
- *   DNF (3 mistakes) = 0 points
+ *   DNF (3 mistakes) = partial credit (20 pts per correct cell)
+ *
+ * Anti-cheat:
+ *   Hard floor: total solve < 60s → reject
+ *   Soft flag: total < 120s, 0 mistakes, 0 hints → flag for review
+ *   Rapid input: 10+ consecutive correct cells avg < 1.5s → flag
  *
  * SOLUTION NEVER LEAVES THIS FILE.
  */
@@ -25,6 +29,12 @@ export const HINT_COST = 200;
 export const TIME_DECAY = 0.008;
 export const MAX_MISTAKES = 3;
 export const MAX_HINTS = 5;
+
+// Anti-cheat thresholds
+const MIN_SOLVE_MS = 60_000;
+const SOFT_FLAG_MS = 120_000;
+const RAPID_WINDOW = 10;
+const RAPID_THRESHOLD_MS = 1500;
 
 // ── Seeded PRNG ─────────────────────────────────────────────────────────
 function seededRand(seed) {
@@ -45,7 +55,7 @@ function shuffle(arr, rng) {
 }
 
 // ── Puzzle generation ───────────────────────────────────────────────────
-function generateBoard(seed) {
+export function generateBoard(seed) {
   const rng = seededRand(seed);
   const board = Array(81).fill(0);
 
@@ -78,7 +88,6 @@ function generateBoard(seed) {
   solve(board);
   const solution = [...board];
 
-  // Remove cells — 46 removed, 35 clues remain (medium difficulty)
   const positions = shuffle([...Array(81).keys()], rng);
   const puzzle = [...board];
   let removed = 0;
@@ -97,13 +106,6 @@ export function getDailySeed() {
   return Math.floor((Date.now() - epoch) / 86400000) + 42;
 }
 
-// ── Session state stored in memory alongside the scoring engine ─────────
-// We use a custom approach: the "questions" array has one entry (the puzzle),
-// and the evaluator handles cell placements, hints, and final submission.
-
-// Active sudoku sessions: sessionId => { puzzle, solution, grid, mistakes, hintsUsed, startedAt }
-const sudokuSessions = new Map();
-
 /**
  * Create a Sudoku session. Called by the scoring engine's startSession.
  * Returns the puzzle grid (no solution) as the "question".
@@ -112,7 +114,6 @@ export function selectQuestions(seed) {
   const s = seed || getDailySeed();
   const { puzzle, solution } = generateBoard(s);
 
-  // Return a single "question" that contains the puzzle
   return [{
     type: 'sudoku',
     text: 'Solve the Sudoku puzzle',
@@ -122,18 +123,42 @@ export function selectQuestions(seed) {
   }];
 }
 
+// ── Anti-cheat checks ───────────────────────────────────────────────────
+function checkAntiCheat(session, elapsedMs) {
+  let flagged = null;
+
+  if (elapsedMs < MIN_SOLVE_MS) {
+    return 'solve_too_fast';
+  }
+
+  if (elapsedMs < SOFT_FLAG_MS && session.mistakes === 0 && session.hintsUsed === 0) {
+    flagged = 'suspiciously_fast';
+  }
+
+  const correctPlacements = session.placements.filter(p => p.correct);
+  if (correctPlacements.length >= RAPID_WINDOW) {
+    for (let i = 0; i <= correctPlacements.length - RAPID_WINDOW; i++) {
+      const windowMs = correctPlacements[i + RAPID_WINDOW - 1].ts - correctPlacements[i].ts;
+      if (windowMs / RAPID_WINDOW < RAPID_THRESHOLD_MS) {
+        flagged = flagged || 'rapid_input';
+        break;
+      }
+    }
+  }
+
+  return flagged;
+}
+
 /**
  * Evaluate a Sudoku action from the client.
+ * Server-authoritative: session object tracks grid, mistakes, hints, placements.
  *
  * Actions:
- *   { action: 'place', cell: 0-80, value: 1-9 }  — place a number
- *   { action: 'erase', cell: 0-80 }               — erase a cell
- *   { action: 'hint', cell: 0-80 }                 — request a hint
- *   { action: 'submit', grid: [81 numbers] }       — submit completed grid
- *
- * Returns: { correct, points, ... } depending on action
+ *   { action: 'place', cell: 0-80, value: 1-9 }
+ *   { action: 'hint', cell: 0-80 }
+ *   { action: 'submit' }
  */
-export function evaluator(question, answer, elapsedMs) {
+export function evaluator(question, answer, elapsedMs, session) {
   if (typeof answer === 'string') {
     try { answer = JSON.parse(answer); } catch(e) {
       return { correct: false, points: 0, error: 'Invalid action' };
@@ -146,6 +171,14 @@ export function evaluator(question, answer, elapsedMs) {
 
   const puzzle = question.puzzle;
   const solution = question.solution;
+  const now = Date.now();
+
+  // Initialise server-authoritative state on session if not present
+  if (!session.grid) session.grid = [...puzzle];
+  if (!session.placements) session.placements = [];
+  if (!session.hintLog) session.hintLog = [];
+  if (session.mistakes === undefined) session.mistakes = 0;
+  if (session.hintsUsed === undefined) session.hintsUsed = 0;
 
   // ── Place a number ──────────────────────────────────────────────────
   if (answer.action === 'place') {
@@ -158,15 +191,41 @@ export function evaluator(question, answer, elapsedMs) {
     if (puzzle[cell] !== 0) {
       return { correct: false, points: 0, error: 'Cannot modify given cell' };
     }
+    if (session.grid[cell] !== 0) {
+      return { correct: false, points: 0, error: 'Cell already filled' };
+    }
 
     const isCorrect = value === solution[cell];
-    return {
+
+    session.placements.push({ cell, value, correct: isCorrect, ts: now });
+
+    if (isCorrect) {
+      session.grid[cell] = value;
+    } else {
+      session.mistakes++;
+    }
+
+    const result = {
       correct: isCorrect,
       points: 0,
       action: 'place',
       cell: cell,
       isCorrect: isCorrect,
+      mistakes: session.mistakes,
+      hintsUsed: session.hintsUsed,
     };
+
+    // Auto game-over on 3 mistakes
+    if (session.mistakes >= MAX_MISTAKES) {
+      let correctCells = 0;
+      for (let i = 0; i < 81; i++) {
+        if (puzzle[i] === 0 && session.grid[i] === solution[i]) correctCells++;
+      }
+      result.gameOver = true;
+      result.partialScore = correctCells * 20;
+    }
+
+    return result;
   }
 
   // ── Request a hint ────────────────────────────────────────────────
@@ -178,6 +237,16 @@ export function evaluator(question, answer, elapsedMs) {
     if (puzzle[cell] !== 0) {
       return { correct: false, points: 0, error: 'Cell is already given' };
     }
+    if (session.grid[cell] !== 0) {
+      return { correct: false, points: 0, error: 'Cell already filled' };
+    }
+    if (session.hintsUsed >= MAX_HINTS) {
+      return { correct: false, points: 0, error: 'No hints remaining' };
+    }
+
+    session.hintsUsed++;
+    session.grid[cell] = solution[cell];
+    session.hintLog.push({ cell, ts: now });
 
     return {
       correct: true,
@@ -185,41 +254,41 @@ export function evaluator(question, answer, elapsedMs) {
       action: 'hint',
       cell: cell,
       value: solution[cell],
+      mistakes: session.mistakes,
+      hintsUsed: session.hintsUsed,
     };
   }
 
-  // ── Submit completed grid ─────────────────────────────────────────
+  // ── Submit (check completion) ─────────────────────────────────────
   if (answer.action === 'submit') {
-    const grid = answer.grid;
-    const mistakes = answer.mistakes || 0;
-    const hints = answer.hints || 0;
-
-    if (!Array.isArray(grid) || grid.length !== 81) {
-      return { correct: false, points: 0, error: 'Invalid grid' };
-    }
-
-    // Validate every cell matches solution
-    let correct = true;
+    // Check if grid is complete and correct (using server grid, not client)
+    let complete = true;
     for (let i = 0; i < 81; i++) {
-      if (grid[i] !== solution[i]) {
-        correct = false;
+      if (session.grid[i] !== solution[i]) {
+        complete = false;
         break;
       }
     }
 
-    if (!correct) {
-      // Partial credit: 20 points per correct player-placed cell
+    if (!complete) {
+      // Partial credit for game-over or incomplete submit
       let correctCells = 0;
       for (let i = 0; i < 81; i++) {
-        if (puzzle[i] === 0 && grid[i] === solution[i]) correctCells++;
+        if (puzzle[i] === 0 && session.grid[i] === solution[i]) correctCells++;
       }
       const partialScore = correctCells * 20;
       return { correct: false, points: partialScore, action: 'submit', partialCredit: true, correctCells: correctCells };
     }
 
-    // Calculate score
+    // Anti-cheat
+    const flagged = checkAntiCheat(session, elapsedMs);
+    if (flagged === 'solve_too_fast') {
+      return { correct: false, points: 0, action: 'submit', error: 'Solve time too fast', flagged: 'solve_too_fast' };
+    }
+
+    // Calculate score using server-authoritative state
     const secs = elapsedMs ? elapsedMs / 1000 : 0;
-    const pen = mistakes * MISTAKE_COST + hints * HINT_COST;
+    const pen = session.mistakes * MISTAKE_COST + session.hintsUsed * HINT_COST;
     const mult = 1 / (1 + TIME_DECAY * Math.log(1 + secs));
     const points = Math.max(1, Math.round((BASE_SCORE - pen) * mult));
 
@@ -228,9 +297,10 @@ export function evaluator(question, answer, elapsedMs) {
       points: points,
       action: 'submit',
       time: Math.round(secs),
-      mistakes: mistakes,
-      hints: hints,
+      mistakes: session.mistakes,
+      hints: session.hintsUsed,
       multiplier: Math.round(mult * 1000) / 1000,
+      flagged: flagged,
     };
   }
 
