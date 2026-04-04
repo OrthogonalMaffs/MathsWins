@@ -801,7 +801,9 @@ var G = (function() {
         body.leagueId = leagueId;
       }
 
+      console.log('[LEAGUE DEBUG] session/start request — wallet:', W.state.address, 'body:', JSON.stringify(body));
       var data = await api('/session/start', body);
+      console.log('[LEAGUE DEBUG] session/start response — puzzleIndex:', data.puzzleIndex, 'error:', data.error, 'freePlay:', data.freePlay);
       if (data.error) {
         if (data.error === 'ACTIVE_SESSION_EXISTS') {
           return startGameSession(forceSeed, withCountdown);
