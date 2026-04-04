@@ -319,7 +319,7 @@ function generateShareCode() {
 }
 
 // Create a duel
-router.post('/duel/create', requireAuth, async (req, res) => {
+router.post('/duel/create', optionalWallet, async (req, res) => {
   const wallet = req.wallet;
 
   const { gameId, difficulty, stake } = req.body;
@@ -371,7 +371,7 @@ router.get('/duel/:code', (req, res) => {
 });
 
 // Accept a duel (opponent joins)
-router.post('/duel/:code/accept', requireAuth, (req, res) => {
+router.post('/duel/:code/accept', optionalWallet, (req, res) => {
   const wallet = req.wallet;
 
   const code = req.params.code.toUpperCase();
@@ -392,7 +392,7 @@ router.post('/duel/:code/accept', requireAuth, (req, res) => {
 });
 
 // Submit duel score (both creator and opponent use this)
-router.post('/duel/:code/submit', requireAuth, (req, res) => {
+router.post('/duel/:code/submit', optionalWallet, (req, res) => {
   const wallet = req.wallet;
 
   const code = req.params.code.toUpperCase();
@@ -596,13 +596,13 @@ router.get('/leagues/:gameId/all', (req, res) => {
 });
 
 // Get single league details
-router.get('/league/:leagueId', (req, res) => {
+router.get('/league/:leagueId', optionalWallet, (req, res) => {
   const league = getLeagueById(req.params.leagueId);
   if (!league) return res.status(404).json({ error: 'League not found' });
 
   const playerCount = getLeaguePlayerCount(league.id);
   const players = getLeaguePlayers(league.id);
-  const wallet = req.headers['x-wallet-address'];
+  const wallet = req.wallet || req.headers['x-wallet-address'];
   const isPlayer = wallet ? !!isLeaguePlayer(league.id, wallet) : false;
 
   // Leaderboard: only show if join window closed
@@ -625,7 +625,7 @@ router.get('/league/:leagueId', (req, res) => {
 });
 
 // Join a league
-router.post('/league/:leagueId/join', requireAuth, (req, res) => {
+router.post('/league/:leagueId/join', optionalWallet, (req, res) => {
   const wallet = req.wallet;
 
   const league = getLeagueById(req.params.leagueId);
@@ -665,7 +665,7 @@ router.post('/league/:leagueId/join', requireAuth, (req, res) => {
 });
 
 // Get league puzzles (only if player and league active)
-router.get('/league/:leagueId/puzzles', requireAuth, (req, res) => {
+router.get('/league/:leagueId/puzzles', optionalWallet, (req, res) => {
   const wallet = req.wallet;
 
   const league = getLeagueById(req.params.leagueId);
@@ -719,7 +719,7 @@ router.get('/league/:leagueId/puzzles', requireAuth, (req, res) => {
 });
 
 // Submit a league puzzle score
-router.post('/league/:leagueId/submit', requireAuth, (req, res) => {
+router.post('/league/:leagueId/submit', optionalWallet, (req, res) => {
   const wallet = req.wallet;
 
   const league = getLeagueById(req.params.leagueId);
@@ -757,7 +757,7 @@ router.post('/league/:leagueId/submit', requireAuth, (req, res) => {
 });
 
 // Get player's own scores in a league (always visible)
-router.get('/league/:leagueId/my-scores', requireAuth, (req, res) => {
+router.get('/league/:leagueId/my-scores', optionalWallet, (req, res) => {
   const wallet = req.wallet;
 
   const league = getLeagueById(req.params.leagueId);
