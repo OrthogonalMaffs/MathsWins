@@ -1422,6 +1422,7 @@ var G = (function() {
   // ── Numpad ──────────────────────────────────────────────────────────
   function buildNumpad() {
     var np = document.getElementById('numpad');
+    for (var n = 1; n <= 9; n++) { var old = document.getElementById('nbtn' + n); if (old) old.remove(); }
     for (var n = 1; n <= 9; n++) {
       var btn = document.createElement('button');
       btn.className = 'num-btn';
