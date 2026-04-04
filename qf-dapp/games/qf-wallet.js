@@ -87,6 +87,7 @@
 
   async function resolveQfName(addr) {
     if (!addr) return null;
+    if (!addr.startsWith('0x')) return null; // QNS is EVM-only
     var key = addr.toLowerCase();
     if (nameCache[key] !== undefined) return nameCache[key];
     var prov = getRpcProvider();
@@ -107,7 +108,7 @@
 
   function formatAddr(addr) {
     if (!addr) return '???';
-    var key = addr.toLowerCase();
+    var key = addr.startsWith('0x') ? addr.toLowerCase() : addr;
     if (nameCache[key]) return nameCache[key];
     return addr.slice(0, 6) + '...' + addr.slice(-4);
   }
@@ -144,6 +145,18 @@
       if (window.ethereum.isTalisman) add('talisman', 'Talisman', '\uD83D\uDD2E', window.ethereum);
       else if (window.ethereum.isMetaMask) add('metamask', 'MetaMask', '\uD83E\uDD8A', window.ethereum);
       else add('browser', 'Browser Wallet', '\uD83D\uDD17', window.ethereum);
+    }
+    // Substrate wallets via injectedWeb3
+    if (window.injectedWeb3) {
+      Object.keys(window.injectedWeb3).forEach(function(key) {
+        var subId = 'sub-' + key;
+        var name = key.charAt(0).toUpperCase() + key.slice(1) + ' (Substrate)';
+        var icon = '\uD83D\uDD17';
+        if (key === 'talisman') { name = 'Talisman (Substrate)'; icon = '\uD83D\uDD2E'; }
+        else if (key.indexOf('polkadot') !== -1) { name = 'Polkadot.js'; icon = '\uD83D\uDFE0'; }
+        else if (key.indexOf('subwallet') !== -1) { name = 'SubWallet (Substrate)'; icon = '\uD83D\uDFE2'; }
+        add(subId, name, icon, { _substrate: true, _key: key });
+      });
     }
     return wallets;
   }
@@ -198,10 +211,14 @@
     name.textContent = wallet.name;
     var desc = document.createElement('div');
     desc.style.cssText = "font-family:'JetBrains Mono',monospace;font-size:.52rem;color:#4a4e5a;margin-top:.1rem;";
-    desc.textContent = 'EVM wallet';
+    desc.textContent = wallet.provider && wallet.provider._substrate ? 'Substrate wallet' : 'EVM wallet';
     info.appendChild(name); info.appendChild(desc);
     btn.appendChild(icon); btn.appendChild(info);
-    btn.onclick = function() { closeModal(); connectWithProvider(wallet.provider, wallet.id); };
+    if (wallet.provider && wallet.provider._substrate) {
+      btn.onclick = function() { closeModal(); connectSubstrate(wallet.provider._key); };
+    } else {
+      btn.onclick = function() { closeModal(); connectWithProvider(wallet.provider, wallet.id); };
+    }
     return btn;
   }
 
@@ -337,8 +354,9 @@
 
       try { localStorage.setItem('qf_wallet_id', walletId); } catch (e) {}
 
-      // Authenticate with server — challenge-sign-verify
-      authToken = await authenticate(address, state.signer);
+      // Authenticate with server — use raw signer to avoid ensureVerified popup
+      authToken = await authenticate(address, { signMessage: function(msg) { return signer.signMessage(msg); } });
+      if (authToken) state.verified = true;
 
       fireCallbacks();
 
@@ -374,6 +392,101 @@
       document.body.appendChild(errorDiv);
       setTimeout(function() { var el = document.getElementById('qf-wallet-error'); if (el) el.remove(); }, 4000);
     }
+  }
+
+  // ── Substrate connection ──────────────────────────────────────────
+  async function connectSubstrate(subKey) {
+    try {
+      // Lazy-load polkadot extension-dapp if not already loaded
+      if (!window.polkadotExtensionDapp) {
+        await new Promise(function(resolve, reject) {
+          var s = document.createElement('script');
+          s.src = 'https://cdn.jsdelivr.net/npm/@polkadot/extension-dapp@0.52.3/bundle-polkadot-extension-dapp.min.js';
+          s.onload = resolve;
+          s.onerror = function() { reject(new Error('Failed to load Substrate extension library')); };
+          document.head.appendChild(s);
+        });
+      }
+      var ext = window.polkadotExtensionDapp;
+      if (!ext) { alert('Substrate wallet extension not loaded.'); return; }
+
+      var extensions = await ext.web3Enable('MathsWins');
+      if (!extensions || extensions.length === 0) { alert('No Substrate wallet authorised. Please approve the connection in your wallet extension.'); return; }
+
+      var accounts = await ext.web3Accounts();
+      if (!accounts || accounts.length === 0) { alert('No Substrate accounts found.'); return; }
+
+      // Filter to the selected extension if possible
+      var filtered = accounts.filter(function(a) { return a.meta && a.meta.source === subKey; });
+      var accs = filtered.length > 0 ? filtered : accounts;
+
+      var selected;
+      if (accs.length === 1) {
+        selected = accs[0];
+      } else {
+        // Show account picker
+        selected = await showSubstrateAccountPicker(accs);
+        if (!selected) return;
+      }
+
+      var injector = await ext.web3FromAddress(selected.address);
+      var signer = injector.signer;
+
+      state.address = selected.address;
+      state.balance = null;
+      state.chainId = null;
+      state.provider = null;
+      state.signer = { signMessage: function(msg) { return signer.signRaw({ address: selected.address, data: stringToHex(msg), type: 'bytes' }).then(function(r) { return r.signature; }); } };
+      state.walletType = 'sub-' + subKey;
+      state.rawProvider = null;
+      state.qfName = null;
+      state.verified = true;
+
+      try { localStorage.setItem('qf_wallet_id', 'sub-' + subKey); } catch (e) {}
+      try { localStorage.setItem('qf_substrate_addr', selected.address); } catch (e) {}
+
+      // Authenticate with server
+      authToken = await authenticate(selected.address, state.signer);
+
+      fireCallbacks();
+    } catch (e) {
+      console.error('Substrate connect failed:', e);
+      alert('Substrate connection failed. Please try again.');
+    }
+  }
+
+  function stringToHex(str) {
+    var hex = '0x';
+    for (var i = 0; i < str.length; i++) hex += str.charCodeAt(i).toString(16).padStart(2, '0');
+    return hex;
+  }
+
+  function showSubstrateAccountPicker(accounts) {
+    return new Promise(function(resolve) {
+      createModal();
+      var list = document.getElementById('qf-wallet-list');
+      list.innerHTML = '';
+      var title = document.querySelector('#qf-wallet-modal h3');
+      if (title) title.textContent = 'Select Account';
+      accounts.forEach(function(acc) {
+        var btn = document.createElement('button');
+        btn.style.cssText = "width:100%;padding:.8rem 1rem;display:flex;align-items:center;gap:.8rem;background:#1e2025;border:1px solid #2a2e36;border-radius:8px;cursor:pointer;transition:all .15s;";
+        btn.onmouseover = function() { btn.style.borderColor = 'rgba(184,188,198,0.15)'; };
+        btn.onmouseout = function() { btn.style.borderColor = '#2a2e36'; };
+        var info = document.createElement('div');
+        info.style.cssText = 'text-align:left;flex:1;';
+        var name = document.createElement('div');
+        name.style.cssText = "font-family:'Inter',sans-serif;font-size:.82rem;font-weight:600;color:#e8eaf0;";
+        name.textContent = (acc.meta && acc.meta.name) || 'Account';
+        var addr = document.createElement('div');
+        addr.style.cssText = "font-family:'JetBrains Mono',monospace;font-size:.52rem;color:#4a4e5a;margin-top:.1rem;";
+        addr.textContent = acc.address.slice(0, 8) + '...' + acc.address.slice(-6);
+        info.appendChild(name); info.appendChild(addr);
+        btn.appendChild(info);
+        btn.onclick = function() { closeModal(); resolve(acc); };
+        list.appendChild(btn);
+      });
+    });
   }
 
   // ── Callbacks ─────────────────────────────────────────────────────
@@ -419,6 +532,7 @@
     state.verified = false;
     authToken = null;
     try { localStorage.removeItem('qf_wallet_id'); } catch (e) {}
+    try { localStorage.removeItem('qf_substrate_addr'); } catch (e) {}
     fireDisconnectCallbacks();
   }
 
@@ -472,6 +586,10 @@
     if (!savedId) return;
     // Wait briefly for wallet extensions to inject their providers
     setTimeout(function() {
+      if (savedId.startsWith('sub-')) {
+        connectSubstrate(savedId.slice(4));
+        return;
+      }
       var wallets = detectWallets();
       var match = wallets.find(function(w) { return w.id === savedId; });
       if (match) connectWithProvider(match.provider, match.id, true);

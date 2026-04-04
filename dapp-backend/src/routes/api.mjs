@@ -7,6 +7,7 @@ import { createLeague, getLeagueById, getActiveLeagues, getAllLeagues, updateLea
 import { createPromoChallenge, getPromoByCode, getPromoById, getPromoClaim, addPromoClaim, getPromoClaims } from '../db/index.mjs';
 import { startSession, startFreeSession, evaluate, getCurrentWeekId, resumeSession } from '../scoring.mjs';
 import { ethers } from 'ethers';
+import { signatureVerify, decodeAddress } from '@polkadot/util-crypto';
 import { getDb } from '../db/index.mjs';
 
 const router = Router();
@@ -42,21 +43,36 @@ router.post('/auth/verify', (req, res) => {
   }
 
   const message = 'Sign this message to verify your wallet on MathsWins: ' + nonce;
-  let recovered;
-  try {
-    recovered = ethers.verifyMessage(message, signature);
-  } catch (e) {
-    return res.status(400).json({ error: 'Invalid signature' });
+
+  if (wallet.startsWith('0x')) {
+    // EVM path
+    let recovered;
+    try {
+      recovered = ethers.verifyMessage(message, signature);
+    } catch (e) {
+      return res.status(400).json({ error: 'Invalid signature' });
+    }
+    if (recovered.toLowerCase() !== wallet.toLowerCase()) {
+      return res.status(403).json({ error: 'Signature does not match wallet' });
+    }
+    challengeStore.delete(nonce);
+    const token = jwt.sign({ wallet: wallet.toLowerCase() }, AUTH_SECRET, { expiresIn: '24h' });
+    res.json({ token, wallet: wallet.toLowerCase() });
+  } else {
+    // Substrate path
+    try {
+      const publicKey = decodeAddress(wallet);
+      const result = signatureVerify(message, signature, publicKey);
+      if (!result.isValid) {
+        return res.status(403).json({ error: 'Signature does not match wallet' });
+      }
+    } catch (e) {
+      return res.status(400).json({ error: 'Invalid Substrate signature or address' });
+    }
+    challengeStore.delete(nonce);
+    const token = jwt.sign({ wallet: wallet }, AUTH_SECRET, { expiresIn: '24h' });
+    res.json({ token, wallet: wallet });
   }
-
-  if (recovered.toLowerCase() !== wallet.toLowerCase()) {
-    return res.status(403).json({ error: 'Signature does not match wallet' });
-  }
-
-  challengeStore.delete(nonce);
-
-  const token = jwt.sign({ wallet: wallet.toLowerCase() }, AUTH_SECRET, { expiresIn: '24h' });
-  res.json({ token, wallet: wallet.toLowerCase() });
 });
 
 // ── Auth middleware ──────────────────────────────────────────────────────────
