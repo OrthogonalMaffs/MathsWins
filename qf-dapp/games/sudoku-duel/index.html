@@ -1144,6 +1144,7 @@ var G = (function() {
     clearInterval(timerInterval);
     var secs = getSecs();
     var timeMs = secs * 1000;
+    alert('DEBUG endGame: won=' + won + ' leagueMode=' + leagueMode + ' leagueId=' + leagueId + ' puzzleIdx=' + leaguePuzzleIndex + ' partialScore=' + serverPartialScore + ' wallet=' + (W.state.address || 'NONE'));
 
     if (won) {
       try {
