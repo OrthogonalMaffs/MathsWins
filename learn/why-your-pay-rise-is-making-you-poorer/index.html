@@ -1,0 +1,646 @@
+<!DOCTYPE html>
+<html lang="en-GB">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Why Your Pay Rise Is Making You Poorer — Inflation and Fiscal Drag Explained | MathsWins</title>
+<meta name="description" content="Your salary went up but you feel poorer. We explain exactly why — with real teacher and nurse pay data, inflation maths, and the hidden tax of fiscal drag.">
+<meta name="keywords" content="fiscal drag explained, bracket creep, inflation pay cut, real wage growth, teacher pay 2024, nurse pay 2024, personal allowance freeze, tax threshold freeze">
+<meta property="og:title" content="Why Your Pay Rise Is Making You Poorer — Inflation and Fiscal Drag Explained | MathsWins">
+<meta property="og:description" content="Your salary went up but you feel poorer. We explain exactly why — with real teacher and nurse pay data, inflation maths, and the hidden tax of fiscal drag.">
+<meta property="og:url" content="https://mathswins.co.uk/learn/why-your-pay-rise-is-making-you-poorer/">
+<meta property="og:image" content="https://mathswins.co.uk/assets/og-image.png">
+<meta property="og:type" content="article">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:title" content="MathsWins">
+<meta name="twitter:image" content="https://mathswins.co.uk/assets/og-image.png">
+<link rel="canonical" href="https://mathswins.co.uk/learn/why-your-pay-rise-is-making-you-poorer/">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Crimson+Pro:ital,wght@0,400;0,700;1,400&family=DM+Mono:wght@400;500&family=Outfit:wght@300;400;600;700&display=swap" rel="stylesheet">
+
+<style>
+  :root {
+    --bg: #050709;
+    --surface: #0a0d14;
+    --surface2: #0f1319;
+    --border: #161c28;
+    --border2: #1e2638;
+    --navy: #1a2744;
+    --gold: #d4a847;
+    --teal: #0d9488;
+    --teal-bright: #2dd4bf;
+    --blue: #2563eb;
+    --blue-dim: rgba(37,99,235,0.12);
+    --green-bright: #2dd4a0;
+    --green-dim: rgba(45,212,160,0.12);
+    --red-bright: #ef5350;
+    --red-dim: rgba(239,83,80,0.12);
+    --text: #c8cdd8;
+    --text-bright: #e8ecf4;
+    --muted: #4a5568;
+    --cyan: #22d3ee;
+    --cyan-dim: rgba(34,211,238,0.10);
+  }
+
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+
+  body {
+    font-family: 'Outfit', sans-serif;
+    background: var(--bg);
+    color: var(--text);
+    line-height: 1.6;
+    min-height: 100vh;
+  }
+
+  .container {
+    max-width: 920px;
+    margin: 0 auto;
+    padding: 2rem 1.25rem 4rem;
+  }
+
+  /* Header */
+  .nav-bar {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 1rem 0;
+    border-bottom: 1px solid var(--border);
+    margin-bottom: 2.5rem;
+  }
+  .nav-brand {
+    font-family: 'Bebas Neue', sans-serif;
+    font-size: 1.4rem;
+    color: var(--gold);
+    text-decoration: none;
+    letter-spacing: 0.06em;
+  }
+  .nav-brand span { color: var(--text-bright); }
+  .nav-link {
+    font-family: 'Outfit', sans-serif;
+    font-size: 0.85rem;
+    font-weight: 600;
+    color: var(--blue);
+    text-decoration: none;
+    padding: 0.4rem 1rem;
+    border: 1px solid var(--blue);
+    border-radius: 4px;
+    transition: background 0.2s, color 0.2s;
+  }
+  .nav-link:hover { background: var(--blue); color: var(--bg); }
+
+  /* Hero */
+  .hero {
+    text-align: center;
+    margin-bottom: 2.5rem;
+  }
+  .hero-eyebrow {
+    font-family: 'Outfit', sans-serif;
+    font-size: 0.75rem;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.15em;
+    color: var(--blue);
+    margin-bottom: 0.5rem;
+  }
+  .hero h1 {
+    font-family: 'Bebas Neue', sans-serif;
+    font-size: clamp(2rem, 5vw, 3rem);
+    color: var(--text-bright);
+    letter-spacing: 0.04em;
+    line-height: 1.1;
+    margin-bottom: 0.75rem;
+  }
+  .hero-sub {
+    font-family: 'Crimson Pro', serif;
+    font-style: italic;
+    font-size: 1.1rem;
+    color: var(--cyan);
+    max-width: 640px;
+    margin: 0 auto;
+  }
+
+  /* Article body */
+  .article-body {
+    margin-top: 1rem;
+  }
+  .article-body h2 {
+    font-family: 'Bebas Neue', sans-serif;
+    font-size: 1.6rem;
+    color: var(--text-bright);
+    letter-spacing: 0.04em;
+    margin: 2.5rem 0 1rem;
+    padding-top: 1.5rem;
+    border-top: 1px solid var(--border);
+  }
+  .article-body h2:first-child {
+    margin-top: 0;
+    padding-top: 0;
+    border-top: none;
+  }
+  .article-body h3 {
+    font-family: 'Bebas Neue', sans-serif;
+    font-size: 1.2rem;
+    color: var(--blue);
+    margin: 1.5rem 0 0.75rem;
+    letter-spacing: 0.04em;
+  }
+  .article-body p {
+    font-family: 'Crimson Pro', serif;
+    font-size: 1rem;
+    color: var(--text);
+    line-height: 1.7;
+    margin-bottom: 1rem;
+    max-width: 720px;
+  }
+  .article-body a {
+    color: var(--blue);
+    text-decoration: underline;
+    text-underline-offset: 2px;
+  }
+  .article-body a:hover {
+    color: var(--cyan);
+  }
+  .article-body ul {
+    margin: 0 0 1rem 1.5rem;
+    font-family: 'Crimson Pro', serif;
+    font-size: 1rem;
+    color: var(--text);
+    line-height: 1.7;
+    max-width: 720px;
+  }
+  .article-body ul li {
+    margin-bottom: 0.4rem;
+  }
+
+  /* Educational boxes */
+  .mb {
+    background: var(--surface2);
+    border: 1px solid var(--border2);
+    border-radius: 6px;
+    padding: 1rem 1.25rem;
+    font-family: 'DM Mono', monospace;
+    font-size: 0.85rem;
+    color: var(--text-bright);
+    line-height: 1.7;
+    white-space: pre-wrap;
+    margin: 1rem 0;
+    overflow-x: auto;
+  }
+  .pln {
+    font-family: 'Crimson Pro', serif;
+    font-style: italic;
+    color: var(--cyan);
+    background: var(--cyan-dim);
+    border-left: 3px solid var(--cyan);
+    padding: 0.85rem 1.15rem;
+    border-radius: 0 6px 6px 0;
+    margin: 1rem 0;
+    line-height: 1.6;
+    font-size: 0.95rem;
+  }
+  .pt {
+    border-left: 3px solid var(--blue);
+    background: var(--blue-dim);
+    padding: 1rem 1.25rem;
+    border-radius: 0 6px 6px 0;
+    margin: 1.5rem 0;
+    font-family: 'Crimson Pro', serif;
+    font-size: 0.95rem;
+    color: var(--text);
+    line-height: 1.6;
+  }
+  .pt strong { color: var(--blue); }
+  .dg {
+    border-left: 3px solid var(--red-bright);
+    background: var(--red-dim);
+    padding: 1rem 1.25rem;
+    border-radius: 0 6px 6px 0;
+    margin: 1.5rem 0;
+    font-family: 'Crimson Pro', serif;
+    font-size: 0.95rem;
+    color: var(--red-bright);
+    line-height: 1.6;
+  }
+
+  /* Cross-links */
+  .cross-links {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+    gap: 1rem;
+    margin-top: 2rem;
+  }
+  .cross-link {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    padding: 1.25rem;
+    text-decoration: none;
+    transition: border-color 0.2s;
+  }
+  .cross-link:hover { border-color: var(--blue); }
+  .cross-link h4 {
+    font-family: 'Bebas Neue', sans-serif;
+    font-size: 1rem;
+    color: var(--blue);
+    letter-spacing: 0.04em;
+    margin-bottom: 0.35rem;
+  }
+  .cross-link p {
+    font-family: 'Crimson Pro', serif;
+    font-style: italic;
+    font-size: 0.85rem;
+    color: var(--muted);
+    line-height: 1.5;
+  }
+
+  /* CTA */
+  .cta-card {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-left: 3px solid var(--blue);
+    border-radius: 0 10px 10px 0;
+    padding: 1.5rem 1.75rem;
+    margin-top: 2.5rem;
+  }
+  .cta-card h3 {
+    font-family: 'Bebas Neue', sans-serif;
+    font-size: 1.2rem;
+    color: var(--blue);
+    letter-spacing: 0.04em;
+    margin-bottom: 0.5rem;
+  }
+  .cta-card p {
+    font-family: 'Crimson Pro', serif;
+    font-style: italic;
+    font-size: 0.95rem;
+    color: var(--text);
+    line-height: 1.5;
+    margin-bottom: 1rem;
+  }
+  .cta-link {
+    font-family: 'Outfit', sans-serif;
+    font-weight: 600;
+    font-size: 0.9rem;
+    color: var(--blue);
+    text-decoration: none;
+    border-bottom: 1px solid transparent;
+    transition: border-color 0.2s;
+  }
+  .cta-link:hover { border-bottom-color: var(--blue); }
+
+  /* FAQ */
+  .faq-section {
+    margin-top: 3rem;
+    padding-top: 2rem;
+    border-top: 1px solid var(--border);
+  }
+  .faq-title {
+    font-family: 'Bebas Neue', sans-serif;
+    font-size: 2rem;
+    color: var(--text-bright);
+    margin-bottom: 1.5rem;
+    letter-spacing: 0.03em;
+  }
+  .faq-item {
+    border-bottom: 1px solid var(--border);
+    padding: 0;
+  }
+  .faq-item summary {
+    padding: 1rem 0;
+    cursor: pointer;
+    font-weight: 600;
+    color: var(--text-bright);
+    font-size: 1rem;
+    list-style: none;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+  }
+  .faq-item summary::after {
+    content: '+';
+    color: var(--gold);
+    font-size: 1.3rem;
+    font-weight: 700;
+    transition: transform 0.2s;
+  }
+  .faq-item[open] summary::after { transform: rotate(45deg); }
+  .faq-item p {
+    padding: 0 0 1rem;
+    color: #94a3b8;
+    line-height: 1.7;
+    font-size: 0.95rem;
+  }
+
+  /* Footer */
+  .footer {
+    margin-top: 3rem;
+    padding-top: 1.5rem;
+    border-top: 1px solid var(--border);
+    text-align: center;
+  }
+  .footer p {
+    font-family: 'Outfit', sans-serif;
+    font-size: 0.75rem;
+    color: var(--muted);
+    line-height: 1.8;
+  }
+  .footer a {
+    color: var(--muted);
+    text-decoration: underline;
+    text-underline-offset: 2px;
+  }
+
+  /* Responsive */
+  @media (max-width: 600px) {
+    .hero h1 { font-size: 2rem; }
+    .cross-links { grid-template-columns: 1fr; }
+  }
+</style>
+
+<!-- GA4 Cookieless -->
+<script async src="https://www.googletagmanager.com/gtag/js?id=G-7GTLYCZMXN"></script>
+<script>window.dataLayer=window.dataLayer||[];function gtag(){dataLayer.push(arguments);}gtag('js',new Date());gtag('consent','default',{analytics_storage:'denied',ad_storage:'denied',ad_user_data:'denied',ad_personalization:'denied'});gtag('config','G-7GTLYCZMXN',{send_page_view:true,anonymize_ip:true});</script>
+
+<script type="application/ld+json">
+{"@context":"https://schema.org","@type":"Article","headline":"Why Your Pay Rise Is Making You Poorer — Inflation and Fiscal Drag Explained","description":"Your salary went up but you feel poorer. We explain exactly why — with real teacher and nurse pay data, inflation maths, and the hidden tax of fiscal drag.","url":"https://mathswins.co.uk/learn/why-your-pay-rise-is-making-you-poorer/","author":{"@type":"Organization","name":"MathsWins","url":"https://mathswins.co.uk"},"publisher":{"@type":"Organization","name":"MathsWins","url":"https://mathswins.co.uk","logo":{"@type":"ImageObject","url":"https://mathswins.co.uk/assets/og-image.png"}},"datePublished":"2026-04-04","dateModified":"2026-04-04","image":"https://mathswins.co.uk/assets/og-image.png","mainEntityOfPage":{"@type":"WebPage","@id":"https://mathswins.co.uk/learn/why-your-pay-rise-is-making-you-poorer/"}}
+</script>
+<script type="application/ld+json">
+{"@context":"https://schema.org","@type":"FAQPage","mainEntity":[{"@type":"Question","name":"What is fiscal drag and how does it work?","acceptedAnswer":{"@type":"Answer","text":"Fiscal drag occurs when income tax thresholds are frozen while wages rise. As salaries increase — even modestly — more income falls into higher tax brackets automatically. The UK Personal Allowance and Basic Rate limit have been frozen since 2021 and are scheduled to remain frozen until 2028, silently increasing the tax burden on every worker whose pay rises."}},{"@type":"Question","name":"Why does freezing tax thresholds increase the amount I pay in tax?","acceptedAnswer":{"@type":"Answer","text":"Because the Personal Allowance (£12,570) has not risen with inflation. If it had been uprated with CPI, it would be approximately £14,700 in 2024/25. The £2,130 difference is now taxed at 20%, costing every worker above the threshold an extra £426 per year — with no announcement, no vote, and no visibility on the payslip."}},{"@type":"Question","name":"How do I calculate my real wage growth after inflation?","acceptedAnswer":{"@type":"Answer","text":"Subtract the cumulative inflation rate from your cumulative pay rise. If your salary has risen 22% since 2019 but prices have risen 26%, your real wage growth is approximately −4%. The Take Home Pay Calculator can show the exact impact on your net pay."}},{"@type":"Question","name":"What is the best way to reduce the impact of fiscal drag on my take-home pay?","acceptedAnswer":{"@type":"Answer","text":"Salary sacrifice into your pension is the most effective tool. It reduces your taxable income before tax and National Insurance are calculated, effectively recovering some of the fiscal drag. For a worker earning £37,796, sacrificing £3,000 saves approximately £840 in combined tax and NI."}}]}
+</script>
+</head>
+<body>
+<script src="/auth/mw-auth.js"></script>
+<div class="container">
+
+  <!-- Nav -->
+  <nav class="nav-bar">
+    <a href="/" class="nav-brand">MATHS<span>WINS</span></a>
+    <a href="/everyday/" class="nav-link">Everyday Maths &rarr;</a>
+  </nav>
+
+  <!-- Hero -->
+  <div class="hero">
+    <div class="hero-eyebrow">Learn</div>
+    <h1>WHY YOUR PAY RISE IS MAKING YOU POORER</h1>
+    <div class="hero-sub">You received a pay rise. Your payslip went up. And yet, at the end of every month, there is less room in your budget than there was five years ago. This is not poor financial management. It is the predictable outcome of two mechanisms working simultaneously on your income &mdash; and most people have never had either explained clearly.</div>
+  </div>
+
+  <!-- Article Content -->
+  <div class="article-body">
+
+    <h2>THE TWO MECHANISMS</h2>
+
+    <p>The first is inflation. When prices rise faster than your salary, your pay buys less than it did before, even if the number on your payslip has increased. A 5% pay rise in a year of 10% inflation is not a pay rise &mdash; it is a real-terms pay cut of approximately 4.5%.</p>
+
+    <p>The second is fiscal drag, also called bracket creep. When the government freezes the income thresholds at which higher tax rates apply, and salaries rise even modestly, more of your income falls into higher tax brackets automatically. No vote is required. No announcement is made. Your tax bill rises silently, year after year, purely because a threshold did not move while your salary did.</p>
+
+    <div class="pln">Together, these mechanisms explain why millions of experienced public sector workers &mdash; nurses at the top of their pay band, teachers at the top of the main pay scale &mdash; feel considerably poorer than they did in 2019, despite receiving pay rises in most intervening years.</div>
+
+    <h2>UNDERSTANDING INFLATION</h2>
+
+    <p>Inflation measures the rate at which prices rise across the economy. The UK&rsquo;s headline measure is the Consumer Prices Index (CPI), published monthly by the Office for National Statistics. It tracks the cost of a representative basket of goods and services &mdash; food, energy, transport, housing, clothing &mdash; and calculates how much more expensive that basket has become over the past twelve months.</p>
+
+    <p>When CPI is 10%, the same basket that cost &pound;1,000 last year costs &pound;1,100 this year. Your money buys 9.1% less than it did.</p>
+
+    <div class="mb">Real wage growth = Nominal pay rise &minus; Inflation rate (approximate)
+
+If your salary rises 5% and inflation is 10%:
+Real wage change &asymp; 5% &minus; 10% = &minus;5%
+
+In real terms &mdash; in terms of actual purchasing power &mdash; you are 5% worse off. The number on your payslip went up. The amount your life costs went up more.</div>
+
+    <div class="mb">UK CPI annual rates (ONS):
+
+2019/20: 1.5%
+2020/21: 0.7%
+2021/22: 5.4%
+2022/23: 10.1%
+2023/24: 6.7%
+2024/25: ~2.5%
+
+Cumulative price rise 2019 to 2024: approximately 26%</div>
+
+    <div class="dg">That 26% is the benchmark. Any worker whose total salary increase over the same period falls short of 26% has experienced a real-terms pay cut, regardless of how many individual pay rises they received.</div>
+
+    <h2>THE PAY SCALE CEILING PROBLEM</h2>
+
+    <p>Both the teaching profession and the NHS operate structured pay scales. Teachers progress annually through six points on the Main Pay Scale (M1 to M6). NHS staff progress through defined points within their pay band. Scale progression adds meaningful salary increases in the early and middle career years &mdash; above and beyond the national pay award.</p>
+
+    <p>But both scales have a ceiling. Once a teacher reaches M6, further progression requires a formal application to the Upper Pay Scale, assessed against evidence of sustained high performance. It is not automatic, and many experienced teachers remain at M6 for years. Once an NHS Band 5 nurse reaches the top of their band, further progression requires applying for and being appointed to a Band 6 role. The national pay award is all they receive year on year.</p>
+
+    <div class="pln">At the ceiling, these workers are in exactly the same position as anyone else on a fixed grade: entirely dependent on national pay awards to keep pace with the cost of living.</div>
+
+    <h2>THE TEACHER AT M6</h2>
+
+    <p>A secondary school teacher in England, outside London. They reached M6 &mdash; the top of the Main Pay Scale &mdash; by the 2019/20 academic year. From that point, their only salary increases came from national pay awards. Scale progression was exhausted.</p>
+
+    <div class="mb">M6 SALARY, REST OF ENGLAND (CONFIRMED STPCD FIGURES):
+
+2019/20: &pound;40,035
+2020/21: &pound;41,136  (+2.75%)
+2021/22: &pound;41,136  (+0.0% &mdash; pay freeze applied)
+2022/23: &pound;43,685  (+5.0%)
+2023/24: &pound;46,525  (+6.5%)
+2024/25: &pound;49,084  (+5.5%)
+
+Total nominal increase 2019&ndash;2024: +&pound;9,049 (+22.6%)</div>
+
+    <p>Now adjust for cumulative inflation of 26%. To maintain the same purchasing power as &pound;40,035 in 2019/20, a salary of approximately &pound;50,444 would be needed in 2024/25.</p>
+
+    <div class="mb">Actual 2024/25 salary:      &pound;49,084
+Required to hold real terms: &pound;50,444
+Real-terms shortfall:        &minus;&pound;1,360 (&minus;2.7%)</div>
+
+    <p>The teacher&rsquo;s nominal pay rose by over &pound;9,000. In real terms &mdash; in what that salary actually buys &mdash; they are worse off than five years ago. The pay freeze of 2021/22, the single year with zero uplift, fell in the same period that inflation was beginning its rapid climb. That one year of no movement, when prices were already rising at 5.4%, created a gap that the subsequent years of awards have not fully closed.</p>
+
+    <div class="pln">Had the 2021/22 award matched inflation (5.4% rather than 0%), the additional salary that year would have been approximately &pound;2,221. Compounded through subsequent years, the freeze year alone accounts for approximately &pound;2,800 of cumulative shortfall.</div>
+
+    <h2>THE BAND 5 NURSE AT THE TOP OF THEIR BAND</h2>
+
+    <p>A registered nurse in England, outside London, who reached the top of NHS Band 5 by 2019/20. Like the teacher, further progression requires a different role (Band 6). National pay awards are their only annual increase.</p>
+
+    <div class="mb">BAND 5 TOP-OF-BAND SALARY, ENGLAND (CONFIRMED AGENDA FOR CHANGE FIGURES):
+
+2019/20: &pound;30,615
+2020/21: &pound;31,365  (+1.0% &mdash; near-freeze during COVID)
+2021/22: &pound;32,306  (+3.0%)
+2022/23: &pound;35,392  (+5.0% + &pound;1,400 consolidated lump sum)
+2023/24: &pound;37,163  (+5.0%)
+2024/25: &pound;37,796  (+5.5%)
+
+Total nominal increase 2019&ndash;2024: +&pound;7,181 (+23.5%)</div>
+
+    <p>To maintain real purchasing power from 2019/20, a 2024/25 salary of approximately &pound;38,575 would be required.</p>
+
+    <div class="mb">Actual 2024/25 salary:      &pound;37,796
+Required to hold real terms: &pound;38,575
+Real-terms shortfall:        &minus;&pound;779 (&minus;2.0%)</div>
+
+    <p>The nurse&rsquo;s nominal pay rose by &pound;7,181. In real terms they are approximately 2% worse off than in 2019/20. The near-freeze of 2020/21 &mdash; just 1% at the height of the pandemic &mdash; combined with the 3% award in 2021/22 when inflation was running at 5.4% created the gap.</p>
+
+    <div class="dg">The real-terms story for both workers is the same: nominal pay rose around 22&ndash;23%. Prices rose 26%. Both are behind.</div>
+
+    <h2>NOW ADD FISCAL DRAG</h2>
+
+    <p>The income tax position makes the picture materially worse. The key thresholds &mdash; the Personal Allowance and the Basic Rate limit &mdash; have been frozen since April 2021 and are scheduled to remain frozen until April 2028.</p>
+
+    <div class="mb">UK INCOME TAX THRESHOLDS (2024/25):
+
+Personal Allowance: &pound;0&ndash;&pound;12,570 taxed at 0%
+Basic Rate:        &pound;12,571&ndash;&pound;50,270 taxed at 20%
+Higher Rate:       &pound;50,271+ taxed at 40%
+
+These thresholds have not moved since 2021. In a normal year they would rise with inflation. They have not.</div>
+
+    <div class="mb">Had the Personal Allowance been uprated with CPI from April 2021:
+
+Personal Allowance in 2024/25 (if uprated): approximately &pound;14,700
+Actual Personal Allowance: &pound;12,570
+Difference: &pound;2,130 now taxed at 20% that would previously have been tax-free
+
+Extra income tax from frozen Personal Allowance alone: &pound;2,130 &times; 20% = &pound;426 per year</div>
+
+    <div class="pln">That &pound;426 is not the result of a Budget announcement. It accrues silently because a threshold did not move.</div>
+
+    <h2>THE TEACHER&rsquo;S FULL POSITION</h2>
+
+    <div class="mb">2019/20 tax (M6, &pound;40,035):
+
+Taxable income: &pound;40,035 &minus; &pound;12,500 = &pound;27,535
+Income tax: &pound;27,535 &times; 20% = &pound;5,507
+National Insurance: approximately &pound;3,440
+Total deductions: approximately &pound;8,947
+Take-home: approximately &pound;31,088</div>
+
+    <div class="mb">2024/25 tax (M6, &pound;49,084):
+
+Taxable income: &pound;49,084 &minus; &pound;12,570 = &pound;36,514
+Income tax: &pound;36,514 &times; 20% = &pound;7,303
+National Insurance: approximately &pound;3,954
+Total deductions: approximately &pound;11,257
+Take-home: approximately &pound;37,827</div>
+
+    <p>Nominal take-home increase 2019&ndash;2024: +&pound;6,739 (+21.7%)</p>
+
+    <p>Now adjust for inflation. &pound;37,827 in 2024/25 money is worth approximately &pound;30,021 in 2019 prices.</p>
+
+    <div class="dg">Real take-home in 2019 prices: &pound;30,021
+Original take-home in 2019 prices: &pound;31,088
+Real-terms reduction in take-home pay: &minus;&pound;1,067 (&minus;3.4%)
+
+The teacher&rsquo;s nominal take-home rose by &pound;6,739. Their real take-home &mdash; what it actually buys &mdash; fell by over &pound;1,000.</div>
+
+    <h2>THE NURSE&rsquo;S FULL POSITION</h2>
+
+    <div class="mb">2019/20 tax (Band 5 top, &pound;30,615):
+
+Taxable income: &pound;30,615 &minus; &pound;12,500 = &pound;18,115
+Income tax: &pound;18,115 &times; 20% = &pound;3,623
+National Insurance: approximately &pound;2,218
+Total deductions: approximately &pound;5,841
+Take-home: approximately &pound;24,774</div>
+
+    <div class="mb">2024/25 tax (Band 5 top, &pound;37,796):
+
+Taxable income: &pound;37,796 &minus; &pound;12,570 = &pound;25,226
+Income tax: &pound;25,226 &times; 20% = &pound;5,045
+National Insurance: approximately &pound;2,784
+Total deductions: approximately &pound;7,829
+Take-home: approximately &pound;29,967</div>
+
+    <p>Nominal take-home increase 2019&ndash;2024: +&pound;5,193 (+21.0%)</p>
+
+    <div class="dg">Real take-home in 2019 prices: &pound;23,784
+Original take-home in 2019 prices: &pound;24,774
+Real-terms reduction in take-home pay: &minus;&pound;990 (&minus;4.0%)
+
+The nurse&rsquo;s nominal take-home rose by over &pound;5,000. Their real take-home fell by approximately &pound;990 &mdash; almost a month&rsquo;s rent in many parts of England.</div>
+
+    <div class="pln">Note: figures above use standard tax rates and primary NI thresholds. NHS pension contributions (between 6.5% and 9.8% of salary depending on earnings) would reduce take-home further. Teacher pension contributions (between 7.4% and 11.7%) similarly. These calculations show gross-to-net before pension deduction to isolate the tax and inflation effects.</div>
+
+    <h2>WHY THE FREEZE HITS HARDER ON LOWER SALARIES</h2>
+
+    <p>It might seem that fiscal drag primarily affects higher earners being pulled toward the 40% threshold. In fact the Personal Allowance freeze hits lower and middle earners proportionally harder.</p>
+
+    <p>The Personal Allowance represents a larger share of a &pound;30,000 salary than a &pound;80,000 salary. When &pound;2,130 that should be tax-free is instead taxed at 20%, the &pound;426 cost represents 1.4% of the nurse&rsquo;s gross salary and just 0.5% of a senior manager&rsquo;s. The freeze is regressive &mdash; it extracts a larger proportion from those who can least afford it.</p>
+
+    <h2>THE SAME ARITHMETIC APPLIES TO MILLIONS</h2>
+
+    <p>The teacher at M6 and the nurse at the top of Band 5 are not unusual cases. They represent the most common situation for experienced public sector workers: scale progression exhausted, reliant entirely on national awards, watching inflation erode what those awards gained.</p>
+
+    <p>The same calculation applies to a police constable at the top of their scale. A council worker at the ceiling of their grade. A civil servant who has not been promoted. Any worker on a structured scale who has hit the top &mdash; and there are hundreds of thousands of them &mdash; faces exactly this arithmetic.</p>
+
+    <h2>WHAT YOU CAN DO ABOUT IT</h2>
+
+    <p>Fiscal drag and inflation are structural policy decisions, not personal finance failures. But within the constraints you face, two tools reduce the damage.</p>
+
+    <div class="pt"><strong>Salary sacrifice into your pension</strong> reduces your taxable income before tax and National Insurance are calculated. For the nurse earning &pound;37,796, sacrificing &pound;3,000 into their pension reduces their taxable income by &pound;3,000 &mdash; saving approximately &pound;600 in income tax and &pound;240 in NI, a combined saving of &pound;840 per year. Their take-home falls by just &pound;2,160 to generate &pound;3,000 of pension saving. The government and HMRC effectively contribute &pound;840 of that pension for free. Use the <a href="/tools/salary-sacrifice/">Salary Sacrifice Calculator</a> to see the exact numbers for your salary.</div>
+
+    <div class="pt"><strong>Understanding your real pay position is itself useful.</strong> If you are negotiating a pay rise, considering a job move, or comparing offers, knowing the difference between nominal and real terms is the starting point. The <a href="/tools/take-home-pay/">UK Take Home Pay Calculator</a> shows your full tax position &mdash; income tax, NI, pension &mdash; broken down to the penny.</div>
+
+  </div>
+
+  <!-- Cross-links -->
+  <div class="cross-links">
+    <a href="/tools/salary-sacrifice/" class="cross-link">
+      <h4>SALARY SACRIFICE CALCULATOR</h4>
+      <p>Enter your salary and pension contribution to see your exact tax and NI saving.</p>
+    </a>
+    <a href="/tools/take-home-pay/" class="cross-link">
+      <h4>UK TAKE HOME PAY CALCULATOR</h4>
+      <p>See where every pound of your gross salary goes &mdash; income tax, National Insurance, pension, student loan.</p>
+    </a>
+    <a href="/everyday/" class="cross-link">
+      <h4>EVERYDAY MATHS &mdash; FREE COURSES</h4>
+      <p>Inflation, compound interest, mortgage maths, pension modelling, and the real cost of debt. All free.</p>
+    </a>
+  </div>
+
+  <!-- CTA -->
+  <div class="cta-card">
+    <h3>EVERYDAY MATHS &mdash; FREE COURSES</h3>
+    <p>This article covers inflation, fiscal drag, and real wage growth. The Everyday Maths section goes further: compound interest, mortgage mathematics, pension modelling, and the real cost of debt. All free.</p>
+    <a href="/everyday/" class="cta-link">Explore Everyday Maths &rarr;</a>
+  </div>
+
+  <!-- FAQ -->
+  <div class="faq-section">
+    <h2 class="faq-title">FREQUENTLY ASKED QUESTIONS</h2>
+    <details class="faq-item"><summary>What is fiscal drag and how does it work?</summary><p>Fiscal drag occurs when income tax thresholds are frozen while wages rise. As salaries increase &mdash; even modestly &mdash; more income falls into higher tax brackets automatically. The UK Personal Allowance and Basic Rate limit have been frozen since 2021 and are scheduled to remain frozen until 2028, silently increasing the tax burden on every worker whose pay rises.</p></details>
+    <details class="faq-item"><summary>Why does freezing tax thresholds increase the amount I pay in tax?</summary><p>Because the Personal Allowance (&pound;12,570) has not risen with inflation. If it had been uprated with CPI, it would be approximately &pound;14,700 in 2024/25. The &pound;2,130 difference is now taxed at 20%, costing every worker above the threshold an extra &pound;426 per year &mdash; with no announcement, no vote, and no visibility on the payslip.</p></details>
+    <details class="faq-item"><summary>How do I calculate my real wage growth after inflation?</summary><p>Subtract the cumulative inflation rate from your cumulative pay rise. If your salary has risen 22% since 2019 but prices have risen 26%, your real wage growth is approximately &minus;4%. The <a href="/tools/take-home-pay/">Take Home Pay Calculator</a> can show the exact impact on your net pay.</p></details>
+    <details class="faq-item"><summary>What is the best way to reduce the impact of fiscal drag on my take-home pay?</summary><p>Salary sacrifice into your pension is the most effective tool. It reduces your taxable income before tax and National Insurance are calculated, effectively recovering some of the fiscal drag. For a worker earning &pound;37,796, sacrificing &pound;3,000 saves approximately &pound;840 in combined tax and NI.</p></details>
+  </div>
+
+  <!-- Disclaimer -->
+  <div style="margin-top:2rem; padding:1.25rem; background:var(--surface); border:1px solid var(--border); border-radius:8px;">
+    <p style="font-family:'Outfit',sans-serif; font-size:0.78rem; color:var(--muted); line-height:1.7;">
+      This is a mathematical education article, not financial advice. Tax figures are based on standard 2024/25 rates for England and do not account for individual circumstances including student loans, pension scheme variations, or local authority tax codes.
+    </p>
+  </div>
+
+  <!-- Footer -->
+  <div class="footer">
+    <p>
+      Built by a first-class mathematics graduate with QTS.<br>
+      <a href="/">MathsWins</a> &middot; <a href="/learn/">Articles</a> &middot; <a href="/tools/">Tools</a> &middot; <a href="/academy/">Academy</a> &middot; <a href="/restore/">Restore Access</a><br>
+      &copy; 2026 MathsWins. Maths Always Wins.
+    </p>
+  </div>
+
+</div>
+
+<!-- Cookie Consent Banner -->
+<div id="cookieConsent" style="display:none;position:fixed;bottom:0;left:0;right:0;background:#0c1628;border-top:1px solid #14263d;padding:14px 24px;z-index:99999;font-family:'Outfit',system-ui,sans-serif;font-size:13px;color:#94a3b8;align-items:center;justify-content:center;gap:16px;flex-wrap:wrap">
+<span>We use cookies for analytics to improve your experience. No personal data is sold or shared.</span>
+<button onclick="acceptCookies()" style="background:#d4a847;color:#050709;border:none;padding:8px 20px;border-radius:4px;font-weight:700;font-size:13px;cursor:pointer;font-family:inherit">Accept</button>
+<button onclick="declineCookies()" style="background:transparent;color:#64748b;border:1px solid #14263d;padding:8px 20px;border-radius:4px;font-size:13px;cursor:pointer;font-family:inherit">Decline</button>
+</div>
+<script>
+function acceptCookies(){localStorage.setItem('mw_cookies','accepted');gtag('consent','update',{analytics_storage:'granted'});document.getElementById('cookieConsent').style.display='none';}
+function declineCookies(){localStorage.setItem('mw_cookies','declined');document.getElementById('cookieConsent').style.display='none';}
+(function(){var c=localStorage.getItem('mw_cookies');if(c==='accepted'){gtag('consent','update',{analytics_storage:'granted'});}else if(!c){document.getElementById('cookieConsent').style.display='flex';}})();
+</script>
+</body>
+</html>
