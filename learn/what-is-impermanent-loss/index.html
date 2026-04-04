@@ -1,0 +1,550 @@
+<!DOCTYPE html>
+<html lang="en-GB">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>What Is Impermanent Loss? The Maths Behind LP Risk | MathsWins</title>
+<meta name="description" content="Impermanent loss silently erodes liquidity provider positions. We explain the AMM formula, show worked examples, and calculate exactly when fees cover the loss.">
+<meta name="keywords" content="impermanent loss, liquidity pool, AMM, automated market maker, DeFi, liquidity provider, constant product formula, Uniswap">
+<meta property="og:title" content="What Is Impermanent Loss? The Maths Behind LP Risk | MathsWins">
+<meta property="og:description" content="Impermanent loss silently erodes liquidity provider positions. We explain the AMM formula, show worked examples, and calculate exactly when fees cover the loss.">
+<meta property="og:url" content="https://mathswins.co.uk/learn/what-is-impermanent-loss/">
+<meta property="og:image" content="https://mathswins.co.uk/assets/og-image.png">
+<meta property="og:type" content="article">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:title" content="MathsWins">
+<meta name="twitter:image" content="https://mathswins.co.uk/assets/og-image.png">
+<link rel="canonical" href="https://mathswins.co.uk/learn/what-is-impermanent-loss/">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Crimson+Pro:ital,wght@0,400;0,700;1,400&family=DM+Mono:wght@400;500&family=Outfit:wght@300;400;600;700&display=swap" rel="stylesheet">
+
+<style>
+  :root {
+    --bg: #050709;
+    --surface: #0a0d14;
+    --surface2: #0f1319;
+    --border: #161c28;
+    --border2: #1e2638;
+    --navy: #1a2744;
+    --gold: #d4a847;
+    --teal: #0d9488;
+    --teal-bright: #2dd4bf;
+    --blue: #2563eb;
+    --blue-dim: rgba(37,99,235,0.12);
+    --green-bright: #2dd4a0;
+    --green-dim: rgba(45,212,160,0.12);
+    --red-bright: #ef5350;
+    --red-dim: rgba(239,83,80,0.12);
+    --text: #c8cdd8;
+    --text-bright: #e8ecf4;
+    --muted: #4a5568;
+    --cyan: #22d3ee;
+    --cyan-dim: rgba(34,211,238,0.10);
+  }
+
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+
+  body {
+    font-family: 'Outfit', sans-serif;
+    background: var(--bg);
+    color: var(--text);
+    line-height: 1.6;
+    min-height: 100vh;
+  }
+
+  .container {
+    max-width: 920px;
+    margin: 0 auto;
+    padding: 2rem 1.25rem 4rem;
+  }
+
+  /* Header */
+  .nav-bar {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 1rem 0;
+    border-bottom: 1px solid var(--border);
+    margin-bottom: 2.5rem;
+  }
+  .nav-brand {
+    font-family: 'Bebas Neue', sans-serif;
+    font-size: 1.4rem;
+    color: var(--gold);
+    text-decoration: none;
+    letter-spacing: 0.06em;
+  }
+  .nav-brand span { color: var(--text-bright); }
+  .nav-link {
+    font-family: 'Outfit', sans-serif;
+    font-size: 0.85rem;
+    font-weight: 600;
+    color: var(--blue);
+    text-decoration: none;
+    padding: 0.4rem 1rem;
+    border: 1px solid var(--blue);
+    border-radius: 4px;
+    transition: background 0.2s, color 0.2s;
+  }
+  .nav-link:hover { background: var(--blue); color: var(--bg); }
+
+  /* Hero */
+  .hero {
+    text-align: center;
+    margin-bottom: 2.5rem;
+  }
+  .hero-eyebrow {
+    font-family: 'Outfit', sans-serif;
+    font-size: 0.75rem;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.15em;
+    color: var(--blue);
+    margin-bottom: 0.5rem;
+  }
+  .hero h1 {
+    font-family: 'Bebas Neue', sans-serif;
+    font-size: clamp(2rem, 5vw, 3rem);
+    color: var(--text-bright);
+    letter-spacing: 0.04em;
+    line-height: 1.1;
+    margin-bottom: 0.75rem;
+  }
+  .hero-sub {
+    font-family: 'Crimson Pro', serif;
+    font-style: italic;
+    font-size: 1.1rem;
+    color: var(--cyan);
+    max-width: 640px;
+    margin: 0 auto;
+  }
+
+  /* Article body */
+  .article-body {
+    margin-top: 1rem;
+  }
+  .article-body h2 {
+    font-family: 'Bebas Neue', sans-serif;
+    font-size: 1.6rem;
+    color: var(--text-bright);
+    letter-spacing: 0.04em;
+    margin: 2.5rem 0 1rem;
+    padding-top: 1.5rem;
+    border-top: 1px solid var(--border);
+  }
+  .article-body h2:first-child {
+    margin-top: 0;
+    padding-top: 0;
+    border-top: none;
+  }
+  .article-body h3 {
+    font-family: 'Bebas Neue', sans-serif;
+    font-size: 1.2rem;
+    color: var(--blue);
+    margin: 1.5rem 0 0.75rem;
+    letter-spacing: 0.04em;
+  }
+  .article-body p {
+    font-family: 'Crimson Pro', serif;
+    font-size: 1rem;
+    color: var(--text);
+    line-height: 1.7;
+    margin-bottom: 1rem;
+    max-width: 720px;
+  }
+  .article-body a {
+    color: var(--blue);
+    text-decoration: underline;
+    text-underline-offset: 2px;
+  }
+  .article-body a:hover {
+    color: var(--cyan);
+  }
+  .article-body ul {
+    margin: 0 0 1rem 1.5rem;
+    font-family: 'Crimson Pro', serif;
+    font-size: 1rem;
+    color: var(--text);
+    line-height: 1.7;
+    max-width: 720px;
+  }
+  .article-body ul li {
+    margin-bottom: 0.4rem;
+  }
+
+  /* Educational boxes */
+  .mb {
+    background: var(--surface2);
+    border: 1px solid var(--border2);
+    border-radius: 6px;
+    padding: 1rem 1.25rem;
+    font-family: 'DM Mono', monospace;
+    font-size: 0.85rem;
+    color: var(--text-bright);
+    line-height: 1.7;
+    white-space: pre-wrap;
+    margin: 1rem 0;
+    overflow-x: auto;
+  }
+  .pln {
+    font-family: 'Crimson Pro', serif;
+    font-style: italic;
+    color: var(--cyan);
+    background: var(--cyan-dim);
+    border-left: 3px solid var(--cyan);
+    padding: 0.85rem 1.15rem;
+    border-radius: 0 6px 6px 0;
+    margin: 1rem 0;
+    line-height: 1.6;
+    font-size: 0.95rem;
+  }
+  .pt {
+    border-left: 3px solid var(--blue);
+    background: var(--blue-dim);
+    padding: 1rem 1.25rem;
+    border-radius: 0 6px 6px 0;
+    margin: 1.5rem 0;
+    font-family: 'Crimson Pro', serif;
+    font-size: 0.95rem;
+    color: var(--text);
+    line-height: 1.6;
+  }
+  .pt strong { color: var(--blue); }
+  .dg {
+    border-left: 3px solid var(--red-bright);
+    background: var(--red-dim);
+    padding: 1rem 1.25rem;
+    border-radius: 0 6px 6px 0;
+    margin: 1.5rem 0;
+    font-family: 'Crimson Pro', serif;
+    font-size: 0.95rem;
+    color: var(--red-bright);
+    line-height: 1.6;
+  }
+
+  /* Cross-links */
+  .cross-links {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+    gap: 1rem;
+    margin-top: 2rem;
+  }
+  .cross-link {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    padding: 1.25rem;
+    text-decoration: none;
+    transition: border-color 0.2s;
+  }
+  .cross-link:hover { border-color: var(--blue); }
+  .cross-link h4 {
+    font-family: 'Bebas Neue', sans-serif;
+    font-size: 1rem;
+    color: var(--blue);
+    letter-spacing: 0.04em;
+    margin-bottom: 0.35rem;
+  }
+  .cross-link p {
+    font-family: 'Crimson Pro', serif;
+    font-style: italic;
+    font-size: 0.85rem;
+    color: var(--muted);
+    line-height: 1.5;
+  }
+
+  /* CTA */
+  .cta-card {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-left: 3px solid var(--blue);
+    border-radius: 0 10px 10px 0;
+    padding: 1.5rem 1.75rem;
+    margin-top: 2.5rem;
+  }
+  .cta-card h3 {
+    font-family: 'Bebas Neue', sans-serif;
+    font-size: 1.2rem;
+    color: var(--blue);
+    letter-spacing: 0.04em;
+    margin-bottom: 0.5rem;
+  }
+  .cta-card p {
+    font-family: 'Crimson Pro', serif;
+    font-style: italic;
+    font-size: 0.95rem;
+    color: var(--text);
+    line-height: 1.5;
+    margin-bottom: 1rem;
+  }
+  .cta-link {
+    font-family: 'Outfit', sans-serif;
+    font-weight: 600;
+    font-size: 0.9rem;
+    color: var(--blue);
+    text-decoration: none;
+    border-bottom: 1px solid transparent;
+    transition: border-color 0.2s;
+  }
+  .cta-link:hover { border-bottom-color: var(--blue); }
+
+  /* FAQ */
+  .faq-section {
+    margin-top: 3rem;
+    padding-top: 2rem;
+    border-top: 1px solid var(--border);
+  }
+  .faq-title {
+    font-family: 'Bebas Neue', sans-serif;
+    font-size: 2rem;
+    color: var(--text-bright);
+    margin-bottom: 1.5rem;
+    letter-spacing: 0.03em;
+  }
+  .faq-item {
+    border-bottom: 1px solid var(--border);
+    padding: 0;
+  }
+  .faq-item summary {
+    padding: 1rem 0;
+    cursor: pointer;
+    font-weight: 600;
+    color: var(--text-bright);
+    font-size: 1rem;
+    list-style: none;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+  }
+  .faq-item summary::after {
+    content: '+';
+    color: var(--gold);
+    font-size: 1.3rem;
+    font-weight: 700;
+    transition: transform 0.2s;
+  }
+  .faq-item[open] summary::after { transform: rotate(45deg); }
+  .faq-item p {
+    padding: 0 0 1rem;
+    color: #94a3b8;
+    line-height: 1.7;
+    font-size: 0.95rem;
+  }
+
+  /* Footer */
+  .footer {
+    margin-top: 3rem;
+    padding-top: 1.5rem;
+    border-top: 1px solid var(--border);
+    text-align: center;
+  }
+  .footer p {
+    font-family: 'Outfit', sans-serif;
+    font-size: 0.75rem;
+    color: var(--muted);
+    line-height: 1.8;
+  }
+  .footer a {
+    color: var(--muted);
+    text-decoration: underline;
+    text-underline-offset: 2px;
+  }
+
+  /* Responsive */
+  @media (max-width: 600px) {
+    .hero h1 { font-size: 2rem; }
+    .cross-links { grid-template-columns: 1fr; }
+  }
+</style>
+
+<!-- GA4 Cookieless -->
+<script async src="https://www.googletagmanager.com/gtag/js?id=G-7GTLYCZMXN"></script>
+<script>window.dataLayer=window.dataLayer||[];function gtag(){dataLayer.push(arguments);}gtag('js',new Date());gtag('consent','default',{analytics_storage:'denied',ad_storage:'denied',ad_user_data:'denied',ad_personalization:'denied'});gtag('config','G-7GTLYCZMXN',{send_page_view:true,anonymize_ip:true});</script>
+
+<script type="application/ld+json">
+{"@context":"https://schema.org","@type":"Article","headline":"What Is Impermanent Loss? The Maths Behind LP Risk","description":"Impermanent loss silently erodes liquidity provider positions. We explain the AMM formula, show worked examples, and calculate exactly when fees cover the loss.","url":"https://mathswins.co.uk/learn/what-is-impermanent-loss/","author":{"@type":"Organization","name":"MathsWins","url":"https://mathswins.co.uk"},"publisher":{"@type":"Organization","name":"MathsWins","url":"https://mathswins.co.uk","logo":{"@type":"ImageObject","url":"https://mathswins.co.uk/assets/og-image.png"}},"datePublished":"2026-04-04","dateModified":"2026-04-04","image":"https://mathswins.co.uk/assets/og-image.png","mainEntityOfPage":{"@type":"WebPage","@id":"https://mathswins.co.uk/learn/what-is-impermanent-loss/"}}
+</script>
+<script type="application/ld+json">
+{"@context":"https://schema.org","@type":"FAQPage","mainEntity":[{"@type":"Question","name":"What is impermanent loss in crypto?","acceptedAnswer":{"@type":"Answer","text":"Impermanent loss is the difference between holding tokens in a liquidity pool versus simply holding them in a wallet. When token prices diverge, the AMM rebalances your position — you end up with more of the cheaper token and less of the expensive one, resulting in a lower total value compared to holding."}},{"@type":"Question","name":"Why does impermanent loss happen?","acceptedAnswer":{"@type":"Answer","text":"It happens because of the constant product formula (x × y = k) used by automated market makers. When prices change, arbitrageurs trade against the pool to restore alignment with external markets. This rebalancing extracts value from liquidity providers."}},{"@type":"Question","name":"Is impermanent loss permanent?","acceptedAnswer":{"@type":"Answer","text":"The loss is 'impermanent' only if prices return to the exact ratio at which you deposited. If you withdraw at any other ratio, the loss is realised and permanent. In practice, prices rarely return to exact entry ratios."}},{"@type":"Question","name":"Can trading fees cover impermanent loss?","acceptedAnswer":{"@type":"Answer","text":"Sometimes. High-volume pools with stable pairs (like stablecoins) often generate enough fees to exceed impermanent loss. Volatile pairs with low volume frequently do not — the IL outpaces fee income."}}]}
+</script>
+</head>
+<body>
+<script src="/auth/mw-auth.js"></script>
+<div class="container">
+
+  <!-- Nav -->
+  <nav class="nav-bar">
+    <a href="/" class="nav-brand">MATHS<span>WINS</span></a>
+    <a href="/academy/crypto-trading/" class="nav-link">Crypto Trading Maths &rarr;</a>
+  </nav>
+
+  <!-- Hero -->
+  <div class="hero">
+    <div class="hero-eyebrow">Learn</div>
+    <h1>WHAT IS IMPERMANENT LOSS?</h1>
+    <div class="hero-sub">Providing liquidity to a decentralised exchange looks straightforward &mdash; deposit two tokens, earn trading fees. What most liquidity providers discover too late is that the mechanism designed to keep prices accurate is also silently eroding their position.</div>
+  </div>
+
+  <!-- Article Content -->
+  <div class="article-body">
+
+    <h2>THE MECHANISM NOBODY EXPLAINS</h2>
+
+    <p>Decentralised exchanges (DEXs) like Uniswap do not use an order book. There are no buyers and sellers matching up at an agreed price. Instead, they use an automated market maker (AMM) &mdash; a mathematical formula that sets prices based on the ratio of tokens in a liquidity pool.</p>
+
+    <p>The formula is simple:</p>
+
+    <div class="mb">x &times; y = k
+
+Where x is the quantity of token A in the pool, y is the quantity of token B, and k is a constant that never changes.</div>
+
+    <p>When a trader buys token A from the pool, they add token B and remove token A. The ratio shifts. The formula ensures the product stays constant, which means the price of token A rises as it becomes scarcer in the pool.</p>
+
+    <p>This mechanism keeps prices aligned with the broader market through arbitrage. If the price of token A rises on a centralised exchange, arbitrageurs buy it cheaply from the DEX pool until the DEX price matches. This arbitrage is automatic and relentless &mdash; and it is the source of impermanent loss.</p>
+
+    <h2>WHAT IMPERMANENT LOSS ACTUALLY IS</h2>
+
+    <p>When you deposit into a liquidity pool, you deposit equal value of both tokens. As the price of one token changes relative to the other, the AMM rebalances the pool through arbitrage. You end up holding more of the token that fell in price and less of the token that rose.</p>
+
+    <p>Compare this to simply holding the same tokens in a wallet &mdash; a strategy called HODLing. Impermanent loss is the difference between what your position is worth inside the pool versus what it would be worth had you simply held.</p>
+
+    <div class="mb">Worked example &mdash; ETH/USDC pool:
+
+Deposit: 1 ETH + 1,000 USDC when ETH = &pound;1,000
+Pool value at deposit: &pound;2,000
+k = 1 &times; 1,000 = 1,000
+
+ETH price doubles to &pound;2,000.
+New pool ratio (solving x &times; y = 1,000 with y/x = 2,000):
+x = &radic;(1,000/2,000) = 0.7071 ETH
+y = &radic;(1,000 &times; 2,000) = 1,414.2 USDC
+
+Pool value: (0.7071 &times; &pound;2,000) + &pound;1,414.2 = &pound;2,828.4
+HODL value: (1 &times; &pound;2,000) + &pound;1,000 = &pound;3,000
+
+Impermanent loss = &pound;3,000 &minus; &pound;2,828.4 = &pound;171.60
+Loss as % of HODL value = 5.72%</div>
+
+    <div class="pln">You gained from the price rise &mdash; your pool position is worth &pound;2,828 instead of &pound;2,000. But a HODLer gained more: &pound;3,000. The difference &mdash; &pound;171.60 &mdash; is the impermanent loss. You paid it invisibly, in the form of selling ETH to arbitrageurs as the price rose.</div>
+
+    <h2>HOW LOSS SCALES WITH PRICE CHANGE</h2>
+
+    <p>Impermanent loss grows with the magnitude of price divergence, not the direction. A token that halves causes the same impermanent loss as a token that doubles, because the AMM rebalances symmetrically.</p>
+
+    <div class="mb">Impermanent loss by price change (one token vs the other):
+
+Price change  &rarr;  IL as % of HODL value
+1.25&times;         &rarr;  0.6%
+1.50&times;         &rarr;  2.0%
+2&times;            &rarr;  5.7%
+3&times;            &rarr;  13.4%
+4&times;            &rarr;  20.0%
+5&times;            &rarr;  25.5%
+10&times;           &rarr;  42.5%</div>
+
+    <div class="dg">At a 2&times; price change, you lose 5.7% compared to holding. At 5&times;, you lose 25.5%. At 10&times;, you lose 42.5% of what you would have had by simply holding both assets.</div>
+
+    <h2>WHY &ldquo;IMPERMANENT&rdquo; IS A GENEROUS DESCRIPTION</h2>
+
+    <p>The loss is impermanent only in a narrow mathematical sense. In practice, it becomes permanent the moment you withdraw. Three scenarios:</p>
+
+    <div class="pt"><strong>Price returns to entry ratio.</strong> Impermanent loss goes to zero. You keep all the trading fees you earned. This is the best case, and the least common.</div>
+
+    <div class="pt"><strong>Price partially recovers.</strong> You withdraw with some impermanent loss remaining, partially offset by fees earned. Whether you are ahead depends on fee income versus loss magnitude.</div>
+
+    <div class="pt"><strong>Price divergence widens further or never recovers.</strong> You withdraw with significant impermanent loss. The trading fees may or may not cover it. For volatile token pairs in low-volume pools, they often do not.</div>
+
+    <div class="pln">The word &ldquo;impermanent&rdquo; describes a mathematical property of the mechanism, not a reassurance about your outcome. Many liquidity providers who lose money do so because they misread &ldquo;impermanent&rdquo; as &ldquo;temporary and therefore ignorable.&rdquo;</div>
+
+    <h2>WHEN FEES COVER THE LOSS &mdash; AND WHEN THEY DON&rsquo;T</h2>
+
+    <p>Impermanent loss is not automatically a reason to avoid liquidity provision. Trading fees can offset it &mdash; and in high-volume pools, they often do. The question is always whether the fees earned exceed the impermanent loss incurred.</p>
+
+    <p>Fee income depends on: trading volume in the pool, fee tier (typically 0.05%, 0.30%, or 1.00% per trade), your share of the pool.</p>
+
+    <div class="mb">Rough framework:
+
+Low IL risk (stablecoin pairs, pegged pairs):
+  Fee income likely exceeds IL
+
+Medium IL risk (ETH/BTC, blue-chip pairs):
+  Fee income may cover IL in high-volume pools
+
+High IL risk (ETH/small-cap altcoin):
+  IL frequently exceeds fee income
+  Requires careful monitoring</div>
+
+    <div class="dg">CRYPTOASSETS ARE NOT REGULATED BY THE FCA. PROVIDING LIQUIDITY TO DECENTRALISED EXCHANGES CARRIES SIGNIFICANT FINANCIAL RISK, INCLUDING THE POTENTIAL LOSS OF YOUR ENTIRE DEPOSIT. THIS IS NOT FINANCIAL ADVICE.</div>
+
+    <div class="pt"><strong>WHAT THE IMPERMANENT LOSS CALCULATOR SHOWS YOU</strong> &mdash; Before you deposit into any liquidity pool, the <a href="/tools/impermanent-loss/">Impermanent Loss Calculator</a> lets you model exactly what happens to your position at different price points. Enter your deposit amounts and a target price scenario &mdash; the calculator shows your pool value, your HODL value, and the exact impermanent loss in both percentage and sterling terms. Use it before every deposit.</div>
+
+  </div>
+
+  <!-- Cross-links -->
+  <div class="cross-links">
+    <a href="/tools/impermanent-loss/" class="cross-link">
+      <h4>IMPERMANENT LOSS CALCULATOR</h4>
+      <p>Enter your deposit and price scenario to see the exact IL in pounds and percentage terms before you commit.</p>
+    </a>
+    <a href="/tools/crypto-liquidation/" class="cross-link">
+      <h4>CRYPTO LIQUIDATION CALCULATOR</h4>
+      <p>If you use leverage alongside liquidity provision, understand your liquidation price before the market moves against you.</p>
+    </a>
+    <a href="/academy/crypto-trading/" class="cross-link">
+      <h4>CRYPTO TRADING MATHS COURSE</h4>
+      <p>10 modules covering AMM mechanics, impermanent loss, leverage and liquidation, on-chain analysis, and risk management. Module 1 free.</p>
+    </a>
+    <a href="/tools/poker-odds/" class="cross-link">
+      <h4>POKER ODDS CALCULATOR</h4>
+      <p>Apply probability thinking to poker &mdash; calculate your equity in any hand situation.</p>
+    </a>
+  </div>
+
+  <!-- CTA -->
+  <div class="cta-card">
+    <h3>CRYPTO TRADING MATHS &mdash; 10 MODULES</h3>
+    <p>This article explains impermanent loss. The Crypto Trading Maths course goes further: full AMM mechanics, concentrated liquidity, fee modelling, leverage and liquidation mathematics, and on-chain risk management. Module 1 free.</p>
+    <a href="/academy/crypto-trading/" class="cta-link">Explore the full course &rarr;</a>
+  </div>
+
+  <!-- FAQ -->
+  <div class="faq-section">
+    <h2 class="faq-title">FREQUENTLY ASKED QUESTIONS</h2>
+    <details class="faq-item"><summary>What is impermanent loss in crypto?</summary><p>Impermanent loss is the difference between holding tokens in a liquidity pool versus simply holding them in a wallet. When token prices diverge, the AMM rebalances your position &mdash; you end up with more of the cheaper token and less of the expensive one, resulting in a lower total value compared to holding.</p></details>
+    <details class="faq-item"><summary>Why does impermanent loss happen?</summary><p>It happens because of the constant product formula (x &times; y = k) used by automated market makers. When prices change, arbitrageurs trade against the pool to restore alignment with external markets. This rebalancing extracts value from liquidity providers.</p></details>
+    <details class="faq-item"><summary>Is impermanent loss permanent?</summary><p>The loss is &ldquo;impermanent&rdquo; only if prices return to the exact ratio at which you deposited. If you withdraw at any other ratio, the loss is realised and permanent. In practice, prices rarely return to exact entry ratios.</p></details>
+    <details class="faq-item"><summary>Can trading fees cover impermanent loss?</summary><p>Sometimes. High-volume pools with stable pairs (like stablecoins) often generate enough fees to exceed impermanent loss. Volatile pairs with low volume frequently do not &mdash; the IL outpaces fee income.</p></details>
+  </div>
+
+  <!-- Crypto Disclaimer -->
+  <div style="margin-top:2rem; padding:1.25rem; background:var(--surface); border:1px solid var(--border); border-radius:8px;">
+    <p style="font-family:'Outfit',sans-serif; font-size:0.78rem; color:var(--muted); line-height:1.7;">
+      Cryptoassets are not regulated in the UK. Capital at risk. This is a mathematical education article, not financial advice.
+    </p>
+  </div>
+
+  <!-- Footer -->
+  <div class="footer">
+    <p>
+      Built by a first-class mathematics graduate with QTS.<br>
+      <a href="/">MathsWins</a> &middot; <a href="/learn/">Articles</a> &middot; <a href="/tools/">Tools</a> &middot; <a href="/academy/">Academy</a> &middot; <a href="/restore/">Restore Access</a><br>
+      &copy; 2026 MathsWins. Maths Always Wins.
+    </p>
+  </div>
+
+</div>
+
+<!-- Cookie Consent Banner -->
+<div id="cookieConsent" style="display:none;position:fixed;bottom:0;left:0;right:0;background:#0c1628;border-top:1px solid #14263d;padding:14px 24px;z-index:99999;font-family:'Outfit',system-ui,sans-serif;font-size:13px;color:#94a3b8;align-items:center;justify-content:center;gap:16px;flex-wrap:wrap">
+<span>We use cookies for analytics to improve your experience. No personal data is sold or shared.</span>
+<button onclick="acceptCookies()" style="background:#d4a847;color:#050709;border:none;padding:8px 20px;border-radius:4px;font-weight:700;font-size:13px;cursor:pointer;font-family:inherit">Accept</button>
+<button onclick="declineCookies()" style="background:transparent;color:#64748b;border:1px solid #14263d;padding:8px 20px;border-radius:4px;font-size:13px;cursor:pointer;font-family:inherit">Decline</button>
+</div>
+<script>
+function acceptCookies(){localStorage.setItem('mw_cookies','accepted');gtag('consent','update',{analytics_storage:'granted'});document.getElementById('cookieConsent').style.display='none';}
+function declineCookies(){localStorage.setItem('mw_cookies','declined');document.getElementById('cookieConsent').style.display='none';}
+(function(){var c=localStorage.getItem('mw_cookies');if(c==='accepted'){gtag('consent','update',{analytics_storage:'granted'});}else if(!c){document.getElementById('cookieConsent').style.display='flex';}})();
+</script>
+</body>
+</html>

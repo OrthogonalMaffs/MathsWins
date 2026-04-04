@@ -1,0 +1,549 @@
+<!DOCTYPE html>
+<html lang="en-GB">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Is Card Counting Illegal in the UK? | MathsWins</title>
+<meta name="description" content="Card counting is legal in the UK but casinos can ban you. We explain the law, the maths behind Hi-Lo, and what edge a counter can realistically achieve.">
+<meta name="keywords" content="card counting illegal UK, card counting law, Hi-Lo card counting, blackjack card counting, Gambling Act 2005, card counting edge">
+<meta property="og:title" content="Is Card Counting Illegal in the UK? | MathsWins">
+<meta property="og:description" content="Card counting is legal in the UK but casinos can ban you. We explain the law, the maths behind Hi-Lo, and what edge a counter can realistically achieve.">
+<meta property="og:url" content="https://mathswins.co.uk/learn/is-card-counting-illegal-uk/">
+<meta property="og:image" content="https://mathswins.co.uk/assets/og-image.png">
+<meta property="og:type" content="article">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:title" content="MathsWins">
+<meta name="twitter:image" content="https://mathswins.co.uk/assets/og-image.png">
+<link rel="canonical" href="https://mathswins.co.uk/learn/is-card-counting-illegal-uk/">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Crimson+Pro:ital,wght@0,400;0,700;1,400&family=DM+Mono:wght@400;500&family=Outfit:wght@300;400;600;700&display=swap" rel="stylesheet">
+
+<style>
+  :root {
+    --bg: #050709;
+    --surface: #0a0d14;
+    --surface2: #0f1319;
+    --border: #161c28;
+    --border2: #1e2638;
+    --navy: #1a2744;
+    --gold: #d4a847;
+    --teal: #0d9488;
+    --teal-bright: #2dd4bf;
+    --blue: #2563eb;
+    --blue-dim: rgba(37,99,235,0.12);
+    --green-bright: #2dd4a0;
+    --green-dim: rgba(45,212,160,0.12);
+    --red-bright: #ef5350;
+    --red-dim: rgba(239,83,80,0.12);
+    --text: #c8cdd8;
+    --text-bright: #e8ecf4;
+    --muted: #4a5568;
+    --cyan: #22d3ee;
+    --cyan-dim: rgba(34,211,238,0.10);
+  }
+
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+
+  body {
+    font-family: 'Outfit', sans-serif;
+    background: var(--bg);
+    color: var(--text);
+    line-height: 1.6;
+    min-height: 100vh;
+  }
+
+  .container {
+    max-width: 920px;
+    margin: 0 auto;
+    padding: 2rem 1.25rem 4rem;
+  }
+
+  /* Header */
+  .nav-bar {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 1rem 0;
+    border-bottom: 1px solid var(--border);
+    margin-bottom: 2.5rem;
+  }
+  .nav-brand {
+    font-family: 'Bebas Neue', sans-serif;
+    font-size: 1.4rem;
+    color: var(--gold);
+    text-decoration: none;
+    letter-spacing: 0.06em;
+  }
+  .nav-brand span { color: var(--text-bright); }
+  .nav-link {
+    font-family: 'Outfit', sans-serif;
+    font-size: 0.85rem;
+    font-weight: 600;
+    color: var(--blue);
+    text-decoration: none;
+    padding: 0.4rem 1rem;
+    border: 1px solid var(--blue);
+    border-radius: 4px;
+    transition: background 0.2s, color 0.2s;
+  }
+  .nav-link:hover { background: var(--blue); color: var(--bg); }
+
+  /* Hero */
+  .hero {
+    text-align: center;
+    margin-bottom: 2.5rem;
+  }
+  .hero-eyebrow {
+    font-family: 'Outfit', sans-serif;
+    font-size: 0.75rem;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.15em;
+    color: var(--blue);
+    margin-bottom: 0.5rem;
+  }
+  .hero h1 {
+    font-family: 'Bebas Neue', sans-serif;
+    font-size: clamp(2rem, 5vw, 3rem);
+    color: var(--text-bright);
+    letter-spacing: 0.04em;
+    line-height: 1.1;
+    margin-bottom: 0.75rem;
+  }
+  .hero-sub {
+    font-family: 'Crimson Pro', serif;
+    font-style: italic;
+    font-size: 1.1rem;
+    color: var(--cyan);
+    max-width: 640px;
+    margin: 0 auto;
+  }
+
+  /* Article body */
+  .article-body {
+    margin-top: 1rem;
+  }
+  .article-body h2 {
+    font-family: 'Bebas Neue', sans-serif;
+    font-size: 1.6rem;
+    color: var(--text-bright);
+    letter-spacing: 0.04em;
+    margin: 2.5rem 0 1rem;
+    padding-top: 1.5rem;
+    border-top: 1px solid var(--border);
+  }
+  .article-body h2:first-child {
+    margin-top: 0;
+    padding-top: 0;
+    border-top: none;
+  }
+  .article-body h3 {
+    font-family: 'Bebas Neue', sans-serif;
+    font-size: 1.2rem;
+    color: var(--blue);
+    margin: 1.5rem 0 0.75rem;
+    letter-spacing: 0.04em;
+  }
+  .article-body p {
+    font-family: 'Crimson Pro', serif;
+    font-size: 1rem;
+    color: var(--text);
+    line-height: 1.7;
+    margin-bottom: 1rem;
+    max-width: 720px;
+  }
+  .article-body a {
+    color: var(--blue);
+    text-decoration: underline;
+    text-underline-offset: 2px;
+  }
+  .article-body a:hover {
+    color: var(--cyan);
+  }
+  .article-body ul {
+    margin: 0 0 1rem 1.5rem;
+    font-family: 'Crimson Pro', serif;
+    font-size: 1rem;
+    color: var(--text);
+    line-height: 1.7;
+    max-width: 720px;
+  }
+  .article-body ul li {
+    margin-bottom: 0.4rem;
+  }
+
+  /* Educational boxes */
+  .mb {
+    background: var(--surface2);
+    border: 1px solid var(--border2);
+    border-radius: 6px;
+    padding: 1rem 1.25rem;
+    font-family: 'DM Mono', monospace;
+    font-size: 0.85rem;
+    color: var(--text-bright);
+    line-height: 1.7;
+    white-space: pre-wrap;
+    margin: 1rem 0;
+    overflow-x: auto;
+  }
+  .pln {
+    font-family: 'Crimson Pro', serif;
+    font-style: italic;
+    color: var(--cyan);
+    background: var(--cyan-dim);
+    border-left: 3px solid var(--cyan);
+    padding: 0.85rem 1.15rem;
+    border-radius: 0 6px 6px 0;
+    margin: 1rem 0;
+    line-height: 1.6;
+    font-size: 0.95rem;
+  }
+  .pt {
+    border-left: 3px solid var(--blue);
+    background: var(--blue-dim);
+    padding: 1rem 1.25rem;
+    border-radius: 0 6px 6px 0;
+    margin: 1.5rem 0;
+    font-family: 'Crimson Pro', serif;
+    font-size: 0.95rem;
+    color: var(--text);
+    line-height: 1.6;
+  }
+  .pt strong { color: var(--blue); }
+  .dg {
+    border-left: 3px solid var(--red-bright);
+    background: var(--red-dim);
+    padding: 1rem 1.25rem;
+    border-radius: 0 6px 6px 0;
+    margin: 1.5rem 0;
+    font-family: 'Crimson Pro', serif;
+    font-size: 0.95rem;
+    color: var(--red-bright);
+    line-height: 1.6;
+  }
+
+  /* Cross-links */
+  .cross-links {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+    gap: 1rem;
+    margin-top: 2rem;
+  }
+  .cross-link {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    padding: 1.25rem;
+    text-decoration: none;
+    transition: border-color 0.2s;
+  }
+  .cross-link:hover { border-color: var(--blue); }
+  .cross-link h4 {
+    font-family: 'Bebas Neue', sans-serif;
+    font-size: 1rem;
+    color: var(--blue);
+    letter-spacing: 0.04em;
+    margin-bottom: 0.35rem;
+  }
+  .cross-link p {
+    font-family: 'Crimson Pro', serif;
+    font-style: italic;
+    font-size: 0.85rem;
+    color: var(--muted);
+    line-height: 1.5;
+  }
+
+  /* CTA */
+  .cta-card {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-left: 3px solid var(--blue);
+    border-radius: 0 10px 10px 0;
+    padding: 1.5rem 1.75rem;
+    margin-top: 2.5rem;
+  }
+  .cta-card h3 {
+    font-family: 'Bebas Neue', sans-serif;
+    font-size: 1.2rem;
+    color: var(--blue);
+    letter-spacing: 0.04em;
+    margin-bottom: 0.5rem;
+  }
+  .cta-card p {
+    font-family: 'Crimson Pro', serif;
+    font-style: italic;
+    font-size: 0.95rem;
+    color: var(--text);
+    line-height: 1.5;
+    margin-bottom: 1rem;
+  }
+  .cta-link {
+    font-family: 'Outfit', sans-serif;
+    font-weight: 600;
+    font-size: 0.9rem;
+    color: var(--blue);
+    text-decoration: none;
+    border-bottom: 1px solid transparent;
+    transition: border-color 0.2s;
+  }
+  .cta-link:hover { border-bottom-color: var(--blue); }
+
+  /* FAQ */
+  .faq-section {
+    margin-top: 3rem;
+    padding-top: 2rem;
+    border-top: 1px solid var(--border);
+  }
+  .faq-title {
+    font-family: 'Bebas Neue', sans-serif;
+    font-size: 2rem;
+    color: var(--text-bright);
+    margin-bottom: 1.5rem;
+    letter-spacing: 0.03em;
+  }
+  .faq-item {
+    border-bottom: 1px solid var(--border);
+    padding: 0;
+  }
+  .faq-item summary {
+    padding: 1rem 0;
+    cursor: pointer;
+    font-weight: 600;
+    color: var(--text-bright);
+    font-size: 1rem;
+    list-style: none;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+  }
+  .faq-item summary::after {
+    content: '+';
+    color: var(--gold);
+    font-size: 1.3rem;
+    font-weight: 700;
+    transition: transform 0.2s;
+  }
+  .faq-item[open] summary::after { transform: rotate(45deg); }
+  .faq-item p {
+    padding: 0 0 1rem;
+    color: #94a3b8;
+    line-height: 1.7;
+    font-size: 0.95rem;
+  }
+
+  /* Footer */
+  .footer {
+    margin-top: 3rem;
+    padding-top: 1.5rem;
+    border-top: 1px solid var(--border);
+    text-align: center;
+  }
+  .footer p {
+    font-family: 'Outfit', sans-serif;
+    font-size: 0.75rem;
+    color: var(--muted);
+    line-height: 1.8;
+  }
+  .footer a {
+    color: var(--muted);
+    text-decoration: underline;
+    text-underline-offset: 2px;
+  }
+
+  /* Responsive */
+  @media (max-width: 600px) {
+    .hero h1 { font-size: 2rem; }
+    .cross-links { grid-template-columns: 1fr; }
+  }
+</style>
+
+<!-- GA4 Cookieless -->
+<script async src="https://www.googletagmanager.com/gtag/js?id=G-7GTLYCZMXN"></script>
+<script>window.dataLayer=window.dataLayer||[];function gtag(){dataLayer.push(arguments);}gtag('js',new Date());gtag('consent','default',{analytics_storage:'denied',ad_storage:'denied',ad_user_data:'denied',ad_personalization:'denied'});gtag('config','G-7GTLYCZMXN',{send_page_view:true,anonymize_ip:true});</script>
+
+<script type="application/ld+json">
+{"@context":"https://schema.org","@type":"Article","headline":"Is Card Counting Illegal in the UK? | MathsWins","description":"Card counting is legal in the UK but casinos can ban you. We explain the law, the maths behind Hi-Lo, and what edge a counter can realistically achieve.","url":"https://mathswins.co.uk/learn/is-card-counting-illegal-uk/","author":{"@type":"Organization","name":"MathsWins","url":"https://mathswins.co.uk"},"publisher":{"@type":"Organization","name":"MathsWins","url":"https://mathswins.co.uk","logo":{"@type":"ImageObject","url":"https://mathswins.co.uk/assets/og-image.png"}},"datePublished":"2026-04-04","dateModified":"2026-04-04","image":"https://mathswins.co.uk/assets/og-image.png","mainEntityOfPage":{"@type":"WebPage","@id":"https://mathswins.co.uk/learn/is-card-counting-illegal-uk/"}}
+</script>
+<script type="application/ld+json">
+{"@context":"https://schema.org","@type":"FAQPage","mainEntity":[{"@type":"Question","name":"Is card counting illegal in the UK?","acceptedAnswer":{"@type":"Answer","text":"No. Card counting is not illegal in the United Kingdom under the Gambling Act 2005. It is a mental skill using publicly visible information. However, casinos can refuse your custom and bar you from their premises — they are private businesses with the right to exclude anyone."}},{"@type":"Question","name":"What is the Hi-Lo card counting system?","acceptedAnswer":{"@type":"Answer","text":"Hi-Lo assigns +1 to cards 2-6, 0 to 7-9, and -1 to 10-A. You keep a running count as cards are dealt. Dividing by decks remaining gives the true count. A true count of +2 or higher indicates the remaining shoe favours the player."}},{"@type":"Question","name":"What edge does card counting give a player?","acceptedAnswer":{"@type":"Answer","text":"With perfect basic strategy and Hi-Lo counting, a skilled player can achieve a 0.5-1.0% edge over the house. This requires a significant betting spread, good deck penetration, and thousands of hands for the edge to manifest reliably."}},{"@type":"Question","name":"Can casinos ban you for card counting?","acceptedAnswer":{"@type":"Answer","text":"Yes. While counting is legal, UK casinos are private premises and can refuse entry to anyone without giving a reason. Identified counters are typically asked to leave and may be added to shared industry databases."}}]}
+</script>
+</head>
+<body>
+<script src="/auth/mw-auth.js"></script>
+<div class="container">
+
+  <!-- Nav -->
+  <nav class="nav-bar">
+    <a href="/" class="nav-brand">MATHS<span>WINS</span></a>
+    <a href="/academy/blackjack/" class="nav-link">Blackjack Academy &rarr;</a>
+  </nav>
+
+  <!-- Hero -->
+  <div class="hero">
+    <div class="hero-eyebrow">Learn</div>
+    <h1>IS CARD COUNTING ILLEGAL IN THE UK?</h1>
+    <div class="hero-sub">Card counting is one of the most misunderstood skills in gambling. Films portray it as a crime. Casinos treat it as one. The law says something else entirely &mdash; and understanding the distinction matters if you want to play blackjack seriously.</div>
+  </div>
+
+  <!-- Article Content -->
+  <div class="article-body">
+
+    <h2>THE SHORT ANSWER</h2>
+
+    <p>Card counting is not illegal in the United Kingdom. It is not fraud, it is not cheating, and it carries no criminal penalty. It is a mental skill &mdash; the application of mathematics to publicly available information &mdash; and no law prohibits it.</p>
+
+    <p>What casinos can do is refuse your custom. A casino is a private premises, and the operator has the legal right to ask any patron to leave or to bar them from returning, without giving a reason. Card counters get banned not because they have broken the law, but because they have reduced the casino&rsquo;s edge &mdash; and casinos are under no obligation to continue offering games to customers they believe are beating them.</p>
+
+    <p>The legal position and the practical position are therefore very different. Legal: entirely permissible. Practical: if you are good enough to matter, you will eventually be asked to leave.</p>
+
+    <div class="pln">Card counting is legal. It is also genuinely difficult, rarely profitable enough to justify the effort, and guaranteed to shorten your welcome at any casino where you are effective.</div>
+
+    <h2>WHAT IS CARD COUNTING?</h2>
+
+    <p>Card counting is a technique for tracking the ratio of high cards to low cards remaining in a blackjack shoe. As cards are dealt, a skilled player updates a running count and uses it to determine when the remaining deck is rich in tens and aces &mdash; which favours the player &mdash; and when it is depleted of them &mdash; which favours the house.</p>
+
+    <p>The most widely used system is Hi-Lo. Each card is assigned a value:</p>
+
+    <div class="mb">Hi-Lo card counting values:
+
+2, 3, 4, 5, 6  &rarr;  +1  (low cards, favour the house)
+7, 8, 9        &rarr;   0  (neutral)
+10, J, Q, K, A &rarr;  -1  (high cards, favour the player)</div>
+
+    <p>As each card is dealt face-up, you add or subtract from your running count. A high positive count means many low cards have left the shoe and the remaining deck is ten-rich. A high negative count means the opposite.</p>
+
+    <p>The running count is then converted to a true count by dividing by the number of decks remaining in the shoe. This normalises the count across different shoe sizes.</p>
+
+    <div class="mb">True count = Running count &divide; Decks remaining</div>
+
+    <p>A true count of +2 means there are approximately two extra high-value cards per remaining deck compared to a balanced shoe. At this level, the player&rsquo;s edge begins to turn positive. At +4 or above, a skilled counter has a meaningful mathematical advantage over the house.</p>
+
+    <h2>WHY DOES A HIGH COUNT FAVOUR THE PLAYER?</h2>
+
+    <p>Three reasons, all rooted in the rules of blackjack:</p>
+
+    <div class="pt"><strong>1. Blackjack pays 3:2.</strong> When the shoe is ten-rich, both the player and the dealer are more likely to be dealt a natural blackjack. But only the player gets paid 3:2 for it. The dealer simply wins even money on theirs. A ten-rich shoe amplifies a payout asymmetry that already exists in the rules.</div>
+
+    <div class="pt"><strong>2. The dealer must hit on soft 17 or below.</strong> When the shoe is ten-rich, the dealer busts more often, because every hand they build toward 17 or below carries a higher risk of drawing a ten and going over 21. The player can stand on any total &mdash; the dealer cannot.</div>
+
+    <div class="pt"><strong>3. Doubling and splitting become more profitable.</strong> When you know the shoe is ten-rich, doubling down on 10 or 11 is more likely to produce a strong hand. Splitting aces is more likely to result in two blackjacks. The count tells you when these high-variance plays carry positive expected value.</div>
+
+    <h2>WHAT EDGE CAN A CARD COUNTER ACHIEVE?</h2>
+
+    <p>Without counting, basic strategy reduces the house edge to approximately 0.5% in a standard six-deck game with favourable rules. With card counting, a skilled player can flip this into a player edge of roughly 0.5&ndash;1.5%, depending on betting spread and game conditions.</p>
+
+    <div class="mb">House edge without counting (6-deck, S17, DAS):
+House edge &asymp; 0.45%
+Expected loss per &pound;100 wagered &asymp; &pound;0.45
+
+Player edge with Hi-Lo counting and 1:12 bet spread:
+Player edge &asymp; +0.5% to +1.0%
+Expected gain per &pound;100 wagered &asymp; &pound;0.50 to &pound;1.00</div>
+
+    <p>These numbers are small. Card counting is not a get-rich scheme &mdash; it is a slow, grinding mathematical edge that requires thousands of hands to manifest reliably. Variance is enormous. A counter can lose heavily over hundreds of hands and still be playing with a long-run advantage. The edge only becomes reliable over very large sample sizes.</p>
+
+    <h2>HOW DO CASINOS RESPOND?</h2>
+
+    <p>UK casinos cannot call the police. But they have a significant toolkit of countermeasures:</p>
+
+    <div class="pt"><strong>1. Reshuffling early.</strong> The most effective counter to card counting is cutting the shoe deep &mdash; forcing a reshuffle when 40&ndash;50% of cards remain rather than 20&ndash;25%. This eliminates the high-count situations where a counter would otherwise press their bets.</div>
+
+    <div class="pt"><strong>2. Flat betting rules.</strong> Some casinos will instruct a suspected counter to flat bet &mdash; to wager the same amount on every hand regardless of the count. This removes the betting spread that makes counting profitable.</div>
+
+    <div class="pt"><strong>3. Banning and barring.</strong> If a casino identifies a counter, they will typically ask them to leave and add them to a shared intelligence database used by operators across the industry.</div>
+
+    <div class="pt"><strong>4. Continuous shuffle machines.</strong> Some casinos have replaced traditional shoes with continuous shuffle machines (CSMs) that return cards to the shoe after every hand. This makes card counting entirely impossible.</div>
+
+    <h2>THE LEGAL POSITION IN DETAIL</h2>
+
+    <p>The Gambling Act 2005 governs gambling in England, Wales, and Scotland. It does not criminalise card counting. The relevant criminal offences relate to cheating &mdash; defined in section 42 of the Act as behaviour that affects the outcome of a game by deceiving another person or concealing information.</p>
+
+    <p>Card counting does not involve deception. A counter uses only information that is publicly visible &mdash; the cards dealt face-up on the table &mdash; and performs mental arithmetic. No information is concealed from the casino. No equipment is used. No collusion with casino staff occurs.</p>
+
+    <div class="dg"><strong>Mental card counting:</strong> legal.<br><strong>Device-assisted counting:</strong> potentially illegal and certainly grounds for immediate ejection.</div>
+
+    <p>Using a device to assist counting &mdash; a phone app, a hidden computer &mdash; crosses into different legal territory. Section 42 of the Gambling Act could apply.</p>
+
+    <h2>WHAT THIS MEANS IN PRACTICE</h2>
+
+    <div class="pt"><strong>1. You will not be arrested.</strong> No law prohibits what you are doing.</div>
+
+    <div class="pt"><strong>2. You will be watched.</strong> Casino surveillance teams are trained to identify betting pattern changes that correlate with counting.</div>
+
+    <div class="pt"><strong>3. You will be asked to leave if identified.</strong> This is the casino&rsquo;s legal right.</div>
+
+    <div class="pt"><strong>4. The edge is small and hard to achieve.</strong> A 0.5&ndash;1% edge requires near-perfect play, significant betting spread, good penetration, and hundreds of hours of practice.</div>
+
+  </div>
+
+  <!-- Cross-links -->
+  <div class="cross-links">
+    <a href="/academy/blackjack/" class="cross-link">
+      <h4>BLACKJACK ACADEMY</h4>
+      <p>11 modules covering basic strategy, card counting theory, Hi-Lo system, speed drills, and a full session replay with EV analysis. Module 1 free.</p>
+    </a>
+    <a href="/tools/free-bet-calculator/" class="cross-link">
+      <h4>FREE BET CALCULATOR</h4>
+      <p>Calculate the true value of any casino bonus or free bet offer and the optimal extraction strategy.</p>
+    </a>
+    <a href="/tools/poker-odds/" class="cross-link">
+      <h4>POKER ODDS CALCULATOR</h4>
+      <p>Apply the same probability thinking to poker &mdash; calculate your equity in any hand situation.</p>
+    </a>
+    <a href="/academy/sports-betting/" class="cross-link">
+      <h4>SPORTS BETTING MATHS</h4>
+      <p>16 modules covering implied probability, value betting, exchange maths. Module 1 free.</p>
+    </a>
+  </div>
+
+  <!-- CTA -->
+  <div class="cta-card">
+    <h3>BLACKJACK ACADEMY &mdash; 11 MODULES</h3>
+    <p>This article explains the legal and mathematical basis of card counting. The Blackjack Academy teaches you to do it: Hi-Lo theory, speed drills, true count conversion, the Illustrious 18 deviations, and a full 50-hand session replay with expected value reporting. Module 1 free.</p>
+    <a href="/academy/blackjack/" class="cta-link">Explore the full course &rarr;</a>
+  </div>
+
+  <!-- FAQ -->
+  <div class="faq-section">
+    <h2 class="faq-title">FREQUENTLY ASKED QUESTIONS</h2>
+    <details class="faq-item"><summary>Is card counting illegal in the UK?</summary><p>No. Card counting is not illegal in the United Kingdom under the Gambling Act 2005. It is a mental skill using publicly visible information. However, casinos can refuse your custom and bar you from their premises &mdash; they are private businesses with the right to exclude anyone.</p></details>
+    <details class="faq-item"><summary>What is the Hi-Lo card counting system?</summary><p>Hi-Lo assigns +1 to cards 2&ndash;6, 0 to 7&ndash;9, and -1 to 10&ndash;A. You keep a running count as cards are dealt. Dividing by decks remaining gives the true count. A true count of +2 or higher indicates the remaining shoe favours the player.</p></details>
+    <details class="faq-item"><summary>What edge does card counting give a player?</summary><p>With perfect basic strategy and Hi-Lo counting, a skilled player can achieve a 0.5&ndash;1.0% edge over the house. This requires a significant betting spread, good deck penetration, and thousands of hands for the edge to manifest reliably.</p></details>
+    <details class="faq-item"><summary>Can casinos ban you for card counting?</summary><p>Yes. While counting is legal, UK casinos are private premises and can refuse entry to anyone without giving a reason. Identified counters are typically asked to leave and may be added to shared industry databases.</p></details>
+  </div>
+
+  <!-- Responsible Gambling -->
+  <div style="margin-top:2rem; padding:1.25rem; background:var(--surface); border:1px solid var(--border); border-radius:8px;">
+    <p style="font-family:'Outfit',sans-serif; font-size:0.78rem; color:var(--muted); line-height:1.7;">
+      This is a mathematical education article, not betting advice. If you or someone you know is affected by problem gambling:<br>
+      <strong style="color:var(--text);">National Gambling Helpline: 0808 8020 133</strong> (free, 24/7)<br>
+      <a href="https://www.gamcare.org.uk" style="color:var(--muted);">GamCare</a> &middot;
+      <a href="https://www.begambleaware.org" style="color:var(--muted);">BeGambleAware</a>
+    </p>
+  </div>
+
+  <!-- Footer -->
+  <div class="footer">
+    <p>
+      Built by a first-class mathematics graduate with QTS.<br>
+      <a href="/">MathsWins</a> &middot; <a href="/learn/">Articles</a> &middot; <a href="/tools/">Tools</a> &middot; <a href="/academy/">Academy</a> &middot; <a href="/restore/">Restore Access</a><br>
+      &copy; 2026 MathsWins. Maths Always Wins.
+    </p>
+  </div>
+
+</div>
+
+<!-- Cookie Consent Banner -->
+<div id="cookieConsent" style="display:none;position:fixed;bottom:0;left:0;right:0;background:#0c1628;border-top:1px solid #14263d;padding:14px 24px;z-index:99999;font-family:'Outfit',system-ui,sans-serif;font-size:13px;color:#94a3b8;align-items:center;justify-content:center;gap:16px;flex-wrap:wrap">
+<span>We use cookies for analytics to improve your experience. No personal data is sold or shared.</span>
+<button onclick="acceptCookies()" style="background:#d4a847;color:#050709;border:none;padding:8px 20px;border-radius:4px;font-weight:700;font-size:13px;cursor:pointer;font-family:inherit">Accept</button>
+<button onclick="declineCookies()" style="background:transparent;color:#64748b;border:1px solid #14263d;padding:8px 20px;border-radius:4px;font-size:13px;cursor:pointer;font-family:inherit">Decline</button>
+</div>
+<script>
+function acceptCookies(){localStorage.setItem('mw_cookies','accepted');gtag('consent','update',{analytics_storage:'granted'});document.getElementById('cookieConsent').style.display='none';}
+function declineCookies(){localStorage.setItem('mw_cookies','declined');document.getElementById('cookieConsent').style.display='none';}
+(function(){var c=localStorage.getItem('mw_cookies');if(c==='accepted'){gtag('consent','update',{analytics_storage:'granted'});}else if(!c){document.getElementById('cookieConsent').style.display='flex';}})();
+</script>
+</body>
+</html>
