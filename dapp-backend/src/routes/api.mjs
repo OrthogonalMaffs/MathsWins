@@ -9,6 +9,7 @@ import { startSession, startFreeSession, evaluate, getCurrentWeekId, resumeSessi
 import { ethers } from 'ethers';
 import { signatureVerify, decodeAddress } from '@polkadot/util-crypto';
 import { getDb } from '../db/index.mjs';
+import { doSettleLeague, checkEarlySettlement, recoverStuckLeagues } from '../league-settle.mjs';
 
 const router = Router();
 const AUTH_SECRET = process.env.AUTH_JWT_SECRET || 'dev-auth-secret-change-me';
@@ -770,6 +771,9 @@ router.post('/league/:leagueId/submit', optionalWallet, (req, res) => {
   const total = myScores.reduce((sum, s) => sum + s.score, 0);
 
   res.json({ submitted: true, puzzle_index: puzzleIndex, score, cumulative: total, puzzles_played: myScores.length });
+
+  // Check if all puzzles complete — trigger early settlement
+  checkEarlySettlement(league.id);
 });
 
 // Get player's own scores in a league (always visible)
@@ -823,6 +827,9 @@ function recalculateLeaguePot(leagueId) {
 export function checkLeagueLifecycles() {
   const now = Date.now();
 
+  // Recover stuck leagues (settling for >30 minutes)
+  recoverStuckLeagues();
+
   // Get all leagues that need checking
   const db = getDb();
   const leagues = db.prepare(`SELECT * FROM leagues WHERE status IN ('registration', 'active')`).all();
@@ -856,18 +863,25 @@ export function checkLeagueLifecycles() {
 }
 
 function settleLeagueNow(leagueId) {
-  const league = getLeagueById(leagueId);
-  if (!league || league.status !== 'active') return;
-
-  const leaderboard = getLeagueLeaderboard(leagueId);
-
-  // Award prizes to top 4
-  for (let i = 0; i < Math.min(4, leaderboard.length); i++) {
-    const amount = Math.floor(league.prize_pool * PRIZE_SPLITS[i]);
-    addLeaguePrize(leagueId, i + 1, leaderboard[i].wallet, amount);
-  }
-
-  settleLeague(leagueId);
+  doSettleLeague(leagueId).catch(function(e) {
+    console.error('Deadline settlement failed for ' + leagueId + ':', e.message);
+  });
 }
+
+// ── Admin: manual settlement ────────────────────────────────────────
+const ADMIN_SECRET = process.env.ADMIN_SECRET || '';
+
+router.post('/admin/league/:leagueId/settle', async (req, res) => {
+  const key = req.headers['x-admin-key'];
+  if (!ADMIN_SECRET || key !== ADMIN_SECRET) {
+    return res.status(403).json({ error: 'Forbidden' });
+  }
+  try {
+    const result = await doSettleLeague(req.params.leagueId);
+    res.json(result);
+  } catch (e) {
+    res.status(500).json({ error: e.message });
+  }
+});
 
 export default router;
