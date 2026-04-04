@@ -44,8 +44,36 @@
     API_BASE = 'http://127.0.0.1:3860/api/dapp';
   }
 
+  // ── Auth token persistence ────────────────────────────────────────
+  function saveAuthToken(token) {
+    authToken = token;
+    try { localStorage.setItem('qf_auth_token', token); } catch (e) {}
+  }
+
+  function clearAuthToken() {
+    authToken = null;
+    try { localStorage.removeItem('qf_auth_token'); } catch (e) {}
+  }
+
+  function loadStoredToken(address) {
+    try {
+      var stored = localStorage.getItem('qf_auth_token');
+      if (!stored) return null;
+      var parts = stored.split('.');
+      if (parts.length !== 3) return null;
+      var payload = JSON.parse(atob(parts[1]));
+      if (payload.exp && payload.exp * 1000 < Date.now()) { localStorage.removeItem('qf_auth_token'); return null; }
+      if (payload.wallet && address && payload.wallet.toLowerCase() !== address.toLowerCase()) { localStorage.removeItem('qf_auth_token'); return null; }
+      return stored;
+    } catch (e) { return null; }
+  }
+
   // ── Auth: challenge-sign-verify flow ──────────────────────────────
   async function authenticate(address, signer) {
+    // Check for valid stored token first
+    var stored = loadStoredToken(address);
+    if (stored) return stored;
+
     try {
       var challengeRes = await fetch(API_BASE + '/auth/challenge', {
         method: 'POST',
@@ -62,7 +90,7 @@
         body: JSON.stringify({ signature: signature, wallet: address, nonce: challengeData.nonce })
       });
       var verifyData = await verifyRes.json();
-      if (verifyData.token) return verifyData.token;
+      if (verifyData.token) { saveAuthToken(verifyData.token); return verifyData.token; }
       return null;
     } catch (e) {
       console.error('Auth failed:', e);
@@ -530,7 +558,7 @@
     state.walletType = null;
     state.rawProvider = null;
     state.verified = false;
-    authToken = null;
+    clearAuthToken();
     try { localStorage.removeItem('qf_wallet_id'); } catch (e) {}
     try { localStorage.removeItem('qf_substrate_addr'); } catch (e) {}
     fireDisconnectCallbacks();
@@ -610,7 +638,8 @@
     get authToken() { return authToken; },
     authHeaders: function() {
       var h = { 'Content-Type': 'application/json' };
-      if (authToken) h['Authorization'] = 'Bearer ' + authToken;
+      var token = authToken || loadStoredToken(state.address);
+      if (token) { authToken = token; h['Authorization'] = 'Bearer ' + token; }
       else if (state.address) h['X-Wallet-Address'] = state.address;
       return h;
     },
