@@ -506,7 +506,15 @@ var G = (function() {
       leagueMode = true;
       leagueId = lid;
       hidePreGame();
-      startGameSession();
+      if (W.state.address) {
+        startGameSession();
+      } else {
+        setMsg('Waiting for wallet...');
+        qfWallet.onConnect(function() {
+          setMsg('');
+          startGameSession();
+        });
+      }
       return true;
     }
 
@@ -801,9 +809,7 @@ var G = (function() {
         body.leagueId = leagueId;
       }
 
-      console.log('[LEAGUE DEBUG] session/start request — wallet:', W.state.address, 'body:', JSON.stringify(body));
       var data = await api('/session/start', body);
-      console.log('[LEAGUE DEBUG] session/start response — puzzleIndex:', data.puzzleIndex, 'error:', data.error, 'freePlay:', data.freePlay);
       if (data.error) {
         if (data.error === 'ACTIVE_SESSION_EXISTS') {
           return startGameSession(forceSeed, withCountdown);
@@ -1021,7 +1027,6 @@ var G = (function() {
 
         if (isGameOver) {
           inputLocked = false;
-          alert('GAME OVER TRIGGER: partialScore=' + partialScore + ' leagueMode=' + leagueMode + ' leagueId=' + leagueId + ' puzzleIdx=' + leaguePuzzleIndex);
           endGame(false, partialScore);
           return;
         }
@@ -1169,7 +1174,7 @@ var G = (function() {
           var leagueResult = await api('/league/' + leagueId + '/submit', {
             puzzleIndex: leaguePuzzleIndex, score: finalScore, timeMs: timeMs, mistakes: mistakes, hints: hintsUsed
           });
-          if (leagueResult.error) alert('League score failed to save: ' + leagueResult.error + '\n\nDEBUG: puzzleIdx=' + leaguePuzzleIndex + ' score=' + finalScore + ' wallet=' + (W.state.address || 'NONE'));
+          if (leagueResult.error) alert('League score failed to save: ' + leagueResult.error);
         }
 
         if (promoMode && promoCode) {
@@ -1200,8 +1205,8 @@ var G = (function() {
           var leagueResult = await api('/league/' + leagueId + '/submit', {
             puzzleIndex: leaguePuzzleIndex, score: partialScore, timeMs: timeMs, mistakes: mistakes, hints: hintsUsed
           });
-          if (leagueResult.error) alert('League score failed to save: ' + leagueResult.error + '\n\nDEBUG: puzzleIdx=' + leaguePuzzleIndex + ' score=' + partialScore + ' wallet=' + (W.state.address || 'NONE'));
-        } catch (e) { alert('League score failed to save — check your connection.\n\nDEBUG: ' + e.message); }
+          if (leagueResult.error) alert('League score failed to save: ' + leagueResult.error);
+        } catch (e) { alert('League score failed to save — check your connection.'); }
       }
 
       if (promoMode && promoCode) {
