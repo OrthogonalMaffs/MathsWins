@@ -1,5 +1,6 @@
 import { Router } from 'express';
 import crypto from 'crypto';
+import jwt from 'jsonwebtoken';
 import { getLeaderboard, getEntry, getPaidGames } from '../db/index.mjs';
 import { createDuel, getDuelByCode, getDuelById, updateDuelCreatorScore, acceptDuel, updateDuelOpponentScore, completeDuel, expireOldDuels, getDuelsByWallet, getActiveDuelCount } from '../db/index.mjs';
 import { createLeague, getLeagueById, getActiveLeagues, getAllLeagues, updateLeagueStatus, startLeague, settleLeague, cancelLeague, addLeaguePlayer, getLeaguePlayers, getLeaguePlayerCount, isLeaguePlayer, markRefunded, addLeaguePuzzle, getLeaguePuzzles, addLeagueScore, getLeagueScore, getLeagueScoresByWallet, getLeagueLeaderboard, addLeaguePrize, getLeaguePrizes, getPlayerPuzzleOrder, setPlayerPuzzleOrder } from '../db/index.mjs';
@@ -9,6 +10,84 @@ import { ethers } from 'ethers';
 import { getDb } from '../db/index.mjs';
 
 const router = Router();
+const AUTH_SECRET = process.env.AUTH_JWT_SECRET || 'dev-auth-secret-change-me';
+
+// ── Challenge/Verify nonce store (in-memory, 5-minute TTL) ──────────────────
+const challengeStore = new Map();
+const CHALLENGE_TTL = 5 * 60 * 1000;
+
+setInterval(() => {
+  const now = Date.now();
+  for (const [nonce, entry] of challengeStore) {
+    if (now - entry.created > CHALLENGE_TTL) challengeStore.delete(nonce);
+  }
+}, 60 * 1000);
+
+// ── Auth endpoints ──────────────────────────────────────────────────────────
+router.post('/auth/challenge', (req, res) => {
+  const nonce = crypto.randomBytes(32).toString('hex');
+  challengeStore.set(nonce, { created: Date.now() });
+  res.json({ challenge: 'Sign this message to verify your wallet on MathsWins: ' + nonce, nonce });
+});
+
+router.post('/auth/verify', (req, res) => {
+  const { signature, wallet, nonce } = req.body;
+  if (!signature || !wallet || !nonce) return res.status(400).json({ error: 'signature, wallet, and nonce required' });
+
+  const entry = challengeStore.get(nonce);
+  if (!entry) return res.status(400).json({ error: 'Invalid or expired challenge' });
+  if (Date.now() - entry.created > CHALLENGE_TTL) {
+    challengeStore.delete(nonce);
+    return res.status(400).json({ error: 'Challenge expired' });
+  }
+
+  const message = 'Sign this message to verify your wallet on MathsWins: ' + nonce;
+  let recovered;
+  try {
+    recovered = ethers.verifyMessage(message, signature);
+  } catch (e) {
+    return res.status(400).json({ error: 'Invalid signature' });
+  }
+
+  if (recovered.toLowerCase() !== wallet.toLowerCase()) {
+    return res.status(403).json({ error: 'Signature does not match wallet' });
+  }
+
+  challengeStore.delete(nonce);
+
+  const token = jwt.sign({ wallet: wallet.toLowerCase() }, AUTH_SECRET, { expiresIn: '24h' });
+  res.json({ token, wallet: wallet.toLowerCase() });
+});
+
+// ── Auth middleware ──────────────────────────────────────────────────────────
+function requireAuth(req, res, next) {
+  const authHeader = req.headers['authorization'];
+  if (!authHeader || !authHeader.startsWith('Bearer ')) {
+    return res.status(401).json({ error: 'Authentication required — connect your wallet' });
+  }
+  try {
+    const payload = jwt.verify(authHeader.slice(7), AUTH_SECRET);
+    req.wallet = payload.wallet;
+    next();
+  } catch (e) {
+    return res.status(401).json({ error: 'Invalid or expired authentication — reconnect your wallet' });
+  }
+}
+
+function optionalAuth(req, res, next) {
+  const authHeader = req.headers['authorization'];
+  if (authHeader && authHeader.startsWith('Bearer ')) {
+    try {
+      const payload = jwt.verify(authHeader.slice(7), AUTH_SECRET);
+      req.wallet = payload.wallet;
+    } catch (e) {
+      req.wallet = null;
+    }
+  } else {
+    req.wallet = null;
+  }
+  next();
+}
 
 function shuffleArray(arr) {
   var a = arr.slice();
@@ -19,8 +98,9 @@ function shuffleArray(arr) {
   return a;
 }
 
-// ── Middleware: extract wallet from signed message ──────────────────────────
+// Legacy middleware — kept for read-only endpoints that don't need auth
 function requireWallet(req, res, next) {
+  if (req.wallet) return next();
   const wallet = req.headers['x-wallet-address'];
   if (!wallet || !ethers.isAddress(wallet)) {
     return res.status(401).json({ error: 'Wallet address required' });
@@ -59,8 +139,16 @@ router.get('/pot/:gameId', async (req, res) => {
 
 // ── Game session ────────────────────────────────────────────────────────────
 
-// Optional wallet — allows free play without a connected wallet
+// Optional wallet — tries JWT first, falls back to header, allows free play without either
 function optionalWallet(req, res, next) {
+  const authHeader = req.headers['authorization'];
+  if (authHeader && authHeader.startsWith('Bearer ')) {
+    try {
+      const payload = jwt.verify(authHeader.slice(7), AUTH_SECRET);
+      req.wallet = payload.wallet;
+      return next();
+    } catch (e) { /* invalid JWT, fall through */ }
+  }
   const wallet = req.headers['x-wallet-address'];
   if (wallet && ethers.isAddress(wallet)) {
     req.wallet = wallet.toLowerCase();
@@ -231,9 +319,8 @@ function generateShareCode() {
 }
 
 // Create a duel
-router.post('/duel/create', async (req, res) => {
-  const wallet = req.headers['x-wallet-address'];
-  if (!wallet) return res.status(401).json({ error: 'Wallet required' });
+router.post('/duel/create', requireAuth, async (req, res) => {
+  const wallet = req.wallet;
 
   const { gameId, difficulty, stake } = req.body;
   if (!gameId) return res.status(400).json({ error: 'gameId required' });
@@ -284,9 +371,8 @@ router.get('/duel/:code', (req, res) => {
 });
 
 // Accept a duel (opponent joins)
-router.post('/duel/:code/accept', (req, res) => {
-  const wallet = req.headers['x-wallet-address'];
-  if (!wallet) return res.status(401).json({ error: 'Wallet required' });
+router.post('/duel/:code/accept', requireAuth, (req, res) => {
+  const wallet = req.wallet;
 
   const code = req.params.code.toUpperCase();
   const duel = getDuelByCode(code);
@@ -306,9 +392,8 @@ router.post('/duel/:code/accept', (req, res) => {
 });
 
 // Submit duel score (both creator and opponent use this)
-router.post('/duel/:code/submit', (req, res) => {
-  const wallet = req.headers['x-wallet-address'];
-  if (!wallet) return res.status(401).json({ error: 'Wallet required' });
+router.post('/duel/:code/submit', requireAuth, (req, res) => {
+  const wallet = req.wallet;
 
   const code = req.params.code.toUpperCase();
   const duel = getDuelByCode(code);
@@ -540,9 +625,8 @@ router.get('/league/:leagueId', (req, res) => {
 });
 
 // Join a league
-router.post('/league/:leagueId/join', (req, res) => {
-  const wallet = req.headers['x-wallet-address'];
-  if (!wallet) return res.status(401).json({ error: 'Wallet required' });
+router.post('/league/:leagueId/join', requireAuth, (req, res) => {
+  const wallet = req.wallet;
 
   const league = getLeagueById(req.params.leagueId);
   if (!league) return res.status(404).json({ error: 'League not found' });
@@ -581,9 +665,8 @@ router.post('/league/:leagueId/join', (req, res) => {
 });
 
 // Get league puzzles (only if player and league active)
-router.get('/league/:leagueId/puzzles', (req, res) => {
-  const wallet = req.headers['x-wallet-address'];
-  if (!wallet) return res.status(401).json({ error: 'Wallet required' });
+router.get('/league/:leagueId/puzzles', requireAuth, (req, res) => {
+  const wallet = req.wallet;
 
   const league = getLeagueById(req.params.leagueId);
   if (!league) return res.status(404).json({ error: 'League not found' });
@@ -636,9 +719,8 @@ router.get('/league/:leagueId/puzzles', (req, res) => {
 });
 
 // Submit a league puzzle score
-router.post('/league/:leagueId/submit', (req, res) => {
-  const wallet = req.headers['x-wallet-address'];
-  if (!wallet) return res.status(401).json({ error: 'Wallet required' });
+router.post('/league/:leagueId/submit', requireAuth, (req, res) => {
+  const wallet = req.wallet;
 
   const league = getLeagueById(req.params.leagueId);
   if (!league) return res.status(404).json({ error: 'League not found' });
@@ -675,9 +757,8 @@ router.post('/league/:leagueId/submit', (req, res) => {
 });
 
 // Get player's own scores in a league (always visible)
-router.get('/league/:leagueId/my-scores', (req, res) => {
-  const wallet = req.headers['x-wallet-address'];
-  if (!wallet) return res.status(401).json({ error: 'Wallet required' });
+router.get('/league/:leagueId/my-scores', requireAuth, (req, res) => {
+  const wallet = req.wallet;
 
   const league = getLeagueById(req.params.leagueId);
   if (!league) return res.status(404).json({ error: 'League not found' });

@@ -479,8 +479,7 @@ var G = (function() {
 
   // ── API helper ──────────────────────────────────────────────────────
   async function api(url, body, method) {
-    var headers = { 'Content-Type': 'application/json' };
-    if (W.state.address) headers['X-Wallet-Address'] = W.state.address;
+    var headers = qfWallet.authHeaders();
     var opts = { method: method || 'POST', headers: headers };
     if (body && method !== 'GET') opts.body = JSON.stringify(body);
     if (method === 'GET') { delete opts.body; opts.method = 'GET'; }

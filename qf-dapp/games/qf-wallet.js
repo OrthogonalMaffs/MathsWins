@@ -37,6 +37,38 @@
   var connectCallbacks = [];
   var disconnectCallbacks = [];
   var rpcProvider = null;
+  var authToken = null;
+
+  var API_BASE = 'https://dapp-api.mathswins.co.uk/api/dapp';
+  if (typeof location !== 'undefined' && (location.hostname === 'localhost' || location.hostname === '127.0.0.1')) {
+    API_BASE = 'http://127.0.0.1:3860/api/dapp';
+  }
+
+  // ── Auth: challenge-sign-verify flow ──────────────────────────────
+  async function authenticate(address, signer) {
+    try {
+      var challengeRes = await fetch(API_BASE + '/auth/challenge', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' }
+      });
+      var challengeData = await challengeRes.json();
+      if (!challengeData.challenge || !challengeData.nonce) return null;
+
+      var signature = await signer.signMessage(challengeData.challenge);
+
+      var verifyRes = await fetch(API_BASE + '/auth/verify', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ signature: signature, wallet: address, nonce: challengeData.nonce })
+      });
+      var verifyData = await verifyRes.json();
+      if (verifyData.token) return verifyData.token;
+      return null;
+    } catch (e) {
+      console.error('Auth failed:', e);
+      return null;
+    }
+  }
 
   // EIP-6963: collect wallet providers as they announce themselves
   var _eip6963Providers = [];
@@ -305,6 +337,9 @@
 
       try { localStorage.setItem('qf_wallet_id', walletId); } catch (e) {}
 
+      // Authenticate with server — challenge-sign-verify
+      authToken = await authenticate(address, state.signer);
+
       fireCallbacks();
 
       // Resolve .qf name in background, fire callbacks again when resolved
@@ -382,6 +417,7 @@
     state.walletType = null;
     state.rawProvider = null;
     state.verified = false;
+    authToken = null;
     try { localStorage.removeItem('qf_wallet_id'); } catch (e) {}
     fireDisconnectCallbacks();
   }
@@ -453,6 +489,13 @@
     get walletType() { return state.walletType; },
     get verified()   { return state.verified; },
     isConnected: function() { return !!state.address; },
+    get authToken() { return authToken; },
+    authHeaders: function() {
+      var h = { 'Content-Type': 'application/json' };
+      if (authToken) h['Authorization'] = 'Bearer ' + authToken;
+      else if (state.address) h['X-Wallet-Address'] = state.address;
+      return h;
+    },
     ensureVerified: ensureVerified,
     connect: connect,
     disconnect: disconnect,
