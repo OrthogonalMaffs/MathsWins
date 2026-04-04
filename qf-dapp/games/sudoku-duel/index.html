@@ -1019,6 +1019,7 @@ var G = (function() {
 
         if (isGameOver) {
           inputLocked = false;
+          alert('GAME OVER TRIGGER: partialScore=' + partialScore + ' leagueMode=' + leagueMode + ' leagueId=' + leagueId + ' puzzleIdx=' + leaguePuzzleIndex);
           endGame(false, partialScore);
           return;
         }
@@ -1144,7 +1145,6 @@ var G = (function() {
     clearInterval(timerInterval);
     var secs = getSecs();
     var timeMs = secs * 1000;
-    alert('DEBUG endGame: won=' + won + ' leagueMode=' + leagueMode + ' leagueId=' + leagueId + ' puzzleIdx=' + leaguePuzzleIndex + ' partialScore=' + serverPartialScore + ' wallet=' + (W.state.address || 'NONE'));
 
     if (won) {
       try {
@@ -1167,7 +1167,7 @@ var G = (function() {
           var leagueResult = await api('/league/' + leagueId + '/submit', {
             puzzleIndex: leaguePuzzleIndex, score: finalScore, timeMs: timeMs, mistakes: mistakes, hints: hintsUsed
           });
-          if (leagueResult.error) alert('League score failed to save: ' + leagueResult.error);
+          if (leagueResult.error) alert('League score failed to save: ' + leagueResult.error + '\n\nDEBUG: puzzleIdx=' + leaguePuzzleIndex + ' score=' + finalScore + ' wallet=' + (W.state.address || 'NONE'));
         }
 
         if (promoMode && promoCode) {
@@ -1198,8 +1198,8 @@ var G = (function() {
           var leagueResult = await api('/league/' + leagueId + '/submit', {
             puzzleIndex: leaguePuzzleIndex, score: partialScore, timeMs: timeMs, mistakes: mistakes, hints: hintsUsed
           });
-          if (leagueResult.error) alert('League score failed to save: ' + leagueResult.error);
-        } catch (e) { alert('League score failed to save — check your connection.'); }
+          if (leagueResult.error) alert('League score failed to save: ' + leagueResult.error + '\n\nDEBUG: puzzleIdx=' + leaguePuzzleIndex + ' score=' + partialScore + ' wallet=' + (W.state.address || 'NONE'));
+        } catch (e) { alert('League score failed to save — check your connection.\n\nDEBUG: ' + e.message); }
       }
 
       if (promoMode && promoCode) {
