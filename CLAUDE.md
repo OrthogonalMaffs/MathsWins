@@ -69,14 +69,73 @@ Split from MaffsGames in March 2025. MaffsGames = free schools games. MathsWins 
 - `.pt` — practical tip (green accent)
 - `.dg` — danger warning (red accent)
 
+## dApp Backend (Competitive Games on QF Network)
+- **Server:** Hetzner 37.27.219.31, port 3860, PM2 `mathswins-dapp`
+- **API Base:** `https://dapp-api.mathswins.co.uk/api/dapp` (Cloudflare Tunnel)
+- **Local:** `http://127.0.0.1:3860/api/dapp`
+- **Database:** SQLite at `/home/ubuntu/dapp-backend/data/mathswins.db`
+- **Frontend:** `qf-dapp/` directory, single-file HTML games, GitHub Pages
+- **Wallet Module:** `qf-dapp/games/qf-wallet.js` — shared across all games, QNS reverse resolution, EIP-6963, auto-reconnect with 500ms delay
+
+### Registered Games (8 league-capable)
+estimation-engine, sudoku-duel, prime-or-composite, sequence-solver, countdown-numbers, kenken, nonogram, kakuro
+
+### SQLite Tables (14)
+| Table | Purpose |
+|-------|---------|
+| `games` | Game registry |
+| `entries` | Paid game entries per wallet/week |
+| `sessions` | Game session records |
+| `best_scores` | Leaderboard — best score per wallet/game/week |
+| `settlements` | Prize settlement records |
+| `duels` | 1v1 duel challenges |
+| `leagues` | League instances (game, tier, fee, status, schedule, pot) |
+| `league_players` | Players per league (wallet, tx, puzzle_order) |
+| `league_puzzles` | Pre-generated puzzle seeds per league |
+| `league_scores` | Puzzle scores per player per league |
+| `league_prizes` | Prize payouts per position |
+| `promo_challenges` | Promo/challenge codes |
+| `promo_claims` | Claims against promo challenges |
+| `active_game_state` | Persistent session state for resume (league puzzles) |
+
+### API Endpoints (27)
+**Sessions:** POST /session/start, /session/resume, /session/evaluate
+**Leaderboard:** GET /leaderboard/:gameId, /leaderboard/:gameId/:weekId, /pot/:gameId, /games, /week, /entry/:gameId
+**Duels:** POST /duel/create, /duel/:code/accept, /duel/:code/submit | GET /duel/:code, /duels/history
+**Promos:** POST /promo/create, /promo/:code/submit | GET /promo/:code
+**Leagues:** GET /leagues/:gameId, /leagues/:gameId/all, /league/:leagueId, /league/:leagueId/puzzles, /league/:leagueId/my-scores | POST /league/:leagueId/join, /league/:leagueId/submit
+
+### League System
+- Server-authoritative: seeds never reach client, sequential random puzzle delivery
+- Anti-cheat: 60s floor, rapid input detection
+- Tiers: Bronze (100 QF entry), Silver (250 QF entry)
+- 10 puzzles per league, 14-day play window, 8-16 players
+- Top 4 share prize pool (90% prize, 5% burn, 5% team)
+- Builder whitelist via BUILDER_WALLETS env var (testing without payment)
+- Wallet must be connected before session starts (race condition fixed 2026-04-04)
+- Score submit is awaited with error alerts (fire-and-forget bug fixed 2026-04-04)
+
+### Trophy NFTs (QFLeagueTrophy.sol)
+- Soulbound ERC-721, compiled with resolc, 22 Forge tests passing
+- All 9 games have silver + bronze trophy images in `qf-dapp/games/{slug}/assets/`
+- MidJourney prompts saved as `logoprompt.md` per game
+- Pinata IPFS: account set up, JWT on Hetzner
+
+### QNS Integration
+- Reverse resolution via QNS Resolver contract (`reverseResolve(address)`)
+- New Resolver: `0x276b7e9343c19bea29d32dd4a8f84e6d1c183111`
+- Old Resolver: `0xd5d12431b2956248861dbec5e8a9bc6023114e80`
+- Leaderboard displays .qf names when available
+
 ## Relationship to Other Projects
 - **maffsgames.co.uk** — sister site, schools-only. Shares 5 games. Zero branding crossover.
-- **QF Network** — the blockchain. MathsWins is a dApp on QF Network.
+- **QF Network** — the blockchain. MathsWins is a dApp on QF Network (Chain ID 3426).
 
 ## Safety
 - No wallet connection code without explicit approval
 - 10% burn on every QF payment is non-negotiable
 - No crossover with maffsgames.co.uk branding or contact
+- NEVER restart PM2/server without explicit "yes" from Jon
 
 
 ## Task Contract
