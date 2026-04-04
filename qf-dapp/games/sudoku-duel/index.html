@@ -512,7 +512,6 @@ var G = (function() {
         var hasWalletSaved = false;
         try { hasWalletSaved = !!localStorage.getItem('qf_wallet_id'); } catch (e) {}
         setMsg(hasWalletSaved ? 'Reconnecting wallet...' : 'Connect your wallet to play this league puzzle.');
-        if (!hasWalletSaved) qfWallet.connect();
         qfWallet.onConnect(function() {
           setMsg('');
           startGameSession();
