@@ -116,6 +116,9 @@ estimation-engine, sudoku-duel, prime-or-composite, sequence-solver, countdown-n
 - Score submit is awaited with error alerts (fire-and-forget bug fixed 2026-04-04)
 
 ### Trophy NFTs (QFLeagueTrophy.sol)
+- **Contract:** `0xBC41549872d5480b95733e4f29359b7EAB4E05b8` (QF Network mainnet)
+- **Owner:** `0x76E00079d96A9AFe44D9883fA23A5B6e0297903E` (onlyfans.qf)
+- **Minter:** `0xFc6346C5A10c51Ef6B9cE9746F436b0b7Ec3D7b6` (escrow)
 - Soulbound ERC-721, compiled with resolc, 22 Forge tests passing
 - All 9 games have silver + bronze trophy images in `qf-dapp/games/{slug}/assets/`
 - MidJourney prompts saved as `logoprompt.md` per game
