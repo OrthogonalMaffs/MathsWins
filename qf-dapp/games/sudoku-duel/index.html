@@ -1163,9 +1163,10 @@ var G = (function() {
         }
 
         if (leagueMode && leagueId) {
-          await api('/league/' + leagueId + '/submit', {
+          var leagueResult = await api('/league/' + leagueId + '/submit', {
             puzzleIndex: leaguePuzzleIndex, score: finalScore, timeMs: timeMs, mistakes: mistakes, hints: hintsUsed
           });
+          if (leagueResult.error) alert('League score failed to save: ' + leagueResult.error);
         }
 
         if (promoMode && promoCode) {
@@ -1193,10 +1194,11 @@ var G = (function() {
 
       if (leagueMode && leagueId) {
         try {
-          await api('/league/' + leagueId + '/submit', {
+          var leagueResult = await api('/league/' + leagueId + '/submit', {
             puzzleIndex: leaguePuzzleIndex, score: partialScore, timeMs: timeMs, mistakes: mistakes, hints: hintsUsed
           });
-        } catch (e) { /* ignore */ }
+          if (leagueResult.error) alert('League score failed to save: ' + leagueResult.error);
+        } catch (e) { alert('League score failed to save — check your connection.'); }
       }
 
       if (promoMode && promoCode) {
