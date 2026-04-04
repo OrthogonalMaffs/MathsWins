@@ -137,7 +137,10 @@
     cancel.style.cssText = "margin-top:1rem;width:100%;padding:.55rem;font-family:'JetBrains Mono',monospace;font-size:.6rem;background:transparent;border:1px solid #2a2e36;color:#4a4e5a;border-radius:6px;cursor:pointer;letter-spacing:.05em;";
     cancel.textContent = 'CANCEL';
     cancel.onclick = function() { closeModal(); };
-    box.appendChild(title); box.appendChild(sub); box.appendChild(list); box.appendChild(cancel);
+    var hint = document.createElement('p');
+    hint.style.cssText = "font-family:'Inter',sans-serif;font-size:.58rem;color:#6a6e7a;text-align:center;margin-top:.8rem;line-height:1.5;";
+    hint.textContent = "Can\u2019t see your account? Make sure you\u2019ve selected an Ethereum account in Talisman, not a Substrate one.";
+    box.appendChild(title); box.appendChild(sub); box.appendChild(list); box.appendChild(hint); box.appendChild(cancel);
     overlay.appendChild(box);
     overlay.addEventListener('click', function(e) { if (e.target === overlay) closeModal(); });
     document.body.appendChild(overlay);
