@@ -735,16 +735,18 @@ var G = (function() {
   });
 
   // ── Modal ────────────────────────────────────────────────────────
-  function showModal(won, score) {
+  async function showModal(won, score) {
     if (won && leagueMode && leagueId) {
       try {
         var lh = { 'Content-Type': 'application/json' };
         if (typeof dappWallet !== 'undefined' && dappWallet && dappWallet.address) lh['X-Wallet-Address'] = dappWallet.address;
-        fetch((location.hostname === 'localhost' ? 'http://127.0.0.1:3860' : 'https://dapp-api.mathswins.co.uk') + '/api/dapp/league/' + leagueId + '/submit', {
+        var resp = await fetch((location.hostname === 'localhost' ? 'http://127.0.0.1:3860' : 'https://dapp-api.mathswins.co.uk') + '/api/dapp/league/' + leagueId + '/submit', {
           method: 'POST', headers: lh,
           body: JSON.stringify({ puzzleIndex: leaguePuzzleIndex, score: score || 0, timeMs: getSecs() * 1000, mistakes: mistakes, hints: hintsUsed })
         });
-      } catch (e) { /* ignore */ }
+        var result = await resp.json();
+        if (!resp.ok || result.error) alert('League score failed to save: ' + (result.error || resp.status));
+      } catch (e) { alert('League score failed to save — check your connection.'); }
     }
 
     if (won && window.duelMode && window.duelCode) {
