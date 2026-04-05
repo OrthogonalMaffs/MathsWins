@@ -41,10 +41,10 @@ Split from MaffsGames in March 2025. MaffsGames = free schools games. MathsWins 
 ## Current State
 - 9 academy courses with Stripe payments (Module 1 free)
 - 28 free tools (finance, self-employment, property, family, betting, crypto)
-- 13 free games
+- 16 games total (8 competitive + 8 free on dApp, 13 on main site)
 - 6 free everyday maths courses
 - 20 free parent guides
-- /learn/ hub with 3 articles (poker odds, salary sacrifice, overround explained)
+- /learn/ hub with 7 articles (poker odds, pot odds, salary sacrifice, overround, card counting, impermanent loss, pay rise/fiscal drag)
 - /about/ page with BMC
 - Google Sign-In + purchase restoration + upgrade credit live
 - Cookie consent banner on all pages
@@ -77,10 +77,14 @@ Split from MaffsGames in March 2025. MaffsGames = free schools games. MathsWins 
 - **Frontend:** `qf-dapp/` directory, single-file HTML games, GitHub Pages
 - **Wallet Module:** `qf-dapp/games/qf-wallet.js` — shared across all games, QNS reverse resolution, EIP-6963, auto-reconnect with 500ms delay
 
-### Registered Games (8 league-capable)
-estimation-engine, sudoku-duel, prime-or-composite, sequence-solver, countdown-numbers, kenken, nonogram, kakuro
+### Registered Games
+**League-capable (6):** sudoku-duel, countdown-numbers, cryptarithmetic-club, kenken, nonogram, kakuro
+**Competitive, no league (2):** sequence-solver, prime-or-composite
+**Free play (3):** estimation-engine, minesweeper (also league-capable), freecell (also league-capable)
+**Duel-only:** battleships (turn-based async, vs CPU free play)
+**Renamed:** Equatle → Maffsy (slug: /games/maffsy/)
 
-### SQLite Tables (14)
+### SQLite Tables (22+)
 | Table | Purpose |
 |-------|---------|
 | `games` | Game registry |
@@ -97,23 +101,66 @@ estimation-engine, sudoku-duel, prime-or-composite, sequence-solver, countdown-n
 | `promo_challenges` | Promo/challenge codes |
 | `promo_claims` | Claims against promo challenges |
 | `active_game_state` | Persistent session state for resume (league puzzles) |
+| `league_refunds` | Refund tracking for cancelled leagues |
+| `battleships_games` | Battleships duel instances |
+| `battleships_placements` | Fleet positions per player per game |
+| `battleships_rounds` | Shot history per game |
+| `battleships_record` | Win/loss/draw per wallet |
+| `achievement_registry` | 47 achievements seeded (names, tiers, fees, pioneer) |
+| `achievement_eligibility` | Per-wallet achievement progress and mint status |
+| `global_records` | Community records (e.g. The Tortoise slowest win) |
+| `wallet_stats` | Per-wallet tracking (streaks, spending, consecutive wins) |
 
-### API Endpoints (27)
+### API Endpoints (45+)
+**Auth:** POST /auth/challenge, /auth/verify (challenge-sign-verify, JWT 24h)
 **Sessions:** POST /session/start, /session/resume, /session/evaluate
 **Leaderboard:** GET /leaderboard/:gameId, /leaderboard/:gameId/:weekId, /pot/:gameId, /games, /week, /entry/:gameId
 **Duels:** POST /duel/create, /duel/:code/accept, /duel/:code/submit | GET /duel/:code, /duels/history
 **Promos:** POST /promo/create, /promo/:code/submit | GET /promo/:code
 **Leagues:** GET /leagues/:gameId, /leagues/:gameId/all, /league/:leagueId, /league/:leagueId/puzzles, /league/:leagueId/my-scores | POST /league/:leagueId/join, /league/:leagueId/submit
+**League v2:** GET /leagues/my, /leagues/active, /leagues/settled | POST /admin/league/:id/settle, /admin/league/:id/cancel, /admin/league/:id/refund/:wallet | GET /admin/refunds
+**Battleships:** POST /battleships/create, /:code/join, /:code/place, /:code/shoot, /:code/forfeit | GET /battleships/:code, /battleships/history
+**Achievements:** GET /achievements/status, /achievements/all, /achievements/my, /achievements/record/:id | POST /achievement/mint | POST /admin/achievement/register, /admin/achievement/award | GET /admin/achievements
 
-### League System
+### League System v2
 - Server-authoritative: seeds never reach client, sequential random puzzle delivery
 - Anti-cheat: 60s floor, rapid input detection
 - Tiers: Bronze (100 QF entry), Silver (250 QF entry)
-- 10 puzzles per league, 14-day play window, 8-16 players
+- 10 puzzles per league, 14-day play window, min 4 players (was 8)
 - Top 4 share prize pool (90% prize, 5% burn, 5% team)
+- Auto-create: new OPEN league created when existing one starts
+- Auto-cancel: leagues with <4 players at join close
+- Auto-settle: when all puzzles complete (early) or 14-day deadline
+- Automatic refunds on cancel (full entry fee, no burn)
+- Admin endpoints: force-settle, cancel, retry refund
+- Player endpoints: /leagues/my, /leagues/active, /leagues/settled
+- League-eligible games: sudoku-duel, countdown-numbers, cryptarithmetic-club, kenken, nonogram, kakuro, minesweeper, freecell
 - Builder whitelist via BUILDER_WALLETS env var (testing without payment)
-- Wallet must be connected before session starts (race condition fixed 2026-04-04)
-- Score submit is awaited with error alerts (fire-and-forget bug fixed 2026-04-04)
+- Wallet auth: challenge-sign-verify JWT (24h), persisted in localStorage
+- Substrate wallet support: Talisman/Polkadot.js/SubWallet via @polkadot/extension-dapp
+
+### Wallet Auth (JWT)
+- Challenge-sign-verify flow in qf-wallet.js
+- JWT stored in localStorage (sign once per 24 hours)
+- Server: /auth/challenge + /auth/verify, supports both EVM and Substrate signatures
+- optionalWallet middleware accepts JWT or legacy X-Wallet-Address header
+- @polkadot/util-crypto installed on Hetzner for Substrate signature verification
+
+### Achievement System (47 achievements, gated by ACHIEVEMENTS_ACTIVE=false)
+- Teaser page live at /qf-dapp/achievements/ — names only, all locked
+- 10 categories: purity, volume, winning, duels, skill, time, absurd, community, meta, impossible
+- Pioneer tag: first mint per achievement, UNIQUE constraint
+- Condition checker hooks into league settlement
+- DB: achievement_registry, achievement_eligibility, global_records, wallet_stats
+- Contract: QFAchievement.sol (not yet deployed — after games tested)
+- "Boom" — the impossible achievement (first click safety means it can never be earned)
+
+### Battleships
+- Turn-based async duels only (no simultaneous — dropped to avoid WebSocket complexity)
+- vs CPU free play: 3 difficulties (Recruit, Officer, Admiral)
+- Admiral uses probability density map AI
+- 24h auto-shot timeout, 5-minute sweep
+- Settlement: 90% winner, 5% burn, 5% team
 
 ### Trophy NFTs (QFLeagueTrophy.sol)
 - **Contract:** `0xBC41549872d5480b95733e4f29359b7EAB4E05b8` (QF Network mainnet)

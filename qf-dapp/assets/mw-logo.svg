@@ -1,0 +1,20 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 120 120">
+  <!-- MW mark — crypto chart bars reading as M over W, silver/charcoal dApp theme -->
+
+  <!-- M bars (silver) — 5 bars forming the M shape -->
+  <rect x="18" y="14" width="12" height="44" rx="2" fill="#b8bcc6"/>
+  <rect x="36" y="26" width="12" height="32" rx="2" fill="#8a8f9c"/>
+  <rect x="54" y="14" width="12" height="44" rx="2" fill="#b8bcc6"/>
+  <rect x="72" y="26" width="12" height="32" rx="2" fill="#8a8f9c"/>
+  <rect x="90" y="14" width="12" height="44" rx="2" fill="#b8bcc6"/>
+
+  <!-- Divider line -->
+  <line x1="14" y1="62" x2="106" y2="62" stroke="#2a2e36" stroke-width="1.5"/>
+
+  <!-- W bars (muted silver) — 5 bars forming the W shape -->
+  <rect x="18" y="66" width="12" height="20" rx="2" fill="#6a6e7a"/>
+  <rect x="36" y="66" width="12" height="34" rx="2" fill="#8a8f9c"/>
+  <rect x="54" y="66" width="12" height="20" rx="2" fill="#6a6e7a"/>
+  <rect x="72" y="66" width="12" height="34" rx="2" fill="#8a8f9c"/>
+  <rect x="90" y="66" width="12" height="20" rx="2" fill="#6a6e7a"/>
+</svg>

@@ -476,10 +476,10 @@ function renderGames(filter) {
       var logoCell = document.createElement('a');
       logoCell.href = 'https://mathswins.co.uk';
       logoCell.className = 'game-card mw-logo-cell';
-      logoCell.innerHTML = '<img src="/assets/og-image.svg" alt="MathsWins" style="width:60%;opacity:0.7;filter:grayscale(1) brightness(1.5);transition:all .3s">';
+      logoCell.innerHTML = '<img src="/qf-dapp/assets/mw-logo.svg" alt="MathsWins" style="width:80%;opacity:0.8;transition:all .3s">';
       logoCell.style.cssText = 'display:flex;align-items:center;justify-content:center;background:var(--surface2);border:1px solid var(--border);cursor:pointer;text-decoration:none';
-      logoCell.onmouseover = function() { logoCell.querySelector('img').style.opacity = '1'; logoCell.querySelector('img').style.filter = 'grayscale(0)'; logoCell.style.boxShadow = '0 0 20px rgba(184,188,198,0.08)'; };
-      logoCell.onmouseout = function() { logoCell.querySelector('img').style.opacity = '0.7'; logoCell.querySelector('img').style.filter = 'grayscale(1) brightness(1.5)'; logoCell.style.boxShadow = 'none'; };
+      logoCell.onmouseover = function() { logoCell.querySelector('img').style.opacity = '1'; logoCell.style.boxShadow = '0 0 20px rgba(212,168,71,0.08)'; };
+      logoCell.onmouseout = function() { logoCell.querySelector('img').style.opacity = '0.8'; logoCell.style.boxShadow = 'none'; };
       grid.appendChild(logoCell);
       return;
     }
