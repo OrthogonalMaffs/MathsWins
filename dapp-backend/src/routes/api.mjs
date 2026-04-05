@@ -926,7 +926,11 @@ async function processLeagueRefunds(leagueId) {
 
 // ── Auto-create successor league ────────────────────────────────────
 
+// Games eligible for league auto-creation
+var LEAGUE_GAMES = new Set(['sudoku-duel', 'kenken', 'kakuro', 'nonogram', 'cryptarithmetic-club', 'countdown-numbers']);
+
 function autoCreateLeague(triggeredByLeague) {
+  if (!LEAGUE_GAMES.has(triggeredByLeague.game_id)) return;
   const db = getDb();
   // Check if an OPEN league already exists for this game+tier
   const existing = db.prepare("SELECT id FROM leagues WHERE game_id = ? AND tier = ? AND status = 'registration'")
