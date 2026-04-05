@@ -1,0 +1,551 @@
+<!DOCTYPE html>
+<html lang="en-GB">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>How to Calculate Pot Odds in Poker | MathsWins</title>
+<meta name="description" content="Learn pot odds, the Rule of 2 and 4, and implied odds. Free poker maths guide with worked examples.">
+<meta property="og:title" content="How to Calculate Pot Odds in Poker | MathsWins">
+<meta property="og:description" content="Learn pot odds, the Rule of 2 and 4, and implied odds. Free poker maths guide with worked examples.">
+<meta property="og:url" content="https://mathswins.co.uk/learn/how-to-calculate-pot-odds/">
+<meta property="og:image" content="https://mathswins.co.uk/assets/og-image.png">
+<meta property="og:type" content="article">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:title" content="How to Calculate Pot Odds in Poker — MathsWins">
+<meta name="twitter:image" content="https://mathswins.co.uk/assets/og-image.png">
+<link rel="canonical" href="https://mathswins.co.uk/learn/how-to-calculate-pot-odds/">
+<script type="application/ld+json">
+{"@context":"https://schema.org","@type":"Article","headline":"How to Calculate Pot Odds in Poker","description":"Learn pot odds, the Rule of 2 and 4, and implied odds. Free poker maths guide with worked examples.","url":"https://mathswins.co.uk/learn/how-to-calculate-pot-odds/","datePublished":"2026-04-05","dateModified":"2026-04-05","author":{"@type":"Organization","name":"MathsWins","url":"https://mathswins.co.uk"},"publisher":{"@type":"Organization","name":"MathsWins","url":"https://mathswins.co.uk","logo":{"@type":"ImageObject","url":"https://mathswins.co.uk/assets/og-image.png"}},"image":"https://mathswins.co.uk/assets/og-image.png","mainEntityOfPage":{"@type":"WebPage","@id":"https://mathswins.co.uk/learn/how-to-calculate-pot-odds/"}}
+</script>
+<script type="application/ld+json">
+{"@context":"https://schema.org","@type":"FAQPage","mainEntity":[{"@type":"Question","name":"What are pot odds in poker?","acceptedAnswer":{"@type":"Answer","text":"Pot odds compare the cost of calling a bet to the total pot size, expressed as a percentage. They tell you the minimum win rate needed to make a call profitable over time."}},{"@type":"Question","name":"How do you calculate pot odds quickly?","acceptedAnswer":{"@type":"Answer","text":"Divide the amount you must call by the total pot (including your call). For example, calling £10 into a £50 pot: £10 ÷ £60 = 16.7%. You need to win more than 16.7% of the time."}},{"@type":"Question","name":"What is the Rule of 2 and 4?","acceptedAnswer":{"@type":"Answer","text":"A shortcut for estimating hand equity. After the flop, multiply your outs by 4. After the turn, multiply by 2. With 9 outs after the flop: 9 × 4 = 36% chance of completing your hand."}},{"@type":"Question","name":"What are implied odds?","acceptedAnswer":{"@type":"Answer","text":"Implied odds account for money you expect to win on future betting rounds if you hit your draw. They make borderline calls profitable when opponents are likely to pay off your completed hand."}},{"@type":"Question","name":"Should I always call if pot odds are in my favour?","acceptedAnswer":{"@type":"Answer","text":"In cash games, generally yes — that is the mathematically correct play over time. In tournaments, ICM pressure and stack considerations can make a mathematically correct call strategically wrong."}}]}
+</script>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Crimson+Pro:ital,wght@0,400;0,700;1,400&family=DM+Mono:wght@400;500&family=Outfit:wght@300;400;600;700&display=swap" rel="stylesheet">
+<style>
+:root {
+  --bg: #050709;
+  --surface: #0a0d14;
+  --surface2: #0f1319;
+  --border: #161c28;
+  --border2: #1e2638;
+  --green: #2dd4a0;
+  --green-dim: rgba(45,212,160,0.10);
+  --green-bright: #34eab5;
+  --red: #ef5350;
+  --red-dim: rgba(239,83,80,0.10);
+  --blue: #2563eb;
+  --blue-dim: rgba(37,99,235,0.10);
+  --gold: #d4a847;
+  --cyan: #22d3ee;
+  --cyan-dim: rgba(34,211,238,0.10);
+  --text: #c8cdd8;
+  --text-bright: #e8ecf4;
+  --muted: #4a5568;
+}
+
+* { margin: 0; padding: 0; box-sizing: border-box; }
+
+body {
+  font-family: 'Outfit', sans-serif;
+  background: var(--bg);
+  color: var(--text);
+  min-height: 100vh;
+  line-height: 1.6;
+  -webkit-font-smoothing: antialiased;
+}
+
+.container {
+  max-width: 780px;
+  margin: 0 auto;
+  padding: 2rem 1.25rem 4rem;
+}
+
+/* Nav */
+.nav-bar {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 1rem 0;
+  border-bottom: 1px solid var(--border);
+  margin-bottom: 2.5rem;
+}
+.nav-brand {
+  font-family: 'Bebas Neue', sans-serif;
+  font-size: 1.4rem;
+  color: var(--gold);
+  text-decoration: none;
+  letter-spacing: 0.06em;
+}
+.nav-brand span { color: var(--text-bright); }
+.nav-link {
+  font-size: 0.85rem;
+  font-weight: 600;
+  color: var(--green);
+  text-decoration: none;
+  padding: 0.4rem 1rem;
+  border: 1px solid var(--green);
+  border-radius: 4px;
+  transition: background 0.2s, color 0.2s;
+}
+.nav-link:hover { background: var(--green); color: var(--bg); }
+
+/* Hero */
+.hero {
+  text-align: center;
+  margin-bottom: 2.5rem;
+}
+.hero-eyebrow {
+  font-size: 0.75rem;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.15em;
+  color: var(--green);
+  margin-bottom: 0.5rem;
+}
+.hero h1 {
+  font-family: 'Bebas Neue', sans-serif;
+  font-size: clamp(2rem, 5vw, 3rem);
+  color: var(--text-bright);
+  letter-spacing: 0.04em;
+  line-height: 1.1;
+  margin-bottom: 0.75rem;
+}
+.hero-sub {
+  font-family: 'Crimson Pro', serif;
+  font-style: italic;
+  font-size: 1.05rem;
+  color: var(--cyan);
+  max-width: 600px;
+  margin: 0 auto;
+}
+
+/* Article body */
+.article-body h2 {
+  font-family: 'Bebas Neue', sans-serif;
+  font-size: 1.6rem;
+  color: var(--text-bright);
+  letter-spacing: 0.04em;
+  margin: 2.5rem 0 1rem;
+}
+.article-body h3 {
+  font-family: 'Bebas Neue', sans-serif;
+  font-size: 1.2rem;
+  color: var(--green);
+  letter-spacing: 0.04em;
+  margin: 1.5rem 0 0.75rem;
+}
+.article-body p {
+  font-family: 'Crimson Pro', serif;
+  font-size: 1.05rem;
+  color: var(--text);
+  line-height: 1.75;
+  margin-bottom: 1rem;
+  max-width: 720px;
+}
+.article-body strong {
+  color: var(--text-bright);
+}
+
+/* Maths box (monospace formula/worked example) */
+.mb {
+  background: var(--surface2);
+  border: 1px solid var(--border2);
+  border-radius: 6px;
+  padding: 1rem 1.25rem;
+  font-family: 'DM Mono', monospace;
+  font-size: 0.85rem;
+  color: var(--text-bright);
+  line-height: 1.7;
+  white-space: pre-wrap;
+  margin: 1rem 0;
+  overflow-x: auto;
+}
+
+/* Plain English callout */
+.pln {
+  font-family: 'Crimson Pro', serif;
+  font-style: italic;
+  color: var(--cyan);
+  background: var(--cyan-dim);
+  border-left: 3px solid var(--cyan);
+  padding: 0.85rem 1.15rem;
+  border-radius: 0 6px 6px 0;
+  margin: 1rem 0;
+  line-height: 1.6;
+  font-size: 0.95rem;
+}
+
+/* Practical tip box (green) */
+.pt {
+  font-family: 'Crimson Pro', serif;
+  font-style: italic;
+  color: var(--green);
+  background: var(--green-dim);
+  border-left: 3px solid var(--green);
+  padding: 0.85rem 1.15rem;
+  border-radius: 0 6px 6px 0;
+  margin: 1rem 0;
+  line-height: 1.6;
+  font-size: 0.95rem;
+}
+
+/* Good / positive decision box (bright green) */
+.gd {
+  font-family: 'Crimson Pro', serif;
+  font-style: italic;
+  color: var(--green-bright);
+  background: var(--green-dim);
+  border-left: 3px solid var(--green-bright);
+  padding: 0.85rem 1.15rem;
+  border-radius: 0 6px 6px 0;
+  margin: 1rem 0;
+  line-height: 1.6;
+  font-size: 0.95rem;
+}
+
+/* Danger / warning box (red) */
+.dg {
+  font-family: 'Crimson Pro', serif;
+  font-style: italic;
+  color: var(--red);
+  background: var(--red-dim);
+  border-left: 3px solid var(--red);
+  padding: 0.85rem 1.15rem;
+  border-radius: 0 6px 6px 0;
+  margin: 1rem 0;
+  line-height: 1.6;
+  font-size: 0.95rem;
+}
+
+/* Tables */
+.article-body table {
+  width: 100%;
+  border-collapse: collapse;
+  margin: 1rem 0;
+  font-size: 0.9rem;
+}
+.article-body th {
+  font-family: 'Outfit', sans-serif;
+  font-weight: 600;
+  font-size: 0.78rem;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  color: var(--muted);
+  text-align: left;
+  padding: 0.6rem 0.75rem;
+  border-bottom: 2px solid var(--border2);
+}
+.article-body td {
+  font-family: 'DM Mono', monospace;
+  font-size: 0.88rem;
+  color: var(--text-bright);
+  padding: 0.55rem 0.75rem;
+  border-bottom: 1px solid var(--border);
+}
+.article-body td:first-child {
+  font-family: 'Outfit', sans-serif;
+  color: var(--text);
+}
+
+/* CTA card */
+.cta-card {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-left: 3px solid var(--green);
+  border-radius: 0 10px 10px 0;
+  padding: 1.5rem 1.75rem;
+  margin-top: 2.5rem;
+}
+.cta-card h3 {
+  font-family: 'Bebas Neue', sans-serif;
+  font-size: 1.2rem;
+  color: var(--green);
+  letter-spacing: 0.04em;
+  margin-bottom: 0.5rem;
+}
+.cta-card p {
+  font-family: 'Crimson Pro', serif;
+  font-style: italic;
+  font-size: 0.95rem;
+  color: var(--text);
+  line-height: 1.5;
+  margin-bottom: 1rem;
+}
+.cta-link {
+  font-family: 'Outfit', sans-serif;
+  font-weight: 600;
+  font-size: 0.9rem;
+  color: var(--green);
+  text-decoration: none;
+  border-bottom: 1px solid transparent;
+  transition: border-color 0.2s;
+}
+.cta-link:hover { border-bottom-color: var(--green); }
+
+/* FAQ */
+.faq-section { max-width: 780px; margin: 3rem auto; padding: 0; }
+.faq-title { font-family: 'Bebas Neue', sans-serif; font-size: 2rem; color: #e8ecf4; margin-bottom: 1.5rem; letter-spacing: .03em; }
+.faq-item { border-bottom: 1px solid #161c28; padding: 0; }
+.faq-item summary { padding: 1rem 0; cursor: pointer; font-weight: 600; color: #e8ecf4; font-size: 1rem; list-style: none; display: flex; justify-content: space-between; align-items: center; }
+.faq-item summary::after { content: '+'; color: #d4a847; font-size: 1.3rem; font-weight: 700; transition: transform 0.2s; }
+.faq-item[open] summary::after { transform: rotate(45deg); }
+.faq-item p { padding: 0 0 1rem; color: #94a3b8; line-height: 1.7; font-size: 0.95rem; }
+
+/* Footer */
+.footer {
+  margin-top: 3rem;
+  padding-top: 1.5rem;
+  border-top: 1px solid var(--border);
+  text-align: center;
+}
+.footer p {
+  font-family: 'Outfit', sans-serif;
+  font-size: 0.75rem;
+  color: var(--muted);
+  line-height: 1.8;
+}
+.footer a {
+  color: var(--muted);
+  text-decoration: underline;
+  text-underline-offset: 2px;
+}
+
+/* Responsive */
+@media (max-width: 600px) {
+  .hero h1 { font-size: 2rem; }
+  .article-body table { font-size: 0.8rem; }
+  .article-body td, .article-body th { padding: 0.45rem 0.5rem; }
+}
+</style>
+<!-- GA4 Cookieless -->
+<script async src="https://www.googletagmanager.com/gtag/js?id=G-7GTLYCZMXN"></script>
+<script>window.dataLayer=window.dataLayer||[];function gtag(){dataLayer.push(arguments);}gtag('js',new Date());gtag('consent','default',{analytics_storage:'denied',ad_storage:'denied',ad_user_data:'denied',ad_personalization:'denied'});gtag('config','G-7GTLYCZMXN',{send_page_view:true,anonymize_ip:true});</script>
+</head>
+<body>
+<script src="/auth/mw-auth.js"></script>
+<div class="container">
+
+<nav class="nav-bar">
+  <a href="/" class="nav-brand">MATHS<span>WINS</span></a>
+  <a href="/academy/poker/" class="nav-link">Poker School &rarr;</a>
+</nav>
+
+<div class="hero">
+  <div class="hero-eyebrow">Learn</div>
+  <h1>HOW TO CALCULATE POT ODDS</h1>
+  <div class="hero-sub">Every poker decision is a maths problem. You do not need to be good at maths to solve it — you need to understand one ratio. That ratio is called pot odds, and once you can calculate it, you will never again have to guess whether calling a bet is profitable.</div>
+</div>
+
+<div class="article-body">
+
+<!-- 1. WHAT ARE POT ODDS? -->
+<h2>WHAT ARE POT ODDS?</h2>
+
+<p>Pot odds compare the size of the bet you must call to the size of the pot you stand to win. They answer one question: is the price right?</p>
+
+<p>If you are getting good enough odds from the pot relative to your chance of making your hand, the call is mathematically correct — regardless of whether you win this particular hand.</p>
+
+<div class="pt">Pot odds are not about predicting the future. They are about making decisions that are profitable over hundreds of hands. You will lose individual hands. You will win the war.</div>
+
+
+<!-- 2. THE FORMULA -->
+<h2>THE FORMULA</h2>
+
+<div class="mb">Pot Odds = Amount to Call &divide; (Current Pot + Amount to Call)</div>
+
+<div class="pln">In plain English: what fraction of the total pot am I putting in? If I am putting in a small fraction but could win the whole thing, the price is good. If I am putting in a large fraction, the price is bad — unless my hand is very likely to improve.</div>
+
+
+<!-- 3. A WORKED EXAMPLE -->
+<h2>A WORKED EXAMPLE</h2>
+
+<p>You hold 9&#9824; 8&#9824;. The board is 7&#9824; 2&#9824; K&#9830;. You have a flush draw — any spade completes your hand.</p>
+
+<p>The pot is &pound;40. Your opponent bets &pound;10. Should you call?</p>
+
+<h3>STEP 1: CALCULATE YOUR POT ODDS</h3>
+
+<div class="mb">Pot = &pound;40 (existing) + &pound;10 (opponent's bet) = &pound;50 total
+Cost to call = &pound;10
+Pot odds = &pound;10 &divide; (&pound;50 + &pound;10) = &pound;10 &divide; &pound;60 = 0.167 = 16.7%</div>
+
+<div class="pln">You are putting in &pound;10 to win a pot of &pound;60. That means you need to win this hand more than 16.7% of the time to break even. Anything above that is profit.</div>
+
+<h3>STEP 2: CALCULATE YOUR CHANCE OF HITTING</h3>
+
+<p>You have a flush draw. There are 13 spades in a deck, you can see 4 of them (two in your hand, two on the board), so there are 9 spades left. You have seen 5 cards total (2 in hand + 3 on board), leaving 47 unseen.</p>
+
+<div class="mb">Outs = 9 (remaining spades)
+Cards unseen = 47
+Chance of hitting on next card = 9 &divide; 47 = 19.1%</div>
+
+<div class="pln">You have roughly a 19% chance of completing your flush on the turn. Your pot odds require only 16.7%. Since 19.1% &gt; 16.7%, this is a profitable call.</div>
+
+<h3>STEP 3: DECIDE</h3>
+
+<div class="gd">Your equity (19.1%) exceeds the price you are paying (16.7%). Call. Over thousands of hands, this exact situation will make you money — even though you will miss the flush roughly 4 times out of 5.</div>
+
+
+<!-- 4. THE RULE OF 2 AND 4 -->
+<h2>THE RULE OF 2 AND 4</h2>
+
+<p>Calculating exact percentages at the table is slow. There is a shortcut that is accurate enough for every real-world decision.</p>
+
+<div class="mb">After the flop (two cards to come): Outs &times; 4 = approximate % chance
+After the turn (one card to come):  Outs &times; 2 = approximate % chance</div>
+
+<div class="pln">With 9 outs after the flop: 9 &times; 4 = 36%. With 9 outs after the turn: 9 &times; 2 = 18%. Compare these to the exact figures — 35.0% and 19.1% respectively — and you can see the shortcut is remarkably close.</div>
+
+<h3>COMMON DRAWS USING THE RULE OF 2 AND 4</h3>
+
+<table>
+  <thead>
+    <tr><th>Draw</th><th>Outs</th><th>After Flop (&times;4)</th><th>After Turn (&times;2)</th></tr>
+  </thead>
+  <tbody>
+    <tr><td>Gutshot straight</td><td>4</td><td>16%</td><td>8%</td></tr>
+    <tr><td>Open-ended straight</td><td>8</td><td>32%</td><td>16%</td></tr>
+    <tr><td>Flush draw</td><td>9</td><td>36%</td><td>18%</td></tr>
+    <tr><td>Flush + gutshot</td><td>12</td><td>48%</td><td>24%</td></tr>
+    <tr><td>Flush + open-ended</td><td>15</td><td>60%</td><td>30%</td></tr>
+  </tbody>
+</table>
+
+<div class="pln">These numbers are worth knowing. Not memorising — understanding. If you know you have 9 outs and multiply by 2, you get 18%. If the pot is offering you better than 18%, call. If it is not, fold. That is the entire decision.</div>
+
+
+<!-- 5. CONVERTING BETWEEN RATIOS AND PERCENTAGES -->
+<h2>CONVERTING BETWEEN RATIOS AND PERCENTAGES</h2>
+
+<p>Some players think in ratios (3:1, 4:1). Some think in percentages (25%, 20%). You should be comfortable with both.</p>
+
+<div class="mb">Ratio to percentage:
+  3:1 means you call 1 out of every 4 units = 1 &divide; 4 = 25%
+  4:1 means you call 1 out of every 5 units = 1 &divide; 5 = 20%
+
+Percentage to ratio:
+  25% = 1 in 4 = 3:1 (three parts pot, one part your call)
+  20% = 1 in 5 = 4:1</div>
+
+<div class="pln">If the pot is &pound;30 and you must call &pound;10, you are getting 3:1 (&pound;30 to your &pound;10). As a percentage: &pound;10 &divide; &pound;40 total = 25%. You need to win more than 25% of the time.</div>
+
+
+<!-- 6. IMPLIED ODDS -->
+<h2>IMPLIED ODDS</h2>
+
+<p>Pot odds only account for money already in the pot. But poker hands have more betting rounds to come. Implied odds estimate the additional money you expect to win on later streets if you hit your hand.</p>
+
+<div class="pt">Implied odds matter most when you have a disguised draw. If you hit a flush and your opponent cannot see it coming, they are likely to pay you off on the river. That extra money changes the equation.</div>
+
+<h3>EXAMPLE</h3>
+
+<div class="mb">Pot = &pound;30. Opponent bets &pound;15. Cost to call = &pound;15.
+Pot odds = &pound;15 &divide; &pound;60 = 25%. You need 25% equity.
+Your flush draw gives you 19% on the next card alone.
+
+Strict pot odds say fold. But if you expect your opponent to call
+a &pound;30 river bet when you hit:
+
+Implied pot = &pound;60 (current) + &pound;30 (expected river call) = &pound;90
+Implied odds = &pound;15 &divide; &pound;105 = 14.3%
+
+Now you only need 14.3%. Your 19% equity clears that easily.</div>
+
+<div class="pln">Implied odds make borderline calls profitable by accounting for future money. But be honest with yourself — implied odds only work if your opponent actually pays you when you hit. Against tight players who fold to aggression, your implied odds are lower than you think.</div>
+
+<div class="dg">Implied odds are an estimate, not a guarantee. The most common mistake is overestimating how much your opponent will pay when you hit. Be conservative. If you are routinely using implied odds to justify calls, you are probably calling too much.</div>
+
+
+<!-- 7. REVERSE IMPLIED ODDS -->
+<h2>REVERSE IMPLIED ODDS</h2>
+
+<p>Sometimes you hit your hand and still lose. This happens when your draw completes to a second-best hand — for example, making a low flush when your opponent has a higher flush, or hitting a straight on a paired board where a full house is possible.</p>
+
+<div class="pt">Reverse implied odds are highest when your draw is obvious (everyone can see the flush came in), when you could be drawing to a second-best hand, or when your opponent's range includes hands that beat your completed draw.</div>
+
+
+<!-- 8. WHEN POT ODDS DO NOT APPLY -->
+<h2>WHEN POT ODDS DO NOT APPLY</h2>
+
+<p>Pot odds assume you can see the hand to completion. There are situations where the framework breaks down.</p>
+
+<p><strong>Tournament play with ICM pressure.</strong> In tournaments, chips have non-linear value. Risking your entire stack on a mathematically correct call might still be wrong if busting costs you more expected value than the pot is worth. Pot odds are a cash game tool first.</p>
+
+<p><strong>Tiny edges against large bets.</strong> If your pot odds give you a 1% edge but you must risk your entire stack, variance will destroy you before the long run arrives. Bankroll management overrides marginal pot odds.</p>
+
+<p><strong>Multiway pots.</strong> When three or more players are in the hand, pot odds change because other players may bet or raise behind you. Your effective odds are harder to calculate.</p>
+
+
+<!-- 9. PUTTING IT ALL TOGETHER -->
+<h2>PUTTING IT ALL TOGETHER</h2>
+
+<p>Here is the complete decision process, every hand, every time:</p>
+
+<div class="mb">1. Count outs (how many cards help you)
+2. Estimate equity (outs &times; 2 after turn, outs &times; 4 after flop)
+3. Calculate pot odds (call &divide; total pot including your call)
+4. Compare: equity &gt; pot odds &rarr; call. Equity &lt; pot odds &rarr; fold.
+5. Adjust for implied odds if there are streets remaining</div>
+
+<div class="pln">That is five steps. In practice, it takes seconds. Count your outs, multiply by 2 or 4, compare to what the pot is offering you. The answer is either yes or no. Poker becomes much simpler when you stop guessing and start calculating.</div>
+
+
+<!-- CROSS-LINKS -->
+<h2>PUT IT INTO PRACTICE</h2>
+
+<p>To go deeper into every concept covered here — position play, range analysis, post-flop strategy, and advanced tournament concepts across 20 modules with interactive scenarios — see the <a href="/academy/poker/" style="color:var(--green);font-weight:600;text-decoration:none;border-bottom:1px solid var(--green);">Poker School</a> (Module 1 free).</p>
+
+<p>To calculate pot odds, equity, and outs for any hand in real time — no maths required — use the <a href="/tools/poker-odds/" style="color:var(--green);font-weight:600;text-decoration:none;border-bottom:1px solid var(--green);">Poker Odds Calculator</a>.</p>
+
+</div><!-- end article-body -->
+
+
+<!-- CTA -->
+<div class="cta-card">
+  <h3>POKER SCHOOL — 20 MODULES</h3>
+  <p>This article covers the foundation. Poker School takes you from pot odds through position play, range analysis, post-flop strategy, and advanced tournament concepts across 20 modules with interactive scenarios.</p>
+  <a href="/academy/poker/" class="cta-link">Explore Poker School &rarr;</a>
+</div>
+
+<div class="cta-card" style="border-left-color: var(--cyan); margin-top: 1.25rem;">
+  <h3 style="color: var(--cyan);">POKER ODDS CALCULATOR</h3>
+  <p>Calculate pot odds, equity, and outs for any hand in real time — no maths required.</p>
+  <a href="/tools/poker-odds/" class="cta-link" style="color: var(--cyan);">Open the Calculator &rarr;</a>
+</div>
+
+
+<!-- FAQ -->
+<div class="faq-section">
+<h2 class="faq-title">FREQUENTLY ASKED QUESTIONS</h2>
+<details class="faq-item"><summary>What are pot odds in poker?</summary><p>Pot odds compare the cost of calling a bet to the total pot size, expressed as a percentage. They tell you the minimum win rate needed to make a call profitable over time.</p></details>
+<details class="faq-item"><summary>How do you calculate pot odds quickly?</summary><p>Divide the amount you must call by the total pot (including your call). For example, calling &pound;10 into a &pound;50 pot: &pound;10 &divide; &pound;60 = 16.7%. You need to win more than 16.7% of the time.</p></details>
+<details class="faq-item"><summary>What is the Rule of 2 and 4?</summary><p>A shortcut for estimating hand equity. After the flop, multiply your outs by 4. After the turn, multiply by 2. With 9 outs after the flop: 9 &times; 4 = 36% chance of completing your hand.</p></details>
+<details class="faq-item"><summary>What are implied odds?</summary><p>Implied odds account for money you expect to win on future betting rounds if you hit your draw. They make borderline calls profitable when opponents are likely to pay off your completed hand.</p></details>
+<details class="faq-item"><summary>Should I always call if pot odds are in my favour?</summary><p>In cash games, generally yes — that is the mathematically correct play over time. In tournaments, ICM pressure and stack considerations can make a mathematically correct call strategically wrong.</p></details>
+</div>
+
+
+<div class="footer">
+  <p>Built by a first-class mathematics graduate with QTS.<br>
+  <a href="/">MathsWins</a> · <a href="/academy/">Academy</a> · <a href="/tools/">Tools</a> · <a href="/games/">Games</a> · <a href="/learn/">Learn</a><br>
+  © 2026 MathsWins. Maths Always Wins.<br><a href="/restore/">Restore Access</a></p>
+  <p style="margin-top: 1rem;">If you or someone you know has a gambling problem, help is available.<br>
+  <a href="https://www.begambleaware.org/" target="_blank" rel="noopener">BeGambleAware.org</a> · <a href="https://www.gamcare.org.uk/" target="_blank" rel="noopener">GamCare</a> · National Gambling Helpline: <strong style="color:var(--text-bright);">0808 8020 133</strong></p>
+</div>
+</div>
+
+<!-- Cookie Consent Banner -->
+<div id="cookieConsent" style="display:none;position:fixed;bottom:0;left:0;right:0;background:#0c1628;border-top:1px solid #14263d;padding:14px 24px;z-index:99999;font-family:'Outfit',system-ui,sans-serif;font-size:13px;color:#94a3b8;display:none;align-items:center;justify-content:center;gap:16px;flex-wrap:wrap">
+<span>We use cookies for analytics to improve your experience. No personal data is sold or shared.</span>
+<button onclick="acceptCookies()" style="background:#d4a847;color:#050709;border:none;padding:8px 20px;border-radius:4px;font-weight:700;font-size:13px;cursor:pointer;font-family:inherit">Accept</button>
+<button onclick="declineCookies()" style="background:transparent;color:#64748b;border:1px solid #14263d;padding:8px 20px;border-radius:4px;font-size:13px;cursor:pointer;font-family:inherit">Decline</button>
+</div>
+<script>
+function acceptCookies(){localStorage.setItem('mw_cookies','accepted');gtag('consent','update',{analytics_storage:'granted'});document.getElementById('cookieConsent').style.display='none';}
+function declineCookies(){localStorage.setItem('mw_cookies','declined');document.getElementById('cookieConsent').style.display='none';}
+(function(){var c=localStorage.getItem('mw_cookies');if(c==='accepted'){gtag('consent','update',{analytics_storage:'granted'});}else if(!c){document.getElementById('cookieConsent').style.display='flex';}})();
+</script>
+</body>
+</html>
