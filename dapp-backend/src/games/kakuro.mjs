@@ -613,6 +613,7 @@ export function selectQuestions(seed, difficulty) {
       len: cl.len,
       sum: cl.sum,
     })),
+    puzzle: new Array(100).fill(0),
     solution,
     whiteCellCount: puzzle.whiteCellCount,
     seed: s,

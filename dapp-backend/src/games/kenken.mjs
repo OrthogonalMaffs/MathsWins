@@ -331,6 +331,7 @@ export function selectQuestions(seed, difficulty) {
     size: puzzle.size,
     difficulty: puzzle.difficulty,
     cages: puzzle.cages,
+    puzzle: new Array(puzzle.size * puzzle.size).fill(0),
     solution: puzzle.solution,
     seed: s,
   }];

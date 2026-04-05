@@ -449,6 +449,7 @@ export function selectQuestions(seed) {
     type: 'nonogram',
     text: 'Reveal the Greek letter',
     size,
+    puzzle: new Array(size * size).fill(0),
     solution: [...image.grid],
     rowClues,
     colClues,
