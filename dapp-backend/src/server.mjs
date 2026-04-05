@@ -66,6 +66,21 @@ setInterval(() => {
   }
 }, 300000);
 
+// ── Request timing ──────────────────────────────────────────────────────────
+app.use('/api/dapp', (req, res, next) => {
+  const start = process.hrtime.bigint();
+  const originalEnd = res.end;
+  res.end = function(...args) {
+    const elapsed = Number(process.hrtime.bigint() - start) / 1e6;
+    const path = req.originalUrl.replace('/api/dapp', '');
+    const wallet = req.wallet ? req.wallet.slice(0, 8) + '...' : '-';
+    console.log(`[API] ${req.method} ${path} ${res.statusCode} ${elapsed.toFixed(1)}ms wallet=${wallet}`);
+    res.set('Server-Timing', 'api;dur=' + elapsed.toFixed(1));
+    originalEnd.apply(res, args);
+  };
+  next();
+});
+
 // ── Routes ──────────────────────────────────────────────────────────────────
 app.use('/api/dapp', apiRoutes);
 
