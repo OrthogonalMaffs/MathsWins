@@ -299,8 +299,8 @@ footer a:hover{color:var(--silver-bright)}
   <h1>QF <span>Games</span></h1>
   <p class="tagline">Competitive maths games on QF Network. Enter leagues, duel your rivals, win prizes. Pure skill.</p>
   <div class="hero-stats">
-    <div class="hs"><div class="hs-num">9</div><div class="hs-label">Competitive Games</div></div>
-    <div class="hs"><div class="hs-num">7</div><div class="hs-label">Free Games</div></div>
+    <div class="hs"><div class="hs-num">8</div><div class="hs-label">Competitive Games</div></div>
+    <div class="hs"><div class="hs-num">8</div><div class="hs-label">Free Games</div></div>
     <div class="hs"><div class="hs-num" id="activeLeagues">&mdash;</div><div class="hs-label">Active Leagues</div></div>
   </div>
 </div>
@@ -360,17 +360,17 @@ footer a:hover{color:var(--silver-bright)}
 // ── Game Data ───────────────────────────────────────────────────────────────
 var GAMES = [
   // Row 1
-  { id:'estimation-engine', name:'Estimation Engine', desc:'Estimate complex calculations under time pressure. Pure mental arithmetic.', cat:'number', paid:true, tags:['mental maths','speed'] },
-  { id:'sequence-solver', name:'Sequence Solver', desc:'Identify patterns in number sequences. Escalating difficulty across KS3 to A-Level.', cat:'number', paid:true, tags:['sequences','patterns'] },
-  { id:'countdown-numbers', name:'Countdown Numbers', desc:'Six numbers, one target. Use arithmetic and brackets to hit the target.', cat:'number', paid:true, tags:['arithmetic','BODMAS'] },
+  { id:'sequence-solver', name:'Sequence Solver', desc:'Identify patterns in number sequences. Arithmetic, geometric, and combined sequences across escalating difficulty.', cat:'number', paid:true, league:false, tags:['sequences','patterns'] },
+  { id:'countdown-numbers', name:'Countdown Numbers', desc:'Six numbers, one target. Use arithmetic and brackets to hit the target.', cat:'number', paid:true, league:true, tags:['arithmetic','BODMAS'] },
+  { id:'prime-or-composite', name:'Prime or Composite', desc:'Classify numbers as prime or composite in 5 seconds. Speed and number sense.', cat:'speed', paid:true, league:false, tags:['primes','speed'] },
   // Row 2 — Sudoku Duel centre
-  { id:'prime-or-composite', name:'Prime or Composite', desc:'Classify numbers as prime or composite in 5 seconds. Speed and number sense.', cat:'speed', paid:true, tags:['primes','speed'] },
-  { id:'sudoku-duel', name:'Sudoku Duel', desc:'Challenge anyone to a 1v1. Same puzzle, same conditions. Fastest clean solve wins.', cat:'puzzle', paid:true, duel:true, featured:true, tags:['logic','daily','duel'] },
-  { id:'cryptarithmetic-club', name:'Cryptarithmetic Club', desc:'Each letter is a digit. Solve the substitution puzzle within the time limit. Pure deduction.', cat:'puzzle', paid:true, tags:['logic','deduction'] },
+  { id:'kenken', name:'KenKen', desc:'Fill the grid using arithmetic and logic. No repeats in rows or columns. Cages must hit their target.', cat:'puzzle', paid:true, league:true, coming:true, tags:['arithmetic','logic'] },
+  { id:'sudoku-duel', name:'Sudoku Duel', desc:'Challenge anyone to a 1v1. Same puzzle, same conditions. Fastest clean solve wins.', cat:'puzzle', paid:true, league:true, duel:true, featured:true, tags:['logic','daily','duel'] },
+  { id:'nonogram', name:'Nonogram', desc:'Fill cells to reveal a hidden Greek letter. Use row and column clues to solve the grid.', cat:'logic', paid:true, league:true, coming:true, tags:['logic','pixel art'] },
   // Row 3
-  { id:'kenken', name:'KenKen', desc:'Fill the grid using arithmetic and logic. No repeats in rows or columns. Cages must hit their target.', cat:'puzzle', paid:true, tags:['arithmetic','logic'] },
-  { id:'nonogram', name:'Nonogram', desc:'Fill cells to reveal a hidden Greek letter. Use row and column clues to solve the grid.', cat:'logic', paid:true, tags:['logic','pixel art'] },
-  { id:'kakuro', name:'Kakuro', desc:'Crossword meets Sudoku. Fill white cells with digits 1-9 so each run sums to its clue. No repeats.', cat:'puzzle', paid:true, tags:['sums','logic'] },
+  { id:'cryptarithmetic-club', name:'Cryptarithmetic Club', desc:'Each letter is a digit. Solve the substitution puzzle within the time limit. Pure deduction.', cat:'puzzle', paid:true, league:true, tags:['logic','deduction'] },
+  { id:'kakuro', name:'Kakuro', desc:'Crossword meets Sudoku. Fill white cells with digits 1-9 so each run sums to its clue. No repeats.', cat:'puzzle', paid:true, league:true, coming:true, tags:['sums','logic'] },
+  { id:'estimation-engine', name:'Estimation Engine', desc:'Estimate complex calculations under time pressure. Pure mental arithmetic.', cat:'number', paid:false, tags:['mental maths','speed'] },
   { id:'higher-or-lower', name:'Higher or Lower', desc:'Is the next mathematical number higher or lower? Build streaks for multipliers.', cat:'number', paid:false, tags:['number sense','streaks'] },
   { id:'equatle', name:'Equatle', desc:'Wordle-style equation guessing. Deduce the hidden 8-character equation in 6 tries.', cat:'puzzle', paid:false, tags:['deduction','daily'] },
   { id:'52dle', name:'52-dle', desc:'Daily number deduction. Use mathematical clues to guess the hidden number.', cat:'puzzle', paid:false, tags:['deduction','daily'] },
@@ -472,13 +472,19 @@ function renderGames(filter) {
     if (g.featured) card.classList.add('featured');
     card.dataset.cat = g.cat;
     card.dataset.paid = g.paid ? '1' : '0';
-    card.onclick = function() { openGame(g.id); };
+    if (!g.coming) card.onclick = function() { openGame(g.id); };
+    if (g.coming) card.style.opacity = '0.5';
+    if (g.coming) card.style.cursor = 'default';
 
-    var badge = g.paid
-      ? '<span class="gc-badge paid">League</span>'
-      : '<span class="gc-badge free">FREE</span>';
+    var badge = g.coming
+      ? '<span class="gc-badge" style="background:rgba(184,188,198,.1);color:var(--silver);border:1px solid rgba(184,188,198,.2)">Coming Soon</span>'
+      : g.league
+        ? '<span class="gc-badge paid">League</span>'
+        : g.paid
+          ? '<span class="gc-badge paid">Competitive</span>'
+          : '<span class="gc-badge free">FREE</span>';
 
-    var leagueHtml = g.paid
+    var leagueHtml = g.league && !g.coming
       ? '<div class="gc-league-info"><span class="gc-league-tier bronze">Bronze 100 QF</span> <span class="gc-league-tier silver">Silver 250 QF</span></div>'
       : '';
 
