@@ -20,6 +20,27 @@ export function getDb() {
 
   // Migrations — add columns that may not exist on older DBs
   try { db.exec('ALTER TABLE league_players ADD COLUMN puzzle_order TEXT'); } catch (e) { /* already exists */ }
+  try { db.exec('ALTER TABLE leagues ADD COLUMN auto_created_by TEXT'); } catch (e) { /* already exists */ }
+  try { db.exec('ALTER TABLE leagues ADD COLUMN cancelled_at INTEGER'); } catch (e) { /* already exists */ }
+  try { db.exec('ALTER TABLE leagues ADD COLUMN cancel_reason TEXT'); } catch (e) { /* already exists */ }
+  try { db.exec('ALTER TABLE leagues ADD COLUMN force_settled_at INTEGER'); } catch (e) { /* already exists */ }
+  try { db.exec('ALTER TABLE leagues ADD COLUMN force_settled_by TEXT'); } catch (e) { /* already exists */ }
+
+  // League refunds table
+  db.exec(`CREATE TABLE IF NOT EXISTS league_refunds (
+    id INTEGER PRIMARY KEY AUTOINCREMENT,
+    league_id TEXT NOT NULL,
+    wallet TEXT NOT NULL,
+    amount_qf INTEGER NOT NULL,
+    status TEXT NOT NULL DEFAULT 'pending',
+    tx_hash TEXT,
+    attempted_at INTEGER,
+    sent_at INTEGER,
+    failed_reason TEXT,
+    created_at INTEGER NOT NULL
+  )`);
+  db.exec('CREATE INDEX IF NOT EXISTS idx_league_refunds_status ON league_refunds(status)');
+  db.exec('CREATE INDEX IF NOT EXISTS idx_league_refunds_league ON league_refunds(league_id)');
 
   return db;
 }
@@ -416,4 +437,84 @@ export function loadActiveGameStates() {
   const db = getDb();
   const cutoff = Date.now() - (3600 * 1000);
   return db.prepare(`SELECT * FROM active_game_state WHERE status = 'active' AND started_at > ?`).all(cutoff);
+}
+
+// ── League refund queries ────────────────────────────────────────────
+
+export function addLeagueRefund(leagueId, wallet, amountQf, createdAt) {
+  const db = getDb();
+  db.prepare('INSERT INTO league_refunds (league_id, wallet, amount_qf, status, created_at) VALUES (?, ?, ?, ?, ?)')
+    .run(leagueId, wallet.toLowerCase(), amountQf, 'pending', createdAt);
+}
+
+export function getPendingRefunds() {
+  const db = getDb();
+  return db.prepare("SELECT * FROM league_refunds WHERE status = 'pending'").all();
+}
+
+export function getFailedRefunds() {
+  const db = getDb();
+  return db.prepare("SELECT * FROM league_refunds WHERE status = 'failed'").all();
+}
+
+export function getLeagueRefunds(leagueId) {
+  const db = getDb();
+  return db.prepare('SELECT * FROM league_refunds WHERE league_id = ? ORDER BY created_at ASC').all(leagueId);
+}
+
+export function updateRefundStatus(id, status, txHash, failedReason) {
+  const db = getDb();
+  const now = Date.now();
+  if (status === 'sent') {
+    db.prepare('UPDATE league_refunds SET status = ?, tx_hash = ?, sent_at = ? WHERE id = ?')
+      .run(status, txHash, now, id);
+  } else if (status === 'failed') {
+    db.prepare('UPDATE league_refunds SET status = ?, failed_reason = ?, attempted_at = ? WHERE id = ?')
+      .run(status, failedReason, now, id);
+  } else {
+    db.prepare('UPDATE league_refunds SET status = ?, attempted_at = ? WHERE id = ?')
+      .run(status, now, id);
+  }
+}
+
+export function cancelLeagueWithReason(leagueId, reason) {
+  const db = getDb();
+  db.prepare("UPDATE leagues SET status = 'cancelled', cancelled_at = ?, cancel_reason = ? WHERE id = ?")
+    .run(Date.now(), reason, leagueId);
+}
+
+export function forceSettleLeague(leagueId, settledBy) {
+  const db = getDb();
+  db.prepare('UPDATE leagues SET force_settled_at = ?, force_settled_by = ? WHERE id = ?')
+    .run(Date.now(), settledBy, leagueId);
+}
+
+export function getLeaguesByWallet(wallet) {
+  const db = getDb();
+  return db.prepare(`
+    SELECT l.*, lp.joined_at, lp.refunded
+    FROM leagues l
+    JOIN league_players lp ON l.id = lp.league_id
+    WHERE lp.wallet = ? AND lp.refunded = 0
+    ORDER BY l.created_at DESC
+  `).all(wallet.toLowerCase());
+}
+
+export function getOpenAndActiveLeagues(gameId) {
+  const db = getDb();
+  if (gameId) {
+    return db.prepare("SELECT * FROM leagues WHERE game_id = ? AND status IN ('registration', 'active') ORDER BY created_at DESC").all(gameId);
+  }
+  return db.prepare("SELECT * FROM leagues WHERE status IN ('registration', 'active') ORDER BY created_at DESC").all();
+}
+
+export function getRecentlySettledLeagues(gameId, limit) {
+  const db = getDb();
+  const cutoff = Date.now() - (7 * 24 * 60 * 60 * 1000);
+  if (gameId) {
+    return db.prepare("SELECT * FROM leagues WHERE game_id = ? AND status = 'settled' AND settled_at > ? ORDER BY settled_at DESC LIMIT ?")
+      .all(gameId, cutoff, limit || 20);
+  }
+  return db.prepare("SELECT * FROM leagues WHERE status = 'settled' AND settled_at > ? ORDER BY settled_at DESC LIMIT ?")
+    .all(cutoff, limit || 20);
 }
