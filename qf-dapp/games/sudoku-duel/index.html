@@ -110,7 +110,11 @@ body{background:var(--bg);color:var(--text);font-family:'Inter',sans-serif;min-h
 .cell.selected{background:var(--silver-glow)}
 .cell.same-num{background:rgba(184,188,198,0.16)}
 .cell.same-num .cell-val{color:var(--silver-bright)}
-.cell.wave{background:var(--silver-glow);transition:background 0.3s ease}
+.board{position:relative}
+@keyframes light-sweep{0%{background-position:-200% -200%}100%{background-position:200% 200%}}
+@keyframes light-sweep-box{0%{background-position:-200% -200%}100%{background-position:200% 200%}}
+.board-sweep{position:absolute;inset:0;pointer-events:none;z-index:10;background:linear-gradient(135deg,transparent 35%,rgba(255,255,255,0.18) 50%,transparent 65%);background-size:200% 200%;animation:light-sweep 900ms ease-in-out forwards}
+.box-sweep{position:absolute;pointer-events:none;z-index:10;background:linear-gradient(135deg,transparent 35%,rgba(255,255,255,0.10) 50%,transparent 65%);background-size:200% 200%;animation:light-sweep-box 400ms ease-in-out forwards;border-radius:2px}
 .cell.given{cursor:default}
 .cell.error{background:rgba(176,58,58,0.25);border-color:var(--red) !important}
 .cell.error-flash{background:rgba(176,58,58,0.35);border-color:var(--red) !important}
@@ -1040,6 +1044,7 @@ var G = (function() {
 
       renderBoard();
       updateNumpad();
+      checkBoxComplete(selected);
       checkComplete();
 
     } catch (e) {
@@ -1104,6 +1109,7 @@ var G = (function() {
       var cellEl = document.querySelector('.cell[data-idx="' + selected + '"]');
       if (cellEl) cellEl.classList.add('hint-reveal');
 
+      checkBoxComplete(selected);
       checkComplete();
     } catch (e) {
       setMsg('Connection error');
@@ -1118,33 +1124,44 @@ var G = (function() {
     playCompletionWave();
   }
 
-  // Silver wave from top-left to bottom-right, then endGame
+  // Light sweep across the full board on completion
   function playCompletionWave() {
-    done = true; // prevent further input during animation
-    var cells = document.querySelectorAll('.cell');
-    var maxDiag = 16; // max (row + col) = 8 + 8
-    var delayPerDiag = 50; // ms between each diagonal
-
-    for (var i = 0; i < cells.length; i++) {
-      var r = parseInt(cells[i].dataset.row);
-      var c = parseInt(cells[i].dataset.col);
-      var diag = r + c;
-      (function(cell, d) {
-        setTimeout(function() {
-          cell.classList.add('wave');
-          cell.style.background = 'rgba(184,188,198,0.25)';
-        }, d * delayPerDiag);
-        setTimeout(function() {
-          cell.style.background = '';
-        }, d * delayPerDiag + 400);
-      })(cells[i], diag);
-    }
-
-    // After wave completes, trigger endGame
+    done = true;
+    var board = document.getElementById('board');
+    var sweep = document.createElement('div');
+    sweep.className = 'board-sweep';
+    board.appendChild(sweep);
     setTimeout(function() {
-      done = false; // reset so endGame can proceed
+      sweep.remove();
+      done = false;
       endGame(true);
-    }, maxDiag * delayPerDiag + 500);
+    }, 1000);
+  }
+
+  // Light sweep across a single 3×3 box on box completion
+  function playBoxSweep(boxRow, boxCol) {
+    var board = document.getElementById('board');
+    var cellSize = board.offsetWidth / 9;
+    var sweep = document.createElement('div');
+    sweep.className = 'box-sweep';
+    sweep.style.left = (boxCol * 3 * cellSize) + 'px';
+    sweep.style.top = (boxRow * 3 * cellSize) + 'px';
+    sweep.style.width = (3 * cellSize) + 'px';
+    sweep.style.height = (3 * cellSize) + 'px';
+    board.appendChild(sweep);
+    setTimeout(function() { sweep.remove(); }, 500);
+  }
+
+  // Check if a 3×3 box is complete after a placement
+  function checkBoxComplete(cellIdx) {
+    var row = Math.floor(cellIdx / 9), col = cellIdx % 9;
+    var boxRow = Math.floor(row / 3), boxCol = Math.floor(col / 3);
+    for (var r = boxRow * 3; r < boxRow * 3 + 3; r++) {
+      for (var c = boxCol * 3; c < boxCol * 3 + 3; c++) {
+        if (grid[r * 9 + c] === 0) return;
+      }
+    }
+    playBoxSweep(boxRow, boxCol);
   }
 
   // ── End game ────────────────────────────────────────────────────────
