@@ -7,7 +7,7 @@ cloudflare-worker/
 games/                              # Free games (single-file HTML each)
   countdown-numbers/index.html      # Classic 6-number target challenge with solver
   52dle/index.html                  # Also on maffsgames.co.uk
-  equatle/index.html                # Also on maffsgames.co.uk
+  maffsy/index.html                 # Renamed from Equatle. Also on maffsgames.co.uk
   sudoku-duel/index.html
   higher-or-lower/index.html
   prime-or-composite/index.html     # Also on maffsgames.co.uk

@@ -300,7 +300,7 @@ footer a:hover{color:var(--silver-bright)}
   <p class="tagline">Competitive maths games on QF Network. Enter leagues, duel your rivals, win prizes. Pure skill.</p>
   <div class="hero-stats">
     <div class="hs"><div class="hs-num">8</div><div class="hs-label">Competitive Games</div></div>
-    <div class="hs"><div class="hs-num">8</div><div class="hs-label">Free Games</div></div>
+    <div class="hs"><div class="hs-num">11</div><div class="hs-label">Free Games</div></div>
     <div class="hs"><div class="hs-num" id="activeLeagues">&mdash;</div><div class="hs-label">Active Leagues</div></div>
   </div>
 </div>
@@ -359,20 +359,23 @@ footer a:hover{color:var(--silver-bright)}
 <script>
 // ── Game Data ───────────────────────────────────────────────────────────────
 var GAMES = [
-  // Row 1
-  { id:'sequence-solver', name:'Sequence Solver', desc:'Identify patterns in number sequences. Arithmetic, geometric, and combined sequences across escalating difficulty.', cat:'number', paid:true, league:false, tags:['sequences','patterns'] },
+  // Row 1 — Sudoku Duel top-centre
   { id:'countdown-numbers', name:'Countdown Numbers', desc:'Six numbers, one target. Use arithmetic and brackets to hit the target.', cat:'number', paid:true, league:true, tags:['arithmetic','BODMAS'] },
-  { id:'prime-or-composite', name:'Prime or Composite', desc:'Classify numbers as prime or composite in 5 seconds. Speed and number sense.', cat:'speed', paid:true, league:false, tags:['primes','speed'] },
-  // Row 2 — Sudoku Duel centre
-  { id:'kenken', name:'KenKen', desc:'Fill the grid using arithmetic and logic. No repeats in rows or columns. Cages must hit their target.', cat:'puzzle', paid:true, league:true, coming:true, tags:['arithmetic','logic'] },
   { id:'sudoku-duel', name:'Sudoku Duel', desc:'Challenge anyone to a 1v1. Same puzzle, same conditions. Fastest clean solve wins.', cat:'puzzle', paid:true, league:true, duel:true, featured:true, tags:['logic','daily','duel'] },
-  { id:'nonogram', name:'Nonogram', desc:'Fill cells to reveal a hidden Greek letter. Use row and column clues to solve the grid.', cat:'logic', paid:true, league:true, coming:true, tags:['logic','pixel art'] },
-  // Row 3
   { id:'cryptarithmetic-club', name:'Cryptarithmetic Club', desc:'Each letter is a digit. Solve the substitution puzzle within the time limit. Pure deduction.', cat:'puzzle', paid:true, league:true, tags:['logic','deduction'] },
-  { id:'kakuro', name:'Kakuro', desc:'Crossword meets Sudoku. Fill white cells with digits 1-9 so each run sums to its clue. No repeats.', cat:'puzzle', paid:true, league:true, coming:true, tags:['sums','logic'] },
+  // Row 2 — MW logo centre
+  { id:'minesweeper', name:'Minesweeper', desc:'Clear the minefield. Logic, deduction, and calculated risk.', cat:'puzzle', paid:true, league:true, coming:true, tags:['logic','deduction'] },
+  { id:'_mw_logo', name:'', desc:'', cat:'', paid:true, logo:true },
+  { id:'kenken', name:'KenKen', desc:'Fill the grid using arithmetic and logic. No repeats in rows or columns. Cages must hit their target.', cat:'puzzle', paid:true, league:true, tags:['arithmetic','logic'] },
+  // Row 3
+  { id:'freecell', name:'FreeCell', desc:'Strategic solitaire. Every deal is solvable — pure skill, zero luck.', cat:'strategy', paid:true, league:true, coming:true, tags:['cards','strategy'] },
+  { id:'nonogram', name:'Nonogram', desc:'Fill cells to reveal a hidden Greek letter. Use row and column clues to solve the grid.', cat:'logic', paid:true, league:true, tags:['logic','pixel art'] },
+  { id:'kakuro', name:'Kakuro', desc:'Crossword meets Sudoku. Fill white cells with digits 1-9 so each run sums to its clue. No repeats.', cat:'puzzle', paid:true, league:true, tags:['sums','logic'] },
   { id:'estimation-engine', name:'Estimation Engine', desc:'Estimate complex calculations under time pressure. Pure mental arithmetic.', cat:'number', paid:false, tags:['mental maths','speed'] },
+  { id:'sequence-solver', name:'Sequence Solver', desc:'Identify patterns in number sequences. Arithmetic, geometric, and combined sequences.', cat:'number', paid:false, tags:['sequences','patterns'] },
+  { id:'prime-or-composite', name:'Prime or Composite', desc:'Classify numbers as prime or composite in 5 seconds. Speed and number sense.', cat:'speed', paid:false, tags:['primes','speed'] },
   { id:'higher-or-lower', name:'Higher or Lower', desc:'Is the next mathematical number higher or lower? Build streaks for multipliers.', cat:'number', paid:false, tags:['number sense','streaks'] },
-  { id:'equatle', name:'Equatle', desc:'Wordle-style equation guessing. Deduce the hidden 8-character equation in 6 tries.', cat:'puzzle', paid:false, tags:['deduction','daily'] },
+  { id:'maffsy', name:'Maffsy', desc:'Wordle-style equation guessing. Deduce the hidden 8-character equation in 6 tries.', cat:'puzzle', paid:false, tags:['deduction','daily'] },
   { id:'52dle', name:'52-dle', desc:'Daily number deduction. Use mathematical clues to guess the hidden number.', cat:'puzzle', paid:false, tags:['deduction','daily'] },
   { id:'towers-of-hanoi', name:'Towers of Hanoi', desc:'Move all discs to the target peg. Classic recursive logic puzzle.', cat:'logic', paid:false, tags:['logic','recursive'] },
   { id:'dont-press-it', name:"Don't Press It", desc:'How long can you resist? The button gets more tempting. A test of willpower.', cat:'strategy', paid:false, tags:['psychology','fun'] },
@@ -466,6 +469,20 @@ function renderGames(filter) {
       if (filter === 'free' && g.paid) return;
       if (filter !== 'paid' && filter !== 'free' && g.cat !== filter) return;
     }
+
+    // MW Logo centre cell
+    if (g.logo) {
+      var logoCell = document.createElement('a');
+      logoCell.href = 'https://mathswins.co.uk';
+      logoCell.className = 'game-card mw-logo-cell';
+      logoCell.innerHTML = '<img src="/assets/og-image.svg" alt="MathsWins" style="width:60%;opacity:0.7;filter:grayscale(1) brightness(1.5);transition:all .3s">';
+      logoCell.style.cssText = 'display:flex;align-items:center;justify-content:center;background:var(--surface2);border:1px solid var(--border);cursor:pointer;text-decoration:none';
+      logoCell.onmouseover = function() { logoCell.querySelector('img').style.opacity = '1'; logoCell.querySelector('img').style.filter = 'grayscale(0)'; logoCell.style.boxShadow = '0 0 20px rgba(184,188,198,0.08)'; };
+      logoCell.onmouseout = function() { logoCell.querySelector('img').style.opacity = '0.7'; logoCell.querySelector('img').style.filter = 'grayscale(1) brightness(1.5)'; logoCell.style.boxShadow = 'none'; };
+      grid.appendChild(logoCell);
+      return;
+    }
+
     var catClass = 'cat-' + (g.cat === 'strategy' ? 'strategy' : g.cat);
     var card = document.createElement('div');
     card.className = 'game-card ' + catClass;
