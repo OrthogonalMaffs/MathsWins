@@ -402,7 +402,7 @@ function renderPuzzles(puzzles, league) {
   });
 }
 
-function renderLeaderboard(league) {
+async function renderLeaderboard(league) {
   var container = document.getElementById('leaderboardContent');
 
   // Hidden during join window
@@ -416,6 +416,11 @@ function renderLeaderboard(league) {
     return;
   }
 
+  // Resolve all QNS names before rendering
+  await Promise.all(league.leaderboard.map(function(entry) {
+    return qfWallet.resolveAny(entry.wallet);
+  }));
+
   var html = '<table class="lb-table"><tr><th class="lb-pos">#</th><th>Player</th><th>Score</th><th>Played</th></tr>';
   league.leaderboard.forEach(function(entry, i) {
     var isYou = qfWallet.address && entry.wallet.toLowerCase() === qfWallet.address.toLowerCase();
@@ -424,8 +429,6 @@ function renderLeaderboard(league) {
     else if (i < 4) rowClass = 'top-4';
 
     var name = qfWallet.formatAddr(entry.wallet);
-    // Fire async name resolution
-    qfWallet.resolveAny(entry.wallet);
 
     html += '<tr class="' + rowClass + '">' +
       '<td class="lb-pos">' + (i + 1) + '</td>' +
