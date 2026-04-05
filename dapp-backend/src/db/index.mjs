@@ -43,7 +43,223 @@ export function getDb() {
   db.exec('CREATE INDEX IF NOT EXISTS idx_league_refunds_status ON league_refunds(status)');
   db.exec('CREATE INDEX IF NOT EXISTS idx_league_refunds_league ON league_refunds(league_id)');
 
+  // ── Achievement tables ──────────────────────────────────────────────
+  db.exec(`CREATE TABLE IF NOT EXISTS achievement_registry (
+    achievement_id TEXT PRIMARY KEY,
+    name TEXT NOT NULL,
+    game_id TEXT,
+    tier TEXT NOT NULL,
+    mint_fee_qf INTEGER NOT NULL,
+    first_claimed_by TEXT,
+    first_claimed_at INTEGER,
+    active INTEGER DEFAULT 1
+  )`);
+
+  db.exec(`CREATE TABLE IF NOT EXISTS achievement_eligibility (
+    id INTEGER PRIMARY KEY AUTOINCREMENT,
+    wallet TEXT NOT NULL,
+    achievement_id TEXT NOT NULL,
+    earned_at INTEGER NOT NULL,
+    minted_at INTEGER,
+    tx_hash TEXT,
+    is_pioneer INTEGER DEFAULT 0,
+    UNIQUE(wallet, achievement_id)
+  )`);
+
+  db.exec(`CREATE TABLE IF NOT EXISTS global_records (
+    record_id TEXT PRIMARY KEY,
+    wallet TEXT NOT NULL,
+    value TEXT NOT NULL,
+    achieved_at INTEGER NOT NULL,
+    updated_at INTEGER NOT NULL
+  )`);
+
+  db.exec(`CREATE TABLE IF NOT EXISTS wallet_stats (
+    wallet TEXT PRIMARY KEY,
+    saturday_streak INTEGER DEFAULT 0,
+    saturday_last_played TEXT,
+    total_qf_minted INTEGER DEFAULT 0,
+    consecutive_duel_wins INTEGER DEFAULT 0,
+    updated_at INTEGER
+  )`);
+
+  seedAchievements(db);
+
   return db;
+}
+
+// ── Achievement seed data ───────────────────────────────────────────────────
+
+const ACHIEVEMENTS = [
+  // Purity (per game)
+  { id: 'no-errors-sudoku', name: 'No Errors — Sudoku', game_id: 'sudoku-duel', tier: 'standard', fee: 100 },
+  { id: 'no-errors-minesweeper', name: 'No Errors — Minesweeper', game_id: 'minesweeper', tier: 'standard', fee: 100 },
+  { id: 'no-errors-freecell', name: 'No Errors — FreeCell', game_id: 'freecell', tier: 'standard', fee: 100 },
+  { id: 'no-errors-countdown', name: 'No Errors — Countdown', game_id: 'countdown-numbers', tier: 'standard', fee: 100 },
+  { id: 'no-errors-cryptarithmetic', name: 'No Errors — Cryptarithmetic', game_id: 'cryptarithmetic-club', tier: 'standard', fee: 100 },
+  { id: 'no-errors-kenken', name: 'No Errors — KenKen', game_id: 'kenken', tier: 'standard', fee: 100 },
+  { id: 'no-errors-nonogram', name: 'No Errors — Nonogram', game_id: 'nonogram', tier: 'standard', fee: 100 },
+  { id: 'no-errors-kakuro', name: 'No Errors — Kakuro', game_id: 'kakuro', tier: 'standard', fee: 100 },
+  { id: 'the-purist', name: 'The Purist', game_id: 'freecell', tier: 'standard', fee: 100 },
+  { id: 'flawless-line', name: 'Flawless Line', game_id: 'minesweeper', tier: 'standard', fee: 100 },
+  // Super
+  { id: 'immaculate', name: 'Immaculate', game_id: null, tier: 'obsidian', fee: 250 },
+  // Volume
+  { id: 'first-steps', name: 'First Steps', game_id: null, tier: 'standard', fee: 100 },
+  { id: 'committed', name: 'Committed', game_id: null, tier: 'standard', fee: 100 },
+  { id: 'dedicated', name: 'Dedicated', game_id: null, tier: 'standard', fee: 100 },
+  { id: 'veteran', name: 'Veteran', game_id: null, tier: 'standard', fee: 100 },
+  { id: 'legend', name: 'Legend', game_id: null, tier: 'obsidian', fee: 100 },
+  // Winning
+  { id: 'winner', name: 'Winner', game_id: null, tier: 'standard', fee: 100 },
+  { id: 'on-a-roll', name: 'On a Roll', game_id: null, tier: 'standard', fee: 100 },
+  { id: 'dominant', name: 'Dominant', game_id: null, tier: 'obsidian', fee: 100 },
+  { id: 'hat-trick', name: 'Hat Trick', game_id: null, tier: 'standard', fee: 100 },
+  { id: 'the-completionist', name: 'The Completionist', game_id: null, tier: 'obsidian', fee: 100 },
+  { id: 'the-tortoise', name: 'The Tortoise', game_id: null, tier: 'standard', fee: 100 },
+  // Duels
+  { id: 'first-blood', name: 'First Blood', game_id: null, tier: 'standard', fee: 100 },
+  { id: 'duelist', name: 'Duelist', game_id: null, tier: 'standard', fee: 100 },
+  { id: 'gladiator', name: 'Gladiator', game_id: null, tier: 'standard', fee: 100 },
+  { id: 'heartbreaker', name: 'Heartbreaker', game_id: null, tier: 'standard', fee: 100 },
+  { id: 'giant-slayer', name: 'Giant Slayer', game_id: null, tier: 'standard', fee: 100 },
+  { id: 'the-wall', name: 'The Wall', game_id: null, tier: 'standard', fee: 100 },
+  // Skill
+  { id: 'clean-sweep', name: 'Clean Sweep', game_id: 'minesweeper', tier: 'standard', fee: 100 },
+  { id: 'sub-minute', name: 'Sub-Minute', game_id: 'sudoku-duel', tier: 'standard', fee: 100 },
+  { id: 'untouchable', name: 'Untouchable', game_id: null, tier: 'standard', fee: 100 },
+  { id: 'the-undo-king', name: 'The Undo King', game_id: 'freecell', tier: 'standard', fee: 100 },
+  { id: 'wrong-answer-streak', name: 'Wrong Answer Streak', game_id: 'prime-or-composite', tier: 'standard', fee: 100 },
+  // Time & Dedication
+  { id: 'night-owl', name: 'Night Owl', game_id: null, tier: 'standard', fee: 100 },
+  { id: 'weekend-warrior', name: 'Weekend Warrior', game_id: null, tier: 'standard', fee: 100 },
+  { id: 'the-marathon', name: 'The Marathon', game_id: null, tier: 'standard', fee: 100 },
+  // Absurd
+  { id: 'the-mathematician', name: 'The Mathematician', game_id: null, tier: 'standard', fee: 100 },
+  { id: 'lucky-number', name: 'Lucky Number', game_id: 'freecell', tier: 'standard', fee: 100 },
+  { id: 'palindrome', name: 'Palindrome', game_id: null, tier: 'standard', fee: 100 },
+  { id: 'speedrun-to-zero', name: 'Speedrun to Zero', game_id: 'sudoku-duel', tier: 'standard', fee: 100 },
+  { id: 'flag-everything', name: 'Flag Everything', game_id: 'minesweeper', tier: 'standard', fee: 100 },
+  // Community
+  { id: 'duel-master', name: 'Duel Master', game_id: null, tier: 'standard', fee: 100 },
+  { id: 'onlyfans-qf', name: 'onlyfans.qf', game_id: null, tier: 'manual', fee: 100 },
+  // Meta
+  { id: 'the-collector', name: 'The Collector', game_id: null, tier: 'meta', fee: 100 },
+  { id: 'pioneer-hunter', name: 'Pioneer Hunter', game_id: null, tier: 'meta', fee: 100 },
+  { id: 'the-whale', name: 'The Whale', game_id: null, tier: 'meta', fee: 100 },
+  // Impossible
+  { id: 'boom', name: 'Boom', game_id: null, tier: 'impossible', fee: 50 },
+];
+
+function seedAchievements(db) {
+  const stmt = db.prepare(`INSERT OR IGNORE INTO achievement_registry (achievement_id, name, game_id, tier, mint_fee_qf)
+    VALUES (?, ?, ?, ?, ?)`);
+  for (const a of ACHIEVEMENTS) {
+    stmt.run(a.id, a.name, a.game_id || null, a.tier, a.fee);
+  }
+}
+
+// ── Achievement queries ─────────────────────────────────────────────────────
+
+export function getAchievementRegistry() {
+  const db = getDb();
+  return db.prepare('SELECT * FROM achievement_registry ORDER BY achievement_id').all();
+}
+
+export function getAchievement(achievementId) {
+  const db = getDb();
+  return db.prepare('SELECT * FROM achievement_registry WHERE achievement_id = ?').get(achievementId);
+}
+
+export function awardAchievement(wallet, achievementId) {
+  const db = getDb();
+  const now = Date.now();
+  const w = wallet.toLowerCase();
+
+  // Insert eligibility row — UNIQUE constraint handles dupes
+  try {
+    db.prepare(`INSERT INTO achievement_eligibility (wallet, achievement_id, earned_at) VALUES (?, ?, ?)`)
+      .run(w, achievementId, now);
+  } catch (e) {
+    if (e.code === 'SQLITE_CONSTRAINT_UNIQUE' || (e.message && e.message.includes('UNIQUE'))) {
+      return { awarded: false, reason: 'already_earned' };
+    }
+    throw e;
+  }
+
+  // Check if this wallet is the pioneer (first to earn)
+  const reg = db.prepare('SELECT first_claimed_by FROM achievement_registry WHERE achievement_id = ?').get(achievementId);
+  if (reg && !reg.first_claimed_by) {
+    db.prepare('UPDATE achievement_registry SET first_claimed_by = ?, first_claimed_at = ? WHERE achievement_id = ? AND first_claimed_by IS NULL')
+      .run(w, now, achievementId);
+    db.prepare('UPDATE achievement_eligibility SET is_pioneer = 1 WHERE wallet = ? AND achievement_id = ?')
+      .run(w, achievementId);
+    return { awarded: true, pioneer: true };
+  }
+
+  return { awarded: true, pioneer: false };
+}
+
+export function getWalletAchievements(wallet) {
+  const db = getDb();
+  return db.prepare('SELECT * FROM achievement_eligibility WHERE wallet = ? ORDER BY earned_at DESC')
+    .all(wallet.toLowerCase());
+}
+
+export function getAllAchievements() {
+  const db = getDb();
+  return db.prepare(`
+    SELECT r.*, COALESCE(e.earned_count, 0) as earned_count
+    FROM achievement_registry r
+    LEFT JOIN (SELECT achievement_id, COUNT(*) as earned_count FROM achievement_eligibility GROUP BY achievement_id) e
+      ON r.achievement_id = e.achievement_id
+    ORDER BY r.achievement_id
+  `).all();
+}
+
+export function getGlobalRecord(recordId) {
+  const db = getDb();
+  return db.prepare('SELECT * FROM global_records WHERE record_id = ?').get(recordId);
+}
+
+export function setGlobalRecord(recordId, wallet, value) {
+  const db = getDb();
+  const now = Date.now();
+  db.prepare(`INSERT INTO global_records (record_id, wallet, value, achieved_at, updated_at) VALUES (?, ?, ?, ?, ?)
+    ON CONFLICT(record_id) DO UPDATE SET wallet = excluded.wallet, value = excluded.value, updated_at = excluded.updated_at`)
+    .run(recordId, wallet.toLowerCase(), String(value), now, now);
+}
+
+export function getWalletStats(wallet) {
+  const db = getDb();
+  return db.prepare('SELECT * FROM wallet_stats WHERE wallet = ?').get(wallet.toLowerCase());
+}
+
+export function upsertWalletStats(wallet, fields) {
+  const db = getDb();
+  const w = wallet.toLowerCase();
+  const now = Date.now();
+  const existing = db.prepare('SELECT * FROM wallet_stats WHERE wallet = ?').get(w);
+  if (!existing) {
+    const cols = ['wallet', 'updated_at'];
+    const vals = [w, now];
+    for (const [key, val] of Object.entries(fields)) {
+      cols.push(key);
+      vals.push(val);
+    }
+    db.prepare('INSERT INTO wallet_stats (' + cols.join(', ') + ') VALUES (' + cols.map(() => '?').join(', ') + ')').run(...vals);
+  } else {
+    const sets = [];
+    const vals = [];
+    for (const [key, val] of Object.entries(fields)) {
+      sets.push(key + ' = ?');
+      vals.push(val);
+    }
+    sets.push('updated_at = ?');
+    vals.push(now);
+    vals.push(w);
+    db.prepare('UPDATE wallet_stats SET ' + sets.join(', ') + ' WHERE wallet = ?').run(...vals);
+  }
 }
 
 // ── Entry queries ───────────────────────────────────────────────────────────

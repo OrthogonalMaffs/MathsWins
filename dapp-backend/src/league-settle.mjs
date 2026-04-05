@@ -13,6 +13,7 @@ import {
   addLeaguePrize, getLeaguePrizes, updateLeagueStatus
 } from './db/index.mjs';
 import { sendQF, TEAM_WALLET, BURN_ADDRESS } from './escrow.mjs';
+import { checkAchievements } from './achievement-checker.mjs';
 
 const __dirname = dirname(fileURLToPath(import.meta.url));
 
@@ -205,6 +206,33 @@ export async function doSettleLeague(leagueId) {
       }
     } else {
       console.log('  No prize pot — skipping QF distribution');
+    }
+
+    // Step 4b: Check achievements for all placed players
+    for (const winner of prizes) {
+      try {
+        // Count total leagues and wins for this wallet
+        const walletLeagues = getDb().prepare(
+          "SELECT COUNT(*) as count FROM league_players lp JOIN leagues l ON lp.league_id = l.id WHERE lp.wallet = ? AND lp.refunded = 0 AND l.status IN ('settled', 'settling')"
+        ).get(winner.wallet.toLowerCase());
+        const walletWins = getDb().prepare(
+          "SELECT COUNT(*) as count FROM league_prizes WHERE wallet = ? AND position = 1"
+        ).get(winner.wallet.toLowerCase());
+
+        checkAchievements(winner.wallet, {
+          type: 'league_settle',
+          gameId: league.game_id,
+          leagueId: league.id,
+          score: winner.score,
+          mistakes: winner.mistakes || 0,
+          position: winner.position,
+          won: winner.position === 1,
+          leagueCount: walletLeagues ? walletLeagues.count : 0,
+          winCount: walletWins ? walletWins.count : 0,
+        });
+      } catch (e) {
+        console.error('Achievement check failed for ' + winner.wallet.slice(0, 8) + '...:', e.message);
+      }
     }
 
     // Step 5: Finalise

@@ -12,6 +12,7 @@ import { getDb } from '../db/index.mjs';
 import { doSettleLeague, checkEarlySettlement, recoverStuckLeagues } from '../league-settle.mjs';
 import { sendQF, settleDuel } from '../escrow.mjs';
 import { createBattleshipsGame, getBattleshipsGameByCode, getBattleshipsGameById, updateBattleshipsGameStatus, saveBattleshipsPlacement, getBattleshipsPlacement, getBattleshipsPlacements, addBattleshipsRound, getBattleshipsRounds, getBattleshipsRecord, updateBattleshipsRecord, getActiveBattleshipsGames, getBattleshipsGamesByWallet } from '../db/index.mjs';
+import { getAchievementRegistry, getAchievement, awardAchievement, getWalletAchievements, getAllAchievements, getGlobalRecord } from '../db/index.mjs';
 import { validateFleet, calculateRange, checkHit, checkSunk, checkWin, getGameState as getBattleshipsState, cpuShootRecruit, pickSurvivingShip, FLEET } from '../games/battleships.mjs';
 
 const router = Router();
@@ -1498,5 +1499,119 @@ export function checkBattleshipsTimeouts() {
     console.error('Battleships timeout check error:', e.message);
   }
 }
+
+// ── Achievement endpoints ──────────────────────────────────────────────────
+
+const ACHIEVEMENTS_ACTIVE = process.env.ACHIEVEMENTS_ACTIVE === 'true';
+
+router.get('/achievements/status', (req, res) => {
+  const registry = getAchievementRegistry();
+  res.json({ active: ACHIEVEMENTS_ACTIVE, count: registry.length });
+});
+
+router.get('/achievements/all', (req, res) => {
+  const registry = getAchievementRegistry();
+  // Return names only, no criteria
+  const list = registry.map(a => ({
+    id: a.achievement_id,
+    name: a.name,
+    game_id: a.game_id,
+    tier: a.tier,
+    mint_fee_qf: a.mint_fee_qf,
+    first_claimed_by: a.first_claimed_by || null,
+    active: a.active === 1
+  }));
+  res.json({ achievements: list });
+});
+
+router.get('/achievements/my', optionalWallet, (req, res) => {
+  if (!req.wallet) return res.status(401).json({ error: 'Wallet required' });
+  const eligibility = getWalletAchievements(req.wallet);
+  res.json({ wallet: req.wallet, achievements: eligibility });
+});
+
+router.get('/achievements/record/:id', (req, res) => {
+  const record = getGlobalRecord(req.params.id);
+  if (!record) return res.status(404).json({ error: 'Record not found' });
+  res.json(record);
+});
+
+router.post('/achievement/mint', optionalWallet, (req, res) => {
+  if (!ACHIEVEMENTS_ACTIVE) {
+    return res.json({ status: 'coming_soon' });
+  }
+  if (!req.wallet) return res.status(401).json({ error: 'Wallet required' });
+
+  const { achievement_id } = req.body;
+  if (!achievement_id) return res.status(400).json({ error: 'achievement_id required' });
+
+  const registry = getAchievement(achievement_id);
+  if (!registry) return res.status(404).json({ error: 'Achievement not found' });
+  if (!registry.active) return res.status(400).json({ error: 'Achievement not active' });
+
+  // Check wallet has eligibility with minted_at = null
+  const eligibility = getWalletAchievements(req.wallet);
+  const eligible = eligibility.find(e => e.achievement_id === achievement_id && !e.minted_at);
+  if (!eligible) return res.status(400).json({ error: 'Not eligible or already minted' });
+
+  // TODO: For 'immaculate' — verify wallet holds all 8 no-errors tokens (requires contract interaction)
+
+  // Pioneer check: if registry.first_claimed_by is null, this wallet is pioneer
+  const isPioneer = !registry.first_claimed_by;
+  const db = getDb();
+
+  if (isPioneer) {
+    db.prepare('UPDATE achievement_registry SET first_claimed_by = ?, first_claimed_at = ? WHERE achievement_id = ? AND first_claimed_by IS NULL')
+      .run(req.wallet, Date.now(), achievement_id);
+    db.prepare('UPDATE achievement_eligibility SET is_pioneer = 1 WHERE wallet = ? AND achievement_id = ?')
+      .run(req.wallet, achievement_id);
+  }
+
+  // TODO: actual on-chain minting will be added when contract is deployed. For now, just update the DB.
+  const fakeTxHash = 'pending-contract-deploy';
+  db.prepare('UPDATE achievement_eligibility SET minted_at = ?, tx_hash = ? WHERE wallet = ? AND achievement_id = ?')
+    .run(Date.now(), fakeTxHash, req.wallet, achievement_id);
+
+  res.json({ minted: true, pioneer: isPioneer, token_id: null });
+});
+
+// ── Admin achievement endpoints ────────────────────────────────────────────
+
+router.post('/admin/achievement/register', requireAdmin, (req, res) => {
+  const { achievement_id, name, game_id, tier, mint_fee_qf } = req.body;
+  if (!achievement_id || !name || !tier || mint_fee_qf === undefined) {
+    return res.status(400).json({ error: 'achievement_id, name, tier, and mint_fee_qf required' });
+  }
+  const db = getDb();
+  try {
+    db.prepare('INSERT INTO achievement_registry (achievement_id, name, game_id, tier, mint_fee_qf) VALUES (?, ?, ?, ?, ?)')
+      .run(achievement_id, name, game_id || null, tier, mint_fee_qf);
+    res.json({ registered: true, achievement_id });
+  } catch (e) {
+    if (e.message && e.message.includes('UNIQUE')) {
+      return res.status(409).json({ error: 'Achievement already exists' });
+    }
+    throw e;
+  }
+});
+
+router.post('/admin/achievement/award', requireAdmin, (req, res) => {
+  const { wallet, achievement_id } = req.body;
+  if (!wallet || !achievement_id) return res.status(400).json({ error: 'wallet and achievement_id required' });
+  const result = awardAchievement(wallet, achievement_id);
+  res.json(result);
+});
+
+router.get('/admin/achievements', requireAdmin, (req, res) => {
+  const all = getAllAchievements();
+  const status = req.query.status;
+  if (status === 'active') {
+    res.json({ achievements: all.filter(a => a.active === 1) });
+  } else if (status === 'inactive') {
+    res.json({ achievements: all.filter(a => a.active === 0) });
+  } else {
+    res.json({ achievements: all });
+  }
+});
 
 export default router;
