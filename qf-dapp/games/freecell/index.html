@@ -1,0 +1,1467 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<script async src="https://www.googletagmanager.com/gtag/js?id=G-7GTLYCZMXN"></script>
+<script>
+  window.dataLayer = window.dataLayer || [];
+  function gtag(){dataLayer.push(arguments);}
+  gtag('js', new Date());
+  gtag('config', 'G-7GTLYCZMXN', { send_page_view: true, storage: 'none', anonymize_ip: true });
+</script>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+<meta name="description" content="Strategic solitaire on QF Network. Every deal is solvable. Pure skill, zero luck. Competitive leagues.">
+<meta property="og:title" content="FreeCell &middot; QF Games">
+<meta property="og:description" content="Strategic solitaire on QF Network. Every deal is solvable. Pure skill, zero luck.">
+<meta property="og:url" content="https://mathswins.co.uk/qf-dapp/games/freecell/">
+<link rel="canonical" href="https://mathswins.co.uk/qf-dapp/games/freecell/">
+<title>FreeCell &middot; QF Games</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;700&family=JetBrains+Mono:wght@400;500&family=Playfair+Display:wght@700&display=swap" rel="stylesheet">
+<style>
+:root {
+  --bg:            #050709;
+  --surface:       #16181c;
+  --surface2:      #1e2025;
+  --surface3:      #26282e;
+  --silver:        #b8bcc6;
+  --silver-bright: #d4d8e2;
+  --silver-dim:    rgba(184,188,198,0.08);
+  --silver-glow:   rgba(184,188,198,0.12);
+  --silver-border: rgba(184,188,198,0.15);
+  --text-white:    #e8eaf0;
+  --text:          #8a8f9c;
+  --muted:         #4a4e5a;
+  --border:        #1e2228;
+  --border2:       #2a2e36;
+  --grid-border:   #3a3e48;
+  --grid-box:      #5a5e68;
+  --gold:          #c9a84c;
+  --green:         #3a8a5c;
+  --red:           #b03a3a;
+  --blue:          #3a6a9c;
+}
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+body{background:var(--bg);color:var(--text);font-family:'Inter',sans-serif;min-height:100vh;display:flex;flex-direction:column;align-items:center;-webkit-tap-highlight-color:transparent}
+
+.page{width:100%;max-width:600px;padding:2rem 1rem 4rem;display:flex;flex-direction:column;align-items:center;gap:1.2rem}
+
+/* ── Header ── */
+.game-header{text-align:center}
+.game-kicker{font-family:'JetBrains Mono',monospace;font-size:0.55rem;letter-spacing:0.2em;text-transform:uppercase;color:var(--silver);margin-bottom:0.4rem}
+.game-title{font-family:'Playfair Display',serif;font-size:2.6rem;color:var(--text-white);line-height:1}
+.game-title span{background:linear-gradient(135deg,var(--silver-bright),var(--silver),#8a8f9c);-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text}
+.game-sub{font-size:0.72rem;color:var(--muted);line-height:1.6;margin-top:0.4rem}
+
+/* ── Wallet bar ── */
+.top-bar{
+  width:100%;display:flex;justify-content:space-between;align-items:center;
+  padding:.5rem 1rem;background:rgba(5,7,9,.94);backdrop-filter:blur(12px);
+  border-bottom:1px solid var(--border);position:sticky;top:0;z-index:100;
+}
+.top-bar-left{display:flex;align-items:center;gap:.6rem}
+.back-link{font-size:.7rem;color:var(--muted);text-decoration:none;padding:.25rem .6rem;border:1px solid var(--border);border-radius:6px;transition:all .15s}
+.back-link:hover{border-color:var(--silver-border);color:var(--text)}
+.top-logo{font-family:'Playfair Display',serif;font-size:1rem;color:var(--text-white);text-decoration:none}
+.top-logo span{color:var(--silver)}
+.top-bar-right{display:flex;align-items:center;gap:.5rem}
+.top-addr{font-family:'JetBrains Mono',monospace;font-size:.65rem;color:var(--muted);background:var(--surface);border:1px solid var(--border);padding:.2rem .5rem;border-radius:5px}
+.top-qf-name{font-family:'JetBrains Mono',monospace;font-size:.65rem;color:var(--silver-bright);background:var(--surface2);border:1px solid var(--silver-border);padding:.2rem .5rem;border-radius:5px}
+.top-connect{font-family:'Inter',sans-serif;font-weight:600;font-size:.7rem;padding:.35rem .8rem;border-radius:5px;border:1px solid var(--silver-border);background:var(--silver-dim);color:var(--silver-bright);cursor:pointer;transition:all .15s}
+.top-connect:hover{background:var(--silver-bright);color:var(--bg)}
+
+/* ── How to Play — collapsible ── */
+.htp{width:100%;background:var(--surface);border:1px solid var(--border);border-radius:10px;overflow:hidden;margin-bottom:0}
+.htp-toggle{width:100%;padding:.8rem 1rem;display:flex;justify-content:space-between;align-items:center;cursor:pointer;background:none;border:none;color:var(--text);font-family:'Inter',sans-serif;font-size:.75rem;font-weight:600;text-align:left}
+.htp-toggle:hover{color:var(--silver-bright)}
+.htp-arrow{transition:transform .2s;font-size:.6rem}
+.htp.open .htp-arrow{transform:rotate(180deg)}
+.htp-body{display:none;padding:0 1rem .8rem;font-size:.65rem;color:var(--muted);line-height:1.7}
+.htp.open .htp-body{display:block}
+.htp-body p{margin-bottom:.5rem}
+.htp-body ul{margin:.3rem 0 .5rem 1.2rem}
+.htp-body li{margin-bottom:.2rem}
+.htp-body strong{color:var(--text)}
+
+/* ── Scoring info panel ── */
+.scoring-info{width:100%;background:var(--surface);border:1px solid var(--border);border-radius:10px;padding:1.2rem;font-family:'JetBrains Mono',monospace;font-size:0.62rem;color:var(--muted);line-height:1.8}
+.scoring-info h3{font-family:'Playfair Display',serif;font-size:1rem;color:var(--text-white);letter-spacing:0.02em;margin-bottom:0.5rem}
+.si-row{display:flex;justify-content:space-between;padding:0.15rem 0}
+.si-label{color:var(--text)}
+.si-val{color:var(--silver-bright)}
+.si-note{color:var(--muted);font-size:0.55rem;margin-top:0.5rem;font-style:italic}
+
+/* ── Deal selector ── */
+.deal-row{display:flex;gap:0.4rem;width:100%;align-items:center}
+.deal-input{
+  flex:1;padding:0.55rem 0.8rem;font-family:'JetBrains Mono',monospace;font-size:0.8rem;
+  background:var(--surface2);border:1px solid var(--border2);border-radius:6px;
+  color:var(--text-white);text-align:center;outline:none;
+}
+.deal-input::placeholder{color:var(--muted)}
+.deal-input:focus{border-color:var(--silver-border)}
+
+/* ── Status bar ── */
+.status-bar{display:flex;gap:0.8rem;width:100%;background:var(--surface);border:1px solid var(--border);border-radius:10px;padding:0.75rem 1rem;justify-content:space-around}
+.si{display:flex;flex-direction:column;align-items:center;gap:0.15rem}
+.si .si-val{font-family:'JetBrains Mono',monospace;font-size:1rem;font-weight:500;color:var(--silver-bright)}
+.si .si-lbl{font-family:'JetBrains Mono',monospace;font-size:0.42rem;letter-spacing:0.12em;text-transform:uppercase;color:var(--muted)}
+
+/* ── Board layout ── */
+.board-area{width:100%;display:flex;flex-direction:column;align-items:center;gap:6px;position:relative}
+.top-row{display:flex;width:100%;justify-content:space-between;align-items:flex-start;gap:8px}
+.fc-group,.fn-group{display:flex;gap:3px}
+
+/* ── Card slots (free cells and foundations) ── */
+.card-slot{
+  width:60px;height:85px;border-radius:6px;display:flex;align-items:center;justify-content:center;
+  position:relative;cursor:pointer;transition:box-shadow .15s;
+}
+.card-slot.empty-fc{border:1px dashed var(--silver-border);background:var(--surface)}
+.card-slot.empty-fn{border:1px solid var(--border2);background:var(--surface)}
+.card-slot .suit-label{font-size:1.4rem;color:var(--muted);user-select:none;pointer-events:none}
+
+/* ── Cards ── */
+.card{
+  width:60px;height:85px;border-radius:6px;background:var(--surface);
+  border:1px solid var(--grid-border);display:flex;flex-direction:column;
+  align-items:flex-start;justify-content:flex-start;padding:3px 5px;
+  cursor:pointer;user-select:none;-webkit-user-select:none;position:relative;
+  transition:transform .1s,box-shadow .15s;
+}
+.card.selected{
+  box-shadow:0 0 8px rgba(184,188,198,0.4);
+  transform:translateY(-2px);
+  border-color:var(--silver);
+  z-index:5;
+}
+.card.dragging{opacity:0.6;z-index:50}
+.card .card-rank-suit{font-family:'JetBrains Mono',monospace;font-size:0.85rem;font-weight:500;line-height:1.1;pointer-events:none}
+.card .card-center{position:absolute;top:50%;left:50%;transform:translate(-50%,-50%);font-size:1.3rem;pointer-events:none}
+.card.black-suit .card-rank-suit{color:var(--silver)}
+.card.black-suit .card-center{color:var(--silver)}
+.card.red-suit .card-rank-suit{color:#b03a3a}
+.card.red-suit .card-center{color:#b03a3a}
+
+/* ── Cascade columns ── */
+.cascades{display:flex;gap:3px;width:100%;justify-content:center}
+.cascade{
+  display:flex;flex-direction:column;align-items:center;
+  min-height:120px;width:60px;position:relative;
+}
+.cascade .card{position:absolute;left:0}
+
+/* ── Valid drop target highlight ── */
+@keyframes pulse-glow{0%{box-shadow:0 0 4px rgba(184,188,198,0.2)}50%{box-shadow:0 0 10px rgba(184,188,198,0.35)}100%{box-shadow:0 0 4px rgba(184,188,198,0.2)}}
+.drop-highlight{animation:pulse-glow 1s ease-in-out infinite}
+.card-slot.drop-highlight{animation:pulse-glow 1s ease-in-out infinite}
+
+/* ── Board sweep (win animation) ── */
+@keyframes light-sweep{0%{background-position:-200% -200%}100%{background-position:200% 200%}}
+.board-sweep{position:absolute;inset:0;pointer-events:none;z-index:50;background:linear-gradient(135deg,transparent 35%,rgba(255,255,255,0.18) 50%,transparent 65%);background-size:200% 200%;animation:light-sweep 900ms ease-in-out forwards;border-radius:8px}
+
+/* ── Auto-complete card fly animation ── */
+@keyframes card-fly{
+  0%{opacity:1}
+  100%{opacity:0;transform:translate(var(--fly-x),var(--fly-y)) scale(0.5)}
+}
+.card-flying{animation:card-fly 200ms ease-in forwards;pointer-events:none;z-index:40}
+
+/* ── Buttons ── */
+.btn{padding:0.6rem 1rem;font-family:'JetBrains Mono',monospace;font-size:0.58rem;letter-spacing:0.08em;text-transform:uppercase;cursor:pointer;border-radius:6px;border:none;transition:all 0.15s;flex:1;min-width:0}
+.btn-silver{background:var(--silver-bright);color:var(--bg);font-weight:500}
+.btn-silver:hover{opacity:.85}
+.btn-silver:disabled{background:var(--muted);cursor:not-allowed;opacity:0.5}
+.btn-ghost{background:transparent;border:1px solid var(--border);color:var(--muted)}
+.btn-ghost:hover{border-color:var(--silver-border);color:var(--silver)}
+
+.controls{display:flex;gap:0.5rem;width:100%;flex-wrap:wrap}
+
+.league-link{
+  display:inline-block;font-family:'JetBrains Mono',monospace;font-size:.6rem;
+  letter-spacing:.08em;color:var(--silver);text-decoration:none;
+  padding:.4rem .8rem;border:1px solid var(--border);border-radius:6px;
+  transition:all .15s;
+}
+.league-link:hover{border-color:var(--silver-border);color:var(--silver-bright)}
+
+.msg{font-family:'JetBrains Mono',monospace;font-size:0.6rem;text-align:center;min-height:1rem;color:var(--red)}
+.msg.ok{color:var(--green)}
+
+/* ── Results Modal ── */
+.modal-overlay{position:fixed;inset:0;background:rgba(5,7,9,0.94);backdrop-filter:blur(8px);z-index:200;display:flex;align-items:center;justify-content:center;padding:1rem}
+.modal-overlay.hidden{display:none}
+.modal{background:var(--surface);border:1px solid var(--border2);border-radius:12px;width:100%;max-width:420px;overflow:hidden}
+.modal-header{padding:1.6rem 1.6rem 0;text-align:center}
+.modal-result{font-family:'Playfair Display',serif;font-size:2rem;letter-spacing:0.02em;margin-bottom:0.3rem}
+.modal-result.win{color:var(--green)}
+.modal-result.lose{color:var(--red)}
+.modal-sub{font-family:'JetBrains Mono',monospace;font-size:0.6rem;color:var(--muted)}
+.modal-score{margin:1rem 1.6rem;background:var(--surface2);border:1px solid var(--border);border-radius:8px;padding:0.8rem;display:grid;grid-template-columns:1fr 1fr;gap:0.5rem}
+.ms-item{display:flex;flex-direction:column;gap:0.1rem}
+.ms-val{font-family:'JetBrains Mono',monospace;font-size:0.9rem;color:var(--silver-bright)}
+.ms-lbl{font-family:'JetBrains Mono',monospace;font-size:0.42rem;letter-spacing:0.1em;text-transform:uppercase;color:var(--muted)}
+.modal-acts{display:flex;gap:0.5rem;padding:1rem 1.6rem 1.6rem}
+.modal-acts .btn{flex:1}
+
+/* ── Cookie consent ── */
+.cookie-banner{position:fixed;bottom:0;left:0;right:0;background:var(--surface);border-top:1px solid var(--border);padding:1rem;z-index:300;display:flex;align-items:center;justify-content:center;gap:1rem;flex-wrap:wrap;font-size:.65rem;color:var(--muted)}
+.cookie-banner.hidden{display:none}
+.cookie-banner button{font-family:'JetBrains Mono',monospace;font-size:.6rem;padding:.4rem .8rem;border-radius:5px;cursor:pointer;border:none;transition:all .15s}
+.cookie-accept{background:var(--silver-bright);color:var(--bg)}
+.cookie-decline{background:transparent;border:1px solid var(--border);color:var(--muted)}
+
+/* ── Mobile adjustments ── */
+@media(max-width:520px){
+  .page{padding:1.5rem 0.5rem 3rem}
+  .game-title{font-size:2rem}
+  .card-slot{width:42px;height:60px}
+  .card{width:42px;height:60px;padding:2px 3px}
+  .card .card-rank-suit{font-size:0.65rem}
+  .card .card-center{font-size:1rem}
+  .cascade{width:42px;min-height:80px}
+  .cascades{gap:2px}
+  .fc-group,.fn-group{gap:2px}
+  .top-row{gap:4px}
+  .controls{gap:0.3rem}
+  .btn{padding:0.5rem 0.5rem;font-size:0.5rem}
+}
+@media(max-width:380px){
+  .card-slot{width:36px;height:52px}
+  .card{width:36px;height:52px;padding:1px 2px}
+  .card .card-rank-suit{font-size:0.55rem}
+  .card .card-center{font-size:0.8rem}
+  .cascade{width:36px;min-height:60px}
+}
+</style>
+<script src="https://cdn.jsdelivr.net/npm/ethers@6/dist/ethers.umd.min.js"></script>
+<script src="/auth/mw-auth.js"></script>
+</head>
+<body>
+<script src="../qf-wallet.js"></script>
+
+<!-- TOP BAR -->
+<div class="top-bar">
+  <div class="top-bar-left">
+    <a href="/qf-dapp/" class="back-link">&larr; Lobby</a>
+    <a href="/qf-dapp/" class="top-logo">QF <span>Games</span></a>
+  </div>
+  <div class="top-bar-right">
+    <span class="top-qf-name" id="topQfName" style="display:none;cursor:pointer" onclick="qfWallet.showMenu(this)"></span>
+    <span class="top-addr" id="topAddr" style="display:none;cursor:pointer" onclick="qfWallet.showMenu(this)"></span>
+    <button class="top-connect" id="topConnectBtn" onclick="qfWallet.connect()">Connect Wallet</button>
+  </div>
+</div>
+
+<div class="page">
+  <div class="game-header">
+    <p class="game-kicker">QF Games</p>
+    <h1 class="game-title"><span>FreeCell</span></h1>
+    <p class="game-sub">Strategic solitaire. Every deal is solvable. Pure skill, zero luck.</p>
+  </div>
+
+  <!-- PRE-GAME SCREEN -->
+  <div id="pre-game">
+    <div class="htp" style="margin-bottom:1.2rem">
+      <button class="htp-toggle">How to Play <span class="htp-arrow">&#9660;</span></button>
+      <div class="htp-body">
+        <p>Move all 52 cards to the foundations, built up by suit from Ace to King.</p>
+        <ul>
+          <li>Cascade columns are built down in alternating colours.</li>
+          <li>Free cells hold one card each &mdash; temporary storage only.</li>
+          <li>You can move sequences of cards if you have enough free cells and empty columns to support them.</li>
+          <li>Auto-complete appears when the game is won &mdash; no decisions left to make.</li>
+          <li>Fastest time wins. Undos are free but they're tracked.</li>
+        </ul>
+      </div>
+    </div>
+
+    <div class="scoring-info">
+      <h3>How Scoring Works</h3>
+      <div class="si-row"><span class="si-label">Base score</span><span class="si-val">5,000 pts</span></div>
+      <div class="si-row"><span class="si-label">Time penalty</span><span class="si-val">-1 pt/second</span></div>
+      <div class="si-row"><span class="si-label">DNF penalty</span><span class="si-val">-(cards remaining)</span></div>
+      <p class="si-note">Win score = max(0, 5000 - seconds elapsed). Complete the board as fast as you can.</p>
+    </div>
+
+    <div style="margin-top:1rem">
+      <div style="font-family:'JetBrains Mono',monospace;font-size:.55rem;letter-spacing:.08em;text-transform:uppercase;color:var(--muted);margin-bottom:.4rem">Deal Number (1&ndash;32000)</div>
+      <div class="deal-row">
+        <input type="number" class="deal-input" id="deal-input" min="1" max="32000" placeholder="e.g. 11982">
+        <button class="btn btn-ghost" onclick="G.randomDeal()" style="flex:0 0 auto;padding:.55rem .8rem">Random</button>
+      </div>
+    </div>
+
+    <div class="controls" style="margin-top:.8rem">
+      <button class="btn btn-silver" id="start-btn" onclick="G.startGame()">Start</button>
+    </div>
+
+    <div style="text-align:center;margin-top:.6rem">
+      <a href="/qf-dapp/games/freecell/league/" class="league-link">View Leagues &rarr;</a>
+    </div>
+  </div>
+
+  <!-- GAME SCREEN -->
+  <div class="status-bar" style="display:none" id="status-bar">
+    <div class="si"><span class="si-val" id="sv-t">00:00</span><span class="si-lbl">Time</span></div>
+    <div class="si" id="si-moves"><span class="si-val" id="sv-m">0</span><span class="si-lbl">Moves</span></div>
+    <div class="si"><span class="si-val" id="sv-deal">--</span><span class="si-lbl">Deal</span></div>
+  </div>
+
+  <div class="board-area" style="display:none" id="board-area">
+    <div class="top-row">
+      <div class="fc-group" id="fc-group"></div>
+      <div class="fn-group" id="fn-group"></div>
+    </div>
+    <div class="cascades" id="cascades"></div>
+  </div>
+
+  <div class="controls" style="display:none" id="game-controls">
+    <button class="btn btn-ghost" id="undo-btn" onclick="G.undo()" disabled>Undo</button>
+    <button class="btn btn-ghost" id="autocomplete-btn" onclick="G.autoComplete()" style="display:none">Auto-Complete</button>
+    <button class="btn btn-ghost" onclick="G.abandon()">Abandon</button>
+  </div>
+
+  <div class="msg" id="msg-bar"></div>
+</div>
+
+<!-- RESULT MODAL -->
+<div class="modal-overlay hidden" id="modal">
+  <div class="modal">
+    <div class="modal-header">
+      <div class="modal-result" id="modal-result">--</div>
+      <div class="modal-sub" id="modal-sub"></div>
+    </div>
+    <div class="modal-score" id="modal-score"></div>
+    <div class="modal-acts" id="modal-acts">
+      <button class="btn btn-ghost" onclick="G.newDeal()">New Deal</button>
+      <button class="btn btn-ghost" onclick="location.reload()">Play Again</button>
+      <button class="btn btn-silver" onclick="window.location='/qf-dapp/'">Back to Lobby</button>
+    </div>
+  </div>
+</div>
+
+<!-- COOKIE CONSENT -->
+<div class="cookie-banner" id="cookie-banner">
+  <span>This site uses cookies for analytics.</span>
+  <button class="cookie-accept" onclick="acceptCookies()">Accept</button>
+  <button class="cookie-decline" onclick="declineCookies()">Decline</button>
+</div>
+
+<script>
+// ── Cookie consent ────────────────────────────────────────────────────
+(function(){
+  var c = localStorage.getItem('mw_cookies');
+  if (c) {
+    document.getElementById('cookie-banner').classList.add('hidden');
+    if (c === 'accepted') {
+      gtag('consent', 'update', { analytics_storage: 'granted' });
+    }
+  }
+})();
+function acceptCookies(){
+  localStorage.setItem('mw_cookies', 'accepted');
+  document.getElementById('cookie-banner').classList.add('hidden');
+  gtag('consent', 'update', { analytics_storage: 'granted' });
+}
+function declineCookies(){
+  localStorage.setItem('mw_cookies', 'declined');
+  document.getElementById('cookie-banner').classList.add('hidden');
+}
+
+// ── Wallet (thin wrapper over shared qf-wallet.js) ───────────────────
+qfWallet.onConnect(function(s) {
+  if (s.address) {
+    document.getElementById('topConnectBtn').style.display = 'none';
+    document.getElementById('topAddr').style.display = '';
+    document.getElementById('topAddr').textContent = s.address.slice(0, 6) + '...' + s.address.slice(-4);
+  }
+  if (s.qfName) {
+    document.getElementById('topQfName').textContent = s.qfName;
+    document.getElementById('topQfName').style.display = '';
+    document.getElementById('topAddr').style.display = 'none';
+  }
+});
+
+// ── HTP toggle ────────────────────────────────────────────────────────
+document.querySelectorAll('.htp-toggle').forEach(function(btn){
+  btn.addEventListener('click', function(){ this.closest('.htp').classList.toggle('open'); });
+});
+
+// ── Game Module ───────────────────────────────────────────────────────
+var G = (function() {
+  'use strict';
+
+  var API_BASE = 'https://dapp-api.mathswins.co.uk/api/dapp';
+  if (location.hostname === 'localhost' || location.hostname === '127.0.0.1') {
+    API_BASE = 'http://127.0.0.1:3860/api/dapp';
+  }
+
+  var GAME_ID = 'freecell';
+  var SUIT_SYMBOLS = ['\u2663','\u2666','\u2665','\u2660']; // clubs, diamonds, hearts, spades
+  var RANK_NAMES = ['A','2','3','4','5','6','7','8','9','10','J','Q','K'];
+
+  // ── State ──────────────────────────────────────────────────────────
+  var columns = [[],[],[],[],[],[],[],[]];
+  var freeCells = [null,null,null,null];
+  var foundations = [0,0,0,0]; // count per suit
+  var moveCount = 0;
+  var undoCount = 0;
+  var undoStack = [];
+  var dealNum = 0;
+  var done = false;
+  var selectedCard = null; // { type:'cascade'|'freecell', index:N, cardIndex:N (for cascade), count:N }
+  var isMobile = false;
+
+  // Timer
+  var startTime = null;
+  var timerInterval = null;
+  var timerStarted = false;
+  var finalTimeMs = 0;
+
+  // League state
+  var leagueMode = false;
+  var leagueId = null;
+  var leaguePuzzleIndex = null;
+  var sessionToken = null;
+
+  // Drag state
+  var dragData = null;
+
+  // ── Card helpers ───────────────────────────────────────────────────
+  function cardSuit(c) { return Math.floor(c / 13); }
+  function cardRank(c) { return c % 13; }
+  function cardColor(c) { var s = cardSuit(c); return (s === 1 || s === 2) ? 1 : 0; }
+  function suitSymbol(c) { return SUIT_SYMBOLS[cardSuit(c)]; }
+  function rankName(c) { return RANK_NAMES[cardRank(c)]; }
+  function suitClass(c) { return cardColor(c) === 1 ? 'red-suit' : 'black-suit'; }
+
+  // ── Microsoft deal algorithm ──────────────────────────────────────
+  function msDeal(dealNumber) {
+    var seed = dealNumber;
+    function msRand() {
+      seed = (seed * 214013 + 2531011) & 0x7FFFFFFF;
+      return (seed >> 16) & 0x7FFF;
+    }
+    var deck = [];
+    for (var i = 0; i < 52; i++) deck.push(i);
+    for (var i = 51; i > 0; i--) {
+      var j = msRand() % (i + 1);
+      var tmp = deck[i]; deck[i] = deck[j]; deck[j] = tmp;
+    }
+    var cols = [[],[],[],[],[],[],[],[]];
+    for (var i = 0; i < 52; i++) cols[i % 8].push(deck[i]);
+    return cols;
+  }
+
+  // ── State cloning for undo ────────────────────────────────────────
+  function cloneState() {
+    return {
+      columns: columns.map(function(col) { return col.slice(); }),
+      freeCells: freeCells.slice(),
+      foundations: foundations.slice(),
+      moveCount: moveCount
+    };
+  }
+
+  function restoreState(state) {
+    columns = state.columns.map(function(col) { return col.slice(); });
+    freeCells = state.freeCells.slice();
+    foundations = state.foundations.slice();
+    moveCount = state.moveCount;
+  }
+
+  // ── Counting helpers ──────────────────────────────────────────────
+  function countEmptyFreeCells() {
+    var n = 0;
+    for (var i = 0; i < 4; i++) { if (freeCells[i] === null) n++; }
+    return n;
+  }
+
+  function countEmptyCascades() {
+    var n = 0;
+    for (var i = 0; i < 8; i++) { if (columns[i].length === 0) n++; }
+    return n;
+  }
+
+  function totalFoundationCards() {
+    return foundations[0] + foundations[1] + foundations[2] + foundations[3];
+  }
+
+  function supermoveMax(destIsEmpty) {
+    var emptyFC = countEmptyFreeCells();
+    var emptyC = countEmptyCascades();
+    if (destIsEmpty) emptyC = Math.max(0, emptyC - 1);
+    return (emptyFC + 1) * Math.pow(2, emptyC);
+  }
+
+  // ── Validation ────────────────────────────────────────────────────
+  function isValidCascadeSequence(cards, startIndex) {
+    for (var i = startIndex; i < cards.length - 1; i++) {
+      if (cardColor(cards[i]) === cardColor(cards[i + 1])) return false;
+      if (cardRank(cards[i]) !== cardRank(cards[i + 1]) + 1) return false;
+    }
+    return true;
+  }
+
+  function canGoToFoundation(card) {
+    var suit = cardSuit(card);
+    var rank = cardRank(card);
+    return rank === foundations[suit];
+  }
+
+  function isLegalMove(from, to, count) {
+    var movingCards = [];
+    if (from.type === 'cascade') {
+      var col = columns[from.index];
+      if (col.length === 0 || count > col.length || count < 1) return false;
+      movingCards = col.slice(col.length - count);
+    } else if (from.type === 'freecell') {
+      if (freeCells[from.index] === null) return false;
+      if (count !== 1) return false;
+      movingCards = [freeCells[from.index]];
+    } else {
+      return false;
+    }
+
+    if (count > 1 && !isValidCascadeSequence(movingCards, 0)) return false;
+
+    if (to.type === 'cascade') {
+      var destCol = columns[to.index];
+      if (destCol.length > 0) {
+        var destTop = destCol[destCol.length - 1];
+        var topMoving = movingCards[0];
+        if (cardColor(topMoving) === cardColor(destTop)) return false;
+        if (cardRank(destTop) !== cardRank(topMoving) + 1) return false;
+      }
+      if (count > 1) {
+        var maxM = supermoveMax(destCol.length === 0);
+        if (count > maxM) return false;
+      }
+      return true;
+    }
+
+    if (to.type === 'freecell') {
+      if (count !== 1) return false;
+      if (freeCells[to.index] !== null) return false;
+      return true;
+    }
+
+    if (to.type === 'foundation') {
+      if (count !== 1) return false;
+      var card = movingCards[0];
+      return canGoToFoundation(card);
+    }
+
+    return false;
+  }
+
+  // ── Execute move (free play) ──────────────────────────────────────
+  function executeMove(from, to, count) {
+    var prev = cloneState();
+
+    var movingCards = [];
+    if (from.type === 'cascade') {
+      movingCards = columns[from.index].splice(columns[from.index].length - count, count);
+    } else if (from.type === 'freecell') {
+      movingCards = [freeCells[from.index]];
+      freeCells[from.index] = null;
+    }
+
+    if (to.type === 'cascade') {
+      for (var i = 0; i < movingCards.length; i++) columns[to.index].push(movingCards[i]);
+    } else if (to.type === 'freecell') {
+      freeCells[to.index] = movingCards[0];
+    } else if (to.type === 'foundation') {
+      var card = movingCards[0];
+      foundations[cardSuit(card)]++;
+    }
+
+    moveCount++;
+    undoStack.push(prev);
+    return true;
+  }
+
+  // ── Auto-complete detection ───────────────────────────────────────
+  function isAutoCompletable() {
+    var allCards = [];
+    for (var c = 0; c < 8; c++) {
+      for (var i = 0; i < columns[c].length; i++) allCards.push(columns[c][i]);
+    }
+    for (var i = 0; i < 4; i++) {
+      if (freeCells[i] !== null) allCards.push(freeCells[i]);
+    }
+
+    for (var i = 0; i < allCards.length; i++) {
+      var card = allCards[i];
+      var rank = cardRank(card);
+      var color = cardColor(card);
+      for (var s = 0; s < 4; s++) {
+        var sColor = (s === 1 || s === 2) ? 1 : 0;
+        if (sColor !== color) {
+          if (foundations[s] < rank) return false;
+        }
+      }
+    }
+    return true;
+  }
+
+  function checkWin() {
+    return totalFoundationCards() === 52;
+  }
+
+  // ── API helper (league mode) ──────────────────────────────────────
+  async function api(url, body, method) {
+    var headers = qfWallet.authHeaders();
+    var opts = { method: method || 'POST', headers: headers };
+    if (body && method !== 'GET') opts.body = JSON.stringify(body);
+    if (method === 'GET') { delete opts.body; opts.method = 'GET'; }
+    var res = await fetch(API_BASE + url, opts);
+    return res.json();
+  }
+
+  // ── Utility ───────────────────────────────────────────────────────
+  function setMsg(txt, ok) {
+    var el = document.getElementById('msg-bar');
+    el.textContent = txt;
+    el.className = 'msg' + (ok ? ' ok' : '');
+  }
+
+  function formatTime(ms) {
+    var totalSec = Math.floor(ms / 1000);
+    var min = Math.floor(totalSec / 60);
+    var sec = totalSec % 60;
+    return (min < 10 ? '0' : '') + min + ':' + (sec < 10 ? '0' : '') + sec;
+  }
+
+  function getElapsedMs() {
+    if (!startTime) return 0;
+    if (done) return finalTimeMs;
+    return Date.now() - startTime;
+  }
+
+  // ── Timer ─────────────────────────────────────────────────────────
+  function startTimer() {
+    if (timerStarted) return;
+    timerStarted = true;
+    startTime = Date.now();
+    timerInterval = setInterval(function() {
+      document.getElementById('sv-t').textContent = formatTime(getElapsedMs());
+    }, 200);
+  }
+
+  function stopTimer() {
+    finalTimeMs = Date.now() - startTime;
+    if (timerInterval) { clearInterval(timerInterval); timerInterval = null; }
+    document.getElementById('sv-t').textContent = formatTime(finalTimeMs);
+  }
+
+  // ── Detect mobile ─────────────────────────────────────────────────
+  function detectMobile() {
+    isMobile = ('ontouchstart' in window) || (navigator.maxTouchPoints > 0);
+  }
+
+  // ── Get card dimensions from CSS ──────────────────────────────────
+  function getCardWidth() {
+    var w = window.innerWidth;
+    if (w <= 380) return 36;
+    if (w <= 520) return 42;
+    return 60;
+  }
+
+  function getCardHeight() {
+    var w = window.innerWidth;
+    if (w <= 380) return 52;
+    if (w <= 520) return 60;
+    return 85;
+  }
+
+  function getOverlap() {
+    var h = getCardHeight();
+    return Math.max(18, Math.floor(h * 0.3));
+  }
+
+  // ── Create card DOM element ───────────────────────────────────────
+  function createCardEl(cardVal) {
+    var div = document.createElement('div');
+    div.className = 'card ' + suitClass(cardVal);
+    div.dataset.card = cardVal;
+    div.innerHTML = '<span class="card-rank-suit">' + rankName(cardVal) + suitSymbol(cardVal) + '</span>' +
+                    '<span class="card-center">' + suitSymbol(cardVal) + '</span>';
+    return div;
+  }
+
+  // ── Render board ──────────────────────────────────────────────────
+  function render() {
+    renderFreeCells();
+    renderFoundations();
+    renderCascades();
+    updateStatusBar();
+    updateUndoBtn();
+    checkAutoCompleteBtn();
+  }
+
+  function renderFreeCells() {
+    var group = document.getElementById('fc-group');
+    group.innerHTML = '';
+    for (var i = 0; i < 4; i++) {
+      var slot = document.createElement('div');
+      slot.className = 'card-slot' + (freeCells[i] === null ? ' empty-fc' : '');
+      slot.dataset.type = 'freecell';
+      slot.dataset.index = i;
+
+      if (freeCells[i] !== null) {
+        var card = createCardEl(freeCells[i]);
+        card.dataset.fromType = 'freecell';
+        card.dataset.fromIndex = i;
+        card.style.position = 'relative';
+        card.style.width = '100%';
+        card.style.height = '100%';
+        attachCardEvents(card);
+        slot.appendChild(card);
+        slot.style.border = 'none';
+        slot.style.padding = '0';
+      }
+
+      attachDropEvents(slot);
+      group.appendChild(slot);
+    }
+  }
+
+  function renderFoundations() {
+    var group = document.getElementById('fn-group');
+    group.innerHTML = '';
+    for (var i = 0; i < 4; i++) {
+      var slot = document.createElement('div');
+      slot.className = 'card-slot empty-fn';
+      slot.dataset.type = 'foundation';
+      slot.dataset.index = i;
+
+      if (foundations[i] > 0) {
+        var cardVal = i * 13 + (foundations[i] - 1);
+        var card = createCardEl(cardVal);
+        card.style.position = 'relative';
+        card.style.width = '100%';
+        card.style.height = '100%';
+        card.style.cursor = 'default';
+        slot.appendChild(card);
+        slot.style.border = 'none';
+        slot.style.padding = '0';
+      } else {
+        var label = document.createElement('span');
+        label.className = 'suit-label';
+        label.textContent = SUIT_SYMBOLS[i];
+        slot.appendChild(label);
+      }
+
+      attachDropEvents(slot);
+      group.appendChild(slot);
+    }
+  }
+
+  function renderCascades() {
+    var container = document.getElementById('cascades');
+    container.innerHTML = '';
+    var overlap = getOverlap();
+    var cardH = getCardHeight();
+
+    for (var c = 0; c < 8; c++) {
+      var cascade = document.createElement('div');
+      cascade.className = 'cascade';
+      cascade.dataset.type = 'cascade';
+      cascade.dataset.index = c;
+
+      var col = columns[c];
+      var cascadeH = col.length > 0 ? cardH + (col.length - 1) * overlap : cardH;
+      cascade.style.height = cascadeH + 'px';
+
+      for (var i = 0; i < col.length; i++) {
+        var card = createCardEl(col[i]);
+        card.style.top = (i * overlap) + 'px';
+        card.dataset.fromType = 'cascade';
+        card.dataset.fromIndex = c;
+        card.dataset.cardIndex = i;
+        card.dataset.count = col.length - i;
+
+        // Only bottom card and valid sequences are movable
+        if (i === col.length - 1 || isValidCascadeSequence(col, i)) {
+          attachCardEvents(card);
+        } else {
+          card.style.cursor = 'default';
+        }
+
+        cascade.appendChild(card);
+      }
+
+      attachDropEvents(cascade);
+      container.appendChild(cascade);
+    }
+  }
+
+  function updateStatusBar() {
+    document.getElementById('sv-m').textContent = moveCount;
+    document.getElementById('sv-deal').textContent = dealNum > 0 ? '#' + dealNum : '--';
+  }
+
+  function updateUndoBtn() {
+    var btn = document.getElementById('undo-btn');
+    if (leagueMode) {
+      btn.textContent = 'Undo (' + undoCount + ')';
+    } else {
+      btn.textContent = 'Undo';
+    }
+    btn.disabled = undoStack.length === 0 && !leagueMode;
+    if (leagueMode) btn.disabled = false; // server tracks undo ability
+  }
+
+  function checkAutoCompleteBtn() {
+    var btn = document.getElementById('autocomplete-btn');
+    if (!leagueMode && isAutoCompletable() && !checkWin()) {
+      btn.style.display = '';
+    } else if (leagueMode) {
+      // In league mode, check auto-complete from server after each move
+      btn.style.display = 'none';
+    } else {
+      btn.style.display = 'none';
+    }
+  }
+
+  // ── Card interaction events ───────────────────────────────────────
+  function attachCardEvents(cardEl) {
+    if (!isMobile) {
+      // Desktop: drag and drop + click select
+      cardEl.setAttribute('draggable', 'true');
+      cardEl.addEventListener('dragstart', onDragStart);
+      cardEl.addEventListener('dragend', onDragEnd);
+      cardEl.addEventListener('click', onCardClick);
+      cardEl.addEventListener('dblclick', onCardDblClick);
+    } else {
+      // Mobile: tap to select, double-tap to auto-move
+      cardEl.addEventListener('click', onCardClick);
+      cardEl.addEventListener('dblclick', onCardDblClick);
+    }
+  }
+
+  function attachDropEvents(el) {
+    el.addEventListener('dragover', function(e) { e.preventDefault(); });
+    el.addEventListener('drop', onDrop);
+    if (isMobile) {
+      el.addEventListener('click', onSlotClick);
+    } else {
+      el.addEventListener('click', onSlotClick);
+    }
+  }
+
+  // ── Selection ─────────────────────────────────────────────────────
+  function clearSelection() {
+    selectedCard = null;
+    var all = document.querySelectorAll('.card.selected');
+    for (var i = 0; i < all.length; i++) all[i].classList.remove('selected');
+    clearHighlights();
+  }
+
+  function clearHighlights() {
+    var all = document.querySelectorAll('.drop-highlight');
+    for (var i = 0; i < all.length; i++) all[i].classList.remove('drop-highlight');
+  }
+
+  function highlightValidTargets(from, count) {
+    // Cascade targets
+    var cascadeEls = document.querySelectorAll('.cascade');
+    for (var i = 0; i < cascadeEls.length; i++) {
+      var idx = parseInt(cascadeEls[i].dataset.index);
+      if (from.type === 'cascade' && from.index === idx) continue;
+      if (isLegalMove(from, { type: 'cascade', index: idx }, count)) {
+        var lastCard = cascadeEls[i].querySelector('.card:last-child');
+        if (lastCard) lastCard.classList.add('drop-highlight');
+        else cascadeEls[i].classList.add('drop-highlight');
+      }
+    }
+
+    // Free cell targets
+    if (count === 1) {
+      var fcSlots = document.querySelectorAll('#fc-group .card-slot');
+      for (var i = 0; i < fcSlots.length; i++) {
+        var idx = parseInt(fcSlots[i].dataset.index);
+        if (from.type === 'freecell' && from.index === idx) continue;
+        if (isLegalMove(from, { type: 'freecell', index: idx }, 1)) {
+          fcSlots[i].classList.add('drop-highlight');
+        }
+      }
+    }
+
+    // Foundation targets
+    if (count === 1) {
+      var fnSlots = document.querySelectorAll('#fn-group .card-slot');
+      for (var i = 0; i < fnSlots.length; i++) {
+        var idx = parseInt(fnSlots[i].dataset.index);
+        if (isLegalMove(from, { type: 'foundation', index: idx }, 1)) {
+          fnSlots[i].classList.add('drop-highlight');
+        }
+      }
+    }
+  }
+
+  function onCardClick(e) {
+    if (done) return;
+    e.stopPropagation();
+
+    var cardEl = e.currentTarget;
+    var fromType = cardEl.dataset.fromType;
+    var fromIndex = parseInt(cardEl.dataset.fromIndex);
+    var count = parseInt(cardEl.dataset.count) || 1;
+
+    // If there's already a selection, try to move to this card's cascade
+    if (selectedCard) {
+      var target = null;
+      if (fromType === 'cascade') {
+        target = { type: 'cascade', index: fromIndex };
+      } else if (fromType === 'freecell') {
+        target = { type: 'freecell', index: fromIndex };
+      }
+
+      if (target) {
+        var legal = isLegalMove(
+          { type: selectedCard.type, index: selectedCard.index },
+          target,
+          selectedCard.count
+        );
+        if (legal) {
+          doMove(
+            { type: selectedCard.type, index: selectedCard.index },
+            target,
+            selectedCard.count
+          );
+          clearSelection();
+          return;
+        }
+      }
+
+      // Clicking a different card — change selection
+      clearSelection();
+    }
+
+    // Select this card
+    selectedCard = { type: fromType, index: fromIndex, count: count };
+    cardEl.classList.add('selected');
+
+    // Highlight the whole sequence for multi-card
+    if (fromType === 'cascade' && count > 1) {
+      var cardIndex = parseInt(cardEl.dataset.cardIndex);
+      var cascadeEl = cardEl.parentNode;
+      var cards = cascadeEl.querySelectorAll('.card');
+      for (var i = cardIndex; i < cards.length; i++) {
+        cards[i].classList.add('selected');
+      }
+    }
+
+    highlightValidTargets({ type: fromType, index: fromIndex }, count);
+  }
+
+  function onSlotClick(e) {
+    if (done) return;
+    if (!selectedCard) return;
+    // Only handle clicks on empty slots (not on cards within slots)
+    if (e.target.closest('.card')) return;
+
+    var slotEl = e.currentTarget;
+    var toType = slotEl.dataset.type;
+    var toIndex = parseInt(slotEl.dataset.index);
+
+    if (toType === undefined) return;
+
+    var from = { type: selectedCard.type, index: selectedCard.index };
+    var to = { type: toType, index: toIndex };
+    var count = selectedCard.count;
+
+    if (isLegalMove(from, to, count)) {
+      doMove(from, to, count);
+    }
+    clearSelection();
+  }
+
+  function onCardDblClick(e) {
+    if (done) return;
+    e.stopPropagation();
+    e.preventDefault();
+
+    var cardEl = e.currentTarget;
+    var fromType = cardEl.dataset.fromType;
+    var fromIndex = parseInt(cardEl.dataset.fromIndex);
+    var count = parseInt(cardEl.dataset.count) || 1;
+
+    if (count !== 1) return; // only auto-move single cards
+
+    clearSelection();
+
+    // Try foundation first
+    var from = { type: fromType, index: fromIndex };
+    var card;
+    if (fromType === 'cascade') {
+      var col = columns[fromIndex];
+      card = col[col.length - 1];
+    } else if (fromType === 'freecell') {
+      card = freeCells[fromIndex];
+    }
+    if (card === undefined || card === null) return;
+
+    var suit = cardSuit(card);
+    if (isLegalMove(from, { type: 'foundation', index: suit }, 1)) {
+      doMove(from, { type: 'foundation', index: suit }, 1);
+      return;
+    }
+
+    // Try an empty free cell
+    for (var i = 0; i < 4; i++) {
+      if (isLegalMove(from, { type: 'freecell', index: i }, 1)) {
+        doMove(from, { type: 'freecell', index: i }, 1);
+        return;
+      }
+    }
+  }
+
+  // ── Drag and drop (desktop) ───────────────────────────────────────
+  function onDragStart(e) {
+    if (done) return;
+    clearSelection();
+
+    var cardEl = e.currentTarget;
+    var fromType = cardEl.dataset.fromType;
+    var fromIndex = parseInt(cardEl.dataset.fromIndex);
+    var count = parseInt(cardEl.dataset.count) || 1;
+
+    dragData = { type: fromType, index: fromIndex, count: count };
+    cardEl.classList.add('dragging');
+
+    // For multi-card drag, dim the other cards in the sequence
+    if (fromType === 'cascade' && count > 1) {
+      var cardIndex = parseInt(cardEl.dataset.cardIndex);
+      var cascadeEl = cardEl.parentNode;
+      var cards = cascadeEl.querySelectorAll('.card');
+      for (var i = cardIndex + 1; i < cards.length; i++) {
+        cards[i].classList.add('dragging');
+      }
+    }
+
+    highlightValidTargets({ type: fromType, index: fromIndex }, count);
+
+    // Ghost image
+    try {
+      e.dataTransfer.setData('text/plain', '');
+      e.dataTransfer.effectAllowed = 'move';
+    } catch (err) {}
+  }
+
+  function onDragEnd(e) {
+    var all = document.querySelectorAll('.card.dragging');
+    for (var i = 0; i < all.length; i++) all[i].classList.remove('dragging');
+    clearHighlights();
+    dragData = null;
+  }
+
+  function onDrop(e) {
+    e.preventDefault();
+    if (!dragData || done) return;
+
+    var target = e.currentTarget;
+    var toType = target.dataset.type;
+    var toIndex = parseInt(target.dataset.index);
+
+    if (toType === undefined) return;
+
+    var from = { type: dragData.type, index: dragData.index };
+    var to = { type: toType, index: toIndex };
+    var count = dragData.count;
+
+    if (isLegalMove(from, to, count)) {
+      doMove(from, to, count);
+    }
+
+    clearHighlights();
+    dragData = null;
+  }
+
+  // ── Perform a move ────────────────────────────────────────────────
+  async function doMove(from, to, count) {
+    if (!timerStarted) startTimer();
+
+    if (leagueMode) {
+      await doLeagueMove(from, to, count);
+    } else {
+      executeMove(from, to, count);
+      render();
+      afterMove();
+    }
+  }
+
+  function afterMove() {
+    if (checkWin()) {
+      handleWin();
+      return;
+    }
+    if (isAutoCompletable()) {
+      document.getElementById('autocomplete-btn').style.display = '';
+    }
+  }
+
+  // ── League move ───────────────────────────────────────────────────
+  async function doLeagueMove(from, to, count) {
+    try {
+      var data = await api('/session/evaluate', {
+        sessionToken: sessionToken,
+        answer: JSON.stringify({
+          action: 'move',
+          from: { type: from.type, index: from.index },
+          to: { type: to.type, index: to.index },
+          count: count
+        })
+      });
+
+      if (data.error) { setMsg(data.error); return; }
+
+      columns = data.columns || columns;
+      freeCells = data.freeCells || freeCells;
+      foundations = data.foundations || foundations;
+      moveCount = data.moveCount || moveCount;
+
+      render();
+
+      if (data.won) {
+        handleWin(data.points);
+        return;
+      }
+
+      if (data.autoComplete) {
+        document.getElementById('autocomplete-btn').style.display = '';
+      }
+    } catch (e) {
+      setMsg('Network error \u2014 try again.');
+    }
+  }
+
+  // ── Win handling ──────────────────────────────────────────────────
+  async function handleWin(serverPoints) {
+    done = true;
+    stopTimer();
+    setMsg('');
+
+    // Win animation
+    var boardArea = document.getElementById('board-area');
+    var sweep = document.createElement('div');
+    sweep.className = 'board-sweep';
+    boardArea.appendChild(sweep);
+    setTimeout(function() { if (sweep.parentNode) sweep.parentNode.removeChild(sweep); }, 1000);
+
+    var points = serverPoints !== undefined ? serverPoints : Math.max(0, 5000 - Math.floor(finalTimeMs / 1000));
+
+    // League score submission
+    if (leagueMode && leagueId) {
+      try {
+        var leagueResult = await api('/league/' + leagueId + '/submit', {
+          puzzleIndex: leaguePuzzleIndex, score: points, timeMs: finalTimeMs, mistakes: 0, hints: 0
+        });
+        if (leagueResult.error) alert('League score failed to save: ' + leagueResult.error);
+      } catch (e) {
+        alert('League score failed to save \u2014 check your connection.');
+      }
+    }
+
+    showModal(true, points, finalTimeMs);
+  }
+
+  // ── Abandon ───────────────────────────────────────────────────────
+  function abandon() {
+    if (done) return;
+    if (!confirm('Abandon this game?')) return;
+
+    done = true;
+    if (timerStarted) stopTimer();
+
+    var remaining = 52 - totalFoundationCards();
+    showModal(false, 0, getElapsedMs(), remaining);
+  }
+
+  // ── Undo ──────────────────────────────────────────────────────────
+  async function undo() {
+    if (done) return;
+
+    if (leagueMode) {
+      try {
+        var data = await api('/session/evaluate', {
+          sessionToken: sessionToken,
+          answer: JSON.stringify({ action: 'undo' })
+        });
+        if (data.error) { setMsg(data.error); return; }
+
+        columns = data.columns || columns;
+        freeCells = data.freeCells || freeCells;
+        foundations = data.foundations || foundations;
+        moveCount = data.moveCount || moveCount;
+        undoCount = data.undoCount || undoCount;
+
+        render();
+      } catch (e) {
+        setMsg('Network error \u2014 try again.');
+      }
+    } else {
+      if (undoStack.length === 0) return;
+      var prev = undoStack.pop();
+      restoreState(prev);
+      undoCount++;
+      render();
+    }
+  }
+
+  // ── Auto-complete ─────────────────────────────────────────────────
+  async function autoCompleteAction() {
+    if (done) return;
+
+    if (leagueMode) {
+      try {
+        var data = await api('/session/evaluate', {
+          sessionToken: sessionToken,
+          answer: JSON.stringify({ action: 'autocomplete' })
+        });
+        if (data.error) { setMsg(data.error); return; }
+        if (data.won) {
+          foundations = data.foundations || foundations;
+          render();
+          handleWin(data.points);
+        }
+      } catch (e) {
+        setMsg('Network error \u2014 try again.');
+      }
+    } else {
+      // Client-side auto-complete with animation
+      document.getElementById('autocomplete-btn').style.display = 'none';
+      document.getElementById('undo-btn').disabled = true;
+
+      await animateAutoComplete();
+    }
+  }
+
+  async function animateAutoComplete() {
+    var moved = true;
+    var delay = 0;
+    var moves = [];
+
+    // Collect all moves first
+    while (moved) {
+      moved = false;
+      // Free cells
+      for (var i = 0; i < 4; i++) {
+        if (freeCells[i] !== null && canGoToFoundation(freeCells[i])) {
+          moves.push({ type: 'freecell', index: i, card: freeCells[i] });
+          foundations[cardSuit(freeCells[i])]++;
+          freeCells[i] = null;
+          moved = true;
+        }
+      }
+      // Cascade tops
+      for (var c = 0; c < 8; c++) {
+        var col = columns[c];
+        if (col.length > 0 && canGoToFoundation(col[col.length - 1])) {
+          var card = col.pop();
+          moves.push({ type: 'cascade', index: c, card: card });
+          foundations[cardSuit(card)]++;
+          moved = true;
+        }
+      }
+    }
+
+    // Animate each move
+    for (var i = 0; i < moves.length; i++) {
+      await animateSingleAutoComplete(moves[i], i);
+    }
+
+    // Final state
+    render();
+    handleWin();
+  }
+
+  function animateSingleAutoComplete(move, idx) {
+    return new Promise(function(resolve) {
+      setTimeout(function() {
+        render();
+        resolve();
+      }, 80);
+    });
+  }
+
+  // ── Results modal ─────────────────────────────────────────────────
+  function showModal(won, score, timeMs, cardsRemaining) {
+    var modal = document.getElementById('modal');
+    modal.classList.remove('hidden');
+
+    var result = document.getElementById('modal-result');
+    result.textContent = won ? 'Game Complete' : 'Game Abandoned';
+    result.className = 'modal-result ' + (won ? 'win' : 'lose');
+
+    var sub = document.getElementById('modal-sub');
+    if (won) {
+      sub.textContent = 'Deal #' + dealNum + ' solved.';
+    } else {
+      sub.textContent = (cardsRemaining || 0) + ' card' + ((cardsRemaining || 0) !== 1 ? 's' : '') + ' remaining.';
+    }
+
+    var scoreHtml = '';
+    if (won) {
+      scoreHtml += '<div class="ms-item"><span class="ms-val">' + (score || 0) + '</span><span class="ms-lbl">Final Score</span></div>';
+      scoreHtml += '<div class="ms-item"><span class="ms-val">' + formatTime(timeMs) + '</span><span class="ms-lbl">Time</span></div>';
+      scoreHtml += '<div class="ms-item"><span class="ms-val">' + moveCount + '</span><span class="ms-lbl">Moves</span></div>';
+      scoreHtml += '<div class="ms-item"><span class="ms-val">' + undoCount + '</span><span class="ms-lbl">Undos</span></div>';
+    } else {
+      scoreHtml += '<div class="ms-item"><span class="ms-val">0</span><span class="ms-lbl">Score</span></div>';
+      scoreHtml += '<div class="ms-item"><span class="ms-val">' + formatTime(timeMs) + '</span><span class="ms-lbl">Time</span></div>';
+    }
+    document.getElementById('modal-score').innerHTML = scoreHtml;
+
+    // League back button
+    var acts = document.getElementById('modal-acts');
+    if (leagueMode && leagueId) {
+      acts.innerHTML =
+        '<button class="btn btn-ghost" onclick="location.reload()">Play Again</button>' +
+        '<button class="btn btn-silver" onclick="window.location=\'/qf-dapp/games/freecell/league/?id=' + leagueId + '\'">Back to League</button>';
+    }
+  }
+
+  // ── Start game (free play) ────────────────────────────────────────
+  function startGame() {
+    var input = document.getElementById('deal-input');
+    var num = parseInt(input.value);
+    if (!num || num < 1 || num > 32000) {
+      num = Math.floor(Math.random() * 32000) + 1;
+      input.value = num;
+    }
+
+    dealNum = num;
+    columns = msDeal(dealNum);
+    freeCells = [null,null,null,null];
+    foundations = [0,0,0,0];
+    moveCount = 0;
+    undoCount = 0;
+    undoStack = [];
+    done = false;
+    selectedCard = null;
+    timerStarted = false;
+    startTime = null;
+    finalTimeMs = 0;
+
+    // Hide pre-game, show game
+    document.getElementById('pre-game').style.display = 'none';
+    document.getElementById('status-bar').style.display = 'flex';
+    document.getElementById('board-area').style.display = 'flex';
+    document.getElementById('game-controls').style.display = 'flex';
+
+    // Hide move counter in league mode
+    if (leagueMode) {
+      document.getElementById('si-moves').style.display = 'none';
+    }
+
+    render();
+  }
+
+  // ── New deal (from modal) ─────────────────────────────────────────
+  function newDeal() {
+    document.getElementById('modal').classList.add('hidden');
+    document.getElementById('pre-game').style.display = '';
+    document.getElementById('status-bar').style.display = 'none';
+    document.getElementById('board-area').style.display = 'none';
+    document.getElementById('game-controls').style.display = 'none';
+    document.getElementById('sv-t').textContent = '00:00';
+    if (timerInterval) { clearInterval(timerInterval); timerInterval = null; }
+    done = false;
+    timerStarted = false;
+    document.getElementById('deal-input').value = '';
+  }
+
+  // ── Random deal button ────────────────────────────────────────────
+  function randomDeal() {
+    document.getElementById('deal-input').value = Math.floor(Math.random() * 32000) + 1;
+  }
+
+  // ── League start ──────────────────────────────────────────────────
+  async function startLeagueGame() {
+    setMsg('');
+
+    try {
+      var data = await api('/session/start', { gameId: GAME_ID, leagueId: leagueId });
+
+      if (data.error) {
+        setMsg(data.error);
+        return;
+      }
+
+      sessionToken = data.token;
+      var q = data.question;
+
+      columns = q.columns;
+      freeCells = q.freeCells;
+      foundations = q.foundations;
+      dealNum = q.seed || 0;
+      moveCount = 0;
+      undoCount = 0;
+      undoStack = [];
+      done = false;
+      selectedCard = null;
+      timerStarted = false;
+      startTime = null;
+      finalTimeMs = 0;
+
+      if (data.puzzleIndex !== undefined) leaguePuzzleIndex = data.puzzleIndex;
+
+      document.getElementById('pre-game').style.display = 'none';
+      document.getElementById('status-bar').style.display = 'flex';
+      document.getElementById('board-area').style.display = 'flex';
+      document.getElementById('game-controls').style.display = 'flex';
+      document.getElementById('si-moves').style.display = 'none';
+
+      render();
+    } catch (e) {
+      setMsg('Could not start league game. Check your connection.');
+    }
+  }
+
+  // ── Check URL params ──────────────────────────────────────────────
+  function checkUrlParams() {
+    var params = new URLSearchParams(window.location.search);
+
+    var lid = params.get('league');
+    if (lid) {
+      leagueMode = true;
+      leagueId = lid;
+      document.getElementById('pre-game').style.display = 'none';
+
+      var hasWalletSaved = false;
+      try { hasWalletSaved = !!localStorage.getItem('qf_wallet_id'); } catch (e) {}
+
+      if (typeof qfWallet !== 'undefined' && qfWallet._state && qfWallet._state.address) {
+        startLeagueGame();
+      } else {
+        setMsg(hasWalletSaved ? 'Reconnecting wallet...' : 'Connect your wallet to play this league puzzle.');
+        qfWallet.onConnect(function() {
+          setMsg('');
+          startLeagueGame();
+        });
+      }
+      return true;
+    }
+    return false;
+  }
+
+  // ── Init ──────────────────────────────────────────────────────────
+  detectMobile();
+  checkUrlParams();
+
+  return {
+    startGame: startGame,
+    undo: undo,
+    autoComplete: autoCompleteAction,
+    abandon: abandon,
+    newDeal: newDeal,
+    randomDeal: randomDeal
+  };
+})();
+</script>
+</body>
+</html>

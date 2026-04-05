@@ -72,6 +72,13 @@ import {
   stripQuestion as msStrip,
 } from './minesweeper.mjs';
 
+import {
+  GAME_ID as fcId,
+  evaluator as fcEval,
+  selectQuestions as fcSelect,
+  stripQuestion as fcStrip,
+} from './freecell.mjs';
+
 export function registerAllGames() {
   // Estimation Engine — sequential (10 questions, 60s each)
   registerGame(estId, estQ, estEval, estSelect, null, 'sequential');
@@ -172,5 +179,16 @@ export function registerAllGames() {
     questionsPerSession: 1
   });
 
-  console.log('Registered games:', [estId, sudId, pocId, seqId, cdnId, kenId, nonoId, kakId, msId].join(', '));
+  // FreeCell — continuous (single deal, timed session)
+  registerGame(fcId, null, fcEval, fcSelect, fcStrip, 'continuous');
+  upsertGame({
+    id: fcId,
+    name: 'FreeCell',
+    isPaid: true,
+    serverScoring: true,
+    sessionTimeoutSeconds: 3600,
+    questionsPerSession: 1
+  });
+
+  console.log('Registered games:', [estId, sudId, pocId, seqId, cdnId, kenId, nonoId, kakId, msId, fcId].join(', '));
 }
