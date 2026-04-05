@@ -1,0 +1,348 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<script async src="https://www.googletagmanager.com/gtag/js?id=G-7GTLYCZMXN"></script>
+<script>
+  window.dataLayer = window.dataLayer || [];
+  function gtag(){dataLayer.push(arguments);}
+  gtag('js', new Date());
+  gtag('config', 'G-7GTLYCZMXN', { send_page_view: true, storage: 'none', anonymize_ip: true });
+</script>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="description" content="47 achievements. Some impossible. Most secret. All yours forever. Soulbound NFTs on QF Network.">
+<meta property="og:title" content="Achievements — QF Games">
+<meta property="og:description" content="47 achievements. Some impossible. Most secret. All yours forever. Soulbound NFTs on QF Network.">
+<meta property="og:url" content="https://mathswins.co.uk/qf-dapp/achievements/">
+<link rel="canonical" href="https://mathswins.co.uk/qf-dapp/achievements/">
+<title>Achievements &middot; QF Games</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;700&family=JetBrains+Mono:wght@400;500&family=Playfair+Display:wght@700&display=swap" rel="stylesheet">
+<style>
+:root {
+  --bg:            #0e1013;
+  --surface:       #16181c;
+  --surface2:      #1e2025;
+  --surface3:      #26282e;
+  --silver:        #b8bcc6;
+  --silver-bright: #d4d8e2;
+  --silver-dim:    rgba(184,188,198,0.08);
+  --silver-glow:   rgba(184,188,198,0.12);
+  --silver-border: rgba(184,188,198,0.15);
+  --text-white:    #e8eaf0;
+  --text:          #8a8f9c;
+  --muted:         #4a4e5a;
+  --border:        #1e2228;
+  --border2:       #2a2e36;
+  --gold:          #c9a84c;
+  --green:         #3a8a5c;
+  --red:           #b03a3a;
+  --blue:          #3a6a9c;
+}
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+body{background:var(--bg);color:var(--text);font-family:'Inter',sans-serif;min-height:100vh;display:flex;flex-direction:column;align-items:center}
+
+/* ── Wallet bar ── */
+.top-bar{
+  width:100%;display:flex;justify-content:space-between;align-items:center;
+  padding:.5rem 1rem;background:rgba(14,16,19,.94);backdrop-filter:blur(12px);
+  border-bottom:1px solid var(--border);position:sticky;top:0;z-index:100;
+}
+.top-bar-left{display:flex;align-items:center;gap:.6rem}
+.back-link{font-size:.7rem;color:var(--muted);text-decoration:none;padding:.25rem .6rem;border:1px solid var(--border);border-radius:6px;transition:all .15s}
+.back-link:hover{border-color:var(--silver-border);color:var(--text)}
+.top-logo{font-family:'Playfair Display',serif;font-size:1rem;color:var(--text-white);text-decoration:none}
+.top-logo span{color:var(--silver)}
+.top-bar-right{display:flex;align-items:center;gap:.5rem}
+.top-addr{font-family:'JetBrains Mono',monospace;font-size:.65rem;color:var(--muted);background:var(--surface);border:1px solid var(--border);padding:.2rem .5rem;border-radius:5px}
+.top-qf-name{font-family:'JetBrains Mono',monospace;font-size:.65rem;color:var(--silver-bright);background:var(--surface2);border:1px solid var(--silver-border);padding:.2rem .5rem;border-radius:5px}
+.top-connect{font-family:'Inter',sans-serif;font-weight:600;font-size:.7rem;padding:.35rem .8rem;border-radius:5px;border:1px solid var(--silver-border);background:var(--silver-dim);color:var(--silver-bright);cursor:pointer;transition:all .15s}
+.top-connect:hover{background:var(--silver-bright);color:var(--bg)}
+
+/* ── Page container ── */
+.page{width:100%;max-width:900px;padding:2rem 1rem 4rem;display:flex;flex-direction:column;align-items:center;gap:1.5rem}
+
+/* ── Hero ── */
+.hero{text-align:center}
+.hero h1{font-family:'Playfair Display',serif;font-size:2.8rem;line-height:1;background:linear-gradient(135deg,var(--silver-bright),var(--silver),#8a8f9c);-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text}
+.hero-sub{font-size:.78rem;color:var(--muted);line-height:1.6;margin-top:.6rem;max-width:480px;margin-left:auto;margin-right:auto}
+.hero-count{font-family:'JetBrains Mono',monospace;font-size:.62rem;color:var(--muted);margin-top:.5rem;letter-spacing:.03em}
+
+/* ── Tab pills ── */
+.tab-bar{width:100%;overflow-x:auto;-webkit-overflow-scrolling:touch;scrollbar-width:none}
+.tab-bar::-webkit-scrollbar{display:none}
+.tab-pills{display:flex;gap:.4rem;padding:.2rem 0;white-space:nowrap}
+.tab-pill{font-family:'JetBrains Mono',monospace;font-size:.6rem;padding:.4rem .8rem;border-radius:20px;border:1px solid var(--border);background:transparent;color:var(--muted);cursor:pointer;transition:all .15s;flex-shrink:0}
+.tab-pill:hover{border-color:var(--silver-border);color:var(--text)}
+.tab-pill.active{background:var(--silver-dim);border-color:var(--silver-border);color:var(--silver-bright)}
+
+/* ── Achievement grid ── */
+.achievement-grid{width:100%;display:grid;grid-template-columns:repeat(3,1fr);gap:.6rem}
+.ach-card{background:var(--surface);border:1px solid var(--silver-dim);border-radius:10px;padding:1rem;display:flex;align-items:center;justify-content:space-between;gap:.6rem;transition:border-color .15s}
+.ach-card:hover{border-color:var(--silver-border)}
+.ach-name{font-family:'Playfair Display',serif;font-size:.85rem;color:var(--silver);line-height:1.2}
+.ach-lock{font-size:.9rem;flex-shrink:0;opacity:.5}
+.ach-mint{font-family:'JetBrains Mono',monospace;font-size:.5rem;color:var(--muted);margin-top:.4rem;letter-spacing:.03em}
+
+/* ── Tortoise community board ── */
+.tortoise-board{width:100%;background:var(--surface);border:1px solid var(--border);border-left:3px solid var(--gold);border-radius:10px;padding:1.2rem}
+.tortoise-board h3{font-family:'Playfair Display',serif;font-size:1rem;color:var(--text-white);margin-bottom:.4rem}
+.tortoise-board .record-val{font-family:'JetBrains Mono',monospace;font-size:.72rem;color:var(--muted)}
+
+/* ── Mystery section ── */
+.mystery{text-align:center;padding:1.5rem 0}
+.mystery h3{font-family:'JetBrains Mono',monospace;font-size:1.2rem;color:var(--muted);letter-spacing:.15em;margin-bottom:.4rem}
+.mystery p{font-size:.68rem;color:var(--muted);opacity:.6}
+
+/* ── Footer ── */
+footer{text-align:center;padding:2rem 0;font-size:.6rem;color:var(--muted);border-top:1px solid var(--border);width:100%}
+footer a{color:var(--muted);text-decoration:none;transition:color .15s}
+footer a:hover{color:var(--silver-bright)}
+
+/* ── Cookie consent ── */
+.cookie-banner{position:fixed;bottom:0;left:0;right:0;background:var(--surface);border-top:1px solid var(--border);padding:1rem;z-index:300;display:flex;align-items:center;justify-content:center;gap:1rem;flex-wrap:wrap;font-size:.65rem;color:var(--muted)}
+.cookie-banner.hidden{display:none}
+.cookie-banner button{font-family:'JetBrains Mono',monospace;font-size:.6rem;padding:.4rem .8rem;border-radius:5px;cursor:pointer;border:none;transition:all .15s}
+.cookie-accept{background:var(--silver-bright);color:var(--bg)}
+.cookie-decline{background:transparent;border:1px solid var(--border);color:var(--muted)}
+
+/* ── Responsive ── */
+@media(max-width:768px){
+  .achievement-grid{grid-template-columns:repeat(2,1fr)}
+  .hero h1{font-size:2.2rem}
+}
+@media(max-width:480px){
+  .page{padding:1.5rem .5rem 3rem}
+  .achievement-grid{grid-template-columns:1fr}
+  .hero h1{font-size:1.8rem}
+}
+</style>
+<script src="https://cdn.jsdelivr.net/npm/ethers@6/dist/ethers.umd.min.js"></script>
+<script src="/auth/mw-auth.js"></script>
+</head>
+<body>
+<script src="/qf-dapp/games/qf-wallet.js"></script>
+
+<!-- TOP BAR -->
+<div class="top-bar">
+  <div class="top-bar-left">
+    <a href="/qf-dapp/" class="back-link">&larr; Lobby</a>
+    <a href="/qf-dapp/" class="top-logo">QF <span>Games</span></a>
+  </div>
+  <div class="top-bar-right">
+    <span class="top-qf-name" id="topQfName" style="display:none;cursor:pointer" onclick="qfWallet.showMenu(this)"></span>
+    <span class="top-addr" id="topAddr" style="display:none;cursor:pointer" onclick="qfWallet.showMenu(this)"></span>
+    <button class="top-connect" id="topConnectBtn" onclick="qfWallet.connect()">Connect Wallet</button>
+  </div>
+</div>
+
+<div class="page">
+
+  <!-- HERO -->
+  <div class="hero">
+    <h1>Achievements</h1>
+    <p class="hero-sub">Some things are earned. Some things are discovered. All of them are yours forever.</p>
+    <p class="hero-count">47 achievements. Some impossible. Most secret.</p>
+  </div>
+
+  <!-- TAB NAVIGATION -->
+  <div class="tab-bar">
+    <div class="tab-pills" id="tabPills"></div>
+  </div>
+
+  <!-- ACHIEVEMENT GRID -->
+  <div class="achievement-grid" id="achGrid"></div>
+
+  <!-- TORTOISE COMMUNITY BOARD (All tab only) -->
+  <div class="tortoise-board" id="tortoiseBoard" style="display:none">
+    <h3>The Tortoise &mdash; Community Record</h3>
+    <p class="record-val">No record set yet.</p>
+  </div>
+
+  <!-- MYSTERY SECTION (All tab only) -->
+  <div class="mystery" id="mysterySection" style="display:none">
+    <h3>? ? ?</h3>
+    <p>More achievements exist. You'll know when you find them.</p>
+  </div>
+
+</div>
+
+<footer>
+  <p><a href="/">MathsWins</a> &middot; <a href="/qf-dapp/">QF Games</a> &middot; <a href="/games/">Free Games</a> &middot; <a href="/academy/">Academy</a> &middot; Powered by <a href="https://qfnetwork.org" target="_blank">QF Network</a></p>
+</footer>
+
+<!-- COOKIE CONSENT -->
+<div class="cookie-banner" id="cookie-banner">
+  <span>This site uses cookies for analytics.</span>
+  <button class="cookie-accept" onclick="acceptCookies()">Accept</button>
+  <button class="cookie-decline" onclick="declineCookies()">Decline</button>
+</div>
+
+<script>
+// ── Cookie consent ────────────────────────────────────────────────────
+(function(){
+  var c = localStorage.getItem('mw_cookies');
+  if (c) {
+    document.getElementById('cookie-banner').classList.add('hidden');
+    if (c === 'accepted') {
+      gtag('consent', 'update', { analytics_storage: 'granted' });
+    }
+  }
+})();
+function acceptCookies(){
+  localStorage.setItem('mw_cookies', 'accepted');
+  document.getElementById('cookie-banner').classList.add('hidden');
+  gtag('consent', 'update', { analytics_storage: 'granted' });
+}
+function declineCookies(){
+  localStorage.setItem('mw_cookies', 'declined');
+  document.getElementById('cookie-banner').classList.add('hidden');
+}
+
+// ── Wallet ────────────────────────────────────────────────────────────
+qfWallet.onConnect(function(s) {
+  if (s.address) {
+    document.getElementById('topConnectBtn').style.display = 'none';
+    document.getElementById('topAddr').style.display = '';
+    document.getElementById('topAddr').textContent = s.address.slice(0, 6) + '...' + s.address.slice(-4);
+  }
+  if (s.qfName) {
+    document.getElementById('topQfName').textContent = s.qfName;
+    document.getElementById('topQfName').style.display = '';
+    document.getElementById('topAddr').style.display = 'none';
+  }
+});
+
+// ── Achievement Data ──────────────────────────────────────────────────
+var TABS = [
+  { id: 'all', label: 'All' },
+  { id: 'sudoku-duel', label: 'Sudoku Duel' },
+  { id: 'minesweeper', label: 'Minesweeper' },
+  { id: 'freecell', label: 'FreeCell' },
+  { id: 'countdown-numbers', label: 'Countdown Numbers' },
+  { id: 'cryptarithmetic-club', label: 'Cryptarithmetic Club' },
+  { id: 'kenken', label: 'KenKen' },
+  { id: 'nonogram', label: 'Nonogram' },
+  { id: 'kakuro', label: 'Kakuro' },
+  { id: 'cross-game', label: 'Cross-Game' }
+];
+
+var ACHIEVEMENTS = [
+  // Sudoku Duel
+  { name: 'No Errors \u2014 Sudoku', tab: 'sudoku-duel' },
+  { name: 'Sub-Minute', tab: 'sudoku-duel' },
+
+  // Minesweeper
+  { name: 'No Errors \u2014 Minesweeper', tab: 'minesweeper' },
+  { name: 'Flawless Line', tab: 'minesweeper' },
+  { name: 'Clean Sweep', tab: 'minesweeper' },
+  { name: 'Flag Everything', tab: 'minesweeper' },
+
+  // FreeCell
+  { name: 'No Errors \u2014 FreeCell', tab: 'freecell' },
+  { name: 'The Purist', tab: 'freecell' },
+  { name: 'The Undo King', tab: 'freecell' },
+  { name: 'Lucky Number', tab: 'freecell' },
+
+  // Countdown Numbers
+  { name: 'No Errors \u2014 Countdown', tab: 'countdown-numbers' },
+
+  // Cryptarithmetic Club
+  { name: 'No Errors \u2014 Cryptarithmetic', tab: 'cryptarithmetic-club' },
+
+  // KenKen
+  { name: 'No Errors \u2014 KenKen', tab: 'kenken' },
+
+  // Nonogram
+  { name: 'No Errors \u2014 Nonogram', tab: 'nonogram' },
+
+  // Kakuro
+  { name: 'No Errors \u2014 Kakuro', tab: 'kakuro' },
+
+  // Cross-Game
+  { name: 'Immaculate', tab: 'cross-game' },
+  { name: 'First Steps', tab: 'cross-game' },
+  { name: 'Committed', tab: 'cross-game' },
+  { name: 'Dedicated', tab: 'cross-game' },
+  { name: 'Veteran', tab: 'cross-game' },
+  { name: 'Legend', tab: 'cross-game' },
+  { name: 'Winner', tab: 'cross-game' },
+  { name: 'On a Roll', tab: 'cross-game' },
+  { name: 'Dominant', tab: 'cross-game' },
+  { name: 'Hat Trick', tab: 'cross-game' },
+  { name: 'The Completionist', tab: 'cross-game' },
+  { name: 'The Tortoise', tab: 'cross-game' },
+  { name: 'First Blood', tab: 'cross-game' },
+  { name: 'Duelist', tab: 'cross-game' },
+  { name: 'Gladiator', tab: 'cross-game' },
+  { name: 'Heartbreaker', tab: 'cross-game' },
+  { name: 'Giant Slayer', tab: 'cross-game' },
+  { name: 'The Wall', tab: 'cross-game' },
+  { name: 'Untouchable', tab: 'cross-game' },
+  { name: 'Night Owl', tab: 'cross-game' },
+  { name: 'Weekend Warrior', tab: 'cross-game' },
+  { name: 'The Marathon', tab: 'cross-game' },
+  { name: 'The Mathematician', tab: 'cross-game' },
+  { name: 'Palindrome', tab: 'cross-game' },
+  { name: 'Speedrun to Zero', tab: 'cross-game' },
+  { name: 'Wrong Answer Streak', tab: 'cross-game' },
+  { name: 'Duel Master', tab: 'cross-game' },
+  { name: 'onlyfans.qf', tab: 'cross-game' },
+  { name: 'The Collector', tab: 'cross-game' },
+  { name: 'Pioneer Hunter', tab: 'cross-game' },
+  { name: 'The Whale', tab: 'cross-game' },
+  { name: 'Boom', tab: 'cross-game' }
+];
+
+// ── Render ────────────────────────────────────────────────────────────
+var activeTab = 'all';
+
+function renderTabs() {
+  var container = document.getElementById('tabPills');
+  container.innerHTML = '';
+  TABS.forEach(function(t) {
+    var btn = document.createElement('button');
+    btn.className = 'tab-pill' + (t.id === activeTab ? ' active' : '');
+    btn.textContent = t.label;
+    btn.onclick = function() { activeTab = t.id; renderTabs(); renderGrid(); };
+    container.appendChild(btn);
+  });
+}
+
+function renderGrid() {
+  var grid = document.getElementById('achGrid');
+  grid.innerHTML = '';
+
+  var filtered = activeTab === 'all'
+    ? ACHIEVEMENTS
+    : ACHIEVEMENTS.filter(function(a) { return a.tab === activeTab; });
+
+  filtered.forEach(function(a) {
+    var card = document.createElement('div');
+    card.className = 'ach-card';
+    card.innerHTML =
+      '<div>' +
+        '<div class="ach-name">' + a.name + '</div>' +
+        '<div class="ach-mint">Coming Soon</div>' +
+      '</div>' +
+      '<div class="ach-lock">\uD83D\uDD12</div>';
+    grid.appendChild(card);
+  });
+
+  // Tortoise board and mystery section only on All tab
+  var tortoise = document.getElementById('tortoiseBoard');
+  var mystery = document.getElementById('mysterySection');
+  if (activeTab === 'all') {
+    tortoise.style.display = '';
+    mystery.style.display = '';
+  } else {
+    tortoise.style.display = 'none';
+    mystery.style.display = 'none';
+  }
+}
+
+renderTabs();
+renderGrid();
+</script>
+</body>
+</html>
