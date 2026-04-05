@@ -65,6 +65,13 @@ import {
   stripQuestion as kakStrip,
 } from './kakuro.mjs';
 
+import {
+  GAME_ID as msId,
+  evaluator as msEval,
+  selectQuestions as msSelect,
+  stripQuestion as msStrip,
+} from './minesweeper.mjs';
+
 export function registerAllGames() {
   // Estimation Engine — sequential (10 questions, 60s each)
   registerGame(estId, estQ, estEval, estSelect, null, 'sequential');
@@ -154,5 +161,16 @@ export function registerAllGames() {
     questionsPerSession: 1
   });
 
-  console.log('Registered games:', [estId, sudId, pocId, seqId, cdnId, kenId, nonoId, kakId].join(', '));
+  // Minesweeper — continuous (single puzzle, timed session)
+  registerGame(msId, null, msEval, msSelect, msStrip, 'continuous');
+  upsertGame({
+    id: msId,
+    name: 'Minesweeper',
+    isPaid: true,
+    serverScoring: true,
+    sessionTimeoutSeconds: 3600,
+    questionsPerSession: 1
+  });
+
+  console.log('Registered games:', [estId, sudId, pocId, seqId, cdnId, kenId, nonoId, kakId, msId].join(', '));
 }

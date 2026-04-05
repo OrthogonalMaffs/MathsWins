@@ -1,0 +1,908 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<script async src="https://www.googletagmanager.com/gtag/js?id=G-7GTLYCZMXN"></script>
+<script>
+  window.dataLayer = window.dataLayer || [];
+  function gtag(){dataLayer.push(arguments);}
+  gtag('js', new Date());
+  gtag('config', 'G-7GTLYCZMXN', { send_page_view: true, storage: 'none', anonymize_ip: true });
+</script>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+<meta name="description" content="Clear the minefield with logic and deduction. Four board sizes, server-validated, competitive leagues on QF Network.">
+<meta property="og:title" content="Minesweeper - QF Games">
+<meta property="og:description" content="Clear the minefield with logic and deduction. Four board sizes, server-validated.">
+<meta property="og:url" content="https://mathswins.co.uk/qf-dapp/games/minesweeper/">
+<link rel="canonical" href="https://mathswins.co.uk/qf-dapp/games/minesweeper/">
+<title>Minesweeper &middot; QF Games</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;700&family=JetBrains+Mono:wght@400;500&family=Playfair+Display:wght@700&display=swap" rel="stylesheet">
+<style>
+:root {
+  --bg:            #050709;
+  --surface:       #16181c;
+  --surface2:      #1e2025;
+  --surface3:      #26282e;
+  --silver:        #b8bcc6;
+  --silver-bright: #d4d8e2;
+  --silver-dim:    rgba(184,188,198,0.08);
+  --silver-glow:   rgba(184,188,198,0.12);
+  --silver-border: rgba(184,188,198,0.15);
+  --text-white:    #e8eaf0;
+  --text:          #8a8f9c;
+  --muted:         #4a4e5a;
+  --border:        #1e2228;
+  --border2:       #2a2e36;
+  --grid-border:   #3a3e48;
+  --grid-box:      #5a5e68;
+  --gold:          #c9a84c;
+  --green:         #3a8a5c;
+  --red:           #b03a3a;
+  --blue:          #3a6a9c;
+}
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+body{background:var(--bg);color:var(--text);font-family:'Inter',sans-serif;min-height:100vh;display:flex;flex-direction:column;align-items:center;-webkit-tap-highlight-color:transparent}
+
+.page{width:100%;max-width:560px;padding:2rem 1rem 4rem;display:flex;flex-direction:column;align-items:center;gap:1.2rem}
+
+/* ── Header ── */
+.game-header{text-align:center}
+.game-kicker{font-family:'JetBrains Mono',monospace;font-size:0.55rem;letter-spacing:0.2em;text-transform:uppercase;color:var(--silver);margin-bottom:0.4rem}
+.game-title{font-family:'Playfair Display',serif;font-size:2.6rem;color:var(--text-white);line-height:1}
+.game-title span{background:linear-gradient(135deg,var(--silver-bright),var(--silver),#8a8f9c);-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text}
+.game-sub{font-size:0.72rem;color:var(--muted);line-height:1.6;margin-top:0.4rem}
+
+/* ── Wallet bar ── */
+.top-bar{
+  width:100%;display:flex;justify-content:space-between;align-items:center;
+  padding:.5rem 1rem;background:rgba(5,7,9,.94);backdrop-filter:blur(12px);
+  border-bottom:1px solid var(--border);position:sticky;top:0;z-index:100;
+}
+.top-bar-left{display:flex;align-items:center;gap:.6rem}
+.back-link{font-size:.7rem;color:var(--muted);text-decoration:none;padding:.25rem .6rem;border:1px solid var(--border);border-radius:6px;transition:all .15s}
+.back-link:hover{border-color:var(--silver-border);color:var(--text)}
+.top-logo{font-family:'Playfair Display',serif;font-size:1rem;color:var(--text-white);text-decoration:none}
+.top-logo span{color:var(--silver)}
+.top-bar-right{display:flex;align-items:center;gap:.5rem}
+.top-addr{font-family:'JetBrains Mono',monospace;font-size:.65rem;color:var(--muted);background:var(--surface);border:1px solid var(--border);padding:.2rem .5rem;border-radius:5px}
+.top-qf-name{font-family:'JetBrains Mono',monospace;font-size:.65rem;color:var(--silver-bright);background:var(--surface2);border:1px solid var(--silver-border);padding:.2rem .5rem;border-radius:5px}
+.top-connect{font-family:'Inter',sans-serif;font-weight:600;font-size:.7rem;padding:.35rem .8rem;border-radius:5px;border:1px solid var(--silver-border);background:var(--silver-dim);color:var(--silver-bright);cursor:pointer;transition:all .15s}
+.top-connect:hover{background:var(--silver-bright);color:var(--bg)}
+
+/* ── How to Play — collapsible ── */
+.htp{width:100%;background:var(--surface);border:1px solid var(--border);border-radius:10px;overflow:hidden;margin-bottom:0}
+.htp-toggle{width:100%;padding:.8rem 1rem;display:flex;justify-content:space-between;align-items:center;cursor:pointer;background:none;border:none;color:var(--text);font-family:'Inter',sans-serif;font-size:.75rem;font-weight:600;text-align:left}
+.htp-toggle:hover{color:var(--silver-bright)}
+.htp-arrow{transition:transform .2s;font-size:.6rem}
+.htp.open .htp-arrow{transform:rotate(180deg)}
+.htp-body{display:none;padding:0 1rem .8rem;font-size:.65rem;color:var(--muted);line-height:1.7}
+.htp.open .htp-body{display:block}
+.htp-body p{margin-bottom:.5rem}
+.htp-body ul{margin:.3rem 0 .5rem 1.2rem}
+.htp-body li{margin-bottom:.2rem}
+.htp-body strong{color:var(--text)}
+
+/* ── Scoring info panel ── */
+.scoring-info{width:100%;background:var(--surface);border:1px solid var(--border);border-radius:10px;padding:1.2rem;font-family:'JetBrains Mono',monospace;font-size:0.62rem;color:var(--muted);line-height:1.8}
+.scoring-info h3{font-family:'Playfair Display',serif;font-size:1rem;color:var(--text-white);letter-spacing:0.02em;margin-bottom:0.5rem}
+.si-row{display:flex;justify-content:space-between;padding:0.15rem 0}
+.si-label{color:var(--text)}
+.si-val{color:var(--silver-bright)}
+.si-note{color:var(--muted);font-size:0.55rem;margin-top:0.5rem;font-style:italic}
+
+/* ── Size selector ── */
+.diff-select{display:flex;gap:0.4rem;width:100%;flex-wrap:wrap}
+.diff-btn{flex:1;min-width:70px;padding:0.6rem;font-family:'JetBrains Mono',monospace;font-size:0.55rem;text-transform:uppercase;letter-spacing:0.08em;border:1px solid var(--border);border-radius:6px;background:transparent;color:var(--muted);cursor:pointer;text-align:center;transition:all 0.2s}
+.diff-btn:hover{border-color:var(--silver-border);color:var(--silver)}
+.diff-btn.active{border-color:var(--silver);color:var(--silver);background:var(--silver-dim)}
+
+/* ── Status bar ── */
+.status-bar{display:flex;gap:0.8rem;width:100%;background:var(--surface);border:1px solid var(--border);border-radius:10px;padding:0.75rem 1rem;justify-content:space-around}
+.si{display:flex;flex-direction:column;align-items:center;gap:0.15rem}
+.si .si-val{font-family:'JetBrains Mono',monospace;font-size:1rem;font-weight:500;color:var(--silver-bright)}
+.si .si-lbl{font-family:'JetBrains Mono',monospace;font-size:0.42rem;letter-spacing:0.12em;text-transform:uppercase;color:var(--muted)}
+
+/* ── Board ── */
+.board-wrap{width:100%;display:flex;justify-content:center;overflow:hidden}
+.board{display:grid;gap:1px;background:var(--grid-border);border:2px solid var(--grid-box);border-radius:4px;overflow:hidden;position:relative;touch-action:manipulation}
+.cell{
+  background:var(--surface2);display:flex;align-items:center;justify-content:center;
+  cursor:pointer;position:relative;transition:background 0.1s;border:none;outline:none;
+  min-width:28px;min-height:28px;user-select:none;-webkit-user-select:none;
+}
+.cell:hover{background:var(--surface3)}
+.cell.revealed{background:var(--surface);cursor:default}
+.cell.revealed-zero{background:rgba(30,32,37,0.8)}
+.cell.flagged{background:var(--surface2)}
+.cell.detonated{background:rgba(176,58,58,0.45)}
+.cell.mine-show{background:var(--surface)}
+.cell.incorrect-flag{background:rgba(176,58,58,0.15)}
+.cell-val{font-family:'JetBrains Mono',monospace;font-size:clamp(0.65rem,2.2vw,0.95rem);font-weight:700;line-height:1;user-select:none;-webkit-user-select:none}
+.cell-flag{font-size:clamp(0.7rem,2.4vw,1rem);line-height:1;user-select:none}
+.cell-mine{font-size:clamp(0.7rem,2.4vw,1rem);line-height:1;user-select:none}
+
+/* Minesweeper number colours (dark theme adapted) */
+.num-1{color:#5b9bd5}
+.num-2{color:#6abf69}
+.num-3{color:#e05555}
+.num-4{color:#4a6fa5}
+.num-5{color:#a04040}
+.num-6{color:#4db8a4}
+.num-7{color:#8a8f9c}
+.num-8{color:#6a6e7a}
+
+/* ── Board sweep (win animation) ── */
+@keyframes light-sweep{0%{background-position:-200% -200%}100%{background-position:200% 200%}}
+.board-sweep{position:absolute;inset:0;pointer-events:none;z-index:10;background:linear-gradient(135deg,transparent 35%,rgba(255,255,255,0.18) 50%,transparent 65%);background-size:200% 200%;animation:light-sweep 900ms ease-in-out forwards}
+
+/* ── Detonation pulse ── */
+@keyframes det-pulse{0%{background:rgba(176,58,58,0.45)}50%{background:rgba(176,58,58,0.7)}100%{background:rgba(176,58,58,0.45)}}
+.cell.det-pulse{animation:det-pulse 0.6s ease 2}
+
+/* ── Buttons ── */
+.btn{padding:0.6rem 1rem;font-family:'JetBrains Mono',monospace;font-size:0.58rem;letter-spacing:0.08em;text-transform:uppercase;cursor:pointer;border-radius:6px;border:none;transition:all 0.15s;flex:1;min-width:0}
+.btn-silver{background:var(--silver-bright);color:var(--bg);font-weight:500}
+.btn-silver:hover{opacity:.85}
+.btn-silver:disabled{background:var(--muted);cursor:not-allowed;opacity:0.5}
+.btn-ghost{background:transparent;border:1px solid var(--border);color:var(--muted)}
+.btn-ghost:hover{border-color:var(--silver-border);color:var(--silver)}
+
+.controls{display:flex;gap:0.5rem;width:100%;flex-wrap:wrap}
+
+.league-link{
+  display:inline-block;font-family:'JetBrains Mono',monospace;font-size:.6rem;
+  letter-spacing:.08em;color:var(--silver);text-decoration:none;
+  padding:.4rem .8rem;border:1px solid var(--border);border-radius:6px;
+  transition:all .15s;
+}
+.league-link:hover{border-color:var(--silver-border);color:var(--silver-bright)}
+
+.msg{font-family:'JetBrains Mono',monospace;font-size:0.6rem;text-align:center;min-height:1rem;color:var(--red)}
+.msg.ok{color:var(--green)}
+
+/* ── Results Modal ── */
+.modal-overlay{position:fixed;inset:0;background:rgba(5,7,9,0.94);backdrop-filter:blur(8px);z-index:200;display:flex;align-items:center;justify-content:center;padding:1rem}
+.modal-overlay.hidden{display:none}
+.modal{background:var(--surface);border:1px solid var(--border2);border-radius:12px;width:100%;max-width:420px;overflow:hidden}
+.modal-header{padding:1.6rem 1.6rem 0;text-align:center}
+.modal-result{font-family:'Playfair Display',serif;font-size:2rem;letter-spacing:0.02em;margin-bottom:0.3rem}
+.modal-result.win{color:var(--green)}
+.modal-result.lose{color:var(--red)}
+.modal-sub{font-family:'JetBrains Mono',monospace;font-size:0.6rem;color:var(--muted)}
+.modal-score{margin:1rem 1.6rem;background:var(--surface2);border:1px solid var(--border);border-radius:8px;padding:0.8rem;display:grid;grid-template-columns:1fr 1fr;gap:0.5rem}
+.ms-item{display:flex;flex-direction:column;gap:0.1rem}
+.ms-val{font-family:'JetBrains Mono',monospace;font-size:0.9rem;color:var(--silver-bright)}
+.ms-lbl{font-family:'JetBrains Mono',monospace;font-size:0.42rem;letter-spacing:0.1em;text-transform:uppercase;color:var(--muted)}
+.modal-acts{display:flex;gap:0.5rem;padding:1rem 1.6rem 1.6rem}
+.modal-acts .btn{flex:1}
+
+/* ── Cookie consent ── */
+.cookie-banner{position:fixed;bottom:0;left:0;right:0;background:var(--surface);border-top:1px solid var(--border);padding:1rem;z-index:300;display:flex;align-items:center;justify-content:center;gap:1rem;flex-wrap:wrap;font-size:.65rem;color:var(--muted)}
+.cookie-banner.hidden{display:none}
+.cookie-banner button{font-family:'JetBrains Mono',monospace;font-size:.6rem;padding:.4rem .8rem;border-radius:5px;cursor:pointer;border:none;transition:all .15s}
+.cookie-accept{background:var(--silver-bright);color:var(--bg)}
+.cookie-decline{background:transparent;border:1px solid var(--border);color:var(--muted)}
+
+@media(max-width:480px){
+  .page{padding:1.5rem 0.5rem 3rem}
+  .game-title{font-size:2rem}
+  .controls{gap:0.3rem}
+  .btn{padding:0.5rem 0.5rem;font-size:0.5rem}
+}
+</style>
+<script src="https://cdn.jsdelivr.net/npm/ethers@6/dist/ethers.umd.min.js"></script>
+<script src="/auth/mw-auth.js"></script>
+</head>
+<body>
+<script src="../qf-wallet.js"></script>
+
+<!-- TOP BAR -->
+<div class="top-bar">
+  <div class="top-bar-left">
+    <a href="/qf-dapp/" class="back-link">&larr; Lobby</a>
+    <a href="/qf-dapp/" class="top-logo">QF <span>Games</span></a>
+  </div>
+  <div class="top-bar-right">
+    <span class="top-qf-name" id="topQfName" style="display:none;cursor:pointer" onclick="qfWallet.showMenu(this)"></span>
+    <span class="top-addr" id="topAddr" style="display:none;cursor:pointer" onclick="qfWallet.showMenu(this)"></span>
+    <button class="top-connect" id="topConnectBtn" onclick="qfWallet.connect()">Connect Wallet</button>
+  </div>
+</div>
+
+<div class="page">
+  <div class="game-header">
+    <p class="game-kicker">QF Games</p>
+    <h1 class="game-title"><span>Minesweeper</span></h1>
+    <p class="game-sub">Clear the minefield with logic and deduction. Server-validated, competitive leagues on QF Network.</p>
+  </div>
+
+  <!-- PRE-GAME SCREEN -->
+  <div id="pre-game">
+    <div class="htp" style="margin-bottom:1.2rem">
+      <button class="htp-toggle">How to Play <span class="htp-arrow">&#9660;</span></button>
+      <div class="htp-body">
+        <p>Reveal all safe cells without detonating a mine.</p>
+        <ul>
+          <li><strong>Left click / tap</strong> to reveal a cell</li>
+          <li><strong>Right click / long press</strong> to toggle a flag</li>
+          <li><strong>Click a revealed number</strong> to chord (auto-reveal neighbours if adjacent flags match the number)</li>
+          <li><strong>First click is always safe</strong> — mines are placed after your first move</li>
+          <li>Numbers show how many adjacent cells contain mines</li>
+        </ul>
+        <p>Scoring: 5,000 base points minus 1 point per second. Clear faster for a higher score.</p>
+      </div>
+    </div>
+
+    <div class="scoring-info" id="scoring-panel">
+      <h3>How Scoring Works</h3>
+      <div class="si-row"><span class="si-label">Base score</span><span class="si-val">5,000 pts</span></div>
+      <div class="si-row"><span class="si-label">Time penalty</span><span class="si-val">-1 pt/second</span></div>
+      <div class="si-row"><span class="si-label">Detonation</span><span class="si-val">Game over (0 pts)</span></div>
+      <p class="si-note">Win score = max(0, 5000 - seconds elapsed). Clear the board as fast as you can.</p>
+    </div>
+
+    <div class="diff-select" id="diff-select" style="margin-top:.8rem">
+      <button class="diff-btn" data-diff="pocket">Pocket 12&times;12</button>
+      <button class="diff-btn" data-diff="beginner">Beginner 9&times;9</button>
+      <button class="diff-btn" data-diff="intermediate">Intermediate 16&times;16</button>
+      <button class="diff-btn" data-diff="expert">Expert 30&times;16</button>
+    </div>
+
+    <div class="controls" style="margin-top:.8rem">
+      <button class="btn btn-silver" id="start-btn" onclick="G.startGame()">Start Game</button>
+    </div>
+
+    <div style="text-align:center;margin-top:.6rem">
+      <a href="/qf-dapp/games/minesweeper/league/" class="league-link">View Leagues &rarr;</a>
+    </div>
+  </div>
+
+  <!-- GAME SCREEN -->
+  <div class="status-bar" style="display:none" id="status-bar">
+    <div class="si"><span class="si-val" id="sv-t">00:00.000</span><span class="si-lbl">Time</span></div>
+    <div class="si"><span class="si-val" id="sv-m">0</span><span class="si-lbl">Mines Left</span></div>
+    <div class="si"><span class="si-val" id="sv-size">--</span><span class="si-lbl">Board</span></div>
+  </div>
+
+  <div class="board-wrap" style="display:none" id="board-wrap">
+    <div class="board" id="board"></div>
+  </div>
+
+  <div class="msg" id="msg-bar"></div>
+</div>
+
+<!-- RESULT MODAL -->
+<div class="modal-overlay hidden" id="modal">
+  <div class="modal">
+    <div class="modal-header">
+      <div class="modal-result" id="modal-result">--</div>
+      <div class="modal-sub" id="modal-sub"></div>
+    </div>
+    <div class="modal-score" id="modal-score"></div>
+    <div class="modal-acts" id="modal-acts">
+      <button class="btn btn-ghost" onclick="location.reload()">Play Again</button>
+      <button class="btn btn-silver" onclick="window.location='/qf-dapp/'">Back to Lobby</button>
+    </div>
+  </div>
+</div>
+
+<!-- COOKIE CONSENT -->
+<div class="cookie-banner" id="cookie-banner">
+  <span>This site uses cookies for analytics.</span>
+  <button class="cookie-accept" onclick="acceptCookies()">Accept</button>
+  <button class="cookie-decline" onclick="declineCookies()">Decline</button>
+</div>
+
+<script>
+// ── Cookie consent ────────────────────────────────────────────────────
+(function(){
+  var c = localStorage.getItem('mw_cookies');
+  if (c) {
+    document.getElementById('cookie-banner').classList.add('hidden');
+    if (c === 'accepted') {
+      gtag('consent', 'update', { analytics_storage: 'granted' });
+    }
+  }
+})();
+function acceptCookies(){
+  localStorage.setItem('mw_cookies', 'accepted');
+  document.getElementById('cookie-banner').classList.add('hidden');
+  gtag('consent', 'update', { analytics_storage: 'granted' });
+}
+function declineCookies(){
+  localStorage.setItem('mw_cookies', 'declined');
+  document.getElementById('cookie-banner').classList.add('hidden');
+}
+
+// ── Wallet (thin wrapper over shared qf-wallet.js) ───────────────────
+qfWallet.onConnect(function(s) {
+  if (s.address) {
+    document.getElementById('topConnectBtn').style.display = 'none';
+    document.getElementById('topAddr').style.display = '';
+    document.getElementById('topAddr').textContent = s.address.slice(0, 6) + '...' + s.address.slice(-4);
+  }
+  if (s.qfName) {
+    document.getElementById('topQfName').textContent = s.qfName;
+    document.getElementById('topQfName').style.display = '';
+    document.getElementById('topAddr').style.display = 'none';
+  }
+});
+
+// ── HTP toggle ────────────────────────────────────────────────────────
+document.querySelectorAll('.htp-toggle').forEach(function(btn){
+  btn.addEventListener('click', function(){ this.closest('.htp').classList.toggle('open'); });
+});
+
+// ── Size selector toggle ──────────────────────────────────────────────
+(function(){
+  var btns = document.querySelectorAll('.diff-btn');
+  var defaultDiff = window.innerWidth < 768 ? 'pocket' : 'beginner';
+  btns.forEach(function(b){
+    if (b.dataset.diff === defaultDiff) b.classList.add('active');
+    b.addEventListener('click', function(){
+      btns.forEach(function(x){ x.classList.remove('active'); });
+      b.classList.add('active');
+    });
+  });
+})();
+
+// ── Game Module ───────────────────────────────────────────────────────
+var G = (function() {
+  'use strict';
+
+  var API_BASE = 'https://dapp-api.mathswins.co.uk/api/dapp';
+  if (location.hostname === 'localhost' || location.hostname === '127.0.0.1') {
+    API_BASE = 'http://127.0.0.1:3860/api/dapp';
+  }
+
+  var GAME_ID = 'minesweeper';
+
+  // Board state
+  var sessionToken = null;
+  var boardWidth = 0, boardHeight = 0, mineCount = 0;
+  var difficulty = 'beginner';
+  var cells = [];       // DOM elements
+  var cellState = [];   // 'hidden' | 'revealed' | 'flagged'
+  var cellValues = [];  // number for revealed, null otherwise
+  var totalCells = 0;
+  var flagCount = 0;
+  var minesPlaced = false;
+  var done = false;
+  var revealedCount = 0;
+
+  // Timer
+  var startTime = null;
+  var timerInterval = null;
+  var timerStarted = false;
+  var finalTimeMs = 0;
+
+  // Long press for flagging
+  var longPressTimer = null;
+  var longPressTriggered = false;
+  var LONG_PRESS_MS = 300;
+
+  // League state
+  var leagueMode = false;
+  var leagueId = null;
+  var leaguePuzzleIndex = null;
+
+  // ── API helper ──────────────────────────────────────────────────────
+  async function api(url, body, method) {
+    var headers = qfWallet.authHeaders();
+    var opts = { method: method || 'POST', headers: headers };
+    if (body && method !== 'GET') opts.body = JSON.stringify(body);
+    if (method === 'GET') { delete opts.body; opts.method = 'GET'; }
+    var res = await fetch(API_BASE + url, opts);
+    return res.json();
+  }
+
+  // ── Utility ─────────────────────────────────────────────────────────
+  function setMsg(txt, ok) {
+    var el = document.getElementById('msg-bar');
+    el.textContent = txt;
+    el.className = 'msg' + (ok ? ' ok' : '');
+  }
+
+  function formatTime(ms) {
+    var totalSec = Math.floor(ms / 1000);
+    var min = Math.floor(totalSec / 60);
+    var sec = totalSec % 60;
+    var millis = ms % 1000;
+    return (min < 10 ? '0' : '') + min + ':' + (sec < 10 ? '0' : '') + sec + '.' + (millis < 10 ? '00' : millis < 100 ? '0' : '') + millis;
+  }
+
+  function getElapsedMs() {
+    if (!startTime) return 0;
+    if (done) return finalTimeMs;
+    return Date.now() - startTime;
+  }
+
+  // ── Timer ───────────────────────────────────────────────────────────
+  function startTimer() {
+    if (timerStarted) return;
+    timerStarted = true;
+    startTime = Date.now();
+    timerInterval = setInterval(function() {
+      document.getElementById('sv-t').textContent = formatTime(getElapsedMs());
+    }, 100);
+  }
+
+  function stopTimer() {
+    finalTimeMs = Date.now() - startTime;
+    if (timerInterval) { clearInterval(timerInterval); timerInterval = null; }
+    document.getElementById('sv-t').textContent = formatTime(finalTimeMs);
+  }
+
+  // ── Board rendering ─────────────────────────────────────────────────
+  function buildBoard() {
+    var board = document.getElementById('board');
+    board.innerHTML = '';
+    board.style.gridTemplateColumns = 'repeat(' + boardWidth + ', 1fr)';
+
+    // Calculate cell size for mobile fitting
+    var maxBoardPx = Math.min(window.innerWidth - 24, 540);
+    var cellSize = Math.max(28, Math.floor((maxBoardPx - boardWidth) / boardWidth));
+    board.style.width = (cellSize * boardWidth + boardWidth + 3) + 'px';
+
+    cells = [];
+    cellState = [];
+    cellValues = [];
+    totalCells = boardWidth * boardHeight;
+
+    for (var i = 0; i < totalCells; i++) {
+      var cell = document.createElement('div');
+      cell.className = 'cell';
+      cell.dataset.idx = i;
+
+      // Mouse events
+      cell.addEventListener('mousedown', onCellMouseDown);
+      cell.addEventListener('mouseup', onCellMouseUp);
+      cell.addEventListener('contextmenu', function(e) { e.preventDefault(); });
+
+      // Touch events
+      cell.addEventListener('touchstart', onCellTouchStart, { passive: false });
+      cell.addEventListener('touchend', onCellTouchEnd);
+      cell.addEventListener('touchmove', onCellTouchMove);
+
+      board.appendChild(cell);
+      cells.push(cell);
+      cellState.push('hidden');
+      cellValues.push(null);
+    }
+  }
+
+  // ── Cell interaction handlers ───────────────────────────────────────
+  function onCellMouseDown(e) {
+    if (done) return;
+    var idx = parseInt(this.dataset.idx);
+
+    // Right click = flag
+    if (e.button === 2) {
+      e.preventDefault();
+      toggleFlag(idx);
+      return;
+    }
+
+    // Left click
+    if (e.button === 0) {
+      handleClick(idx);
+    }
+  }
+
+  function onCellMouseUp(e) {
+    // nothing needed for mouse
+  }
+
+  function onCellTouchStart(e) {
+    if (done) return;
+    e.preventDefault();
+    var touch = e.touches[0];
+    var cell = this;
+    var idx = parseInt(cell.dataset.idx);
+
+    longPressTriggered = false;
+    longPressTimer = setTimeout(function() {
+      longPressTriggered = true;
+      toggleFlag(idx);
+    }, LONG_PRESS_MS);
+  }
+
+  function onCellTouchEnd(e) {
+    if (done) return;
+    if (longPressTimer) { clearTimeout(longPressTimer); longPressTimer = null; }
+    if (longPressTriggered) { longPressTriggered = false; return; }
+
+    var idx = parseInt(this.dataset.idx);
+    handleClick(idx);
+  }
+
+  function onCellTouchMove(e) {
+    if (longPressTimer) { clearTimeout(longPressTimer); longPressTimer = null; }
+  }
+
+  function handleClick(idx) {
+    if (done) return;
+    if (cellState[idx] === 'flagged') return;
+
+    // Chord: click on a revealed number
+    if (cellState[idx] === 'revealed' && cellValues[idx] > 0) {
+      doChord(idx);
+      return;
+    }
+
+    if (cellState[idx] !== 'hidden') return;
+
+    if (!minesPlaced) {
+      doFirstClick(idx);
+    } else {
+      doClick(idx);
+    }
+  }
+
+  // ── Flag ────────────────────────────────────────────────────────────
+  async function toggleFlag(idx) {
+    if (done) return;
+    if (cellState[idx] === 'revealed') return;
+    if (!minesPlaced) return;
+
+    try {
+      var data = await api('/session/evaluate', {
+        sessionToken: sessionToken,
+        answer: JSON.stringify({ action: 'flag', cell: idx })
+      });
+
+      if (data.error) { setMsg(data.error); return; }
+
+      if (data.flagged) {
+        cellState[idx] = 'flagged';
+        cells[idx].className = 'cell flagged';
+        cells[idx].innerHTML = '<span class="cell-flag">\u2691</span>';
+        flagCount++;
+      } else {
+        cellState[idx] = 'hidden';
+        cells[idx].className = 'cell';
+        cells[idx].innerHTML = '';
+        flagCount--;
+      }
+
+      updateMineCounter();
+    } catch (e) {
+      setMsg('Network error — try again.');
+    }
+  }
+
+  // ── First click ─────────────────────────────────────────────────────
+  async function doFirstClick(idx) {
+    startTimer();
+    setMsg('');
+
+    try {
+      var data = await api('/session/evaluate', {
+        sessionToken: sessionToken,
+        answer: JSON.stringify({ action: 'firstclick', cell: idx })
+      });
+
+      if (data.error) { setMsg(data.error); return; }
+
+      minesPlaced = true;
+      applyRevealed(data.revealed);
+
+      if (data.won) {
+        handleWin(data.points);
+      }
+    } catch (e) {
+      setMsg('Network error — try again.');
+    }
+  }
+
+  // ── Regular click ───────────────────────────────────────────────────
+  async function doClick(idx) {
+    setMsg('');
+
+    try {
+      var data = await api('/session/evaluate', {
+        sessionToken: sessionToken,
+        answer: JSON.stringify({ action: 'click', cell: idx })
+      });
+
+      if (data.error) { setMsg(data.error); return; }
+
+      if (data.gameOver) {
+        handleDetonation(data.detonated, data.mines, data.incorrectFlags, data.partialScore);
+        return;
+      }
+
+      applyRevealed(data.revealed);
+
+      if (data.won) {
+        handleWin(data.points);
+      }
+    } catch (e) {
+      setMsg('Network error — try again.');
+    }
+  }
+
+  // ── Chord ───────────────────────────────────────────────────────────
+  async function doChord(idx) {
+    setMsg('');
+
+    try {
+      var data = await api('/session/evaluate', {
+        sessionToken: sessionToken,
+        answer: JSON.stringify({ action: 'chord', cell: idx })
+      });
+
+      if (data.error) { /* Chord fails silently if flag count wrong */ return; }
+
+      if (data.gameOver) {
+        handleDetonation(data.detonated, data.mines, data.incorrectFlags, data.partialScore);
+        return;
+      }
+
+      if (data.revealed) {
+        applyRevealed(data.revealed);
+      }
+
+      if (data.won) {
+        handleWin(data.points);
+      }
+    } catch (e) {
+      setMsg('Network error — try again.');
+    }
+  }
+
+  // ── Apply revealed cells ────────────────────────────────────────────
+  function applyRevealed(revealed) {
+    if (!revealed) return;
+    for (var i = 0; i < revealed.length; i++) {
+      var r = revealed[i];
+      var c = r.cell;
+      var v = r.value;
+
+      cellState[c] = 'revealed';
+      cellValues[c] = v;
+      revealedCount++;
+
+      var el = cells[c];
+      if (v === 0) {
+        el.className = 'cell revealed revealed-zero';
+        el.innerHTML = '';
+      } else {
+        el.className = 'cell revealed';
+        el.innerHTML = '<span class="cell-val num-' + v + '">' + v + '</span>';
+      }
+    }
+    updateMineCounter();
+  }
+
+  // ── Win ─────────────────────────────────────────────────────────────
+  async function handleWin(points) {
+    done = true;
+    stopTimer();
+
+    // Win sweep animation
+    var board = document.getElementById('board');
+    var sweep = document.createElement('div');
+    sweep.className = 'board-sweep';
+    board.appendChild(sweep);
+    setTimeout(function() { if (sweep.parentNode) sweep.parentNode.removeChild(sweep); }, 1000);
+
+    // League score submission
+    if (leagueMode && leagueId) {
+      try {
+        var leagueResult = await api('/league/' + leagueId + '/submit', {
+          puzzleIndex: leaguePuzzleIndex,
+          score: points || 0,
+          timeMs: finalTimeMs,
+          mistakes: 0,
+          hints: 0
+        });
+        if (leagueResult.error) alert('League score failed to save: ' + leagueResult.error);
+      } catch (e) {
+        alert('League score failed to save \u2014 check your connection.');
+      }
+    }
+
+    showModal(true, points, finalTimeMs);
+  }
+
+  // ── Detonation ──────────────────────────────────────────────────────
+  function handleDetonation(detonated, mines, incorrectFlags, partialScore) {
+    done = true;
+    stopTimer();
+
+    // Show the detonated cell
+    cells[detonated].className = 'cell detonated det-pulse';
+    cells[detonated].innerHTML = '<span class="cell-mine">\uD83D\uDCA3</span>';
+
+    // Show all other mines
+    var mineSet = new Set(mines);
+    for (var i = 0; i < mines.length; i++) {
+      var m = mines[i];
+      if (m === detonated) continue;
+      if (cellState[m] === 'flagged') continue; // correctly flagged
+      cells[m].className = 'cell mine-show';
+      cells[m].innerHTML = '<span class="cell-mine">\uD83D\uDCA3</span>';
+    }
+
+    // Show incorrect flags
+    if (incorrectFlags) {
+      for (var j = 0; j < incorrectFlags.length; j++) {
+        var f = incorrectFlags[j];
+        cells[f].className = 'cell incorrect-flag';
+        cells[f].innerHTML = '<span class="cell-val" style="color:var(--red);">\u2717</span>';
+      }
+    }
+
+    var safeCellsRemaining = (boardWidth * boardHeight - mineCount) - revealedCount;
+    showModal(false, 0, finalTimeMs, safeCellsRemaining);
+  }
+
+  // ── Results modal ───────────────────────────────────────────────────
+  function showModal(won, score, timeMs, safeCellsRemaining) {
+    var modal = document.getElementById('modal');
+    modal.classList.remove('hidden');
+
+    var result = document.getElementById('modal-result');
+    result.textContent = won ? 'Minefield Cleared' : 'Detonation';
+    result.className = 'modal-result ' + (won ? 'win' : 'lose');
+
+    var sub = document.getElementById('modal-sub');
+    sub.textContent = won ? 'Clean sweep.' : (safeCellsRemaining + ' safe cell' + (safeCellsRemaining !== 1 ? 's' : '') + ' remaining.');
+
+    var scoreHtml = '';
+    if (won) {
+      scoreHtml += '<div class="ms-item"><span class="ms-val">' + (score || 0) + '</span><span class="ms-lbl">Final Score</span></div>';
+      scoreHtml += '<div class="ms-item"><span class="ms-val">' + formatTime(timeMs) + '</span><span class="ms-lbl">Time</span></div>';
+    } else {
+      scoreHtml += '<div class="ms-item"><span class="ms-val">0</span><span class="ms-lbl">Score</span></div>';
+      scoreHtml += '<div class="ms-item"><span class="ms-val">' + formatTime(timeMs) + '</span><span class="ms-lbl">Time</span></div>';
+    }
+    document.getElementById('modal-score').innerHTML = scoreHtml;
+
+    // League back button
+    var acts = document.getElementById('modal-acts');
+    if (leagueMode && leagueId) {
+      acts.innerHTML =
+        '<button class="btn btn-ghost" onclick="location.reload()">Play Again</button>' +
+        '<button class="btn btn-silver" onclick="window.location=\'/qf-dapp/games/minesweeper/league/?id=' + leagueId + '\'">Back to League</button>';
+    }
+  }
+
+  // ── Update mine counter ─────────────────────────────────────────────
+  function updateMineCounter() {
+    document.getElementById('sv-m').textContent = Math.max(0, mineCount - flagCount);
+  }
+
+  // ── Start game ──────────────────────────────────────────────────────
+  async function startGame() {
+    // Get selected difficulty
+    var activeBtn = document.querySelector('.diff-btn.active');
+    difficulty = activeBtn ? activeBtn.dataset.diff : 'beginner';
+
+    setMsg('');
+    document.getElementById('start-btn').disabled = true;
+
+    try {
+      var data = await api('/session/start', { gameId: GAME_ID, difficulty: difficulty });
+
+      if (data.error) {
+        setMsg(data.error);
+        document.getElementById('start-btn').disabled = false;
+        return;
+      }
+
+      sessionToken = data.token;
+      var q = data.question;
+
+      boardWidth = q.width;
+      boardHeight = q.height;
+      mineCount = q.mineCount;
+      flagCount = 0;
+      minesPlaced = false;
+      done = false;
+      revealedCount = 0;
+      timerStarted = false;
+      startTime = null;
+      finalTimeMs = 0;
+
+      // Hide pre-game, show game
+      document.getElementById('pre-game').style.display = 'none';
+      document.getElementById('status-bar').style.display = 'flex';
+      document.getElementById('board-wrap').style.display = 'flex';
+
+      // Update status bar
+      document.getElementById('sv-t').textContent = '00:00.000';
+      document.getElementById('sv-m').textContent = mineCount;
+      var sizeLabels = { pocket: '12\u00D712', beginner: '9\u00D79', intermediate: '16\u00D716', expert: '30\u00D716' };
+      document.getElementById('sv-size').textContent = sizeLabels[difficulty] || difficulty;
+
+      buildBoard();
+    } catch (e) {
+      setMsg('Could not start game. Check your connection.');
+      document.getElementById('start-btn').disabled = false;
+    }
+  }
+
+  // ── League start ────────────────────────────────────────────────────
+  async function startLeagueGame() {
+    setMsg('');
+
+    try {
+      var data = await api('/session/start', { gameId: GAME_ID, leagueId: leagueId });
+
+      if (data.error) {
+        setMsg(data.error);
+        return;
+      }
+
+      sessionToken = data.token;
+      var q = data.question;
+
+      boardWidth = q.width;
+      boardHeight = q.height;
+      mineCount = q.mineCount;
+      difficulty = q.difficulty || 'beginner';
+      flagCount = 0;
+      minesPlaced = false;
+      done = false;
+      revealedCount = 0;
+      timerStarted = false;
+      startTime = null;
+      finalTimeMs = 0;
+
+      if (data.puzzleIndex !== undefined) leaguePuzzleIndex = data.puzzleIndex;
+
+      document.getElementById('pre-game').style.display = 'none';
+      document.getElementById('status-bar').style.display = 'flex';
+      document.getElementById('board-wrap').style.display = 'flex';
+
+      document.getElementById('sv-t').textContent = '00:00.000';
+      document.getElementById('sv-m').textContent = mineCount;
+      var sizeLabels = { pocket: '12\u00D712', beginner: '9\u00D79', intermediate: '16\u00D716', expert: '30\u00D716' };
+      document.getElementById('sv-size').textContent = sizeLabels[difficulty] || difficulty;
+
+      buildBoard();
+    } catch (e) {
+      setMsg('Could not start league game. Check your connection.');
+    }
+  }
+
+  // ── Check URL params ────────────────────────────────────────────────
+  function checkUrlParams() {
+    var params = new URLSearchParams(window.location.search);
+
+    var lid = params.get('league');
+    if (lid) {
+      leagueMode = true;
+      leagueId = lid;
+      document.getElementById('pre-game').style.display = 'none';
+
+      var hasWalletSaved = false;
+      try { hasWalletSaved = !!localStorage.getItem('qf_wallet_id'); } catch (e) {}
+
+      if (typeof qfWallet !== 'undefined' && qfWallet._state && qfWallet._state.address) {
+        startLeagueGame();
+      } else {
+        setMsg(hasWalletSaved ? 'Reconnecting wallet...' : 'Connect your wallet to play this league puzzle.');
+        qfWallet.onConnect(function() {
+          setMsg('');
+          startLeagueGame();
+        });
+      }
+      return true;
+    }
+    return false;
+  }
+
+  // ── Init ────────────────────────────────────────────────────────────
+  checkUrlParams();
+
+  return {
+    startGame: startGame
+  };
+})();
+</script>
+</body>
+</html>
