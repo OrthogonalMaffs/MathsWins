@@ -509,6 +509,103 @@ export function getOpenAndActiveLeagues(gameId) {
   return db.prepare("SELECT * FROM leagues WHERE status IN ('registration', 'active') ORDER BY created_at DESC").all();
 }
 
+// ── Battleships queries ──────────────────────────────────────────────
+
+export function createBattleshipsGame(id, stakeQf, creatorWallet, shareCode, createdAt) {
+  const db = getDb();
+  db.prepare(`INSERT INTO battleships_games (id, stake_qf, creator_wallet, share_code, created_at)
+    VALUES (?, ?, ?, ?, ?)`).run(id, stakeQf, creatorWallet.toLowerCase(), shareCode, createdAt);
+}
+
+export function getBattleshipsGameByCode(code) {
+  const db = getDb();
+  return db.prepare('SELECT * FROM battleships_games WHERE share_code = ?').get(code);
+}
+
+export function getBattleshipsGameById(id) {
+  const db = getDb();
+  return db.prepare('SELECT * FROM battleships_games WHERE id = ?').get(id);
+}
+
+export function updateBattleshipsGameStatus(id, status, fields) {
+  const db = getDb();
+  const sets = ['status = ?'];
+  const vals = [status];
+  if (fields) {
+    for (const [key, val] of Object.entries(fields)) {
+      sets.push(key + ' = ?');
+      vals.push(val);
+    }
+  }
+  vals.push(id);
+  db.prepare('UPDATE battleships_games SET ' + sets.join(', ') + ' WHERE id = ?').run(...vals);
+}
+
+export function saveBattleshipsPlacement(gameId, wallet, fleetJson, confirmedAt) {
+  const db = getDb();
+  db.prepare(`INSERT INTO battleships_placements (game_id, wallet, fleet, confirmed_at)
+    VALUES (?, ?, ?, ?)
+    ON CONFLICT(game_id, wallet) DO UPDATE SET fleet = excluded.fleet, confirmed_at = excluded.confirmed_at`)
+    .run(gameId, wallet.toLowerCase(), fleetJson, confirmedAt);
+}
+
+export function getBattleshipsPlacement(gameId, wallet) {
+  const db = getDb();
+  return db.prepare('SELECT * FROM battleships_placements WHERE game_id = ? AND wallet = ?')
+    .get(gameId, wallet.toLowerCase());
+}
+
+export function getBattleshipsPlacements(gameId) {
+  const db = getDb();
+  return db.prepare('SELECT * FROM battleships_placements WHERE game_id = ?').all(gameId);
+}
+
+export function addBattleshipsRound(gameId, roundNum, wallet, firingShip, targetX, targetY, range, result, shipHit, autoShot, createdAt) {
+  const db = getDb();
+  db.prepare(`INSERT INTO battleships_rounds (game_id, round_number, wallet, firing_ship, target_x, target_y, range_distance, result, ship_hit, auto_shot, created_at)
+    VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)`)
+    .run(gameId, roundNum, wallet.toLowerCase(), firingShip, targetX, targetY, range, result, shipHit, autoShot ? 1 : 0, createdAt);
+}
+
+export function getBattleshipsRounds(gameId) {
+  const db = getDb();
+  return db.prepare('SELECT * FROM battleships_rounds WHERE game_id = ? ORDER BY round_number ASC, id ASC').all(gameId);
+}
+
+export function getBattleshipsRecord(wallet) {
+  const db = getDb();
+  return db.prepare('SELECT * FROM battleships_record WHERE wallet = ?').get(wallet.toLowerCase());
+}
+
+export function updateBattleshipsRecord(wallet, result) {
+  const db = getDb();
+  const w = wallet.toLowerCase();
+  const now = Date.now();
+  const existing = db.prepare('SELECT * FROM battleships_record WHERE wallet = ?').get(w);
+  if (!existing) {
+    const wins = result === 'win' ? 1 : 0;
+    const losses = result === 'loss' ? 1 : 0;
+    const draws = result === 'draw' ? 1 : 0;
+    db.prepare('INSERT INTO battleships_record (wallet, wins, losses, draws, updated_at) VALUES (?, ?, ?, ?, ?)')
+      .run(w, wins, losses, draws, now);
+  } else {
+    const col = result === 'win' ? 'wins' : result === 'loss' ? 'losses' : 'draws';
+    db.prepare('UPDATE battleships_record SET ' + col + ' = ' + col + ' + 1, updated_at = ? WHERE wallet = ?')
+      .run(now, w);
+  }
+}
+
+export function getActiveBattleshipsGames() {
+  const db = getDb();
+  return db.prepare("SELECT * FROM battleships_games WHERE status = 'active'").all();
+}
+
+export function getBattleshipsGamesByWallet(wallet, limit) {
+  const db = getDb();
+  return db.prepare(`SELECT * FROM battleships_games WHERE (creator_wallet = ? OR opponent_wallet = ?) AND status = 'completed' ORDER BY completed_at DESC LIMIT ?`)
+    .all(wallet.toLowerCase(), wallet.toLowerCase(), limit || 20);
+}
+
 export function getRecentlySettledLeagues(gameId, limit) {
   const db = getDb();
   const cutoff = Date.now() - (7 * 24 * 60 * 60 * 1000);

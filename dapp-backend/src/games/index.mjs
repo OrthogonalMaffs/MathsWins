@@ -79,6 +79,8 @@ import {
   stripQuestion as fcStrip,
 } from './freecell.mjs';
 
+export const BATTLESHIPS_GAME_ID = 'battleships';
+
 export function registerAllGames() {
   // Estimation Engine — sequential (10 questions, 60s each)
   registerGame(estId, estQ, estEval, estSelect, null, 'sequential');
@@ -190,5 +192,15 @@ export function registerAllGames() {
     questionsPerSession: 1
   });
 
-  console.log('Registered games:', [estId, sudId, pocId, seqId, cdnId, kenId, nonoId, kakId, msId, fcId].join(', '));
+  // Battleships — duel-only, no leagues, no scoring engine
+  upsertGame({
+    id: BATTLESHIPS_GAME_ID,
+    name: 'Battleships',
+    isPaid: true,
+    serverScoring: true,
+    sessionTimeoutSeconds: 0,
+    questionsPerSession: 0
+  });
+
+  console.log('Registered games:', [estId, sudId, pocId, seqId, cdnId, kenId, nonoId, kakId, msId, fcId, BATTLESHIPS_GAME_ID].join(', '));
 }

@@ -4,7 +4,7 @@ import helmet from 'helmet';
 import { getDb } from './db/index.mjs';
 import { expireOldDuels } from './db/index.mjs';
 import apiRoutes from './routes/api.mjs';
-import { checkLeagueLifecycles } from './routes/api.mjs';
+import { checkLeagueLifecycles, checkBattleshipsTimeouts } from './routes/api.mjs';
 import { registerAllGames } from './games/index.mjs';
 import { recoverSessions } from './scoring.mjs';
 import { startListener } from './chain-listener.mjs';
@@ -117,6 +117,9 @@ setInterval(() => { try { expireOldDuels(); } catch (e) { console.error('Duel ex
 
 // Check league lifecycles every 2 minutes
 setInterval(() => { try { checkLeagueLifecycles(); } catch (e) { console.error('League lifecycle check error:', e); } }, 2 * 60 * 1000);
+
+// Check battleships 24h auto-shot timeouts every 5 minutes
+setInterval(() => { try { checkBattleshipsTimeouts(); } catch (e) { console.error('Battleships timeout check error:', e); } }, 5 * 60 * 1000);
 
 app.listen(PORT, '127.0.0.1', () => {
   console.log(`MathsWins dApp backend listening on port ${PORT}`);
