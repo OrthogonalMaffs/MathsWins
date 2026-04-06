@@ -70,8 +70,11 @@ Split from MaffsGames in March 2025. MaffsGames = free schools games. MathsWins 
 - `.dg` — danger warning (red accent)
 
 ## dApp Backend (Competitive Games on QF Network)
-- **Server:** Hetzner 37.27.219.31, port 3860, PM2 `mathswins-dapp`
-- **API Base:** `https://dapp-api.mathswins.co.uk/api/dapp` (Cloudflare Tunnel)
+- **Server:** Hetzner Box 1 (204.168.200.237), port 3860, PM2 `mathswins-dapp` (user jon)
+- **SSH:** `root@204.168.200.237` with `~/.ssh/hetzner-vm`, PM2 via `su - jon`
+- **Deploy:** `scp` files to `/home/jon/mathswins-dapp/src/games/`, `chown jon:jon`, restart PM2
+- **API Base:** `https://dapp-api.mathswins.co.uk/api/dapp` (Cloudflare Tunnel 66ac7db5)
+- **Box 2 (37.27.219.31):** bots, indexer, explorer, vector-graphs only — NO dApp backend
 - **Local:** `http://127.0.0.1:3860/api/dapp`
 - **Database:** SQLite at `/home/ubuntu/dapp-backend/data/mathswins.db`
 - **Frontend:** `qf-dapp/` directory, single-file HTML games, GitHub Pages
