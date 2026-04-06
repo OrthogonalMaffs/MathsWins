@@ -147,9 +147,9 @@ body{background:var(--bg);color:var(--text);font-family:'Inter',sans-serif;min-h
 .card.black-suit .card-tl,.card.black-suit .card-br{color:var(--ink-black)}
 
 /* ��─ Card pips ── */
-.pip-area{position:absolute;top:22px;bottom:22px;left:4px;right:4px}
-.pip{position:absolute;font-size:0.8rem;line-height:1;display:block}
-.pip-area .pip:only-child{font-size:1.8rem}
+.pip-area{position:absolute;top:26px;bottom:22px;left:4px;right:4px}
+.card-watermark{position:absolute;top:50%;left:50%;transform:translate(-50%,-50%);font-size:2.2rem;opacity:0.12;pointer-events:none;user-select:none;line-height:1}
+.pip-area .card-watermark:only-child{font-size:2.8rem;opacity:0.18}
 .card-face-letter{position:absolute;top:50%;left:50%;transform:translate(-50%,-50%);font-family:'Playfair Display',serif;font-size:1.8rem;font-weight:700;line-height:1}
 .card-face-frame{position:absolute;inset:6px;border:1.5px solid;border-radius:4px;pointer-events:none;opacity:0.25}
 
@@ -259,10 +259,10 @@ body{background:var(--bg);color:var(--text);font-family:'Inter',sans-serif;min-h
   .card-suit-idx{font-size:0.55rem}
   .card-tl{top:2px;left:3px}
   .card-br{bottom:2px;right:3px}
-  .pip{font-size:0.6rem}
-  .pip-area .pip:only-child{font-size:1.3rem}
+  .card-watermark{font-size:1.6rem}
+  .pip-area .card-watermark:only-child{font-size:2rem}
   .card-face-letter{font-size:1.3rem}
-  .pip-area{top:18px;bottom:18px}
+  .pip-area{top:20px;bottom:18px}
   .cascade{width:42px;min-height:80px}
   .cascades{gap:2px}
   .fc-group,.fn-group{gap:2px}
@@ -275,10 +275,10 @@ body{background:var(--bg);color:var(--text);font-family:'Inter',sans-serif;min-h
   .card{width:36px;height:52px;border-radius:6px}
   .card-rank{font-size:0.52rem}
   .card-suit-idx{font-size:0.46rem}
-  .pip{font-size:0.5rem}
-  .pip-area .pip:only-child{font-size:1.1rem}
+  .card-watermark{font-size:1.3rem}
+  .pip-area .card-watermark:only-child{font-size:1.6rem}
   .card-face-letter{font-size:1.1rem}
-  .pip-area{top:14px;bottom:14px}
+  .pip-area{top:16px;bottom:14px}
   .cascade{width:36px;min-height:60px}
 }
 </style>
@@ -736,20 +736,6 @@ var G = (function() {
     return Math.max(18, Math.floor(h * 0.3));
   }
 
-  // ── Pip coordinate lookup [top%, left%] ────────────────────────
-  var PIP_POSITIONS = {
-    1:  [[50,50]],
-    2:  [[22,50],[78,50]],
-    3:  [[22,50],[50,50],[78,50]],
-    4:  [[22,25],[22,75],[78,25],[78,75]],
-    5:  [[22,25],[22,75],[50,50],[78,25],[78,75]],
-    6:  [[22,25],[22,75],[50,25],[50,75],[78,25],[78,75]],
-    7:  [[22,25],[22,75],[50,25],[50,75],[78,25],[78,75],[35,50]],
-    8:  [[22,25],[22,75],[50,25],[50,75],[78,25],[78,75],[35,50],[65,50]],
-    9:  [[22,25],[22,75],[35,50],[50,25],[50,75],[65,50],[78,25],[78,75],[50,50]],
-    10: [[22,25],[22,75],[32,50],[50,25],[50,75],[68,50],[78,25],[78,75],[35,25],[65,75]]
-  };
-
   function renderPips(cardVal, cardEl) {
     var rank = cardRank(cardVal); // 0=A .. 12=K
     var color = cardColor(cardVal) === 1 ? 'var(--ink-red)' : 'var(--ink-black)';
@@ -774,21 +760,12 @@ var G = (function() {
       return;
     }
 
-    // Number cards (A=0 through 10=9)
-    var positions = PIP_POSITIONS[rank + 1];
-    if (!positions) return;
-
-    for (var i = 0; i < positions.length; i++) {
-      var pip = document.createElement('span');
-      pip.className = 'pip';
-      pip.textContent = sym;
-      pip.style.top = positions[i][0] + '%';
-      pip.style.left = positions[i][1] + '%';
-      pip.style.color = color;
-      if (positions[i][0] > 55) pip.style.transform = 'translate(-50%,-50%) rotate(180deg)';
-      else pip.style.transform = 'translate(-50%,-50%)';
-      pip_area.appendChild(pip);
-    }
+    // Number cards (A–10): single centred watermark suit symbol
+    var wm = document.createElement('span');
+    wm.className = 'card-watermark';
+    wm.textContent = sym;
+    wm.style.color = color;
+    pip_area.appendChild(wm);
   }
 
   // ── Create card DOM element ───────────────────────────────────────
