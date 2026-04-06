@@ -116,7 +116,7 @@ body{background:var(--bg);color:var(--text);font-family:'Inter',sans-serif;min-h
 .grid-cell:hover{border-color:var(--silver-border);background:var(--surface3)}
 .grid-cell.occupied{cursor:default;border-color:var(--border)}
 .grid-cell.occupied:hover{background:var(--surface2);border-color:var(--border)}
-.grid-cell .card{width:100%!important;height:100%!important;border-radius:5px;position:absolute;inset:0}
+.grid-cell .card{width:100%!important;height:100%!important;max-width:100%;border-radius:5px;position:absolute;inset:0}
 
 /* ── Row/col score pills ── */
 .row-scores{display:grid;grid-template-columns:28px repeat(5,1fr);gap:4px;margin-bottom:2px}
@@ -172,6 +172,15 @@ body{background:var(--bg);color:var(--text);font-family:'Inter',sans-serif;min-h
   .grid-row{grid-template-columns:22px repeat(5,1fr) 48px}
   .share-code-display{font-size:1.6rem}
   .grand-total{font-size:2.4rem}
+}
+@media(max-width:420px){
+  .current-card-area .card{width:60px;height:86px}
+  .grid-labels-top{grid-template-columns:20px repeat(5,1fr) 42px}
+  .grid-row{grid-template-columns:20px repeat(5,1fr) 42px}
+  .row-scores{grid-template-columns:20px repeat(5,1fr)}
+  .row-scores .spacer{width:20px}
+  .grid-row .row-pill{padding:2px 4px;font-size:.42rem}
+  .score-pill{font-size:.42rem}
 }
 </style>
 </head>

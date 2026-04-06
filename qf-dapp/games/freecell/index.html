@@ -192,25 +192,6 @@ body{background:var(--bg);color:var(--text);font-family:'Inter',sans-serif;min-h
 .cookie-accept{background:var(--silver-bright);color:var(--bg)}
 .cookie-decline{background:transparent;border:1px solid var(--border);color:var(--muted)}
 
-/* ── Portrait rotation gate ── */
-#rotate-prompt{
-  display:none;position:fixed;inset:0;z-index:9999;
-  background:rgba(5,7,9,0.97);
-  flex-direction:column;align-items:center;justify-content:center;gap:1.5rem;
-  text-align:center;padding:2rem;
-}
-#rotate-prompt.visible{display:flex}
-#rotate-prompt .rotate-title{font-family:'Playfair Display',serif;font-size:1.6rem;color:var(--text-white)}
-#rotate-prompt .rotate-msg{font-family:'Inter',sans-serif;font-size:0.8rem;color:var(--muted);max-width:260px;line-height:1.6}
-#rotate-prompt .rotate-icon{
-  width:60px;height:90px;border:3px solid var(--silver);border-radius:12px;position:relative;
-  transform:rotate(-30deg);transition:transform .6s;
-}
-#rotate-prompt .rotate-icon::after{
-  content:'\21BB';position:absolute;bottom:-22px;left:50%;transform:translateX(-50%);
-  font-size:1.4rem;color:var(--silver);
-}
-.page.hidden-portrait{display:none}
 
 /* ── Mobile landscape (strip non-essential) ── */
 @media(max-height:500px) and (orientation:landscape){
@@ -235,6 +216,10 @@ body{background:var(--bg);color:var(--text);font-family:'Inter',sans-serif;min-h
 @media(max-width:380px){
   .card-slot{width:36px;height:52px;border-radius:6px}
   .cascade{width:36px;min-height:60px}
+  .fc-group,.fn-group{gap:2px}
+  .cascades{gap:2px}
+  .top-row{gap:3px}
+  .btn{min-height:44px}
 }
 </style>
 <script src="https://cdn.jsdelivr.net/npm/ethers@6/dist/ethers.umd.min.js"></script>
@@ -257,12 +242,6 @@ body{background:var(--bg);color:var(--text);font-family:'Inter',sans-serif;min-h
   </div>
 </div>
 
-<!-- PORTRAIT ROTATION GATE -->
-<div id="rotate-prompt">
-  <div class="rotate-icon"></div>
-  <div class="rotate-title">Rotate Your Device</div>
-  <div class="rotate-msg">FreeCell needs landscape mode for the best experience. Turn your phone sideways to play.</div>
-</div>
 
 <div class="page" id="page-content">
   <div class="game-header">
@@ -1467,25 +1446,6 @@ var G = (function() {
   };
 })();
 
-// ── Portrait rotation gate ──────────────────────────────────────────
-(function(){
-  var prompt = document.getElementById('rotate-prompt');
-  var page = document.getElementById('page-content');
-  function checkOrientation() {
-    var w = window.innerWidth;
-    var h = window.innerHeight;
-    if (w < h && w < 700) {
-      prompt.classList.add('visible');
-      page.classList.add('hidden-portrait');
-    } else {
-      prompt.classList.remove('visible');
-      page.classList.remove('hidden-portrait');
-    }
-  }
-  window.addEventListener('resize', checkOrientation);
-  window.addEventListener('orientationchange', function(){ setTimeout(checkOrientation, 100); });
-  checkOrientation();
-})();
 </script>
 </body>
 </html>

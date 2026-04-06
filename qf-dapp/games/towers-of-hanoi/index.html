@@ -100,6 +100,18 @@ nav{position:sticky;top:0;z-index:100;width:100%;display:flex;align-items:center
 .disk[data-size="6"]{width:78%;background:var(--disk6)}
 .disk[data-size="7"]{width:88%;background:var(--disk7)}
 
+/* Mobile tap targets — WCAG 44px minimum height, 60px minimum width */
+@media(max-width:480px){
+  .disk{min-height:44px}
+  .disk[data-size="1"]{min-width:60px}
+  .disk[data-size="2"]{min-width:68px}
+  .disk[data-size="3"]{min-width:76px}
+  .disk[data-size="4"]{min-width:84px}
+  .disk[data-size="5"]{min-width:92px}
+  .disk[data-size="6"]{min-width:100px}
+  .disk[data-size="7"]{min-width:108px}
+}
+
 .arena-labels{display:flex;justify-content:space-around;width:100%;margin-top:1.5rem}
 .a-lbl{flex:1;text-align:center;font-family:'JetBrains Mono',monospace;font-size:0.6rem;letter-spacing:0.1em;text-transform:uppercase;color:var(--muted)}
 
