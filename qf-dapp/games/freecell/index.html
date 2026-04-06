@@ -18,6 +18,7 @@
 <title>FreeCell &middot; QF Games</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;700&family=JetBrains+Mono:wght@400;500&family=Playfair+Display:wght@700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="../qf-cards.css">
 <style>
 :root {
   --bg:            #050709;
@@ -40,8 +41,6 @@
   --green:         #3a8a5c;
   --red:           #b03a3a;
   --blue:          #3a6a9c;
-  --ink-black:     #1c1a17;
-  --ink-red:       #9e1a1a;
 }
 *,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
 body{background:var(--bg);color:var(--text);font-family:'Inter',sans-serif;min-height:100vh;display:flex;flex-direction:column;align-items:center;-webkit-tap-highlight-color:transparent}
@@ -123,35 +122,7 @@ body{background:var(--bg);color:var(--text);font-family:'Inter',sans-serif;min-h
 .card-slot.empty-fn{background:rgba(242,232,213,0.04);border:1.5px solid rgba(212,196,160,0.15);border-radius:8px}
 .card-slot .suit-label{font-size:1.4rem;color:rgba(212,196,160,0.18);user-select:none;pointer-events:none}
 
-/* ── Cards ── */
-.card{
-  width:60px;height:85px;border-radius:8px;background:#f2e8d5;
-  border:1px solid #d4c4a0;
-  box-shadow:0 4px 16px rgba(0,0,0,0.55),0 1px 4px rgba(0,0,0,0.3),inset 0 0 20px rgba(180,160,120,0.08);
-  position:relative;cursor:pointer;user-select:none;-webkit-user-select:none;
-  transition:box-shadow .15s;
-}
-.card.selected{
-  box-shadow:0 0 0 3px #c9a84c,0 6px 20px rgba(0,0,0,0.65),inset 0 0 20px rgba(180,160,120,0.08);
-  z-index:5;
-}
-.card.dragging{opacity:0.6;z-index:50}
-
-/* ── Card corners ── */
-.card-tl,.card-br{position:absolute;display:flex;flex-direction:column;align-items:center;font-family:'Georgia','Times New Roman',serif;font-weight:700;line-height:1.05}
-.card-tl{top:4px;left:5px}
-.card-br{bottom:4px;right:5px;transform:rotate(180deg)}
-.card-rank{font-size:0.82rem}
-.card-suit-idx{font-size:0.7rem}
-.card.red-suit .card-tl,.card.red-suit .card-br{color:var(--ink-red)}
-.card.black-suit .card-tl,.card.black-suit .card-br{color:var(--ink-black)}
-
-/* ��─ Card pips ── */
-.pip-area{position:absolute;top:26px;bottom:22px;left:4px;right:4px}
-.card-watermark{position:absolute;top:50%;left:50%;transform:translate(-50%,-50%);font-size:2.2rem;opacity:0.07;pointer-events:none;user-select:none;line-height:1}
-.pip-area .card-watermark:only-child{font-size:2.8rem;opacity:0.18}
-.card-face-letter{position:absolute;top:46%;left:50%;transform:translate(-50%,-50%);font-family:'Playfair Display',serif;font-size:1.8rem;font-weight:700;line-height:1;text-shadow:0 1px 2px rgba(0,0,0,0.15)}
-.card-face-suit{display:block;text-align:center;font-size:0.7rem;opacity:0.45;margin-top:2px;pointer-events:none}
+/* Card styles loaded from ../qf-cards.css */
 
 /* ── Cascade columns ── */
 .cascades{display:flex;gap:3px;width:100%;justify-content:center}
@@ -254,15 +225,6 @@ body{background:var(--bg);color:var(--text);font-family:'Inter',sans-serif;min-h
   .page{padding:1.5rem 0.5rem 3rem}
   .game-title{font-size:2rem}
   .card-slot{width:42px;height:60px;border-radius:7px}
-  .card{width:42px;height:60px;border-radius:7px}
-  .card-rank{font-size:0.62rem}
-  .card-suit-idx{font-size:0.55rem}
-  .card-tl{top:2px;left:3px}
-  .card-br{bottom:2px;right:3px}
-  .card-watermark{font-size:1.6rem}
-  .pip-area .card-watermark:only-child{font-size:2rem}
-  .card-face-letter{font-size:1.3rem}
-  .pip-area{top:20px;bottom:18px}
   .cascade{width:42px;min-height:80px}
   .cascades{gap:2px}
   .fc-group,.fn-group{gap:2px}
@@ -272,13 +234,6 @@ body{background:var(--bg);color:var(--text);font-family:'Inter',sans-serif;min-h
 }
 @media(max-width:380px){
   .card-slot{width:36px;height:52px;border-radius:6px}
-  .card{width:36px;height:52px;border-radius:6px}
-  .card-rank{font-size:0.52rem}
-  .card-suit-idx{font-size:0.46rem}
-  .card-watermark{font-size:1.3rem}
-  .pip-area .card-watermark:only-child{font-size:1.6rem}
-  .card-face-letter{font-size:1.1rem}
-  .pip-area{top:16px;bottom:14px}
   .cascade{width:36px;min-height:60px}
 }
 </style>
@@ -286,6 +241,7 @@ body{background:var(--bg);color:var(--text);font-family:'Inter',sans-serif;min-h
 <script src="/auth/mw-auth.js"></script>
 </head>
 <body>
+<script src="../qf-cards.js"></script>
 <script src="../qf-wallet.js"></script>
 
 <!-- TOP BAR -->
@@ -453,8 +409,8 @@ var G = (function() {
   }
 
   var GAME_ID = 'freecell';
-  var SUIT_SYMBOLS = ['\u2663','\u2666','\u2665','\u2660']; // clubs, diamonds, hearts, spades
-  var RANK_NAMES = ['A','2','3','4','5','6','7','8','9','10','J','Q','K'];
+  var SUIT_SYMBOLS = QFCards.SUIT_SYMBOLS;
+  var RANK_NAMES = QFCards.RANK_NAMES;
 
   // ── State ──────────────────────────────────────────────────────────
   var columns = [[],[],[],[],[],[],[],[]];
@@ -483,13 +439,13 @@ var G = (function() {
   // Drag state
   var dragData = null;
 
-  // ── Card helpers ───────────────────────────────────────────────────
-  function cardSuit(c) { return Math.floor(c / 13); }
-  function cardRank(c) { return c % 13; }
-  function cardColor(c) { var s = cardSuit(c); return (s === 1 || s === 2) ? 1 : 0; }
-  function suitSymbol(c) { return SUIT_SYMBOLS[cardSuit(c)]; }
-  function rankName(c) { return RANK_NAMES[cardRank(c)]; }
-  function suitClass(c) { return cardColor(c) === 1 ? 'red-suit' : 'black-suit'; }
+  // ── Card helpers (from QFCards shared module) ──────────────────────
+  var cardSuit = QFCards.cardSuit;
+  var cardRank = QFCards.cardRank;
+  var cardColor = QFCards.cardColor;
+  var suitSymbol = QFCards.suitSymbol;
+  var rankName = QFCards.rankName;
+  var suitClass = QFCards.suitClass;
 
   // ── Microsoft deal algorithm ──────────────────────────────────────
   function msDeal(dealNumber) {
@@ -736,64 +692,8 @@ var G = (function() {
     return Math.max(18, Math.floor(h * 0.3));
   }
 
-  function renderPips(cardVal, cardEl) {
-    var rank = cardRank(cardVal); // 0=A .. 12=K
-    var color = cardColor(cardVal) === 1 ? 'var(--ink-red)' : 'var(--ink-black)';
-    var sym = suitSymbol(cardVal);
-
-    var pip_area = document.createElement('div');
-    pip_area.className = 'pip-area';
-    cardEl.appendChild(pip_area);
-
-    // Face cards (J=10, Q=11, K=12)
-    if (rank >= 10) {
-      var face = document.createElement('div');
-      face.className = 'card-face-letter';
-      face.textContent = RANK_NAMES[rank];
-      face.style.color = color;
-      var faceSuit = document.createElement('span');
-      faceSuit.className = 'card-face-suit';
-      faceSuit.textContent = sym;
-      faceSuit.style.color = color;
-      face.appendChild(faceSuit);
-      pip_area.appendChild(face);
-      return;
-    }
-
-    // Number cards (A–10): single centred watermark suit symbol
-    var wm = document.createElement('span');
-    wm.className = 'card-watermark';
-    wm.textContent = sym;
-    wm.style.color = color;
-    pip_area.appendChild(wm);
-  }
-
-  // ── Create card DOM element ───────────────────────────────────────
-  function createCardEl(cardVal) {
-    var div = document.createElement('div');
-    var sc = suitClass(cardVal);
-    div.className = 'card ' + sc;
-    div.dataset.card = cardVal;
-
-    // Top-left index
-    var tl = document.createElement('div');
-    tl.className = 'card-tl';
-    tl.innerHTML = '<span class="card-rank">' + rankName(cardVal) + '</span>' +
-                   '<span class="card-suit-idx">' + suitSymbol(cardVal) + '</span>';
-    div.appendChild(tl);
-
-    // Bottom-right index (rotated)
-    var br = document.createElement('div');
-    br.className = 'card-br';
-    br.innerHTML = '<span class="card-rank">' + rankName(cardVal) + '</span>' +
-                   '<span class="card-suit-idx">' + suitSymbol(cardVal) + '</span>';
-    div.appendChild(br);
-
-    // Centre area
-    renderPips(cardVal, div);
-
-    return div;
-  }
+  // Card rendering from shared QFCards module
+  var createCardEl = QFCards.createCardEl;
 
   // ── Render board ──────────────────────────────────────────────────
   function render() {
