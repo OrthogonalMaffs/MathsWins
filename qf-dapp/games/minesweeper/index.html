@@ -40,11 +40,16 @@
   --green:         #3a8a5c;
   --red:           #b03a3a;
   --blue:          #3a6a9c;
+  /* Classic Minesweeper palette */
+  --ms-face:       #c0c0c0;
+  --ms-hi:         #ffffff;
+  --ms-lo:         #808080;
+  --ms-dark:       #404040;
 }
 *,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
 body{background:var(--bg);color:var(--text);font-family:'Inter',sans-serif;min-height:100vh;display:flex;flex-direction:column;align-items:center;-webkit-tap-highlight-color:transparent}
 
-.page{width:100%;max-width:560px;padding:2rem 1rem 4rem;display:flex;flex-direction:column;align-items:center;gap:1.2rem}
+.page{width:100%;max-width:620px;padding:2rem 1rem 4rem;display:flex;flex-direction:column;align-items:center;gap:1.2rem}
 
 /* ── Header ── */
 .game-header{text-align:center}
@@ -97,47 +102,107 @@ body{background:var(--bg);color:var(--text);font-family:'Inter',sans-serif;min-h
 .diff-btn:hover{border-color:var(--silver-border);color:var(--silver)}
 .diff-btn.active{border-color:var(--silver);color:var(--silver);background:var(--silver-dim)}
 
-/* ── Status bar ── */
-.status-bar{display:flex;gap:0.8rem;width:100%;background:var(--surface);border:1px solid var(--border);border-radius:10px;padding:0.75rem 1rem;justify-content:space-around}
-.si{display:flex;flex-direction:column;align-items:center;gap:0.15rem}
-.si .si-val{font-family:'JetBrains Mono',monospace;font-size:1rem;font-weight:500;color:var(--silver-bright)}
-.si .si-lbl{font-family:'JetBrains Mono',monospace;font-size:0.42rem;letter-spacing:0.12em;text-transform:uppercase;color:var(--muted)}
+/* ── Classic Minesweeper Panel ── */
+.ms-panel{
+  background:var(--ms-face);
+  border:3px solid;
+  border-top-color:var(--ms-hi);border-left-color:var(--ms-hi);
+  border-right-color:var(--ms-dark);border-bottom-color:var(--ms-dark);
+  padding:6px;
+  width:100%;
+}
+
+/* ── Header bar (mine counter / smiley / timer) ── */
+.ms-header{
+  display:flex;justify-content:space-between;align-items:center;
+  background:var(--ms-face);padding:4px 6px;margin-bottom:6px;
+  border:2px solid;
+  border-top-color:var(--ms-lo);border-left-color:var(--ms-lo);
+  border-right-color:var(--ms-hi);border-bottom-color:var(--ms-hi);
+}
+.ms-lcd{
+  font-family:'JetBrains Mono',monospace;font-weight:700;
+  font-size:1.5rem;letter-spacing:0.05em;line-height:1;
+  background:#000;color:#ff0000;
+  padding:2px 6px;min-width:3.2rem;text-align:right;
+  border:2px solid;
+  border-top-color:var(--ms-lo);border-left-color:var(--ms-lo);
+  border-right-color:var(--ms-hi);border-bottom-color:var(--ms-hi);
+}
+.ms-smiley{
+  width:36px;height:36px;font-size:1.3rem;line-height:36px;text-align:center;
+  background:var(--ms-face);cursor:pointer;border:2px solid;user-select:none;
+  border-top-color:var(--ms-hi);border-left-color:var(--ms-hi);
+  border-right-color:var(--ms-lo);border-bottom-color:var(--ms-lo);
+}
+.ms-smiley:active{
+  border-top-color:var(--ms-lo);border-left-color:var(--ms-lo);
+  border-right-color:var(--ms-hi);border-bottom-color:var(--ms-hi);
+}
 
 /* ── Board ── */
-.board-wrap{width:100%;display:flex;justify-content:center;overflow:hidden}
-.board{display:grid;gap:1px;background:var(--grid-border);border:2px solid var(--grid-box);border-radius:4px;overflow:hidden;position:relative;touch-action:manipulation}
-.cell{
-  background:var(--surface2);display:flex;align-items:center;justify-content:center;
-  cursor:pointer;position:relative;transition:background 0.1s;border:none;outline:none;
-  min-width:28px;min-height:28px;user-select:none;-webkit-user-select:none;
+.board-wrap{display:flex;justify-content:center;overflow:hidden}
+.board{
+  display:grid;gap:0px;
+  background:var(--ms-face);
+  border:3px solid;
+  border-top-color:var(--ms-lo);border-left-color:var(--ms-lo);
+  border-right-color:var(--ms-hi);border-bottom-color:var(--ms-hi);
+  overflow:hidden;position:relative;touch-action:manipulation;
 }
-.cell:hover{background:var(--surface3)}
-.cell.revealed{background:var(--surface);cursor:default}
-.cell.revealed-zero{background:rgba(30,32,37,0.8)}
-.cell.flagged{background:var(--surface2)}
-.cell.detonated{background:rgba(176,58,58,0.45)}
-.cell.mine-show{background:var(--surface)}
-.cell.incorrect-flag{background:rgba(176,58,58,0.15)}
-.cell-val{font-family:'JetBrains Mono',monospace;font-size:clamp(0.65rem,2.2vw,0.95rem);font-weight:700;line-height:1;user-select:none;-webkit-user-select:none}
-.cell-flag{font-size:clamp(0.7rem,2.4vw,1rem);line-height:1;user-select:none}
-.cell-mine{font-size:clamp(0.7rem,2.4vw,1rem);line-height:1;user-select:none}
 
-/* Minesweeper number colours (dark theme adapted) */
-.num-1{color:#5b9bd5}
-.num-2{color:#6abf69}
-.num-3{color:#e05555}
-.num-4{color:#4a6fa5}
-.num-5{color:#a04040}
-.num-6{color:#4db8a4}
-.num-7{color:#8a8f9c}
-.num-8{color:#6a6e7a}
+/* ── Cells ── */
+.cell{
+  display:flex;align-items:center;justify-content:center;
+  cursor:pointer;position:relative;
+  user-select:none;-webkit-user-select:none;
+  background:var(--ms-face);
+  border:3px solid;
+  border-top-color:var(--ms-hi);border-left-color:var(--ms-hi);
+  border-right-color:var(--ms-lo);border-bottom-color:var(--ms-lo);
+}
+.cell:active:not(.revealed):not(.flagged){
+  border:1px solid var(--ms-lo);
+  background:var(--ms-face);
+}
+.cell.revealed{
+  background:var(--ms-face);cursor:default;
+  border:1px solid var(--ms-lo);
+}
+.cell.revealed-zero{
+  background:var(--ms-face);cursor:default;
+  border:1px solid var(--ms-lo);
+}
+.cell.flagged{
+  background:var(--ms-face);
+  border:3px solid;
+  border-top-color:var(--ms-hi);border-left-color:var(--ms-hi);
+  border-right-color:var(--ms-lo);border-bottom-color:var(--ms-lo);
+}
+.cell.detonated{background:#ff0000;border:1px solid var(--ms-lo)}
+.cell.mine-show{background:var(--ms-face);border:1px solid var(--ms-lo)}
+.cell.incorrect-flag{background:var(--ms-face);border:1px solid var(--ms-lo)}
+
+.cell-val{font-family:'JetBrains Mono',monospace;font-weight:700;line-height:1;user-select:none;-webkit-user-select:none}
+.cell-flag{line-height:1;user-select:none}
+.cell-mine{line-height:1;user-select:none}
+
+/* Classic number colours */
+.num-1{color:#0000ff}
+.num-2{color:#008000}
+.num-3{color:#ff0000}
+.num-4{color:#000080}
+.num-5{color:#800000}
+.num-6{color:#008080}
+.num-7{color:#000000}
+.num-8{color:#808080}
 
 /* ── Board sweep (win animation) ── */
 @keyframes light-sweep{0%{background-position:-200% -200%}100%{background-position:200% 200%}}
-.board-sweep{position:absolute;inset:0;pointer-events:none;z-index:10;background:linear-gradient(135deg,transparent 35%,rgba(255,255,255,0.18) 50%,transparent 65%);background-size:200% 200%;animation:light-sweep 900ms ease-in-out forwards}
+.board-sweep{position:absolute;inset:0;pointer-events:none;z-index:10;background:linear-gradient(135deg,transparent 35%,rgba(255,255,255,0.3) 50%,transparent 65%);background-size:200% 200%;animation:light-sweep 900ms ease-in-out forwards}
 
 /* ── Detonation pulse ── */
-@keyframes det-pulse{0%{background:rgba(176,58,58,0.45)}50%{background:rgba(176,58,58,0.7)}100%{background:rgba(176,58,58,0.45)}}
+@keyframes det-pulse{0%{background:#ff0000}50%{background:#cc0000}100%{background:#ff0000}}
 .cell.det-pulse{animation:det-pulse 0.6s ease 2}
 
 /* ── Buttons ── */
@@ -160,6 +225,17 @@ body{background:var(--bg);color:var(--text);font-family:'Inter',sans-serif;min-h
 
 .msg{font-family:'JetBrains Mono',monospace;font-size:0.6rem;text-align:center;min-height:1rem;color:var(--red)}
 .msg.ok{color:var(--green)}
+
+/* ── How to Play (below board) ── */
+.ms-how-to-play{
+  width:100%;font-size:.68rem;color:var(--muted);line-height:1.7;
+  background:var(--surface);border:1px solid var(--border);border-radius:10px;
+  padding:1rem 1.2rem;
+}
+.ms-how-to-play h3{font-family:'Playfair Display',serif;font-size:.9rem;color:var(--text-white);margin-bottom:.4rem}
+.ms-how-to-play ul{margin:0 0 0 1.2rem;padding:0}
+.ms-how-to-play li{margin-bottom:.15rem}
+.ms-how-to-play strong{color:var(--text)}
 
 /* ── Results Modal ── */
 .modal-overlay{position:fixed;inset:0;background:rgba(5,7,9,0.94);backdrop-filter:blur(8px);z-index:200;display:flex;align-items:center;justify-content:center;padding:1rem}
@@ -189,6 +265,10 @@ body{background:var(--bg);color:var(--text);font-family:'Inter',sans-serif;min-h
   .game-title{font-size:2rem}
   .controls{gap:0.3rem}
   .btn{padding:0.5rem 0.5rem;font-size:0.5rem}
+  .ms-lcd{font-size:1.1rem;min-width:2.4rem;padding:2px 4px}
+  .ms-smiley{width:30px;height:30px;font-size:1.1rem;line-height:30px}
+  .ms-panel{padding:4px}
+  .ms-header{padding:3px 4px;margin-bottom:4px}
 }
 </style>
 <script src="https://cdn.jsdelivr.net/npm/ethers@6/dist/ethers.umd.min.js"></script>
@@ -259,14 +339,29 @@ body{background:var(--bg);color:var(--text);font-family:'Inter',sans-serif;min-h
   </div>
 
   <!-- GAME SCREEN -->
-  <div class="status-bar" style="display:none" id="status-bar">
-    <div class="si"><span class="si-val" id="sv-t">00:00.000</span><span class="si-lbl">Time</span></div>
-    <div class="si"><span class="si-val" id="sv-m">0</span><span class="si-lbl">Mines Left</span></div>
-    <div class="si"><span class="si-val" id="sv-size">--</span><span class="si-lbl">Board</span></div>
-  </div>
+  <div id="game-area" style="display:none;width:100%">
+    <div class="ms-panel" id="ms-panel">
+      <!-- Classic header: mines | smiley | timer -->
+      <div class="ms-header">
+        <div class="ms-lcd" id="lcd-mines">000</div>
+        <div class="ms-smiley" id="ms-smiley" title="New game">&#128578;</div>
+        <div class="ms-lcd" id="lcd-timer">000</div>
+      </div>
+      <!-- Board -->
+      <div class="board-wrap">
+        <div class="board" id="board"></div>
+      </div>
+    </div>
 
-  <div class="board-wrap" style="display:none" id="board-wrap">
-    <div class="board" id="board"></div>
+    <!-- How to play — always visible below board -->
+    <div class="ms-how-to-play" style="margin-top:1rem">
+      <h3>Controls</h3>
+      <ul>
+        <li><strong>Left click / tap</strong> — reveal a cell</li>
+        <li><strong>Right click / long press</strong> — place or remove a flag</li>
+        <li><strong>Click a number</strong> — chord (reveals neighbours if your flags are correct)</li>
+      </ul>
+    </div>
   </div>
 
   <div class="msg" id="msg-bar"></div>
@@ -387,6 +482,12 @@ var G = (function() {
   var leagueId = null;
   var leaguePuzzleIndex = null;
 
+  // Smiley states
+  var SMILEY_NORMAL = '\u{1F642}';
+  var SMILEY_CLICK  = '\u{1F62E}';
+  var SMILEY_WIN    = '\u{1F60E}';
+  var SMILEY_DEAD   = '\u{1F635}';
+
   // ── API helper ──────────────────────────────────────────────────────
   async function api(url, body, method) {
     var headers = qfWallet.authHeaders();
@@ -418,32 +519,63 @@ var G = (function() {
     return Date.now() - startTime;
   }
 
+  function padLcd(n) {
+    var s = String(Math.max(0, Math.min(999, n)));
+    while (s.length < 3) s = '0' + s;
+    return s;
+  }
+
+  function setSmiley(emoji) {
+    document.getElementById('ms-smiley').textContent = emoji;
+  }
+
   // ── Timer ───────────────────────────────────────────────────────────
   function startTimer() {
     if (timerStarted) return;
     timerStarted = true;
     startTime = Date.now();
     timerInterval = setInterval(function() {
-      document.getElementById('sv-t').textContent = formatTime(getElapsedMs());
-    }, 100);
+      var sec = Math.floor(getElapsedMs() / 1000);
+      document.getElementById('lcd-timer').textContent = padLcd(sec);
+    }, 500);
   }
 
   function stopTimer() {
     finalTimeMs = Date.now() - startTime;
     if (timerInterval) { clearInterval(timerInterval); timerInterval = null; }
-    document.getElementById('sv-t').textContent = formatTime(finalTimeMs);
+    var sec = Math.floor(finalTimeMs / 1000);
+    document.getElementById('lcd-timer').textContent = padLcd(sec);
+  }
+
+  // ── Update mine counter ─────────────────────────────────────────────
+  function updateMineCounter() {
+    var remaining = Math.max(0, mineCount - flagCount);
+    document.getElementById('lcd-mines').textContent = padLcd(remaining);
   }
 
   // ── Board rendering ─────────────────────────────────────────────────
   function buildBoard() {
     var board = document.getElementById('board');
+    var panel = document.getElementById('ms-panel');
     board.innerHTML = '';
     board.style.gridTemplateColumns = 'repeat(' + boardWidth + ', 1fr)';
 
-    // Calculate cell size for mobile fitting
-    var maxBoardPx = Math.min(window.innerWidth - 24, 540);
-    var cellSize = Math.max(28, Math.floor((maxBoardPx - boardWidth) / boardWidth));
-    board.style.width = (cellSize * boardWidth + boardWidth + 3) + 'px';
+    // Calculate square cell size to fit viewport
+    // Panel has 6px padding each side + 3px border each side = 18px horizontal
+    // Board has 3px border each side = 6px
+    var panelPad = 18 + 6;
+    var pageMargin = window.innerWidth < 480 ? 16 : 32;
+    var maxAvail = Math.min(window.innerWidth - pageMargin, 600) - panelPad;
+    var cellPx = Math.floor(maxAvail / Math.max(boardWidth, boardHeight));
+    cellPx = Math.max(20, Math.min(cellPx, 36));
+
+    var boardPx = cellPx * boardWidth;
+    board.style.width = boardPx + 'px';
+    panel.style.width = (boardPx + panelPad) + 'px';
+    panel.style.maxWidth = '100%';
+
+    // Set font size proportional to cell size
+    var fontSize = Math.max(10, Math.floor(cellPx * 0.55));
 
     cells = [];
     cellState = [];
@@ -454,6 +586,8 @@ var G = (function() {
       var cell = document.createElement('div');
       cell.className = 'cell';
       cell.dataset.idx = i;
+      cell.style.width = cellPx + 'px';
+      cell.style.height = cellPx + 'px';
 
       // Mouse events
       cell.addEventListener('mousedown', onCellMouseDown);
@@ -470,6 +604,10 @@ var G = (function() {
       cellState.push('hidden');
       cellValues.push(null);
     }
+
+    // Apply font sizes
+    board.style.setProperty('--cell-font', fontSize + 'px');
+    board.style.setProperty('--flag-font', Math.floor(cellPx * 0.5) + 'px');
   }
 
   // ── Cell interaction handlers ───────────────────────────────────────
@@ -484,14 +622,15 @@ var G = (function() {
       return;
     }
 
-    // Left click
+    // Left click — show "worried" smiley
     if (e.button === 0) {
+      if (cellState[idx] !== 'revealed') setSmiley(SMILEY_CLICK);
       handleClick(idx);
     }
   }
 
   function onCellMouseUp(e) {
-    // nothing needed for mouse
+    if (!done) setSmiley(SMILEY_NORMAL);
   }
 
   function onCellTouchStart(e) {
@@ -502,8 +641,10 @@ var G = (function() {
     var idx = parseInt(cell.dataset.idx);
 
     longPressTriggered = false;
+    if (cellState[idx] !== 'revealed') setSmiley(SMILEY_CLICK);
     longPressTimer = setTimeout(function() {
       longPressTriggered = true;
+      setSmiley(SMILEY_NORMAL);
       toggleFlag(idx);
     }, LONG_PRESS_MS);
   }
@@ -511,6 +652,7 @@ var G = (function() {
   function onCellTouchEnd(e) {
     if (done) return;
     if (longPressTimer) { clearTimeout(longPressTimer); longPressTimer = null; }
+    setSmiley(SMILEY_NORMAL);
     if (longPressTriggered) { longPressTriggered = false; return; }
 
     var idx = parseInt(this.dataset.idx);
@@ -519,6 +661,7 @@ var G = (function() {
 
   function onCellTouchMove(e) {
     if (longPressTimer) { clearTimeout(longPressTimer); longPressTimer = null; }
+    setSmiley(SMILEY_NORMAL);
   }
 
   function handleClick(idx) {
@@ -557,7 +700,7 @@ var G = (function() {
       if (data.flagged) {
         cellState[idx] = 'flagged';
         cells[idx].className = 'cell flagged';
-        cells[idx].innerHTML = '<span class="cell-flag">\u2691</span>';
+        cells[idx].innerHTML = '<span class="cell-flag" style="font-size:var(--flag-font)">\u2691</span>';
         flagCount++;
       } else {
         cellState[idx] = 'hidden';
@@ -670,7 +813,7 @@ var G = (function() {
         el.innerHTML = '';
       } else {
         el.className = 'cell revealed';
-        el.innerHTML = '<span class="cell-val num-' + v + '">' + v + '</span>';
+        el.innerHTML = '<span class="cell-val num-' + v + '" style="font-size:var(--cell-font)">' + v + '</span>';
       }
     }
     updateMineCounter();
@@ -680,6 +823,7 @@ var G = (function() {
   async function handleWin(points) {
     done = true;
     stopTimer();
+    setSmiley(SMILEY_WIN);
 
     // Win sweep animation
     var board = document.getElementById('board');
@@ -711,10 +855,11 @@ var G = (function() {
   function handleDetonation(detonated, mines, incorrectFlags, partialScore) {
     done = true;
     stopTimer();
+    setSmiley(SMILEY_DEAD);
 
     // Show the detonated cell
     cells[detonated].className = 'cell detonated det-pulse';
-    cells[detonated].innerHTML = '<span class="cell-mine">\uD83D\uDCA3</span>';
+    cells[detonated].innerHTML = '<span class="cell-mine" style="font-size:var(--flag-font)">\uD83D\uDCA3</span>';
 
     // Show all other mines
     var mineSet = new Set(mines);
@@ -723,7 +868,7 @@ var G = (function() {
       if (m === detonated) continue;
       if (cellState[m] === 'flagged') continue; // correctly flagged
       cells[m].className = 'cell mine-show';
-      cells[m].innerHTML = '<span class="cell-mine">\uD83D\uDCA3</span>';
+      cells[m].innerHTML = '<span class="cell-mine" style="font-size:var(--flag-font)">\uD83D\uDCA3</span>';
     }
 
     // Show incorrect flags
@@ -731,7 +876,7 @@ var G = (function() {
       for (var j = 0; j < incorrectFlags.length; j++) {
         var f = incorrectFlags[j];
         cells[f].className = 'cell incorrect-flag';
-        cells[f].innerHTML = '<span class="cell-val" style="color:var(--red);">\u2717</span>';
+        cells[f].innerHTML = '<span class="cell-val" style="color:#ff0000;font-size:var(--cell-font)">\u2717</span>';
       }
     }
 
@@ -770,10 +915,10 @@ var G = (function() {
     }
   }
 
-  // ── Update mine counter ─────────────────────────────────────────────
-  function updateMineCounter() {
-    document.getElementById('sv-m').textContent = Math.max(0, mineCount - flagCount);
-  }
+  // ── Smiley click = restart ──────────────────────────────────────────
+  document.getElementById('ms-smiley').addEventListener('click', function() {
+    location.reload();
+  });
 
   // ── Start game ──────────────────────────────────────────────────────
   async function startGame() {
@@ -809,14 +954,12 @@ var G = (function() {
 
       // Hide pre-game, show game
       document.getElementById('pre-game').style.display = 'none';
-      document.getElementById('status-bar').style.display = 'flex';
-      document.getElementById('board-wrap').style.display = 'flex';
+      document.getElementById('game-area').style.display = '';
 
-      // Update status bar
-      document.getElementById('sv-t').textContent = '00:00.000';
-      document.getElementById('sv-m').textContent = mineCount;
-      var sizeLabels = { pocket: '12\u00D712', beginner: '9\u00D79', intermediate: '16\u00D716', expert: '30\u00D716' };
-      document.getElementById('sv-size').textContent = sizeLabels[difficulty] || difficulty;
+      // Update LCD displays
+      document.getElementById('lcd-mines').textContent = padLcd(mineCount);
+      document.getElementById('lcd-timer').textContent = '000';
+      setSmiley(SMILEY_NORMAL);
 
       buildBoard();
     } catch (e) {
@@ -855,13 +998,11 @@ var G = (function() {
       if (data.puzzleIndex !== undefined) leaguePuzzleIndex = data.puzzleIndex;
 
       document.getElementById('pre-game').style.display = 'none';
-      document.getElementById('status-bar').style.display = 'flex';
-      document.getElementById('board-wrap').style.display = 'flex';
+      document.getElementById('game-area').style.display = '';
 
-      document.getElementById('sv-t').textContent = '00:00.000';
-      document.getElementById('sv-m').textContent = mineCount;
-      var sizeLabels = { pocket: '12\u00D712', beginner: '9\u00D79', intermediate: '16\u00D716', expert: '30\u00D716' };
-      document.getElementById('sv-size').textContent = sizeLabels[difficulty] || difficulty;
+      document.getElementById('lcd-mines').textContent = padLcd(mineCount);
+      document.getElementById('lcd-timer').textContent = '000';
+      setSmiley(SMILEY_NORMAL);
 
       buildBoard();
     } catch (e) {
