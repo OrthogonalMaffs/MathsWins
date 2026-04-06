@@ -41,7 +41,7 @@ Split from MaffsGames in March 2025. MaffsGames = free schools games. MathsWins 
 ## Current State
 - 9 academy courses with Stripe payments (Module 1 free)
 - 28 free tools (finance, self-employment, property, family, betting, crypto)
-- 16 games total (8 competitive + 8 free on dApp, 13 on main site)
+- 22 games on dApp (8 competitive incl. 2 Coming Soon, 13 free, 1 duel-only), 13 on main site
 - 6 free everyday maths courses
 - 20 free parent guides
 - /learn/ hub with 7 articles (poker odds, pot odds, salary sacrifice, overround, card counting, impermanent loss, pay rise/fiscal drag)
@@ -78,11 +78,12 @@ Split from MaffsGames in March 2025. MaffsGames = free schools games. MathsWins 
 - **Wallet Module:** `qf-dapp/games/qf-wallet.js` — shared across all games, QNS reverse resolution, EIP-6963, auto-reconnect with 500ms delay
 
 ### Registered Games
-**League-capable (6):** sudoku-duel, countdown-numbers, cryptarithmetic-club, kenken, nonogram, kakuro
-**Competitive, no league (2):** sequence-solver, prime-or-composite
-**Free play (3):** estimation-engine, minesweeper (also league-capable), freecell (also league-capable)
-**Duel-only:** battleships (turn-based async, vs CPU free play)
+**League-capable (6):** sudoku-duel, minesweeper, freecell, kenken, nonogram, kakuro
+**Coming Soon (2):** poker-patience, cribbage-solitaire (competitive grid placeholders)
+**Free play (13):** battleships (duel-only), countdown-numbers, cryptarithmetic-club, estimation-engine, sequence-solver, prime-or-composite, higher-or-lower, maffsy, 52dle, towers-of-hanoi, dont-press-it, memory-matrix, rps-vs-machine
+**Card Games section:** FreeCell (live), Cribbage Solitaire, Poker Patience, Golf Solitaire, Pyramid (last 4 Coming Soon)
 **Renamed:** Equatle → Maffsy (slug: /games/maffsy/)
+**Demoted from competitive:** countdown-numbers, cryptarithmetic-club (too short for league play)
 
 ### SQLite Tables (22+)
 | Table | Purpose |
