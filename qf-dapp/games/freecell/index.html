@@ -40,6 +40,8 @@
   --green:         #3a8a5c;
   --red:           #b03a3a;
   --blue:          #3a6a9c;
+  --ink-black:     #1c1a17;
+  --ink-red:       #9e1a1a;
 }
 *,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
 body{background:var(--bg);color:var(--text);font-family:'Inter',sans-serif;min-height:100vh;display:flex;flex-direction:column;align-items:center;-webkit-tap-highlight-color:transparent}
@@ -114,45 +116,42 @@ body{background:var(--bg);color:var(--text);font-family:'Inter',sans-serif;min-h
 
 /* ── Card slots (free cells and foundations) ── */
 .card-slot{
-  width:60px;height:85px;border-radius:10px;display:flex;align-items:center;justify-content:center;
+  width:60px;height:85px;border-radius:8px;display:flex;align-items:center;justify-content:center;
   position:relative;cursor:pointer;transition:box-shadow .15s;
 }
-.card-slot.empty-fc{border:1.5px dashed rgba(184,188,198,0.25);background:rgba(255,255,255,0.04)}
-.card-slot.empty-fn{border:1.5px dashed rgba(184,188,198,0.25);background:rgba(255,255,255,0.04)}
-.card-slot .suit-label{font-size:1.6rem;color:rgba(184,188,198,0.4);user-select:none;pointer-events:none}
+.card-slot.empty-fc{background:rgba(242,232,213,0.04);border:1.5px dashed rgba(212,196,160,0.2);border-radius:8px}
+.card-slot.empty-fn{background:rgba(242,232,213,0.04);border:1.5px solid rgba(212,196,160,0.15);border-radius:8px}
+.card-slot .suit-label{font-size:1.4rem;color:rgba(212,196,160,0.18);user-select:none;pointer-events:none}
 
 /* ── Cards ── */
 .card{
-  width:60px;height:85px;border-radius:10px;background:#fdfaf5;
-  border:1px solid #ddd5c8;
-  box-shadow:0 2px 10px rgba(0,0,0,0.45),inset 0 0 0 1px rgba(255,255,255,0.8);
-  display:flex;flex-direction:column;
-  align-items:flex-start;justify-content:flex-start;padding:0;
-  cursor:pointer;user-select:none;-webkit-user-select:none;position:relative;
+  width:60px;height:85px;border-radius:8px;background:#f2e8d5;
+  border:1px solid #d4c4a0;
+  box-shadow:0 4px 16px rgba(0,0,0,0.55),0 1px 4px rgba(0,0,0,0.3),inset 0 0 20px rgba(180,160,120,0.08);
+  position:relative;cursor:pointer;user-select:none;-webkit-user-select:none;
   transition:box-shadow .15s;
 }
 .card.selected{
-  box-shadow:0 0 0 3px #c9a84c,0 4px 16px rgba(0,0,0,0.5);
+  box-shadow:0 0 0 3px #c9a84c,0 6px 20px rgba(0,0,0,0.65),inset 0 0 20px rgba(180,160,120,0.08);
   z-index:5;
 }
 .card.dragging{opacity:0.6;z-index:50}
 
 /* ── Card corners ── */
-.card-corner{position:absolute;display:flex;flex-direction:column;align-items:center;line-height:1;pointer-events:none;font-family:'Georgia','Times New Roman',serif;font-weight:700;font-size:0.7rem}
-.card-corner.top-left{top:3px;left:4px}
-.card-corner.bottom-right{bottom:3px;right:4px;transform:rotate(180deg)}
-.card-corner .corner-rank{display:block}
-.card-corner .corner-suit{display:block;font-size:0.65rem;margin-top:-1px}
+.card-tl,.card-br{position:absolute;display:flex;flex-direction:column;align-items:center;font-family:'Georgia','Times New Roman',serif;font-weight:700;line-height:1.05}
+.card-tl{top:4px;left:5px}
+.card-br{bottom:4px;right:5px;transform:rotate(180deg)}
+.card-rank{font-size:0.82rem}
+.card-suit-idx{font-size:0.7rem}
+.card.red-suit .card-tl,.card.red-suit .card-br{color:var(--ink-red)}
+.card.black-suit .card-tl,.card.black-suit .card-br{color:var(--ink-black)}
 
-/* ── Card pips ── */
-.card-pips{position:absolute;inset:0;pointer-events:none;display:grid;padding:16px 6px 16px 6px}
-.card-pips .pip{font-family:'Georgia','Times New Roman',serif;text-align:center;line-height:1}
-.card-pips .pip.flip{transform:rotate(180deg)}
-.card-face-letter{position:absolute;top:50%;left:50%;transform:translate(-50%,-50%);font-family:'Georgia','Times New Roman',serif;font-size:1.6rem;font-weight:700;pointer-events:none}
-
-/* ── Card colours ── */
-.card.black-suit .card-corner,.card.black-suit .pip,.card.black-suit .card-face-letter{color:#1a1a1a}
-.card.red-suit .card-corner,.card.red-suit .pip,.card.red-suit .card-face-letter{color:#cc0000}
+/* ��─ Card pips ── */
+.pip-area{position:absolute;top:22px;bottom:22px;left:4px;right:4px}
+.pip{position:absolute;font-size:0.8rem;line-height:1;display:block}
+.pip-area .pip:only-child{font-size:1.8rem}
+.card-face-letter{position:absolute;top:50%;left:50%;transform:translate(-50%,-50%);font-family:'Playfair Display',serif;font-size:1.8rem;font-weight:700;line-height:1}
+.card-face-frame{position:absolute;inset:6px;border:1.5px solid;border-radius:4px;pointer-events:none;opacity:0.25}
 
 /* ── Cascade columns ── */
 .cascades{display:flex;gap:3px;width:100%;justify-content:center}
@@ -254,15 +253,16 @@ body{background:var(--bg);color:var(--text);font-family:'Inter',sans-serif;min-h
 @media(max-width:520px){
   .page{padding:1.5rem 0.5rem 3rem}
   .game-title{font-size:2rem}
-  .card-slot{width:42px;height:60px;border-radius:8px}
-  .card{width:42px;height:60px;border-radius:8px}
-  .card-corner{font-size:0.5rem}
-  .card-corner .corner-suit{font-size:0.45rem}
-  .card-corner.top-left{top:2px;left:3px}
-  .card-corner.bottom-right{bottom:2px;right:3px}
-  .card-pips{padding:12px 4px 12px 4px}
-  .card-pips .pip{font-size:0.55rem}
-  .card-face-letter{font-size:1.1rem}
+  .card-slot{width:42px;height:60px;border-radius:7px}
+  .card{width:42px;height:60px;border-radius:7px}
+  .card-rank{font-size:0.62rem}
+  .card-suit-idx{font-size:0.55rem}
+  .card-tl{top:2px;left:3px}
+  .card-br{bottom:2px;right:3px}
+  .pip{font-size:0.6rem}
+  .pip-area .pip:only-child{font-size:1.3rem}
+  .card-face-letter{font-size:1.3rem}
+  .pip-area{top:18px;bottom:18px}
   .cascade{width:42px;min-height:80px}
   .cascades{gap:2px}
   .fc-group,.fn-group{gap:2px}
@@ -271,12 +271,14 @@ body{background:var(--bg);color:var(--text);font-family:'Inter',sans-serif;min-h
   .btn{padding:0.5rem 0.5rem;font-size:0.5rem}
 }
 @media(max-width:380px){
-  .card-slot{width:36px;height:52px;border-radius:7px}
-  .card{width:36px;height:52px;border-radius:7px}
-  .card-corner{font-size:0.42rem}
-  .card-corner .corner-suit{font-size:0.38rem}
-  .card-pips .pip{font-size:0.45rem}
-  .card-face-letter{font-size:0.9rem}
+  .card-slot{width:36px;height:52px;border-radius:6px}
+  .card{width:36px;height:52px;border-radius:6px}
+  .card-rank{font-size:0.52rem}
+  .card-suit-idx{font-size:0.46rem}
+  .pip{font-size:0.5rem}
+  .pip-area .pip:only-child{font-size:1.1rem}
+  .card-face-letter{font-size:1.1rem}
+  .pip-area{top:14px;bottom:14px}
   .cascade{width:36px;min-height:60px}
 }
 </style>
@@ -734,81 +736,83 @@ var G = (function() {
     return Math.max(18, Math.floor(h * 0.3));
   }
 
-  // ── Pip layout positions (row, col) for ranks 1-10 ─────────────
-  // Grid: 3 columns (L=0, C=1, R=2), rows positioned as fractions of card height
-  var PIP_LAYOUTS = {
-    1:  [{r:0.5,c:1}],
-    2:  [{r:0.2,c:1},{r:0.8,c:1,flip:true}],
-    3:  [{r:0.2,c:1},{r:0.5,c:1},{r:0.8,c:1,flip:true}],
-    4:  [{r:0.2,c:0},{r:0.2,c:2},{r:0.8,c:0,flip:true},{r:0.8,c:2,flip:true}],
-    5:  [{r:0.2,c:0},{r:0.2,c:2},{r:0.5,c:1},{r:0.8,c:0,flip:true},{r:0.8,c:2,flip:true}],
-    6:  [{r:0.2,c:0},{r:0.2,c:2},{r:0.5,c:0},{r:0.5,c:2},{r:0.8,c:0,flip:true},{r:0.8,c:2,flip:true}],
-    7:  [{r:0.2,c:0},{r:0.2,c:2},{r:0.35,c:1},{r:0.5,c:0},{r:0.5,c:2},{r:0.8,c:0,flip:true},{r:0.8,c:2,flip:true}],
-    8:  [{r:0.2,c:0},{r:0.2,c:2},{r:0.35,c:1},{r:0.5,c:0},{r:0.5,c:2},{r:0.65,c:1,flip:true},{r:0.8,c:0,flip:true},{r:0.8,c:2,flip:true}],
-    9:  [{r:0.2,c:0},{r:0.2,c:2},{r:0.38,c:0},{r:0.38,c:2},{r:0.5,c:1},{r:0.62,c:0,flip:true},{r:0.62,c:2,flip:true},{r:0.8,c:0,flip:true},{r:0.8,c:2,flip:true}],
-    10: [{r:0.2,c:0},{r:0.2,c:2},{r:0.32,c:1},{r:0.38,c:0},{r:0.38,c:2},{r:0.62,c:0,flip:true},{r:0.62,c:2,flip:true},{r:0.68,c:1,flip:true},{r:0.8,c:0,flip:true},{r:0.8,c:2,flip:true}]
+  // ── Pip coordinate lookup [top%, left%] ────────────────────────
+  var PIP_POSITIONS = {
+    1:  [[50,50]],
+    2:  [[22,50],[78,50]],
+    3:  [[22,50],[50,50],[78,50]],
+    4:  [[22,25],[22,75],[78,25],[78,75]],
+    5:  [[22,25],[22,75],[50,50],[78,25],[78,75]],
+    6:  [[22,25],[22,75],[50,25],[50,75],[78,25],[78,75]],
+    7:  [[22,25],[22,75],[50,25],[50,75],[78,25],[78,75],[35,50]],
+    8:  [[22,25],[22,75],[50,25],[50,75],[78,25],[78,75],[35,50],[65,50]],
+    9:  [[22,25],[22,75],[35,50],[50,25],[50,75],[65,50],[78,25],[78,75],[50,50]],
+    10: [[22,25],[22,75],[32,50],[50,25],[50,75],[68,50],[78,25],[78,75],[35,25],[65,75]]
   };
 
-  var COL_POSITIONS = ['18%','50%','82%'];
-
-  function renderPips(cardVal, container) {
+  function renderPips(cardVal, cardEl) {
     var rank = cardRank(cardVal); // 0=A .. 12=K
+    var color = cardColor(cardVal) === 1 ? 'var(--ink-red)' : 'var(--ink-black)';
     var sym = suitSymbol(cardVal);
-    var displayRank = rank + 1; // 1-13
 
-    // Face cards (J=11, Q=12, K=13): large centre letter
-    if (displayRank >= 11) {
-      var letter = document.createElement('span');
-      letter.className = 'card-face-letter';
-      letter.textContent = RANK_NAMES[rank];
-      container.appendChild(letter);
+    var pip_area = document.createElement('div');
+    pip_area.className = 'pip-area';
+    cardEl.appendChild(pip_area);
+
+    // Face cards (J=10, Q=11, K=12)
+    if (rank >= 10) {
+      var face = document.createElement('div');
+      face.className = 'card-face-letter';
+      face.textContent = RANK_NAMES[rank];
+      face.style.color = color;
+      pip_area.appendChild(face);
+
+      var frame = document.createElement('div');
+      frame.className = 'card-face-frame';
+      frame.style.borderColor = color;
+      cardEl.appendChild(frame);
       return;
     }
 
-    // Number cards (A=1 through 10): pip layout
-    var layout = PIP_LAYOUTS[displayRank];
-    if (!layout) return;
+    // Number cards (A=0 through 10=9)
+    var positions = PIP_POSITIONS[rank + 1];
+    if (!positions) return;
 
-    var pipsContainer = document.createElement('div');
-    pipsContainer.className = 'card-pips';
-    pipsContainer.style.position = 'absolute';
-    pipsContainer.style.inset = '0';
-
-    for (var i = 0; i < layout.length; i++) {
-      var p = layout[i];
+    for (var i = 0; i < positions.length; i++) {
       var pip = document.createElement('span');
-      pip.className = 'pip' + (p.flip ? ' flip' : '');
+      pip.className = 'pip';
       pip.textContent = sym;
-      pip.style.position = 'absolute';
-      pip.style.left = COL_POSITIONS[p.c];
-      pip.style.top = (p.r * 100) + '%';
-      pip.style.transform = 'translate(-50%,-50%)' + (p.flip ? ' rotate(180deg)' : '');
-      pip.style.fontSize = '0.75rem';
-      pipsContainer.appendChild(pip);
+      pip.style.top = positions[i][0] + '%';
+      pip.style.left = positions[i][1] + '%';
+      pip.style.color = color;
+      if (positions[i][0] > 55) pip.style.transform = 'translate(-50%,-50%) rotate(180deg)';
+      else pip.style.transform = 'translate(-50%,-50%)';
+      pip_area.appendChild(pip);
     }
-
-    container.appendChild(pipsContainer);
   }
 
   // ── Create card DOM element ───────────────────────────────────────
   function createCardEl(cardVal) {
     var div = document.createElement('div');
-    div.className = 'card ' + suitClass(cardVal);
+    var sc = suitClass(cardVal);
+    div.className = 'card ' + sc;
     div.dataset.card = cardVal;
 
-    // Top-left corner
-    var tl = document.createElement('span');
-    tl.className = 'card-corner top-left';
-    tl.innerHTML = '<span class="corner-rank">' + rankName(cardVal) + '</span><span class="corner-suit">' + suitSymbol(cardVal) + '</span>';
+    // Top-left index
+    var tl = document.createElement('div');
+    tl.className = 'card-tl';
+    tl.innerHTML = '<span class="card-rank">' + rankName(cardVal) + '</span>' +
+                   '<span class="card-suit-idx">' + suitSymbol(cardVal) + '</span>';
     div.appendChild(tl);
 
-    // Bottom-right corner
-    var br = document.createElement('span');
-    br.className = 'card-corner bottom-right';
-    br.innerHTML = '<span class="corner-rank">' + rankName(cardVal) + '</span><span class="corner-suit">' + suitSymbol(cardVal) + '</span>';
+    // Bottom-right index (rotated)
+    var br = document.createElement('div');
+    br.className = 'card-br';
+    br.innerHTML = '<span class="card-rank">' + rankName(cardVal) + '</span>' +
+                   '<span class="card-suit-idx">' + suitSymbol(cardVal) + '</span>';
     div.appendChild(br);
 
-    // Centre pips or face letter
+    // Centre area
     renderPips(cardVal, div);
 
     return div;
