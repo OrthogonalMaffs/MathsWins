@@ -150,8 +150,8 @@ body{background:var(--bg);color:var(--text);font-family:'Inter',sans-serif;min-h
 .pip-area{position:absolute;top:26px;bottom:22px;left:4px;right:4px}
 .card-watermark{position:absolute;top:50%;left:50%;transform:translate(-50%,-50%);font-size:2.2rem;opacity:0.12;pointer-events:none;user-select:none;line-height:1}
 .pip-area .card-watermark:only-child{font-size:2.8rem;opacity:0.18}
-.card-face-letter{position:absolute;top:50%;left:50%;transform:translate(-50%,-50%);font-family:'Playfair Display',serif;font-size:1.8rem;font-weight:700;line-height:1}
-.card-face-frame{position:absolute;inset:6px;border:1.5px solid;border-radius:4px;pointer-events:none;opacity:0.25}
+.card-face-letter{position:absolute;top:46%;left:50%;transform:translate(-50%,-50%);font-family:'Playfair Display',serif;font-size:1.8rem;font-weight:700;line-height:1;text-shadow:0 1px 2px rgba(0,0,0,0.15)}
+.card-face-suit{display:block;text-align:center;font-size:0.7rem;opacity:0.45;margin-top:2px;pointer-events:none}
 
 /* ── Cascade columns ── */
 .cascades{display:flex;gap:3px;width:100%;justify-content:center}
@@ -751,12 +751,12 @@ var G = (function() {
       face.className = 'card-face-letter';
       face.textContent = RANK_NAMES[rank];
       face.style.color = color;
+      var faceSuit = document.createElement('span');
+      faceSuit.className = 'card-face-suit';
+      faceSuit.textContent = sym;
+      faceSuit.style.color = color;
+      face.appendChild(faceSuit);
       pip_area.appendChild(face);
-
-      var frame = document.createElement('div');
-      frame.className = 'card-face-frame';
-      frame.style.borderColor = color;
-      cardEl.appendChild(frame);
       return;
     }
 
