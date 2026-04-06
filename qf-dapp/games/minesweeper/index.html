@@ -41,10 +41,10 @@
   --red:           #b03a3a;
   --blue:          #3a6a9c;
   /* Classic Minesweeper palette */
-  --ms-face:       #c0c0c0;
-  --ms-hi:         #ffffff;
-  --ms-lo:         #808080;
-  --ms-dark:       #404040;
+  --ms-face:       #c8ccd6;
+  --ms-hi:         #e8eaf0;
+  --ms-lo:         #8a8f9c;
+  --ms-dark:       #4a4e5a;
 }
 *,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
 body{background:var(--bg);color:var(--text);font-family:'Inter',sans-serif;min-height:100vh;display:flex;flex-direction:column;align-items:center;-webkit-tap-highlight-color:transparent}
@@ -101,6 +101,9 @@ body{background:var(--bg);color:var(--text);font-family:'Inter',sans-serif;min-h
 .diff-btn{flex:1;min-width:70px;padding:0.6rem;font-family:'JetBrains Mono',monospace;font-size:0.55rem;text-transform:uppercase;letter-spacing:0.08em;border:1px solid var(--border);border-radius:6px;background:transparent;color:var(--muted);cursor:pointer;text-align:center;transition:all 0.2s}
 .diff-btn:hover{border-color:var(--silver-border);color:var(--silver)}
 .diff-btn.active{border-color:var(--silver);color:var(--silver);background:var(--silver-dim)}
+
+/* ── Game area ── */
+#game-area{flex-direction:column;align-items:center;width:100%}
 
 /* ── Classic Minesweeper Panel ── */
 .ms-panel{
@@ -339,7 +342,7 @@ body{background:var(--bg);color:var(--text);font-family:'Inter',sans-serif;min-h
   </div>
 
   <!-- GAME SCREEN -->
-  <div id="game-area" style="display:none;width:100%">
+  <div id="game-area" style="display:none;width:100%"
     <div class="ms-panel" id="ms-panel">
       <!-- Classic header: mines | smiley | timer -->
       <div class="ms-header">
@@ -954,7 +957,7 @@ var G = (function() {
 
       // Hide pre-game, show game
       document.getElementById('pre-game').style.display = 'none';
-      document.getElementById('game-area').style.display = '';
+      document.getElementById('game-area').style.display = 'flex';
 
       // Update LCD displays
       document.getElementById('lcd-mines').textContent = padLcd(mineCount);
@@ -998,7 +1001,7 @@ var G = (function() {
       if (data.puzzleIndex !== undefined) leaguePuzzleIndex = data.puzzleIndex;
 
       document.getElementById('pre-game').style.display = 'none';
-      document.getElementById('game-area').style.display = '';
+      document.getElementById('game-area').style.display = 'flex';
 
       document.getElementById('lcd-mines').textContent = padLcd(mineCount);
       document.getElementById('lcd-timer').textContent = '000';
