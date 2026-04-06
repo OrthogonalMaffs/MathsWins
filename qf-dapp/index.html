@@ -127,8 +127,9 @@ h1 span{background:linear-gradient(135deg,var(--silver-bright),var(--silver),#8a
 .filter-pill.active{border-color:var(--silver);background:var(--silver-dim);color:var(--silver-bright)}
 
 /* ── Game Cards ── */
-.game-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:24px;margin:1.5rem 0 3rem}
+.game-grid{display:grid;grid-template-columns:repeat(3,1fr);grid-auto-rows:1fr;gap:24px;margin:1.5rem 0 3rem}
 .game-grid.free-grid{grid-template-columns:repeat(auto-fill,minmax(260px,1fr))}
+.logo-cell{display:flex;align-items:center;justify-content:center;padding:20px 24px;background:var(--surface2);border:1px solid var(--border);cursor:pointer;text-decoration:none}
 .game-card{
   background:var(--surface);border:1px solid var(--border);border-radius:10px;
   padding:20px 24px;transition:all .4s ease,opacity .4s ease,filter .4s ease;
@@ -263,6 +264,7 @@ footer a:hover{color:var(--silver-bright)}
   h1{font-size:2rem}
   .hero-stats{gap:1.5rem}
   .game-grid,.game-grid.free-grid{grid-template-columns:1fr;gap:12px}
+  .logo-cell{min-height:80px}
   .wallet-bar{flex-wrap:wrap;gap:.4rem}
   .wb-balance{font-size:.7rem}
   .hiw-steps{grid-template-columns:1fr;gap:.6rem}
@@ -475,9 +477,8 @@ function renderGames(filter) {
     if (g.logo) {
       var logoCell = document.createElement('a');
       logoCell.href = 'https://mathswins.co.uk';
-      logoCell.className = 'game-card mw-logo-cell';
+      logoCell.className = 'game-card logo-cell';
       logoCell.innerHTML = '<img src="/qf-dapp/assets/mw-logo.svg" alt="MathsWins" style="width:80%;opacity:0.8;transition:all .3s">';
-      logoCell.style.cssText = 'display:flex;align-items:center;justify-content:center;background:var(--surface2);border:1px solid var(--border);cursor:pointer;text-decoration:none';
       logoCell.onmouseover = function() { logoCell.querySelector('img').style.opacity = '1'; logoCell.style.boxShadow = '0 0 20px rgba(212,168,71,0.08)'; };
       logoCell.onmouseout = function() { logoCell.querySelector('img').style.opacity = '0.8'; logoCell.style.boxShadow = 'none'; };
       grid.appendChild(logoCell);
