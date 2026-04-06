@@ -296,7 +296,10 @@
   // ── Connect ───────────────────────────────────────────────────────
   async function connect() {
     var wallets = detectWallets();
+    console.log('[qf-wallet] detectWallets found:', wallets.length, 'wallets:', wallets.map(function(w) { return w.id + '(' + w.name + ')'; }).join(', '));
+    console.log('[qf-wallet] EIP-6963 providers:', _eip6963Providers.length, '| window.ethereum:', !!window.ethereum, '| isMetaMask:', !!(window.ethereum && window.ethereum.isMetaMask));
     if (wallets.length === 0) {
+      console.log('[qf-wallet] No wallets detected — showing install message');
       createModal();
       showNoWalletMessage(document.getElementById('qf-wallet-list'));
       return;
@@ -304,9 +307,11 @@
     // Single EVM wallet: connect directly, skip chooser modal
     var evmWallets = wallets.filter(function(w) { return !w.provider._substrate; });
     if (evmWallets.length === 1 && wallets.length === 1) {
+      console.log('[qf-wallet] Single wallet — skipping modal, connecting directly as', evmWallets[0].id);
       connectWithProvider(evmWallets[0].provider, evmWallets[0].id);
       return;
     }
+    console.log('[qf-wallet] Multiple wallets — showing chooser modal');
     createModal();
     var list = document.getElementById('qf-wallet-list');
     list.innerHTML = '';
@@ -324,12 +329,16 @@
       } else {
         // Manual connect — use eth_requestAccounts first (universally supported),
         // then try wallet_requestPermissions for desktop multi-account selection
+        console.log('[qf-wallet] Manual connect — calling eth_requestAccounts');
         var accounts = await ethProvider.request({ method: 'eth_requestAccounts' });
+        console.log('[qf-wallet] eth_requestAccounts returned:', accounts ? accounts.length + ' accounts' : 'null');
         address = accounts[0];
 
         // On desktop with multi-account wallets, offer account picker via permissions API
         try {
+          console.log('[qf-wallet] Trying wallet_requestPermissions for account picker');
           var permissions = await ethProvider.request({ method: 'wallet_requestPermissions', params: [{ eth_accounts: {} }] });
+          console.log('[qf-wallet] wallet_requestPermissions succeeded');
           var ethAccountsPerm = permissions.find(function(p) { return p.parentCapability === 'eth_accounts'; });
           if (ethAccountsPerm && ethAccountsPerm.caveats) {
             var caveat = ethAccountsPerm.caveats.find(function(c) { return c.type === 'restrictReturnedAccounts'; });
@@ -337,34 +346,44 @@
               address = caveat.value[0];
             }
           }
-        } catch (e) { /* wallet_requestPermissions not supported — address from eth_requestAccounts is fine */ }
+        } catch (e) {
+          console.log('[qf-wallet] wallet_requestPermissions not supported:', e.message || e);
+        }
       }
 
+      console.log('[qf-wallet] Got address:', address, '— creating BrowserProvider');
       var provider = new ethers.BrowserProvider(ethProvider);
       var signer = await provider.getSigner(address);
       var network = await provider.getNetwork();
       var chainId = Number(network.chainId);
+      console.log('[qf-wallet] Connected on chain:', chainId, '(need', QF_CHAIN_ID, ')');
 
       // Auto-add QF Network if wrong chain
       if (chainId !== QF_CHAIN_ID) {
+        console.log('[qf-wallet] Wrong chain — attempting switch to', QF_CHAIN_HEX);
         try {
           await ethProvider.request({ method: 'wallet_switchEthereumChain', params: [{ chainId: QF_CHAIN_HEX }] });
+          console.log('[qf-wallet] Chain switch succeeded');
         } catch (switchErr) {
+          console.log('[qf-wallet] Chain switch failed, adding chain:', switchErr.message || switchErr);
           await ethProvider.request({
             method: 'wallet_addEthereumChain',
             params: [{ chainId: QF_CHAIN_HEX, chainName: 'QF Network Mainnet',
               nativeCurrency: { name: 'QF', symbol: 'QF', decimals: 18 },
               rpcUrls: [QF_RPC], blockExplorerUrls: [] }]
           });
+          console.log('[qf-wallet] Chain added');
         }
         network = await provider.getNetwork();
         chainId = Number(network.chainId);
+        console.log('[qf-wallet] Now on chain:', chainId);
       }
 
       // Liveness check — verify wallet is actually responsive, not returning cached data
       try {
         await ethProvider.request({ method: 'eth_chainId' });
       } catch (e) {
+        console.log('[qf-wallet] Liveness check FAILED:', e.message || e);
         throw new Error('Wallet is locked or unresponsive');
       }
 
@@ -412,7 +431,7 @@
       });
 
     } catch (e) {
-      console.error('Wallet connect failed:', e);
+      console.error('[qf-wallet] CONNECT FAILED at:', e.message || e, '| stack:', e.stack || 'none');
       var errorDiv = document.createElement('div');
       errorDiv.id = 'qf-wallet-error';
       errorDiv.style.cssText = 'position:fixed;top:60px;left:50%;transform:translateX(-50%);background:#1e2025;border:1px solid #b03a3a;border-radius:8px;padding:.8rem 1.2rem;z-index:9999;font-family:"Inter",sans-serif;font-size:.75rem;color:#e8eaf0;max-width:320px;text-align:center;box-shadow:0 8px 24px rgba(0,0,0,.5);';
