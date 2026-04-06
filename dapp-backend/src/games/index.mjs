@@ -87,6 +87,13 @@ import {
   QUESTIONS_PER_SESSION as cribQPS,
 } from './cribbage-solitaire.mjs';
 
+import {
+  GAME_ID as ppId,
+  evaluator as ppEval,
+  selectQuestions as ppSelect,
+  stripQuestion as ppStrip,
+} from './poker-patience.mjs';
+
 export const BATTLESHIPS_GAME_ID = 'battleships';
 
 export function registerAllGames() {
@@ -200,6 +207,17 @@ export function registerAllGames() {
     questionsPerSession: 1
   });
 
+  // Poker Patience — continuous (25 cards, card-by-card placement)
+  registerGame(ppId, null, ppEval, ppSelect, ppStrip, 'continuous');
+  upsertGame({
+    id: ppId,
+    name: 'Poker Patience',
+    isPaid: true,
+    serverScoring: true,
+    sessionTimeoutSeconds: 3600,
+    questionsPerSession: 1
+  });
+
   // Cribbage Solitaire — sequential (9 hands, no time pressure)
   registerGame(cribId, null, cribEval, cribSelect, cribStrip, 'sequential');
   upsertGame({
@@ -221,5 +239,5 @@ export function registerAllGames() {
     questionsPerSession: 0
   });
 
-  console.log('Registered games:', [estId, sudId, pocId, seqId, cdnId, kenId, nonoId, kakId, msId, fcId, cribId, BATTLESHIPS_GAME_ID].join(', '));
+  console.log('Registered games:', [estId, sudId, pocId, seqId, cdnId, kenId, nonoId, kakId, msId, fcId, ppId, cribId, BATTLESHIPS_GAME_ID].join(', '));
 }

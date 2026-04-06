@@ -1,0 +1,697 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<script async src="https://www.googletagmanager.com/gtag/js?id=G-7GTLYCZMXN"></script>
+<script>
+  window.dataLayer = window.dataLayer || [];
+  function gtag(){dataLayer.push(arguments);}
+  gtag('js', new Date());
+  gtag('config', 'G-7GTLYCZMXN', { send_page_view: true, storage: 'none', anonymize_ip: true });
+</script>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+<meta name="description" content="Poker Patience on QF Network. Place 25 cards into a 5x5 grid to make the best poker hands across rows and columns.">
+<meta property="og:title" content="Poker Patience &middot; QF Games">
+<meta property="og:description" content="Place 25 cards into a 5x5 grid. Score poker hands across rows and columns. Pure skill on QF Network.">
+<meta property="og:url" content="https://mathswins.co.uk/qf-dapp/games/poker-patience/">
+<link rel="canonical" href="https://mathswins.co.uk/qf-dapp/games/poker-patience/">
+<title>Poker Patience &middot; QF Games</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=DM+Mono:wght@400;500&family=Inter:wght@400;500;700&family=JetBrains+Mono:wght@400;500&family=Playfair+Display:wght@700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="../qf-cards.css">
+<script src="https://cdn.jsdelivr.net/npm/ethers@6/dist/ethers.umd.min.js"></script>
+<style>
+:root {
+  --bg:#050709;--surface:#16181c;--surface2:#1e2025;--surface3:#26282e;
+  --silver:#b8bcc6;--silver-bright:#d4d8e2;--silver-dim:rgba(184,188,198,0.08);
+  --silver-glow:rgba(184,188,198,0.12);--silver-border:rgba(184,188,198,0.15);
+  --text-white:#e8eaf0;--text:#8a8f9c;--muted:#4a4e5a;
+  --border:#1e2228;--border2:#2a2e36;
+  --gold:#c9a84c;--green:#3a8a5c;--red:#b03a3a;--blue:#3a6a9c;
+}
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+body{background:var(--bg);color:var(--text);font-family:'Inter',sans-serif;min-height:100vh;display:flex;flex-direction:column;align-items:center;-webkit-tap-highlight-color:transparent}
+.page{width:100%;max-width:640px;padding:2rem 1rem 4rem;display:flex;flex-direction:column;align-items:center;gap:1.2rem}
+
+/* ── Top bar ── */
+.top-bar{width:100%;display:flex;justify-content:space-between;align-items:center;padding:.5rem 1rem;background:rgba(5,7,9,.94);backdrop-filter:blur(12px);border-bottom:1px solid var(--border);position:sticky;top:0;z-index:100}
+.top-bar-left{display:flex;align-items:center;gap:.6rem}
+.back-link{font-size:.7rem;color:var(--muted);text-decoration:none;padding:.25rem .6rem;border:1px solid var(--border);border-radius:6px;transition:all .15s}
+.back-link:hover{border-color:var(--silver-border);color:var(--text)}
+.top-logo{font-family:'Playfair Display',serif;font-size:1rem;color:var(--text-white);text-decoration:none}
+.top-logo span{color:var(--silver)}
+.top-bar-right{display:flex;align-items:center;gap:.5rem}
+.top-addr{font-family:'JetBrains Mono',monospace;font-size:.65rem;color:var(--muted);background:var(--surface);border:1px solid var(--border);padding:.2rem .5rem;border-radius:5px}
+.top-qf-name{font-family:'JetBrains Mono',monospace;font-size:.65rem;color:var(--silver-bright);background:var(--surface2);border:1px solid var(--silver-border);padding:.2rem .5rem;border-radius:5px}
+.top-connect{font-family:'Inter',sans-serif;font-weight:600;font-size:.7rem;padding:.35rem .8rem;border-radius:5px;border:1px solid var(--silver-border);background:var(--silver-dim);color:var(--silver-bright);cursor:pointer;transition:all .15s}
+.top-connect:hover{background:var(--silver-bright);color:var(--bg)}
+
+/* ── Header ── */
+.game-header{text-align:center}
+.game-kicker{font-family:'JetBrains Mono',monospace;font-size:0.55rem;letter-spacing:0.2em;text-transform:uppercase;color:var(--silver);margin-bottom:0.4rem}
+.game-title{font-family:'Playfair Display',serif;font-size:2.4rem;color:var(--text-white);line-height:1}
+.game-title span{background:linear-gradient(135deg,var(--silver-bright),var(--silver),#8a8f9c);-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text}
+.game-sub{font-size:0.72rem;color:var(--muted);line-height:1.6;margin-top:0.4rem}
+
+/* ── How to Play ── */
+.htp{width:100%;background:var(--surface);border:1px solid var(--border);border-radius:10px;overflow:hidden}
+.htp-toggle{width:100%;padding:.8rem 1rem;display:flex;justify-content:space-between;align-items:center;cursor:pointer;background:none;border:none;color:var(--text);font-family:'Inter',sans-serif;font-size:.75rem;font-weight:600;text-align:left}
+.htp-toggle:hover{color:var(--silver-bright)}
+.htp-arrow{transition:transform .2s;font-size:.6rem}
+.htp.open .htp-arrow{transform:rotate(180deg)}
+.htp-body{display:none;padding:0 1rem .8rem;font-size:.65rem;color:var(--muted);line-height:1.7}
+.htp.open .htp-body{display:block}
+.htp-body p{margin-bottom:.5rem}
+.htp-body table{width:100%;font-family:'JetBrains Mono',monospace;font-size:.6rem;border-collapse:collapse;margin:.4rem 0}
+.htp-body th,.htp-body td{padding:.2rem .4rem;text-align:left;border-bottom:1px solid var(--border)}
+.htp-body th{color:var(--text);font-weight:500}
+.htp-body td:last-child{text-align:right;color:var(--silver-bright)}
+.htp-body strong{color:var(--text)}
+
+/* ── Buttons ── */
+.btn{font-family:'Inter',sans-serif;font-weight:600;font-size:.8rem;padding:.6rem 1.8rem;border-radius:8px;border:1px solid var(--silver-border);background:var(--silver-dim);color:var(--silver-bright);cursor:pointer;transition:all .15s}
+.btn:hover{background:var(--silver-bright);color:var(--bg)}
+.btn:disabled{opacity:.4;cursor:default;pointer-events:none}
+.btn-gold{border-color:rgba(201,168,76,.3);background:rgba(201,168,76,.08);color:var(--gold)}
+.btn-gold:hover{background:var(--gold);color:var(--bg)}
+
+/* ── Start screen ── */
+.start-screen{text-align:center;width:100%}
+.start-screen .msg{font-size:.7rem;color:var(--red);margin-top:.5rem;display:none}
+.mode-panel{width:100%;background:var(--surface);border:1px solid var(--border);border-radius:10px;padding:1.2rem;margin-top:.8rem}
+.mode-panel h3{font-family:'Playfair Display',serif;font-size:1rem;color:var(--text-white);margin-bottom:.8rem;text-align:center}
+.mode-btns{display:flex;gap:.6rem;flex-wrap:wrap;justify-content:center}
+
+/* ── Duel UI ── */
+.duel-share{display:none;width:100%;background:var(--surface);border:1px solid var(--border);border-radius:10px;padding:1.2rem;text-align:center}
+.duel-share h3{font-family:'Playfair Display',serif;font-size:1rem;color:var(--text-white);margin-bottom:.3rem}
+.duel-share p{font-size:.65rem;color:var(--muted);margin-bottom:.6rem}
+.share-code-display{font-family:'JetBrains Mono',monospace;font-size:2rem;font-weight:700;letter-spacing:.15em;color:var(--gold);background:var(--surface2);border:1px solid var(--border2);border-radius:8px;padding:.6rem 1.2rem;display:inline-block;margin-bottom:.6rem}
+.duel-accept{display:none;width:100%;text-align:center}
+.duel-accept h2{font-family:'Playfair Display',serif;font-size:1.6rem;color:var(--text-white);margin-bottom:.5rem}
+.duel-accept p{font-size:.72rem;color:var(--muted);line-height:1.5}
+
+/* ── Game screen ── */
+.game-screen{display:none;width:100%}
+.progress-bar{display:flex;justify-content:space-between;align-items:center;padding:.6rem 1rem;background:var(--surface);border:1px solid var(--border);border-radius:8px;font-family:'JetBrains Mono',monospace;font-size:.65rem}
+.progress-label{color:var(--muted)}
+.progress-label strong{color:var(--silver-bright)}
+.progress-score{color:var(--gold)}
+
+/* ── Current card ── */
+.current-card-area{text-align:center;margin:.8rem 0}
+.current-card-label{font-family:'JetBrains Mono',monospace;font-size:.55rem;color:var(--muted);text-transform:uppercase;letter-spacing:.1em;margin-bottom:.4rem}
+.current-card-area .card{width:80px;height:114px;margin:0 auto}
+
+/* ── 5x5 Grid ── */
+.grid-container{width:100%;margin:.6rem 0}
+.grid-labels-top{display:grid;grid-template-columns:28px repeat(5,1fr);gap:4px;margin-bottom:2px;padding-left:0}
+.grid-labels-top span{text-align:center;font-family:'JetBrains Mono',monospace;font-size:.5rem;color:var(--muted);letter-spacing:.05em}
+.grid-row{display:grid;grid-template-columns:28px repeat(5,1fr);gap:4px;margin-bottom:4px}
+.grid-row-label{display:flex;align-items:center;justify-content:center;font-family:'JetBrains Mono',monospace;font-size:.5rem;color:var(--muted)}
+.grid-cell{
+  aspect-ratio:5/7;background:var(--surface2);border:1px solid var(--border2);border-radius:6px;
+  display:flex;align-items:center;justify-content:center;cursor:pointer;transition:all .15s;position:relative;overflow:hidden;
+}
+.grid-cell:hover{border-color:var(--silver-border);background:var(--surface3)}
+.grid-cell.occupied{cursor:default;border-color:var(--border)}
+.grid-cell.occupied:hover{background:var(--surface2);border-color:var(--border)}
+.grid-cell .card{width:100%!important;height:100%!important;border-radius:5px;position:absolute;inset:0}
+
+/* ── Row/col score pills ── */
+.row-scores{display:grid;grid-template-columns:28px repeat(5,1fr);gap:4px;margin-bottom:2px}
+.row-scores .spacer{width:28px}
+.col-score-col{display:flex;flex-direction:column;gap:4px}
+.score-pill{
+  font-family:'JetBrains Mono',monospace;font-size:.48rem;
+  padding:2px 0;border-radius:4px;text-align:center;
+  background:var(--silver-dim);color:var(--silver);border:1px solid var(--silver-border);
+  white-space:nowrap;overflow:hidden;
+}
+.score-pill.scored{color:var(--gold);border-color:rgba(201,168,76,.2);background:rgba(201,168,76,.06)}
+.score-pill.zero{color:var(--muted);border-color:var(--border)}
+
+/* Row score pills (right side) */
+.grid-row-score{display:flex;align-items:center}
+.grid-row .row-pill{
+  font-family:'JetBrains Mono',monospace;font-size:.48rem;
+  padding:2px 6px;border-radius:4px;margin-left:4px;white-space:nowrap;
+  background:var(--silver-dim);color:var(--silver);border:1px solid var(--silver-border);
+}
+.grid-row .row-pill.scored{color:var(--gold);border-color:rgba(201,168,76,.2);background:rgba(201,168,76,.06)}
+
+/* Adjusted grid to include row score column */
+.grid-labels-top{grid-template-columns:28px repeat(5,1fr) 56px}
+.grid-row{grid-template-columns:28px repeat(5,1fr) 56px}
+
+/* ── Final scorecard ── */
+.final-screen{display:none;width:100%;text-align:center}
+.final-title{font-family:'Bebas Neue',sans-serif;font-size:2.2rem;color:var(--text-white);letter-spacing:.05em;margin-bottom:.8rem}
+.scorecard{width:100%;background:var(--surface);border:1px solid var(--border);border-radius:10px;padding:1rem;margin-bottom:1rem}
+.scorecard table{width:100%;font-family:'JetBrains Mono',monospace;font-size:.6rem;border-collapse:collapse}
+.scorecard th{font-weight:500;color:var(--muted);text-align:left;padding:.3rem .4rem;border-bottom:1px solid var(--border2);font-size:.5rem;text-transform:uppercase;letter-spacing:.06em}
+.scorecard td{padding:.35rem .4rem;border-bottom:1px solid var(--border)}
+.scorecard td:first-child{color:var(--text)}
+.scorecard td:last-child{text-align:right;color:var(--silver-bright)}
+.scorecard .total-row td{font-size:.75rem;font-weight:700;color:var(--gold);border-top:2px solid var(--border2);border-bottom:none}
+.grand-total{font-family:'Bebas Neue',sans-serif;font-size:3rem;color:var(--gold);margin:.5rem 0}
+
+/* ── Duel results ── */
+.duel-result{display:none;width:100%;background:var(--surface);border:1px solid var(--border);border-radius:10px;padding:1.2rem;text-align:center;margin-top:.8rem}
+.duel-result h3{font-family:'Playfair Display',serif;font-size:1.2rem;color:var(--text-white);margin-bottom:.4rem}
+.duel-result .result-text{font-size:.75rem;margin-bottom:.3rem}
+.duel-result .win{color:var(--green)}
+.duel-result .lose{color:var(--red)}
+.duel-result .draw{color:var(--silver)}
+
+/* ── Mobile ── */
+@media(max-width:480px){
+  .game-title{font-size:1.8rem}
+  .current-card-area .card{width:68px;height:97px}
+  .grid-labels-top{grid-template-columns:22px repeat(5,1fr) 48px}
+  .grid-row{grid-template-columns:22px repeat(5,1fr) 48px}
+  .share-code-display{font-size:1.6rem}
+  .grand-total{font-size:2.4rem}
+}
+</style>
+</head>
+<body>
+
+<!-- TOP BAR -->
+<div class="top-bar">
+  <div class="top-bar-left">
+    <a href="/qf-dapp/" class="back-link">&larr; Lobby</a>
+    <a href="/qf-dapp/" class="top-logo">QF <span>Games</span></a>
+  </div>
+  <div class="top-bar-right">
+    <span class="top-qf-name" id="topQfName" style="display:none"></span>
+    <span class="top-addr" id="topAddr" style="display:none"></span>
+    <button class="top-connect" id="topConnect" onclick="qfWallet.connect()">Connect</button>
+  </div>
+</div>
+<script src="../qf-wallet.js"></script>
+<script src="../qf-cards.js"></script>
+
+<div class="page">
+
+<!-- HEADER -->
+<div class="game-header">
+  <div class="game-kicker">QF Games &middot; Card Games</div>
+  <h1 class="game-title">Poker <span>Patience</span></h1>
+  <p class="game-sub">Place 25 cards into a 5&times;5 grid. Score poker hands across rows and columns.</p>
+</div>
+
+<!-- HOW TO PLAY -->
+<div class="htp" id="htp">
+  <button class="htp-toggle" onclick="this.closest('.htp').classList.toggle('open')">
+    <span>How to Play</span><span class="htp-arrow">&#9660;</span>
+  </button>
+  <div class="htp-body">
+    <p>Cards are dealt one at a time. Tap any empty cell in the 5&times;5 grid to place the card. Once placed, it cannot be moved.</p>
+    <p>After all 25 cards are placed, each of the 5 rows and 5 columns is scored as a poker hand.</p>
+    <table>
+      <tr><th>Hand</th><td>Points</td></tr>
+      <tr><td>Royal Flush</td><td>100</td></tr>
+      <tr><td>Straight Flush</td><td>75</td></tr>
+      <tr><td>Four of a Kind</td><td>50</td></tr>
+      <tr><td>Full House</td><td>25</td></tr>
+      <tr><td>Flush</td><td>20</td></tr>
+      <tr><td>Straight</td><td>15</td></tr>
+      <tr><td>Three of a Kind</td><td>10</td></tr>
+      <tr><td>Two Pair</td><td>5</td></tr>
+      <tr><td>One Pair</td><td>2</td></tr>
+      <tr><td>High Card</td><td>0</td></tr>
+    </table>
+    <p><strong>Aces</strong> play high or low in straights (A-2-3-4-5 and 10-J-Q-K-A both valid).</p>
+  </div>
+</div>
+
+<!-- START SCREEN -->
+<div class="start-screen" id="startScreen">
+  <div class="mode-panel" id="modePanel">
+    <h3>Choose Mode</h3>
+    <div class="mode-btns">
+      <button class="btn" onclick="G.startFree()">Free Play</button>
+      <button class="btn btn-gold" onclick="G.createDuel(25)">Duel 25 QF</button>
+      <button class="btn btn-gold" onclick="G.createDuel(50)">Duel 50 QF</button>
+    </div>
+  </div>
+  <div class="msg" id="startMsg"></div>
+
+  <div class="duel-share" id="duelShare">
+    <h3>Share Your Duel Code</h3>
+    <p>Send this code to your opponent. They have 24 hours to play.</p>
+    <div class="share-code-display" id="shareCode">------</div>
+    <p id="duelExpire" style="font-size:.55rem;color:var(--muted)"></p>
+    <p id="duelStatusMsg" style="font-size:.65rem;color:var(--silver);margin-top:.4rem">Waiting for opponent...</p>
+  </div>
+
+  <div class="duel-accept" id="duelAccept">
+    <h2>Duel Challenge</h2>
+    <p>Challenged by <strong id="challengerName">...</strong></p>
+    <p id="acceptStakeInfo" style="margin:.4rem 0 .8rem"></p>
+    <button class="btn btn-gold" onclick="G.acceptDuel()">Accept &amp; Play</button>
+  </div>
+</div>
+
+<!-- GAME SCREEN -->
+<div class="game-screen" id="gameScreen">
+  <div class="progress-bar">
+    <span class="progress-label">Card <strong id="cardNum">1</strong> of <strong>25</strong></span>
+    <span class="progress-score">Score: <strong id="runningTotal">0</strong></span>
+  </div>
+
+  <div class="current-card-area" id="currentCardArea">
+    <div class="current-card-label">Place this card</div>
+    <div id="currentCard"></div>
+  </div>
+
+  <div class="grid-container">
+    <div class="grid-labels-top">
+      <span></span><span>A</span><span>B</span><span>C</span><span>D</span><span>E</span><span></span>
+    </div>
+    <div id="gridRows"></div>
+  </div>
+</div>
+
+<!-- FINAL SCREEN -->
+<div class="final-screen" id="finalScreen">
+  <div class="final-title">Final Score</div>
+  <div class="scorecard">
+    <table>
+      <thead><tr><th>Hand</th><th>Type</th><th style="text-align:right">Points</th></tr></thead>
+      <tbody id="scorecardBody"></tbody>
+    </table>
+  </div>
+  <div class="grand-total" id="grandTotal">0</div>
+  <div style="font-family:'JetBrains Mono',monospace;font-size:.6rem;color:var(--muted);margin-bottom:1rem">points</div>
+
+  <div class="duel-result" id="duelResult">
+    <h3 id="duelResultTitle">Duel Result</h3>
+    <p class="result-text" id="duelResultText"></p>
+  </div>
+
+  <div style="margin-top:1rem;display:flex;gap:.6rem;justify-content:center;flex-wrap:wrap">
+    <button class="btn" onclick="location.reload()">Play Again</button>
+    <a href="/qf-dapp/" class="btn" style="text-decoration:none">Back to Lobby</a>
+  </div>
+</div>
+
+</div>
+
+<script>
+// ── Wallet UI ────────────────────────────────────────────────────────────
+var W = qfWallet;
+W.onConnect(function(s) {
+  if (!s.address) return;
+  document.getElementById('topConnect').style.display = 'none';
+  var addrEl = document.getElementById('topAddr');
+  addrEl.textContent = s.address.slice(0,6) + '...' + s.address.slice(-4);
+  addrEl.style.display = '';
+  if (s.qfName) {
+    document.getElementById('topQfName').textContent = s.qfName;
+    document.getElementById('topQfName').style.display = '';
+    addrEl.style.display = 'none';
+  }
+});
+W.onDisconnect(function() {
+  document.getElementById('topConnect').style.display = '';
+  document.getElementById('topAddr').style.display = 'none';
+  document.getElementById('topQfName').style.display = 'none';
+});
+
+// ── Game Module ──────────────────────────────────────────────────────────
+var G = (function() {
+  'use strict';
+
+  var API_BASE = 'https://dapp-api.mathswins.co.uk/api/dapp';
+  if (location.hostname === 'localhost' || location.hostname === '127.0.0.1') {
+    API_BASE = 'http://127.0.0.1:3860/api/dapp';
+  }
+
+  var GAME_ID = 'poker-patience';
+  var createCardEl = QFCards.createCardEl;
+
+  // ── State ────────────────────────────────────────────────────────────
+  var sessionToken = null;
+  var grid = new Array(25).fill(null); // local mirror
+  var currentCard = null;
+  var cardIndex = 0;
+  var totalScore = 0;
+  var lineScores = {}; // label -> { name, points }
+  var placing = false;
+
+  // Duel state
+  var duelMode = false;
+  var duelCode = null;
+  var duelPollTimer = null;
+
+  // ── API helper ───────────────────────────────────────────────────────
+  async function api(url, body, method) {
+    var headers = W.authHeaders();
+    var opts = { method: method || 'POST', headers: headers };
+    if (body && method !== 'GET') opts.body = JSON.stringify(body);
+    if (method === 'GET') { delete opts.body; opts.method = 'GET'; }
+    var res = await fetch(API_BASE + url, opts);
+    return res.json();
+  }
+
+  function setMsg(txt) {
+    var el = document.getElementById('startMsg');
+    el.textContent = txt;
+    el.style.display = txt ? '' : 'none';
+  }
+
+  // ── Grid rendering ───────────────────────────────────────────────────
+  function buildGrid() {
+    var container = document.getElementById('gridRows');
+    container.innerHTML = '';
+
+    for (var r = 0; r < 5; r++) {
+      var row = document.createElement('div');
+      row.className = 'grid-row';
+
+      // Row label
+      var label = document.createElement('div');
+      label.className = 'grid-row-label';
+      label.textContent = r + 1;
+      row.appendChild(label);
+
+      // 5 cells
+      for (var c = 0; c < 5; c++) {
+        var cell = document.createElement('div');
+        cell.className = 'grid-cell';
+        cell.dataset.row = r;
+        cell.dataset.col = c;
+        cell.dataset.cell = String.fromCharCode(65 + c) + (r + 1);
+        cell.addEventListener('click', onCellClick);
+        row.appendChild(cell);
+      }
+
+      // Row score pill
+      var pill = document.createElement('div');
+      pill.className = 'grid-row-score';
+      pill.innerHTML = '<span class="row-pill" id="rowPill' + r + '">&mdash;</span>';
+      row.appendChild(pill);
+
+      container.appendChild(row);
+    }
+
+    // Column score pills below grid
+    var colRow = document.createElement('div');
+    colRow.className = 'grid-labels-top';
+    colRow.innerHTML = '<span></span>';
+    for (var c = 0; c < 5; c++) {
+      colRow.innerHTML += '<span class="score-pill" id="colPill' + c + '">&mdash;</span>';
+    }
+    colRow.innerHTML += '<span></span>';
+    container.appendChild(colRow);
+  }
+
+  function renderCurrentCard() {
+    var area = document.getElementById('currentCard');
+    area.innerHTML = '';
+    if (currentCard !== null) {
+      area.appendChild(createCardEl(currentCard));
+      document.getElementById('currentCardArea').style.display = '';
+    } else {
+      document.getElementById('currentCardArea').style.display = 'none';
+    }
+  }
+
+  function renderGridCard(cellIdx, cardVal) {
+    var r = Math.floor(cellIdx / 5);
+    var c = cellIdx % 5;
+    var cells = document.querySelectorAll('.grid-cell');
+    var cellEl = cells[r * 5 + c];
+    cellEl.innerHTML = '';
+    cellEl.classList.add('occupied');
+    cellEl.appendChild(createCardEl(cardVal));
+  }
+
+  function updateLineScores(scores) {
+    if (!scores) return;
+    var running = 0;
+    scores.forEach(function(s) {
+      lineScores[s.label] = s;
+    });
+
+    // Update row pills
+    for (var r = 0; r < 5; r++) {
+      var pill = document.getElementById('rowPill' + r);
+      var info = lineScores['Row ' + (r + 1)];
+      if (info) {
+        pill.textContent = info.points;
+        pill.className = 'row-pill' + (info.points > 0 ? ' scored' : '');
+        running += info.points;
+      }
+    }
+
+    // Update column pills
+    for (var c = 0; c < 5; c++) {
+      var pill = document.getElementById('colPill' + c);
+      var info = lineScores['Col ' + String.fromCharCode(65 + c)];
+      if (info) {
+        pill.textContent = info.points;
+        pill.className = 'score-pill' + (info.points > 0 ? ' scored' : ' zero');
+        running += info.points;
+      }
+    }
+
+    totalScore = running;
+    document.getElementById('runningTotal').textContent = totalScore;
+  }
+
+  // ── Cell click handler ───────────────────────────────────────────────
+  async function onCellClick(e) {
+    if (placing) return;
+    var cellEl = e.currentTarget;
+    if (cellEl.classList.contains('occupied')) return;
+    if (currentCard === null) return;
+
+    var cellStr = cellEl.dataset.cell;
+    placing = true;
+
+    try {
+      var data = await api('/session/evaluate', {
+        sessionToken: sessionToken,
+        answer: JSON.stringify({ action: 'place', cell: cellStr })
+      });
+
+      if (data.error) {
+        placing = false;
+        return;
+      }
+
+      // Update local state
+      var idx = parseInt(cellEl.dataset.row) * 5 + parseInt(cellEl.dataset.col);
+      grid[idx] = data.cardPlaced;
+      renderGridCard(idx, data.cardPlaced);
+
+      cardIndex = data.cardIndex;
+      document.getElementById('cardNum').textContent = Math.min(cardIndex + 1, 25);
+
+      // Update line scores
+      if (data.lineScores) {
+        updateLineScores(data.lineScores);
+      }
+
+      if (data.allPlaced) {
+        // All cards placed — show final scores then submit
+        currentCard = null;
+        renderCurrentCard();
+
+        if (data.finalScores) {
+          updateLineScores(data.finalScores.results);
+        }
+
+        // Submit to finalise session
+        var submitData = await api('/session/evaluate', {
+          sessionToken: sessionToken,
+          answer: JSON.stringify({ action: 'submit' })
+        });
+
+        totalScore = (submitData.finalScore !== undefined) ? submitData.finalScore : totalScore;
+        showFinalScore(data.finalScores);
+      } else {
+        // Show next card
+        currentCard = data.nextCard;
+        renderCurrentCard();
+      }
+
+    } catch (e) {
+      setMsg('Error placing card');
+    }
+
+    placing = false;
+  }
+
+  // ── Final score screen ───────────────────────────────────────────────
+  function showFinalScore(finalScores) {
+    document.getElementById('gameScreen').style.display = 'none';
+    document.getElementById('finalScreen').style.display = '';
+
+    var body = document.getElementById('scorecardBody');
+    var html = '';
+
+    if (finalScores && finalScores.results) {
+      finalScores.results.forEach(function(h) {
+        html += '<tr><td>' + h.label + '</td><td>' + h.name + '</td><td style="text-align:right">' + h.points + '</td></tr>';
+      });
+      html += '<tr class="total-row"><td colspan="2">Total</td><td style="text-align:right">' + finalScores.total + '</td></tr>';
+      totalScore = finalScores.total;
+    }
+
+    body.innerHTML = html;
+    document.getElementById('grandTotal').textContent = totalScore;
+
+    if (duelMode && duelCode) {
+      submitDuelScore();
+    }
+  }
+
+  // ── Session management ───────────────────────────────────────────────
+  async function startSession(seed) {
+    try {
+      var payload = { gameId: GAME_ID };
+      if (seed) payload.seed = seed;
+      var data = await api('/session/start', payload);
+      if (data.error) { setMsg(data.error); return; }
+      beginGame(data);
+    } catch (e) {
+      setMsg('Failed to start session: ' + e.message);
+    }
+  }
+
+  function beginGame(data) {
+    sessionToken = data.token;
+    grid = new Array(25).fill(null);
+    lineScores = {};
+    cardIndex = 0;
+    totalScore = 0;
+
+    // First card from question data
+    currentCard = data.question.currentCard;
+
+    document.getElementById('startScreen').style.display = 'none';
+    document.getElementById('gameScreen').style.display = '';
+    document.getElementById('cardNum').textContent = '1';
+    document.getElementById('runningTotal').textContent = '0';
+
+    buildGrid();
+    renderCurrentCard();
+
+    // Restore grid if resuming
+    if (data.question.grid) {
+      data.question.grid.forEach(function(cardVal, i) {
+        if (cardVal !== null) {
+          grid[i] = cardVal;
+          renderGridCard(i, cardVal);
+          cardIndex++;
+        }
+      });
+      cardIndex = data.question.cardIndex || cardIndex;
+      document.getElementById('cardNum').textContent = Math.min(cardIndex + 1, 25);
+    }
+  }
+
+  // ── Public API ───────────────────────────────────────────────────────
+  function startFree() { startSession(); }
+
+  // ── Duel functions ───────────────────────────────────────────────────
+  async function createDuel(stake) {
+    if (!W.state.address) { alert('Connect your wallet to create a duel.'); return; }
+    duelMode = true;
+    try {
+      var data = await api('/duel/create', { gameId: GAME_ID, difficulty: 'medium', stake: stake || 25 });
+      if (data.error) { setMsg(data.error); return; }
+      duelCode = data.shareCode;
+      await startSession(data.puzzleSeed);
+    } catch (e) { setMsg('Connection error creating duel'); }
+  }
+
+  async function submitDuelScore() {
+    try {
+      await api('/duel/' + duelCode + '/submit', { score: totalScore });
+      showDuelShare();
+    } catch (e) { /* ignore */ }
+  }
+
+  function showDuelShare() {
+    document.getElementById('finalScreen').style.display = 'none';
+    document.getElementById('startScreen').style.display = '';
+    document.getElementById('modePanel').style.display = 'none';
+    document.getElementById('duelShare').style.display = '';
+    document.getElementById('shareCode').textContent = duelCode;
+    document.getElementById('duelExpire').textContent = 'Expires: ' + new Date(Date.now() + 86400000).toLocaleString();
+    pollDuelStatus();
+  }
+
+  function pollDuelStatus() {
+    if (duelPollTimer) clearInterval(duelPollTimer);
+    duelPollTimer = setInterval(async function() {
+      try {
+        var data = await api('/duel/' + duelCode, null, 'GET');
+        if (data.status === 'completed') {
+          clearInterval(duelPollTimer);
+          showDuelResults(data);
+        } else if (data.opponent_wallet) {
+          document.getElementById('duelStatusMsg').textContent = W.displayName(data.opponent_wallet) + ' is playing...';
+        }
+      } catch (e) { /* ignore */ }
+    }, 5000);
+  }
+
+  function showDuelResults(data) {
+    var myScore = totalScore;
+    var oppScore = data.creator_wallet === W.state.address ? data.opponent_score : data.creator_score;
+    document.getElementById('duelShare').style.display = 'none';
+    document.getElementById('finalScreen').style.display = '';
+    var resultEl = document.getElementById('duelResult');
+    var titleEl = document.getElementById('duelResultTitle');
+    var textEl = document.getElementById('duelResultText');
+    if (myScore > oppScore) { titleEl.textContent = 'You Win!'; textEl.className = 'result-text win'; }
+    else if (myScore < oppScore) { titleEl.textContent = 'You Lose'; textEl.className = 'result-text lose'; }
+    else { titleEl.textContent = 'Draw'; textEl.className = 'result-text draw'; }
+    textEl.textContent = myScore + ' vs ' + oppScore;
+    resultEl.style.display = '';
+  }
+
+  async function showAcceptScreen(code) {
+    duelCode = code; duelMode = true;
+    document.getElementById('modePanel').style.display = 'none';
+    try {
+      var data = await api('/duel/' + code, null, 'GET');
+      if (data.error) { setMsg(data.error); return; }
+      document.getElementById('challengerName').textContent = W.displayName(data.creator_wallet);
+      document.getElementById('acceptStakeInfo').textContent = 'Stake: ' + (data.stake || 25) + ' QF each';
+      document.getElementById('duelAccept').style.display = '';
+    } catch (e) { setMsg('Could not load duel.'); }
+  }
+
+  async function acceptDuel() {
+    if (!W.state.address) { alert('Connect your wallet to accept a duel.'); return; }
+    try {
+      var data = await api('/duel/' + duelCode + '/accept', {});
+      if (data.error) { setMsg(data.error); return; }
+      document.getElementById('duelAccept').style.display = 'none';
+      await startSession(data.puzzleSeed);
+    } catch (e) { setMsg('Connection error accepting duel'); }
+  }
+
+  // ── URL params ───────────────────────────────────────────────────────
+  (function() {
+    var params = new URLSearchParams(window.location.search);
+    var code = params.get('duel');
+    if (code) { showAcceptScreen(code.toUpperCase()); }
+  })();
+
+  return {
+    startFree: startFree,
+    createDuel: createDuel,
+    acceptDuel: acceptDuel,
+  };
+})();
+</script>
+</body>
+</html>
