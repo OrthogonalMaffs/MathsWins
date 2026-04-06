@@ -79,6 +79,14 @@ import {
   stripQuestion as fcStrip,
 } from './freecell.mjs';
 
+import {
+  GAME_ID as cribId,
+  evaluator as cribEval,
+  selectQuestions as cribSelect,
+  stripQuestion as cribStrip,
+  QUESTIONS_PER_SESSION as cribQPS,
+} from './cribbage-solitaire.mjs';
+
 export const BATTLESHIPS_GAME_ID = 'battleships';
 
 export function registerAllGames() {
@@ -192,6 +200,17 @@ export function registerAllGames() {
     questionsPerSession: 1
   });
 
+  // Cribbage Solitaire — sequential (9 hands, no time pressure)
+  registerGame(cribId, null, cribEval, cribSelect, cribStrip, 'sequential');
+  upsertGame({
+    id: cribId,
+    name: 'Cribbage Solitaire',
+    isPaid: true,
+    serverScoring: true,
+    sessionTimeoutSeconds: 1800,
+    questionsPerSession: cribQPS
+  });
+
   // Battleships — duel-only, no leagues, no scoring engine
   upsertGame({
     id: BATTLESHIPS_GAME_ID,
@@ -202,5 +221,5 @@ export function registerAllGames() {
     questionsPerSession: 0
   });
 
-  console.log('Registered games:', [estId, sudId, pocId, seqId, cdnId, kenId, nonoId, kakId, msId, fcId, BATTLESHIPS_GAME_ID].join(', '));
+  console.log('Registered games:', [estId, sudId, pocId, seqId, cdnId, kenId, nonoId, kakId, msId, fcId, cribId, BATTLESHIPS_GAME_ID].join(', '));
 }

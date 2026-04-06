@@ -1,0 +1,744 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<script async src="https://www.googletagmanager.com/gtag/js?id=G-7GTLYCZMXN"></script>
+<script>
+  window.dataLayer = window.dataLayer || [];
+  function gtag(){dataLayer.push(arguments);}
+  gtag('js', new Date());
+  gtag('config', 'G-7GTLYCZMXN', { send_page_view: true, storage: 'none', anonymize_ip: true });
+</script>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+<meta name="description" content="Cribbage Solitaire on QF Network. Score 9 dealt hands, find every fifteen, pair, run, and flush. Competitive leagues and duels.">
+<meta property="og:title" content="Cribbage Solitaire &middot; QF Games">
+<meta property="og:description" content="Score 9 cribbage hands. Find fifteens, pairs, runs, and flushes. Pure skill on QF Network.">
+<meta property="og:url" content="https://mathswins.co.uk/qf-dapp/games/cribbage-solitaire/">
+<link rel="canonical" href="https://mathswins.co.uk/qf-dapp/games/cribbage-solitaire/">
+<title>Cribbage Solitaire &middot; QF Games</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=DM+Mono:wght@400;500&family=Inter:wght@400;500;700&family=JetBrains+Mono:wght@400;500&family=Playfair+Display:wght@700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="../qf-cards.css">
+<script src="https://cdn.jsdelivr.net/npm/ethers@6/dist/ethers.umd.min.js"></script>
+<style>
+:root {
+  --bg:            #050709;
+  --surface:       #16181c;
+  --surface2:      #1e2025;
+  --surface3:      #26282e;
+  --silver:        #b8bcc6;
+  --silver-bright: #d4d8e2;
+  --silver-dim:    rgba(184,188,198,0.08);
+  --silver-glow:   rgba(184,188,198,0.12);
+  --silver-border: rgba(184,188,198,0.15);
+  --text-white:    #e8eaf0;
+  --text:          #8a8f9c;
+  --muted:         #4a4e5a;
+  --border:        #1e2228;
+  --border2:       #2a2e36;
+  --gold:          #c9a84c;
+  --green:         #3a8a5c;
+  --red:           #b03a3a;
+  --blue:          #3a6a9c;
+}
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+body{background:var(--bg);color:var(--text);font-family:'Inter',sans-serif;min-height:100vh;display:flex;flex-direction:column;align-items:center;-webkit-tap-highlight-color:transparent}
+
+.page{width:100%;max-width:640px;padding:2rem 1rem 4rem;display:flex;flex-direction:column;align-items:center;gap:1.2rem}
+
+/* ── Top bar ── */
+.top-bar{
+  width:100%;display:flex;justify-content:space-between;align-items:center;
+  padding:.5rem 1rem;background:rgba(5,7,9,.94);backdrop-filter:blur(12px);
+  border-bottom:1px solid var(--border);position:sticky;top:0;z-index:100;
+}
+.top-bar-left{display:flex;align-items:center;gap:.6rem}
+.back-link{font-size:.7rem;color:var(--muted);text-decoration:none;padding:.25rem .6rem;border:1px solid var(--border);border-radius:6px;transition:all .15s}
+.back-link:hover{border-color:var(--silver-border);color:var(--text)}
+.top-logo{font-family:'Playfair Display',serif;font-size:1rem;color:var(--text-white);text-decoration:none}
+.top-logo span{color:var(--silver)}
+.top-bar-right{display:flex;align-items:center;gap:.5rem}
+.top-addr{font-family:'JetBrains Mono',monospace;font-size:.65rem;color:var(--muted);background:var(--surface);border:1px solid var(--border);padding:.2rem .5rem;border-radius:5px}
+.top-qf-name{font-family:'JetBrains Mono',monospace;font-size:.65rem;color:var(--silver-bright);background:var(--surface2);border:1px solid var(--silver-border);padding:.2rem .5rem;border-radius:5px}
+.top-connect{font-family:'Inter',sans-serif;font-weight:600;font-size:.7rem;padding:.35rem .8rem;border-radius:5px;border:1px solid var(--silver-border);background:var(--silver-dim);color:var(--silver-bright);cursor:pointer;transition:all .15s}
+.top-connect:hover{background:var(--silver-bright);color:var(--bg)}
+
+/* ── Header ── */
+.game-header{text-align:center}
+.game-kicker{font-family:'JetBrains Mono',monospace;font-size:0.55rem;letter-spacing:0.2em;text-transform:uppercase;color:var(--silver);margin-bottom:0.4rem}
+.game-title{font-family:'Playfair Display',serif;font-size:2.4rem;color:var(--text-white);line-height:1}
+.game-title span{background:linear-gradient(135deg,var(--silver-bright),var(--silver),#8a8f9c);-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text}
+.game-sub{font-size:0.72rem;color:var(--muted);line-height:1.6;margin-top:0.4rem}
+
+/* ── How to Play ── */
+.htp{width:100%;background:var(--surface);border:1px solid var(--border);border-radius:10px;overflow:hidden}
+.htp-toggle{width:100%;padding:.8rem 1rem;display:flex;justify-content:space-between;align-items:center;cursor:pointer;background:none;border:none;color:var(--text);font-family:'Inter',sans-serif;font-size:.75rem;font-weight:600;text-align:left}
+.htp-toggle:hover{color:var(--silver-bright)}
+.htp-arrow{transition:transform .2s;font-size:.6rem}
+.htp.open .htp-arrow{transform:rotate(180deg)}
+.htp-body{display:none;padding:0 1rem .8rem;font-size:.65rem;color:var(--muted);line-height:1.7}
+.htp.open .htp-body{display:block}
+.htp-body p{margin-bottom:.5rem}
+.htp-body ul{margin:.3rem 0 .5rem 1.2rem}
+.htp-body li{margin-bottom:.2rem}
+.htp-body strong{color:var(--text)}
+
+/* ── Buttons ── */
+.btn{
+  font-family:'Inter',sans-serif;font-weight:600;font-size:.8rem;
+  padding:.6rem 1.8rem;border-radius:8px;border:1px solid var(--silver-border);
+  background:var(--silver-dim);color:var(--silver-bright);cursor:pointer;transition:all .15s;
+}
+.btn:hover{background:var(--silver-bright);color:var(--bg)}
+.btn:disabled{opacity:.4;cursor:default;pointer-events:none}
+.btn-small{font-size:.7rem;padding:.4rem 1rem}
+.btn-gold{border-color:rgba(201,168,76,.3);background:rgba(201,168,76,.08);color:var(--gold)}
+.btn-gold:hover{background:var(--gold);color:var(--bg)}
+
+/* ── Start screen ── */
+.start-screen{text-align:center;width:100%}
+.start-screen .msg{font-size:.7rem;color:var(--red);margin-top:.5rem;display:none}
+.mode-panel{width:100%;background:var(--surface);border:1px solid var(--border);border-radius:10px;padding:1.2rem;margin-top:.8rem}
+.mode-panel h3{font-family:'Playfair Display',serif;font-size:1rem;color:var(--text-white);margin-bottom:.8rem;text-align:center}
+.mode-btns{display:flex;gap:.6rem;flex-wrap:wrap;justify-content:center}
+
+/* ── Duel UI ── */
+.duel-share{display:none;width:100%;background:var(--surface);border:1px solid var(--border);border-radius:10px;padding:1.2rem;text-align:center}
+.duel-share h3{font-family:'Playfair Display',serif;font-size:1rem;color:var(--text-white);margin-bottom:.3rem}
+.duel-share p{font-size:.65rem;color:var(--muted);margin-bottom:.6rem}
+.share-code-display{font-family:'JetBrains Mono',monospace;font-size:2rem;font-weight:700;letter-spacing:.15em;color:var(--gold);background:var(--surface2);border:1px solid var(--border2);border-radius:8px;padding:.6rem 1.2rem;display:inline-block;margin-bottom:.6rem}
+.duel-accept{display:none;width:100%;text-align:center}
+.duel-accept h2{font-family:'Playfair Display',serif;font-size:1.6rem;color:var(--text-white);margin-bottom:.5rem}
+.duel-accept p{font-size:.72rem;color:var(--muted);line-height:1.5}
+
+/* ── Game screen ── */
+.game-screen{display:none;width:100%}
+.progress-bar{
+  display:flex;justify-content:space-between;align-items:center;
+  padding:.6rem 1rem;background:var(--surface);border:1px solid var(--border);border-radius:8px;
+  font-family:'JetBrains Mono',monospace;font-size:.65rem;
+}
+.progress-label{color:var(--muted)}
+.progress-label strong{color:var(--silver-bright)}
+.progress-score{color:var(--gold)}
+
+/* ── Hand display ── */
+.hand-area{
+  width:100%;background:var(--surface);border:1px solid var(--border);border-radius:10px;
+  padding:1.2rem;margin-top:.8rem;
+}
+.hand-label{font-family:'JetBrains Mono',monospace;font-size:.6rem;color:var(--muted);text-transform:uppercase;letter-spacing:.1em;margin-bottom:.6rem;text-align:center}
+.hand-label.crib-label{color:var(--gold)}
+
+.cards-row{display:flex;gap:8px;justify-content:center;flex-wrap:wrap;align-items:flex-start}
+.cards-hand{display:flex;gap:8px;flex-wrap:wrap;justify-content:center}
+.starter-area{display:flex;flex-direction:column;align-items:center;gap:4px;margin-left:16px;padding-left:16px;border-left:1px solid var(--border2)}
+.starter-label{font-family:'JetBrains Mono',monospace;font-size:.5rem;color:var(--muted);text-transform:uppercase;letter-spacing:.08em}
+
+/* Card sizing override for this game */
+.hand-area .card{width:70px;height:100px;font-size:.7rem;border-radius:6px}
+
+/* ── Score button & breakdown ── */
+.score-actions{text-align:center;margin-top:1rem}
+
+.breakdown-panel{
+  display:none;width:100%;background:var(--surface2);border:1px solid var(--border2);
+  border-radius:8px;padding:1rem;margin-top:.8rem;
+}
+.breakdown-table{width:100%;font-family:'JetBrains Mono',monospace;font-size:.62rem}
+.breakdown-table tr{border-bottom:1px solid var(--border)}
+.breakdown-table td{padding:.3rem .4rem}
+.breakdown-table td:first-child{color:var(--text)}
+.breakdown-table td:last-child{text-align:right;color:var(--silver-bright);font-weight:500}
+.breakdown-table td.zero{color:var(--muted)}
+.breakdown-total{font-size:.75rem;color:var(--gold);font-weight:700}
+
+.combos-list{margin-top:.6rem;font-family:'JetBrains Mono',monospace;font-size:.55rem;color:var(--muted);line-height:1.8}
+.combos-list div{padding:.1rem 0}
+
+/* ── Final scorecard ── */
+.final-screen{display:none;width:100%;text-align:center}
+.final-title{font-family:'Bebas Neue',sans-serif;font-size:2.2rem;color:var(--text-white);letter-spacing:.05em;margin-bottom:.8rem}
+.scorecard{
+  width:100%;background:var(--surface);border:1px solid var(--border);border-radius:10px;
+  padding:1rem;margin-bottom:1rem;
+}
+.scorecard table{width:100%;font-family:'JetBrains Mono',monospace;font-size:.6rem;border-collapse:collapse}
+.scorecard th{font-weight:500;color:var(--muted);text-align:left;padding:.3rem .4rem;border-bottom:1px solid var(--border2);font-size:.5rem;text-transform:uppercase;letter-spacing:.06em}
+.scorecard td{padding:.35rem .4rem;border-bottom:1px solid var(--border)}
+.scorecard td:first-child{color:var(--text)}
+.scorecard td:last-child{text-align:right;color:var(--silver-bright)}
+.scorecard .crib-row td{color:var(--gold)}
+.scorecard .total-row td{font-size:.75rem;font-weight:700;color:var(--gold);border-top:2px solid var(--border2);border-bottom:none}
+.grand-total{font-family:'Bebas Neue',sans-serif;font-size:3rem;color:var(--gold);margin:.5rem 0}
+
+/* ── Duel results ── */
+.duel-result{display:none;width:100%;background:var(--surface);border:1px solid var(--border);border-radius:10px;padding:1.2rem;text-align:center;margin-top:.8rem}
+.duel-result h3{font-family:'Playfair Display',serif;font-size:1.2rem;color:var(--text-white);margin-bottom:.4rem}
+.duel-result .result-text{font-size:.75rem;margin-bottom:.3rem}
+.duel-result .win{color:var(--green)}
+.duel-result .lose{color:var(--red)}
+.duel-result .draw{color:var(--silver)}
+
+/* ── Mobile ── */
+@media(max-width:480px){
+  .game-title{font-size:1.8rem}
+  .hand-area .card{width:56px;height:80px;font-size:.6rem}
+  .starter-area{margin-left:10px;padding-left:10px}
+  .share-code-display{font-size:1.6rem}
+  .grand-total{font-size:2.4rem}
+}
+@media(max-width:360px){
+  .hand-area .card{width:48px;height:68px;font-size:.52rem}
+}
+</style>
+</head>
+<body>
+
+<!-- TOP BAR -->
+<div class="top-bar">
+  <div class="top-bar-left">
+    <a href="/qf-dapp/" class="back-link">&larr; Lobby</a>
+    <a href="/qf-dapp/" class="top-logo">QF <span>Games</span></a>
+  </div>
+  <div class="top-bar-right">
+    <span class="top-qf-name" id="topQfName" style="display:none"></span>
+    <span class="top-addr" id="topAddr" style="display:none"></span>
+    <button class="top-connect" id="topConnect" onclick="qfWallet.connect()">Connect</button>
+  </div>
+</div>
+<script src="../qf-wallet.js"></script>
+<script src="../qf-cards.js"></script>
+
+<div class="page">
+
+<!-- HEADER -->
+<div class="game-header">
+  <div class="game-kicker">QF Games &middot; Card Games</div>
+  <h1 class="game-title">Cribbage <span>Solitaire</span></h1>
+  <p class="game-sub">Score 9 dealt hands. Find every fifteen, pair, run, and flush.</p>
+</div>
+
+<!-- HOW TO PLAY -->
+<div class="htp" id="htp">
+  <button class="htp-toggle" onclick="this.closest('.htp').classList.toggle('open')">
+    <span>How to Play</span><span class="htp-arrow">&#9660;</span>
+  </button>
+  <div class="htp-body">
+    <p>52 cards are dealt into 9 groups. You see one hand at a time (5 cards + a starter card). The last hand is a 2-card crib.</p>
+    <p><strong>Tap "Score It"</strong> to see the cribbage breakdown, then <strong>"Next Hand"</strong> to advance.</p>
+    <p><strong>Scoring:</strong></p>
+    <ul>
+      <li><strong>Fifteens:</strong> 2pts per unique combination summing to 15</li>
+      <li><strong>Pairs:</strong> 2pts per pair of same rank (3-of-a-kind = 6, 4-of-a-kind = 12)</li>
+      <li><strong>Runs:</strong> 1pt per card in any run of 3+ consecutive ranks</li>
+      <li><strong>Flush:</strong> 4pts for 4-card hand flush, 5pts if starter matches</li>
+      <li><strong>Nobs:</strong> 1pt for Jack matching starter suit</li>
+      <li><strong>Nibs:</strong> 2pts if starter is a Jack (crib only)</li>
+    </ul>
+    <p>Card values for fifteens: Ace = 1, face cards = 10, others = face value.</p>
+    <p>Your total across all 9 hands is your score. Higher is better.</p>
+  </div>
+</div>
+
+<!-- START SCREEN -->
+<div class="start-screen" id="startScreen">
+  <div class="mode-panel" id="modePanel">
+    <h3>Choose Mode</h3>
+    <div class="mode-btns">
+      <button class="btn" onclick="G.startFree()">Free Play</button>
+      <button class="btn btn-gold" onclick="G.createDuel(25)" id="duelBtn25">Duel 25 QF</button>
+      <button class="btn btn-gold" onclick="G.createDuel(50)" id="duelBtn50">Duel 50 QF</button>
+    </div>
+  </div>
+  <div class="msg" id="startMsg"></div>
+
+  <!-- Duel share (after creator finishes) -->
+  <div class="duel-share" id="duelShare">
+    <h3>Share Your Duel Code</h3>
+    <p>Send this code to your opponent. They have 24 hours to play.</p>
+    <div class="share-code-display" id="shareCode">------</div>
+    <p id="duelExpire" style="font-size:.55rem;color:var(--muted)"></p>
+    <p id="duelStatusMsg" style="font-size:.65rem;color:var(--silver);margin-top:.4rem">Waiting for opponent...</p>
+  </div>
+
+  <!-- Duel accept (opponent view) -->
+  <div class="duel-accept" id="duelAccept">
+    <h2>Duel Challenge</h2>
+    <p>Challenged by <strong id="challengerName">...</strong></p>
+    <p id="acceptStakeInfo" style="margin:.4rem 0 .8rem"></p>
+    <button class="btn btn-gold" onclick="G.acceptDuel()">Accept &amp; Play</button>
+  </div>
+</div>
+
+<!-- GAME SCREEN -->
+<div class="game-screen" id="gameScreen">
+  <div class="progress-bar">
+    <span class="progress-label">Hand <strong id="handNum">1</strong> of <strong>9</strong></span>
+    <span class="progress-score">Score: <strong id="runningTotal">0</strong></span>
+  </div>
+
+  <div class="hand-area" id="handArea">
+    <div class="hand-label" id="handLabel">Hand 1</div>
+    <div class="cards-row">
+      <div class="cards-hand" id="cardsHand"></div>
+      <div class="starter-area">
+        <div class="starter-label">Starter</div>
+        <div id="starterCard"></div>
+      </div>
+    </div>
+
+    <div class="score-actions" id="scoreActions">
+      <button class="btn" id="scoreBtn" onclick="G.scoreHand()">Score It</button>
+    </div>
+
+    <div class="breakdown-panel" id="breakdownPanel">
+      <table class="breakdown-table" id="breakdownTable"></table>
+      <div class="combos-list" id="combosList"></div>
+      <div style="text-align:center;margin-top:.8rem">
+        <button class="btn btn-small" id="nextBtn" onclick="G.nextHand()">Next Hand</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- FINAL SCREEN -->
+<div class="final-screen" id="finalScreen">
+  <div class="final-title">Final Score</div>
+  <div class="scorecard">
+    <table>
+      <thead><tr><th>Hand</th><th>15s</th><th>Pairs</th><th>Runs</th><th>Flush</th><th>Other</th><th style="text-align:right">Total</th></tr></thead>
+      <tbody id="scorecardBody"></tbody>
+    </table>
+  </div>
+  <div class="grand-total" id="grandTotal">0</div>
+  <div style="font-family:'JetBrains Mono',monospace;font-size:.6rem;color:var(--muted);margin-bottom:1rem">points</div>
+
+  <div class="duel-result" id="duelResult">
+    <h3 id="duelResultTitle">Duel Result</h3>
+    <p class="result-text" id="duelResultText"></p>
+  </div>
+
+  <div style="margin-top:1rem;display:flex;gap:.6rem;justify-content:center;flex-wrap:wrap">
+    <button class="btn" onclick="location.reload()">Play Again</button>
+    <a href="/qf-dapp/" class="btn" style="text-decoration:none">Back to Lobby</a>
+  </div>
+</div>
+
+</div>
+
+<script>
+// ── Wallet UI ────────────────────────────────────────────────────────────
+var W = qfWallet;
+W.onConnect(function(s) {
+  if (!s.address) return;
+  document.getElementById('topConnect').style.display = 'none';
+  var addrEl = document.getElementById('topAddr');
+  addrEl.textContent = s.address.slice(0,6) + '...' + s.address.slice(-4);
+  addrEl.style.display = '';
+  if (s.qfName) {
+    document.getElementById('topQfName').textContent = s.qfName;
+    document.getElementById('topQfName').style.display = '';
+    addrEl.style.display = 'none';
+  }
+});
+W.onDisconnect(function() {
+  document.getElementById('topConnect').style.display = '';
+  document.getElementById('topAddr').style.display = 'none';
+  document.getElementById('topQfName').style.display = 'none';
+});
+
+// ── Game Module ──────────────────────────────────────────────────────────
+var G = (function() {
+  'use strict';
+
+  var API_BASE = 'https://dapp-api.mathswins.co.uk/api/dapp';
+  if (location.hostname === 'localhost' || location.hostname === '127.0.0.1') {
+    API_BASE = 'http://127.0.0.1:3860/api/dapp';
+  }
+
+  var GAME_ID = 'cribbage-solitaire';
+
+  // ── State ────────────────────────────────────────────────────────────
+  var sessionToken = null;
+  var totalQuestions = 9;
+  var currentHand = 0;
+  var totalScore = 0;
+  var handScores = []; // { score, breakdown } per hand
+  var currentQuestion = null;
+
+  // Duel state
+  var duelMode = false;
+  var duelCode = null;
+  var duelId = null;
+  var duelPollTimer = null;
+
+  // League state
+  var leagueMode = false;
+  var leagueId = null;
+
+  // ── API helper ───────────────────────────────────────────────────────
+  async function api(url, body, method) {
+    var headers = W.authHeaders();
+    var opts = { method: method || 'POST', headers: headers };
+    if (body && method !== 'GET') opts.body = JSON.stringify(body);
+    if (method === 'GET') { delete opts.body; opts.method = 'GET'; }
+    var res = await fetch(API_BASE + url, opts);
+    return res.json();
+  }
+
+  function setMsg(txt) {
+    var el = document.getElementById('startMsg');
+    el.textContent = txt;
+    el.style.display = txt ? '' : 'none';
+  }
+
+  // ── Card rendering ───────────────────────────────────────────────────
+  var createCardEl = QFCards.createCardEl;
+
+  function renderHand(question) {
+    currentQuestion = question;
+    var handEl = document.getElementById('cardsHand');
+    var starterEl = document.getElementById('starterCard');
+    handEl.innerHTML = '';
+    starterEl.innerHTML = '';
+
+    // Render hand cards
+    question.hand.forEach(function(cardVal) {
+      handEl.appendChild(createCardEl(cardVal));
+    });
+
+    // Render starter
+    starterEl.appendChild(createCardEl(question.starter));
+
+    // Update labels
+    var label = question.is_crib ? 'Crib (2 cards)' : 'Hand ' + question.num;
+    document.getElementById('handLabel').textContent = label;
+    document.getElementById('handLabel').className = question.is_crib ? 'hand-label crib-label' : 'hand-label';
+    document.getElementById('handNum').textContent = question.num;
+    document.getElementById('runningTotal').textContent = totalScore;
+
+    // Reset UI
+    document.getElementById('scoreBtn').disabled = false;
+    document.getElementById('scoreActions').style.display = '';
+    document.getElementById('breakdownPanel').style.display = 'none';
+  }
+
+  function showBreakdown(data) {
+    var bd = data.correctAnswer;
+    if (!bd) return;
+
+    var table = document.getElementById('breakdownTable');
+    var rows = [
+      ['Fifteens', bd.breakdown.fifteens],
+      ['Pairs', bd.breakdown.pairs],
+      ['Runs', bd.breakdown.runs],
+      ['Flush', bd.breakdown.flush],
+      ['Nobs', bd.breakdown.nobs],
+      ['Nibs', bd.breakdown.nibs],
+    ];
+
+    var html = '';
+    var handTotal = 0;
+    rows.forEach(function(r) {
+      var cls = r[1] === 0 ? ' class="zero"' : '';
+      html += '<tr><td>' + r[0] + '</td><td' + cls + '>' + r[1] + '</td></tr>';
+      handTotal += r[1];
+    });
+    html += '<tr><td class="breakdown-total">Hand Total</td><td class="breakdown-total">' + handTotal + '</td></tr>';
+    table.innerHTML = html;
+
+    // Combinations
+    var combosEl = document.getElementById('combosList');
+    if (bd.combinations && bd.combinations.length > 0) {
+      combosEl.innerHTML = bd.combinations.map(function(c) { return '<div>' + c + '</div>'; }).join('');
+    } else {
+      combosEl.innerHTML = '<div>No scoring combinations</div>';
+    }
+
+    // Show
+    document.getElementById('scoreActions').style.display = 'none';
+    document.getElementById('breakdownPanel').style.display = '';
+
+    // Update button text for final hand
+    if (currentHand >= totalQuestions) {
+      document.getElementById('nextBtn').textContent = 'See Final Score';
+    }
+  }
+
+  function showFinalScore() {
+    document.getElementById('gameScreen').style.display = 'none';
+    document.getElementById('finalScreen').style.display = '';
+
+    var body = document.getElementById('scorecardBody');
+    var html = '';
+    handScores.forEach(function(h, i) {
+      var cls = i === 8 ? ' class="crib-row"' : '';
+      var label = i === 8 ? 'Crib' : 'Hand ' + (i + 1);
+      var other = (h.breakdown.flush || 0) + (h.breakdown.nobs || 0) + (h.breakdown.nibs || 0);
+      // Wait, flush is separate column. Let me recalculate.
+      var otherPts = (h.breakdown.nobs || 0) + (h.breakdown.nibs || 0);
+      html += '<tr' + cls + '>';
+      html += '<td>' + label + '</td>';
+      html += '<td>' + (h.breakdown.fifteens || 0) + '</td>';
+      html += '<td>' + (h.breakdown.pairs || 0) + '</td>';
+      html += '<td>' + (h.breakdown.runs || 0) + '</td>';
+      html += '<td>' + (h.breakdown.flush || 0) + '</td>';
+      html += '<td>' + (otherPts || 0) + '</td>';
+      html += '<td style="text-align:right">' + h.score + '</td>';
+      html += '</tr>';
+    });
+    html += '<tr class="total-row"><td colspan="6">Total</td><td style="text-align:right">' + totalScore + '</td></tr>';
+    body.innerHTML = html;
+
+    document.getElementById('grandTotal').textContent = totalScore;
+
+    // Duel: submit score
+    if (duelMode && duelCode) {
+      submitDuelScore();
+    }
+  }
+
+  // ── Session management ───────────────────────────────────────────────
+  async function startSession(seed) {
+    try {
+      var payload = { gameId: GAME_ID };
+      if (seed) payload.seed = seed;
+      var data = await api('/session/start', payload);
+      if (data.error) { setMsg(data.error); return; }
+      beginGame(data);
+    } catch (e) {
+      setMsg('Failed to start session: ' + e.message);
+    }
+  }
+
+  function beginGame(data) {
+    sessionToken = data.token;
+    totalQuestions = data.totalQuestions || 9;
+    currentHand = 1;
+    totalScore = 0;
+    handScores = [];
+
+    document.getElementById('startScreen').style.display = 'none';
+    document.getElementById('gameScreen').style.display = '';
+
+    renderHand(data.question);
+  }
+
+  // ── Public API ───────────────────────────────────────────────────────
+
+  function startFree() {
+    startSession();
+  }
+
+  async function scoreHand() {
+    var btn = document.getElementById('scoreBtn');
+    btn.disabled = true;
+    btn.textContent = 'Scoring...';
+
+    try {
+      var data = await api('/session/evaluate', {
+        sessionToken: sessionToken,
+        answer: JSON.stringify({ action: 'score' })
+      });
+
+      if (data.error) {
+        setMsg(data.error);
+        btn.disabled = false;
+        btn.textContent = 'Score It';
+        return;
+      }
+
+      totalScore = data.totalScore || 0;
+      document.getElementById('runningTotal').textContent = totalScore;
+
+      // Store hand score
+      var bd = data.correctAnswer || { score: data.points, breakdown: {} };
+      handScores.push(bd);
+
+      currentHand = data.questionNum || currentHand;
+
+      // If server sent next question, store it
+      if (data.question) {
+        currentQuestion = data.question;
+      }
+
+      showBreakdown(data);
+
+      // Check if finished
+      if (data.finished) {
+        document.getElementById('nextBtn').textContent = 'See Final Score';
+      }
+
+    } catch (e) {
+      setMsg('Scoring error: ' + e.message);
+      btn.disabled = false;
+      btn.textContent = 'Score It';
+    }
+  }
+
+  function nextHand() {
+    if (handScores.length >= totalQuestions) {
+      showFinalScore();
+      return;
+    }
+
+    if (currentQuestion && currentQuestion.hand) {
+      renderHand(currentQuestion);
+    }
+  }
+
+  // ── Duel functions ───────────────────────────────────────────────────
+  async function createDuel(stake) {
+    if (!W.state.address) {
+      alert('Connect your wallet to create a duel.');
+      return;
+    }
+    duelMode = true;
+
+    try {
+      var data = await api('/duel/create', { gameId: GAME_ID, difficulty: 'medium', stake: stake || 25 });
+      if (data.error) { setMsg(data.error); return; }
+
+      duelCode = data.shareCode;
+      duelId = data.duelId;
+
+      await startSession(data.puzzleSeed);
+    } catch (e) {
+      setMsg('Connection error creating duel');
+    }
+  }
+
+  function showDuelShare() {
+    document.getElementById('finalScreen').style.display = 'none';
+    document.getElementById('startScreen').style.display = '';
+    document.getElementById('modePanel').style.display = 'none';
+    document.getElementById('duelShare').style.display = '';
+    document.getElementById('shareCode').textContent = duelCode;
+    var expires = new Date(Date.now() + 24 * 60 * 60 * 1000);
+    document.getElementById('duelExpire').textContent = 'Expires: ' + expires.toLocaleString();
+    pollDuelStatus();
+  }
+
+  function pollDuelStatus() {
+    if (duelPollTimer) clearInterval(duelPollTimer);
+    duelPollTimer = setInterval(async function() {
+      try {
+        var data = await api('/duel/' + duelCode, null, 'GET');
+        if (data.status === 'completed') {
+          clearInterval(duelPollTimer);
+          showDuelResults(data);
+        } else if (data.opponent_wallet) {
+          var name = W.displayName(data.opponent_wallet);
+          document.getElementById('duelStatusMsg').textContent = name + ' is playing...';
+        }
+      } catch (e) { /* ignore */ }
+    }, 5000);
+  }
+
+  async function submitDuelScore() {
+    try {
+      await api('/duel/' + duelCode + '/submit', { score: totalScore });
+      showDuelShare();
+    } catch (e) { /* ignore */ }
+  }
+
+  function showDuelResults(data) {
+    var resultEl = document.getElementById('duelResult');
+    var titleEl = document.getElementById('duelResultTitle');
+    var textEl = document.getElementById('duelResultText');
+
+    var myScore = totalScore;
+    var oppScore = data.creator_wallet === W.state.address ? data.opponent_score : data.creator_score;
+
+    if (myScore > oppScore) {
+      titleEl.textContent = 'You Win!';
+      textEl.className = 'result-text win';
+      textEl.textContent = myScore + ' vs ' + oppScore;
+    } else if (myScore < oppScore) {
+      titleEl.textContent = 'You Lose';
+      textEl.className = 'result-text lose';
+      textEl.textContent = myScore + ' vs ' + oppScore;
+    } else {
+      titleEl.textContent = 'Draw';
+      textEl.className = 'result-text draw';
+      textEl.textContent = myScore + ' vs ' + oppScore + ' — pot split evenly';
+    }
+
+    // Show on final screen
+    document.getElementById('duelShare').style.display = 'none';
+    document.getElementById('finalScreen').style.display = '';
+    resultEl.style.display = '';
+  }
+
+  async function showAcceptScreen(code) {
+    duelCode = code;
+    duelMode = true;
+    document.getElementById('modePanel').style.display = 'none';
+
+    try {
+      var data = await api('/duel/' + code, null, 'GET');
+      if (data.error) { setMsg(data.error); return; }
+
+      duelId = data.id;
+      var creatorDisplay = W.displayName(data.creator_wallet);
+      document.getElementById('challengerName').textContent = creatorDisplay;
+
+      var stakeDisplay = (data.stake || 25) + ' QF';
+      document.getElementById('acceptStakeInfo').textContent = 'Stake: ' + stakeDisplay + ' each';
+
+      document.getElementById('duelAccept').style.display = '';
+    } catch (e) {
+      setMsg('Could not load duel.');
+    }
+  }
+
+  async function acceptDuel() {
+    if (!W.state.address) {
+      alert('Connect your wallet to accept a duel.');
+      return;
+    }
+    try {
+      var data = await api('/duel/' + duelCode + '/accept', {});
+      if (data.error) { setMsg(data.error); return; }
+
+      document.getElementById('duelAccept').style.display = 'none';
+      duelId = data.duelId;
+      await startSession(data.puzzleSeed);
+    } catch (e) {
+      setMsg('Connection error accepting duel');
+    }
+  }
+
+  // ── URL param check ──────────────────────────────────────────────────
+  function checkUrlParams() {
+    var params = new URLSearchParams(window.location.search);
+    var code = params.get('duel');
+    if (code) {
+      showAcceptScreen(code.toUpperCase());
+      return true;
+    }
+    var lid = params.get('league');
+    if (lid) {
+      leagueMode = true;
+      leagueId = lid;
+      return true;
+    }
+    return false;
+  }
+
+  // ── Init ─────────────────────────────────────────────────────────────
+  checkUrlParams();
+
+  return {
+    startFree: startFree,
+    scoreHand: scoreHand,
+    nextHand: nextHand,
+    createDuel: createDuel,
+    acceptDuel: acceptDuel,
+  };
+
+})();
+</script>
+</body>
+</html>
