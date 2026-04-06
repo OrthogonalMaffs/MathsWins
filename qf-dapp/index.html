@@ -259,6 +259,28 @@ footer a:hover{color:var(--silver-bright)}
   border-radius:1px;
 }
 
+/* ── Card Games Section ── */
+.card-games-section{margin:0 0 3rem;padding:1.4rem;background:var(--surface);border:1px solid var(--border);border-radius:10px}
+.card-games-header{text-align:center;margin-bottom:1.2rem}
+.card-games-header h3{font-family:'Playfair Display',serif;font-size:1.1rem;color:var(--text-white);margin-bottom:.3rem}
+.card-games-suits{font-size:1rem;letter-spacing:.4em;color:var(--silver)}
+.card-games-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(220px,1fr));gap:16px}
+.cg-card{
+  background:var(--surface2);border:1px solid var(--border);border-radius:8px;
+  padding:16px 18px;position:relative;overflow:hidden;transition:all .3s;
+}
+.cg-card::before{content:'';position:absolute;left:0;top:0;bottom:0;width:3px;border-radius:3px 0 0 3px;background:var(--silver)}
+.cg-card.live{cursor:pointer}
+.cg-card.live:hover{border-color:var(--silver-border);transform:translateY(-2px);box-shadow:0 0 10px rgba(184,188,198,0.06)}
+.cg-card.coming{opacity:.45;cursor:default}
+.cg-card .cg-title{font-size:.82rem;font-weight:700;color:var(--text-white);margin-bottom:.25rem}
+.cg-card .cg-desc{font-size:.62rem;color:var(--muted);line-height:1.5}
+.cg-pill{
+  display:inline-block;font-family:'JetBrains Mono',monospace;font-size:.46rem;
+  padding:2px 8px;border-radius:10px;margin-top:.5rem;
+  background:rgba(184,188,198,.1);color:var(--silver);border:1px solid rgba(184,188,198,.2);
+}
+
 /* ── Mobile ── */
 @media(max-width:600px){
   h1{font-size:2rem}
@@ -302,7 +324,7 @@ footer a:hover{color:var(--silver-bright)}
   <p class="tagline">Competitive maths games on QF Network. Enter leagues, duel your rivals, win prizes. Pure skill.</p>
   <div class="hero-stats">
     <div class="hs"><div class="hs-num">8</div><div class="hs-label">Competitive Games</div></div>
-    <div class="hs"><div class="hs-num">12</div><div class="hs-label">Free Games</div></div>
+    <div class="hs"><div class="hs-num">13</div><div class="hs-label">Free Games</div></div>
     <div class="hs"><div class="hs-num" id="activeLeagues">&mdash;</div><div class="hs-label">Active Leagues</div></div>
   </div>
 </div>
@@ -352,6 +374,40 @@ footer a:hover{color:var(--silver-bright)}
 <!-- GAME GRID -->
 <div class="game-grid" id="gameGrid"></div>
 
+<!-- CARD GAMES -->
+<div class="card-games-section">
+  <div class="card-games-header">
+    <h3>Card Games</h3>
+    <div class="card-games-suits">&spades; &hearts; &diams; &clubs;</div>
+  </div>
+  <div class="card-games-grid">
+    <div class="cg-card live" onclick="window.location.href='/qf-dapp/games/freecell/'">
+      <div class="cg-title">FreeCell</div>
+      <div class="cg-desc">Strategic solitaire. Every deal is solvable &mdash; pure skill, zero luck.</div>
+    </div>
+    <div class="cg-card coming">
+      <div class="cg-title">Cribbage Solitaire</div>
+      <div class="cg-desc">Draw cards and form cribbage hands. Score 15s, pairs, runs, and flushes.</div>
+      <span class="cg-pill">Coming Soon</span>
+    </div>
+    <div class="cg-card coming">
+      <div class="cg-title">Poker Patience</div>
+      <div class="cg-desc">Place cards into a 5&times;5 grid to make the best poker hands.</div>
+      <span class="cg-pill">Coming Soon</span>
+    </div>
+    <div class="cg-card coming">
+      <div class="cg-title">Golf Solitaire</div>
+      <div class="cg-desc">Clear the tableau by playing cards one rank up or down from the waste pile.</div>
+      <span class="cg-pill">Coming Soon</span>
+    </div>
+    <div class="cg-card coming">
+      <div class="cg-title">Pyramid</div>
+      <div class="cg-desc">Remove pairs that sum to 13. Clear the pyramid before the deck runs out.</div>
+      <span class="cg-pill">Coming Soon</span>
+    </div>
+  </div>
+</div>
+
 </div>
 
 <footer>
@@ -361,19 +417,22 @@ footer a:hover{color:var(--silver-bright)}
 <script>
 // ── Game Data ───────────────────────────────────────────────────────────────
 var GAMES = [
-  // Row 1 — Sudoku Duel top-centre
-  { id:'countdown-numbers', name:'Countdown Numbers', desc:'Six numbers, one target. Use arithmetic and brackets to hit the target.', cat:'number', paid:true, league:true, tags:['arithmetic','BODMAS'] },
-  { id:'sudoku-duel', name:'Sudoku Duel', desc:'Challenge anyone to a 1v1. Same puzzle, same conditions. Fastest clean solve wins.', cat:'puzzle', paid:true, league:true, duel:true, featured:true, tags:['logic','daily','duel'] },
-  { id:'cryptarithmetic-club', name:'Cryptarithmetic Club', desc:'Each letter is a digit. Solve the substitution puzzle within the time limit. Pure deduction.', cat:'puzzle', paid:true, league:true, tags:['logic','deduction'] },
-  // Row 2 — MW logo centre
+  // Row 1 — Minesweeper, Sudoku Duel (featured), FreeCell
   { id:'minesweeper', name:'Minesweeper', desc:'Clear the minefield. Logic, deduction, and calculated risk.', cat:'puzzle', paid:true, league:true, tags:['logic','deduction'] },
-  { id:'_mw_logo', name:'', desc:'', cat:'', paid:true, logo:true },
-  { id:'kenken', name:'KenKen', desc:'Fill the grid using arithmetic and logic. No repeats in rows or columns. Cages must hit their target.', cat:'puzzle', paid:true, league:true, tags:['arithmetic','logic'] },
-  // Row 3
+  { id:'sudoku-duel', name:'Sudoku Duel', desc:'Challenge anyone to a 1v1. Same puzzle, same conditions. Fastest clean solve wins.', cat:'puzzle', paid:true, league:true, duel:true, featured:true, tags:['logic','daily','duel'] },
   { id:'freecell', name:'FreeCell', desc:'Strategic solitaire. Every deal is solvable — pure skill, zero luck.', cat:'strategy', paid:true, league:true, tags:['cards','strategy'] },
-  { id:'nonogram', name:'Nonogram', desc:'Fill cells to reveal a hidden Greek letter. Use row and column clues to solve the grid.', cat:'logic', paid:true, league:true, tags:['logic','pixel art'] },
+  // Row 2 — KenKen, MW logo, Poker Patience (coming soon)
+  { id:'kenken', name:'KenKen', desc:'Fill the grid using arithmetic and logic. No repeats in rows or columns. Cages must hit their target.', cat:'puzzle', paid:true, league:true, tags:['arithmetic','logic'] },
+  { id:'_mw_logo', name:'', desc:'', cat:'', paid:true, logo:true },
+  { id:'poker-patience', name:'Poker Patience', desc:'Place cards into a 5\u00d75 grid to make the best poker hands across rows and columns.', cat:'strategy', paid:true, coming:true, tags:['cards','strategy'] },
+  // Row 3 — Kakuro, Nonogram, Cribbage Solitaire (coming soon)
   { id:'kakuro', name:'Kakuro', desc:'Crossword meets Sudoku. Fill white cells with digits 1-9 so each run sums to its clue. No repeats.', cat:'puzzle', paid:true, league:true, tags:['sums','logic'] },
+  { id:'nonogram', name:'Nonogram', desc:'Fill cells to reveal a hidden Greek letter. Use row and column clues to solve the grid.', cat:'logic', paid:true, league:true, tags:['logic','pixel art'] },
+  { id:'cribbage-solitaire', name:'Cribbage Solitaire', desc:'Draw cards and form cribbage hands. Score 15s, pairs, runs, and flushes against the deck.', cat:'strategy', paid:true, coming:true, tags:['cards','strategy'] },
+  // Free games
   { id:'battleships', name:'Battleships', desc:'Naval warfare. Place your fleet, hunt the enemy. Turn-based duels with QF stakes.', cat:'strategy', paid:false, duel:true, tags:['strategy','naval'] },
+  { id:'countdown-numbers', name:'Countdown Numbers', desc:'Six numbers, one target. Use arithmetic and brackets to hit the target.', cat:'number', paid:false, tags:['arithmetic','BODMAS'] },
+  { id:'cryptarithmetic-club', name:'Cryptarithmetic Club', desc:'Each letter is a digit. Solve the substitution puzzle within the time limit. Pure deduction.', cat:'puzzle', paid:false, tags:['logic','deduction'] },
   { id:'estimation-engine', name:'Estimation Engine', desc:'Estimate complex calculations under time pressure. Pure mental arithmetic.', cat:'number', paid:false, tags:['mental maths','speed'] },
   { id:'sequence-solver', name:'Sequence Solver', desc:'Identify patterns in number sequences. Arithmetic, geometric, and combined sequences.', cat:'number', paid:false, tags:['sequences','patterns'] },
   { id:'prime-or-composite', name:'Prime or Composite', desc:'Classify numbers as prime or composite in 5 seconds. Speed and number sense.', cat:'speed', paid:false, tags:['primes','speed'] },
