@@ -40,11 +40,9 @@
   --green:         #3a8a5c;
   --red:           #b03a3a;
   --blue:          #3a6a9c;
-  /* Classic Minesweeper palette */
-  --ms-face:       #c8ccd6;
-  --ms-hi:         #e8eaf0;
-  --ms-lo:         #8a8f9c;
-  --ms-dark:       #4a4e5a;
+  /* Sabre Minesweeper palette */
+  --ms-cell:       #1e2025;
+  --ms-revealed:   #26282e;
 }
 *,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
 body{background:var(--bg);color:var(--text);font-family:'Inter',sans-serif;min-height:100vh;display:flex;flex-direction:column;align-items:center;-webkit-tap-highlight-color:transparent}
@@ -105,52 +103,47 @@ body{background:var(--bg);color:var(--text);font-family:'Inter',sans-serif;min-h
 /* ── Game area ── */
 #game-area{flex-direction:column;align-items:center;width:100%}
 
-/* ── Classic Minesweeper Panel ── */
+/* ── Sabre Minesweeper Panel ── */
 .ms-panel{
-  background:var(--ms-face);
-  border:3px solid;
-  border-top-color:var(--ms-hi);border-left-color:var(--ms-hi);
-  border-right-color:var(--ms-dark);border-bottom-color:var(--ms-dark);
-  padding:6px;
+  background:transparent;
+  border:1px solid var(--silver-border);
+  border-radius:6px;
+  box-shadow:0 0 40px rgba(0,0,0,0.7),0 0 0 1px rgba(184,188,198,0.05);
+  padding:0;
   width:100%;
+  overflow:hidden;
 }
 
 /* ── Header bar (mine counter / smiley / timer) ── */
 .ms-header{
   display:flex;justify-content:space-between;align-items:center;
-  background:var(--ms-face);padding:4px 6px;margin-bottom:6px;
-  border:2px solid;
-  border-top-color:var(--ms-lo);border-left-color:var(--ms-lo);
-  border-right-color:var(--ms-hi);border-bottom-color:var(--ms-hi);
+  background:var(--surface);padding:8px 16px;
+  border-bottom:1px solid var(--silver-border);
+  backdrop-filter:blur(8px);
 }
 .ms-lcd{
-  font-family:'JetBrains Mono',monospace;font-weight:700;
-  font-size:1.5rem;letter-spacing:0.05em;line-height:1;
-  background:#000;color:#ff0000;
-  padding:2px 6px;min-width:3.2rem;text-align:right;
-  border:2px solid;
-  border-top-color:var(--ms-lo);border-left-color:var(--ms-lo);
-  border-right-color:var(--ms-hi);border-bottom-color:var(--ms-hi);
+  font-family:'JetBrains Mono',monospace;font-weight:500;
+  font-size:1.4rem;letter-spacing:0.05em;line-height:1;
+  color:var(--silver-bright);
+  background:none;padding:0;min-width:3rem;text-align:right;
+  border:none;
 }
 .ms-smiley{
-  width:36px;height:36px;font-size:1.3rem;line-height:36px;text-align:center;
-  background:var(--ms-face);cursor:pointer;border:2px solid;user-select:none;
-  border-top-color:var(--ms-hi);border-left-color:var(--ms-hi);
-  border-right-color:var(--ms-lo);border-bottom-color:var(--ms-lo);
+  width:36px;height:36px;font-size:1.2rem;line-height:36px;text-align:center;
+  background:var(--surface2);cursor:pointer;user-select:none;
+  border:1px solid var(--silver-border);border-radius:50%;
+  transition:border-color .15s;
 }
-.ms-smiley:active{
-  border-top-color:var(--ms-lo);border-left-color:var(--ms-lo);
-  border-right-color:var(--ms-hi);border-bottom-color:var(--ms-hi);
-}
+.ms-smiley:hover{border-color:var(--silver)}
+.ms-smiley:active{background:var(--surface3)}
 
 /* ── Board ── */
 .board-wrap{display:flex;justify-content:center;overflow:hidden}
+.board-inner{background:radial-gradient(ellipse at center,#22242a 0%,#16181c 100%);padding:1px}
 .board{
-  display:grid;gap:0px;
-  background:var(--ms-face);
-  border:3px solid;
-  border-top-color:var(--ms-lo);border-left-color:var(--ms-lo);
-  border-right-color:var(--ms-hi);border-bottom-color:var(--ms-hi);
+  display:grid;gap:1px;
+  background:rgba(0,0,0,0.3);
+  border:none;
   overflow:hidden;position:relative;touch-action:manipulation;
 }
 
@@ -159,53 +152,63 @@ body{background:var(--bg);color:var(--text);font-family:'Inter',sans-serif;min-h
   display:flex;align-items:center;justify-content:center;
   cursor:pointer;position:relative;
   user-select:none;-webkit-user-select:none;
-  background:var(--ms-face);
-  border:3px solid;
-  border-top-color:var(--ms-hi);border-left-color:var(--ms-hi);
-  border-right-color:var(--ms-lo);border-bottom-color:var(--ms-lo);
+  background:var(--ms-cell);
+  border-top:2px solid rgba(212,216,226,0.18);
+  border-left:2px solid rgba(212,216,226,0.12);
+  border-bottom:2px solid rgba(0,0,0,0.45);
+  border-right:2px solid rgba(0,0,0,0.35);
 }
 .cell:active:not(.revealed):not(.flagged){
-  border:1px solid var(--ms-lo);
-  background:var(--ms-face);
+  border:1px solid rgba(0,0,0,0.3);
+  background:var(--ms-revealed);
 }
 .cell.revealed{
-  background:var(--ms-face);cursor:default;
-  border:1px solid var(--ms-lo);
+  background:var(--ms-revealed);cursor:default;
+  border:1px solid rgba(0,0,0,0.3);
 }
 .cell.revealed-zero{
-  background:var(--ms-face);cursor:default;
-  border:1px solid var(--ms-lo);
+  background:var(--ms-revealed);cursor:default;
+  border:1px solid rgba(0,0,0,0.3);
 }
 .cell.flagged{
-  background:var(--ms-face);
-  border:3px solid;
-  border-top-color:var(--ms-hi);border-left-color:var(--ms-hi);
-  border-right-color:var(--ms-lo);border-bottom-color:var(--ms-lo);
+  background:var(--ms-cell);
+  border-top:2px solid rgba(212,216,226,0.18);
+  border-left:2px solid rgba(212,216,226,0.12);
+  border-bottom:2px solid rgba(0,0,0,0.45);
+  border-right:2px solid rgba(0,0,0,0.35);
 }
-.cell.detonated{background:#ff0000;border:1px solid var(--ms-lo)}
-.cell.mine-show{background:var(--ms-face);border:1px solid var(--ms-lo)}
-.cell.incorrect-flag{background:var(--ms-face);border:1px solid var(--ms-lo)}
+.cell.detonated{background:#3a1a1a;border:1px solid rgba(0,0,0,0.3);box-shadow:inset 0 0 12px rgba(200,50,50,0.4)}
+.cell.mine-show{background:var(--ms-revealed);border:1px solid rgba(0,0,0,0.3)}
+.cell.incorrect-flag{background:var(--ms-revealed);border:1px solid rgba(0,0,0,0.3)}
 
 .cell-val{font-family:'JetBrains Mono',monospace;font-weight:700;line-height:1;user-select:none;-webkit-user-select:none}
-.cell-flag{line-height:1;user-select:none}
+.cell-flag{line-height:1;user-select:none;color:#cc3333}
 .cell-mine{line-height:1;user-select:none}
 
-/* Classic number colours */
-.num-1{color:#0000ff}
-.num-2{color:#008000}
-.num-3{color:#ff0000}
-.num-4{color:#000080}
-.num-5{color:#800000}
-.num-6{color:#008080}
-.num-7{color:#000000}
-.num-8{color:#808080}
+/* Number colours (functional — unchanged from classic intent, Sabre-adjusted) */
+.num-1{color:#3a6fd8}
+.num-2{color:#3a8a5c}
+.num-3{color:#cc3333}
+.num-4{color:#1a1a7a}
+.num-5{color:#7a1a1a}
+.num-6{color:#1a7a7a}
+.num-7{color:#1a1a1a}
+.num-8{color:#5a5e68}
+
+/* ── Cell reveal animation ── */
+@keyframes cell-reveal{0%{opacity:0.4}100%{opacity:1}}
+.cell-reveal{animation:cell-reveal 0.08s ease-out}
+
+/* ── Mine reveal animation (staggered) ── */
+@keyframes mine-reveal{0%{opacity:0;transform:scale(0.8)}100%{opacity:1;transform:scale(1)}}
+.mine-stagger{animation:mine-reveal 0.15s ease-out both}
 
 /* ── Board sweep (win animation) ── */
 @keyframes light-sweep{0%{background-position:-200% -200%}100%{background-position:200% 200%}}
 .board-sweep{position:absolute;inset:0;pointer-events:none;z-index:10;background:linear-gradient(135deg,transparent 35%,rgba(255,255,255,0.3) 50%,transparent 65%);background-size:200% 200%;animation:light-sweep 900ms ease-in-out forwards}
 
 /* ── Detonation pulse ── */
-@keyframes det-pulse{0%{background:#ff0000}50%{background:#cc0000}100%{background:#ff0000}}
+@keyframes det-pulse{0%{box-shadow:inset 0 0 16px rgba(200,50,50,0.6)}50%{box-shadow:inset 0 0 8px rgba(200,50,50,0.3)}100%{box-shadow:inset 0 0 12px rgba(200,50,50,0.4)}}
 .cell.det-pulse{animation:det-pulse 0.6s ease 2}
 
 /* ── Buttons ── */
@@ -268,10 +271,9 @@ body{background:var(--bg);color:var(--text);font-family:'Inter',sans-serif;min-h
   .game-title{font-size:2rem}
   .controls{gap:0.3rem}
   .btn{padding:0.5rem 0.5rem;font-size:0.5rem}
-  .ms-lcd{font-size:1.1rem;min-width:2.4rem;padding:2px 4px}
-  .ms-smiley{width:30px;height:30px;font-size:1.1rem;line-height:30px}
-  .ms-panel{padding:4px}
-  .ms-header{padding:3px 4px;margin-bottom:4px}
+  .ms-lcd{font-size:1.1rem;min-width:2.4rem}
+  .ms-smiley{width:30px;height:30px;font-size:1rem;line-height:30px}
+  .ms-header{padding:6px 10px}
 }
 </style>
 <script src="https://cdn.jsdelivr.net/npm/ethers@6/dist/ethers.umd.min.js"></script>
@@ -352,7 +354,9 @@ body{background:var(--bg);color:var(--text);font-family:'Inter',sans-serif;min-h
       </div>
       <!-- Board -->
       <div class="board-wrap">
-        <div class="board" id="board"></div>
+        <div class="board-inner">
+          <div class="board" id="board"></div>
+        </div>
       </div>
     </div>
 
@@ -564,15 +568,14 @@ var G = (function() {
     board.style.gridTemplateColumns = 'repeat(' + boardWidth + ', 1fr)';
 
     // Calculate square cell size to fit viewport
-    // Panel has 6px padding each side + 3px border each side = 18px horizontal
-    // Board has 3px border each side = 6px
-    var panelPad = 18 + 6;
+    // Panel has 1px border each side + 1px board-inner padding each side + 1px gap approx
+    var panelPad = 6;
     var pageMargin = window.innerWidth < 480 ? 16 : 32;
     var maxAvail = Math.min(window.innerWidth - pageMargin, 600) - panelPad;
     var cellPx = Math.floor(maxAvail / Math.max(boardWidth, boardHeight));
     cellPx = Math.max(20, Math.min(cellPx, 36));
 
-    var boardPx = cellPx * boardWidth;
+    var boardPx = cellPx * boardWidth + (boardWidth - 1); // account for 1px gaps
     board.style.width = boardPx + 'px';
     panel.style.width = (boardPx + panelPad) + 'px';
     panel.style.maxWidth = '100%';
@@ -703,7 +706,7 @@ var G = (function() {
       if (data.flagged) {
         cellState[idx] = 'flagged';
         cells[idx].className = 'cell flagged';
-        cells[idx].innerHTML = '<span class="cell-flag" style="font-size:var(--flag-font)">\u2691</span>';
+        cells[idx].innerHTML = '<span class="cell-flag" style="font-size:var(--flag-font)">&#9873;</span>';
         flagCount++;
       } else {
         cellState[idx] = 'hidden';
@@ -812,12 +815,14 @@ var G = (function() {
 
       var el = cells[c];
       if (v === 0) {
-        el.className = 'cell revealed revealed-zero';
+        el.className = 'cell revealed revealed-zero cell-reveal';
         el.innerHTML = '';
       } else {
-        el.className = 'cell revealed';
+        el.className = 'cell revealed cell-reveal';
         el.innerHTML = '<span class="cell-val num-' + v + '" style="font-size:var(--cell-font)">' + v + '</span>';
       }
+      // Remove animation class after it completes so it can re-trigger if needed
+      el.addEventListener('animationend', function() { this.classList.remove('cell-reveal'); }, { once: true });
     }
     updateMineCounter();
   }
@@ -860,18 +865,20 @@ var G = (function() {
     stopTimer();
     setSmiley(SMILEY_DEAD);
 
-    // Show the detonated cell
+    // Show the detonated cell immediately with red glow
     cells[detonated].className = 'cell detonated det-pulse';
-    cells[detonated].innerHTML = '<span class="cell-mine" style="font-size:var(--flag-font)">\uD83D\uDCA3</span>';
+    cells[detonated].innerHTML = '<span class="cell-mine" style="font-size:var(--flag-font);color:#cc3333">\u2739</span>';
 
-    // Show all other mines
-    var mineSet = new Set(mines);
+    // Show all other mines with staggered reveal
+    var staggerIdx = 0;
     for (var i = 0; i < mines.length; i++) {
       var m = mines[i];
       if (m === detonated) continue;
       if (cellState[m] === 'flagged') continue; // correctly flagged
-      cells[m].className = 'cell mine-show';
-      cells[m].innerHTML = '<span class="cell-mine" style="font-size:var(--flag-font)">\uD83D\uDCA3</span>';
+      cells[m].className = 'cell mine-show mine-stagger';
+      cells[m].innerHTML = '<span class="cell-mine" style="font-size:var(--flag-font);color:#cc3333">\u2739</span>';
+      cells[m].style.animationDelay = (staggerIdx * 50) + 'ms';
+      staggerIdx++;
     }
 
     // Show incorrect flags
@@ -879,7 +886,7 @@ var G = (function() {
       for (var j = 0; j < incorrectFlags.length; j++) {
         var f = incorrectFlags[j];
         cells[f].className = 'cell incorrect-flag';
-        cells[f].innerHTML = '<span class="cell-val" style="color:#ff0000;font-size:var(--cell-font)">\u2717</span>';
+        cells[f].innerHTML = '<span class="cell-val" style="color:#cc3333;font-size:var(--cell-font)">\u2717</span>';
       }
     }
 
