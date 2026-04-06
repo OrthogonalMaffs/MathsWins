@@ -301,6 +301,12 @@
       showNoWalletMessage(document.getElementById('qf-wallet-list'));
       return;
     }
+    // Single EVM wallet: connect directly, skip chooser modal
+    var evmWallets = wallets.filter(function(w) { return !w.provider._substrate; });
+    if (evmWallets.length === 1 && wallets.length === 1) {
+      connectWithProvider(evmWallets[0].provider, evmWallets[0].id);
+      return;
+    }
     createModal();
     var list = document.getElementById('qf-wallet-list');
     list.innerHTML = '';
@@ -316,11 +322,12 @@
         if (!accounts || accounts.length === 0) return;
         address = accounts[0];
       } else {
-        // Manual connect — revoke and request fresh permissions
-        try {
-          await ethProvider.request({ method: 'wallet_revokePermissions', params: [{ eth_accounts: {} }] });
-        } catch (e) { /* Not supported on this wallet — continue */ }
+        // Manual connect — use eth_requestAccounts first (universally supported),
+        // then try wallet_requestPermissions for desktop multi-account selection
+        var accounts = await ethProvider.request({ method: 'eth_requestAccounts' });
+        address = accounts[0];
 
+        // On desktop with multi-account wallets, offer account picker via permissions API
         try {
           var permissions = await ethProvider.request({ method: 'wallet_requestPermissions', params: [{ eth_accounts: {} }] });
           var ethAccountsPerm = permissions.find(function(p) { return p.parentCapability === 'eth_accounts'; });
@@ -330,14 +337,7 @@
               address = caveat.value[0];
             }
           }
-          if (!address) {
-            var accounts = await ethProvider.request({ method: 'eth_requestAccounts' });
-            address = accounts[0];
-          }
-        } catch (e) {
-          var accounts = await ethProvider.request({ method: 'eth_requestAccounts' });
-          address = accounts[0];
-        }
+        } catch (e) { /* wallet_requestPermissions not supported — address from eth_requestAccounts is fine */ }
       }
 
       var provider = new ethers.BrowserProvider(ethProvider);
