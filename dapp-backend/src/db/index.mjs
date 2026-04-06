@@ -727,10 +727,10 @@ export function getOpenAndActiveLeagues(gameId) {
 
 // ── Battleships queries ──────────────────────────────────────────────
 
-export function createBattleshipsGame(id, stakeQf, creatorWallet, shareCode, createdAt) {
+export function createBattleshipsGame(id, stakeQf, creatorWallet, shareCode, createdAt, vsCpu = 0, difficulty = 'recruit') {
   const db = getDb();
-  db.prepare(`INSERT INTO battleships_games (id, stake_qf, creator_wallet, share_code, created_at)
-    VALUES (?, ?, ?, ?, ?)`).run(id, stakeQf, creatorWallet.toLowerCase(), shareCode, createdAt);
+  db.prepare(`INSERT INTO battleships_games (id, stake_qf, creator_wallet, share_code, created_at, vs_cpu, difficulty)
+    VALUES (?, ?, ?, ?, ?, ?, ?)`).run(id, stakeQf, creatorWallet.toLowerCase(), shareCode, createdAt, vsCpu, difficulty);
 }
 
 export function getBattleshipsGameByCode(code) {

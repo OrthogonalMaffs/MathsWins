@@ -209,3 +209,56 @@ CREATE TABLE IF NOT EXISTS active_game_state (
 );
 CREATE INDEX IF NOT EXISTS idx_ags_wallet ON active_game_state(wallet, context_type, context_id, puzzle_index);
 CREATE INDEX IF NOT EXISTS idx_ags_status ON active_game_state(status);
+
+-- Battleships (duel-only, turn-based async)
+CREATE TABLE IF NOT EXISTS battleships_games (
+  id TEXT PRIMARY KEY,
+  stake_qf INTEGER NOT NULL DEFAULT 25,
+  status TEXT NOT NULL DEFAULT 'placement',
+  creator_wallet TEXT NOT NULL,
+  opponent_wallet TEXT,
+  vs_cpu INTEGER DEFAULT 0,
+  difficulty TEXT DEFAULT 'recruit',
+  current_turn TEXT,
+  turn_deadline INTEGER,
+  winner_wallet TEXT,
+  share_code TEXT UNIQUE NOT NULL,
+  created_at INTEGER NOT NULL,
+  started_at INTEGER,
+  completed_at INTEGER
+);
+
+CREATE TABLE IF NOT EXISTS battleships_placements (
+  game_id TEXT NOT NULL,
+  wallet TEXT NOT NULL,
+  fleet TEXT NOT NULL,
+  confirmed_at INTEGER,
+  PRIMARY KEY (game_id, wallet)
+);
+
+CREATE TABLE IF NOT EXISTS battleships_rounds (
+  id INTEGER PRIMARY KEY AUTOINCREMENT,
+  game_id TEXT NOT NULL,
+  round_number INTEGER NOT NULL,
+  wallet TEXT NOT NULL,
+  firing_ship TEXT NOT NULL,
+  target_x INTEGER NOT NULL,
+  target_y INTEGER NOT NULL,
+  range_distance REAL NOT NULL,
+  result TEXT NOT NULL,
+  ship_hit TEXT,
+  auto_shot INTEGER DEFAULT 0,
+  created_at INTEGER NOT NULL
+);
+
+CREATE TABLE IF NOT EXISTS battleships_record (
+  wallet TEXT PRIMARY KEY,
+  wins INTEGER DEFAULT 0,
+  losses INTEGER DEFAULT 0,
+  draws INTEGER DEFAULT 0,
+  updated_at INTEGER
+);
+
+CREATE INDEX IF NOT EXISTS idx_bs_games_code ON battleships_games(share_code);
+CREATE INDEX IF NOT EXISTS idx_bs_games_wallet ON battleships_games(creator_wallet);
+CREATE INDEX IF NOT EXISTS idx_bs_rounds_game ON battleships_rounds(game_id);

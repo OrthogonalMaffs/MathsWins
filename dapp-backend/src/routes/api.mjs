@@ -13,7 +13,7 @@ import { doSettleLeague, checkEarlySettlement, recoverStuckLeagues } from '../le
 import { sendQF, settleDuel } from '../escrow.mjs';
 import { createBattleshipsGame, getBattleshipsGameByCode, getBattleshipsGameById, updateBattleshipsGameStatus, saveBattleshipsPlacement, getBattleshipsPlacement, getBattleshipsPlacements, addBattleshipsRound, getBattleshipsRounds, getBattleshipsRecord, updateBattleshipsRecord, getActiveBattleshipsGames, getBattleshipsGamesByWallet } from '../db/index.mjs';
 import { getAchievementRegistry, getAchievement, awardAchievement, getWalletAchievements, getAllAchievements, getGlobalRecord } from '../db/index.mjs';
-import { validateFleet, calculateRange, checkHit, checkSunk, checkWin, getGameState as getBattleshipsState, cpuShootRecruit, pickSurvivingShip, FLEET } from '../games/battleships.mjs';
+import { validateFleet, calculateRange, checkHit, checkSunk, checkWin, getGameState as getBattleshipsState, cpuPlaceFleet, cpuShootRecruit, cpuShootOfficer, cpuShootAdmiral, pickSurvivingShip, FLEET } from '../games/battleships.mjs';
 
 const router = Router();
 const AUTH_SECRET = process.env.AUTH_JWT_SECRET || 'dev-auth-secret-change-me';
@@ -1125,6 +1125,9 @@ router.post('/battleships/create', optionalWallet, (req, res) => {
   if (!wallet) return res.status(401).json({ error: 'Wallet required' });
 
   const stakeQf = Math.max(25, parseInt(req.body.stake_qf) || 25);
+  const vsCpu = req.body.vs_cpu ? 1 : 0;
+  const validDifficulties = ['recruit', 'officer', 'admiral'];
+  const difficulty = vsCpu && validDifficulties.includes(req.body.difficulty) ? req.body.difficulty : 'recruit';
 
   let shareCode, existing;
   for (let i = 0; i < 10; i++) {
@@ -1136,7 +1139,14 @@ router.post('/battleships/create', optionalWallet, (req, res) => {
 
   const id = crypto.randomUUID();
   const now = Date.now();
-  createBattleshipsGame(id, stakeQf, wallet, shareCode, now);
+  createBattleshipsGame(id, stakeQf, wallet, shareCode, now, vsCpu, difficulty);
+
+  // For CPU games: generate and place CPU fleet immediately
+  if (vsCpu) {
+    const seed = now ^ (parseInt(id.slice(0, 8), 16) || 0);
+    const cpuFleet = cpuPlaceFleet(seed);
+    saveBattleshipsPlacement(id, 'CPU', JSON.stringify(cpuFleet), now);
+  }
 
   res.json({ share_code: shareCode, game_id: id });
 });
@@ -1174,6 +1184,7 @@ router.post('/battleships/:code/join', optionalWallet, (req, res) => {
   const game = getBattleshipsGameByCode(code);
   if (!game) return res.status(404).json({ error: 'Game not found' });
   if (game.status !== 'placement') return res.status(400).json({ error: 'Game is not accepting players' });
+  if (game.vs_cpu) return res.status(400).json({ error: 'Cannot join a CPU game' });
   if (game.creator_wallet === wallet) return res.status(400).json({ error: 'Cannot join your own game' });
   if (game.opponent_wallet && game.opponent_wallet !== wallet) return res.status(400).json({ error: 'Game already has an opponent' });
 
@@ -1208,11 +1219,15 @@ router.post('/battleships/:code/place', optionalWallet, (req, res) => {
   saveBattleshipsPlacement(game.id, wallet, JSON.stringify(fleet), now);
 
   // Check if both players have placed
+  // For vs_cpu: CPU fleet was placed on create, so check CPU placement
   const creatorPlacement = getBattleshipsPlacement(game.id, game.creator_wallet);
-  const opponentPlacement = game.opponent_wallet ? getBattleshipsPlacement(game.id, game.opponent_wallet) : null;
+  const opponentPlacement = game.vs_cpu
+    ? getBattleshipsPlacement(game.id, 'CPU')
+    : (game.opponent_wallet ? getBattleshipsPlacement(game.id, game.opponent_wallet) : null);
 
   if (creatorPlacement && opponentPlacement) {
-    updateBattleshipsGameStatus(game.id, 'active', { current_turn: game.creator_wallet, started_at: now });
+    const turnDeadline = Math.floor(now / 1000) + 86400;
+    updateBattleshipsGameStatus(game.id, 'active', { current_turn: game.creator_wallet, started_at: now, turn_deadline: turnDeadline });
     return res.json({ status: 'ready' });
   }
 
@@ -1242,7 +1257,7 @@ router.post('/battleships/:code/shoot', optionalWallet, (req, res) => {
   }
 
   const rounds = getBattleshipsRounds(game.id);
-  const opponentWallet = game.creator_wallet === wallet ? game.opponent_wallet : game.creator_wallet;
+  const opponentWallet = game.vs_cpu ? 'CPU' : (game.creator_wallet === wallet ? game.opponent_wallet : game.creator_wallet);
 
   // Check target not already shot at (by this player)
   const alreadyShot = rounds.find(r => r.wallet === wallet && r.target_x === targetX && r.target_y === targetY);
@@ -1318,19 +1333,102 @@ router.post('/battleships/:code/shoot', optionalWallet, (req, res) => {
     const teamAmount = Math.floor(totalPot * 0.05);
     const winnerAmount = totalPot - burnAmount - teamAmount;
 
-    updateBattleshipsGameStatus(game.id, 'completed', { winner_wallet: wallet, completed_at: now });
+    updateBattleshipsGameStatus(game.id, 'completed', { winner_wallet: wallet, completed_at: now, turn_deadline: null });
     updateBattleshipsRecord(wallet, 'win');
-    updateBattleshipsRecord(opponentWallet, 'loss');
-
-    settleDuel(wallet, burnAmount, teamAmount, winnerAmount).catch(e => {
-      console.error('Battleships settlement failed:', e.message);
-    });
+    if (!game.vs_cpu) {
+      updateBattleshipsRecord(opponentWallet, 'loss');
+      settleDuel(wallet, burnAmount, teamAmount, winnerAmount).catch(e => {
+        console.error('Battleships settlement failed:', e.message);
+      });
+    }
 
     response.game_status = 'completed';
     response.winner = wallet;
+  } else if (game.vs_cpu) {
+    // CPU responds immediately — no turn swap, no turn_deadline change
+    const cpuRounds = getBattleshipsRounds(game.id);
+    const cpuShots = new Set(cpuRounds.filter(r => r.wallet === 'CPU').map(r => r.target_x + ',' + r.target_y));
+
+    // Build data for Officer/Admiral
+    const cpuHits = cpuRounds.filter(r => r.wallet === 'CPU' && (r.result === 'hit' || r.result === 'sunk'))
+      .map(r => ({ x: r.target_x, y: r.target_y }));
+    const cpuMisses = new Set(cpuRounds.filter(r => r.wallet === 'CPU' && r.result === 'miss')
+      .map(r => r.target_x + ',' + r.target_y));
+
+    // Pick CPU firing ship
+    const cpuPlacement = getBattleshipsPlacement(game.id, 'CPU');
+    const cpuFleetData = JSON.parse(cpuPlacement.fleet);
+    const playerAttacks = cpuRounds.filter(r => r.wallet === wallet);
+    const cpuFiringShip = pickSurvivingShip(cpuFleetData, playerAttacks, wallet);
+
+    let cpuShotResult = null;
+    if (cpuFiringShip) {
+      // Choose shot based on difficulty
+      let cpuTarget;
+      if (game.difficulty === 'admiral') {
+        // Build remaining fleet info for density map
+        const playerPlacement = getBattleshipsPlacement(game.id, wallet);
+        const playerFleet = JSON.parse(playerPlacement.fleet);
+        const remainingFleet = playerFleet.filter(s => !checkSunk(s.ship, playerFleet, cpuRounds.filter(r => r.wallet === 'CPU')))
+          .map(s => ({ name: s.ship, size: s.cells.length }));
+        cpuTarget = cpuShootAdmiral(cpuShots, cpuHits, cpuMisses, remainingFleet);
+      } else if (game.difficulty === 'officer') {
+        cpuTarget = cpuShootOfficer(cpuShots, cpuHits, cpuMisses);
+      } else {
+        cpuTarget = cpuShootRecruit(cpuShots);
+      }
+
+      if (cpuTarget) {
+        const playerPlacement = getBattleshipsPlacement(game.id, wallet);
+        const playerFleet = JSON.parse(playerPlacement.fleet);
+
+        const cpuRange = calculateRange(cpuFiringShip.cells, cpuTarget.x, cpuTarget.y);
+        const cpuHitResult = checkHit(cpuTarget.x, cpuTarget.y, playerFleet);
+
+        let cpuResultType = cpuHitResult.hit ? 'hit' : 'miss';
+        let cpuSunkShipCells = null;
+
+        if (cpuHitResult.hit) {
+          const tempCpuRounds = [...cpuRounds.filter(r => r.wallet === 'CPU'), {
+            wallet: 'CPU', target_x: cpuTarget.x, target_y: cpuTarget.y, result: 'hit'
+          }];
+          if (checkSunk(cpuHitResult.shipName, playerFleet, tempCpuRounds)) {
+            cpuResultType = 'sunk';
+            const sunkS = playerFleet.find(s => s.ship === cpuHitResult.shipName);
+            cpuSunkShipCells = sunkS ? sunkS.cells : null;
+          }
+        }
+
+        const cpuRoundNumber = cpuRounds.length + 1;
+        addBattleshipsRound(game.id, cpuRoundNumber, 'CPU', cpuFiringShip.ship, cpuTarget.x, cpuTarget.y, cpuRange, cpuResultType, cpuHitResult.shipName, false, now);
+
+        cpuShotResult = {
+          firing_ship: cpuFiringShip.ship,
+          target: cpuTarget,
+          result: cpuResultType,
+          range: cpuRange,
+          ship_hit: cpuHitResult.shipName,
+          sunk_ship_cells: cpuSunkShipCells
+        };
+
+        // Check if CPU won
+        const allAfterCpu = getBattleshipsRounds(game.id);
+        const cpuWon = checkWin(playerFleet, allAfterCpu, wallet);
+
+        if (cpuWon) {
+          updateBattleshipsGameStatus(game.id, 'completed', { winner_wallet: 'CPU', completed_at: now, turn_deadline: null });
+          updateBattleshipsRecord(wallet, 'loss');
+          response.game_status = 'completed';
+          response.winner = 'CPU';
+        }
+      }
+    }
+
+    response.cpu_shot = cpuShotResult;
   } else {
-    // Switch turn
-    updateBattleshipsGameStatus(game.id, 'active', { current_turn: opponentWallet });
+    // PvP: switch turn and reset turn_deadline
+    const turnDeadline = Math.floor(now / 1000) + 86400;
+    updateBattleshipsGameStatus(game.id, 'active', { current_turn: opponentWallet, turn_deadline: turnDeadline });
   }
 
   res.json(response);
@@ -1415,26 +1513,21 @@ router.post('/battleships/:code/forfeit', optionalWallet, (req, res) => {
 export function checkBattleshipsTimeouts() {
   try {
     const activeGames = getActiveBattleshipsGames();
-    const now = Date.now();
-    const TIMEOUT_MS = 24 * 60 * 60 * 1000;
+    const nowSecs = Math.floor(Date.now() / 1000);
+    const nowMs = Date.now();
 
     for (const game of activeGames) {
+      // Skip CPU games — CPU responds instantly in the shoot route
+      if (game.vs_cpu) continue;
       if (!game.current_turn) continue;
-
-      const rounds = getBattleshipsRounds(game.id);
-      const currentPlayerRounds = rounds.filter(r => r.wallet === game.current_turn);
-
-      // Check last activity: either last round by current player, or game start
-      let lastActivity = game.started_at;
-      if (currentPlayerRounds.length > 0) {
-        lastActivity = currentPlayerRounds[currentPlayerRounds.length - 1].created_at;
-      }
-
-      if (now - lastActivity < TIMEOUT_MS) continue;
+      // Use turn_deadline as single source of truth
+      if (!game.turn_deadline || game.turn_deadline > nowSecs) continue;
 
       // Auto-shot: pick random surviving ship, random target
       const currentWallet = game.current_turn;
       const opponentWallet = game.creator_wallet === currentWallet ? game.opponent_wallet : game.creator_wallet;
+
+      const rounds = getBattleshipsRounds(game.id);
 
       const shooterPlacement = getBattleshipsPlacement(game.id, currentWallet);
       if (!shooterPlacement) continue;
@@ -1470,7 +1563,7 @@ export function checkBattleshipsTimeouts() {
         }
       }
 
-      addBattleshipsRound(game.id, roundNumber, currentWallet, survivingShip.ship, shot.x, shot.y, range, resultType, hitResult.shipName, true, now);
+      addBattleshipsRound(game.id, roundNumber, currentWallet, survivingShip.ship, shot.x, shot.y, range, resultType, hitResult.shipName, true, nowMs);
 
       // Check win
       const allRoundsAfterShot = getBattleshipsRounds(game.id);
@@ -1482,7 +1575,7 @@ export function checkBattleshipsTimeouts() {
         const teamAmount = Math.floor(totalPot * 0.05);
         const winnerAmount = totalPot - burnAmount - teamAmount;
 
-        updateBattleshipsGameStatus(game.id, 'completed', { winner_wallet: currentWallet, completed_at: now });
+        updateBattleshipsGameStatus(game.id, 'completed', { winner_wallet: currentWallet, completed_at: nowMs, turn_deadline: null });
         updateBattleshipsRecord(currentWallet, 'win');
         updateBattleshipsRecord(opponentWallet, 'loss');
 
@@ -1490,7 +1583,9 @@ export function checkBattleshipsTimeouts() {
           console.error('Battleships auto-shot settlement failed:', e.message);
         });
       } else {
-        updateBattleshipsGameStatus(game.id, 'active', { current_turn: opponentWallet });
+        // Swap turn and reset deadline for opponent
+        const newDeadline = nowSecs + 86400;
+        updateBattleshipsGameStatus(game.id, 'active', { current_turn: opponentWallet, turn_deadline: newDeadline });
       }
 
       console.log('Battleships auto-shot: game ' + game.id.slice(0, 8) + ', player ' + currentWallet.slice(0, 8) + ' timed out');
