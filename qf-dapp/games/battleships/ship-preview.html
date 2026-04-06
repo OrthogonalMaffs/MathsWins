@@ -3,150 +3,250 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Ship Silhouettes — Preview</title>
+<title>Ship Silhouettes v2 — Preview</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600&family=JetBrains+Mono:wght@400;500&family=Playfair+Display:wght@700&display=swap" rel="stylesheet">
 <style>
-body{background:#1a1a1a;color:#b8bcc6;font-family:'Inter',sans-serif;padding:2rem;display:flex;flex-direction:column;align-items:center;gap:2rem}
-h1{font-family:serif;font-size:1.6rem;color:#e8eaf0;letter-spacing:.02em}
-h2{font-size:.7rem;color:#707070;text-transform:uppercase;letter-spacing:.15em;margin-bottom:.5rem}
+*{margin:0;padding:0;box-sizing:border-box}
+body{background:#141416;color:#b8bcc6;font-family:'Inter',sans-serif;padding:2rem 1rem;display:flex;flex-direction:column;align-items:center;gap:2.5rem}
+h1{font-family:'Playfair Display',serif;font-size:1.5rem;color:#e8eaf0;letter-spacing:.02em}
+h2{font-family:'JetBrains Mono',monospace;font-size:.6rem;color:#505050;text-transform:uppercase;letter-spacing:.15em;margin-bottom:.6rem}
+p.note{font-size:.6rem;color:#3a3a3a;text-align:center;max-width:440px;line-height:1.6}
 
-.preview{display:flex;flex-direction:column;gap:2.5rem;width:100%;max-width:500px}
-.ship-row{display:flex;align-items:center;gap:1.2rem}
-.ship-label{font-family:monospace;font-size:.65rem;color:#707070;width:90px;text-align:right}
-.ship-cells{display:flex;gap:2px}
-.cell{width:44px;height:44px;background:#222;border:1px solid rgba(184,188,198,0.08);border-radius:2px;position:relative;overflow:hidden}
+.section{width:100%;max-width:500px}
 
-/* Grid preview — radar aesthetic */
-.grid-preview{display:grid;grid-template-columns:repeat(10,1fr);gap:1px;width:100%;max-width:440px;background:rgba(184,188,198,0.04);border:1px solid rgba(184,188,198,0.06);border-radius:4px;padding:1px}
-.grid-cell{aspect-ratio:1;background:#1e1e22;border-radius:1px;position:relative}
-.grid-cell::after{content:'';position:absolute;inset:0;border:1px solid rgba(184,188,198,0.04)}
-.grid-cell.hit{background:rgba(176,58,58,0.15)}
-.grid-cell.miss::after{border-color:rgba(184,188,198,0.08)}
+/* ── Ship display: each ship is ONE svg spanning full length ── */
+.ship-display{display:flex;align-items:center;gap:1rem;margin-bottom:.6rem}
+.ship-name{font-family:'JetBrains Mono',monospace;font-size:.6rem;color:#606060;width:80px;text-align:right;flex-shrink:0}
+.ship-svg-wrap{display:flex;background:#1e1e22;border:1px solid rgba(184,188,198,0.06);border-radius:3px;padding:2px}
 
-/* Coordinate labels */
-.grid-wrapper{position:relative}
-.col-labels{display:grid;grid-template-columns:repeat(10,1fr);gap:1px;padding:0 1px;margin-bottom:4px}
-.col-labels span{text-align:center;font-family:monospace;font-size:.45rem;color:rgba(184,188,198,0.25);letter-spacing:.05em}
-.row-labels{position:absolute;left:-18px;top:0;display:flex;flex-direction:column;gap:1px;padding:1px 0}
-.row-labels span{height:44px;display:flex;align-items:center;font-family:monospace;font-size:.45rem;color:rgba(184,188,198,0.25)}
+/* Ship SVGs sized by cell count */
+.ship-svg-wrap svg{height:44px}
+.ship-5 svg{width:220px}
+.ship-4 svg{width:176px}
+.ship-3 svg{width:132px}
+.ship-2 svg{width:88px}
 
-/* Hit/miss markers */
-.marker-hit{width:28px;height:28px}
-.marker-miss{width:20px;height:20px}
-.markers{display:flex;gap:2rem;align-items:center;justify-content:center}
-.marker-label{font-family:monospace;font-size:.55rem;color:#707070}
+/* ── Radar grid ── */
+.radar-section{width:100%;max-width:480px}
+.radar-wrap{position:relative;padding-left:22px;padding-top:18px}
+.radar-col-labels{position:absolute;top:0;left:22px;right:0;display:flex}
+.radar-col-labels span{flex:1;text-align:center;font-family:'JetBrains Mono',monospace;font-size:.5rem;color:rgba(184,188,198,0.2);letter-spacing:.05em}
+.radar-row-labels{position:absolute;top:18px;left:0;bottom:0;display:flex;flex-direction:column}
+.radar-row-labels span{flex:1;display:flex;align-items:center;justify-content:center;font-family:'JetBrains Mono',monospace;font-size:.5rem;color:rgba(184,188,198,0.2);width:20px}
+.radar-grid{display:grid;grid-template-columns:repeat(10,1fr);gap:0;border:1px solid rgba(184,188,198,0.06);border-radius:3px;overflow:hidden}
+.rcell{aspect-ratio:1;background:#1a1a1e;border-right:1px solid rgba(184,188,198,0.04);border-bottom:1px solid rgba(184,188,198,0.04);position:relative;display:flex;align-items:center;justify-content:center}
+.rcell:nth-child(10n){border-right:none}
+.rcell:nth-child(n+91){border-bottom:none}
+
+/* Hit marker: bold red X with glow */
+.rcell.hit{background:rgba(176,58,58,0.08)}
+.rcell.hit::after{content:'';position:absolute;width:60%;height:60%;background:radial-gradient(circle,rgba(176,58,58,0.4) 0%,transparent 70%)}
+.hit-marker{width:55%;height:55%}
+
+/* Miss marker: visible silver ring */
+.rcell.miss{background:rgba(184,188,198,0.02)}
+.miss-marker{width:40%;height:40%}
+
+/* ── Markers standalone preview ── */
+.markers-row{display:flex;gap:2.5rem;align-items:flex-end;justify-content:center}
+.marker-box{text-align:center}
+.marker-box .label{font-family:'JetBrains Mono',monospace;font-size:.5rem;color:#505050;margin-top:.3rem}
+.marker-cell{width:44px;height:44px;background:#1a1a1e;border:1px solid rgba(184,188,198,0.06);border-radius:2px;display:flex;align-items:center;justify-content:center}
+
+/* ── On-grid ship demo ── */
+.grid-ship-demo{margin-top:1rem}
 
 @media(max-width:480px){
-  .cell{width:36px;height:36px}
-  .grid-cell{min-height:0}
-  .row-labels span{height:36px}
+  .ship-5 svg{width:180px;height:36px}
+  .ship-4 svg{width:144px;height:36px}
+  .ship-3 svg{width:108px;height:36px}
+  .ship-2 svg{width:72px;height:36px}
+  .ship-name{width:60px;font-size:.5rem}
 }
 </style>
 </head>
 <body>
 
-<h1>Ship Silhouettes</h1>
-<p style="font-size:.65rem;color:#505050;text-align:center;max-width:400px">Top-down view. Silver palette with distinct tones per ship class. Ships are 85% cell width, rounded ends, slight transparency so grid lines show through.</p>
+<h1>Ship Silhouettes v2</h1>
+<p class="note">True top-down vessel shapes. Each ship drawn as a single continuous SVG spanning all occupied cells. Distinct hull profiles, not rounded rectangles.</p>
 
-<div class="preview">
+<div class="section">
 
-<div>
+<!-- CARRIER: 5 cells — elongated hexagon, wider flight deck mid-section, pointed bow, flat stern -->
 <h2>Carrier — 5 cells</h2>
-<div class="ship-row">
-  <span class="ship-label">Horizontal</span>
-  <div class="ship-cells">
-    <div class="cell"><svg viewBox="0 0 44 44" width="100%" height="100%"><path d="M8 14 Q2 22 8 30 L36 30 Q42 22 36 14 Z" fill="#e8e8e8" fill-opacity="0.75" stroke="#c0c0c0" stroke-width="0.5"/><line x1="10" y1="18" x2="34" y2="18" stroke="#b0b0b0" stroke-width="0.5" stroke-opacity="0.4"/><line x1="10" y1="26" x2="34" y2="26" stroke="#b0b0b0" stroke-width="0.5" stroke-opacity="0.4"/></svg></div>
-    <div class="cell"><svg viewBox="0 0 44 44" width="100%" height="100%"><rect x="2" y="14" width="40" height="16" rx="1" fill="#e8e8e8" fill-opacity="0.75" stroke="#c0c0c0" stroke-width="0.5"/><line x1="2" y1="18" x2="42" y2="18" stroke="#b0b0b0" stroke-width="0.5" stroke-opacity="0.4"/><line x1="2" y1="26" x2="42" y2="26" stroke="#b0b0b0" stroke-width="0.5" stroke-opacity="0.4"/></svg></div>
-    <div class="cell"><svg viewBox="0 0 44 44" width="100%" height="100%"><rect x="2" y="12" width="40" height="20" rx="1" fill="#e8e8e8" fill-opacity="0.75" stroke="#c0c0c0" stroke-width="0.5"/><line x1="2" y1="18" x2="42" y2="18" stroke="#b0b0b0" stroke-width="0.5" stroke-opacity="0.4"/><line x1="2" y1="26" x2="42" y2="26" stroke="#b0b0b0" stroke-width="0.5" stroke-opacity="0.4"/><rect x="14" y="16" width="16" height="12" rx="2" fill="none" stroke="#a0a0a0" stroke-width="0.5" stroke-opacity="0.3"/></svg></div>
-    <div class="cell"><svg viewBox="0 0 44 44" width="100%" height="100%"><rect x="2" y="14" width="40" height="16" rx="1" fill="#e8e8e8" fill-opacity="0.75" stroke="#c0c0c0" stroke-width="0.5"/><line x1="2" y1="18" x2="42" y2="18" stroke="#b0b0b0" stroke-width="0.5" stroke-opacity="0.4"/><line x1="2" y1="26" x2="42" y2="26" stroke="#b0b0b0" stroke-width="0.5" stroke-opacity="0.4"/></svg></div>
-    <div class="cell"><svg viewBox="0 0 44 44" width="100%" height="100%"><path d="M2 14 L36 14 Q42 22 36 30 L2 30 Z" fill="#e8e8e8" fill-opacity="0.75" stroke="#c0c0c0" stroke-width="0.5"/><line x1="2" y1="18" x2="34" y2="18" stroke="#b0b0b0" stroke-width="0.5" stroke-opacity="0.4"/><line x1="2" y1="26" x2="34" y2="26" stroke="#b0b0b0" stroke-width="0.5" stroke-opacity="0.4"/></svg></div>
+<div class="ship-display">
+  <span class="ship-name">Carrier</span>
+  <div class="ship-svg-wrap ship-5">
+    <svg viewBox="0 0 220 44" xmlns="http://www.w3.org/2000/svg">
+      <!-- Hull: pointed bow, widens to flight deck, flat stern -->
+      <path d="M4 22 L18 10 L50 8 L170 8 L200 10 L210 14 L216 22 L210 30 L200 34 L170 36 L50 36 L18 34 Z"
+            fill="#e0e0e0" fill-opacity="0.7" stroke="#c8c8c8" stroke-width="0.8"/>
+      <!-- Flight deck outline (wider mid-section) -->
+      <path d="M55 10 L165 10 L172 12 L172 32 L165 34 L55 34 L48 32 L48 12 Z"
+            fill="none" stroke="#b0b0b0" stroke-width="0.5" stroke-opacity="0.35"/>
+      <!-- Centre line -->
+      <line x1="20" y1="22" x2="212" y2="22" stroke="#a0a0a0" stroke-width="0.4" stroke-opacity="0.2"/>
+      <!-- Landing strip markings -->
+      <line x1="60" y1="14" x2="160" y2="14" stroke="#c0c0c0" stroke-width="0.4" stroke-opacity="0.2" stroke-dasharray="8 4"/>
+      <line x1="60" y1="30" x2="160" y2="30" stroke="#c0c0c0" stroke-width="0.4" stroke-opacity="0.2" stroke-dasharray="8 4"/>
+      <!-- Island (control tower) -->
+      <rect x="145" y="11" width="12" height="7" rx="1.5" fill="#c8c8c8" fill-opacity="0.5" stroke="#a0a0a0" stroke-width="0.4"/>
+    </svg>
   </div>
 </div>
-</div>
 
-<div>
+<!-- BATTLESHIP: 4 cells — pointed bow, straight sides, slight stern taper, two gun turrets -->
 <h2>Battleship — 4 cells</h2>
-<div class="ship-row">
-  <span class="ship-label">Horizontal</span>
-  <div class="ship-cells">
-    <div class="cell"><svg viewBox="0 0 44 44" width="100%" height="100%"><path d="M6 16 Q1 22 6 28 L42 28 L42 16 Z" fill="#c0c0c0" fill-opacity="0.75" stroke="#a0a0a0" stroke-width="0.5"/><circle cx="18" cy="19" r="3" fill="none" stroke="#909090" stroke-width="0.5" stroke-opacity="0.5"/></svg></div>
-    <div class="cell"><svg viewBox="0 0 44 44" width="100%" height="100%"><rect x="2" y="16" width="40" height="12" rx="1" fill="#c0c0c0" fill-opacity="0.75" stroke="#a0a0a0" stroke-width="0.5"/><circle cx="22" cy="20" r="3" fill="none" stroke="#909090" stroke-width="0.5" stroke-opacity="0.5"/></svg></div>
-    <div class="cell"><svg viewBox="0 0 44 44" width="100%" height="100%"><rect x="2" y="16" width="40" height="12" rx="1" fill="#c0c0c0" fill-opacity="0.75" stroke="#a0a0a0" stroke-width="0.5"/></svg></div>
-    <div class="cell"><svg viewBox="0 0 44 44" width="100%" height="100%"><path d="M2 16 L38 16 Q43 22 38 28 L2 28 Z" fill="#c0c0c0" fill-opacity="0.75" stroke="#a0a0a0" stroke-width="0.5"/></svg></div>
+<div class="ship-display">
+  <span class="ship-name">Battleship</span>
+  <div class="ship-svg-wrap ship-4">
+    <svg viewBox="0 0 176 44" xmlns="http://www.w3.org/2000/svg">
+      <!-- Hull: sharp pointed bow, straight midsection, tapered stern -->
+      <path d="M4 22 L22 11 L40 9 L140 9 L158 11 L168 15 L172 22 L168 29 L158 33 L140 35 L40 35 L22 33 Z"
+            fill="#c0c0c0" fill-opacity="0.7" stroke="#a0a0a0" stroke-width="0.8"/>
+      <!-- Centre line -->
+      <line x1="22" y1="22" x2="168" y2="22" stroke="#909090" stroke-width="0.4" stroke-opacity="0.2"/>
+      <!-- Forward turret -->
+      <rect x="48" y="17" width="14" height="10" rx="2" fill="#b0b0b0" fill-opacity="0.5" stroke="#909090" stroke-width="0.5"/>
+      <line x1="55" y1="17" x2="55" y2="12" stroke="#909090" stroke-width="1" stroke-linecap="round" stroke-opacity="0.4"/>
+      <!-- Aft turret -->
+      <rect x="110" y="17" width="14" height="10" rx="2" fill="#b0b0b0" fill-opacity="0.5" stroke="#909090" stroke-width="0.5"/>
+      <line x1="117" y1="17" x2="117" y2="12" stroke="#909090" stroke-width="1" stroke-linecap="round" stroke-opacity="0.4"/>
+      <!-- Superstructure -->
+      <rect x="72" y="15" width="20" height="14" rx="2" fill="#b0b0b0" fill-opacity="0.35" stroke="#909090" stroke-width="0.4"/>
+    </svg>
   </div>
 </div>
-</div>
 
-<div>
+<!-- CRUISER: 3 cells — pointed bow, more taper, single turret, sleeker than battleship -->
 <h2>Cruiser — 3 cells</h2>
-<div class="ship-row">
-  <span class="ship-label">Horizontal</span>
-  <div class="ship-cells">
-    <div class="cell"><svg viewBox="0 0 44 44" width="100%" height="100%"><path d="M6 17 Q1 22 6 27 L42 27 L42 17 Z" fill="#a0a0a0" fill-opacity="0.75" stroke="#808080" stroke-width="0.5"/></svg></div>
-    <div class="cell"><svg viewBox="0 0 44 44" width="100%" height="100%"><rect x="2" y="17" width="40" height="10" rx="1" fill="#a0a0a0" fill-opacity="0.75" stroke="#808080" stroke-width="0.5"/><circle cx="22" cy="21" r="3" fill="none" stroke="#707070" stroke-width="0.5" stroke-opacity="0.5"/></svg></div>
-    <div class="cell"><svg viewBox="0 0 44 44" width="100%" height="100%"><path d="M2 17 L38 17 Q43 22 38 27 L2 27 Z" fill="#a0a0a0" fill-opacity="0.75" stroke="#808080" stroke-width="0.5"/></svg></div>
+<div class="ship-display">
+  <span class="ship-name">Cruiser</span>
+  <div class="ship-svg-wrap ship-3">
+    <svg viewBox="0 0 132 44" xmlns="http://www.w3.org/2000/svg">
+      <!-- Hull: sharper bow, narrower beam, tapered stern -->
+      <path d="M4 22 L20 12 L36 10 L100 10 L116 13 L126 18 L128 22 L126 26 L116 31 L100 34 L36 34 L20 32 Z"
+            fill="#a0a0a0" fill-opacity="0.7" stroke="#808080" stroke-width="0.8"/>
+      <!-- Centre line -->
+      <line x1="20" y1="22" x2="126" y2="22" stroke="#707070" stroke-width="0.4" stroke-opacity="0.2"/>
+      <!-- Single turret (forward) -->
+      <rect x="40" y="18" width="12" height="8" rx="2" fill="#909090" fill-opacity="0.5" stroke="#707070" stroke-width="0.5"/>
+      <line x1="46" y1="18" x2="46" y2="13" stroke="#707070" stroke-width="0.8" stroke-linecap="round" stroke-opacity="0.4"/>
+      <!-- Small superstructure -->
+      <rect x="68" y="17" width="14" height="10" rx="2" fill="#909090" fill-opacity="0.3" stroke="#707070" stroke-width="0.4"/>
+    </svg>
   </div>
 </div>
-</div>
 
-<div>
+<!-- SUBMARINE: 3 cells — rounded both ends, narrow, conning tower oval -->
 <h2>Submarine — 3 cells</h2>
-<div class="ship-row">
-  <span class="ship-label">Horizontal</span>
-  <div class="ship-cells">
-    <div class="cell"><svg viewBox="0 0 44 44" width="100%" height="100%"><path d="M8 18 Q2 22 8 26 L42 26 L42 18 Z" fill="#707070" fill-opacity="0.75" stroke="#505050" stroke-width="0.5"/></svg></div>
-    <div class="cell"><svg viewBox="0 0 44 44" width="100%" height="100%"><rect x="2" y="18" width="40" height="8" rx="1" fill="#707070" fill-opacity="0.75" stroke="#505050" stroke-width="0.5"/><ellipse cx="22" cy="20" rx="6" ry="3" fill="none" stroke="#606060" stroke-width="0.5" stroke-opacity="0.6"/></svg></div>
-    <div class="cell"><svg viewBox="0 0 44 44" width="100%" height="100%"><path d="M2 18 L36 18 Q42 22 36 26 L2 26 Z" fill="#707070" fill-opacity="0.75" stroke="#505050" stroke-width="0.5"/></svg></div>
+<div class="ship-display">
+  <span class="ship-name">Submarine</span>
+  <div class="ship-svg-wrap ship-3">
+    <svg viewBox="0 0 132 44" xmlns="http://www.w3.org/2000/svg">
+      <!-- Hull: rounded/bulbous both ends, narrow beam, cigar shape -->
+      <ellipse cx="66" cy="22" rx="62" ry="11" fill="#686868" fill-opacity="0.7" stroke="#505050" stroke-width="0.8"/>
+      <!-- Conning tower (raised oval, offset forward) -->
+      <ellipse cx="58" cy="22" rx="10" ry="6" fill="#787878" fill-opacity="0.6" stroke="#606060" stroke-width="0.6"/>
+      <!-- Periscope -->
+      <line x1="58" y1="16" x2="58" y2="12" stroke="#606060" stroke-width="0.8" stroke-linecap="round" stroke-opacity="0.5"/>
+      <!-- Deck line -->
+      <line x1="12" y1="22" x2="120" y2="22" stroke="#585858" stroke-width="0.3" stroke-opacity="0.25"/>
+      <!-- Dive planes (bow) -->
+      <line x1="8" y1="18" x2="16" y2="18" stroke="#585858" stroke-width="0.8" stroke-opacity="0.3"/>
+      <line x1="8" y1="26" x2="16" y2="26" stroke="#585858" stroke-width="0.8" stroke-opacity="0.3"/>
+      <!-- Rudder (stern) -->
+      <path d="M120 18 L126 22 L120 26" fill="none" stroke="#585858" stroke-width="0.6" stroke-opacity="0.3"/>
+    </svg>
   </div>
 </div>
-</div>
 
-<div>
+<!-- DESTROYER: 2 cells — very pointed bow, very narrow, sharp taper both ends -->
 <h2>Destroyer — 2 cells</h2>
-<div class="ship-row">
-  <span class="ship-label">Horizontal</span>
-  <div class="ship-cells">
-    <div class="cell"><svg viewBox="0 0 44 44" width="100%" height="100%"><path d="M6 19 Q1 22 6 25 L42 25 L42 19 Z" fill="#505050" fill-opacity="0.75" stroke="#3a3a3a" stroke-width="0.5"/></svg></div>
-    <div class="cell"><svg viewBox="0 0 44 44" width="100%" height="100%"><path d="M2 19 L38 19 Q43 22 38 25 L2 25 Z" fill="#505050" fill-opacity="0.75" stroke="#3a3a3a" stroke-width="0.5"/></svg></div>
-  </div>
-</div>
-</div>
-
-</div>
-
-<h1 style="margin-top:2rem">Hit / Miss Markers</h1>
-<div class="markers">
-  <div style="text-align:center">
-    <svg class="marker-hit" viewBox="0 0 44 44"><circle cx="22" cy="22" r="14" fill="#b03a3a" fill-opacity="0.8"/><path d="M12 12 L32 32 M32 12 L12 32" stroke="#e05050" stroke-width="2.5" stroke-linecap="round"/><circle cx="22" cy="22" r="14" fill="none" stroke="#e05050" stroke-width="1" stroke-opacity="0.4"/></svg>
-    <div class="marker-label">HIT</div>
-  </div>
-  <div style="text-align:center">
-    <svg class="marker-miss" viewBox="0 0 44 44"><circle cx="22" cy="22" r="8" fill="rgba(184,188,198,0.15)"/><circle cx="22" cy="22" r="4" fill="rgba(184,188,198,0.3)"/></svg>
-    <div class="marker-label">MISS</div>
-  </div>
-  <div style="text-align:center">
-    <svg viewBox="0 0 44 44" width="44" height="44"><circle cx="22" cy="22" r="14" fill="#b03a3a" fill-opacity="0.2"/><path d="M6 19 Q1 22 6 25 L38 25 Q43 22 38 19 Z" fill="#b03a3a" fill-opacity="0.6" stroke="#e05050" stroke-width="0.5"/></svg>
-    <div class="marker-label">SUNK (destroyer)</div>
+<div class="ship-display">
+  <span class="ship-name">Destroyer</span>
+  <div class="ship-svg-wrap ship-2">
+    <svg viewBox="0 0 88 44" xmlns="http://www.w3.org/2000/svg">
+      <!-- Hull: knife-edge bow, very narrow beam, sharp stern -->
+      <path d="M3 22 L18 13 L30 11 L62 11 L74 13 L84 18 L85 22 L84 26 L74 31 L62 33 L30 33 L18 31 Z"
+            fill="#505050" fill-opacity="0.75" stroke="#3a3a3a" stroke-width="0.8"/>
+      <!-- Centre line -->
+      <line x1="18" y1="22" x2="82" y2="22" stroke="#444" stroke-width="0.3" stroke-opacity="0.25"/>
+      <!-- Small gun forward -->
+      <circle cx="32" cy="22" r="3" fill="#5a5a5a" fill-opacity="0.5" stroke="#444" stroke-width="0.4"/>
+      <line x1="32" y1="19" x2="32" y2="15" stroke="#444" stroke-width="0.6" stroke-linecap="round" stroke-opacity="0.4"/>
+      <!-- Depth charge rack (stern) -->
+      <rect x="64" y="19" width="8" height="6" rx="1" fill="none" stroke="#444" stroke-width="0.4" stroke-opacity="0.3"/>
+    </svg>
   </div>
 </div>
 
-<h1 style="margin-top:2rem">Radar Grid Aesthetic</h1>
-<p style="font-size:.6rem;color:#505050;text-align:center;margin-bottom:1rem">Dark charcoal cells, faint silver grid lines, subtle coordinate labels. Not graph paper.</p>
-<div class="grid-wrapper" style="position:relative;padding-left:20px">
-  <div class="col-labels">
-    <span>A</span><span>B</span><span>C</span><span>D</span><span>E</span><span>F</span><span>G</span><span>H</span><span>I</span><span>J</span>
+</div>
+
+<!-- HIT / MISS MARKERS -->
+<h1>Hit / Miss Markers</h1>
+<div class="markers-row">
+  <div class="marker-box">
+    <div class="marker-cell" style="background:rgba(176,58,58,0.08)">
+      <svg width="26" height="26" viewBox="0 0 44 44">
+        <circle cx="22" cy="22" r="14" fill="#b03a3a" fill-opacity="0.7"/>
+        <path d="M13 13 L31 31 M31 13 L13 31" stroke="#ff5555" stroke-width="3" stroke-linecap="round"/>
+        <circle cx="22" cy="22" r="16" fill="none" stroke="#ff5555" stroke-width="0.8" stroke-opacity="0.3"/>
+      </svg>
+    </div>
+    <div class="label">HIT</div>
   </div>
-  <div class="row-labels">
-    <span>1</span><span>2</span><span>3</span><span>4</span><span>5</span><span>6</span><span>7</span><span>8</span><span>9</span><span>10</span>
+  <div class="marker-box">
+    <div class="marker-cell">
+      <svg width="26" height="26" viewBox="0 0 44 44">
+        <circle cx="22" cy="22" r="10" fill="none" stroke="#b8bcc6" stroke-width="1.5" stroke-opacity="0.35"/>
+        <circle cx="22" cy="22" r="3" fill="#b8bcc6" fill-opacity="0.25"/>
+      </svg>
+    </div>
+    <div class="label">MISS</div>
   </div>
-  <div class="grid-preview" id="radarGrid"></div>
+  <div class="marker-box">
+    <div class="marker-cell" style="background:rgba(176,58,58,0.06)">
+      <svg width="38" height="26" viewBox="0 0 88 44">
+        <path d="M3 22 L18 13 L30 11 L62 11 L74 13 L84 18 L85 22 L84 26 L74 31 L62 33 L30 33 L18 31 Z"
+              fill="#b03a3a" fill-opacity="0.5" stroke="#ff5555" stroke-width="0.8" stroke-opacity="0.6"/>
+      </svg>
+    </div>
+    <div class="label">SUNK</div>
+  </div>
+</div>
+
+<!-- RADAR GRID -->
+<h1>Radar Grid</h1>
+<p class="note">Dark charcoal cells, faint silver grid lines, subtle coordinate labels. Tactical display, not graph paper.</p>
+<div class="radar-section">
+  <div class="radar-wrap">
+    <div class="radar-col-labels">
+      <span>A</span><span>B</span><span>C</span><span>D</span><span>E</span><span>F</span><span>G</span><span>H</span><span>I</span><span>J</span>
+    </div>
+    <div class="radar-row-labels">
+      <span>1</span><span>2</span><span>3</span><span>4</span><span>5</span><span>6</span><span>7</span><span>8</span><span>9</span><span>10</span>
+    </div>
+    <div class="radar-grid" id="radarGrid"></div>
+  </div>
 </div>
 
 <script>
-// Populate radar grid with some example hits/misses
+// Build radar grid with sample hits/misses and a placed ship
 var grid = document.getElementById('radarGrid');
+var hits = [23, 24, 25]; // B3, C3, D3 — part of a cruiser
+var misses = [11, 33, 45, 67, 78, 89, 52, 14];
 for (var i = 0; i < 100; i++) {
   var cell = document.createElement('div');
-  cell.className = 'grid-cell';
+  cell.className = 'rcell';
+  if (hits.indexOf(i) !== -1) {
+    cell.classList.add('hit');
+    cell.innerHTML = '<svg class="hit-marker" viewBox="0 0 44 44"><circle cx="22" cy="22" r="14" fill="#b03a3a" fill-opacity="0.7"/><path d="M13 13 L31 31 M31 13 L13 31" stroke="#ff5555" stroke-width="3" stroke-linecap="round"/></svg>';
+  } else if (misses.indexOf(i) !== -1) {
+    cell.classList.add('miss');
+    cell.innerHTML = '<svg class="miss-marker" viewBox="0 0 44 44"><circle cx="22" cy="22" r="10" fill="none" stroke="#b8bcc6" stroke-width="1.5" stroke-opacity="0.35"/><circle cx="22" cy="22" r="3" fill="#b8bcc6" fill-opacity="0.25"/></svg>';
+  }
   grid.appendChild(cell);
 }
 </script>
