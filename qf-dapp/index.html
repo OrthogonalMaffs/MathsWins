@@ -397,10 +397,9 @@ footer a:hover{color:var(--silver-bright)}
       <div class="cg-title">Golf Solitaire</div>
       <div class="cg-desc">Clear 7 columns by playing cards one rank up or down from the waste pile.</div>
     </div>
-    <div class="cg-card coming">
+    <div class="cg-card live" onclick="window.location.href='/qf-dapp/games/pyramid/'">
       <div class="cg-title">Pyramid</div>
       <div class="cg-desc">Remove pairs that sum to 13. Clear the pyramid before the deck runs out.</div>
-      <span class="cg-pill">Coming Soon</span>
     </div>
   </div>
 </div>
@@ -421,11 +420,11 @@ var GAMES = [
   // Row 2 — KenKen, MW logo, Poker Patience (coming soon)
   { id:'kenken', name:'KenKen', desc:'Fill the grid using arithmetic and logic. No repeats in rows or columns. Cages must hit their target.', cat:'puzzle', paid:true, league:true, tags:['arithmetic','logic'] },
   { id:'_mw_logo', name:'', desc:'', cat:'', paid:true, logo:true },
-  { id:'poker-patience', name:'Poker Patience', desc:'Place cards into a 5\u00d75 grid to make the best poker hands across rows and columns.', cat:'strategy', paid:true, coming:true, tags:['cards','strategy'] },
+  { id:'poker-patience', name:'Poker Patience', desc:'Place cards into a 5\u00d75 grid to make the best poker hands across rows and columns.', cat:'strategy', paid:true, league:true, tags:['cards','strategy'] },
   // Row 3 — Kakuro, Nonogram, Cribbage Solitaire (coming soon)
   { id:'kakuro', name:'Kakuro', desc:'Crossword meets Sudoku. Fill white cells with digits 1-9 so each run sums to its clue. No repeats.', cat:'puzzle', paid:true, league:true, tags:['sums','logic'] },
   { id:'nonogram', name:'Nonogram', desc:'Fill cells to reveal a hidden Greek letter. Use row and column clues to solve the grid.', cat:'logic', paid:true, league:true, tags:['logic','pixel art'] },
-  { id:'cribbage-solitaire', name:'Cribbage Solitaire', desc:'Draw cards and form cribbage hands. Score 15s, pairs, runs, and flushes against the deck.', cat:'strategy', paid:true, coming:true, tags:['cards','strategy'] },
+  { id:'cribbage-solitaire', name:'Cribbage Solitaire', desc:'Score 9 dealt hands. Find every fifteen, pair, run, and flush.', cat:'strategy', paid:true, league:true, tags:['cards','strategy'] },
   // Free games
   { id:'battleships', name:'Battleships', desc:'Naval warfare. Place your fleet, hunt the enemy. Turn-based duels with QF stakes.', cat:'strategy', paid:false, duel:true, tags:['strategy','naval'] },
   { id:'countdown-numbers', name:'Countdown Numbers', desc:'Six numbers, one target. Use arithmetic and brackets to hit the target.', cat:'number', paid:false, tags:['arithmetic','BODMAS'] },

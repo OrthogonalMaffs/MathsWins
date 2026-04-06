@@ -101,6 +101,13 @@ import {
   stripQuestion as gsStrip,
 } from './golf-solitaire.mjs';
 
+import {
+  GAME_ID as pyrId,
+  evaluator as pyrEval,
+  selectQuestions as pyrSelect,
+  stripQuestion as pyrStrip,
+} from './pyramid.mjs';
+
 export const BATTLESHIPS_GAME_ID = 'battleships';
 
 export function registerAllGames() {
@@ -225,6 +232,17 @@ export function registerAllGames() {
     questionsPerSession: 1
   });
 
+  // Pyramid — continuous (pair-to-13, duel only)
+  registerGame(pyrId, null, pyrEval, pyrSelect, pyrStrip, 'continuous');
+  upsertGame({
+    id: pyrId,
+    name: 'Pyramid',
+    isPaid: true,
+    serverScoring: true,
+    sessionTimeoutSeconds: 1800,
+    questionsPerSession: 1
+  });
+
   // Golf Solitaire — continuous (column clearing, duel only)
   registerGame(gsId, null, gsEval, gsSelect, gsStrip, 'continuous');
   upsertGame({
@@ -257,5 +275,5 @@ export function registerAllGames() {
     questionsPerSession: 0
   });
 
-  console.log('Registered games:', [estId, sudId, pocId, seqId, cdnId, kenId, nonoId, kakId, msId, fcId, ppId, gsId, cribId, BATTLESHIPS_GAME_ID].join(', '));
+  console.log('Registered games:', [estId, sudId, pocId, seqId, cdnId, kenId, nonoId, kakId, msId, fcId, ppId, gsId, pyrId, cribId, BATTLESHIPS_GAME_ID].join(', '));
 }
