@@ -94,6 +94,13 @@ import {
   stripQuestion as ppStrip,
 } from './poker-patience.mjs';
 
+import {
+  GAME_ID as gsId,
+  evaluator as gsEval,
+  selectQuestions as gsSelect,
+  stripQuestion as gsStrip,
+} from './golf-solitaire.mjs';
+
 export const BATTLESHIPS_GAME_ID = 'battleships';
 
 export function registerAllGames() {
@@ -218,6 +225,17 @@ export function registerAllGames() {
     questionsPerSession: 1
   });
 
+  // Golf Solitaire — continuous (column clearing, duel only)
+  registerGame(gsId, null, gsEval, gsSelect, gsStrip, 'continuous');
+  upsertGame({
+    id: gsId,
+    name: 'Golf Solitaire',
+    isPaid: true,
+    serverScoring: true,
+    sessionTimeoutSeconds: 1800,
+    questionsPerSession: 1
+  });
+
   // Cribbage Solitaire — sequential (9 hands, no time pressure)
   registerGame(cribId, null, cribEval, cribSelect, cribStrip, 'sequential');
   upsertGame({
@@ -239,5 +257,5 @@ export function registerAllGames() {
     questionsPerSession: 0
   });
 
-  console.log('Registered games:', [estId, sudId, pocId, seqId, cdnId, kenId, nonoId, kakId, msId, fcId, ppId, cribId, BATTLESHIPS_GAME_ID].join(', '));
+  console.log('Registered games:', [estId, sudId, pocId, seqId, cdnId, kenId, nonoId, kakId, msId, fcId, ppId, gsId, cribId, BATTLESHIPS_GAME_ID].join(', '));
 }
