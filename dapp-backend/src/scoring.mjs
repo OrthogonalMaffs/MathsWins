@@ -175,8 +175,9 @@ export function startFreeSession(gameId, weekId, opts) {
   const sessionId = SESSION_PREFIX + 'free_' + randomUUID();
   const guestWallet = realWallet || ('0x' + randomUUID().replace(/-/g, '').slice(0, 40));
 
+  const difficulty = (opts && opts.difficulty) || undefined;
   const sessionQuestions = bank.selectQuestions
-    ? bank.selectQuestions(seed)
+    ? bank.selectQuestions(seed, difficulty)
     : (() => {
         const all = Array.isArray(bank.questions) ? bank.questions : [];
         const shuffled = [...all].sort(() => Math.random() - 0.5);
@@ -217,7 +218,7 @@ export function startFreeSession(gameId, weekId, opts) {
 
     if (contextType === 'league') {
       const actualSeed = sessionQuestions[0].seed || seed;
-      createGameState(sessionId, guestWallet, gameId, contextType, contextId, puzzleIndex, actualSeed, now, true);
+      createGameState(sessionId, guestWallet, gameId, contextType, contextId, puzzleIndex, actualSeed, now, true, difficulty);
       session._persisted = true;
     }
   }
@@ -303,7 +304,7 @@ function rebuildSession(row) {
   const bank = questionBanks.get(row.game_id);
   if (!bank || !bank.selectQuestions) return null;
 
-  const sessionQuestions = bank.selectQuestions(row.seed);
+  const sessionQuestions = bank.selectQuestions(row.seed, row.difficulty || undefined);
   const puzzle = sessionQuestions[0].puzzle;
   const solution = sessionQuestions[0].solution;
 

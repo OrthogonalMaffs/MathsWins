@@ -26,6 +26,7 @@ export function getDb() {
   try { db.exec('ALTER TABLE leagues ADD COLUMN force_settled_at INTEGER'); } catch (e) { /* already exists */ }
   try { db.exec('ALTER TABLE leagues ADD COLUMN force_settled_by TEXT'); } catch (e) { /* already exists */ }
   try { db.exec('ALTER TABLE active_game_state ADD COLUMN undo_count INTEGER DEFAULT 0'); } catch (e) { /* already exists */ }
+  try { db.exec('ALTER TABLE active_game_state ADD COLUMN difficulty TEXT'); } catch (e) { /* already exists */ }
 
   // League refunds table
   db.exec(`CREATE TABLE IF NOT EXISTS league_refunds (
@@ -621,10 +622,10 @@ export function getLeaguePrizes(leagueId) {
 
 // ── Active game state (persistent sessions) ──────────────────────────
 
-export function createGameState(sessionId, wallet, gameId, contextType, contextId, puzzleIndex, seed, startedAt, freePlay) {
+export function createGameState(sessionId, wallet, gameId, contextType, contextId, puzzleIndex, seed, startedAt, freePlay, difficulty) {
   const db = getDb();
-  db.prepare(`INSERT INTO active_game_state (session_id, wallet, game_id, context_type, context_id, puzzle_index, seed, started_at, free_play)
-    VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)`).run(sessionId, wallet.toLowerCase(), gameId, contextType, contextId, puzzleIndex, seed, startedAt, freePlay ? 1 : 0);
+  db.prepare(`INSERT INTO active_game_state (session_id, wallet, game_id, context_type, context_id, puzzle_index, seed, started_at, free_play, difficulty)
+    VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)`).run(sessionId, wallet.toLowerCase(), gameId, contextType, contextId, puzzleIndex, seed, startedAt, freePlay ? 1 : 0, difficulty || null);
 }
 
 export function getGameState(sessionId) {

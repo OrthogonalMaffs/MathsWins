@@ -16,6 +16,7 @@
  *   pocket:       12×12, 20 mines
  *   beginner:      9×9,  10 mines
  *   intermediate: 16×16, 40 mines
+ *   advanced:     18×18, 65 mines  (Silver league only, not in free play)
  *   expert:       30×16, 99 mines
  *
  * SOLUTION NEVER LEAVES THIS FILE.
@@ -39,6 +40,7 @@ const CONFIGS = {
   pocket:       { width: 12, height: 12, mineCount: 20 },
   beginner:     { width:  9, height:  9, mineCount: 10 },
   intermediate: { width: 16, height: 16, mineCount: 40 },
+  advanced:     { width: 18, height: 18, mineCount: 65 },
   expert:       { width: 30, height: 16, mineCount: 99 },
 };
 

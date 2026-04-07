@@ -226,6 +226,12 @@ router.post('/session/start', optionalWallet, (req, res) => {
       opts.wallet = req.wallet;
       opts.seed = puzzleRow.puzzle_seed;
 
+      // Minesweeper league difficulty: Bronze = intermediate, Silver = advanced
+      if (gameId === 'minesweeper' && league.tier) {
+        if (league.tier === 'silver') opts.difficulty = 'advanced';
+        else opts.difficulty = 'intermediate';
+      }
+
       const result = startFreeSession(gameId, weekId, opts);
       result.puzzleIndex = nextIdx;
       result.puzzleSequence = order.indexOf(nextIdx) + 1;
