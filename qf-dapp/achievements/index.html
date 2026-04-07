@@ -140,7 +140,7 @@ footer a:hover{color:var(--silver-bright)}
   <!-- HERO -->
   <div class="hero">
     <h1>Achievements</h1>
-    <p class="hero-sub">Some things are earned. Some things are discovered. All of them are yours forever.</p>
+    <p class="hero-sub">Achievements are coming. Some will be found. Some may never be.</p>
     <p class="hero-count" id="heroCount"></p>
   </div>
 
@@ -212,6 +212,9 @@ qfWallet.onConnect(function(s) {
   }
 });
 
+// ── Config ────────────────────────────────────────────────────────────
+var ACHIEVEMENTS_ACTIVE = false; // flip to true when system goes live
+
 // ── Achievement Data ──────────────────────────────────────────────────
 var TABS = [
   { id: 'all', label: 'All' },
@@ -226,14 +229,14 @@ var TABS = [
 
 var ACHIEVEMENTS = [
   // ── League tab: purity, shadows, winning, volume, per-game volume, comeback, streaks, monthly ──
-  { name: 'No Errors \u2014 Sudoku', tab: 'league' },
-  { name: 'No Errors \u2014 Minesweeper', tab: 'league' },
-  { name: 'No Errors \u2014 FreeCell', tab: 'league' },
-  { name: 'No Errors \u2014 KenKen', tab: 'league' },
-  { name: 'No Errors \u2014 Nonogram', tab: 'league' },
-  { name: 'No Errors \u2014 Kakuro', tab: 'league' },
-  { name: 'No Errors \u2014 Poker Patience', tab: 'league' },
-  { name: 'No Errors \u2014 Cribbage', tab: 'league' },
+  { name: 'Pristine', tab: 'league' },
+  { name: 'Never Triggered', tab: 'league' },
+  { name: 'The Chain', tab: 'league' },
+  { name: 'Pure Logic', tab: 'league' },
+  { name: 'First Light', tab: 'league' },
+  { name: 'Clean Sheet', tab: 'league' },
+  { name: 'No Tells', tab: 'league' },
+  { name: 'Clean Crib', tab: 'league' },
   { name: 'The Purist', tab: 'league' },
   { name: 'Flawless Line', tab: 'league' },
   { name: 'The Logician', tab: 'league' },
@@ -265,10 +268,6 @@ var ACHIEVEMENTS = [
   { name: 'Weekend Warrior', tab: 'league' },
   { name: 'The Marathon', tab: 'league' },
   { name: 'League Regular', tab: 'league' },
-  { name: 'Active Player', tab: 'league' },
-  { name: 'Grinder', tab: 'league' },
-  { name: 'League Month', tab: 'league' },
-  { name: 'Double Winner', tab: 'league' },
 
   // ── Duels tab ──
   { name: 'First Blood', tab: 'duels' },
@@ -318,7 +317,7 @@ var ACHIEVEMENTS = [
   { name: 'Blind Eye', tab: 'games' },
   { name: '6-7', tab: 'games' },
 
-  // ── Free Games tab ──
+  // ── Free Games tab: free game milestones + time/dedication ──
   { name: 'Century', tab: 'free-games' },
   { name: 'Personal Best', tab: 'free-games' },
   { name: 'Explorer', tab: 'free-games' },
@@ -328,8 +327,10 @@ var ACHIEVEMENTS = [
   { name: 'Photographic', tab: 'free-games' },
   { name: 'Dead Reckoning', tab: 'free-games' },
   { name: 'Clairvoyant', tab: 'free-games' },
+  { name: 'Night Owl', tab: 'free-games' },
+  { name: 'The Insomniac', tab: 'free-games' },
 
-  // ── Seasonal tab: seasonal + time ──
+  // ── Seasonal tab: seasonal + monthly volume ──
   { name: 'Easter', tab: 'seasonal' },
   { name: 'Christmas', tab: 'seasonal' },
   { name: 'New Year', tab: 'seasonal' },
@@ -340,8 +341,10 @@ var ACHIEVEMENTS = [
   { name: 'VE Day', tab: 'seasonal' },
   { name: 'Summer Week', tab: 'seasonal' },
   { name: 'Platform Anniversary', tab: 'seasonal' },
-  { name: 'Night Owl', tab: 'seasonal' },
-  { name: 'The Insomniac', tab: 'seasonal' },
+  { name: 'Active Player', tab: 'seasonal' },
+  { name: 'Grinder', tab: 'seasonal' },
+  { name: 'League Month', tab: 'seasonal' },
+  { name: 'Double Winner', tab: 'seasonal' },
 
   // ── Collector tab: meta, loyalty, milestones, constants, absurd, founding, boom ──
   { name: 'Pi', tab: 'collector' },
@@ -417,10 +420,11 @@ function renderGrid() {
   filtered.forEach(function(a) {
     var card = document.createElement('div');
     card.className = 'ach-card';
+    var subtext = ACHIEVEMENTS_ACTIVE ? '' : '<div class="ach-mint">Coming Soon</div>';
     card.innerHTML =
       '<div>' +
         '<div class="ach-name">' + a.name + '</div>' +
-        '<div class="ach-mint">Coming Soon</div>' +
+        subtext +
       '</div>' +
       '<div class="ach-lock">\uD83D\uDD12</div>';
     grid.appendChild(card);
@@ -440,7 +444,7 @@ function renderGrid() {
 
 renderTabs();
 renderGrid();
-document.getElementById('heroCount').textContent = ACHIEVEMENTS.length + ' achievements. Some impossible. Most secret.';
+document.getElementById('heroCount').textContent = ACHIEVEMENTS.length + ' achievements. Some impossible. Most secret. All yours forever.';
 </script>
 </body>
 </html>
