@@ -35,7 +35,6 @@
   --border:        #1e2228;
   --border2:       #2a2e36;
   --grid-border:   #3a3e48;
-  --grid-box:      #5a5e68;
   --gold:          #c9a84c;
   --green:         #3a8a5c;
   --red:           #b03a3a;
@@ -114,7 +113,7 @@ body{background:var(--bg);color:var(--text);font-family:'Inter',sans-serif;min-h
 .join-input:focus{outline:none;border-color:var(--silver-border)}
 
 /* ── Buttons ── */
-.btn{padding:0.6rem 1rem;font-family:'JetBrains Mono',monospace;font-size:0.58rem;letter-spacing:0.08em;text-transform:uppercase;cursor:pointer;border-radius:6px;border:none;transition:all 0.15s;flex:1;min-width:0}
+.btn{padding:0.6rem 1rem;font-family:'JetBrains Mono',monospace;font-size:0.58rem;letter-spacing:0.08em;text-transform:uppercase;cursor:pointer;border-radius:6px;border:none;transition:all 0.15s;flex:1;min-width:0;min-height:44px}
 .btn-silver{background:var(--silver-bright);color:var(--bg);font-weight:500}
 .btn-silver:hover{opacity:.85}
 .btn-silver:disabled{background:var(--muted);cursor:not-allowed;opacity:0.5}
@@ -136,68 +135,153 @@ body{background:var(--bg);color:var(--text);font-family:'Inter',sans-serif;min-h
 .share-actions .btn{flex:0 1 auto;padding:.6rem 1.5rem}
 .duel-status-msg{font-family:'JetBrains Mono',monospace;font-size:.6rem;color:var(--muted);margin-top:.8rem}
 
-/* ── Grid layout ── */
-.grids-container{width:100%;display:none}
-.grids-desktop{display:flex;gap:1.5rem;width:100%;justify-content:center}
-.grid-section{flex:1;max-width:340px;display:flex;flex-direction:column;align-items:center;gap:.4rem}
-.grid-label{font-family:'JetBrains Mono',monospace;font-size:.5rem;letter-spacing:.12em;text-transform:uppercase;color:var(--muted)}
-.battle-grid{display:grid;grid-template-columns:auto repeat(10,1fr);gap:0;width:100%;position:relative}
+/* ── Placement screen ── */
+.placement-screen{width:100%;display:none;flex-direction:column;align-items:center;gap:1rem}
+.placement-grid-wrap{width:100%;max-width:400px}
+.placement-grid{display:grid;grid-template-columns:auto repeat(10,1fr);gap:0;width:100%}
 .grid-header{font-family:'JetBrains Mono',monospace;font-size:clamp(.4rem,1.2vw,.55rem);color:var(--muted);display:flex;align-items:center;justify-content:center;min-height:20px}
 .grid-row-label{font-family:'JetBrains Mono',monospace;font-size:clamp(.4rem,1.2vw,.55rem);color:var(--muted);display:flex;align-items:center;justify-content:center;min-width:16px}
-.bcell{
+
+.pcell{
   aspect-ratio:1;background:var(--surface2);border:1px solid var(--grid-border);
   display:flex;align-items:center;justify-content:center;cursor:pointer;
   position:relative;transition:background .1s,border-color .1s;min-width:0;
 }
-.bcell:hover{background:var(--surface3)}
-.bcell.ship-cell{background:var(--surface2);border-color:var(--silver-border)}
-.bcell.ship-placed{background:#1a1c22;border-color:rgba(184,188,198,0.25)}
-.bcell.invalid-flash{background:rgba(176,58,58,0.3);transition:background .05s}
-.bcell.hit-cell{background:rgba(176,58,58,0.15)}
-.bcell.sunk-cell{background:rgba(184,188,198,0.08);border-color:rgba(184,188,198,0.3)}
-.bcell.selected-target{border-color:var(--silver-bright);background:var(--silver-dim)}
-.bcell .dot{position:absolute;width:6px;height:6px;border-radius:50%;top:50%;left:50%;transform:translate(-50%,-50%)}
-.bcell .dot.miss{background:var(--silver)}
-.bcell .dot.hit{background:var(--red)}
-@keyframes hit-pulse{0%{transform:translate(-50%,-50%) scale(1)}50%{transform:translate(-50%,-50%) scale(1.6)}100%{transform:translate(-50%,-50%) scale(1)}}
-.bcell .dot.hit-anim{animation:hit-pulse .4s ease}
-@keyframes miss-ripple{0%{transform:translate(-50%,-50%) scale(1);opacity:1}100%{transform:translate(-50%,-50%) scale(2.5);opacity:0}}
-.bcell .miss-ripple{position:absolute;width:6px;height:6px;border-radius:50%;border:1px solid var(--silver);top:50%;left:50%;animation:miss-ripple .5s ease forwards;pointer-events:none}
+.pcell:hover{background:var(--surface3)}
+.pcell.ship-placed{background:#1a1c22;border-color:rgba(184,188,198,0.25)}
+.pcell.invalid-flash{background:rgba(176,58,58,0.3);transition:background .05s}
 
-/* ── Ship selection panel ── */
-.ship-panel{width:100%;display:none;flex-direction:column;gap:.4rem;margin-top:.6rem}
-.ship-panel-title{font-family:'JetBrains Mono',monospace;font-size:.5rem;letter-spacing:.1em;text-transform:uppercase;color:var(--muted);margin-bottom:.2rem}
-.ship-row{
+/* Ship tray for placement */
+.ship-tray{width:100%;display:flex;flex-direction:column;gap:.4rem}
+.ship-tray-title{font-family:'JetBrains Mono',monospace;font-size:.5rem;letter-spacing:.1em;text-transform:uppercase;color:var(--muted);margin-bottom:.2rem}
+.ship-tray-row{
   display:flex;align-items:center;gap:.6rem;padding:.5rem .8rem;
   background:var(--surface);border:1px solid var(--border);border-radius:8px;
   cursor:pointer;transition:all .15s;
 }
-.ship-row:hover{border-color:var(--silver-border)}
-.ship-row.selected{border-color:var(--silver);background:var(--silver-dim)}
-.ship-row.sunk{opacity:.35;cursor:default;text-decoration:line-through}
-.ship-name{font-family:'JetBrains Mono',monospace;font-size:.6rem;color:var(--text-white);flex:1}
-.ship-row.sunk .ship-name{color:var(--muted)}
-.ship-dots{display:flex;gap:3px}
-.ship-dots .sdot{width:8px;height:8px;border-radius:2px;background:var(--surface3);border:1px solid var(--muted)}
-.ship-row.selected .ship-dots .sdot{border-color:var(--silver)}
-.ship-dots .sdot.damaged{background:var(--red);border-color:var(--red)}
-.ship-range{font-family:'JetBrains Mono',monospace;font-size:.5rem;color:var(--muted);min-width:55px;text-align:right}
-
-/* ── Placement panel ── */
-.placement-panel{width:100%;display:none;flex-direction:column;gap:.6rem;align-items:center}
-.placement-ships{display:flex;flex-direction:column;gap:.4rem;width:100%}
-.place-ship-row{
-  display:flex;align-items:center;gap:.6rem;padding:.5rem .8rem;
-  background:var(--surface);border:1px solid var(--border);border-radius:8px;
-  cursor:pointer;transition:all .15s;
-}
-.place-ship-row:hover{border-color:var(--silver-border)}
-.place-ship-row.active{border-color:var(--silver);background:var(--silver-dim)}
-.place-ship-row.placed{border-color:var(--green);opacity:.6}
-.place-ship-row .ship-name{font-family:'JetBrains Mono',monospace;font-size:.6rem;color:var(--text-white);flex:1}
-.place-ship-row .ship-size{font-family:'JetBrains Mono',monospace;font-size:.5rem;color:var(--muted)}
-.placement-controls{display:flex;gap:.5rem;flex-wrap:wrap}
+.ship-tray-row:hover{border-color:var(--silver-border)}
+.ship-tray-row.active{border-color:var(--silver);background:var(--silver-dim)}
+.ship-tray-row.placed{border-color:var(--green);opacity:.6}
+.ship-tray-row .ship-label{font-family:'JetBrains Mono',monospace;font-size:.6rem;color:var(--text-white);flex:1}
+.ship-tray-row .ship-svg-mini{display:flex;align-items:center}
+.ship-tray-row .ship-svg-mini svg{height:20px}
+.placement-controls{display:flex;gap:.5rem;flex-wrap:wrap;width:100%}
 .orient-label{font-family:'JetBrains Mono',monospace;font-size:.5rem;color:var(--muted);display:flex;align-items:center}
+
+/* ── Game screen ── */
+.game-screen{width:100%;display:none;flex-direction:column;align-items:center;gap:1rem}
+
+/* Turn indicator */
+.turn-indicator{
+  width:100%;text-align:center;font-family:'JetBrains Mono',monospace;
+  font-size:.65rem;color:var(--muted);padding:.6rem;
+  background:var(--surface);border:1px solid var(--border);border-radius:8px;
+  display:none;
+}
+.turn-indicator.your-turn{color:var(--silver-bright);border-color:var(--silver-border)}
+
+/* ── Radar grid (target grid) — approved design, DO NOT CHANGE ── */
+.radar-section{width:100%;max-width:420px}
+.radar-wrap{position:relative;padding-left:24px;padding-top:20px}
+.radar-col-labels{position:absolute;top:0;left:24px;right:0;display:flex}
+.radar-col-labels span{flex:1;text-align:center;font-family:'JetBrains Mono',monospace;font-size:.5rem;color:rgba(0,255,100,0.18);letter-spacing:.05em;text-shadow:0 0 4px rgba(0,255,100,0.1)}
+.radar-row-labels{position:absolute;top:20px;left:0;bottom:0;display:flex;flex-direction:column}
+.radar-row-labels span{flex:1;display:flex;align-items:center;justify-content:center;font-family:'JetBrains Mono',monospace;font-size:.5rem;color:rgba(0,255,100,0.18);width:22px;text-shadow:0 0 4px rgba(0,255,100,0.1)}
+
+.radar-container{position:relative;overflow:hidden;border-radius:50%;aspect-ratio:1}
+.radar-grid{display:grid;grid-template-columns:repeat(10,1fr);gap:0;width:100%;height:100%;position:relative;z-index:2}
+.rcell{
+  background:#080a08;
+  border-right:1px solid rgba(0,255,100,0.06);
+  border-bottom:1px solid rgba(0,255,100,0.06);
+  position:relative;display:flex;align-items:center;justify-content:center;
+  transition:background .15s;cursor:crosshair;
+}
+.rcell:hover{background:rgba(0,255,100,0.06);box-shadow:inset 0 0 12px rgba(0,255,100,0.08)}
+.rcell.shot{cursor:default}
+.rcell.shot:hover{background:#080a08;box-shadow:none}
+
+/* Circular mask */
+.radar-container::before{
+  content:'';position:absolute;inset:0;z-index:3;pointer-events:none;
+  box-shadow:0 0 0 100px var(--bg);border-radius:50%;
+}
+/* Outer ring */
+.radar-container::after{
+  content:'';position:absolute;inset:-2px;z-index:4;pointer-events:none;
+  border:2px solid rgba(0,255,100,0.12);border-radius:50%;
+  box-shadow:0 0 20px rgba(0,255,100,0.05),inset 0 0 20px rgba(0,255,100,0.03);
+}
+
+/* Radar sweep */
+.radar-sweep{
+  position:absolute;inset:0;z-index:5;pointer-events:none;
+  border-radius:50%;
+  background:conic-gradient(
+    from 0deg,
+    transparent 0deg,
+    rgba(0,255,100,0.12) 15deg,
+    rgba(0,255,100,0.06) 40deg,
+    rgba(0,255,100,0.02) 70deg,
+    transparent 90deg
+  );
+  animation:radar-rotate 4s linear infinite;
+  mix-blend-mode:screen;
+}
+@keyframes radar-rotate{
+  from{transform:rotate(0deg)}
+  to{transform:rotate(360deg)}
+}
+
+/* Cross-hairs */
+.radar-crosshair{position:absolute;inset:0;z-index:1;pointer-events:none}
+.radar-crosshair::before{content:'';position:absolute;top:0;bottom:0;left:50%;width:1px;background:rgba(0,255,100,0.04)}
+.radar-crosshair::after{content:'';position:absolute;left:0;right:0;top:50%;height:1px;background:rgba(0,255,100,0.04)}
+
+/* Range rings */
+.radar-rings{position:absolute;inset:0;z-index:1;pointer-events:none}
+.radar-rings::before{content:'';position:absolute;top:16.6%;left:16.6%;right:16.6%;bottom:16.6%;border:1px solid rgba(0,255,100,0.03);border-radius:50%}
+.radar-rings::after{content:'';position:absolute;top:33.3%;left:33.3%;right:33.3%;bottom:33.3%;border:1px solid rgba(0,255,100,0.03);border-radius:50%}
+
+/* Hit marker on radar */
+.rcell.hit{background:rgba(176,58,58,0.1)}
+.hit-marker{width:55%;height:55%;z-index:6;position:relative}
+
+/* Miss marker on radar */
+.rcell.miss{background:rgba(0,255,100,0.02)}
+.miss-marker{width:45%;height:45%;z-index:6;position:relative;filter:drop-shadow(0 0 6px rgba(255,255,255,0.6))}
+
+/* Sunk ship on radar */
+.rcell.sunk{background:rgba(176,58,58,0.08)}
+.sunk-marker{width:80%;height:80%;z-index:6;position:relative}
+
+/* ── Mini fleet grid (your ships, shown below radar during gameplay) ── */
+.fleet-section{width:100%;max-width:280px}
+.fleet-section .grid-label{font-family:'JetBrains Mono',monospace;font-size:.5rem;letter-spacing:.12em;text-transform:uppercase;color:var(--muted);text-align:center;margin-bottom:.4rem}
+.fleet-grid{display:grid;grid-template-columns:auto repeat(10,1fr);gap:0;width:100%}
+.fcell{
+  aspect-ratio:1;background:var(--surface2);border:1px solid var(--grid-border);
+  display:flex;align-items:center;justify-content:center;
+  position:relative;min-width:0;
+}
+.fcell.ship-placed{background:#1a1c22;border-color:rgba(184,188,198,0.25)}
+.fcell.hit-cell{background:rgba(176,58,58,0.15)}
+.fcell .dot{position:absolute;width:5px;height:5px;border-radius:50%;top:50%;left:50%;transform:translate(-50%,-50%)}
+.fcell .dot.miss{background:var(--silver)}
+.fcell .dot.hit{background:var(--red)}
+
+/* ── Ship status panel (during gameplay) ── */
+.ship-status{width:100%;display:flex;flex-direction:column;gap:.3rem}
+.ship-status-title{font-family:'JetBrains Mono',monospace;font-size:.5rem;letter-spacing:.1em;text-transform:uppercase;color:var(--muted);margin-bottom:.2rem}
+.ship-status-row{
+  display:flex;align-items:center;gap:.6rem;padding:.4rem .8rem;
+  background:var(--surface);border:1px solid var(--border);border-radius:6px;
+}
+.ship-status-row.sunk{opacity:.35;text-decoration:line-through}
+.ship-status-row .ship-label{font-family:'JetBrains Mono',monospace;font-size:.55rem;color:var(--text-white);flex:1}
+.ship-status-row .ship-dots{display:flex;gap:3px}
+.ship-status-row .sdot{width:7px;height:7px;border-radius:2px;background:var(--surface3);border:1px solid var(--muted)}
+.ship-status-row .sdot.damaged{background:var(--red);border-color:var(--red)}
 
 /* ── Sunk banner ── */
 @keyframes sunk-fade{0%{opacity:1;transform:translate(-50%,-50%) scale(1)}80%{opacity:1;transform:translate(-50%,-50%) scale(1)}100%{opacity:0;transform:translate(-50%,-50%) scale(.9)}}
@@ -208,15 +292,6 @@ body{background:var(--bg);color:var(--text);font-family:'Inter',sans-serif;min-h
   padding:.8rem 2rem;border-radius:10px;pointer-events:none;
   animation:sunk-fade 2s ease forwards;
 }
-
-/* ── Turn indicator ── */
-.turn-indicator{
-  width:100%;text-align:center;font-family:'JetBrains Mono',monospace;
-  font-size:.65rem;color:var(--muted);padding:.6rem;
-  background:var(--surface);border:1px solid var(--border);border-radius:8px;
-  display:none;
-}
-.turn-indicator.your-turn{color:var(--silver-bright);border-color:var(--silver-border)}
 
 /* ── Results modal ── */
 .modal-overlay{position:fixed;inset:0;background:rgba(5,7,9,0.94);backdrop-filter:blur(8px);z-index:200;display:flex;align-items:center;justify-content:center;padding:1rem}
@@ -244,19 +319,23 @@ body{background:var(--bg);color:var(--text);font-family:'Inter',sans-serif;min-h
 .cookie-accept{background:var(--silver-bright);color:var(--bg)}
 .cookie-decline{background:transparent;border:1px solid var(--border);color:var(--muted)}
 
-/* ── Mobile ── */
-@media(max-width:680px){
+/* ── Mobile-first (375px base) ── */
+@media(max-width:480px){
   .page{padding:1.5rem 0.5rem 3rem}
   .game-title{font-size:2rem}
-  .grids-desktop{flex-direction:column;align-items:center;gap:1rem}
-  .grid-section{max-width:100%}
-  .bcell{min-width:28px;min-height:28px}
   .share-code-display{font-size:1.8rem;padding:.8rem 1.2rem}
-  .btn{padding:0.5rem 0.5rem;font-size:0.5rem}
+  .radar-section{max-width:100%}
+  .fleet-section{max-width:100%}
+}
+
+/* ── Desktop (768px+) ── */
+@media(min-width:768px){
+  .game-layout{display:flex;gap:1.5rem;width:100%;align-items:flex-start}
+  .game-layout .radar-section{flex:1;max-width:480px}
+  .game-layout .fleet-col{display:flex;flex-direction:column;gap:1rem;min-width:240px}
 }
 </style>
 <script src="https://cdn.jsdelivr.net/npm/ethers@6/dist/ethers.umd.min.js"></script>
-<script src="/auth/mw-auth.js"></script>
 </head>
 <body>
 <script src="../qf-wallet.js"></script>
@@ -287,10 +366,9 @@ body{background:var(--bg);color:var(--text);font-family:'Inter',sans-serif;min-h
       <button class="htp-toggle">How to Play <span class="htp-arrow">&#9660;</span></button>
       <div class="htp-body">
         <p>Sink all 5 of your opponent's ships before they sink yours.</p>
-        <p>Place your fleet on your grid before the game starts. Your opponent can't see where they are.</p>
-        <p>Each round, choose which of your ships fires and pick a target. The ship closest to its target fires first &mdash; position matters.</p>
-        <p><strong>Hit</strong> = red. <strong>Miss</strong> = silver. Sink all cells of a ship to sink it. When a ship is sunk, you'll see exactly where it was hiding.</p>
-        <p>In turn-based mode, you have 24 hours per shot. Last fleet standing wins.</p>
+        <p>Place your fleet on your grid before the game starts. Tap a cell to place the selected ship, tap Rotate to switch orientation.</p>
+        <p><strong>Hit</strong> = red X on radar. <strong>Miss</strong> = white ring. Sink all cells of a ship to destroy it.</p>
+        <p>In duel mode, you have 24 hours per shot. Last fleet standing wins.</p>
       </div>
     </div>
 
@@ -309,7 +387,7 @@ body{background:var(--bg);color:var(--text);font-family:'Inter',sans-serif;min-h
       </div>
     </div>
 
-    <!-- Stake selector (Create Duel) -->
+    <!-- Stake selector -->
     <div class="stake-panel" id="stake-panel">
       <p style="font-size:.72rem;color:var(--text-white);margin-bottom:.4rem">Choose your stake</p>
       <div class="stake-options" id="stake-options">
@@ -359,36 +437,52 @@ body{background:var(--bg);color:var(--text);font-family:'Inter',sans-serif;min-h
   </div>
 
   <!-- PLACEMENT SCREEN -->
-  <div id="placement-screen" style="display:none">
-    <div class="grid-label" style="margin-bottom:.4rem">Place Your Fleet</div>
-    <div class="battle-grid" id="placement-grid"></div>
-    <div class="placement-panel" id="placement-panel" style="display:flex">
-      <div class="placement-ships" id="placement-ships"></div>
-      <div class="placement-controls">
-        <button class="btn btn-ghost" onclick="G.rotateShip()" id="rotate-btn">Rotate (R)</button>
-        <button class="btn btn-ghost" onclick="G.randomPlace()">Randomise</button>
-        <button class="btn btn-silver" onclick="G.confirmPlacement()" id="confirm-place-btn" disabled>Confirm Fleet</button>
-      </div>
-      <span class="orient-label" id="orient-label">Orientation: Horizontal</span>
+  <div class="placement-screen" id="placement-screen">
+    <div class="grid-label" style="font-family:'JetBrains Mono',monospace;font-size:.5rem;letter-spacing:.12em;text-transform:uppercase;color:var(--muted);margin-bottom:.4rem">Place Your Fleet</div>
+    <div class="placement-grid-wrap">
+      <div class="placement-grid" id="placement-grid"></div>
     </div>
+    <div class="ship-tray" id="ship-tray"></div>
+    <div class="placement-controls">
+      <button class="btn btn-ghost" onclick="G.rotateShip()" id="rotate-btn">Rotate (R)</button>
+      <button class="btn btn-ghost" onclick="G.randomPlace()">Randomise</button>
+      <button class="btn btn-silver" onclick="G.confirmPlacement()" id="confirm-place-btn" disabled>Confirm Fleet</button>
+    </div>
+    <span class="orient-label" id="orient-label">Orientation: Horizontal</span>
   </div>
 
   <!-- GAME SCREEN -->
-  <div class="grids-container" id="game-screen">
+  <div class="game-screen" id="game-screen">
     <div class="turn-indicator" id="turn-indicator"></div>
-    <div class="grids-desktop">
-      <div class="grid-section">
-        <div class="grid-label">Your Fleet</div>
-        <div class="battle-grid" id="my-grid"></div>
+
+    <!-- Mobile: stacked. Desktop: side by side via .game-layout -->
+    <div class="game-layout">
+      <!-- Radar target grid (dominant) -->
+      <div class="radar-section">
+        <div class="radar-wrap">
+          <div class="radar-col-labels">
+            <span>A</span><span>B</span><span>C</span><span>D</span><span>E</span><span>F</span><span>G</span><span>H</span><span>I</span><span>J</span>
+          </div>
+          <div class="radar-row-labels">
+            <span>1</span><span>2</span><span>3</span><span>4</span><span>5</span><span>6</span><span>7</span><span>8</span><span>9</span><span>10</span>
+          </div>
+          <div class="radar-container">
+            <div class="radar-crosshair"></div>
+            <div class="radar-rings"></div>
+            <div class="radar-grid" id="radar-grid"></div>
+            <div class="radar-sweep"></div>
+          </div>
+        </div>
       </div>
-      <div class="grid-section">
-        <div class="grid-label">Tracking Grid</div>
-        <div class="battle-grid" id="tracking-grid"></div>
+
+      <!-- Fleet column (mini grid + ship status) -->
+      <div class="fleet-col">
+        <div class="fleet-section">
+          <div class="grid-label">Your Fleet</div>
+          <div class="fleet-grid" id="fleet-grid"></div>
+        </div>
+        <div class="ship-status" id="ship-status"></div>
       </div>
-    </div>
-    <div class="ship-panel" id="ship-panel" style="display:flex">
-      <div class="ship-panel-title">Select firing ship</div>
-      <div id="ship-rows"></div>
     </div>
   </div>
 
@@ -471,6 +565,28 @@ async function api(url, body, method) {
   return res.json();
 }
 
+// ── SVG ship definitions (approved v3.1) ──────────────────────────────
+var SHIP_SVGS = {
+  Carrier: '<svg viewBox="0 0 220 44" xmlns="http://www.w3.org/2000/svg"><path d="M4 22 L18 10 L50 8 L170 8 L200 10 L210 14 L216 22 L210 30 L200 34 L170 36 L50 36 L18 34 Z" fill="#f0f0f0" fill-opacity="0.85" stroke="#d8d8d8" stroke-width="0.8"/><path d="M55 10 L165 10 L172 12 L172 32 L165 34 L55 34 L48 32 L48 12 Z" fill="none" stroke="#c8c8c8" stroke-width="0.5" stroke-opacity="0.4"/><line x1="20" y1="22" x2="212" y2="22" stroke="#d0d0d0" stroke-width="0.4" stroke-opacity="0.25"/><line x1="60" y1="14" x2="160" y2="14" stroke="#d8d8d8" stroke-width="0.4" stroke-opacity="0.3" stroke-dasharray="8 4"/><line x1="60" y1="30" x2="160" y2="30" stroke="#d8d8d8" stroke-width="0.4" stroke-opacity="0.3" stroke-dasharray="8 4"/><rect x="145" y="11" width="12" height="7" rx="1.5" fill="#e0e0e0" fill-opacity="0.6" stroke="#c0c0c0" stroke-width="0.4"/></svg>',
+  Battleship: '<svg viewBox="0 0 176 44" xmlns="http://www.w3.org/2000/svg"><path d="M4 22 L22 11 L40 9 L140 9 L158 11 L168 15 L172 22 L168 29 L158 33 L140 35 L40 35 L22 33 Z" fill="#d8d8d8" fill-opacity="0.85" stroke="#c0c0c0" stroke-width="0.8"/><line x1="22" y1="22" x2="168" y2="22" stroke="#b8b8b8" stroke-width="0.4" stroke-opacity="0.25"/><rect x="48" y="17" width="14" height="10" rx="2" fill="#c8c8c8" fill-opacity="0.6" stroke="#b0b0b0" stroke-width="0.5"/><line x1="55" y1="17" x2="55" y2="12" stroke="#b0b0b0" stroke-width="1.2" stroke-linecap="round" stroke-opacity="0.5"/><rect x="110" y="17" width="14" height="10" rx="2" fill="#c8c8c8" fill-opacity="0.6" stroke="#b0b0b0" stroke-width="0.5"/><line x1="117" y1="17" x2="117" y2="12" stroke="#b0b0b0" stroke-width="1.2" stroke-linecap="round" stroke-opacity="0.5"/><rect x="72" y="15" width="20" height="14" rx="2" fill="#c8c8c8" fill-opacity="0.4" stroke="#b0b0b0" stroke-width="0.4"/></svg>',
+  Cruiser: '<svg viewBox="0 0 132 44" xmlns="http://www.w3.org/2000/svg"><path d="M4 22 L20 12 L36 10 L100 10 L116 13 L126 18 L128 22 L126 26 L116 31 L100 34 L36 34 L20 32 Z" fill="#c0c0c0" fill-opacity="0.85" stroke="#a8a8a8" stroke-width="0.8"/><line x1="20" y1="22" x2="126" y2="22" stroke="#a0a0a0" stroke-width="0.4" stroke-opacity="0.25"/><rect x="40" y="18" width="12" height="8" rx="2" fill="#b0b0b0" fill-opacity="0.6" stroke="#909090" stroke-width="0.5"/><line x1="46" y1="18" x2="46" y2="13" stroke="#909090" stroke-width="1" stroke-linecap="round" stroke-opacity="0.5"/><rect x="68" y="17" width="14" height="10" rx="2" fill="#b0b0b0" fill-opacity="0.35" stroke="#909090" stroke-width="0.4"/></svg>',
+  Submarine: '<svg viewBox="0 0 132 44" xmlns="http://www.w3.org/2000/svg"><ellipse cx="66" cy="22" rx="62" ry="11" fill="#989898" fill-opacity="0.8" stroke="#808080" stroke-width="0.8"/><ellipse cx="58" cy="22" rx="10" ry="6" fill="#a8a8a8" fill-opacity="0.65" stroke="#909090" stroke-width="0.6"/><line x1="58" y1="16" x2="58" y2="11" stroke="#909090" stroke-width="1" stroke-linecap="round" stroke-opacity="0.6"/><line x1="12" y1="22" x2="120" y2="22" stroke="#808080" stroke-width="0.3" stroke-opacity="0.3"/><line x1="8" y1="18" x2="16" y2="18" stroke="#808080" stroke-width="1" stroke-opacity="0.4"/><line x1="8" y1="26" x2="16" y2="26" stroke="#808080" stroke-width="1" stroke-opacity="0.4"/><path d="M120 18 L126 22 L120 26" fill="none" stroke="#808080" stroke-width="0.8" stroke-opacity="0.4"/></svg>',
+  Destroyer: '<svg viewBox="0 0 88 44" xmlns="http://www.w3.org/2000/svg"><path d="M3 22 L18 13 L30 11 L62 11 L74 13 L84 18 L85 22 L84 26 L74 31 L62 33 L30 33 L18 31 Z" fill="#a8a8a8" fill-opacity="0.9" stroke="#909090" stroke-width="0.8"/><line x1="18" y1="22" x2="82" y2="22" stroke="#909090" stroke-width="0.4" stroke-opacity="0.3"/><rect x="26" y="18" width="12" height="8" rx="1.5" fill="#b0b0b0" fill-opacity="0.55" stroke="#909090" stroke-width="0.5"/><line x1="32" y1="18" x2="32" y2="13" stroke="#909090" stroke-width="1" stroke-linecap="round" stroke-opacity="0.55"/><rect x="64" y="19" width="8" height="6" rx="1" fill="none" stroke="#909090" stroke-width="0.5" stroke-opacity="0.4"/></svg>'
+};
+
+// SVG markers
+var HIT_SVG = '<svg class="hit-marker" viewBox="0 0 44 44"><circle cx="22" cy="22" r="15" fill="#b03a3a" fill-opacity="0.75"/><path d="M13 13 L31 31 M31 13 L13 31" stroke="#ff5555" stroke-width="3.5" stroke-linecap="round"/></svg>';
+var MISS_SVG = '<svg class="miss-marker" viewBox="0 0 44 44"><circle cx="22" cy="22" r="12" fill="none" stroke="#e8eaf0" stroke-width="2" stroke-opacity="0.5"/><circle cx="22" cy="22" r="4" fill="#e8eaf0" fill-opacity="0.35"/></svg>';
+
+// Sunk ship SVGs (red silhouettes) — keyed by ship name
+var SUNK_SVGS = {
+  Carrier: '<svg class="sunk-marker" viewBox="0 0 220 44"><path d="M4 22 L18 10 L50 8 L170 8 L200 10 L210 14 L216 22 L210 30 L200 34 L170 36 L50 36 L18 34 Z" fill="#b03a3a" fill-opacity="0.6" stroke="#ff5555" stroke-width="1" stroke-opacity="0.7"/></svg>',
+  Battleship: '<svg class="sunk-marker" viewBox="0 0 176 44"><path d="M4 22 L22 11 L40 9 L140 9 L158 11 L168 15 L172 22 L168 29 L158 33 L140 35 L40 35 L22 33 Z" fill="#b03a3a" fill-opacity="0.6" stroke="#ff5555" stroke-width="1" stroke-opacity="0.7"/></svg>',
+  Cruiser: '<svg class="sunk-marker" viewBox="0 0 132 44"><path d="M4 22 L20 12 L36 10 L100 10 L116 13 L126 18 L128 22 L126 26 L116 31 L100 34 L36 34 L20 32 Z" fill="#b03a3a" fill-opacity="0.6" stroke="#ff5555" stroke-width="1" stroke-opacity="0.7"/></svg>',
+  Submarine: '<svg class="sunk-marker" viewBox="0 0 132 44"><ellipse cx="66" cy="22" rx="62" ry="11" fill="#b03a3a" fill-opacity="0.6" stroke="#ff5555" stroke-width="1" stroke-opacity="0.7"/></svg>',
+  Destroyer: '<svg class="sunk-marker" viewBox="0 0 88 44"><path d="M3 22 L18 13 L30 11 L62 11 L74 13 L84 18 L85 22 L84 26 L74 31 L62 33 L30 33 L18 31 Z" fill="#b03a3a" fill-opacity="0.6" stroke="#ff5555" stroke-width="1" stroke-opacity="0.7"/></svg>'
+};
+
 // ── Game constants ────────────────────────────────────────────────────
 var SHIPS = [
   { name: 'Carrier',    size: 5 },
@@ -485,44 +601,31 @@ var W = qfWallet;
 
 // ── Game state ────────────────────────────────────────────────────────
 var G = {};
-G.mode = null;          // 'duel' | 'cpu'
+G.mode = null;
 G.cpuDiff = 'recruit';
 G.duelCode = null;
 G.duelStake = 25;
-G.orientation = 'h';    // h or v
+G.orientation = 'h';
 G.selectedPlaceShip = 0;
-G.placedShips = [];     // [{name,size,x,y,orientation,cells}]
-G.myBoard = [];         // 10x10: null or {shipIdx}
-G.myShots = [];         // 10x10: null | 'miss' | 'hit'
-G.oppShots = [];        // 10x10: null | 'miss' | 'hit'
-G.oppBoard = [];        // 10x10: null (revealed on sunk/end)
-G.myShips = [];         // runtime: [{name,size,cells:[{x,y}],hits:0,sunk:false}]
-G.oppShips = [];        // same for CPU mode
-G.selectedFiringShip = -1;
+G.placedShips = [];
+G.myBoard = [];
+G.myShots = [];
+G.oppShots = [];
+G.oppBoard = [];
+G.myShips = [];
+G.oppShips = [];
 G.selectedTarget = null;
 G.myTurn = true;
 G.gameOver = false;
 G.pollTimer = null;
 G.cpuShotHistory = [];
-G.cpuHitQueue = [];     // for officer/admiral AI
-G.cpuProbMap = null;
+G.cpuHitQueue = [];
 
 // ── Helpers ───────────────────────────────────────────────────────────
 function setMsg(t, ok) {
   var el = document.getElementById('msg-bar');
   el.textContent = t;
   el.className = ok ? 'msg ok' : 'msg';
-}
-
-function calcRange(shipCells, targetX, targetY) {
-  var minDist = Infinity;
-  for (var i = 0; i < shipCells.length; i++) {
-    var dx = shipCells[i].x - targetX;
-    var dy = shipCells[i].y - targetY;
-    var dist = Math.sqrt(dx * dx + dy * dy);
-    if (dist < minDist) minDist = dist;
-  }
-  return Math.round(minDist * 10) / 10;
 }
 
 function make2D(def) {
@@ -553,13 +656,13 @@ G.backToMenu = function() {
 };
 
 G.showCreateDuel = function() {
-  if (!W.state.address) { alert('Connect your wallet to create a duel.'); return; }
+  if (!W.isConnected()) { alert('Connect your wallet to create a duel.'); return; }
   document.getElementById('mode-panel').style.display = 'none';
   document.getElementById('stake-panel').style.display = 'flex';
 };
 
 G.showJoinDuel = function() {
-  if (!W.state.address) { alert('Connect your wallet to join a duel.'); return; }
+  if (!W.isConnected()) { alert('Connect your wallet to join a duel.'); return; }
   document.getElementById('mode-panel').style.display = 'none';
   document.getElementById('join-panel').style.display = 'flex';
 };
@@ -668,23 +771,20 @@ G.startCpu = function() {
   G.showPlacement();
 };
 
-// ── Build a grid (for placement, my-grid, tracking-grid) ──────────────
-function buildGrid(containerId, clickHandler) {
-  var el = document.getElementById(containerId);
+// ── Build placement grid ──────────────────────────────────────────────
+function buildPlacementGrid() {
+  var el = document.getElementById('placement-grid');
   el.innerHTML = '';
-  el.style.gridTemplateColumns = 'auto repeat(10, 1fr)';
   // Corner
   var corner = document.createElement('div');
   corner.className = 'grid-header';
   el.appendChild(corner);
-  // Column headers
   for (var c = 0; c < 10; c++) {
     var ch = document.createElement('div');
     ch.className = 'grid-header';
     ch.textContent = COLS[c];
     el.appendChild(ch);
   }
-  // Rows
   for (var r = 0; r < 10; r++) {
     var rl = document.createElement('div');
     rl.className = 'grid-row-label';
@@ -692,50 +792,106 @@ function buildGrid(containerId, clickHandler) {
     el.appendChild(rl);
     for (var c2 = 0; c2 < 10; c2++) {
       var cell = document.createElement('div');
-      cell.className = 'bcell';
+      cell.className = 'pcell';
       cell.dataset.r = r;
       cell.dataset.c = c2;
-      if (clickHandler) cell.addEventListener('click', clickHandler);
+      cell.addEventListener('click', G.placementClick);
       el.appendChild(cell);
     }
   }
 }
 
-function getCell(containerId, r, c) {
-  var el = document.getElementById(containerId);
-  return el.querySelector('.bcell[data-r="' + r + '"][data-c="' + c + '"]');
+function getPlacementCell(r, c) {
+  return document.querySelector('#placement-grid .pcell[data-r="' + r + '"][data-c="' + c + '"]');
+}
+
+// ── Build radar grid (for gameplay) ───────────────────────────────────
+function buildRadarGrid() {
+  var el = document.getElementById('radar-grid');
+  el.innerHTML = '';
+  for (var i = 0; i < 100; i++) {
+    var cell = document.createElement('div');
+    cell.className = 'rcell';
+    cell.dataset.r = Math.floor(i / 10);
+    cell.dataset.c = i % 10;
+    cell.addEventListener('click', G.radarClick);
+    el.appendChild(cell);
+  }
+}
+
+function getRadarCell(r, c) {
+  return document.querySelector('#radar-grid .rcell[data-r="' + r + '"][data-c="' + c + '"]');
+}
+
+// ── Build fleet grid (mini, for gameplay) ─────────────────────────────
+function buildFleetGrid() {
+  var el = document.getElementById('fleet-grid');
+  el.innerHTML = '';
+  var corner = document.createElement('div');
+  corner.className = 'grid-header';
+  el.appendChild(corner);
+  for (var c = 0; c < 10; c++) {
+    var ch = document.createElement('div');
+    ch.className = 'grid-header';
+    ch.textContent = COLS[c];
+    ch.style.fontSize = '.35rem';
+    el.appendChild(ch);
+  }
+  for (var r = 0; r < 10; r++) {
+    var rl = document.createElement('div');
+    rl.className = 'grid-row-label';
+    rl.textContent = ROWS[r];
+    rl.style.fontSize = '.35rem';
+    el.appendChild(rl);
+    for (var c2 = 0; c2 < 10; c2++) {
+      var cell = document.createElement('div');
+      cell.className = 'fcell';
+      cell.dataset.r = r;
+      cell.dataset.c = c2;
+      el.appendChild(cell);
+    }
+  }
+}
+
+function getFleetCell(r, c) {
+  return document.querySelector('#fleet-grid .fcell[data-r="' + r + '"][data-c="' + c + '"]');
 }
 
 // ── Placement ─────────────────────────────────────────────────────────
 G.showPlacement = function() {
   document.getElementById('duel-share').style.display = 'none';
-  document.getElementById('placement-screen').style.display = 'block';
+  document.getElementById('placement-screen').style.display = 'flex';
   G.placedShips = [];
   G.orientation = 'h';
   G.selectedPlaceShip = 0;
   document.getElementById('orient-label').textContent = 'Orientation: Horizontal';
 
-  buildGrid('placement-grid', G.placementClick);
-  G.buildPlacementShipList();
+  buildPlacementGrid();
+  G.buildShipTray();
   G.updatePlacementGrid();
 };
 
-G.buildPlacementShipList = function() {
-  var container = document.getElementById('placement-ships');
-  container.innerHTML = '';
+G.buildShipTray = function() {
+  var container = document.getElementById('ship-tray');
+  container.innerHTML = '<div class="ship-tray-title">Select a ship to place</div>';
   for (var i = 0; i < SHIPS.length; i++) {
     var row = document.createElement('div');
-    row.className = 'place-ship-row' + (i === G.selectedPlaceShip ? ' active' : '');
+    row.className = 'ship-tray-row' + (i === G.selectedPlaceShip ? ' active' : '');
     row.dataset.idx = i;
-    row.innerHTML = '<span class="ship-name">' + SHIPS[i].name + '</span><span class="ship-size">' + SHIPS[i].size + ' cells</span>';
+    var isPlaced = G.placedShips.some(function(s){ return s.shipIdx === i; });
+    if (isPlaced) row.classList.add('placed');
+    row.innerHTML = '<span class="ship-label">' + SHIPS[i].name + ' (' + SHIPS[i].size + ')</span>' +
+      '<span class="ship-svg-mini">' + SHIP_SVGS[SHIPS[i].name] + '</span>';
+    // Scale SVG in tray
+    var svg = row.querySelector('svg');
+    if (svg) { svg.style.height = '20px'; svg.style.width = (SHIPS[i].size * 20) + 'px'; }
     row.addEventListener('click', (function(idx){
       return function() {
         if (G.placedShips.some(function(s){ return s.shipIdx === idx; })) return;
         G.selectedPlaceShip = idx;
-        G.buildPlacementShipList();
+        G.buildShipTray();
       };
     })(i));
-    if (G.placedShips.some(function(s){ return s.shipIdx === i; })) row.classList.add('placed');
     container.appendChild(row);
   }
 };
@@ -787,9 +943,7 @@ G.placementClick = function() {
   var ship = SHIPS[idx];
   var cells = G.getShipCells(r, c, ship.size, G.orientation);
   if (!cells || !G.isValidPlacement(cells)) {
-    // flash red
-    var self = this;
-    var allCells = document.querySelectorAll('#placement-grid .bcell');
+    var allCells = document.querySelectorAll('#placement-grid .pcell');
     allCells.forEach(function(ce){ ce.classList.add('invalid-flash'); });
     setTimeout(function(){ allCells.forEach(function(ce){ ce.classList.remove('invalid-flash'); }); }, 200);
     return;
@@ -797,13 +951,12 @@ G.placementClick = function() {
 
   G.placedShips.push({ shipIdx: idx, name: ship.name, size: ship.size, orientation: G.orientation, cells: cells });
 
-  // Auto-select next unplaced ship
   var nextIdx = -1;
   for (var i = 0; i < SHIPS.length; i++) {
     if (!G.placedShips.some(function(s){ return s.shipIdx === i; })) { nextIdx = i; break; }
   }
   G.selectedPlaceShip = nextIdx;
-  G.buildPlacementShipList();
+  G.buildShipTray();
   G.updatePlacementGrid();
 
   if (G.placedShips.length === 5) {
@@ -812,12 +965,12 @@ G.placementClick = function() {
 };
 
 G.updatePlacementGrid = function() {
-  var allCells = document.querySelectorAll('#placement-grid .bcell');
+  var allCells = document.querySelectorAll('#placement-grid .pcell');
   allCells.forEach(function(ce){ ce.classList.remove('ship-placed'); });
   for (var i = 0; i < G.placedShips.length; i++) {
     var sc = G.placedShips[i].cells;
     for (var j = 0; j < sc.length; j++) {
-      var cell = getCell('placement-grid', sc[j].y, sc[j].x);
+      var cell = getPlacementCell(sc[j].y, sc[j].x);
       if (cell) cell.classList.add('ship-placed');
     }
   }
@@ -842,7 +995,7 @@ G.randomPlace = function() {
     if (!placed) { G.placedShips = []; G.randomPlace(); return; }
   }
   G.selectedPlaceShip = -1;
-  G.buildPlacementShipList();
+  G.buildShipTray();
   G.updatePlacementGrid();
   document.getElementById('confirm-place-btn').disabled = false;
 };
@@ -850,7 +1003,6 @@ G.randomPlace = function() {
 G.confirmPlacement = async function() {
   if (G.placedShips.length < 5) return;
 
-  // Build myShips
   G.myShips = [];
   for (var i = 0; i < G.placedShips.length; i++) {
     var ps = G.placedShips[i];
@@ -868,7 +1020,6 @@ G.confirmPlacement = async function() {
   G.oppBoard = make2D(null);
 
   if (G.mode === 'duel') {
-    // Send placement to server
     var shipData = G.placedShips.map(function(ps){
       return { name: ps.name, size: ps.size, cells: ps.cells };
     });
@@ -920,57 +1071,45 @@ G.setupCpuFleet = function() {
 // ── Start game (shared UI setup) ──────────────────────────────────────
 function showGameScreen() {
   document.getElementById('placement-screen').style.display = 'none';
-  document.getElementById('game-screen').style.display = 'block';
-  document.getElementById('game-screen').querySelector('.grids-container') || null;
-  document.getElementById('game-screen').style.display = 'block';
+  document.getElementById('game-screen').style.display = 'flex';
 
-  buildGrid('my-grid', null);
-  buildGrid('tracking-grid', G.trackingClick);
-  G.buildShipPanel();
-  G.renderMyGrid();
-  G.renderTrackingGrid();
+  buildRadarGrid();
+  buildFleetGrid();
+  G.buildShipStatus();
+  G.renderFleetGrid();
+  G.renderRadarGrid();
 }
 
-G.buildShipPanel = function() {
-  var container = document.getElementById('ship-rows');
-  container.innerHTML = '';
+G.buildShipStatus = function() {
+  var container = document.getElementById('ship-status');
+  container.innerHTML = '<div class="ship-status-title">Fleet Status</div>';
   for (var i = 0; i < G.myShips.length; i++) {
     var row = document.createElement('div');
-    row.className = 'ship-row' + (i === G.selectedFiringShip ? ' selected' : '') + (G.myShips[i].sunk ? ' sunk' : '');
-    row.dataset.idx = i;
+    row.className = 'ship-status-row' + (G.myShips[i].sunk ? ' sunk' : '');
     var dots = '';
     for (var d = 0; d < G.myShips[i].size; d++) {
       dots += '<span class="sdot' + (d < G.myShips[i].hits ? ' damaged' : '') + '"></span>';
     }
-    row.innerHTML = '<span class="ship-name">' + G.myShips[i].name + '</span>' +
-      '<span class="ship-dots">' + dots + '</span>' +
-      '<span class="ship-range" data-ship="' + i + '">Range: --</span>';
-    if (!G.myShips[i].sunk) {
-      row.addEventListener('click', (function(idx){
-        return function() {
-          G.selectedFiringShip = idx;
-          G.buildShipPanel();
-        };
-      })(i));
-    }
+    row.innerHTML = '<span class="ship-label">' + G.myShips[i].name + '</span>' +
+      '<span class="ship-dots">' + dots + '</span>';
     container.appendChild(row);
   }
 };
 
-G.renderMyGrid = function() {
+G.renderFleetGrid = function() {
   // Show ships
   for (var s = 0; s < G.myShips.length; s++) {
     var sc = G.myShips[s].cells;
     for (var j = 0; j < sc.length; j++) {
-      var cell = getCell('my-grid', sc[j].y, sc[j].x);
+      var cell = getFleetCell(sc[j].y, sc[j].x);
       if (cell) cell.classList.add('ship-placed');
     }
   }
-  // Show opponent shots on my grid
+  // Show opponent shots on fleet grid
   for (var r = 0; r < 10; r++) {
     for (var c = 0; c < 10; c++) {
       if (G.oppShots[r][c]) {
-        var cell2 = getCell('my-grid', r, c);
+        var cell2 = getFleetCell(r, c);
         if (cell2) {
           cell2.innerHTML = '<span class="dot ' + G.oppShots[r][c] + '"></span>';
           if (G.oppShots[r][c] === 'hit') cell2.classList.add('hit-cell');
@@ -980,65 +1119,47 @@ G.renderMyGrid = function() {
   }
 };
 
-G.renderTrackingGrid = function() {
+G.renderRadarGrid = function() {
   for (var r = 0; r < 10; r++) {
     for (var c = 0; c < 10; c++) {
-      var cell = getCell('tracking-grid', r, c);
+      var cell = getRadarCell(r, c);
       if (!cell) continue;
       cell.innerHTML = '';
-      cell.className = 'bcell';
+      cell.className = 'rcell';
+
       if (G.myShots[r][c] === 'miss') {
-        cell.innerHTML = '<span class="dot miss"></span>';
+        cell.classList.add('miss', 'shot');
+        cell.innerHTML = MISS_SVG;
       } else if (G.myShots[r][c] === 'hit') {
-        cell.innerHTML = '<span class="dot hit"></span>';
-        cell.classList.add('hit-cell');
-      }
-      // Sunk ship outlines
-      if (G.mode === 'cpu' && G.oppBoard[r][c] !== null) {
-        var oppShip = G.oppShips[G.oppBoard[r][c]];
-        if (oppShip && oppShip.sunk) {
-          cell.classList.add('sunk-cell');
+        // Check if this hit belongs to a sunk ship
+        var isSunk = false;
+        var sunkShipName = null;
+        if (G.mode === 'cpu' && G.oppBoard[r][c] !== null) {
+          var oppShip = G.oppShips[G.oppBoard[r][c]];
+          if (oppShip && oppShip.sunk) { isSunk = true; sunkShipName = oppShip.name; }
         }
-      }
-      // Selected target
-      if (G.selectedTarget && G.selectedTarget.x === c && G.selectedTarget.y === r) {
-        cell.classList.add('selected-target');
+        if (isSunk) {
+          cell.classList.add('sunk', 'shot');
+          // Only show sunk SVG on the first cell of the ship (to avoid repeating)
+          cell.innerHTML = HIT_SVG;
+        } else {
+          cell.classList.add('hit', 'shot');
+          cell.innerHTML = HIT_SVG;
+        }
       }
     }
   }
 };
 
-// Hover handler for range display on tracking grid
-document.addEventListener('mouseover', function(e) {
-  if (!e.target.classList.contains('bcell')) return;
-  if (!e.target.closest('#tracking-grid')) return;
-  var r = parseInt(e.target.dataset.r);
-  var c = parseInt(e.target.dataset.c);
-  // Update range for each ship
-  var ranges = document.querySelectorAll('.ship-range');
-  ranges.forEach(function(el) {
-    var idx = parseInt(el.dataset.ship);
-    if (G.myShips[idx] && !G.myShips[idx].sunk) {
-      el.textContent = 'Range: ' + calcRange(G.myShips[idx].cells, c, r);
-    }
-  });
-});
-
-G.trackingClick = function() {
+// ── Radar click (fire) ────────────────────────────────────────────────
+G.radarClick = function() {
   if (G.gameOver) return;
   if (!G.myTurn && G.mode === 'duel') return;
   var r = parseInt(this.dataset.r);
   var c = parseInt(this.dataset.c);
-  if (G.myShots[r][c]) return; // already shot
+  if (G.myShots[r][c]) return;
 
-  if (G.selectedFiringShip < 0 || G.myShips[G.selectedFiringShip].sunk) {
-    setMsg('Select a firing ship first');
-    return;
-  }
-
-  // Set target and confirm immediately
   G.selectedTarget = { x: c, y: r };
-  G.renderTrackingGrid();
   G.fireShot();
 };
 
@@ -1047,15 +1168,14 @@ G.fireShot = async function() {
   if (!G.selectedTarget) return;
   var tx = G.selectedTarget.x;
   var ty = G.selectedTarget.y;
-  var firingIdx = G.selectedFiringShip;
   setMsg('');
 
   if (G.mode === 'cpu') {
-    G.processCpuPlayerShot(tx, ty, firingIdx);
+    G.processCpuPlayerShot(tx, ty);
   } else {
     try {
       var data = await api('/battleships/' + G.duelCode + '/shoot', {
-        firing_ship: firingIdx,
+        firing_ship: 0,
         target: { x: tx, y: ty }
       });
       if (data.error) { setMsg(data.error); return; }
@@ -1067,7 +1187,7 @@ G.fireShot = async function() {
 };
 
 // ── CPU mode: process player shot ─────────────────────────────────────
-G.processCpuPlayerShot = function(tx, ty, firingIdx) {
+G.processCpuPlayerShot = function(tx, ty) {
   var shipIdx = G.oppBoard[ty][tx];
   var result;
   if (shipIdx !== null) {
@@ -1086,18 +1206,15 @@ G.processCpuPlayerShot = function(tx, ty, firingIdx) {
   }
 
   G.selectedTarget = null;
-  G.animateShot('tracking-grid', ty, tx, result);
-  G.renderTrackingGrid();
-  G.buildShipPanel();
+  G.renderRadarGrid();
+  G.buildShipStatus();
 
-  // Check win
   if (G.oppShips.every(function(s){ return s.sunk; })) {
     G.gameOver = true;
     setTimeout(function(){ G.showResults(true); }, 600);
     return;
   }
 
-  // CPU turn
   G.myTurn = false;
   G.updateTurnIndicator();
   setTimeout(function(){ G.cpuTurn(); }, 800);
@@ -1107,7 +1224,6 @@ G.processCpuPlayerShot = function(tx, ty, firingIdx) {
 G.cpuTurn = function() {
   if (G.gameOver) return;
   var target = G.cpuChooseTarget();
-  var firingShip = G.cpuChooseFiringShip(target);
 
   var shipIdx = G.myBoard[target.y][target.x];
   var result;
@@ -1118,7 +1234,6 @@ G.cpuTurn = function() {
       G.myShips[shipIdx].sunk = true;
       result = 'sunk';
       G.showSunkBanner('Your ' + G.myShips[shipIdx].name);
-      // Remove from hit queue
       G.cpuHitQueue = G.cpuHitQueue.filter(function(h){
         var sc = G.myShips[shipIdx].cells;
         for (var i = 0; i < sc.length; i++) {
@@ -1136,11 +1251,9 @@ G.cpuTurn = function() {
   }
 
   G.cpuShotHistory.push({ x: target.x, y: target.y, result: result });
-  G.animateShot('my-grid', target.y, target.x, result);
-  G.renderMyGrid();
-  G.buildShipPanel();
+  G.renderFleetGrid();
+  G.buildShipStatus();
 
-  // Check loss
   if (G.myShips.every(function(s){ return s.sunk; })) {
     G.gameOver = true;
     setTimeout(function(){ G.showResults(false); }, 600);
@@ -1168,7 +1281,6 @@ G.cpuRandomTarget = function() {
 };
 
 G.cpuOfficerTarget = function() {
-  // If we have hits, try adjacent cells
   if (G.cpuHitQueue.length > 0) {
     var dirs = [{dx:0,dy:-1},{dx:0,dy:1},{dx:-1,dy:0},{dx:1,dy:0}];
     for (var h = 0; h < G.cpuHitQueue.length; h++) {
@@ -1186,10 +1298,10 @@ G.cpuOfficerTarget = function() {
 };
 
 G.cpuAdmiralTarget = function() {
-  // If we have hits, try adjacent cells (like Officer but smarter direction)
+  // Try adjacent to hits first (like Officer)
   if (G.cpuHitQueue.length > 0) {
-    var result = G.cpuOfficerTarget();
-    if (result) return result;
+    var adj = G.cpuOfficerTarget();
+    if (adj && !G.oppShots[adj.y][adj.x]) return adj;
   }
   // Probability density map
   var prob = make2D(0);
@@ -1200,15 +1312,13 @@ G.cpuAdmiralTarget = function() {
 
   for (var si = 0; si < remainingSizes.length; si++) {
     var size = remainingSizes[si];
-    // Horizontal placements
+    // Horizontal
     for (var r = 0; r < 10; r++) {
       for (var c = 0; c <= 10 - size; c++) {
         var valid = true;
         for (var k = 0; k < size; k++) {
           if (G.oppShots[r][c + k] === 'miss') { valid = false; break; }
-          // Skip cells where a sunk ship exists
           if (G.oppShots[r][c + k] === 'hit') {
-            // Check if this hit belongs to a sunk ship
             var isSunk = false;
             for (var ss = 0; ss < G.myShips.length; ss++) {
               if (G.myShips[ss].sunk) {
@@ -1229,7 +1339,7 @@ G.cpuAdmiralTarget = function() {
         }
       }
     }
-    // Vertical placements
+    // Vertical
     for (var c2 = 0; c2 < 10; c2++) {
       for (var r2 = 0; r2 <= 10 - size; r2++) {
         var valid2 = true;
@@ -1258,7 +1368,6 @@ G.cpuAdmiralTarget = function() {
     }
   }
 
-  // Find highest probability cell
   var best = null;
   var bestVal = -1;
   for (var r3 = 0; r3 < 10; r3++) {
@@ -1272,48 +1381,7 @@ G.cpuAdmiralTarget = function() {
   return best || G.cpuRandomTarget();
 };
 
-G.cpuChooseFiringShip = function(target) {
-  var surviving = [];
-  for (var i = 0; i < G.myShips.length; i++) {
-    // CPU uses oppShips (its own ships)
-  }
-  // Rewritten: CPU selects from its own fleet (oppShips relative to player — but CPU has no oppShips visible)
-  // For CPU, the "firing ship" is cosmetic. Pick random surviving CPU ship.
-  if (G.cpuDiff === 'admiral') {
-    // Pick ship with best range to target
-    var bestIdx = 0;
-    var bestRange = Infinity;
-    for (var i2 = 0; i2 < G.oppShips.length; i2++) {
-      if (!G.oppShips[i2].sunk) {
-        var rng = calcRange(G.oppShips[i2].cells, target.x, target.y);
-        if (rng < bestRange) { bestRange = rng; bestIdx = i2; }
-      }
-    }
-    return bestIdx;
-  }
-  // Random surviving ship for Recruit/Officer
-  var surv = [];
-  for (var i3 = 0; i3 < G.oppShips.length; i3++) {
-    if (!G.oppShips[i3].sunk) surv.push(i3);
-  }
-  return surv[Math.floor(Math.random() * surv.length)];
-};
-
-// ── Animations ────────────────────────────────────────────────────────
-G.animateShot = function(gridId, r, c, result) {
-  var cell = getCell(gridId, r, c);
-  if (!cell) return;
-  if (result === 'hit' || result === 'sunk') {
-    var dot = cell.querySelector('.dot.hit');
-    if (dot) dot.classList.add('hit-anim');
-  } else if (result === 'miss') {
-    var ripple = document.createElement('span');
-    ripple.className = 'miss-ripple';
-    cell.appendChild(ripple);
-    setTimeout(function(){ if (ripple.parentNode) ripple.parentNode.removeChild(ripple); }, 500);
-  }
-};
-
+// ── Sunk banner ───────────────────────────────────────────────────────
 G.showSunkBanner = function(shipName) {
   var banner = document.createElement('div');
   banner.className = 'sunk-banner';
@@ -1327,7 +1395,7 @@ G.updateTurnIndicator = function() {
   var el = document.getElementById('turn-indicator');
   el.style.display = 'block';
   if (G.myTurn) {
-    el.textContent = 'Your turn — select a ship and fire';
+    el.textContent = 'Your turn — tap a cell on the radar to fire';
     el.className = 'turn-indicator your-turn';
   } else {
     el.textContent = G.mode === 'cpu' ? 'CPU is firing...' : 'Waiting for opponent\'s turn...';
@@ -1339,7 +1407,6 @@ G.updateTurnIndicator = function() {
 G.startCpuGame = function() {
   G.myTurn = true;
   G.gameOver = false;
-  G.selectedFiringShip = -1;
   G.selectedTarget = null;
   G.cpuShotHistory = [];
   G.cpuHitQueue = [];
@@ -1351,11 +1418,8 @@ G.startCpuGame = function() {
 G.startDuelGame = function() {
   G.myTurn = false;
   G.gameOver = false;
-  G.selectedFiringShip = -1;
   G.selectedTarget = null;
   showGameScreen();
-
-  // Poll for game state
   G.pollDuelState();
 };
 
@@ -1371,10 +1435,10 @@ G.pollDuelState = function() {
       if (state.status === 'complete') {
         clearInterval(G.pollTimer);
         G.applyDuelState(state);
-        G.showResults(state.winner === W.state.address);
+        G.showResults(state.winner === W.address);
         return;
       }
-      if (state.current_turn === W.state.address) {
+      if (state.current_turn === W.address) {
         clearInterval(G.pollTimer);
         G.applyDuelState(state);
         G.myTurn = true;
@@ -1383,12 +1447,11 @@ G.pollDuelState = function() {
         G.applyDuelState(state);
         indicator.textContent = 'Waiting for opponent\'s turn...';
       }
-    } catch (e) { /* ignore poll errors */ }
+    } catch (e) { /* ignore */ }
   }, 10000);
 };
 
 G.applyDuelState = function(state) {
-  // Update boards from server state
   if (state.my_shots) {
     for (var i = 0; i < state.my_shots.length; i++) {
       var s = state.my_shots[i];
@@ -1400,7 +1463,6 @@ G.applyDuelState = function(state) {
       var o = state.opp_shots[j];
       G.oppShots[o.y][o.x] = o.result;
       if (o.result === 'hit') {
-        // Update my ship damage
         var shipIdx = G.myBoard[o.y][o.x];
         if (shipIdx !== null) {
           G.myShips[shipIdx].hits = 0;
@@ -1418,36 +1480,28 @@ G.applyDuelState = function(state) {
       var sunk = state.sunk_ships[s2];
       if (sunk.cells) {
         for (var c = 0; c < sunk.cells.length; c++) {
-          var cell = getCell('tracking-grid', sunk.cells[c].y, sunk.cells[c].x);
-          if (cell) cell.classList.add('sunk-cell');
+          var cell = getRadarCell(sunk.cells[c].y, sunk.cells[c].x);
+          if (cell) { cell.classList.add('sunk', 'shot'); }
         }
       }
     }
   }
-  G.renderMyGrid();
-  G.renderTrackingGrid();
-  G.buildShipPanel();
+  G.renderFleetGrid();
+  G.renderRadarGrid();
+  G.buildShipStatus();
 };
 
 G.processDuelShotResult = function(tx, ty, data) {
   G.myShots[ty][tx] = data.result === 'sunk' ? 'hit' : data.result;
-  G.animateShot('tracking-grid', ty, tx, data.result);
   if (data.result === 'sunk' && data.sunk_ship) {
     G.showSunkBanner(data.sunk_ship.name);
-    if (data.sunk_ship.cells) {
-      for (var i = 0; i < data.sunk_ship.cells.length; i++) {
-        var sc = data.sunk_ship.cells[i];
-        var cell = getCell('tracking-grid', sc.y, sc.x);
-        if (cell) cell.classList.add('sunk-cell');
-      }
-    }
   }
   G.selectedTarget = null;
-  G.renderTrackingGrid();
+  G.renderRadarGrid();
 
   if (data.status === 'complete') {
     G.gameOver = true;
-    setTimeout(function(){ G.showResults(data.winner === W.state.address); }, 600);
+    setTimeout(function(){ G.showResults(data.winner === W.address); }, 600);
     return;
   }
 
@@ -1480,15 +1534,13 @@ G.showResults = function(won) {
     subEl.textContent = G.mode === 'duel' ? 'Better luck next time' : 'Your fleet was sunk';
   }
 
-  // Build reveal grid
+  // Reveal grid
   var revealHtml = '<div class="reveal-title">Opponent\'s Fleet</div>';
   revealHtml += '<p style="font-size:.55rem;color:var(--muted);margin-bottom:.6rem">Here\'s where they were hiding.</p>';
-  revealHtml += '<div class="reveal-grid-wrap"><div class="battle-grid" id="reveal-grid" style="width:240px;grid-template-columns:auto repeat(10,1fr)"></div></div>';
+  revealHtml += '<div class="reveal-grid-wrap"><div class="fleet-grid" id="reveal-grid" style="width:240px;grid-template-columns:auto repeat(10,1fr)"></div></div>';
   bodyEl.innerHTML = revealHtml;
 
-  // Build reveal grid
   var revealEl = document.getElementById('reveal-grid');
-  // Corner
   var corner = document.createElement('div');
   corner.className = 'grid-header';
   revealEl.appendChild(corner);
@@ -1507,17 +1559,11 @@ G.showResults = function(won) {
     revealEl.appendChild(rl);
     for (var c2 = 0; c2 < 10; c2++) {
       var cell = document.createElement('div');
-      cell.className = 'bcell';
-      cell.style.minWidth = '16px';
-      cell.style.minHeight = '16px';
+      cell.className = 'fcell';
       cell.style.cursor = 'default';
-      // Show opponent ships
-      if (G.mode === 'cpu') {
-        if (G.oppBoard[r][c2] !== null) {
-          cell.classList.add('sunk-cell');
-        }
+      if (G.mode === 'cpu' && G.oppBoard[r][c2] !== null) {
+        cell.classList.add('ship-placed');
       }
-      // Show shots
       if (G.myShots[r][c2] === 'hit') {
         cell.innerHTML = '<span class="dot hit" style="width:4px;height:4px"></span>';
       } else if (G.myShots[r][c2] === 'miss') {
@@ -1527,7 +1573,6 @@ G.showResults = function(won) {
     }
   }
 
-  // Save CPU stats
   if (G.mode === 'cpu') {
     var stats = JSON.parse(localStorage.getItem('bs_cpu_stats') || '{"wins":0,"losses":0}');
     if (won) stats.wins++; else stats.losses++;
@@ -1541,12 +1586,9 @@ G.showResults = function(won) {
   var code = params.get('code');
   if (code) {
     document.getElementById('join-code').value = code;
-    // Auto-show join panel after wallet connects
     qfWallet.onConnect(function(s) {
       if (s.address) {
-        setTimeout(function(){
-          G.showJoinDuel();
-        }, 500);
+        setTimeout(function(){ G.showJoinDuel(); }, 500);
       }
     });
   }

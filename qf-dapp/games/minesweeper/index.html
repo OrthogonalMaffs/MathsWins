@@ -96,7 +96,8 @@ body{background:var(--bg);color:var(--text);font-family:'Inter',sans-serif;min-h
 
 /* ── Size selector ── */
 .diff-select{display:flex;gap:0.4rem;width:100%;flex-wrap:wrap}
-.diff-btn{flex:1;min-width:70px;padding:0.6rem;font-family:'JetBrains Mono',monospace;font-size:0.55rem;text-transform:uppercase;letter-spacing:0.08em;border:1px solid var(--border);border-radius:6px;background:transparent;color:var(--muted);cursor:pointer;text-align:center;transition:all 0.2s}
+.diff-btn{flex:1;min-width:70px;padding:0.5rem 0.3rem;font-family:'JetBrains Mono',monospace;font-size:0.5rem;text-transform:uppercase;letter-spacing:0.05em;border:1px solid var(--border);border-radius:6px;background:transparent;color:var(--muted);cursor:pointer;text-align:center;transition:all 0.2s;line-height:1.4}
+.diff-btn .diff-size{display:block;font-size:0.45rem;opacity:0.7;letter-spacing:0.02em;text-transform:none}
 .diff-btn:hover{border-color:var(--silver-border);color:var(--silver)}
 .diff-btn.active{border-color:var(--silver);color:var(--silver);background:var(--silver-dim)}
 
@@ -271,14 +272,13 @@ body{background:var(--bg);color:var(--text);font-family:'Inter',sans-serif;min-h
   .game-title{font-size:2rem}
   .controls{gap:0.3rem}
   .btn{padding:12px 16px;font-size:0.875rem;min-height:44px}
-  .diff-btn{min-height:44px;padding:12px;font-size:0.875rem}
+  .diff-btn{min-height:44px;padding:8px 4px;font-size:0.5rem}
   .ms-lcd{font-size:1.1rem;min-width:2.4rem}
   .ms-smiley{width:44px;height:44px;font-size:1.2rem;line-height:44px}
   .ms-header{padding:6px 10px}
 }
 </style>
 <script src="https://cdn.jsdelivr.net/npm/ethers@6/dist/ethers.umd.min.js"></script>
-<script src="/auth/mw-auth.js"></script>
 </head>
 <body>
 <script src="../qf-wallet.js"></script>
@@ -329,10 +329,10 @@ body{background:var(--bg);color:var(--text);font-family:'Inter',sans-serif;min-h
     </div>
 
     <div class="diff-select" id="diff-select" style="margin-top:.8rem">
-      <button class="diff-btn" data-diff="pocket">Pocket 12&times;12</button>
-      <button class="diff-btn" data-diff="beginner">Beginner 9&times;9</button>
-      <button class="diff-btn" data-diff="intermediate">Intermediate 16&times;16</button>
-      <button class="diff-btn" data-diff="expert">Expert 30&times;16</button>
+      <button class="diff-btn" data-diff="pocket">Pocket<span class="diff-size">12&times;12</span></button>
+      <button class="diff-btn" data-diff="beginner">Beginner<span class="diff-size">9&times;9</span></button>
+      <button class="diff-btn" data-diff="intermediate">Intermediate<span class="diff-size">16&times;16</span></button>
+      <button class="diff-btn" data-diff="expert">Expert<span class="diff-size">30&times;16</span></button>
     </div>
 
     <div class="controls" style="margin-top:.8rem">

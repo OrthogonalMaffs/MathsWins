@@ -223,7 +223,6 @@ body{background:var(--bg);color:var(--text);font-family:'Inter',sans-serif;min-h
 }
 </style>
 <script src="https://cdn.jsdelivr.net/npm/ethers@6/dist/ethers.umd.min.js"></script>
-<script src="/auth/mw-auth.js"></script>
 </head>
 <body>
 <script src="../qf-cards.js"></script>
@@ -676,12 +675,14 @@ var G = (function() {
 
   // ── Render board ──────────────────────────────────────────────────
   function render() {
+    var scrollY = window.scrollY;
     renderFreeCells();
     renderFoundations();
     renderCascades();
     updateStatusBar();
     updateUndoBtn();
     checkAutoCompleteBtn();
+    window.scrollTo(0, scrollY);
   }
 
   function renderFreeCells() {
