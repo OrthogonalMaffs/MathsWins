@@ -10,9 +10,9 @@
 </script>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<meta name="description" content="47 achievements. Some impossible. Most secret. All yours forever. Soulbound NFTs on QF Network.">
+<meta name="description" content="150+ achievements. Some impossible. Most secret. All yours forever. Soulbound NFTs on QF Network.">
 <meta property="og:title" content="Achievements — QF Games">
-<meta property="og:description" content="47 achievements. Some impossible. Most secret. All yours forever. Soulbound NFTs on QF Network.">
+<meta property="og:description" content="150+ achievements. Some impossible. Most secret. All yours forever. Soulbound NFTs on QF Network.">
 <meta property="og:url" content="https://mathswins.co.uk/qf-dapp/achievements/">
 <link rel="canonical" href="https://mathswins.co.uk/qf-dapp/achievements/">
 <title>Achievements &middot; QF Games</title>
@@ -118,7 +118,6 @@ footer a:hover{color:var(--silver-bright)}
 }
 </style>
 <script src="https://cdn.jsdelivr.net/npm/ethers@6/dist/ethers.umd.min.js"></script>
-<script src="/auth/mw-auth.js"></script>
 </head>
 <body>
 <script src="/qf-dapp/games/qf-wallet.js"></script>
@@ -142,7 +141,7 @@ footer a:hover{color:var(--silver-bright)}
   <div class="hero">
     <h1>Achievements</h1>
     <p class="hero-sub">Some things are earned. Some things are discovered. All of them are yours forever.</p>
-    <p class="hero-count">47 achievements. Some impossible. Most secret.</p>
+    <p class="hero-count" id="heroCount"></p>
   </div>
 
   <!-- TAB NAVIGATION -->
@@ -216,82 +215,180 @@ qfWallet.onConnect(function(s) {
 // ── Achievement Data ──────────────────────────────────────────────────
 var TABS = [
   { id: 'all', label: 'All' },
-  { id: 'sudoku-duel', label: 'Sudoku Duel' },
-  { id: 'minesweeper', label: 'Minesweeper' },
-  { id: 'freecell', label: 'FreeCell' },
-  { id: 'countdown-numbers', label: 'Countdown Numbers' },
-  { id: 'cryptarithmetic-club', label: 'Cryptarithmetic Club' },
-  { id: 'kenken', label: 'KenKen' },
-  { id: 'nonogram', label: 'Nonogram' },
-  { id: 'kakuro', label: 'Kakuro' },
-  { id: 'cross-game', label: 'Cross-Game' }
+  { id: 'league', label: 'League' },
+  { id: 'duels', label: 'Duels' },
+  { id: 'games', label: 'Games' },
+  { id: 'free-games', label: 'Free Games' },
+  { id: 'seasonal', label: 'Seasonal' },
+  { id: 'collector', label: 'Collector' },
+  { id: 'wooden-spoons', label: 'Wooden Spoons' }
 ];
 
 var ACHIEVEMENTS = [
-  // Sudoku Duel
-  { name: 'No Errors \u2014 Sudoku', tab: 'sudoku-duel' },
-  { name: 'Sub-Minute', tab: 'sudoku-duel' },
+  // ── League tab: purity, shadows, winning, volume, per-game volume, comeback, streaks, monthly ──
+  { name: 'No Errors \u2014 Sudoku', tab: 'league' },
+  { name: 'No Errors \u2014 Minesweeper', tab: 'league' },
+  { name: 'No Errors \u2014 FreeCell', tab: 'league' },
+  { name: 'No Errors \u2014 KenKen', tab: 'league' },
+  { name: 'No Errors \u2014 Nonogram', tab: 'league' },
+  { name: 'No Errors \u2014 Kakuro', tab: 'league' },
+  { name: 'No Errors \u2014 Poker Patience', tab: 'league' },
+  { name: 'No Errors \u2014 Cribbage', tab: 'league' },
+  { name: 'The Purist', tab: 'league' },
+  { name: 'Flawless Line', tab: 'league' },
+  { name: 'The Logician', tab: 'league' },
+  { name: 'Hintless', tab: 'league' },
+  { name: 'Blind Kakuro', tab: 'league' },
+  { name: 'Immaculate', tab: 'league' },
+  { name: 'First Steps', tab: 'league' },
+  { name: 'Committed', tab: 'league' },
+  { name: 'Dedicated', tab: 'league' },
+  { name: 'Veteran', tab: 'league' },
+  { name: 'Legend', tab: 'league' },
+  { name: 'Winner', tab: 'league' },
+  { name: 'On a Roll', tab: 'league' },
+  { name: 'Dominant', tab: 'league' },
+  { name: 'Hat Trick', tab: 'league' },
+  { name: 'The Completionist', tab: 'league' },
+  { name: 'The Tortoise', tab: 'league' },
+  { name: 'Clean Slate', tab: 'league' },
+  { name: 'The Lurker', tab: 'league' },
+  { name: 'Into the Shadows', tab: 'league' },
+  { name: 'From the Shadows', tab: 'league' },
+  { name: 'Shadow Legend', tab: 'league' },
+  { name: 'Specialist', tab: 'league' },
+  { name: 'Master of One', tab: 'league' },
+  { name: 'World Tour', tab: 'league' },
+  { name: 'High Roller', tab: 'league' },
+  { name: 'From the Ashes', tab: 'league' },
+  { name: 'Zero to Hero', tab: 'league' },
+  { name: 'Weekend Warrior', tab: 'league' },
+  { name: 'The Marathon', tab: 'league' },
+  { name: 'League Regular', tab: 'league' },
+  { name: 'Active Player', tab: 'league' },
+  { name: 'Grinder', tab: 'league' },
+  { name: 'League Month', tab: 'league' },
+  { name: 'Double Winner', tab: 'league' },
 
-  // Minesweeper
-  { name: 'No Errors \u2014 Minesweeper', tab: 'minesweeper' },
-  { name: 'Flawless Line', tab: 'minesweeper' },
-  { name: 'Clean Sweep', tab: 'minesweeper' },
-  { name: 'Flag Everything', tab: 'minesweeper' },
+  // ── Duels tab ──
+  { name: 'First Blood', tab: 'duels' },
+  { name: 'Duelist', tab: 'duels' },
+  { name: 'Gladiator', tab: 'duels' },
+  { name: 'Heartbreaker', tab: 'duels' },
+  { name: 'Giant Slayer', tab: 'duels' },
+  { name: 'The Wall', tab: 'duels' },
+  { name: 'The Contrarian', tab: 'duels' },
 
-  // FreeCell
-  { name: 'No Errors \u2014 FreeCell', tab: 'freecell' },
-  { name: 'The Purist', tab: 'freecell' },
-  { name: 'The Undo King', tab: 'freecell' },
-  { name: 'Lucky Number', tab: 'freecell' },
+  // ── Games tab: all per-game specific achievements ──
+  { name: 'First Strike', tab: 'games' },
+  { name: 'Last Stand', tab: 'games' },
+  { name: 'The Wolf', tab: 'games' },
+  { name: 'Unsinkable', tab: 'games' },
+  { name: 'The Admiral', tab: 'games' },
+  { name: 'Perfect Sonar', tab: 'games' },
+  { name: 'Sub Hunter', tab: 'games' },
+  { name: 'Carrier Supremacy', tab: 'games' },
+  { name: 'Scatter-gun', tab: 'games' },
+  { name: 'Do You Even Aim Bro?', tab: 'games' },
+  { name: 'The Wolf Pack', tab: 'games' },
+  { name: 'The Undo King', tab: 'games' },
+  { name: 'No Cell Used', tab: 'games' },
+  { name: 'Lucky Number', tab: 'games' },
+  { name: 'Clean Sweep', tab: 'games' },
+  { name: 'Flag Everything', tab: 'games' },
+  { name: 'The Comeback', tab: 'games' },
+  { name: 'Royal Flush', tab: 'games' },
+  { name: 'All Pairs', tab: 'games' },
+  { name: 'The Nuts', tab: 'games' },
+  { name: 'Dead Man\u2019s Hand', tab: 'games' },
+  { name: 'Pocket Rockets', tab: 'games' },
+  { name: 'The Brick', tab: 'games' },
+  { name: 'Twenty-Nine', tab: 'games' },
+  { name: 'Crib Master', tab: 'games' },
+  { name: 'Hole in One', tab: 'games' },
+  { name: 'Albatross', tab: 'games' },
+  { name: 'Back Nine', tab: 'games' },
+  { name: 'Under Par', tab: 'games' },
+  { name: 'Perfect Pyramid', tab: 'games' },
+  { name: 'The Archaeologist', tab: 'games' },
+  { name: 'Tutankhamun', tab: 'games' },
+  { name: 'King\u2019s Ransom', tab: 'games' },
+  { name: 'Perfect Logic', tab: 'games' },
+  { name: 'The Artist', tab: 'games' },
+  { name: 'Blind Eye', tab: 'games' },
+  { name: '6-7', tab: 'games' },
 
-  // Countdown Numbers
-  { name: 'No Errors \u2014 Countdown', tab: 'countdown-numbers' },
+  // ── Free Games tab ──
+  { name: 'Century', tab: 'free-games' },
+  { name: 'Personal Best', tab: 'free-games' },
+  { name: 'Explorer', tab: 'free-games' },
+  { name: 'Unbeatable', tab: 'free-games' },
+  { name: 'The Engineer', tab: 'free-games' },
+  { name: 'Speed Reader', tab: 'free-games' },
+  { name: 'Photographic', tab: 'free-games' },
+  { name: 'Dead Reckoning', tab: 'free-games' },
+  { name: 'Clairvoyant', tab: 'free-games' },
 
-  // Cryptarithmetic Club
-  { name: 'No Errors \u2014 Cryptarithmetic', tab: 'cryptarithmetic-club' },
+  // ── Seasonal tab: seasonal + time ──
+  { name: 'Easter', tab: 'seasonal' },
+  { name: 'Christmas', tab: 'seasonal' },
+  { name: 'New Year', tab: 'seasonal' },
+  { name: 'Halloween', tab: 'seasonal' },
+  { name: 'Bonfire Night', tab: 'seasonal' },
+  { name: 'Pancake Day', tab: 'seasonal' },
+  { name: 'Pi Day', tab: 'seasonal' },
+  { name: 'VE Day', tab: 'seasonal' },
+  { name: 'Summer Week', tab: 'seasonal' },
+  { name: 'Platform Anniversary', tab: 'seasonal' },
+  { name: 'Night Owl', tab: 'seasonal' },
+  { name: 'The Insomniac', tab: 'seasonal' },
 
-  // KenKen
-  { name: 'No Errors \u2014 KenKen', tab: 'kenken' },
+  // ── Collector tab: meta, loyalty, milestones, constants, absurd, founding, boom ──
+  { name: 'Pi', tab: 'collector' },
+  { name: 'Euler', tab: 'collector' },
+  { name: 'Golden Ratio', tab: 'collector' },
+  { name: 'Root Two', tab: 'collector' },
+  { name: 'Root Three', tab: 'collector' },
+  { name: 'The Mathematician\u2019s Collection', tab: 'collector' },
+  { name: 'Squared Pi', tab: 'collector' },
+  { name: 'Skin in the Game', tab: 'collector' },
+  { name: 'True Believer', tab: 'collector' },
+  { name: '52,000', tab: 'collector' },
+  { name: 'Collector', tab: 'collector' },
+  { name: 'Devoted', tab: 'collector' },
+  { name: 'Obsessed', tab: 'collector' },
+  { name: 'The Complete Player', tab: 'collector' },
+  { name: 'Pioneer Hunter', tab: 'collector' },
+  { name: 'The Whale', tab: 'collector' },
+  { name: 'Duel Master', tab: 'collector' },
+  { name: 'Breadwinner', tab: 'collector' },
+  { name: 'The Grinder', tab: 'collector' },
+  { name: 'Palindrome', tab: 'collector' },
+  { name: 'Wrong Answer Streak', tab: 'collector' },
+  { name: 'Midnight', tab: 'collector' },
+  { name: 'Fibonacci', tab: 'collector' },
+  { name: 'onlyfans.qf', tab: 'collector' },
+  { name: 'Founding Member', tab: 'collector' },
+  { name: 'Boom', tab: 'collector' },
 
-  // Nonogram
-  { name: 'No Errors \u2014 Nonogram', tab: 'nonogram' },
-
-  // Kakuro
-  { name: 'No Errors \u2014 Kakuro', tab: 'kakuro' },
-
-  // Cross-Game
-  { name: 'Immaculate', tab: 'cross-game' },
-  { name: 'First Steps', tab: 'cross-game' },
-  { name: 'Committed', tab: 'cross-game' },
-  { name: 'Dedicated', tab: 'cross-game' },
-  { name: 'Veteran', tab: 'cross-game' },
-  { name: 'Legend', tab: 'cross-game' },
-  { name: 'Winner', tab: 'cross-game' },
-  { name: 'On a Roll', tab: 'cross-game' },
-  { name: 'Dominant', tab: 'cross-game' },
-  { name: 'Hat Trick', tab: 'cross-game' },
-  { name: 'The Completionist', tab: 'cross-game' },
-  { name: 'The Tortoise', tab: 'cross-game' },
-  { name: 'First Blood', tab: 'cross-game' },
-  { name: 'Duelist', tab: 'cross-game' },
-  { name: 'Gladiator', tab: 'cross-game' },
-  { name: 'Heartbreaker', tab: 'cross-game' },
-  { name: 'Giant Slayer', tab: 'cross-game' },
-  { name: 'The Wall', tab: 'cross-game' },
-  { name: 'Untouchable', tab: 'cross-game' },
-  { name: 'Night Owl', tab: 'cross-game' },
-  { name: 'Weekend Warrior', tab: 'cross-game' },
-  { name: 'The Marathon', tab: 'cross-game' },
-  { name: 'The Mathematician', tab: 'cross-game' },
-  { name: 'Palindrome', tab: 'cross-game' },
-  { name: 'Speedrun to Zero', tab: 'cross-game' },
-  { name: 'Wrong Answer Streak', tab: 'cross-game' },
-  { name: 'Duel Master', tab: 'cross-game' },
-  { name: 'onlyfans.qf', tab: 'cross-game' },
-  { name: 'The Collector', tab: 'cross-game' },
-  { name: 'Pioneer Hunter', tab: 'cross-game' },
-  { name: 'The Whale', tab: 'cross-game' },
-  { name: 'Boom', tab: 'cross-game' }
+  // ── Wooden Spoons tab (shown as question marks) ──
+  { name: '?', tab: 'wooden-spoons', spoon: true },
+  { name: '?', tab: 'wooden-spoons', spoon: true },
+  { name: '?', tab: 'wooden-spoons', spoon: true },
+  { name: '?', tab: 'wooden-spoons', spoon: true },
+  { name: '?', tab: 'wooden-spoons', spoon: true },
+  { name: '?', tab: 'wooden-spoons', spoon: true },
+  { name: '?', tab: 'wooden-spoons', spoon: true },
+  { name: '?', tab: 'wooden-spoons', spoon: true },
+  { name: '?', tab: 'wooden-spoons', spoon: true },
+  { name: '?', tab: 'wooden-spoons', spoon: true },
+  { name: '?', tab: 'wooden-spoons', spoon: true },
+  { name: '?', tab: 'wooden-spoons', spoon: true },
+  { name: '?', tab: 'wooden-spoons', spoon: true },
+  { name: '?', tab: 'wooden-spoons', spoon: true },
+  { name: '?', tab: 'wooden-spoons', spoon: true },
+  { name: '?', tab: 'wooden-spoons', spoon: true },
+  { name: '?', tab: 'wooden-spoons', spoon: true }
 ];
 
 // ── Render ────────────────────────────────────────────────────────────
@@ -343,6 +440,7 @@ function renderGrid() {
 
 renderTabs();
 renderGrid();
+document.getElementById('heroCount').textContent = ACHIEVEMENTS.length + ' achievements. Some impossible. Most secret.';
 </script>
 </body>
 </html>
