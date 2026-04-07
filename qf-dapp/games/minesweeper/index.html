@@ -100,6 +100,9 @@ body{background:var(--bg);color:var(--text);font-family:'Inter',sans-serif;min-h
 .diff-btn .diff-size{display:block;font-size:0.45rem;opacity:0.7;letter-spacing:0.02em;text-transform:none}
 .diff-btn:hover{border-color:var(--silver-border);color:var(--silver)}
 .diff-btn.active{border-color:var(--silver);color:var(--silver);background:var(--silver-dim)}
+.diff-btn:disabled{opacity:0.25;cursor:not-allowed;pointer-events:none}
+.diff-btn .desktop-only{display:none;font-size:0.35rem;opacity:0.7;letter-spacing:0.02em}
+@media(max-width:767px){.diff-btn .desktop-only{display:block}}
 
 /* ── Game area ── */
 #game-area{flex-direction:column;align-items:center;width:100%}
@@ -332,7 +335,7 @@ body{background:var(--bg);color:var(--text);font-family:'Inter',sans-serif;min-h
       <button class="diff-btn" data-diff="pocket">Pocket<span class="diff-size">12&times;12</span></button>
       <button class="diff-btn" data-diff="beginner">Beginner<span class="diff-size">9&times;9</span></button>
       <button class="diff-btn" data-diff="intermediate">Intermediate<span class="diff-size">16&times;16</span></button>
-      <button class="diff-btn" data-diff="expert">Expert<span class="diff-size">30&times;16</span></button>
+      <button class="diff-btn" data-diff="expert" id="expertBtn">Expert<span class="diff-size">30&times;16</span><span class="desktop-only">Desktop only</span></button>
     </div>
 
     <div class="controls" style="margin-top:.8rem">
@@ -440,10 +443,14 @@ document.querySelectorAll('.htp-toggle').forEach(function(btn){
 // ── Size selector toggle ──────────────────────────────────────────────
 (function(){
   var btns = document.querySelectorAll('.diff-btn');
-  var defaultDiff = window.innerWidth < 768 ? 'pocket' : 'beginner';
+  var isMobileView = window.innerWidth < 768;
+  var defaultDiff = isMobileView ? 'pocket' : 'beginner';
+  var expertBtn = document.getElementById('expertBtn');
+  if (isMobileView && expertBtn) expertBtn.disabled = true;
   btns.forEach(function(b){
     if (b.dataset.diff === defaultDiff) b.classList.add('active');
     b.addEventListener('click', function(){
+      if (b.disabled) return;
       btns.forEach(function(x){ x.classList.remove('active'); });
       b.classList.add('active');
     });

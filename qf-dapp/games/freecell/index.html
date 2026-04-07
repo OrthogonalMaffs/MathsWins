@@ -820,7 +820,10 @@ var G = (function() {
       cardEl.addEventListener('click', onCardClick);
       cardEl.addEventListener('dblclick', onCardDblClick);
     } else {
-      // Mobile: tap to select, double-tap to auto-move
+      // Mobile: touch drag + tap to select + double-tap to auto-move
+      cardEl.addEventListener('touchstart', onTouchStart, { passive: false });
+      cardEl.addEventListener('touchmove', onTouchMove, { passive: false });
+      cardEl.addEventListener('touchend', onTouchEnd, { passive: false });
       cardEl.addEventListener('click', onCardClick);
       cardEl.addEventListener('dblclick', onCardDblClick);
     }
@@ -829,11 +832,7 @@ var G = (function() {
   function attachDropEvents(el) {
     el.addEventListener('dragover', function(e) { e.preventDefault(); });
     el.addEventListener('drop', onDrop);
-    if (isMobile) {
-      el.addEventListener('click', onSlotClick);
-    } else {
-      el.addEventListener('click', onSlotClick);
-    }
+    el.addEventListener('click', onSlotClick);
   }
 
   // ── Selection ─────────────────────────────────────────────────────
@@ -1005,6 +1004,96 @@ var G = (function() {
   }
 
   // ── Drag and drop (desktop) ───────────────────────────────────────
+  // ── Touch drag (mobile) ─────────────────────────────────────────────
+  var touchDrag = null;
+  var touchStartPos = null;
+  var touchMoved = false;
+  var TOUCH_DRAG_THRESHOLD = 10;
+
+  function onTouchStart(e) {
+    if (done) return;
+    var touch = e.touches[0];
+    touchStartPos = { x: touch.clientX, y: touch.clientY };
+    touchMoved = false;
+
+    var cardEl = e.currentTarget;
+    var fromType = cardEl.dataset.fromType;
+    var fromIndex = parseInt(cardEl.dataset.fromIndex);
+    var count = parseInt(cardEl.dataset.count) || 1;
+
+    touchDrag = { type: fromType, index: fromIndex, count: count, el: cardEl };
+  }
+
+  function onTouchMove(e) {
+    if (!touchDrag || done) return;
+    var touch = e.touches[0];
+    var dx = touch.clientX - touchStartPos.x;
+    var dy = touch.clientY - touchStartPos.y;
+    if (Math.abs(dx) > TOUCH_DRAG_THRESHOLD || Math.abs(dy) > TOUCH_DRAG_THRESHOLD) {
+      touchMoved = true;
+      e.preventDefault();
+      if (!touchDrag.el.classList.contains('dragging')) {
+        touchDrag.el.classList.add('dragging');
+        if (touchDrag.type === 'cascade' && touchDrag.count > 1) {
+          var cardIndex = parseInt(touchDrag.el.dataset.cardIndex);
+          var cards = touchDrag.el.parentNode.querySelectorAll('.card');
+          for (var i = cardIndex + 1; i < cards.length; i++) cards[i].classList.add('dragging');
+        }
+        highlightValidTargets({ type: touchDrag.type, index: touchDrag.index }, touchDrag.count);
+      }
+    }
+  }
+
+  function onTouchEnd(e) {
+    if (!touchDrag || done) { touchDrag = null; return; }
+    var all = document.querySelectorAll('.card.dragging');
+    for (var i = 0; i < all.length; i++) all[i].classList.remove('dragging');
+    clearHighlights();
+
+    if (touchMoved) {
+      // Find drop target under finger
+      var touch = e.changedTouches[0];
+      var dropEl = document.elementFromPoint(touch.clientX, touch.clientY);
+      if (dropEl) {
+        // Walk up to find a slot or card
+        var target = dropEl.closest('[data-type]');
+        if (target) {
+          var toType = target.dataset.type;
+          var toIndex = parseInt(target.dataset.index);
+          var from = { type: touchDrag.type, index: touchDrag.index };
+          var to = { type: toType, index: toIndex };
+          if (isLegalMove(from, to, touchDrag.count)) {
+            doMove(from, to, touchDrag.count);
+            clearSelection();
+            touchDrag = null;
+            return;
+          }
+        }
+        // Check if dropped on a card in a cascade
+        var cardTarget = dropEl.closest('.card');
+        if (cardTarget) {
+          var cascadeTarget = cardTarget.closest('.cascade');
+          if (cascadeTarget) {
+            var toType2 = 'cascade';
+            var toIndex2 = parseInt(cascadeTarget.dataset.index);
+            var from2 = { type: touchDrag.type, index: touchDrag.index };
+            var to2 = { type: toType2, index: toIndex2 };
+            if (isLegalMove(from2, to2, touchDrag.count)) {
+              doMove(from2, to2, touchDrag.count);
+              clearSelection();
+              touchDrag = null;
+              return;
+            }
+          }
+        }
+      }
+      // If no valid drop, do nothing (card snaps back visually)
+      e.preventDefault(); // prevent click from also firing
+    }
+    touchDrag = null;
+  }
+
+  // ── Desktop drag ──────────────────────────────────────────────────
   function onDragStart(e) {
     if (done) return;
     clearSelection();

@@ -223,7 +223,10 @@ body{background:var(--bg);color:var(--text);font-family:'Inter',sans-serif;min-h
   .game-title{font-size:2rem}
   .controls{gap:0.3rem}
   .btn{padding:12px 16px;font-size:0.875rem;min-height:44px}
-  .num-btn{min-height:44px;font-size:0.875rem}
+  .numpad{grid-template-columns:repeat(3,1fr);gap:0.4rem}
+  .numpad-erase{grid-column:1 / -1;display:flex;gap:0.4rem}
+  .numpad-erase .num-btn{flex:1;aspect-ratio:auto;min-height:44px}
+  .num-btn{min-height:44px;min-width:44px;font-size:0.875rem}
   .share-code-display{font-size:1.8rem;padding:.8rem 1.2rem}
 }
 
@@ -385,7 +388,7 @@ body{background:var(--bg);color:var(--text);font-family:'Inter',sans-serif;min-h
   </div>
 
   <div class="numpad" id="numpad" style="display:none">
-    <button class="num-btn" onclick="G.inputNum(0)" title="Erase">&times;</button>
+    <button class="num-btn" id="eraseBtn" onclick="G.inputNum(0)" title="Erase">&times;</button>
   </div>
 
   <div class="controls" id="controls" style="display:none">
@@ -1437,7 +1440,19 @@ var G = (function() {
   // ── Numpad ──────────────────────────────────────────────────────────
   function buildNumpad() {
     var np = document.getElementById('numpad');
+    var eraseBtn = document.getElementById('eraseBtn');
     for (var n = 1; n <= 9; n++) { var old = document.getElementById('nbtn' + n); if (old) old.remove(); }
+    var eraseRow = document.getElementById('numpadEraseRow');
+    if (eraseRow) eraseRow.remove();
+
+    // On mobile (<480px): 3x3 grid for digits, erase row below
+    var mobileLayout = window.innerWidth < 480;
+    if (mobileLayout) {
+      eraseBtn.style.display = 'none';
+    } else {
+      eraseBtn.style.display = '';
+    }
+
     for (var n = 1; n <= 9; n++) {
       var btn = document.createElement('button');
       btn.className = 'num-btn';
@@ -1445,6 +1460,19 @@ var G = (function() {
       btn.innerHTML = '<span class="nb-val">' + n + '</span><span class="nb-rem" id="nrem' + n + '"></span>';
       (function(num) { btn.onclick = function() { inputNum(num); }; })(n);
       np.appendChild(btn);
+    }
+
+    if (mobileLayout) {
+      eraseRow = document.createElement('div');
+      eraseRow.className = 'numpad-erase';
+      eraseRow.id = 'numpadEraseRow';
+      var eb = document.createElement('button');
+      eb.className = 'num-btn';
+      eb.innerHTML = '<span class="nb-val">&times;</span>';
+      eb.title = 'Erase';
+      eb.onclick = function() { inputNum(0); };
+      eraseRow.appendChild(eb);
+      np.appendChild(eraseRow);
     }
   }
 
