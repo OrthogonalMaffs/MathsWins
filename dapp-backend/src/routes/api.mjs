@@ -181,13 +181,13 @@ function optionalWallet(req, res, next) {
 
 router.post('/session/start', optionalWallet, (req, res) => {
   try {
-    const { gameId, seed, leagueId } = req.body;
+    const { gameId, seed, leagueId, difficulty } = req.body;
     if (!gameId) return res.status(400).json({ error: 'gameId required' });
 
     const weekId = getCurrentWeekId();
 
     // Build context opts for persistent sessions
-    const opts = { seed: seed != null ? seed : undefined };
+    const opts = { seed: seed != null ? seed : undefined, difficulty: difficulty || undefined };
 
     // League mode: server resolves the next puzzle — client never sees seeds
     if (leagueId && req.wallet) {

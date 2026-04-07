@@ -134,7 +134,7 @@ function getDailySeed() {
 // ── Session interface ───────────────────────────────────────────────────
 
 export function selectQuestions(seed, difficulty) {
-  const s = seed || getDailySeed();
+  const s = seed != null ? seed : Math.floor(Math.random() * 1000000);
   const d = difficulty || 'beginner';
   const config = CONFIGS[d] || CONFIGS.beginner;
 
