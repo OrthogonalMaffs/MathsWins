@@ -590,7 +590,7 @@ var G = (function() {
 
   // ── Duel functions ───────────────────────────────────────────────────
   async function createDuel(stake) {
-    if (!W.state.address) {
+    if (!W.address) {
       alert('Connect your wallet to create a duel.');
       return;
     }
@@ -649,7 +649,7 @@ var G = (function() {
     var textEl = document.getElementById('duelResultText');
 
     var myScore = totalScore;
-    var oppScore = data.creator_wallet === W.state.address ? data.opponent_score : data.creator_score;
+    var oppScore = data.creator_wallet === W.address ? data.opponent_score : data.creator_score;
 
     if (myScore > oppScore) {
       titleEl.textContent = 'You Win!';
@@ -694,7 +694,7 @@ var G = (function() {
   }
 
   async function acceptDuel() {
-    if (!W.state.address) {
+    if (!W.address) {
       alert('Connect your wallet to accept a duel.');
       return;
     }

@@ -480,7 +480,7 @@ var G = (function() {
 
   // ── Duel ─────────────────────────────────────────────────────────────
   async function createDuel(stake) {
-    if (!W.state.address) { alert('Connect your wallet to create a duel.'); return; }
+    if (!W.address) { alert('Connect your wallet to create a duel.'); return; }
     duelMode = true;
     try {
       var data = await api('/duel/create', { gameId: GAME_ID, difficulty: 'medium', stake: stake || 25 });
@@ -525,7 +525,7 @@ var G = (function() {
 
   function showDuelResults(data) {
     var myScore = finalScore;
-    var oppScore = Math.abs(data.creator_wallet === W.state.address ? data.opponent_score : data.creator_score);
+    var oppScore = Math.abs(data.creator_wallet === W.address ? data.opponent_score : data.creator_score);
     document.getElementById('duelShare').style.display = 'none';
     document.getElementById('gameScreen').style.display = '';
     document.getElementById('gameOverPanel').style.display = '';
@@ -552,7 +552,7 @@ var G = (function() {
   }
 
   async function acceptDuel() {
-    if (!W.state.address) { alert('Connect your wallet.'); return; }
+    if (!W.address) { alert('Connect your wallet.'); return; }
     try {
       var data = await api('/duel/' + duelCode + '/accept', {});
       if (data.error) { setMsg(data.error); return; }
