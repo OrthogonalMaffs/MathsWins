@@ -184,10 +184,10 @@ body{background:var(--bg);color:var(--text);font-family:'Inter',sans-serif;min-h
 
 /* ── Radar grid (target grid) — approved design, DO NOT CHANGE ── */
 .radar-section{width:100%;max-width:420px}
-.radar-wrap{position:relative;padding-left:36px;padding-top:32px}
-.radar-col-labels{position:absolute;top:0;left:36px;right:0;display:flex}
+.radar-wrap{position:relative;padding-left:24px;padding-top:20px}
+.radar-col-labels{position:absolute;top:0;left:24px;right:0;display:flex}
 .radar-col-labels span{flex:1;text-align:center;font-family:'JetBrains Mono',monospace;font-size:.5rem;color:rgba(0,255,100,0.18);letter-spacing:.05em;text-shadow:0 0 4px rgba(0,255,100,0.1)}
-.radar-row-labels{position:absolute;top:32px;left:0;bottom:0;display:flex;flex-direction:column}
+.radar-row-labels{position:absolute;top:20px;left:0;bottom:0;display:flex;flex-direction:column}
 .radar-row-labels span{flex:1;display:flex;align-items:center;justify-content:center;font-family:'JetBrains Mono',monospace;font-size:.5rem;color:rgba(0,255,100,0.18);width:22px;text-shadow:0 0 4px rgba(0,255,100,0.1)}
 
 .radar-container{position:relative;overflow:hidden;border-radius:50%;aspect-ratio:1}
@@ -206,7 +206,7 @@ body{background:var(--bg);color:var(--text);font-family:'Inter',sans-serif;min-h
 /* Circular mask */
 .radar-container::before{
   content:'';position:absolute;inset:0;z-index:3;pointer-events:none;
-  box-shadow:0 0 0 60px var(--bg);border-radius:50%;
+  box-shadow:0 0 0 40px var(--bg);border-radius:50%;
 }
 /* Outer ring */
 .radar-container::after{
