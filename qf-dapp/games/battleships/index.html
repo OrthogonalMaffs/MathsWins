@@ -138,7 +138,7 @@ body{background:var(--bg);color:var(--text);font-family:'Inter',sans-serif;min-h
 /* ── Placement screen ── */
 .placement-screen{width:100%;display:none;flex-direction:column;align-items:center;gap:1rem}
 .placement-grid-wrap{width:100%;max-width:400px}
-.placement-grid{display:grid;grid-template-columns:auto repeat(10,1fr);gap:0;width:100%}
+.placement-grid{display:grid;grid-template-columns:auto repeat(10,1fr);gap:0;width:100%;position:relative}
 .grid-header{font-family:'JetBrains Mono',monospace;font-size:clamp(.4rem,1.2vw,.55rem);color:var(--muted);display:flex;align-items:center;justify-content:center;min-height:20px}
 .grid-row-label{font-family:'JetBrains Mono',monospace;font-size:clamp(.4rem,1.2vw,.55rem);color:var(--muted);display:flex;align-items:center;justify-content:center;min-width:16px}
 
@@ -150,6 +150,8 @@ body{background:var(--bg);color:var(--text);font-family:'Inter',sans-serif;min-h
 .pcell:hover{background:var(--surface3)}
 .pcell.ship-placed{background:#2a2d35;border-color:rgba(184,188,198,0.35)}
 .pcell.invalid-flash{background:rgba(176,58,58,0.3);transition:background .05s}
+.placed-ship-overlay{position:absolute;pointer-events:none;z-index:5;opacity:0.7;display:flex;align-items:center;justify-content:center}
+.placed-ship-overlay svg{width:100%;height:100%}
 
 /* Ship tray for placement */
 .ship-tray{width:100%;display:flex;flex-direction:column;gap:.4rem}
@@ -258,7 +260,7 @@ body{background:var(--bg);color:var(--text);font-family:'Inter',sans-serif;min-h
 /* ── Mini fleet grid (your ships, shown below radar during gameplay) ── */
 .fleet-section{width:100%;max-width:280px}
 .fleet-section .grid-label{font-family:'JetBrains Mono',monospace;font-size:.5rem;letter-spacing:.12em;text-transform:uppercase;color:var(--muted);text-align:center;margin-bottom:.4rem}
-.fleet-grid{display:grid;grid-template-columns:auto repeat(10,1fr);gap:0;width:100%}
+.fleet-grid{display:grid;grid-template-columns:auto repeat(10,1fr);gap:0;width:100%;position:relative}
 .fcell{
   aspect-ratio:1;background:var(--surface2);border:1px solid var(--grid-border);
   display:flex;align-items:center;justify-content:center;
@@ -964,15 +966,74 @@ G.placementClick = function() {
   }
 };
 
+function renderPlacedShipSVG(shipName, cells, orientation, gridEl, getCellFn) {
+  if (!cells || cells.length === 0) return;
+  var firstCell = getCellFn(cells[0].y, cells[0].x);
+  var lastCell = getCellFn(cells[cells.length - 1].y, cells[cells.length - 1].x);
+  if (!firstCell || !lastCell) return;
+
+  var gridRect = gridEl.getBoundingClientRect();
+  var firstRect = firstCell.getBoundingClientRect();
+  var lastRect = lastCell.getBoundingClientRect();
+
+  var top = firstRect.top - gridRect.top;
+  var left = firstRect.left - gridRect.left;
+  var width = lastRect.right - firstRect.left;
+  var height = lastRect.bottom - firstRect.top;
+
+  var overlay = document.createElement('div');
+  overlay.className = 'placed-ship-overlay';
+  overlay.style.top = top + 'px';
+  overlay.style.left = left + 'px';
+  overlay.style.width = width + 'px';
+  overlay.style.height = height + 'px';
+
+  var svg = SHIP_SVGS[shipName];
+  if (!svg) return;
+
+  // Rotate SVG 90° for vertical ships
+  if (orientation === 'v') {
+    overlay.innerHTML = '<div style="width:100%;height:100%;transform:rotate(90deg);display:flex;align-items:center;justify-content:center">' + svg + '</div>';
+  } else {
+    overlay.innerHTML = svg;
+  }
+
+  gridEl.appendChild(overlay);
+}
+
+function clearPlacedShipOverlays(gridEl) {
+  var overlays = gridEl.querySelectorAll('.placed-ship-overlay');
+  for (var i = 0; i < overlays.length; i++) overlays[i].remove();
+}
+
+var resizeTimer = null;
+window.addEventListener('resize', function() {
+  if (resizeTimer) clearTimeout(resizeTimer);
+  resizeTimer = setTimeout(function() {
+    var placementGrid = document.getElementById('placement-grid');
+    if (placementGrid && placementGrid.offsetParent !== null && G.placedShips.length > 0) {
+      G.updatePlacementGrid();
+    }
+    var fleetGrid = document.getElementById('fleet-grid');
+    if (fleetGrid && fleetGrid.offsetParent !== null && G.myShips && G.myShips.length > 0) {
+      G.renderFleetGrid();
+    }
+  }, 150);
+});
+
 G.updatePlacementGrid = function() {
-  var allCells = document.querySelectorAll('#placement-grid .pcell');
+  var gridEl = document.getElementById('placement-grid');
+  var allCells = gridEl.querySelectorAll('.pcell');
   allCells.forEach(function(ce){ ce.classList.remove('ship-placed'); });
+  clearPlacedShipOverlays(gridEl);
   for (var i = 0; i < G.placedShips.length; i++) {
-    var sc = G.placedShips[i].cells;
+    var ship = G.placedShips[i];
+    var sc = ship.cells;
     for (var j = 0; j < sc.length; j++) {
       var cell = getPlacementCell(sc[j].y, sc[j].x);
       if (cell) cell.classList.add('ship-placed');
     }
+    renderPlacedShipSVG(ship.name, sc, ship.orientation, gridEl, getPlacementCell);
   }
 };
 
@@ -1097,13 +1158,19 @@ G.buildShipStatus = function() {
 };
 
 G.renderFleetGrid = function() {
+  var fleetEl = document.getElementById('fleet-grid');
+  clearPlacedShipOverlays(fleetEl);
   // Show ships
   for (var s = 0; s < G.myShips.length; s++) {
-    var sc = G.myShips[s].cells;
+    var ship = G.myShips[s];
+    var sc = ship.cells;
     for (var j = 0; j < sc.length; j++) {
       var cell = getFleetCell(sc[j].y, sc[j].x);
       if (cell) cell.classList.add('ship-placed');
     }
+    // Derive orientation from cell positions
+    var orient = (sc.length > 1 && sc[0].x !== sc[1].x) ? 'h' : 'v';
+    renderPlacedShipSVG(ship.name, sc, orient, fleetEl, getFleetCell);
   }
   // Show opponent shots on fleet grid
   for (var r = 0; r < 10; r++) {
