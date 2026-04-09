@@ -9,7 +9,7 @@ import { startSession, startFreeSession, evaluate, getCurrentWeekId, resumeSessi
 import { ethers } from 'ethers';
 import { signatureVerify, decodeAddress } from '@polkadot/util-crypto';
 import { getDb } from '../db/index.mjs';
-import { doSettleLeague, checkEarlySettlement, recoverStuckLeagues } from '../league-settle.mjs';
+import { doSettleLeague, checkEarlySettlement, recoverStuckLeagues, mintCommemorative } from '../league-settle.mjs';
 import { sendQF, settleDuel } from '../escrow.mjs';
 import { createBattleshipsGame, getBattleshipsGameByCode, getBattleshipsGameById, updateBattleshipsGameStatus, saveBattleshipsPlacement, getBattleshipsPlacement, getBattleshipsPlacements, addBattleshipsRound, getBattleshipsRounds, getBattleshipsRecord, updateBattleshipsRecord, getActiveBattleshipsGames, getBattleshipsGamesByWallet } from '../db/index.mjs';
 import { getAchievementRegistry, getAchievement, awardAchievement, getWalletAchievements, getAllAchievements, getGlobalRecord } from '../db/index.mjs';
@@ -1121,6 +1121,20 @@ router.get('/admin/refunds', requireAdmin, (req, res) => {
   }
   // Default: all failed
   res.json(getFailedRefunds());
+});
+
+// ── Admin: mint commemorative NFTs ──────────────────────────────────
+
+router.post('/admin/commemorative/mint-all', requireAdmin, async (req, res) => {
+  const leagueId = req.body.leagueId;
+  if (!leagueId) return res.status(400).json({ error: 'leagueId required' });
+
+  try {
+    const result = await mintCommemorative(leagueId);
+    res.json(result);
+  } catch (e) {
+    res.status(500).json({ error: e.message });
+  }
 });
 
 // ── Battleships Endpoints ─────────────────────────────────────────────

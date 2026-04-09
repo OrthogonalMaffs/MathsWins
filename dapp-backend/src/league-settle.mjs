@@ -289,3 +289,58 @@ export function recoverStuckLeagues() {
     updateLeagueStatus(league.id, 'active');
   }
 }
+
+// ── Commemorative NFT minting ──────────────────────────────────────
+const COMMEMORATIVE_METADATA_URI = 'ipfs://QmNxfFF3CeiiPNfoeFnNfoNfioKdy8N9quZ7LhWzsbV8rr';
+
+export async function mintCommemorative(leagueId) {
+  const db = getDb();
+
+  // Find all wallets that submitted at least 1 score in this league
+  const eligible = db.prepare(
+    'SELECT DISTINCT wallet FROM league_scores WHERE league_id = ?'
+  ).all(leagueId).map(r => r.wallet);
+
+  if (eligible.length === 0) {
+    return { error: 'No eligible wallets — zero scores submitted', minted: 0 };
+  }
+
+  // Check which wallets already received a commemorative for this league
+  db.exec(`CREATE TABLE IF NOT EXISTS commemorative_mints (
+    league_id TEXT NOT NULL,
+    wallet TEXT NOT NULL,
+    tx_hash TEXT,
+    minted_at INTEGER NOT NULL,
+    PRIMARY KEY (league_id, wallet)
+  )`);
+
+  const alreadyMinted = new Set(
+    db.prepare('SELECT wallet FROM commemorative_mints WHERE league_id = ?')
+      .all(leagueId).map(r => r.wallet)
+  );
+
+  const toMint = eligible.filter(w => !alreadyMinted.has(w));
+  if (toMint.length === 0) {
+    return { message: 'All eligible wallets already minted', minted: 0, total_eligible: eligible.length };
+  }
+
+  const signer = getEscrowSigner();
+  const trophyContract = new ethers.Contract(TROPHY_CONTRACT, TROPHY_ABI, signer);
+  const results = [];
+
+  for (const wallet of toMint) {
+    try {
+      const tx = await trophyContract.mint(wallet, COMMEMORATIVE_METADATA_URI);
+      const receipt = await tx.wait();
+      db.prepare('INSERT INTO commemorative_mints (league_id, wallet, tx_hash, minted_at) VALUES (?, ?, ?, ?)')
+        .run(leagueId, wallet, receipt.hash, Date.now());
+      results.push({ wallet, tx: receipt.hash, status: 'minted' });
+      console.log('Commemorative minted to ' + wallet.slice(0, 8) + '... tx: ' + receipt.hash);
+    } catch (e) {
+      results.push({ wallet, status: 'failed', error: e.message });
+      console.error('Commemorative mint failed for ' + wallet.slice(0, 8) + '...:', e.message);
+    }
+  }
+
+  return { minted: results.filter(r => r.status === 'minted').length, failed: results.filter(r => r.status === 'failed').length, total_eligible: eligible.length, results };
+}
