@@ -1,0 +1,53 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>The DApp Lab Test Team — NFT Preview</title>
+<link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=DM+Mono:wght@400;500&family=Playfair+Display:wght@700&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+:root{--bg:#050709;--surface:#16181c;--surface2:#1e2025;--silver:#b8bcc6;--silver-bright:#d4d8e2;--silver-border:rgba(184,188,198,0.15);--text:#8a8f9c;--muted:#4a4e5a;--border:#1e2228;--gold:#c9a84c;--teal:#0d9488}
+*{box-sizing:border-box;margin:0;padding:0}
+body{background:var(--bg);color:var(--text);font-family:'Inter',sans-serif;min-height:100vh;display:flex;align-items:center;justify-content:center;padding:2rem}
+.card{width:100%;max-width:420px;background:var(--surface);border:1px solid var(--silver-border);border-radius:16px;overflow:hidden;box-shadow:0 0 60px rgba(184,188,198,0.06)}
+.card-img{width:100%;aspect-ratio:1;object-fit:cover;display:block;border-bottom:1px solid var(--border)}
+.card-body{padding:1.6rem}
+.nft-label{font-family:'JetBrains Mono',monospace;font-size:.5rem;letter-spacing:.2em;text-transform:uppercase;color:var(--teal);margin-bottom:.6rem}
+.nft-title{font-family:'Playfair Display',serif;font-size:1.6rem;color:var(--silver-bright);line-height:1.2;margin-bottom:.6rem}
+.nft-desc{font-size:.72rem;color:var(--muted);line-height:1.7;margin-bottom:1.2rem}
+.nft-attrs{display:grid;grid-template-columns:1fr 1fr 1fr;gap:.5rem}
+.attr{background:var(--surface2);border:1px solid var(--border);border-radius:8px;padding:.6rem;text-align:center}
+.attr-label{font-family:'JetBrains Mono',monospace;font-size:.42rem;letter-spacing:.12em;text-transform:uppercase;color:var(--muted);margin-bottom:.25rem}
+.attr-val{font-family:'DM Mono',monospace;font-size:.65rem;color:var(--silver-bright);font-weight:500}
+.soulbound{margin-top:1rem;text-align:center;font-family:'JetBrains Mono',monospace;font-size:.48rem;color:var(--muted);letter-spacing:.1em;text-transform:uppercase;padding:.5rem;border-top:1px solid var(--border)}
+.soulbound span{color:var(--teal)}
+.chain{margin-top:.8rem;text-align:center;font-family:'JetBrains Mono',monospace;font-size:.4rem;color:var(--muted);letter-spacing:.08em}
+</style>
+</head>
+<body>
+<div class="card">
+  <img class="card-img" src="https://gateway.pinata.cloud/ipfs/QmThEz1Ds1YCE8CEZzSiXAQyDmW1YYuPmkzX7et5EEfLmh" alt="The DApp Lab Test Team NFT">
+  <div class="card-body">
+    <div class="nft-label">Soulbound Commemorative NFT</div>
+    <div class="nft-title">The DApp Lab Test Team</div>
+    <div class="nft-desc">Awarded to wallets who completed a puzzle during the first KenKen league test on QF Games. One of a kind. Never awarded again.</div>
+    <div class="nft-attrs">
+      <div class="attr">
+        <div class="attr-label">Type</div>
+        <div class="attr-val">Founding Commemorative</div>
+      </div>
+      <div class="attr">
+        <div class="attr-label">League</div>
+        <div class="attr-val">KenKen Bronze — Test</div>
+      </div>
+      <div class="attr">
+        <div class="attr-label">Year</div>
+        <div class="attr-val">2026</div>
+      </div>
+    </div>
+    <div class="soulbound"><span>&#9670;</span> Soulbound &middot; Non-transferable <span>&#9670;</span></div>
+    <div class="chain">QF Network &middot; Chain ID 3426</div>
+  </div>
+</div>
+</body>
+</html>
