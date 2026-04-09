@@ -458,7 +458,7 @@ var G = (function() {
 
     // Show
     document.getElementById('scoreActions').style.display = 'none';
-    document.getElementById('breakdownPanel').style.display = '';
+    document.getElementById('breakdownPanel').style.display = 'block';
 
     // Update button text for final hand
     if (currentHand >= totalQuestions) {
@@ -468,7 +468,7 @@ var G = (function() {
 
   function showFinalScore() {
     document.getElementById('gameScreen').style.display = 'none';
-    document.getElementById('finalScreen').style.display = '';
+    document.getElementById('finalScreen').style.display = 'block';
 
     var body = document.getElementById('scorecardBody');
     var html = '';
@@ -520,7 +520,7 @@ var G = (function() {
     handScores = [];
 
     document.getElementById('startScreen').style.display = 'none';
-    document.getElementById('gameScreen').style.display = '';
+    document.getElementById('gameScreen').style.display = 'block';
 
     renderHand(data.question);
   }
@@ -613,7 +613,7 @@ var G = (function() {
     document.getElementById('finalScreen').style.display = 'none';
     document.getElementById('startScreen').style.display = '';
     document.getElementById('modePanel').style.display = 'none';
-    document.getElementById('duelShare').style.display = '';
+    document.getElementById('duelShare').style.display = 'block';
     document.getElementById('shareCode').textContent = duelCode;
     var expires = new Date(Date.now() + 24 * 60 * 60 * 1000);
     document.getElementById('duelExpire').textContent = 'Expires: ' + expires.toLocaleString();
@@ -667,8 +667,8 @@ var G = (function() {
 
     // Show on final screen
     document.getElementById('duelShare').style.display = 'none';
-    document.getElementById('finalScreen').style.display = '';
-    resultEl.style.display = '';
+    document.getElementById('finalScreen').style.display = 'block';
+    resultEl.style.display = 'block';
   }
 
   async function showAcceptScreen(code) {
@@ -687,7 +687,7 @@ var G = (function() {
       var stakeDisplay = (data.stake || 25) + ' QF';
       document.getElementById('acceptStakeInfo').textContent = 'Stake: ' + stakeDisplay + ' each';
 
-      document.getElementById('duelAccept').style.display = '';
+      document.getElementById('duelAccept').style.display = 'block';
     } catch (e) {
       setMsg('Could not load duel.');
     }

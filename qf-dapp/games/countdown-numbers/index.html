@@ -533,7 +533,7 @@ footer a{color:var(--muted);text-decoration:none}footer a:hover{color:var(--silv
     }
 
     flash.className = 'result-flash ' + cls;
-    flash.style.display = '';
+    flash.style.display = 'block';
     flash.innerHTML = '<div class="flash-title">' + title + '</div>'
       + (detailParts.length > 0 ? '<div class="flash-detail">' + detailParts.join(' &middot; ') + '</div>' : '')
       + '<div class="flash-points" style="color:' + (cls === 'exact' ? 'var(--green)' : cls === 'close' ? 'var(--gold)' : 'var(--red)') + '">'
