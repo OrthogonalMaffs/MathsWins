@@ -538,7 +538,7 @@ var G = (function() {
   // ── Final score screen ───────────────────────────────────────────────
   function showFinalScore(finalScores) {
     document.getElementById('gameScreen').style.display = 'none';
-    document.getElementById('finalScreen').style.display = '';
+    document.getElementById('finalScreen').style.display = 'block';
 
     var body = document.getElementById('scorecardBody');
     var html = '';
@@ -583,7 +583,7 @@ var G = (function() {
     currentCard = data.question.currentCard;
 
     document.getElementById('startScreen').style.display = 'none';
-    document.getElementById('gameScreen').style.display = '';
+    document.getElementById('gameScreen').style.display = 'block';
     document.getElementById('cardNum').textContent = '1';
     document.getElementById('runningTotal').textContent = '0';
 
@@ -630,7 +630,7 @@ var G = (function() {
     document.getElementById('finalScreen').style.display = 'none';
     document.getElementById('startScreen').style.display = '';
     document.getElementById('modePanel').style.display = 'none';
-    document.getElementById('duelShare').style.display = '';
+    document.getElementById('duelShare').style.display = 'block';
     document.getElementById('shareCode').textContent = duelCode;
     document.getElementById('duelExpire').textContent = 'Expires: ' + new Date(Date.now() + 86400000).toLocaleString();
     pollDuelStatus();
@@ -655,7 +655,7 @@ var G = (function() {
     var myScore = totalScore;
     var oppScore = data.creator_wallet === W.address ? data.opponent_score : data.creator_score;
     document.getElementById('duelShare').style.display = 'none';
-    document.getElementById('finalScreen').style.display = '';
+    document.getElementById('finalScreen').style.display = 'block';
     var resultEl = document.getElementById('duelResult');
     var titleEl = document.getElementById('duelResultTitle');
     var textEl = document.getElementById('duelResultText');
@@ -663,7 +663,7 @@ var G = (function() {
     else if (myScore < oppScore) { titleEl.textContent = 'You Lose'; textEl.className = 'result-text lose'; }
     else { titleEl.textContent = 'Draw'; textEl.className = 'result-text draw'; }
     textEl.textContent = myScore + ' vs ' + oppScore;
-    resultEl.style.display = '';
+    resultEl.style.display = 'block';
   }
 
   async function showAcceptScreen(code) {
@@ -674,7 +674,7 @@ var G = (function() {
       if (data.error) { setMsg(data.error); return; }
       document.getElementById('challengerName').textContent = W.displayName(data.creator_wallet);
       document.getElementById('acceptStakeInfo').textContent = 'Stake: ' + (data.stake || 25) + ' QF each';
-      document.getElementById('duelAccept').style.display = '';
+      document.getElementById('duelAccept').style.display = 'block';
     } catch (e) { setMsg('Could not load duel.'); }
   }
 
