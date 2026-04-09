@@ -11,13 +11,13 @@ Academy.sol                 # Planned — subscription/access contract with soul
 - `mintBadge(player, tier)` — mint soulbound NFT badge
 - `calculatePrice(baseCost, player)` — apply badge discount to entry fees
 
-### QFSimpleSatellite.sol
+### QFSimpleSatellite.sol (SUPERSEDED by GameEntry.sol — not used in live dApp)
 Base contract for score-submission games:
 - `submitScore(score)` — pay entry fee, record score
 - Revenue split: 70% prize/treasury, 20% protocol, 10% burn to 0xdEaD
 
-### AfterYouSatellite.sol
-Standalone blockchain queue game — the flagship earner:
+### AfterYouSatellite.sol (written but undeployed — parked)
+Standalone blockchain queue game:
 - Players join a queue, pay periodic heartbeats to hold position
 - Nudge others backward, try to hold position 1 when hidden timer fires
 - State machine: OPEN → COMMITTING → REVEALING → RESOLVING → FINISHED → auto-reset

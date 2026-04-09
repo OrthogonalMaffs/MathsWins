@@ -138,7 +138,7 @@ Split from MaffsGames in March 2025. MaffsGames = free schools games. MathsWins 
 - Automatic refunds on cancel (full entry fee, no burn)
 - Admin endpoints: force-settle, cancel, retry refund
 - Player endpoints: /leagues/my, /leagues/active, /leagues/settled
-- League-eligible games: sudoku-duel, countdown-numbers, cryptarithmetic-club, kenken, nonogram, kakuro, minesweeper, freecell
+- League-eligible games: sudoku-duel, kenken, nonogram, kakuro, minesweeper, freecell
 - Builder whitelist via BUILDER_WALLETS env var (testing without payment)
 - Wallet auth: challenge-sign-verify JWT (24h), persisted in localStorage
 - Substrate wallet support: Talisman/Polkadot.js/SubWallet via @polkadot/extension-dapp
@@ -187,7 +187,7 @@ Split from MaffsGames in March 2025. MaffsGames = free schools games. MathsWins 
 
 ## Safety
 - No wallet connection code without explicit approval
-- 10% burn on every QF payment is non-negotiable
+- 5% burn on every QF payment is non-negotiable
 - No crossover with maffsgames.co.uk branding or contact
 - NEVER restart PM2/server without explicit "yes" from Jon
 
