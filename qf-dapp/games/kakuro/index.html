@@ -129,6 +129,19 @@ body{background:var(--bg);color:var(--text);font-family:'Inter',sans-serif;min-h
 .error-banner{position:absolute;top:50%;left:50%;transform:translate(-50%,-50%);background:rgba(176,58,58,0.95);color:#fff;font-family:'JetBrains Mono',monospace;font-size:1rem;font-weight:700;padding:0.6rem 1.4rem;border-radius:8px;z-index:10;pointer-events:none;animation:errorPop 1.2s ease forwards}
 @keyframes errorPop{0%{opacity:1;transform:translate(-50%,-50%) scale(1)}70%{opacity:1;transform:translate(-50%,-50%) scale(1)}100%{opacity:0;transform:translate(-50%,-50%) scale(0.8)}}
 .btn-ghost:disabled{opacity:0.3;cursor:not-allowed;pointer-events:none}
+.help-btn{width:36px;height:36px;flex:0 0 36px;min-width:0;display:flex;align-items:center;justify-content:center;font-family:'JetBrains Mono',monospace;font-size:.85rem;font-weight:700;border-radius:50%;border:1px solid var(--border);background:transparent;color:var(--muted);cursor:pointer;transition:all .15s}
+.help-btn:hover{border-color:var(--silver-border);color:var(--silver)}
+.help-overlay{position:fixed;inset:0;background:rgba(5,7,9,0.92);backdrop-filter:blur(8px);z-index:200;display:flex;align-items:center;justify-content:center;padding:1rem}
+.help-overlay.hidden{display:none}
+.help-box{background:var(--surface2);border:1px solid var(--border);border-radius:12px;width:100%;max-width:380px;padding:1.4rem;max-height:85vh;overflow-y:auto}
+.help-box h3{font-family:'Playfair Display',sans-serif;font-size:1.4rem;color:var(--text-white);margin-bottom:.6rem}
+.help-box p{font-size:.65rem;color:var(--muted);line-height:1.7;margin-bottom:.5rem}
+.help-box ul{margin:.3rem 0 .5rem 1.2rem;font-size:.65rem;color:var(--muted);line-height:1.7}
+.help-box li{margin-bottom:.2rem}
+.help-box strong{color:var(--text)}
+.help-box .example{background:var(--surface);border:1px solid var(--border);border-radius:8px;padding:.8rem;margin:.6rem 0;font-family:'JetBrains Mono',monospace;font-size:.6rem;color:var(--silver);line-height:1.8}
+.help-close{width:100%;margin-top:.8rem;padding:.5rem;font-family:'JetBrains Mono',monospace;font-size:.6rem;letter-spacing:.1em;text-transform:uppercase;cursor:pointer;border-radius:6px;border:1px solid var(--border);background:transparent;color:var(--muted);transition:all .15s}
+.help-close:hover{border-color:var(--silver-border);color:var(--silver)}
 @media(max-width:480px){
   .page{padding:1.5rem 0.5rem 3rem}
   .game-title{font-size:2.4rem}
@@ -221,9 +234,30 @@ body{background:var(--bg);color:var(--text);font-family:'Inter',sans-serif;min-h
     <button class="btn btn-ghost" id="helper-btn" onclick="G.toggleHelper()">Sums</button>
     <button class="btn btn-ghost" id="hint-btn" onclick="G.useHint()">Hint (-500)</button>
     <button class="btn btn-silver" onclick="G.submitGrid()">Submit</button>
+    <button class="help-btn" onclick="toggleHelp()" title="How to Play">?</button>
   </div>
 
   <div class="msg" id="msg-bar"></div>
+
+  <!-- HELP OVERLAY -->
+  <div class="help-overlay hidden" id="helpOverlay" onclick="if(event.target===this)toggleHelp()">
+    <div class="help-box">
+      <h3>How to Play Kakuro</h3>
+      <p>Fill white cells with digits <strong>1&ndash;9</strong> so each horizontal and vertical run <strong>sums to its clue number</strong>.</p>
+      <ul>
+        <li>Dark cells with numbers are clues &mdash; <strong>top-right</strong> = run going right, <strong>bottom-left</strong> = run going down</li>
+        <li>No digit repeats within a single run</li>
+        <li>The same digit CAN appear in the same row or column if it belongs to a different run</li>
+      </ul>
+      <div class="example">
+        <strong>Example:</strong> A 2-cell run with clue 7<br>
+        Possible: 1+6, 2+5, 3+4 (any order)<br>
+        Not allowed: 3+3 (no repeats)
+      </div>
+      <p>Start with <strong>short runs</strong>. A 2-cell run summing to 3 must be {1,2}. A 2-cell run summing to 17 must be {8,9}. These forced combinations unlock the rest.</p>
+      <button class="help-close" onclick="toggleHelp()">Got It</button>
+    </div>
+  </div>
 
   <!-- DUEL STAKE PICKER -->
   <div id="duel-stake-panel" style="display:none;width:100%;text-align:center;margin-bottom:1rem">
@@ -1160,6 +1194,7 @@ if (duelCode) { loadDuelAccept(); }
 document.querySelectorAll('.htp-toggle').forEach(function(btn){
   btn.addEventListener('click',function(){this.closest('.htp').classList.toggle('open')});
 });
+function toggleHelp(){document.getElementById('helpOverlay').classList.toggle('hidden')}
 </script>
 </body>
 </html>
