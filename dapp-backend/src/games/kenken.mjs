@@ -405,6 +405,23 @@ export function evaluator(question, answer, elapsedMs) {
     }
 
     if (!correct) {
+      // 3rd failed submission = fail-out (client sends mistakes count BEFORE incrementing)
+      if (mistakes >= 2) {
+        let correctCells = 0;
+        for (let r = 0; r < n; r++) {
+          for (let c = 0; c < n; c++) {
+            if (grid[r][c] === solution[r][c]) correctCells++;
+          }
+        }
+        const pityScore = correctCells * 20;
+        // If time-based formula would score lower, use that instead
+        const secs = elapsedMs ? elapsedMs / 1000 : 0;
+        const timePenalty = Math.max(0, secs - GRACE_PERIOD);
+        const pen = (mistakes + 1) * MISTAKE_COST + hints * HINT_COST + timePenalty;
+        const timeScore = Math.max(0, Math.round(BASE_SCORE - pen));
+        const finalScore = Math.min(pityScore, timeScore);
+        return { correct: false, points: finalScore, action: 'validate', errors, failedOut: true, correctCells };
+      }
       return { correct: false, points: 0, action: 'validate', errors };
     }
 

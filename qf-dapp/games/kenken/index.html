@@ -50,10 +50,10 @@ body{background:var(--bg);color:var(--text);font-family:'Inter',sans-serif;min-h
 .dot.active{background:#e53e3e;border-color:#e53e3e;box-shadow:0 0 6px rgba(229,62,62,0.5)}
 .cell.wrong-cell{background:rgba(176,58,58,0.25)!important}
 .cell.wrong-cell .cell-val{color:#e53e3e}
-.cage-error .cage-top{border-top-color:#e53e3e!important}
-.cage-error .cage-bottom{border-bottom-color:#e53e3e!important}
-.cage-error .cage-left{border-left-color:#e53e3e!important}
-.cage-error .cage-right{border-right-color:#e53e3e!important}
+.wrong-cell.cage-top{border-top:3px solid rgba(184,188,198,0.6)!important}
+.wrong-cell.cage-bottom{border-bottom:3px solid rgba(184,188,198,0.6)!important}
+.wrong-cell.cage-left{border-left:3px solid rgba(184,188,198,0.6)!important}
+.wrong-cell.cage-right{border-right:3px solid rgba(184,188,198,0.6)!important}
 .board-wrap{width:100%;display:flex;justify-content:center}
 .board{display:grid;gap:0;width:min(100%,450px);aspect-ratio:1;border:2px solid var(--silver-border);border-radius:4px;overflow:hidden}
 .cell{position:relative;display:flex;align-items:center;justify-content:center;cursor:pointer;transition:background 0.1s;border:1px solid var(--border2)}
@@ -72,10 +72,10 @@ body{background:var(--bg);color:var(--text);font-family:'Inter',sans-serif;min-h
 .cell .note-num{font-family:'JetBrains Mono',monospace;font-size:clamp(0.35rem,1.2vw,0.48rem);color:var(--silver);display:flex;align-items:center;justify-content:center;line-height:1}
 .cell .note-num.hidden{opacity:0}
 /* Cage borders */
-.cage-top{border-top:2px solid var(--silver-border)!important}
-.cage-bottom{border-bottom:2px solid var(--silver-border)!important}
-.cage-left{border-left:2px solid var(--silver-border)!important}
-.cage-right{border-right:2px solid var(--silver-border)!important}
+.cage-top{border-top:2px solid rgba(184,188,198,0.45)!important}
+.cage-bottom{border-bottom:2px solid rgba(184,188,198,0.45)!important}
+.cage-left{border-left:2px solid rgba(184,188,198,0.45)!important}
+.cage-right{border-right:2px solid rgba(184,188,198,0.45)!important}
 .numpad{display:grid;gap:0.4rem;width:100%}
 .num-btn{aspect-ratio:1;background:var(--surface2);border:1px solid var(--border);border-radius:6px;font-family:'JetBrains Mono',monospace;color:var(--text);cursor:pointer;display:flex;flex-direction:column;align-items:center;justify-content:center;transition:all 0.15s;gap:0}
 .num-btn .nb-val{font-size:clamp(0.8rem,2.5vw,1.1rem);line-height:1}
@@ -612,8 +612,7 @@ var G = (function() {
         if (mistakes >= 3) {
           done = true;
           clearInterval(timerInterval);
-          var pen = Math.max(0, getSecs() - 60) + mistakes * 300 + hintsUsed * 500;
-          var finalScore = Math.max(0, 5000 - Math.round(pen));
+          var finalScore = data.points || 0;
           setMsg('3 mistakes — game over');
           showModal(false, finalScore);
         } else {
