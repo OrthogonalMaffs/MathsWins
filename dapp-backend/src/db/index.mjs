@@ -28,6 +28,24 @@ export function getDb() {
   try { db.exec('ALTER TABLE active_game_state ADD COLUMN undo_count INTEGER DEFAULT 0'); } catch (e) { /* already exists */ }
   try { db.exec('ALTER TABLE active_game_state ADD COLUMN difficulty TEXT'); } catch (e) { /* already exists */ }
 
+  // v4 achievement schema migrations
+  try { db.exec('ALTER TABLE wallet_stats ADD COLUMN paid_mint_count INTEGER DEFAULT 0'); } catch (e) { /* already exists */ }
+  try { db.exec('ALTER TABLE wallet_stats ADD COLUMN free_mints_banked INTEGER DEFAULT 0'); } catch (e) { /* already exists */ }
+  try { db.exec('ALTER TABLE wallet_stats ADD COLUMN total_qf_spent INTEGER DEFAULT 0'); } catch (e) { /* already exists */ }
+  try { db.exec('ALTER TABLE wallet_stats ADD COLUMN founding_member INTEGER DEFAULT 0'); } catch (e) { /* already exists */ }
+  try { db.exec('ALTER TABLE wallet_stats ADD COLUMN consecutive_golf_wins INTEGER DEFAULT 0'); } catch (e) { /* already exists */ }
+  try { db.exec('ALTER TABLE wallet_stats ADD COLUMN consecutive_pyramid_failures INTEGER DEFAULT 0'); } catch (e) { /* already exists */ }
+  try { db.exec('ALTER TABLE sessions ADD COLUMN last_activity_at INTEGER'); } catch (e) { /* already exists */ }
+  try { db.exec('ALTER TABLE league_scores ADD COLUMN mistake_count INTEGER DEFAULT 0'); } catch (e) { /* already exists */ }
+  try { db.exec('ALTER TABLE league_scores ADD COLUMN hints_used INTEGER DEFAULT 0'); } catch (e) { /* already exists */ }
+  try { db.exec('ALTER TABLE league_scores ADD COLUMN undos_used INTEGER DEFAULT 0'); } catch (e) { /* already exists */ }
+  try { db.exec('ALTER TABLE league_scores ADD COLUMN free_cells_used INTEGER DEFAULT 0'); } catch (e) { /* already exists */ }
+  try { db.exec('ALTER TABLE league_scores ADD COLUMN flags_used INTEGER DEFAULT 0'); } catch (e) { /* already exists */ }
+  try { db.exec('ALTER TABLE league_scores ADD COLUMN helper_used INTEGER DEFAULT 0'); } catch (e) { /* already exists */ }
+  try { db.exec('ALTER TABLE achievement_registry ADD COLUMN category TEXT'); } catch (e) { /* already exists */ }
+  try { db.exec('ALTER TABLE achievement_registry ADD COLUMN retired INTEGER DEFAULT 0'); } catch (e) { /* already exists */ }
+  try { db.exec('ALTER TABLE achievement_registry ADD COLUMN retired_at INTEGER'); } catch (e) { /* already exists */ }
+
   // League refunds table
   db.exec(`CREATE TABLE IF NOT EXISTS league_refunds (
     id INTEGER PRIMARY KEY AUTOINCREMENT,
@@ -84,6 +102,27 @@ export function getDb() {
     updated_at INTEGER
   )`);
 
+  // Preset messages (duels + leagues)
+  db.exec(`CREATE TABLE IF NOT EXISTS game_messages (
+    id INTEGER PRIMARY KEY AUTOINCREMENT,
+    sender_wallet TEXT NOT NULL,
+    recipient_wallet TEXT NOT NULL,
+    context_type TEXT NOT NULL,
+    context_id TEXT NOT NULL,
+    message_key TEXT NOT NULL,
+    sent_at INTEGER NOT NULL
+  )`);
+
+  // Seasonal achievement earning windows
+  db.exec(`CREATE TABLE IF NOT EXISTS seasonal_windows (
+    id INTEGER PRIMARY KEY AUTOINCREMENT,
+    achievement_id TEXT NOT NULL,
+    year INTEGER NOT NULL,
+    window_start INTEGER NOT NULL,
+    window_end INTEGER NOT NULL,
+    UNIQUE(achievement_id, year)
+  )`);
+
   seedAchievements(db);
 
   return db;
@@ -92,71 +131,209 @@ export function getDb() {
 // ── Achievement seed data ───────────────────────────────────────────────────
 
 const ACHIEVEMENTS = [
-  // Purity (per game)
-  { id: 'no-errors-sudoku', name: 'No Errors — Sudoku', game_id: 'sudoku-duel', tier: 'standard', fee: 100 },
-  { id: 'no-errors-minesweeper', name: 'No Errors — Minesweeper', game_id: 'minesweeper', tier: 'standard', fee: 100 },
-  { id: 'no-errors-freecell', name: 'No Errors — FreeCell', game_id: 'freecell', tier: 'standard', fee: 100 },
-  { id: 'no-errors-countdown', name: 'No Errors — Countdown', game_id: 'countdown-numbers', tier: 'standard', fee: 100 },
-  { id: 'no-errors-cryptarithmetic', name: 'No Errors — Cryptarithmetic', game_id: 'cryptarithmetic-club', tier: 'standard', fee: 100 },
-  { id: 'no-errors-kenken', name: 'No Errors — KenKen', game_id: 'kenken', tier: 'standard', fee: 100 },
-  { id: 'no-errors-nonogram', name: 'No Errors — Nonogram', game_id: 'nonogram', tier: 'standard', fee: 100 },
-  { id: 'no-errors-kakuro', name: 'No Errors — Kakuro', game_id: 'kakuro', tier: 'standard', fee: 100 },
-  { id: 'the-purist', name: 'The Purist', game_id: 'freecell', tier: 'standard', fee: 100 },
-  { id: 'flawless-line', name: 'Flawless Line', game_id: 'minesweeper', tier: 'standard', fee: 100 },
-  // Super
-  { id: 'immaculate', name: 'Immaculate', game_id: null, tier: 'obsidian', fee: 250 },
-  // Volume
-  { id: 'first-steps', name: 'First Steps', game_id: null, tier: 'standard', fee: 100 },
-  { id: 'committed', name: 'Committed', game_id: null, tier: 'standard', fee: 100 },
-  { id: 'dedicated', name: 'Dedicated', game_id: null, tier: 'standard', fee: 100 },
-  { id: 'veteran', name: 'Veteran', game_id: null, tier: 'standard', fee: 100 },
-  { id: 'legend', name: 'Legend', game_id: null, tier: 'obsidian', fee: 100 },
-  // Winning
-  { id: 'winner', name: 'Winner', game_id: null, tier: 'standard', fee: 100 },
-  { id: 'on-a-roll', name: 'On a Roll', game_id: null, tier: 'standard', fee: 100 },
-  { id: 'dominant', name: 'Dominant', game_id: null, tier: 'obsidian', fee: 100 },
-  { id: 'hat-trick', name: 'Hat Trick', game_id: null, tier: 'standard', fee: 100 },
-  { id: 'the-completionist', name: 'The Completionist', game_id: null, tier: 'obsidian', fee: 100 },
-  { id: 'the-tortoise', name: 'The Tortoise', game_id: null, tier: 'standard', fee: 100 },
-  // Duels
-  { id: 'first-blood', name: 'First Blood', game_id: null, tier: 'standard', fee: 100 },
-  { id: 'duelist', name: 'Duelist', game_id: null, tier: 'standard', fee: 100 },
-  { id: 'gladiator', name: 'Gladiator', game_id: null, tier: 'standard', fee: 100 },
-  { id: 'heartbreaker', name: 'Heartbreaker', game_id: null, tier: 'standard', fee: 100 },
-  { id: 'giant-slayer', name: 'Giant Slayer', game_id: null, tier: 'standard', fee: 100 },
-  { id: 'the-wall', name: 'The Wall', game_id: null, tier: 'standard', fee: 100 },
-  // Skill
-  { id: 'clean-sweep', name: 'Clean Sweep', game_id: 'minesweeper', tier: 'standard', fee: 100 },
-  { id: 'sub-minute', name: 'Sub-Minute', game_id: 'sudoku-duel', tier: 'standard', fee: 100 },
-  { id: 'untouchable', name: 'Untouchable', game_id: null, tier: 'standard', fee: 100 },
-  { id: 'the-undo-king', name: 'The Undo King', game_id: 'freecell', tier: 'standard', fee: 100 },
-  { id: 'wrong-answer-streak', name: 'Wrong Answer Streak', game_id: 'prime-or-composite', tier: 'standard', fee: 100 },
-  // Time & Dedication
-  { id: 'night-owl', name: 'Night Owl', game_id: null, tier: 'standard', fee: 100 },
-  { id: 'weekend-warrior', name: 'Weekend Warrior', game_id: null, tier: 'standard', fee: 100 },
-  { id: 'the-marathon', name: 'The Marathon', game_id: null, tier: 'standard', fee: 100 },
-  // Absurd
-  { id: 'the-mathematician', name: 'The Mathematician', game_id: null, tier: 'standard', fee: 100 },
-  { id: 'lucky-number', name: 'Lucky Number', game_id: 'freecell', tier: 'standard', fee: 100 },
-  { id: 'palindrome', name: 'Palindrome', game_id: null, tier: 'standard', fee: 100 },
-  { id: 'speedrun-to-zero', name: 'Speedrun to Zero', game_id: 'sudoku-duel', tier: 'standard', fee: 100 },
-  { id: 'flag-everything', name: 'Flag Everything', game_id: 'minesweeper', tier: 'standard', fee: 100 },
-  // Community
-  { id: 'duel-master', name: 'Duel Master', game_id: null, tier: 'standard', fee: 100 },
-  { id: 'onlyfans-qf', name: 'onlyfans.qf', game_id: null, tier: 'manual', fee: 100 },
-  // Meta
-  { id: 'the-collector', name: 'The Collector', game_id: null, tier: 'meta', fee: 100 },
-  { id: 'pioneer-hunter', name: 'Pioneer Hunter', game_id: null, tier: 'meta', fee: 100 },
-  { id: 'the-whale', name: 'The Whale', game_id: null, tier: 'meta', fee: 100 },
-  // Impossible
-  { id: 'boom', name: 'Boom', game_id: null, tier: 'impossible', fee: 50 },
+  // ── Category 1 — Purity (200 QF, Immaculate 500 QF) ──
+  { id: 'pure-logic', name: 'Pure Logic', game_id: 'sudoku-duel', category: 'purity', fee: 200 },
+  { id: 'never-triggered', name: 'Never Triggered', game_id: 'minesweeper', category: 'purity', fee: 200 },
+  { id: 'clean-sheet', name: 'Clean Sheet', game_id: 'freecell', category: 'purity', fee: 200 },
+  { id: 'first-light', name: 'First Light', game_id: 'kenken', category: 'purity', fee: 200 },
+  { id: 'pixel-perfect', name: 'Pixel Perfect', game_id: 'nonogram', category: 'purity', fee: 200 },
+  { id: 'the-chain', name: 'The Chain', game_id: 'kakuro', category: 'purity', fee: 200 },
+  { id: 'no-tells', name: 'No Tells', game_id: 'poker-patience', category: 'purity', fee: 200 },
+  { id: 'clean-crib', name: 'Clean Crib', game_id: 'cribbage-solitaire', category: 'purity', fee: 200 },
+  { id: 'the-purist', name: 'The Purist', game_id: 'freecell', category: 'purity', fee: 200 },
+  { id: 'flawless-line', name: 'Flawless Line', game_id: 'minesweeper', category: 'purity', fee: 200 },
+  { id: 'the-logician', name: 'The Logician', game_id: 'kenken', category: 'purity', fee: 200 },
+  { id: 'hintless', name: 'Hintless', game_id: 'nonogram', category: 'purity', fee: 200 },
+  { id: 'blind-kakuro', name: 'Blind Kakuro', game_id: 'kakuro', category: 'purity', fee: 200 },
+  { id: 'immaculate', name: 'Immaculate', game_id: null, category: 'purity', fee: 500 },
+  // ── Category 2 — Volume (200 QF) ──
+  { id: 'first-steps', name: 'First Steps', game_id: null, category: 'volume', fee: 200 },
+  { id: 'committed', name: 'Committed', game_id: null, category: 'volume', fee: 200 },
+  { id: 'dedicated', name: 'Dedicated', game_id: null, category: 'volume', fee: 200 },
+  { id: 'veteran', name: 'Veteran', game_id: null, category: 'volume', fee: 200 },
+  { id: 'legend', name: 'Legend', game_id: null, category: 'volume', fee: 200 },
+  // ── Category 3 — Winning (200 QF) ──
+  { id: 'winner', name: 'Winner', game_id: null, category: 'winning', fee: 200 },
+  { id: 'on-a-roll', name: 'On a Roll', game_id: null, category: 'winning', fee: 200 },
+  { id: 'dominant', name: 'Dominant', game_id: null, category: 'winning', fee: 200 },
+  { id: 'hat-trick', name: 'Hat Trick', game_id: null, category: 'winning', fee: 200 },
+  { id: 'the-completionist', name: 'The Completionist', game_id: null, category: 'winning', fee: 200 },
+  { id: 'the-tortoise', name: 'The Tortoise', game_id: null, category: 'winning', fee: 200 },
+  { id: 'clean-slate', name: 'Clean Slate', game_id: null, category: 'winning', fee: 200 },
+  { id: 'the-lurker', name: 'The Lurker', game_id: null, category: 'winning', fee: 200 },
+  // ── Category 4 — Shadows (200 QF, Shadow Legend 500 QF) ──
+  { id: 'into-the-shadows', name: 'Into the Shadows', game_id: null, category: 'shadows', fee: 200 },
+  { id: 'from-the-shadows', name: 'From the Shadows', game_id: null, category: 'shadows', fee: 200 },
+  { id: 'shadow-legend', name: 'Shadow Legend', game_id: null, category: 'shadows', fee: 500 },
+  // ── Category 5 — Duels (200 QF) ──
+  { id: 'first-blood', name: 'First Blood', game_id: null, category: 'duels', fee: 200 },
+  { id: 'duelist', name: 'Duelist', game_id: null, category: 'duels', fee: 200 },
+  { id: 'gladiator', name: 'Gladiator', game_id: null, category: 'duels', fee: 200 },
+  { id: 'heartbreaker', name: 'Heartbreaker', game_id: null, category: 'duels', fee: 200 },
+  { id: 'giant-slayer', name: 'Giant Slayer', game_id: null, category: 'duels', fee: 200 },
+  { id: 'the-wall', name: 'The Wall', game_id: null, category: 'duels', fee: 200 },
+  { id: 'the-contrarian', name: 'The Contrarian', game_id: null, category: 'duels', fee: 200 },
+  // ── Category 6 — Battleships (200 QF, Wolf Pack 500 QF) ──
+  { id: 'first-strike', name: 'First Strike', game_id: 'battleships', category: 'battleships', fee: 200 },
+  { id: 'last-stand', name: 'Last Stand', game_id: 'battleships', category: 'battleships', fee: 200 },
+  { id: 'the-wolf', name: 'The Wolf', game_id: 'battleships', category: 'battleships', fee: 200 },
+  { id: 'unsinkable', name: 'Unsinkable', game_id: 'battleships', category: 'battleships', fee: 200 },
+  { id: 'the-admiral', name: 'The Admiral', game_id: 'battleships', category: 'battleships', fee: 200 },
+  { id: 'perfect-sonar', name: 'Perfect Sonar', game_id: 'battleships', category: 'battleships', fee: 200 },
+  { id: 'sub-hunter', name: 'Sub Hunter', game_id: 'battleships', category: 'battleships', fee: 200 },
+  { id: 'carrier-supremacy', name: 'Carrier Supremacy', game_id: 'battleships', category: 'battleships', fee: 200 },
+  { id: 'scatter-gun', name: 'Scatter-gun', game_id: 'battleships', category: 'battleships', fee: 200 },
+  { id: 'do-you-even-aim-bro', name: 'Do You Even Aim Bro?', game_id: 'battleships', category: 'battleships', fee: 200 },
+  { id: 'the-wolf-pack', name: 'The Wolf Pack', game_id: 'battleships', category: 'battleships', fee: 500 },
+  // ── Category 7 — FreeCell (200 QF, Lucky Number 100 QF) ──
+  { id: 'the-undo-king', name: 'The Undo King', game_id: 'freecell', category: 'freecell', fee: 200 },
+  { id: 'no-cell-used', name: 'No Cell Used', game_id: 'freecell', category: 'freecell', fee: 200 },
+  { id: 'lucky-number', name: 'Lucky Number', game_id: 'freecell', category: 'freecell', fee: 100 },
+  // ── Category 8 — Minesweeper (200 QF, Flag Everything 100 QF) ──
+  { id: 'clean-sweep', name: 'Clean Sweep', game_id: 'minesweeper', category: 'minesweeper', fee: 200 },
+  { id: 'flag-everything', name: 'Flag Everything', game_id: 'minesweeper', category: 'minesweeper', fee: 100 },
+  { id: 'the-comeback', name: 'The Comeback', game_id: 'minesweeper', category: 'minesweeper', fee: 200 },
+  // ── Category 9 — Poker Patience (200 QF, The Brick 100 QF) ──
+  { id: 'royal-flush', name: 'Royal Flush', game_id: 'poker-patience', category: 'poker-patience', fee: 200 },
+  { id: 'all-pairs', name: 'All Pairs', game_id: 'poker-patience', category: 'poker-patience', fee: 200 },
+  { id: 'the-nuts', name: 'The Nuts', game_id: 'poker-patience', category: 'poker-patience', fee: 200 },
+  { id: 'dead-mans-hand', name: "Dead Man\u2019s Hand", game_id: 'poker-patience', category: 'poker-patience', fee: 200 },
+  { id: 'pocket-rockets', name: 'Pocket Rockets', game_id: 'poker-patience', category: 'poker-patience', fee: 200 },
+  { id: 'the-brick', name: 'The Brick', game_id: 'poker-patience', category: 'poker-patience', fee: 100 },
+  // ── Category 10 — Cribbage (200 QF) ──
+  { id: 'twenty-nine', name: 'Twenty-Nine', game_id: 'cribbage-solitaire', category: 'cribbage', fee: 200 },
+  { id: 'crib-master', name: 'Crib Master', game_id: 'cribbage-solitaire', category: 'cribbage', fee: 200 },
+  // ── Category 11 — Golf Solitaire (200 QF) ──
+  { id: 'hole-in-one', name: 'Hole in One', game_id: 'golf-solitaire', category: 'golf', fee: 200 },
+  { id: 'albatross', name: 'Albatross', game_id: 'golf-solitaire', category: 'golf', fee: 200 },
+  { id: 'back-nine', name: 'Back Nine', game_id: 'golf-solitaire', category: 'golf', fee: 200 },
+  { id: 'under-par', name: 'Under Par', game_id: 'golf-solitaire', category: 'golf', fee: 200 },
+  // ── Category 12 — Pyramid (200 QF, Tutankhamun 100 QF) ──
+  { id: 'perfect-pyramid', name: 'Perfect Pyramid', game_id: 'pyramid', category: 'pyramid', fee: 200 },
+  { id: 'the-archaeologist', name: 'The Archaeologist', game_id: 'pyramid', category: 'pyramid', fee: 200 },
+  { id: 'tutankhamun', name: 'Tutankhamun', game_id: 'pyramid', category: 'pyramid', fee: 100 },
+  { id: 'kings-ransom', name: "King\u2019s Ransom", game_id: 'pyramid', category: 'pyramid', fee: 200 },
+  // ── Category 13 — KenKen (200 QF) ──
+  { id: 'perfect-logic', name: 'Perfect Logic', game_id: 'kenken', category: 'kenken', fee: 200 },
+  // ── Category 14 — Nonogram (200 QF) ──
+  { id: 'the-artist', name: 'The Artist', game_id: 'nonogram', category: 'nonogram', fee: 200 },
+  { id: 'blind-eye', name: 'Blind Eye', game_id: 'nonogram', category: 'nonogram', fee: 200 },
+  // ── Category 15 — Sudoku (200 QF) ──
+  { id: 'six-seven', name: '6-7', game_id: 'sudoku-duel', category: 'sudoku', fee: 200 },
+  // ── Category 16 — Comeback (200 QF) ──
+  { id: 'from-the-ashes', name: 'From the Ashes', game_id: null, category: 'comeback', fee: 200 },
+  { id: 'zero-to-hero', name: 'Zero to Hero', game_id: null, category: 'comeback', fee: 200 },
+  // ── Category 17 — Per Game Volume (200 QF) ──
+  { id: 'specialist', name: 'Specialist', game_id: null, category: 'per-game-volume', fee: 200 },
+  { id: 'master-of-one', name: 'Master of One', game_id: null, category: 'per-game-volume', fee: 200 },
+  { id: 'world-tour', name: 'World Tour', game_id: null, category: 'per-game-volume', fee: 200 },
+  { id: 'high-roller', name: 'High Roller', game_id: null, category: 'per-game-volume', fee: 200 },
+  // ── Category 18 — Free Games (100 QF) ──
+  { id: 'century', name: 'Century', game_id: null, category: 'free-games', fee: 100 },
+  { id: 'personal-best', name: 'Personal Best', game_id: null, category: 'free-games', fee: 100 },
+  { id: 'explorer', name: 'Explorer', game_id: null, category: 'free-games', fee: 100 },
+  { id: 'unbeatable', name: 'Unbeatable', game_id: 'rps-vs-machine', category: 'free-games', fee: 100 },
+  { id: 'the-engineer', name: 'The Engineer', game_id: 'towers-of-hanoi', category: 'free-games', fee: 100 },
+  { id: 'speed-reader', name: 'Speed Reader', game_id: '52dle', category: 'free-games', fee: 100 },
+  { id: 'photographic', name: 'Photographic', game_id: 'memory-matrix', category: 'free-games', fee: 100 },
+  { id: 'dead-reckoning', name: 'Dead Reckoning', game_id: 'estimation-engine', category: 'free-games', fee: 100 },
+  { id: 'clairvoyant', name: 'Clairvoyant', game_id: 'higher-or-lower', category: 'free-games', fee: 100 },
+  { id: 'on-the-nose', name: 'On the Nose', game_id: 'countdown-numbers', category: 'free-games', fee: 100 },
+  { id: 'next-in-line', name: 'Next In Line', game_id: 'sequence-solver', category: 'free-games', fee: 100 },
+  { id: 'wordy', name: 'Wordy', game_id: 'maffsy', category: 'free-games', fee: 100 },
+  { id: 'binary-decision', name: 'Binary Decision', game_id: 'maffsy', category: 'free-games', fee: 100 },
+  { id: 'feel-no-pressure', name: 'Feel No Pressure', game_id: 'maffsy', category: 'free-games', fee: 100 },
+  // ── Category 19 — Streaks (200 QF) ──
+  { id: 'weekend-warrior', name: 'Weekend Warrior', game_id: null, category: 'streaks', fee: 200 },
+  { id: 'the-marathon', name: 'The Marathon', game_id: null, category: 'streaks', fee: 200 },
+  { id: 'league-regular', name: 'League Regular', game_id: null, category: 'streaks', fee: 200 },
+  // ── Category 20 — Kakuro (200 QF) ──
+  { id: 'the-crossword-king', name: 'The Crossword King', game_id: 'kakuro', category: 'kakuro', fee: 200 },
+  { id: 'sum-of-all-fears', name: 'Sum of All Fears', game_id: 'kakuro', category: 'kakuro', fee: 200 },
+  // ── Category 21 — Time (100 QF) ──
+  { id: 'night-owl', name: 'Night Owl', game_id: null, category: 'time', fee: 100 },
+  { id: 'the-insomniac', name: 'The Insomniac', game_id: null, category: 'time', fee: 100 },
+  // ── Category 22 — Seasonal (100 QF) ──
+  { id: 'easter', name: 'Easter', game_id: null, category: 'seasonal', fee: 100 },
+  { id: 'christmas', name: 'Christmas', game_id: null, category: 'seasonal', fee: 100 },
+  { id: 'new-year', name: 'New Year', game_id: null, category: 'seasonal', fee: 100 },
+  { id: 'halloween', name: 'Halloween', game_id: null, category: 'seasonal', fee: 100 },
+  { id: 'bonfire-night', name: 'Bonfire Night', game_id: null, category: 'seasonal', fee: 100 },
+  { id: 'pancake-day', name: 'Pancake Day', game_id: null, category: 'seasonal', fee: 100 },
+  { id: 'pi-day', name: 'Pi Day', game_id: null, category: 'seasonal', fee: 100 },
+  { id: 've-day', name: 'VE Day', game_id: 'battleships', category: 'seasonal', fee: 100 },
+  { id: 'summer-week', name: 'Summer Week', game_id: null, category: 'seasonal', fee: 100 },
+  { id: 'platform-anniversary', name: 'Platform Anniversary', game_id: null, category: 'seasonal', fee: 100 },
+  // ── Category 23 — Monthly (200 QF) ──
+  { id: 'active-player', name: 'Active Player', game_id: null, category: 'monthly', fee: 200 },
+  { id: 'grinder', name: 'Grinder', game_id: null, category: 'monthly', fee: 200 },
+  { id: 'league-month', name: 'League Month', game_id: null, category: 'monthly', fee: 200 },
+  { id: 'double-winner', name: 'Double Winner', game_id: null, category: 'monthly', fee: 200 },
+  // ── Category 24 — Constants (500 QF) ──
+  { id: 'pi', name: 'Pi', game_id: null, category: 'constants', fee: 500 },
+  { id: 'euler', name: 'Euler', game_id: null, category: 'constants', fee: 500 },
+  { id: 'golden-ratio', name: 'Golden Ratio', game_id: null, category: 'constants', fee: 500 },
+  { id: 'root-two', name: 'Root Two', game_id: null, category: 'constants', fee: 500 },
+  { id: 'root-three', name: 'Root Three', game_id: null, category: 'constants', fee: 500 },
+  { id: 'the-mathematicians-collection', name: "The Mathematician\u2019s Collection", game_id: null, category: 'constants', fee: 500 },
+  // ── Category 25 — Squared Pi (500 QF) ──
+  { id: 'squared-pi', name: 'Squared Pi', game_id: null, category: 'squared-pi', fee: 500 },
+  // ── Category 26 — Loyalty (FREE) ──
+  { id: 'skin-in-the-game', name: 'Skin in the Game', game_id: null, category: 'loyalty', fee: 0 },
+  { id: 'true-believer', name: 'True Believer', game_id: null, category: 'loyalty', fee: 0 },
+  { id: 'fifty-two-thousand', name: '52,000', game_id: null, category: 'loyalty', fee: 0 },
+  // ── Category 27 — Milestones (FREE) ──
+  { id: 'collector', name: 'Collector', game_id: null, category: 'milestones', fee: 0 },
+  { id: 'devoted', name: 'Devoted', game_id: null, category: 'milestones', fee: 0 },
+  { id: 'obsessed', name: 'Obsessed', game_id: null, category: 'milestones', fee: 0 },
+  { id: 'the-complete-player', name: 'The Complete Player', game_id: null, category: 'milestones', fee: 0 },
+  { id: 'the-grandmaster', name: 'The Grandmaster', game_id: null, category: 'milestones', fee: 0 },
+  // ── Category 28 — Meta (200 QF) ──
+  { id: 'pioneer-hunter', name: 'Pioneer Hunter', game_id: null, category: 'meta', fee: 200 },
+  { id: 'the-whale', name: 'The Whale', game_id: null, category: 'meta', fee: 200 },
+  { id: 'duel-master', name: 'Duel Master', game_id: null, category: 'meta', fee: 200 },
+  { id: 'breadwinner', name: 'Breadwinner', game_id: null, category: 'meta', fee: 200 },
+  { id: 'the-grinder', name: 'The Grinder', game_id: null, category: 'meta', fee: 200 },
+  // ── Category 29 — Absurd (mixed) ──
+  { id: 'palindrome', name: 'Palindrome', game_id: null, category: 'absurd', fee: 200 },
+  { id: 'wrong-answer-streak', name: 'Wrong Answer Streak', game_id: 'prime-or-composite', category: 'absurd', fee: 100 },
+  { id: 'midnight', name: 'Midnight', game_id: null, category: 'absurd', fee: 100 },
+  { id: 'fibonacci', name: 'Fibonacci', game_id: null, category: 'absurd', fee: 200 },
+  { id: 'onlyfans-qf', name: 'onlyfans.qf', game_id: null, category: 'absurd', fee: 200 },
+  // ── Category 30 — Founding (FREE) ──
+  { id: 'founding-member', name: 'Founding Member', game_id: null, category: 'founding', fee: 0 },
+  // ── Category 31 — Wooden Spoons (100 QF) ──
+  { id: 'tax-payers-nightmare', name: "Tax Payer\u2019s Nightmare", game_id: 'battleships', category: 'wooden-spoons', fee: 100 },
+  { id: 'the-optimist', name: 'The Optimist', game_id: null, category: 'wooden-spoons', fee: 100 },
+  { id: 'slow-burn', name: 'Slow Burn', game_id: 'minesweeper', category: 'wooden-spoons', fee: 100 },
+  { id: 'crib-death', name: 'Crib Death', game_id: 'cribbage-solitaire', category: 'wooden-spoons', fee: 100 },
+  { id: 'bust', name: 'Bust', game_id: 'poker-patience', category: 'wooden-spoons', fee: 100 },
+  { id: 'the-fish', name: 'The Fish', game_id: 'poker-patience', category: 'wooden-spoons', fee: 100 },
+  { id: 'score-one', name: 'Score One', game_id: null, category: 'wooden-spoons', fee: 100 },
+  { id: 'the-pacifist', name: 'The Pacifist', game_id: 'kakuro', category: 'wooden-spoons', fee: 100 },
+  { id: 'all-wrong', name: 'All Wrong', game_id: 'kakuro', category: 'wooden-spoons', fee: 100 },
+  { id: 'full-hints', name: 'Full Hints', game_id: 'kenken', category: 'wooden-spoons', fee: 100 },
+  { id: 'dnf-king', name: 'DNF King', game_id: null, category: 'wooden-spoons', fee: 100 },
+  { id: 'flagless-and-wrong', name: 'Flagless and Wrong', game_id: 'minesweeper', category: 'wooden-spoons', fee: 100 },
+  { id: 'last-and-slow', name: 'Last and Slow', game_id: null, category: 'wooden-spoons', fee: 100 },
+  { id: 'memory-loss', name: 'Memory Loss', game_id: 'sudoku-duel', category: 'wooden-spoons', fee: 100 },
+  { id: 'bogey', name: 'Bogey', game_id: 'golf-solitaire', category: 'wooden-spoons', fee: 100 },
+  { id: 'curse-of-the-mummy', name: 'Curse of the Mummy', game_id: 'pyramid', category: 'wooden-spoons', fee: 100 },
+  { id: 'pharaohs-curse', name: "Pharaoh\u2019s Curse", game_id: 'pyramid', category: 'wooden-spoons', fee: 100 },
+  { id: 'mucky-hands', name: 'Mucky Hands', game_id: 'poker-patience', category: 'wooden-spoons', fee: 100 },
+  { id: 'the-novelist', name: 'The Novelist', game_id: 'maffsy', category: 'wooden-spoons', fee: 100 },
+  // ── Category 32 — Impossible (FREE) ──
+  { id: 'boom', name: 'Boom', game_id: null, category: 'impossible', fee: 0 },
 ];
 
 function seedAchievements(db) {
-  const stmt = db.prepare(`INSERT OR IGNORE INTO achievement_registry (achievement_id, name, game_id, tier, mint_fee_qf)
-    VALUES (?, ?, ?, ?, ?)`);
+  const insert = db.prepare(`INSERT OR IGNORE INTO achievement_registry (achievement_id, name, game_id, tier, mint_fee_qf, category)
+    VALUES (?, ?, ?, ?, ?, ?)`);
+  const updateCat = db.prepare(`UPDATE achievement_registry SET category = ?, mint_fee_qf = ? WHERE achievement_id = ? AND (category IS NULL OR category != ?)`);
   for (const a of ACHIEVEMENTS) {
-    stmt.run(a.id, a.name, a.game_id || null, a.tier, a.fee);
+    const tier = a.fee === 0 ? 'free' : a.fee <= 100 ? 'standard' : a.fee <= 200 ? 'premium' : 'elite';
+    insert.run(a.id, a.name, a.game_id || null, tier, a.fee, a.category);
+    updateCat.run(a.category, a.fee, a.id, a.category);
   }
 }
 

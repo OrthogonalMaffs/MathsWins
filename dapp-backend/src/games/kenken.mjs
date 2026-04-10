@@ -356,6 +356,7 @@ export function evaluator(question, answer, elapsedMs, session) {
   if (session && !session.hintLog) session.hintLog = [];
   if (session && session.mistakes === undefined) session.mistakes = 0;
   if (session && session.hintsUsed === undefined) session.hintsUsed = 0;
+  if (session && session.submitFailures === undefined) session.submitFailures = 0;
 
   // ── Place a number ──────────────────────────────────────────────
   if (answer.action === 'place') {
@@ -430,22 +431,17 @@ export function evaluator(question, answer, elapsedMs, session) {
     }
 
     if (!correct) {
-      if (session) session.mistakes++;
-      const totalMistakes = session ? session.mistakes : ((answer.mistakes || 0) + 1);
+      if (session) session.submitFailures++;
+      const submitFails = session ? session.submitFailures : ((answer.submitFailures || 0) + 1);
       // 3rd failed submission = fail-out
-      if (totalMistakes >= 3) {
+      if (submitFails >= 3) {
         let correctCells = 0;
         for (let r = 0; r < n; r++) {
           for (let c = 0; c < n; c++) {
             if (grid[r][c] === solution[r][c]) correctCells++;
           }
         }
-        const pityScore = correctCells * 20;
-        const secs = elapsedMs ? elapsedMs / 1000 : 0;
-        const timePenalty = Math.max(0, secs - GRACE_PERIOD);
-        const pen = totalMistakes * MISTAKE_COST + hints * HINT_COST + timePenalty;
-        const timeScore = Math.max(0, Math.round(BASE_SCORE - pen));
-        const finalScore = Math.min(pityScore, timeScore);
+        const finalScore = correctCells * 20;
         return { correct: false, points: finalScore, action: 'validate', errors, failedOut: true, correctCells };
       }
       return { correct: false, points: 0, action: 'validate', errors };

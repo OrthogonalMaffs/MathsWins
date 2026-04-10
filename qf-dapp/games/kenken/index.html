@@ -56,7 +56,7 @@ body{background:var(--bg);color:var(--text);font-family:'Inter',sans-serif;min-h
 .wrong-cell.cage-right{border-right:3px solid rgba(184,188,198,0.6)!important}
 .board-wrap{width:100%;display:flex;justify-content:center}
 .board{display:grid;gap:0;width:min(100%,450px);aspect-ratio:1;border:2px solid var(--silver-border);border-radius:4px;overflow:hidden}
-.cell{position:relative;display:flex;align-items:center;justify-content:center;cursor:pointer;transition:background 0.1s;border:1px solid var(--border2)}
+.cell{position:relative;display:flex;align-items:center;justify-content:center;cursor:pointer;transition:background 0.1s;border:1px solid var(--border2);height:100%;min-height:0;overflow:hidden}
 .cell:hover{background:var(--silver-dim)}
 .cell.selected{background:rgba(184,188,198,0.18)}
 .cell.related{background:rgba(184,188,198,0.06)}
@@ -481,6 +481,7 @@ var G = (function() {
   function renderBoard() {
     var boardEl = document.getElementById('board');
     boardEl.style.gridTemplateColumns = 'repeat(' + n + ', 1fr)';
+    boardEl.style.gridTemplateRows = 'repeat(' + n + ', 1fr)';
     boardEl.innerHTML = '';
 
     // Build cage lookup: cellKey → cageIndex
@@ -805,8 +806,8 @@ var G = (function() {
     document.getElementById('modal-score').innerHTML =
       '<div class="ms-item"><span class="ms-val">' + (score || 0) + '</span><span class="ms-lbl">Final Score</span></div>' +
       '<div class="ms-item"><span class="ms-val">' + m + ':' + (s < 10 ? '0' : '') + s + '</span><span class="ms-lbl">Time</span></div>' +
-      '<div class="ms-item"><span class="ms-val">' + mistakes + '</span><span class="ms-lbl">Mistakes</span></div>' +
-      '<div class="ms-item"><span class="ms-val">' + hintsUsed + '</span><span class="ms-lbl">Hints</span></div>';
+      '<div class="ms-item"><span class="ms-val">' + mistakes + '</span><span class="ms-lbl">Incorrect Submissions</span></div>' +
+      '<div class="ms-item"><span class="ms-val">' + hintsUsed + '</span><span class="ms-lbl">Hints Used</span></div>';
 
     if (leagueMode) {
       var acts = document.querySelector('.modal-acts');
