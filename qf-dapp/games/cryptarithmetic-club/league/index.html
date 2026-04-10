@@ -296,7 +296,7 @@ function renderLeagueCards(leagues) {
       '<div class="lc-name">Season ' + (l.id.slice(-4) || '1') + '</div>' +
       '<div class="lc-stats">' +
         '<div class="lc-stat"><span class="lc-stat-label">Entry</span><span class="lc-stat-val">' + fee + ' QF</span></div>' +
-        '<div class="lc-stat"><span class="lc-stat-label">Players</span><span class="lc-stat-val">' + l.player_count + ' / ' + (l.max_players || 20) + '</span></div>' +
+        '<div class="lc-stat"><span class="lc-stat-label">Players</span><span class="lc-stat-val">' + l.player_count + ' / ' + (l.max_players || 16) + '</span></div>' +
         '<div class="lc-stat"><span class="lc-stat-label">Pot</span><span class="lc-stat-val">' + potDisplay + '</span></div>' +
         (timeLeft ? '<div class="lc-stat"><span class="lc-stat-label">Time</span><span class="lc-stat-val">' + timeLeft + '</span></div>' : '') +
       '</div>' +
