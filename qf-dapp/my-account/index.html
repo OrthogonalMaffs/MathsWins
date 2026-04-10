@@ -79,7 +79,8 @@ body{background:var(--bg);color:var(--text);font-family:'Inter',sans-serif;min-h
 /* ── League cards ── */
 .league-group{margin-bottom:1.5rem}
 .league-group h3{font-family:'Bebas Neue',sans-serif;font-size:1rem;color:var(--silver-bright);letter-spacing:.04em;margin-bottom:.5rem}
-.league-card{background:var(--surface);border:1px solid var(--border);border-radius:8px;padding:.8rem 1rem;margin-bottom:.5rem;display:flex;align-items:center;justify-content:space-between;gap:.8rem;flex-wrap:wrap}
+.league-card{background:var(--surface);border:1px solid var(--border);border-radius:8px;padding:.8rem 1rem;margin-bottom:.5rem;display:flex;align-items:center;justify-content:space-between;gap:.8rem;flex-wrap:wrap;text-decoration:none;color:inherit;transition:border-color .15s}
+.league-card:hover{border-color:var(--silver-border)}
 .lc-left{display:flex;flex-direction:column;gap:.2rem}
 .lc-game{font-family:'DM Mono',monospace;font-size:.72rem;color:var(--silver-bright)}
 .lc-tier{font-family:'DM Mono',monospace;font-size:.55rem;color:var(--muted);text-transform:uppercase;letter-spacing:.06em}
@@ -348,14 +349,14 @@ async function loadLeagues() {
     if (data.active && data.active.length > 0) {
       html += '<div class="league-group"><h3>Active</h3>';
       data.active.forEach(function(l) {
-        html += '<div class="league-card"><div class="lc-left">' +
+        html += '<a href="/qf-dapp/games/' + l.game_id + '/league/" class="league-card"><div class="lc-left">' +
           '<div class="lc-game">' + gameName(l.game_id) + '</div>' +
           '<div class="lc-tier">' + (l.tier || 'bronze') + ' league</div>' +
           '</div><div class="lc-right">' +
           '<div class="lc-stat"><div class="lc-stat-val">' + (l.puzzles_completed || 0) + '/' + (l.puzzles_total || 10) + '</div><div class="lc-stat-label">Puzzles</div></div>' +
           '<div class="lc-stat"><div class="lc-stat-val">' + (l.cumulative_score || 0) + '</div><div class="lc-stat-label">Score</div></div>' +
           '<div class="lc-stat"><div class="lc-stat-val">' + (l.player_count || 0) + '</div><div class="lc-stat-label">Players</div></div>' +
-          '</div></div>';
+          '</div></a>';
       });
       html += '</div>';
     }
@@ -364,12 +365,12 @@ async function loadLeagues() {
     if (data.upcoming && data.upcoming.length > 0) {
       html += '<div class="league-group"><h3>Upcoming</h3>';
       data.upcoming.forEach(function(l) {
-        html += '<div class="league-card"><div class="lc-left">' +
+        html += '<a href="/qf-dapp/games/' + l.game_id + '/league/" class="league-card"><div class="lc-left">' +
           '<div class="lc-game">' + gameName(l.game_id) + '</div>' +
           '<div class="lc-tier">' + (l.tier || 'bronze') + ' league &middot; registration open</div>' +
           '</div><div class="lc-right">' +
           '<div class="lc-stat"><div class="lc-stat-val">' + (l.player_count || 0) + '</div><div class="lc-stat-label">Players</div></div>' +
-          '</div></div>';
+          '</div></a>';
       });
       html += '</div>';
     }
@@ -385,14 +386,14 @@ async function loadLeagues() {
           var match = PROFILE.league_history.find(function(h) { return h.league_id === l.id; });
           if (match) { pos = match.position; prize = match.prize_amount; }
         }
-        html += '<div class="league-card"><div class="lc-left">' +
+        html += '<a href="/qf-dapp/games/' + l.game_id + '/league/" class="league-card"><div class="lc-left">' +
           '<div class="lc-game">' + gameName(l.game_id) + '</div>' +
           '<div class="lc-tier">' + (l.tier || 'bronze') + ' league</div>' +
           '</div><div class="lc-right">' +
           (pos ? positionBadge(pos) : '') +
           (prize ? '<div class="lc-stat"><div class="lc-stat-val">' + parseFloat(ethers.formatEther(String(prize))).toFixed(1) + '</div><div class="lc-stat-label">QF Won</div></div>' : '') +
           '<div class="lc-stat"><div class="lc-stat-val">' + (l.player_count || 0) + '</div><div class="lc-stat-label">Players</div></div>' +
-          '</div></div>';
+          '</div></a>';
       });
       html += '</div>';
     }
