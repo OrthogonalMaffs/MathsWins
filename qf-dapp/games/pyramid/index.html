@@ -26,18 +26,6 @@
 body{background:var(--bg);color:var(--text);font-family:'Inter',sans-serif;min-height:100vh;display:flex;flex-direction:column;align-items:center;-webkit-tap-highlight-color:transparent}
 .page{width:100%;max-width:640px;padding:2rem 1rem 4rem;display:flex;flex-direction:column;align-items:center;gap:1.2rem}
 
-.top-bar{width:100%;display:flex;justify-content:space-between;align-items:center;padding:.5rem 1rem;background:rgba(5,7,9,.94);backdrop-filter:blur(12px);border-bottom:1px solid var(--border);position:sticky;top:0;z-index:100}
-.top-bar-left{display:flex;align-items:center;gap:.6rem}
-.back-link{font-size:.7rem;color:var(--muted);text-decoration:none;padding:.25rem .6rem;border:1px solid var(--border);border-radius:6px;transition:all .15s}
-.back-link:hover{border-color:var(--silver-border);color:var(--text)}
-.top-logo{font-family:'Playfair Display',serif;font-size:1rem;color:var(--text-white);text-decoration:none}
-.top-logo span{color:var(--silver)}
-.top-bar-right{display:flex;align-items:center;gap:.5rem}
-.top-addr{font-family:'JetBrains Mono',monospace;font-size:.65rem;color:var(--muted);background:var(--surface);border:1px solid var(--border);padding:.2rem .5rem;border-radius:5px}
-.top-qf-name{font-family:'JetBrains Mono',monospace;font-size:.65rem;color:var(--silver-bright);background:var(--surface2);border:1px solid var(--silver-border);padding:.2rem .5rem;border-radius:5px}
-.top-connect{font-family:'Inter',sans-serif;font-weight:600;font-size:.7rem;padding:.35rem .8rem;border-radius:5px;border:1px solid var(--silver-border);background:var(--silver-dim);color:var(--silver-bright);cursor:pointer;transition:all .15s}
-.top-connect:hover{background:var(--silver-bright);color:var(--bg)}
-
 .game-header{text-align:center}
 .game-kicker{font-family:'JetBrains Mono',monospace;font-size:0.55rem;letter-spacing:0.2em;text-transform:uppercase;color:var(--silver);margin-bottom:0.4rem}
 .game-title{font-family:'Playfair Display',serif;font-size:2.4rem;color:var(--text-white);line-height:1}
@@ -128,18 +116,9 @@ body{background:var(--bg);color:var(--text);font-family:'Inter',sans-serif;min-h
 </head>
 <body>
 
-<div class="top-bar">
-  <div class="top-bar-left">
-    <a href="/qf-dapp/" class="back-link">&larr; Lobby</a>
-    <a href="/qf-dapp/" class="top-logo">QF <span>Games</span></a>
-  </div>
-  <div class="top-bar-right">
-    <span class="top-qf-name" id="topQfName" style="display:none"></span>
-    <span class="top-addr" id="topAddr" style="display:none"></span>
-    <button class="top-connect" id="topConnect" onclick="qfWallet.connect()">Connect</button>
-  </div>
-</div>
-<script src="../qf-wallet.js"></script>
+<div id="qf-nav"></div>
+<script src="/qf-dapp/games/qf-wallet.js"></script>
+<script src="/qf-dapp/qf-nav.js"></script>
 <script src="../qf-cards.js"></script>
 
 <div class="page">
@@ -227,23 +206,6 @@ body{background:var(--bg);color:var(--text);font-family:'Inter',sans-serif;min-h
 
 <script>
 var W = qfWallet;
-W.onConnect(function(s) {
-  if (!s.address) return;
-  document.getElementById('topConnect').style.display = 'none';
-  var addrEl = document.getElementById('topAddr');
-  addrEl.textContent = s.address.slice(0,6) + '...' + s.address.slice(-4);
-  addrEl.style.display = '';
-  if (s.qfName) {
-    document.getElementById('topQfName').textContent = s.qfName;
-    document.getElementById('topQfName').style.display = '';
-    addrEl.style.display = 'none';
-  }
-});
-W.onDisconnect(function() {
-  document.getElementById('topConnect').style.display = '';
-  document.getElementById('topAddr').style.display = 'none';
-  document.getElementById('topQfName').style.display = 'none';
-});
 
 var G = (function() {
   'use strict';

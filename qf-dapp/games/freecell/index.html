@@ -54,23 +54,6 @@ body{background:var(--bg);color:var(--text);font-family:'Inter',sans-serif;min-h
 .game-title span{background:linear-gradient(135deg,var(--silver-bright),var(--silver),#8a8f9c);-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text}
 .game-sub{font-size:0.72rem;color:var(--muted);line-height:1.6;margin-top:0.4rem}
 
-/* ── Wallet bar ── */
-.top-bar{
-  width:100%;display:flex;justify-content:space-between;align-items:center;
-  padding:.5rem 1rem;background:rgba(5,7,9,.94);backdrop-filter:blur(12px);
-  border-bottom:1px solid var(--border);position:sticky;top:0;z-index:100;
-}
-.top-bar-left{display:flex;align-items:center;gap:.6rem}
-.back-link{font-size:.7rem;color:var(--muted);text-decoration:none;padding:.25rem .6rem;border:1px solid var(--border);border-radius:6px;transition:all .15s}
-.back-link:hover{border-color:var(--silver-border);color:var(--text)}
-.top-logo{font-family:'Playfair Display',serif;font-size:1rem;color:var(--text-white);text-decoration:none}
-.top-logo span{color:var(--silver)}
-.top-bar-right{display:flex;align-items:center;gap:.5rem}
-.top-addr{font-family:'JetBrains Mono',monospace;font-size:.65rem;color:var(--muted);background:var(--surface);border:1px solid var(--border);padding:.2rem .5rem;border-radius:5px}
-.top-qf-name{font-family:'JetBrains Mono',monospace;font-size:.65rem;color:var(--silver-bright);background:var(--surface2);border:1px solid var(--silver-border);padding:.2rem .5rem;border-radius:5px}
-.top-connect{font-family:'Inter',sans-serif;font-weight:600;font-size:.7rem;padding:.35rem .8rem;border-radius:5px;border:1px solid var(--silver-border);background:var(--silver-dim);color:var(--silver-bright);cursor:pointer;transition:all .15s}
-.top-connect:hover{background:var(--silver-bright);color:var(--bg)}
-
 /* ── How to Play — collapsible ── */
 .htp{width:100%;background:var(--surface);border:1px solid var(--border);border-radius:10px;overflow:hidden;margin-bottom:0}
 .htp-toggle{width:100%;padding:.8rem 1rem;display:flex;justify-content:space-between;align-items:center;cursor:pointer;background:none;border:none;color:var(--text);font-family:'Inter',sans-serif;font-size:.75rem;font-weight:600;text-align:left}
@@ -226,20 +209,9 @@ body{background:var(--bg);color:var(--text);font-family:'Inter',sans-serif;min-h
 </head>
 <body>
 <script src="../qf-cards.js"></script>
-<script src="../qf-wallet.js"></script>
-
-<!-- TOP BAR -->
-<div class="top-bar">
-  <div class="top-bar-left">
-    <a href="/qf-dapp/" class="back-link">&larr; Lobby</a>
-    <a href="/qf-dapp/" class="top-logo">QF <span>Games</span></a>
-  </div>
-  <div class="top-bar-right">
-    <span class="top-qf-name" id="topQfName" style="display:none;cursor:pointer" onclick="qfWallet.showMenu(this)"></span>
-    <span class="top-addr" id="topAddr" style="display:none;cursor:pointer" onclick="qfWallet.showMenu(this)"></span>
-    <button class="top-connect" id="topConnectBtn" onclick="qfWallet.connect()">Connect Wallet</button>
-  </div>
-</div>
+<div id="qf-nav"></div>
+<script src="/qf-dapp/games/qf-wallet.js"></script>
+<script src="/qf-dapp/qf-nav.js"></script>
 
 
 <div class="page" id="page-content">
@@ -357,20 +329,6 @@ function declineCookies(){
   localStorage.setItem('mw_cookies', 'declined');
   document.getElementById('cookie-banner').classList.add('hidden');
 }
-
-// ── Wallet (thin wrapper over shared qf-wallet.js) ───────────────────
-qfWallet.onConnect(function(s) {
-  if (s.address) {
-    document.getElementById('topConnectBtn').style.display = 'none';
-    document.getElementById('topAddr').style.display = '';
-    document.getElementById('topAddr').textContent = s.address.slice(0, 6) + '...' + s.address.slice(-4);
-  }
-  if (s.qfName) {
-    document.getElementById('topQfName').textContent = s.qfName;
-    document.getElementById('topQfName').style.display = '';
-    document.getElementById('topAddr').style.display = 'none';
-  }
-});
 
 // ── HTP toggle ────────────────────────────────────────────────────────
 document.querySelectorAll('.htp-toggle').forEach(function(btn){

@@ -36,17 +36,6 @@
 body{font-family:'Inter',sans-serif;background:var(--bg);color:var(--text);min-height:100vh;display:flex;flex-direction:column;align-items:center}
 .container{max-width:560px;width:100%;padding:1rem}
 
-/* ── Top Bar ── */
-.top-bar{width:100%;display:flex;justify-content:space-between;align-items:center;padding:.5rem 1rem;background:rgba(14,16,19,.94);backdrop-filter:blur(12px);border-bottom:1px solid var(--border);position:sticky;top:0;z-index:100}
-.top-bar-left{display:flex;align-items:center;gap:.6rem}
-.back-link{font-size:.7rem;color:var(--muted);text-decoration:none;padding:.25rem .6rem;border:1px solid var(--border);border-radius:6px;transition:all .15s}
-.back-link:hover{border-color:var(--silver-border);color:var(--text)}
-.top-bar-right{display:flex;align-items:center;gap:.5rem}
-.top-addr{font-family:'JetBrains Mono',monospace;font-size:.65rem;color:var(--muted);background:var(--surface);border:1px solid var(--border);padding:.2rem .5rem;border-radius:5px}
-.top-qf-name{font-family:'JetBrains Mono',monospace;font-size:.65rem;color:var(--silver-bright);background:var(--surface2);border:1px solid var(--silver-border);padding:.2rem .5rem;border-radius:5px}
-.top-connect{font-family:'Inter',sans-serif;font-weight:600;font-size:.7rem;padding:.35rem .8rem;border-radius:5px;border:1px solid var(--silver-border);background:var(--silver-dim);color:var(--silver-bright);cursor:pointer;transition:all .15s}
-.top-connect:hover{background:var(--silver-bright);color:var(--bg)}
-
 /* ── Header ── */
 .game-header{text-align:center;padding:1.5rem 0 1rem}
 .game-kicker{font-family:'JetBrains Mono',monospace;font-size:0.55rem;letter-spacing:0.2em;text-transform:uppercase;color:var(--silver);margin-bottom:0.4rem}
@@ -155,18 +144,9 @@ body{font-family:'Inter',sans-serif;background:var(--bg);color:var(--text);min-h
 </style>
 </head>
 <body>
-<script src="../qf-wallet.js"></script>
-
-<div class="top-bar">
-  <div class="top-bar-left">
-    <a href="/qf-dapp/" class="back-link">&larr; Lobby</a>
-  </div>
-  <div class="top-bar-right">
-    <span id="topQfName" class="top-qf-name" style="display:none;cursor:pointer" onclick="qfWallet.showMenu(this)"></span>
-    <span id="topAddr" class="top-addr" style="display:none;cursor:pointer" onclick="qfWallet.showMenu(this)"></span>
-    <button id="topConnectBtn" class="top-connect" onclick="qfWallet.connect()">Connect Wallet</button>
-  </div>
-</div>
+<div id="qf-nav"></div>
+<script src="/qf-dapp/games/qf-wallet.js"></script>
+<script src="/qf-dapp/qf-nav.js"></script>
 
 <div class="container">
 
@@ -591,24 +571,6 @@ document.querySelectorAll('.htp-toggle').forEach(function(btn){
   btn.addEventListener('click',function(){this.closest('.htp').classList.toggle('open')});
 });
 
-// Wire up top-bar wallet display
-qfWallet.onConnect(function(s) {
-  if (s.address) {
-    document.getElementById('topConnectBtn').style.display = 'none';
-    document.getElementById('topAddr').style.display = '';
-    document.getElementById('topAddr').textContent = s.address.slice(0, 6) + '...' + s.address.slice(-4);
-  }
-  if (s.qfName) {
-    document.getElementById('topQfName').textContent = s.qfName;
-    document.getElementById('topQfName').style.display = '';
-    document.getElementById('topAddr').style.display = 'none';
-  }
-});
-qfWallet.onDisconnect(function() {
-  document.getElementById('topConnectBtn').style.display = '';
-  document.getElementById('topAddr').style.display = 'none';
-  document.getElementById('topQfName').style.display = 'none';
-});
 </script>
 </body>
 </html>

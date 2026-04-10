@@ -53,33 +53,6 @@
 body{font-family:'Inter',sans-serif;background:var(--bg);color:var(--text);min-height:100vh;-webkit-font-smoothing:antialiased}
 .outer{max-width:900px;margin:0 auto;padding:0 1.25rem}
 
-/* ── Wallet Bar (sticky) ── */
-.wallet-bar{
-  position:sticky;top:0;z-index:100;
-  background:rgba(14,16,19,.94);backdrop-filter:blur(12px);
-  border-bottom:1px solid var(--border);
-  padding:.6rem 1.25rem;
-  display:flex;align-items:center;justify-content:space-between;
-}
-.wb-brand{display:flex;align-items:center;gap:.5rem;text-decoration:none}
-.wb-logo{font-family:'Playfair Display',serif;font-size:1.2rem;color:var(--text-white);letter-spacing:.02em}
-.wb-logo span{color:var(--silver-bright)}
-.wb-badge{font-family:'JetBrains Mono',monospace;font-size:.5rem;padding:2px 8px;border-radius:10px;background:var(--silver-dim);color:var(--silver);border:1px solid var(--silver-border);letter-spacing:.05em}
-.wb-right{display:flex;align-items:center;gap:.75rem}
-.wb-balance{font-family:'JetBrains Mono',monospace;font-size:.8rem;color:var(--silver-bright)}
-.wb-address{font-family:'JetBrains Mono',monospace;font-size:.72rem;color:var(--muted);background:var(--surface);border:1px solid var(--border);padding:.3rem .6rem;border-radius:6px}
-.wb-connect{
-  font-family:'Inter',sans-serif;font-weight:600;font-size:.78rem;
-  padding:.45rem 1.2rem;border-radius:6px;border:1px solid var(--silver-border);
-  background:var(--silver-dim);color:var(--silver-bright);cursor:pointer;transition:all .15s;
-}
-.wb-connect:hover{background:var(--silver-bright);color:var(--bg)}
-.wb-network{font-family:'JetBrains Mono',monospace;font-size:.55rem;color:var(--silver);display:flex;align-items:center;gap:.3rem}
-.wb-network .dot{width:6px;height:6px;border-radius:50%;background:var(--silver)}
-.wb-network.wrong .dot{background:var(--red)}
-.wb-network.wrong{color:var(--red)}
-.wb-qf-name{font-family:'JetBrains Mono',monospace;font-size:.72rem;color:var(--silver-bright);background:var(--surface2);border:1px solid var(--silver-border);padding:.3rem .6rem;border-radius:6px}
-
 /* ── Hero ── */
 .hero{text-align:center;padding:3.5rem 0 2.5rem;position:relative}
 .hero::after{content:'';position:absolute;bottom:0;left:10%;right:10%;height:1px;background:linear-gradient(90deg,transparent,var(--border2),transparent)}
@@ -287,8 +260,6 @@ footer a:hover{color:var(--silver-bright)}
   .hero-stats{gap:1.5rem}
   .game-grid,.game-grid.free-grid{grid-template-columns:1fr;gap:12px}
   .logo-cell{min-height:80px}
-  .wallet-bar{flex-wrap:wrap;gap:.4rem}
-  .wb-balance{font-size:.7rem}
   .hiw-steps{grid-template-columns:1fr;gap:.6rem}
   .duel-banner{flex-direction:column;text-align:center}
   .duel-code-entry{justify-content:center}
@@ -297,24 +268,9 @@ footer a:hover{color:var(--silver-bright)}
 </head>
 <body>
 
-<!-- WALLET BAR -->
-<div class="wallet-bar">
-  <a href="/qf-dapp/" class="wb-brand">
-    <span class="wb-logo">QF <span>Games</span></span>
-    <span class="wb-badge">QF NETWORK</span>
-  </a>
-  <div class="wb-right">
-    <div class="wb-network" id="networkStatus" style="display:none">
-      <span class="dot"></span>
-      <span id="networkName">QF Network</span>
-    </div>
-    <span class="wb-balance" id="walletBalance" style="display:none"></span>
-    <span class="wb-qf-name" id="walletQfName" style="display:none"></span>
-    <span class="wb-address" id="walletAddress" style="display:none;cursor:pointer" onclick="qfWallet.showMenu(this)"></span>
-    <button class="wb-connect" id="connectBtn" onclick="qfWallet.connect()">Connect Wallet</button>
-  </div>
-</div>
+<div id="qf-nav"></div>
 <script src="games/qf-wallet.js"></script>
+<script src="qf-nav.js"></script>
 
 <div class="outer">
 
@@ -442,46 +398,6 @@ var GAMES = [
 ];
 
 // ── Wallet UI (powered by qf-wallet.js) ────────────────────────────────────
-qfWallet.onConnect(function(w) {
-  if (!w.address) return;
-  document.getElementById('connectBtn').style.display = 'none';
-
-  // Always show the truncated address (clickable for menu)
-  var addrEl = document.getElementById('walletAddress');
-  addrEl.style.display = '';
-  addrEl.textContent = w.address.slice(0, 6) + '...' + w.address.slice(-4);
-
-  document.getElementById('walletBalance').style.display = '';
-  document.getElementById('walletBalance').textContent = parseFloat(ethers.formatEther(w.balance)).toFixed(2) + ' QF';
-
-  var netEl = document.getElementById('networkStatus');
-  netEl.style.display = 'flex';
-  if (w.chainId === 3426) {
-    netEl.className = 'wb-network';
-    document.getElementById('networkName').textContent = 'QF Network';
-  } else {
-    netEl.className = 'wb-network wrong';
-    document.getElementById('networkName').textContent = 'Wrong Network';
-  }
-
-  // Show .qf name alongside address if resolved
-  var nameEl = document.getElementById('walletQfName');
-  if (w.qfName) {
-    nameEl.textContent = w.qfName;
-    nameEl.style.display = '';
-  } else {
-    nameEl.style.display = 'none';
-  }
-});
-
-qfWallet.onDisconnect(function() {
-  document.getElementById('connectBtn').style.display = '';
-  document.getElementById('walletAddress').style.display = 'none';
-  document.getElementById('walletQfName').style.display = 'none';
-  document.getElementById('walletBalance').style.display = 'none';
-  document.getElementById('networkStatus').style.display = 'none';
-});
-
 // ── Accept code (duel or promo) ───────────────────────────────────────────
 async function acceptCode() {
   var raw = document.getElementById('duelCodeInput').value.trim();

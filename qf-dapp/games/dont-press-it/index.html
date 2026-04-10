@@ -31,10 +31,6 @@
 *,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
 body{background:var(--ink);color:var(--body);font-family:'Inter',sans-serif;min-height:100vh;display:flex;flex-direction:column;align-items:center;overflow-x:hidden}
 body::before{content:'';position:fixed;inset:0;background-image:linear-gradient(rgba(201,168,76,0.03) 1px,transparent 1px),linear-gradient(90deg,rgba(201,168,76,0.03) 1px,transparent 1px);background-size:40px 40px;pointer-events:none;z-index:0}
-nav{position:sticky;top:0;z-index:100;width:100%;display:flex;align-items:center;justify-content:space-between;padding:0 2rem;height:52px;background:rgba(7,13,26,0.92);backdrop-filter:blur(12px);border-bottom:1px solid var(--border-dim)}
-.nav-logo{font-family:'Playfair Display',sans-serif;font-size:1.2rem;letter-spacing:0.15em;color:var(--gold);text-decoration:none}
-.nav-back{font-family:'JetBrains Mono',monospace;font-size:0.6rem;letter-spacing:0.12em;color:var(--muted);text-decoration:none;transition:color 0.2s}
-.nav-back:hover{color:var(--gold)}
 .page{position:relative;z-index:1;width:100%;max-width:440px;padding:2rem 1rem 4rem;display:flex;flex-direction:column;align-items:center;gap:1.4rem}
 .game-header{text-align:center}
 .game-kicker{font-family:'JetBrains Mono',monospace;font-size:0.6rem;letter-spacing:0.2em;text-transform:uppercase;color:var(--teal);margin-bottom:0.4rem}
@@ -146,13 +142,9 @@ nav{position:sticky;top:0;z-index:100;width:100%;display:flex;align-items:center
 <script src="https://cdn.jsdelivr.net/npm/ethers@6/dist/ethers.umd.min.js"></script>
 </head>
 <body>
-<script src="../qf-wallet.js"></script>
-
-<nav>
-  <a class="nav-logo" href="/qf-dapp/">QF Games</a>
-  <span style="font-family:'JetBrains Mono',monospace;font-size:0.48rem;letter-spacing:0.1em;text-transform:uppercase;padding:0.2rem 0.6rem;border:1px solid #134e4a;border-radius:2px;color:#2dd4bf">Hosted on QF Network</span>
-  <a class="nav-back" href="../../">← Back</a>
-</nav>
+<div id="qf-nav"></div>
+<script src="/qf-dapp/games/qf-wallet.js"></script>
+<script src="/qf-dapp/qf-nav.js"></script>
 <div class="page">
   <div class="game-header">
     <p class="game-kicker">Silly · Self-Control</p>

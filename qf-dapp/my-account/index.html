@@ -1,0 +1,599 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<script async src="https://www.googletagmanager.com/gtag/js?id=G-7GTLYCZMXN"></script>
+<script>
+  window.dataLayer = window.dataLayer || [];
+  function gtag(){dataLayer.push(arguments);}
+  gtag('js', new Date());
+  gtag('config', 'G-7GTLYCZMXN', { send_page_view: true, storage: 'none', anonymize_ip: true });
+</script>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="description" content="Your QF Games account — leagues, high scores, achievements, and trophy NFTs.">
+<meta property="og:title" content="My Account — QF Games">
+<meta property="og:description" content="Your QF Games account — leagues, high scores, achievements, and trophy NFTs.">
+<meta property="og:url" content="https://mathswins.co.uk/qf-dapp/my-account/">
+<link rel="canonical" href="https://mathswins.co.uk/qf-dapp/my-account/">
+<title>My Account &middot; QF Games</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=DM+Mono:wght@400;500&family=Bebas+Neue&family=Inter:wght@400;500;700&family=JetBrains+Mono:wght@400;500&family=Playfair+Display:wght@700&display=swap" rel="stylesheet">
+<script src="https://cdn.jsdelivr.net/npm/ethers@6/dist/ethers.umd.min.js"></script>
+<style>
+:root {
+  --bg:            #0e1013;
+  --surface:       #16181c;
+  --surface2:      #1e2025;
+  --surface3:      #26282e;
+  --silver:        #b8bcc6;
+  --silver-bright: #d4d8e2;
+  --silver-dim:    rgba(184,188,198,0.08);
+  --silver-glow:   rgba(184,188,198,0.12);
+  --silver-border: rgba(184,188,198,0.15);
+  --text-white:    #e8eaf0;
+  --text:          #8a8f9c;
+  --muted:         #4a4e5a;
+  --border:        #1e2228;
+  --border2:       #2a2e36;
+  --gold:          #c9a84c;
+  --green:         #3a8a5c;
+  --red:           #b03a3a;
+  --blue:          #3a6a9c;
+}
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+body{background:var(--bg);color:var(--text);font-family:'Inter',sans-serif;min-height:100vh;display:flex;flex-direction:column;align-items:center;-webkit-font-smoothing:antialiased}
+
+/* ── Page ── */
+.page{width:100%;max-width:800px;padding:2rem 1rem 4rem;display:flex;flex-direction:column;gap:1.5rem}
+
+/* ── Header ── */
+.acct-header{text-align:center}
+.acct-header h1{font-family:'Bebas Neue',sans-serif;font-size:2.4rem;color:var(--text-white);letter-spacing:.06em}
+.acct-wallet{font-family:'DM Mono',monospace;font-size:.72rem;color:var(--muted);margin-top:.3rem}
+.acct-qfname{font-family:'DM Mono',monospace;font-size:.8rem;color:var(--silver-bright);margin-top:.2rem}
+
+/* ── Tab bar ── */
+.tab-bar{width:100%;overflow-x:auto;-webkit-overflow-scrolling:touch;scrollbar-width:none}
+.tab-bar::-webkit-scrollbar{display:none}
+.tab-pills{display:flex;gap:.4rem;padding:.2rem 0;white-space:nowrap}
+.tab-pill{font-family:'DM Mono',monospace;font-size:.65rem;padding:.45rem .9rem;border-radius:20px;border:1px solid var(--border);background:transparent;color:var(--muted);cursor:pointer;transition:all .15s;flex-shrink:0}
+.tab-pill:hover{border-color:var(--silver-border);color:var(--text)}
+.tab-pill.active{background:var(--silver-dim);border-color:var(--silver-border);color:var(--silver-bright)}
+
+/* ── Tab content ── */
+.tab-content{display:none}
+.tab-content.active{display:block}
+
+/* ── Loading / empty ── */
+.loading{text-align:center;padding:3rem 0;font-size:.75rem;color:var(--muted)}
+.empty{text-align:center;padding:3rem 1rem;font-size:.75rem;color:var(--muted);line-height:1.6}
+
+/* ── Tables ── */
+.score-section{margin-bottom:1.5rem}
+.score-section h3{font-family:'Bebas Neue',sans-serif;font-size:1.1rem;color:var(--silver-bright);letter-spacing:.04em;margin-bottom:.5rem}
+.score-table{width:100%;border-collapse:collapse}
+.score-table th{font-family:'DM Mono',monospace;font-size:.55rem;text-transform:uppercase;letter-spacing:.08em;color:var(--muted);text-align:left;padding:.4rem .6rem;border-bottom:1px solid var(--border)}
+.score-table td{font-family:'DM Mono',monospace;font-size:.68rem;color:var(--text);padding:.5rem .6rem;border-bottom:1px solid var(--border)}
+.score-table tr:last-child td{border-bottom:none}
+
+/* ── League cards ── */
+.league-group{margin-bottom:1.5rem}
+.league-group h3{font-family:'Bebas Neue',sans-serif;font-size:1rem;color:var(--silver-bright);letter-spacing:.04em;margin-bottom:.5rem}
+.league-card{background:var(--surface);border:1px solid var(--border);border-radius:8px;padding:.8rem 1rem;margin-bottom:.5rem;display:flex;align-items:center;justify-content:space-between;gap:.8rem;flex-wrap:wrap}
+.lc-left{display:flex;flex-direction:column;gap:.2rem}
+.lc-game{font-family:'DM Mono',monospace;font-size:.72rem;color:var(--silver-bright)}
+.lc-tier{font-family:'DM Mono',monospace;font-size:.55rem;color:var(--muted);text-transform:uppercase;letter-spacing:.06em}
+.lc-right{display:flex;align-items:center;gap:.8rem;flex-shrink:0}
+.lc-stat{text-align:center}
+.lc-stat-val{font-family:'DM Mono',monospace;font-size:.8rem;color:var(--text-white)}
+.lc-stat-label{font-family:'DM Mono',monospace;font-size:.45rem;color:var(--muted);text-transform:uppercase;letter-spacing:.06em}
+.lc-badge{font-family:'DM Mono',monospace;font-size:.55rem;padding:.2rem .5rem;border-radius:4px}
+.lc-badge.gold{background:rgba(201,168,76,.15);color:var(--gold);border:1px solid rgba(201,168,76,.3)}
+.lc-badge.silver{background:var(--silver-dim);color:var(--silver);border:1px solid var(--silver-border)}
+.lc-badge.bronze{background:rgba(205,127,50,.12);color:#cd7f32;border:1px solid rgba(205,127,50,.25)}
+
+/* ── Achievement cards ── */
+.ach-list{display:flex;flex-direction:column;gap:.5rem}
+.ach-card{background:var(--surface);border:1px solid var(--border);border-radius:8px;padding:.8rem 1rem;display:flex;align-items:center;justify-content:space-between;gap:.6rem}
+.ach-left{display:flex;flex-direction:column;gap:.15rem}
+.ach-name{font-family:'DM Mono',monospace;font-size:.75rem;color:var(--silver-bright)}
+.ach-date{font-family:'DM Mono',monospace;font-size:.5rem;color:var(--muted)}
+.ach-right{flex-shrink:0}
+.ach-minted{font-family:'DM Mono',monospace;font-size:.55rem;color:var(--green)}
+.ach-tx{font-family:'DM Mono',monospace;font-size:.5rem;color:var(--muted);margin-top:.15rem}
+.ach-mint-btn{font-family:'DM Mono',monospace;font-size:.6rem;padding:.3rem .7rem;border-radius:5px;border:1px solid var(--gold);background:rgba(201,168,76,.1);color:var(--gold);cursor:pointer;transition:all .15s}
+.ach-mint-btn:hover{background:rgba(201,168,76,.2)}
+.ach-mint-btn:disabled{opacity:.4;cursor:default}
+.free-mints-banner{background:var(--surface);border:1px solid var(--gold);border-radius:8px;padding:.6rem 1rem;margin-bottom:.8rem;font-family:'DM Mono',monospace;font-size:.65rem;color:var(--gold);text-align:center}
+.ach-browse{display:block;text-align:center;margin-top:1rem;font-family:'DM Mono',monospace;font-size:.65rem;color:var(--silver);text-decoration:none;transition:color .15s}
+.ach-browse:hover{color:var(--silver-bright)}
+.coming-soon{text-align:center;padding:3rem 1rem;font-size:.8rem;color:var(--muted)}
+
+/* ── Trophy cards ── */
+.trophy-grid{display:grid;grid-template-columns:repeat(2,1fr);gap:.6rem}
+.trophy-card{background:var(--surface);border:1px solid var(--border);border-radius:8px;padding:1rem;display:flex;flex-direction:column;gap:.3rem}
+.trophy-game{font-family:'DM Mono',monospace;font-size:.72rem;color:var(--silver-bright)}
+.trophy-tier{font-family:'DM Mono',monospace;font-size:.55rem;text-transform:uppercase;letter-spacing:.06em}
+.trophy-tier.bronze{color:#cd7f32}
+.trophy-tier.silver{color:var(--silver)}
+.trophy-detail{font-family:'DM Mono',monospace;font-size:.5rem;color:var(--muted)}
+
+/* ── Footer ── */
+footer{text-align:center;padding:2rem 0;font-size:.6rem;color:var(--muted);border-top:1px solid var(--border);width:100%}
+footer a{color:var(--muted);text-decoration:none;transition:color .15s}
+footer a:hover{color:var(--silver-bright)}
+
+/* ── Cookie consent ── */
+.cookie-banner{position:fixed;bottom:0;left:0;right:0;background:var(--surface);border-top:1px solid var(--border);padding:1rem;z-index:300;display:flex;align-items:center;justify-content:center;gap:1rem;flex-wrap:wrap;font-size:.65rem;color:var(--muted)}
+.cookie-banner.hidden{display:none}
+.cookie-banner button{font-family:'DM Mono',monospace;font-size:.6rem;padding:.4rem .8rem;border-radius:5px;cursor:pointer;border:none;transition:all .15s}
+.cookie-accept{background:var(--silver-bright);color:var(--bg)}
+.cookie-decline{background:transparent;border:1px solid var(--border);color:var(--muted)}
+
+/* ── Responsive ── */
+@media(max-width:600px){
+  .trophy-grid{grid-template-columns:1fr}
+  .acct-header h1{font-size:1.8rem}
+  .league-card{flex-direction:column;align-items:flex-start}
+  .lc-right{width:100%;justify-content:flex-start}
+}
+</style>
+</head>
+<body>
+<script src="/qf-dapp/games/qf-wallet.js"></script>
+<div id="qf-nav"></div>
+<script src="/qf-dapp/qf-nav.js"></script>
+
+<div class="page">
+
+  <!-- HEADER -->
+  <div class="acct-header">
+    <h1>My Account</h1>
+    <div class="acct-qfname" id="acctQfName" style="display:none"></div>
+    <div class="acct-wallet" id="acctWallet"></div>
+  </div>
+
+  <!-- TAB BAR -->
+  <div class="tab-bar">
+    <div class="tab-pills" id="tabPills">
+      <button class="tab-pill active" data-tab="leagues">My Leagues</button>
+      <button class="tab-pill" data-tab="scores">High Scores</button>
+      <button class="tab-pill" data-tab="achievements">Achievements</button>
+      <button class="tab-pill" data-tab="trophies">Trophies</button>
+    </div>
+  </div>
+
+  <!-- TAB: MY LEAGUES -->
+  <div class="tab-content active" id="tab-leagues">
+    <div class="loading" id="leaguesLoading">Loading leagues...</div>
+    <div id="leaguesContent" style="display:none"></div>
+  </div>
+
+  <!-- TAB: HIGH SCORES -->
+  <div class="tab-content" id="tab-scores">
+    <div class="loading" id="scoresLoading">Loading scores...</div>
+    <div id="scoresContent" style="display:none"></div>
+  </div>
+
+  <!-- TAB: ACHIEVEMENTS -->
+  <div class="tab-content" id="tab-achievements">
+    <div class="loading" id="achievementsLoading">Loading achievements...</div>
+    <div id="achievementsContent" style="display:none"></div>
+  </div>
+
+  <!-- TAB: TROPHIES -->
+  <div class="tab-content" id="tab-trophies">
+    <div class="loading" id="trophiesLoading">Loading trophies...</div>
+    <div id="trophiesContent" style="display:none"></div>
+  </div>
+
+</div>
+
+<footer>
+  <p><a href="/">MathsWins</a> &middot; <a href="/qf-dapp/">QF Games</a> &middot; <a href="/games/">Free Games</a> &middot; <a href="/academy/">Academy</a> &middot; Powered by <a href="https://qfnetwork.org" target="_blank">QF Network</a></p>
+</footer>
+
+<!-- COOKIE CONSENT -->
+<div class="cookie-banner" id="cookie-banner">
+  <span>This site uses cookies for analytics.</span>
+  <button class="cookie-accept" onclick="acceptCookies()">Accept</button>
+  <button class="cookie-decline" onclick="declineCookies()">Decline</button>
+</div>
+
+<script>
+// ── Cookie consent ────────────────────────────────────────────────────
+(function(){
+  var c = localStorage.getItem('mw_cookies');
+  if (c) {
+    document.getElementById('cookie-banner').classList.add('hidden');
+    if (c === 'accepted') gtag('consent', 'update', { analytics_storage: 'granted' });
+  }
+})();
+function acceptCookies(){
+  localStorage.setItem('mw_cookies', 'accepted');
+  document.getElementById('cookie-banner').classList.add('hidden');
+  gtag('consent', 'update', { analytics_storage: 'granted' });
+}
+function declineCookies(){
+  localStorage.setItem('mw_cookies', 'declined');
+  document.getElementById('cookie-banner').classList.add('hidden');
+}
+
+// ── Config ────────────────────────────────────────────────────────────
+var API = 'https://dapp-api.mathswins.co.uk/api/dapp';
+if (location.hostname === 'localhost' || location.hostname === '127.0.0.1') {
+  API = 'http://127.0.0.1:3860/api/dapp';
+}
+
+// Time-primary games: lower is better, display as MM:SS
+var TIME_PRIMARY = ['minesweeper','freecell','kenken','nonogram','kakuro','sudoku-duel'];
+
+// Game display names
+var GAME_NAMES = {
+  'sudoku-duel': 'Sudoku Duel', 'minesweeper': 'Minesweeper', 'freecell': 'FreeCell',
+  'kenken': 'KenKen', 'nonogram': 'Nonogram', 'kakuro': 'Kakuro',
+  'estimation-engine': 'Estimation Engine', 'countdown-numbers': 'Countdown Numbers',
+  'cryptarithmetic-club': 'Cryptarithmetic Club', 'sequence-solver': 'Sequence Solver',
+  'prime-or-composite': 'Prime or Composite', 'higher-or-lower': 'Higher or Lower',
+  'battleships': 'Battleships', 'towers-of-hanoi': 'Towers of Hanoi',
+  'dont-press-it': "Don't Press It", 'memory-matrix': 'Memory Matrix',
+  'rps-vs-machine': 'RPS vs Machine', 'maffsy': 'Maffsy', '52dle': '52dle',
+  'poker-patience': 'Poker Patience', 'cribbage-solitaire': 'Cribbage Solitaire',
+  'golf-solitaire': 'Golf Solitaire', 'pyramid': 'Pyramid'
+};
+
+// ── Auth gate ─────────────────────────────────────────────────────────
+var WALLET = null;
+var JWT = null;
+var PROFILE = null;
+
+function checkAuth() {
+  JWT = localStorage.getItem('qf_auth_token');
+  if (!JWT) { location.href = '/qf-dapp/'; return false; }
+  try {
+    var parts = JWT.split('.');
+    var payload = JSON.parse(atob(parts[1]));
+    if (payload.exp * 1000 < Date.now()) { localStorage.removeItem('qf_auth_token'); location.href = '/qf-dapp/'; return false; }
+    WALLET = payload.wallet;
+  } catch (e) { location.href = '/qf-dapp/'; return false; }
+  return true;
+}
+
+if (!checkAuth()) throw new Error('redirect');
+
+// Show wallet in header
+document.getElementById('acctWallet').textContent = WALLET.slice(0, 6) + '...' + WALLET.slice(-4);
+
+// ── Tab switching ─────────────────────────────────────────────────────
+var pills = document.querySelectorAll('.tab-pill');
+pills.forEach(function(pill) {
+  pill.addEventListener('click', function() {
+    pills.forEach(function(p) { p.classList.remove('active'); });
+    pill.classList.add('active');
+    document.querySelectorAll('.tab-content').forEach(function(t) { t.classList.remove('active'); });
+    document.getElementById('tab-' + pill.getAttribute('data-tab')).classList.add('active');
+  });
+});
+
+// ── Helpers ───────────────────────────────────────────────────────────
+function gameName(id) { return GAME_NAMES[id] || id; }
+
+function formatScore(gameId, score) {
+  if (TIME_PRIMARY.indexOf(gameId) !== -1) {
+    var s = Math.round(score / 1000);
+    var m = Math.floor(s / 60);
+    var sec = s % 60;
+    return (m < 10 ? '0' : '') + m + ':' + (sec < 10 ? '0' : '') + sec;
+  }
+  return String(Math.round(score));
+}
+
+function formatDate(ts) {
+  if (!ts) return '';
+  var d = new Date(typeof ts === 'number' ? ts : parseInt(ts));
+  return d.toLocaleDateString('en-GB', { day: 'numeric', month: 'short', year: 'numeric' });
+}
+
+function truncTx(tx) {
+  if (!tx || tx === 'pending-contract-deploy') return '';
+  return tx.slice(0, 8) + '...' + tx.slice(-6);
+}
+
+function positionBadge(pos) {
+  if (pos === 1) return '<span class="lc-badge gold">1st</span>';
+  if (pos === 2) return '<span class="lc-badge silver">2nd</span>';
+  if (pos === 3) return '<span class="lc-badge bronze">3rd</span>';
+  if (pos) return '<span class="lc-badge" style="border:1px solid var(--border);color:var(--muted)">' + pos + 'th</span>';
+  return '';
+}
+
+// ── Fetch profile data ────────────────────────────────────────────────
+async function loadProfile() {
+  try {
+    var res = await fetch(API + '/profile/' + WALLET);
+    if (!res.ok) throw new Error('Profile fetch failed');
+    PROFILE = await res.json();
+  } catch (e) {
+    PROFILE = { personal_bests: [], league_bests: [], achievements: [], wallet_stats: {}, league_history: [], trophies: [] };
+  }
+
+  // QNS name
+  if (typeof qfWallet !== 'undefined') {
+    qfWallet.resolveAny(WALLET).then(function(name) {
+      if (name) {
+        document.getElementById('acctQfName').textContent = name;
+        document.getElementById('acctQfName').style.display = '';
+      }
+    });
+  }
+
+  renderScores();
+  renderAchievements();
+  renderTrophies();
+}
+
+// ── Fetch leagues ─────────────────────────────────────────────────────
+async function loadLeagues() {
+  var container = document.getElementById('leaguesContent');
+  var loading = document.getElementById('leaguesLoading');
+  try {
+    var res = await fetch(API + '/leagues/my', {
+      headers: { 'Authorization': 'Bearer ' + JWT }
+    });
+    if (!res.ok) throw new Error('Leagues fetch failed');
+    var data = await res.json();
+    var html = '';
+
+    // Active leagues
+    if (data.active && data.active.length > 0) {
+      html += '<div class="league-group"><h3>Active</h3>';
+      data.active.forEach(function(l) {
+        html += '<div class="league-card"><div class="lc-left">' +
+          '<div class="lc-game">' + gameName(l.game_id) + '</div>' +
+          '<div class="lc-tier">' + (l.tier || 'bronze') + ' league</div>' +
+          '</div><div class="lc-right">' +
+          '<div class="lc-stat"><div class="lc-stat-val">' + (l.puzzles_completed || 0) + '/' + (l.puzzles_total || 10) + '</div><div class="lc-stat-label">Puzzles</div></div>' +
+          '<div class="lc-stat"><div class="lc-stat-val">' + (l.cumulative_score || 0) + '</div><div class="lc-stat-label">Score</div></div>' +
+          '<div class="lc-stat"><div class="lc-stat-val">' + (l.player_count || 0) + '</div><div class="lc-stat-label">Players</div></div>' +
+          '</div></div>';
+      });
+      html += '</div>';
+    }
+
+    // Upcoming (registration)
+    if (data.upcoming && data.upcoming.length > 0) {
+      html += '<div class="league-group"><h3>Upcoming</h3>';
+      data.upcoming.forEach(function(l) {
+        html += '<div class="league-card"><div class="lc-left">' +
+          '<div class="lc-game">' + gameName(l.game_id) + '</div>' +
+          '<div class="lc-tier">' + (l.tier || 'bronze') + ' league &middot; registration open</div>' +
+          '</div><div class="lc-right">' +
+          '<div class="lc-stat"><div class="lc-stat-val">' + (l.player_count || 0) + '</div><div class="lc-stat-label">Players</div></div>' +
+          '</div></div>';
+      });
+      html += '</div>';
+    }
+
+    // Completed
+    if (data.completed && data.completed.length > 0) {
+      html += '<div class="league-group"><h3>Completed</h3>';
+      data.completed.forEach(function(l) {
+        // Find position from league_history in profile
+        var pos = null;
+        var prize = null;
+        if (PROFILE && PROFILE.league_history) {
+          var match = PROFILE.league_history.find(function(h) { return h.league_id === l.id; });
+          if (match) { pos = match.position; prize = match.prize_amount; }
+        }
+        html += '<div class="league-card"><div class="lc-left">' +
+          '<div class="lc-game">' + gameName(l.game_id) + '</div>' +
+          '<div class="lc-tier">' + (l.tier || 'bronze') + ' league</div>' +
+          '</div><div class="lc-right">' +
+          (pos ? positionBadge(pos) : '') +
+          (prize ? '<div class="lc-stat"><div class="lc-stat-val">' + parseFloat(ethers.formatEther(String(prize))).toFixed(1) + '</div><div class="lc-stat-label">QF Won</div></div>' : '') +
+          '<div class="lc-stat"><div class="lc-stat-val">' + (l.player_count || 0) + '</div><div class="lc-stat-label">Players</div></div>' +
+          '</div></div>';
+      });
+      html += '</div>';
+    }
+
+    if (!html) html = '<div class="empty">No leagues yet. Join a league from any competitive game page to get started.</div>';
+
+    container.innerHTML = html;
+    container.style.display = '';
+    loading.style.display = 'none';
+  } catch (e) {
+    loading.textContent = 'Failed to load leagues.';
+  }
+}
+
+// ── Render high scores ────────────────────────────────────────────────
+function renderScores() {
+  var container = document.getElementById('scoresContent');
+  var loading = document.getElementById('scoresLoading');
+  var html = '';
+
+  // Personal bests
+  var pb = PROFILE.personal_bests || [];
+  if (pb.length > 0) {
+    // Group by game
+    var games = {};
+    pb.forEach(function(r) {
+      if (!games[r.game_id]) games[r.game_id] = [];
+      games[r.game_id].push(r);
+    });
+    html += '<div class="score-section"><h3>Personal Bests</h3>';
+    Object.keys(games).forEach(function(gid) {
+      var isTime = TIME_PRIMARY.indexOf(gid) !== -1;
+      html += '<table class="score-table"><thead><tr><th>' + gameName(gid) + '</th><th>' + (isTime ? 'Time' : 'Score') + '</th><th>Set</th></tr></thead><tbody>';
+      games[gid].forEach(function(r) {
+        var label = r.difficulty || 'standard';
+        var val = isTime ? formatScore(gid, r.best_time || r.best_score) : formatScore(gid, r.best_score);
+        html += '<tr><td>' + label + '</td><td>' + val + '</td><td>' + formatDate(r.achieved_at) + '</td></tr>';
+      });
+      html += '</tbody></table>';
+    });
+    html += '</div>';
+  }
+
+  // League bests
+  var lb = PROFILE.league_bests || [];
+  if (lb.length > 0) {
+    var lGames = {};
+    lb.forEach(function(r) {
+      if (!lGames[r.game_id]) lGames[r.game_id] = [];
+      lGames[r.game_id].push(r);
+    });
+    html += '<div class="score-section"><h3>League Bests</h3>';
+    Object.keys(lGames).forEach(function(gid) {
+      html += '<table class="score-table"><thead><tr><th>' + gameName(gid) + '</th><th>Total Score</th><th>Set</th></tr></thead><tbody>';
+      lGames[gid].forEach(function(r) {
+        html += '<tr><td>' + (r.tier || 'bronze') + '</td><td>' + r.best_total_score + '</td><td>' + formatDate(r.achieved_at) + '</td></tr>';
+      });
+      html += '</tbody></table>';
+    });
+    html += '</div>';
+  }
+
+  if (!html) html = '<div class="empty">No scores recorded yet. Play a game to get started.</div>';
+
+  container.innerHTML = html;
+  container.style.display = '';
+  loading.style.display = 'none';
+}
+
+// ── Render achievements ───────────────────────────────────────────────
+async function renderAchievements() {
+  var container = document.getElementById('achievementsContent');
+  var loading = document.getElementById('achievementsLoading');
+
+  // Check if achievements system is active
+  var achActive = false;
+  try {
+    var statusRes = await fetch(API + '/achievements/status');
+    var statusData = await statusRes.json();
+    achActive = statusData.active;
+  } catch (e) { /* default false */ }
+
+  if (!achActive) {
+    container.innerHTML = '<div class="coming-soon">Achievements are coming soon.</div>' +
+      '<a href="/qf-dapp/achievements/" class="ach-browse">Browse all achievements &rarr;</a>';
+    container.style.display = '';
+    loading.style.display = 'none';
+    return;
+  }
+
+  var achs = PROFILE.achievements || [];
+  var stats = PROFILE.wallet_stats || {};
+  var html = '';
+
+  // Free mints banner
+  var freeMints = stats.free_mints_banked || 0;
+  if (freeMints > 0) {
+    html += '<div class="free-mints-banner">You have ' + freeMints + ' free mint' + (freeMints > 1 ? 's' : '') + ' banked</div>';
+  }
+
+  if (achs.length > 0) {
+    // Sort by earned_at descending
+    achs.sort(function(a, b) { return (b.earned_at || 0) - (a.earned_at || 0); });
+    html += '<div class="ach-list">';
+    achs.forEach(function(a) {
+      var isMinted = !!a.minted_at;
+      html += '<div class="ach-card"><div class="ach-left">' +
+        '<div class="ach-name">' + (a.achievement_id || a.name || 'Achievement') + '</div>' +
+        '<div class="ach-date">Earned ' + formatDate(a.earned_at) + '</div>' +
+        '</div><div class="ach-right">';
+      if (isMinted) {
+        html += '<div class="ach-minted">Minted</div>';
+        if (a.tx_hash && a.tx_hash !== 'pending-contract-deploy') {
+          html += '<div class="ach-tx">' + truncTx(a.tx_hash) + '</div>';
+        }
+      } else {
+        html += '<button class="ach-mint-btn" onclick="mintAchievement(\'' + a.achievement_id + '\')">Mint</button>';
+      }
+      html += '</div></div>';
+    });
+    html += '</div>';
+  } else {
+    html += '<div class="empty">No achievements yet. Start playing to earn your first.</div>';
+  }
+
+  html += '<a href="/qf-dapp/achievements/" class="ach-browse">Browse all achievements &rarr;</a>';
+
+  container.innerHTML = html;
+  container.style.display = '';
+  loading.style.display = 'none';
+}
+
+// ── Mint achievement ──────────────────────────────────────────────────
+async function mintAchievement(achievementId) {
+  var btn = event.target;
+  btn.disabled = true;
+  btn.textContent = 'Minting...';
+  try {
+    var res = await fetch(API + '/achievement/mint', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json', 'Authorization': 'Bearer ' + JWT },
+      body: JSON.stringify({ achievement_id: achievementId })
+    });
+    var data = await res.json();
+    if (data.minted) {
+      btn.textContent = 'Minted';
+      btn.style.borderColor = 'var(--green)';
+      btn.style.color = 'var(--green)';
+    } else if (data.status === 'coming_soon') {
+      btn.textContent = 'Coming Soon';
+    } else {
+      btn.textContent = data.error || 'Failed';
+      btn.disabled = false;
+    }
+  } catch (e) {
+    btn.textContent = 'Error';
+    btn.disabled = false;
+  }
+}
+
+// ── Render trophies ───────────────────────────────────────────────────
+function renderTrophies() {
+  var container = document.getElementById('trophiesContent');
+  var loading = document.getElementById('trophiesLoading');
+  var trophies = PROFILE.trophies || [];
+
+  if (trophies.length === 0) {
+    container.innerHTML = '<div class="empty">No trophies yet. Finish in the top positions of a league to earn one.</div>';
+    container.style.display = '';
+    loading.style.display = 'none';
+    return;
+  }
+
+  var html = '<div class="trophy-grid">';
+  trophies.forEach(function(t) {
+    // Look up league info from league_history
+    var leagueInfo = null;
+    if (PROFILE.league_history) {
+      leagueInfo = PROFILE.league_history.find(function(l) { return l.league_id === t.league_id; });
+    }
+    var gName = leagueInfo ? gameName(leagueInfo.game_id) : 'League ' + (t.league_id || '').slice(0, 8);
+    var tier = leagueInfo ? (leagueInfo.tier || 'bronze') : '';
+    var tierClass = tier.toLowerCase();
+
+    html += '<div class="trophy-card">' +
+      '<div class="trophy-game">' + gName + '</div>' +
+      (tier ? '<div class="trophy-tier ' + tierClass + '">' + tier + ' trophy</div>' : '') +
+      '<div class="trophy-detail">' + formatDate(t.minted_at) + '</div>' +
+      (t.tx_hash ? '<div class="trophy-detail">' + truncTx(t.tx_hash) + '</div>' : '') +
+      '</div>';
+  });
+  html += '</div>';
+
+  container.innerHTML = html;
+  container.style.display = '';
+  loading.style.display = 'none';
+}
+
+// ── Init ──────────────────────────────────────────────────────────────
+loadProfile();
+loadLeagues();
+</script>
+</body>
+</html>
