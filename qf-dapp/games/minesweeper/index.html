@@ -868,7 +868,6 @@ var G = (function() {
     // Duel score submission
     if (duelMode && duelCode) {
       try { duelApi('/duel/' + duelCode + '/submit', { score: points || 0, timeMs: finalTimeMs, mistakes: 0, hints: 0 }); } catch (e) { /* ignore */ }
-      showDuelShare();
     }
 
     showModal(true, points, finalTimeMs);
@@ -924,7 +923,6 @@ var G = (function() {
     // Duel score submission on loss
     if (duelMode && duelCode) {
       try { duelApi('/duel/' + duelCode + '/submit', { score: partialScore || 0, timeMs: finalTimeMs, mistakes: 1, hints: 0 }); } catch (e) { /* ignore */ }
-      showDuelShare();
     }
 
     var safeCellsRemaining = (boardWidth * boardHeight - mineCount) - revealedCount;
@@ -963,8 +961,16 @@ var G = (function() {
 
     if (duelMode && duelCode) {
       acts.innerHTML =
-        '<button class="btn btn-ghost" onclick="location.reload()">Play Again</button>' +
-        '<button class="btn btn-silver" onclick="window.location=\'/qf-dapp/\'">Back to Lobby</button>';
+        '<div style="text-align:center;width:100%">' +
+          '<div style="font-family:\'JetBrains Mono\',monospace;font-size:.55rem;color:var(--muted);text-transform:uppercase;letter-spacing:.1em;margin-bottom:.4rem">Share Code</div>' +
+          '<div style="font-family:\'JetBrains Mono\',monospace;font-size:2rem;letter-spacing:.25em;color:var(--silver-bright);background:var(--surface,#16181c);border:2px solid var(--silver-border,rgba(184,188,198,0.15));border-radius:10px;padding:.6rem 1.2rem;display:inline-block;margin-bottom:.6rem;user-select:all">' + duelCode + '</div>' +
+          '<div style="display:flex;gap:.4rem;justify-content:center;margin-bottom:.5rem">' +
+            '<button class="btn btn-silver" onclick="copyDuelCode()" style="padding:.4rem 1rem;font-size:.6rem">Copy Code</button>' +
+            '<button class="btn btn-ghost" onclick="shareDuelLink()" style="padding:.4rem 1rem;font-size:.6rem">Share Link</button>' +
+          '</div>' +
+          '<div id="modal-duel-status" style="font-family:\'JetBrains Mono\',monospace;font-size:.55rem;color:var(--muted);margin-bottom:.3rem">Waiting for opponent\u2026</div>' +
+          '<div style="font-family:\'JetBrains Mono\',monospace;font-size:.5rem;color:var(--muted)">Opponent has 24 hours. Full refund if nobody accepts.</div>' +
+        '</div>';
     }
   }
 

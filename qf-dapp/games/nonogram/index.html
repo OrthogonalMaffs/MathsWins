@@ -817,7 +817,6 @@ var G = (function() {
       try {
         duelApi('/duel/' + window.duelCode + '/submit', { score: score || 0, timeMs: getSecs() * 1000, mistakes: mistakes, hints: hintsUsed });
       } catch (e) { /* ignore */ }
-      showDuelShare();
     }
 
     document.getElementById('modal').classList.remove('hidden');
@@ -846,6 +845,21 @@ var G = (function() {
     if (leagueMode) {
       var acts = document.querySelector('.modal-acts');
       acts.innerHTML = '<button class="btn btn-silver" onclick="window.location=\'/qf-dapp/games/nonogram/league/\'">Back to League</button>';
+    }
+
+    if (window.duelMode && window.duelCode) {
+      var acts = document.querySelector('.modal-acts');
+      acts.innerHTML =
+        '<div style="text-align:center;width:100%">' +
+          '<div style="font-family:\'JetBrains Mono\',monospace;font-size:.55rem;color:var(--muted);text-transform:uppercase;letter-spacing:.1em;margin-bottom:.4rem">Share Code</div>' +
+          '<div style="font-family:\'JetBrains Mono\',monospace;font-size:2rem;letter-spacing:.25em;color:var(--silver-bright);background:var(--surface,#16181c);border:2px solid var(--silver-border,rgba(184,188,198,0.15));border-radius:10px;padding:.6rem 1.2rem;display:inline-block;margin-bottom:.6rem;user-select:all">' + window.duelCode + '</div>' +
+          '<div style="display:flex;gap:.4rem;justify-content:center;margin-bottom:.5rem">' +
+            '<button class="btn btn-silver" onclick="copyDuelCode()" style="padding:.4rem 1rem;font-size:.6rem">Copy Code</button>' +
+            '<button class="btn btn-ghost" onclick="shareDuelLink()" style="padding:.4rem 1rem;font-size:.6rem">Share Link</button>' +
+          '</div>' +
+          '<div id="modal-duel-status" style="font-family:\'JetBrains Mono\',monospace;font-size:.55rem;color:var(--muted);margin-bottom:.3rem">Waiting for opponent\u2026</div>' +
+          '<div style="font-family:\'JetBrains Mono\',monospace;font-size:.5rem;color:var(--muted)">Opponent has 24 hours. Full refund if nobody accepts.</div>' +
+        '</div>';
     }
   }
 

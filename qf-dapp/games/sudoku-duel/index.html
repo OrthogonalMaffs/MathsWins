@@ -660,15 +660,16 @@ var G = (function() {
     duelPollTimer = setInterval(async function() {
       try {
         var data = await api('/duel/' + duelCode, null, 'GET');
+        var statusEl = document.getElementById('modal-duel-status') || document.getElementById('duel-status-msg');
         if (data.status === 'completed') {
           clearInterval(duelPollTimer);
           duelData = data;
-          document.getElementById('duel-status-msg').textContent = 'Duel complete!';
+          if (statusEl) statusEl.textContent = 'Duel complete!';
           showDuelResults(data);
         } else if (data.opponent_wallet) {
           var oppName = W.displayName(data.opponent_wallet);
           W.resolveAny(data.opponent_wallet).then(function(n) {
-            document.getElementById('duel-status-msg').textContent = (n || oppName) + ' is playing...';
+            if (statusEl) statusEl.textContent = (n || oppName) + ' is playing\u2026';
           });
         }
       } catch (e) { /* ignore poll errors */ }
@@ -1220,11 +1221,23 @@ var G = (function() {
     } else if (duelMode) {
       document.getElementById('modal-result').textContent = won ? 'Score Submitted' : 'Game Over';
       document.getElementById('modal-result').className = 'modal-result ' + (won ? 'win' : 'lose');
-      document.getElementById('modal-sub').textContent = won ? 'Your score has been recorded. Waiting for opponent.' : 'Too many mistakes.';
+      document.getElementById('modal-sub').textContent = won
+        ? 'Your score has been recorded.'
+        : 'Too many mistakes.' + (score > 0 ? ' Partial credit: ' + score + ' pts.' : '');
 
-      // Show the share screen below the modal for creators
       if (duelCode) {
-        showDuelShare();
+        document.querySelector('.modal-acts').innerHTML =
+          '<div style="text-align:center;width:100%">' +
+            '<div style="font-family:\'JetBrains Mono\',monospace;font-size:.55rem;color:var(--muted);text-transform:uppercase;letter-spacing:.1em;margin-bottom:.4rem">Share Code</div>' +
+            '<div style="font-family:\'JetBrains Mono\',monospace;font-size:2rem;letter-spacing:.25em;color:var(--silver-bright);background:var(--surface);border:2px solid var(--silver-border);border-radius:10px;padding:.6rem 1.2rem;display:inline-block;margin-bottom:.6rem;user-select:all">' + duelCode + '</div>' +
+            '<div style="display:flex;gap:.4rem;justify-content:center;margin-bottom:.5rem">' +
+              '<button class="btn btn-silver" onclick="G.copyCode()" style="padding:.4rem 1rem;font-size:.6rem">Copy Code</button>' +
+              '<button class="btn btn-ghost" onclick="G.shareDuel()" style="padding:.4rem 1rem;font-size:.6rem">Share Link</button>' +
+            '</div>' +
+            '<div id="modal-duel-status" style="font-family:\'JetBrains Mono\',monospace;font-size:.55rem;color:var(--muted);margin-bottom:.3rem">Waiting for opponent\u2026</div>' +
+            '<div style="font-family:\'JetBrains Mono\',monospace;font-size:.5rem;color:var(--muted)">Opponent has 24 hours. Full refund if nobody accepts.</div>' +
+          '</div>';
+        pollDuelStatus();
       }
     } else {
       document.getElementById('modal-result').textContent = won ? 'Board Solved!' : 'Game Over';
