@@ -19,7 +19,8 @@ import {
   createSession, getSession, completeSession, expireSession,
   getSessionCount, upsertBestScore, getEntry,
   createGameState, getGameState, getActiveGameState,
-  updateGameState, completeGameState, loadActiveGameStates
+  updateGameState, completeGameState, loadActiveGameStates,
+  upsertPersonalBest
 } from './db/index.mjs';
 
 const JWT_SECRET = process.env.JWT_SECRET || 'dev-secret-change-me';
@@ -205,6 +206,7 @@ export function startFreeSession(gameId, weekId, opts) {
     contextType,
     contextId,
     puzzleIndex,
+    difficulty: difficulty || 'default',
     _persisted: false
   };
 
@@ -343,6 +345,7 @@ function rebuildSession(row) {
     hintLog,
     mistakes: row.mistakes,
     hintsUsed: row.hints_used,
+    difficulty: row.difficulty || 'default',
     _persisted: true
   };
 }
@@ -423,6 +426,9 @@ export function evaluate(sessionToken, answer) {
         upsertBestScore(session.wallet, session.gameId, session.weekId, session.score);
       }
       if (session._persisted) completeGameState(payload.sid, 'completed', session.score, result.flagged || null);
+      // Personal best — successful completion only
+      const completionTimeMs = now - session.startedAt;
+      upsertPersonalBest(session.wallet, session.gameId, session.difficulty, session.score, completionTimeMs);
       activeSessions.delete(payload.sid);
       response.totalScore = session.score;
       response.finalScore = session.score;
@@ -479,6 +485,9 @@ export function evaluate(sessionToken, answer) {
       completeSession(payload.sid, session.score);
       upsertBestScore(session.wallet, session.gameId, session.weekId, session.score);
     }
+    // Personal best — sequential mode completion
+    const completionTimeMs = now - session.startedAt;
+    upsertPersonalBest(session.wallet, session.gameId, session.difficulty, session.score, completionTimeMs);
     activeSessions.delete(payload.sid);
     response.finalScore = session.score;
     if (session.freePlay) response.freePlay = true;

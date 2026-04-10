@@ -10,7 +10,8 @@ import { fileURLToPath } from 'url';
 import { getDb } from './db/index.mjs';
 import {
   getLeagueById, getLeagueLeaderboard, getLeaguePlayerCount,
-  addLeaguePrize, getLeaguePrizes, updateLeagueStatus
+  addLeaguePrize, getLeaguePrizes, updateLeagueStatus,
+  upsertLeagueBest
 } from './db/index.mjs';
 import { sendQF, TEAM_WALLET, BURN_ADDRESS } from './escrow.mjs';
 import { checkAchievements } from './achievement-checker.mjs';
@@ -232,6 +233,15 @@ export async function doSettleLeague(leagueId) {
         });
       } catch (e) {
         console.error('Achievement check failed for ' + winner.wallet.slice(0, 8) + '...:', e.message);
+      }
+    }
+
+    // Step 4c: Upsert league bests for all players
+    for (const player of leaderboard) {
+      try {
+        upsertLeagueBest(player.wallet, league.game_id, league.tier, player.total_score, leagueId);
+      } catch (e) {
+        console.error('League best upsert failed for ' + player.wallet.slice(0, 8) + '...:', e.message);
       }
     }
 

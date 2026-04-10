@@ -12,7 +12,7 @@ import { getDb } from '../db/index.mjs';
 import { doSettleLeague, checkEarlySettlement, recoverStuckLeagues, mintCommemorative } from '../league-settle.mjs';
 import { sendQF, settleDuel } from '../escrow.mjs';
 import { createBattleshipsGame, getBattleshipsGameByCode, getBattleshipsGameById, updateBattleshipsGameStatus, saveBattleshipsPlacement, getBattleshipsPlacement, getBattleshipsPlacements, addBattleshipsRound, getBattleshipsRounds, getBattleshipsRecord, updateBattleshipsRecord, getActiveBattleshipsGames, getBattleshipsGamesByWallet } from '../db/index.mjs';
-import { getAchievementRegistry, getAchievement, awardAchievement, getWalletAchievements, getAllAchievements, getGlobalRecord } from '../db/index.mjs';
+import { getAchievementRegistry, getAchievement, awardAchievement, getWalletAchievements, getAllAchievements, getGlobalRecord, getPersonalBests, getLeagueBests, getWalletStats, getWalletLeagueHistory } from '../db/index.mjs';
 import { validateFleet, calculateRange, checkHit, checkSunk, checkWin, getGameState as getBattleshipsState, cpuPlaceFleet, cpuShootRecruit, cpuShootOfficer, cpuShootAdmiral, pickSurvivingShip, FLEET } from '../games/battleships.mjs';
 
 const router = Router();
@@ -1734,6 +1734,43 @@ router.get('/admin/achievements', requireAdmin, (req, res) => {
   } else {
     res.json({ achievements: all });
   }
+});
+
+// ── Profile endpoint ──────────────────────────────────────────────────────
+
+const profileRateLimit = new Map();
+router.get('/profile/:wallet', (req, res) => {
+  // Rate limit: 60 requests/minute per IP
+  const ip = req.ip || req.connection.remoteAddress;
+  const now = Date.now();
+  const windowStart = now - 60000;
+  const hits = profileRateLimit.get(ip) || [];
+  const recent = hits.filter(t => t > windowStart);
+  if (recent.length >= 60) {
+    return res.status(429).json({ error: 'Rate limit exceeded' });
+  }
+  recent.push(now);
+  profileRateLimit.set(ip, recent);
+
+  const wallet = req.params.wallet;
+  if (!wallet || wallet.length < 10) {
+    return res.status(400).json({ error: 'Invalid wallet address' });
+  }
+
+  const personalBests = getPersonalBests(wallet);
+  const leagueBests = getLeagueBests(wallet);
+  const achievements = getWalletAchievements(wallet);
+  const walletStats = getWalletStats(wallet) || {};
+  const leagueHistory = getWalletLeagueHistory(wallet, 20);
+
+  res.json({
+    wallet: wallet.toLowerCase(),
+    personal_bests: personalBests,
+    league_bests: leagueBests,
+    achievements,
+    wallet_stats: walletStats,
+    league_history: leagueHistory
+  });
 });
 
 export default router;

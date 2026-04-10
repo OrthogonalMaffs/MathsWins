@@ -102,6 +102,28 @@ export function getDb() {
     updated_at INTEGER
   )`);
 
+  // Personal bests (free play completions)
+  db.exec(`CREATE TABLE IF NOT EXISTS personal_bests (
+    wallet TEXT NOT NULL,
+    game_id TEXT NOT NULL,
+    difficulty TEXT NOT NULL DEFAULT 'default',
+    score INTEGER NOT NULL,
+    time_ms INTEGER,
+    achieved_at INTEGER NOT NULL,
+    PRIMARY KEY (wallet, game_id, difficulty)
+  )`);
+
+  // League bests (materialised at settlement)
+  db.exec(`CREATE TABLE IF NOT EXISTS league_bests (
+    wallet TEXT NOT NULL,
+    game_id TEXT NOT NULL,
+    tier TEXT NOT NULL,
+    best_total_score INTEGER NOT NULL,
+    league_id TEXT NOT NULL,
+    achieved_at INTEGER NOT NULL,
+    PRIMARY KEY (wallet, game_id, tier)
+  )`);
+
   // Preset messages (duels + leagues)
   db.exec(`CREATE TABLE IF NOT EXISTS game_messages (
     id INTEGER PRIMARY KEY AUTOINCREMENT,
@@ -1009,4 +1031,90 @@ export function getRecentlySettledLeagues(gameId, limit) {
   }
   return db.prepare("SELECT * FROM leagues WHERE status = 'settled' AND settled_at > ? ORDER BY settled_at DESC LIMIT ?")
     .all(cutoff, limit || 20);
+}
+
+// ── Personal bests ─────────────────────────────────────────────────────────
+
+const TIME_PRIMARY_GAMES = new Set(['minesweeper', 'freecell', 'kenken', 'nonogram', 'kakuro', 'sudoku-duel']);
+
+export function upsertPersonalBest(wallet, gameId, difficulty, score, timeMs) {
+  const db = getDb();
+  const now = Date.now();
+  const diff = difficulty || 'default';
+  const w = wallet.toLowerCase();
+
+  if (TIME_PRIMARY_GAMES.has(gameId)) {
+    // Lower time is better — only update if new time is faster
+    db.prepare(`INSERT INTO personal_bests (wallet, game_id, difficulty, score, time_ms, achieved_at)
+      VALUES (?, ?, ?, ?, ?, ?)
+      ON CONFLICT(wallet, game_id, difficulty) DO UPDATE SET
+        score = excluded.score,
+        time_ms = excluded.time_ms,
+        achieved_at = excluded.achieved_at
+      WHERE excluded.score < personal_bests.score`)
+      .run(w, gameId, diff, timeMs, timeMs, now);
+  } else {
+    // Higher score is better
+    db.prepare(`INSERT INTO personal_bests (wallet, game_id, difficulty, score, time_ms, achieved_at)
+      VALUES (?, ?, ?, ?, ?, ?)
+      ON CONFLICT(wallet, game_id, difficulty) DO UPDATE SET
+        score = excluded.score,
+        time_ms = excluded.time_ms,
+        achieved_at = excluded.achieved_at
+      WHERE excluded.score > personal_bests.score`)
+      .run(w, gameId, diff, score, timeMs, now);
+  }
+}
+
+export function getPersonalBests(wallet) {
+  const db = getDb();
+  return db.prepare('SELECT * FROM personal_bests WHERE wallet = ? ORDER BY game_id, difficulty')
+    .all(wallet.toLowerCase());
+}
+
+// ── League bests ───────────────────────────────────────────────────────────
+
+export function upsertLeagueBest(wallet, gameId, tier, totalScore, leagueId) {
+  const db = getDb();
+  const now = Date.now();
+  const w = wallet.toLowerCase();
+  db.prepare(`INSERT INTO league_bests (wallet, game_id, tier, best_total_score, league_id, achieved_at)
+    VALUES (?, ?, ?, ?, ?, ?)
+    ON CONFLICT(wallet, game_id, tier) DO UPDATE SET
+      best_total_score = excluded.best_total_score,
+      league_id = excluded.league_id,
+      achieved_at = excluded.achieved_at
+    WHERE excluded.best_total_score > league_bests.best_total_score`)
+    .run(w, gameId, tier, totalScore, leagueId, now);
+}
+
+export function getLeagueBests(wallet) {
+  const db = getDb();
+  return db.prepare('SELECT * FROM league_bests WHERE wallet = ? ORDER BY game_id, tier')
+    .all(wallet.toLowerCase());
+}
+
+// ── Profile endpoint queries ───────────────────────────────────────────────
+
+export function getWalletLeagueHistory(wallet, limit) {
+  const db = getDb();
+  const w = wallet.toLowerCase();
+  return db.prepare(`
+    SELECT
+      l.id as league_id,
+      l.game_id,
+      l.tier,
+      l.settled_at,
+      COALESCE(SUM(ls.score), 0) as total_score,
+      lpr.position,
+      lpr.amount as prize_amount
+    FROM leagues l
+    JOIN league_players lp ON l.id = lp.league_id
+    LEFT JOIN league_scores ls ON l.id = ls.league_id AND ls.wallet = ?
+    LEFT JOIN league_prizes lpr ON l.id = lpr.league_id AND lpr.wallet = ?
+    WHERE lp.wallet = ? AND l.status = 'settled'
+    GROUP BY l.id
+    ORDER BY l.settled_at DESC
+    LIMIT ?
+  `).all(w, w, w, limit || 20);
 }
