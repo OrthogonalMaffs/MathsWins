@@ -458,7 +458,7 @@ export function selectQuestions(seed) {
   }];
 }
 
-export function evaluator(question, answer, elapsedMs) {
+export function evaluator(question, answer, elapsedMs, session) {
   if (typeof answer === 'string') {
     try { answer = JSON.parse(answer); } catch(e) {
       return { correct: false, points: 0, error: 'Invalid action' };
@@ -471,6 +471,34 @@ export function evaluator(question, answer, elapsedMs) {
 
   const size = question.size;
   const solution = question.solution;
+
+  // Initialise server-authoritative state on session if not present
+  if (session && !session.placements) session.placements = [];
+  if (session && !session.hintLog) session.hintLog = [];
+  if (session && session.mistakes === undefined) session.mistakes = 0;
+  if (session && session.hintsUsed === undefined) session.hintsUsed = 0;
+
+  // ── Place / toggle a cell ───────────────────────────────────────
+  if (answer.action === 'place') {
+    const { row, col, value } = answer;
+    if (row < 0 || row >= size || col < 0 || col >= size) {
+      return { correct: false, points: 0, error: 'Invalid cell' };
+    }
+    const cell = row * size + col;
+    const filled = value ? 1 : 0;
+    const isCorrect = filled === solution[cell];
+
+    if (session) {
+      session.placements.push({ cell, value: filled, correct: isCorrect, ts: Date.now() });
+      if (isCorrect) {
+        session.grid[cell] = filled;
+      } else {
+        session.mistakes++;
+      }
+    }
+
+    return { correct: isCorrect, points: 0, action: 'place', row, col, isCorrect };
+  }
 
   // ── Hint: reveal a row or column ──────────────────────────────
   if (answer.action === 'hint') {
@@ -486,14 +514,23 @@ export function evaluator(question, answer, elapsedMs) {
       return { correct: false, points: 0, error: 'Invalid direction' };
     }
 
+    if (session) {
+      for (const c of cells) {
+        const idx = c.row * size + c.col;
+        session.hintLog.push({ cell: idx, value: solution[idx], ts: Date.now() });
+        session.grid[idx] = solution[idx];
+      }
+      session.hintsUsed++;
+    }
+
     return { correct: true, points: 0, action: 'hint', cells };
   }
 
   // ── Submit grid ───────────────────────────────────────────────
   if (answer.action === 'submit') {
     const grid = answer.grid;
-    const mistakes = answer.mistakes || 0;
-    const hints = answer.hints || 0;
+    const mistakes = session ? session.mistakes : (answer.mistakes || 0);
+    const hints = session ? session.hintsUsed : (answer.hints || 0);
 
     if (!Array.isArray(grid) || grid.length !== size * size) {
       return { correct: false, points: 0, error: 'Invalid grid' };
@@ -511,7 +548,23 @@ export function evaluator(question, answer, elapsedMs) {
     }
 
     if (errorCount > 0) {
-      return { correct: false, points: 0, action: 'submit', errorCount, errors: errors.slice(0, 20) };
+      if (session) session.mistakes++;
+      const totalMistakes = session ? session.mistakes : ((answer.mistakes || 0) + 1);
+      // 3rd failed submission = fail-out
+      if (totalMistakes >= 3) {
+        let correctCells = 0;
+        for (let i = 0; i < size * size; i++) {
+          if ((grid[i] ? 1 : 0) === solution[i]) correctCells++;
+        }
+        const pityScore = correctCells * 20;
+        const secs = elapsedMs ? elapsedMs / 1000 : 0;
+        const timePenalty = Math.max(0, secs - GRACE_PERIOD);
+        const pen = totalMistakes * MISTAKE_COST + hints * HINT_COST + timePenalty;
+        const timeScore = Math.max(0, Math.round(BASE_SCORE - pen));
+        const finalScore = Math.min(pityScore, timeScore);
+        return { correct: false, points: finalScore, action: 'validate', errors: errors.slice(0, 20), failedOut: true, correctCells };
+      }
+      return { correct: false, points: 0, action: 'validate', errorCount, errors: errors.slice(0, 20) };
     }
 
     const secs = elapsedMs ? elapsedMs / 1000 : 0;

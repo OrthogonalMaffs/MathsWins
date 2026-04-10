@@ -285,7 +285,7 @@ body{background:var(--bg);color:var(--text);font-family:'Inter',sans-serif;min-h
 
   <button class="btn btn-silver" id="start-btn" style="width:100%;padding:1rem">Start Game</button>
   <button class="btn btn-ghost" id="create-duel-btn" onclick="showDuelStakePicker()" style="width:100%;padding:.7rem;margin-top:.5rem;font-size:.65rem">&#9876; Create a Duel</button>
-  <a href="/qf-dapp/games/kakuro/league/" style="display:block;text-align:center;margin-top:.8rem;font-family:'JetBrains Mono',monospace;font-size:.65rem;color:var(--silver,#b8bcc6);text-decoration:none;padding:.5rem;border:1px solid var(--border,#1e2228);border-radius:6px;transition:all .15s" onmouseover="this.style.borderColor='rgba(184,188,198,0.15)'" onmouseout="this.style.borderColor='var(--border,#1e2228)'">&#9813; View Leagues</a>
+  <a id="league-link" href="/qf-dapp/games/kakuro/league/" style="display:block;text-align:center;margin-top:.8rem;font-family:'JetBrains Mono',monospace;font-size:.65rem;color:var(--silver,#b8bcc6);text-decoration:none;padding:.5rem;border:1px solid var(--border,#1e2228);border-radius:6px;transition:all .15s" onmouseover="this.style.borderColor='rgba(184,188,198,0.15)'" onmouseout="this.style.borderColor='var(--border,#1e2228)'">&#9813; View Leagues</a>
 </div>
 
 <div class="countdown-overlay" id="game-countdown"><div style="text-align:center"><div class="countdown-num" id="countdown-num"></div><div class="countdown-hint">Get ready...</div></div></div>
@@ -412,32 +412,102 @@ var G = (function() {
     });
   }
 
+  // ── Show game UI helper ─────────────────────────────────────────
+  function showGameUI() {
+    document.getElementById('scoring-panel').style.display = 'none';
+    document.getElementById('start-btn').style.display = 'none';
+    document.getElementById('create-duel-btn').style.display = 'none';
+    document.querySelector('.htp').style.display = 'none';
+    var ll = document.getElementById('league-link'); if (ll) ll.style.display = 'none';
+    document.getElementById('status-bar').style.display = 'flex';
+    document.getElementById('board-wrap').style.display = 'flex';
+    document.getElementById('numpad').style.display = 'grid';
+    document.getElementById('controls').style.display = 'flex';
+  }
+
+  function initBoardFromQuestion(q, resumedGrid, resumedHintCells) {
+    layout = q.layout;
+    clues = q.clues;
+    maxHints = q.scoring.maxHints;
+    initGrid();
+    buildClueMap();
+    if (resumedGrid) {
+      // Convert flat array (row * 10 + col) back to 2D grid
+      for (var r = 0; r < SIZE; r++) {
+        for (var c = 0; c < SIZE; c++) {
+          if (layout[r][c] === 'W') {
+            var flatIdx = r * 10 + c;
+            grid[r][c] = (flatIdx < resumedGrid.length) ? (resumedGrid[flatIdx] || 0) : 0;
+          }
+        }
+      }
+    }
+    if (resumedHintCells) {
+      // Convert flat indices back to "r,c" keys
+      for (var i = 0; i < resumedHintCells.length; i++) {
+        var idx = resumedHintCells[i];
+        var hr = Math.floor(idx / 10);
+        var hc = idx % 10;
+        hintCells[hr + ',' + hc] = true;
+      }
+    }
+  }
+
   // ── Start ──────────────────────────────────────────────────────────
   async function startGame() {
     var btn = document.getElementById('start-btn');
     btn.disabled = true;
     btn.textContent = 'Loading...';
+
+    // League mode: try resume first
+    if (leagueMode && leagueId) {
+      try {
+        var resumeData = await api('/session/resume', {
+          contextType: 'league', contextId: leagueId
+        });
+        if (resumeData.exists) {
+          sessionToken = resumeData.token;
+          leaguePuzzleIndex = resumeData.puzzleIndex;
+          mistakes = resumeData.mistakes || 0;
+          hintsUsed = resumeData.hintsUsed || 0;
+          initBoardFromQuestion(resumeData.question, resumeData.grid, resumeData.hintCells);
+          showGameUI();
+          buildNumpad();
+          buildMistakeDots();
+          updateMistakes();
+          document.getElementById('sv-h').textContent = hintsUsed;
+          if (leagueMode) document.getElementById('mistake-dots').style.display = 'none';
+          renderBoard();
+          // Resume timer from server-calculated elapsed time
+          var elapsed = resumeData.elapsedMs || 0;
+          startTime = Date.now() - elapsed;
+          timerInterval = setInterval(updateTimer, 1000);
+          updateTimer();
+          return;
+        }
+      } catch (e) { /* resume failed, fall through to new session */ }
+    }
+
     try {
-      var data = await api('/session/start', { gameId: GAME_ID });
-      if (data.error) { setMsg(data.error); btn.disabled = false; btn.textContent = 'Start Game'; return; }
+      var startBody = { gameId: GAME_ID };
+      if (leagueMode && leagueId) startBody.leagueId = leagueId;
+      var data = await api('/session/start', startBody);
+      if (data.error) {
+        if (data.error === 'ACTIVE_SESSION_EXISTS') {
+          return startGame();
+        }
+        setMsg(data.error); btn.disabled = false; btn.textContent = 'Start Game'; return;
+      }
 
       sessionToken = data.token;
-      var q = data.question;
-      layout = q.layout;
-      clues = q.clues;
-      maxHints = q.scoring.maxHints;
-      initGrid();
-      buildClueMap();
+      if (data.puzzleIndex !== undefined) leaguePuzzleIndex = data.puzzleIndex;
+      mistakes = 0; hintsUsed = 0;
+      initBoardFromQuestion(data.question, null, null);
 
-      document.getElementById('scoring-panel').style.display = 'none';
-      document.getElementById('start-btn').style.display = 'none';
-      document.getElementById('status-bar').style.display = 'flex';
-      document.getElementById('board-wrap').style.display = 'flex';
-      document.getElementById('numpad').style.display = 'grid';
-      document.getElementById('controls').style.display = 'flex';
-
+      showGameUI();
       buildNumpad();
       buildMistakeDots();
+      if (leagueMode) document.getElementById('mistake-dots').style.display = 'none';
       renderBoard();
       startTimer();
     } catch (e) {
@@ -468,6 +538,16 @@ var G = (function() {
       startGame();
     }
   });
+
+  // League mode: skip lobby, go straight to countdown
+  if (leagueMode) {
+    document.getElementById('scoring-panel').style.display = 'none';
+    document.getElementById('start-btn').style.display = 'none';
+    document.getElementById('create-duel-btn').style.display = 'none';
+    document.querySelector('.htp').style.display = 'none';
+    var ll = document.getElementById('league-link'); if (ll) ll.style.display = 'none';
+    showCountdown().then(function() { startGame(); });
+  }
 
   // ── Timer ──────────────────────────────────────────────────────────
   function startTimer() {
@@ -729,20 +809,19 @@ var G = (function() {
         showModal(true, data.points);
       } else {
         mistakes++;
+        if (leagueMode) document.getElementById('mistake-dots').style.display = 'flex';
         updateMistakes();
-        setMsg('Incorrect' + (data.errors ? ' \u2014 ' + data.errors.length + ' cells wrong' : '') + '. Check your solution.');
-
         if (data.errors) {
-          data.errors.forEach(function(e) {
-            var cells = document.querySelectorAll('.cell.white');
-            cells.forEach(function(el) {
-              // Find the cell by position in the grid
-              var idx = Array.from(el.parentNode.children).indexOf(el);
-              // We need to match by row,col instead
-            });
-          });
-          // Flash error cells by re-rendering with a temporary marker
           renderBoard();
+        }
+        if (mistakes >= 3) {
+          done = true;
+          clearInterval(timerInterval);
+          var finalScore = data.points || 0;
+          setMsg('3 mistakes — game over');
+          showModal(false, finalScore);
+        } else {
+          setMsg(data.errors ? data.errors.length + ' cells wrong — ' + (3 - mistakes) + ' attempts remaining' : 'Check your solution');
         }
       }
     } catch (e) { setMsg('Connection error'); }
@@ -840,7 +919,7 @@ var G = (function() {
     el.className = 'msg' + (ok ? ' ok' : '');
   }
   async function showModal(won, score) {
-    if (won && leagueMode && leagueId) {
+    if (leagueMode && leagueId) {
       try {
         var lh = { 'Content-Type': 'application/json' };
         if (typeof dappWallet !== 'undefined' && dappWallet && dappWallet.address) lh['X-Wallet-Address'] = dappWallet.address;
@@ -870,6 +949,11 @@ var G = (function() {
       '<div class="ms-item"><span class="ms-val">' + m + ':' + (s < 10 ? '0' : '') + s + '</span><span class="ms-lbl">Time</span></div>' +
       '<div class="ms-item"><span class="ms-val">' + mistakes + '</span><span class="ms-lbl">Mistakes</span></div>' +
       '<div class="ms-item"><span class="ms-val">' + hintsUsed + '</span><span class="ms-lbl">Hints</span></div>';
+
+    if (leagueMode) {
+      var acts = document.querySelector('.modal-acts');
+      acts.innerHTML = '<button class="btn btn-silver" onclick="window.location=\'/qf-dapp/games/kakuro/league/\'">Back to League</button>';
+    }
   }
 
   // ── Keyboard ───────────────────────────────────────────────────────
@@ -902,20 +986,8 @@ var G = (function() {
   window.addEventListener('dapp-session-ready', function(e) {
     sessionToken = e.detail.token;
     if (e.detail.question) {
-      var q = e.detail.question;
-      layout = q.layout;
-      clues = q.clues;
-      maxHints = q.scoring.maxHints;
-      initGrid();
-      buildClueMap();
-
-      document.getElementById('scoring-panel').style.display = 'none';
-      document.getElementById('start-btn').style.display = 'none';
-      document.getElementById('status-bar').style.display = 'flex';
-      document.getElementById('board-wrap').style.display = 'flex';
-      document.getElementById('numpad').style.display = 'grid';
-      document.getElementById('controls').style.display = 'flex';
-
+      initBoardFromQuestion(e.detail.question, null, null);
+      showGameUI();
       buildNumpad(); buildMistakeDots(); renderBoard(); startTimer();
     }
   });

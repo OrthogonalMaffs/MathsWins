@@ -390,7 +390,7 @@ export function evaluator(question, answer, elapsedMs, session) {
     const cell = row * n + col;
 
     if (session) {
-      session.hintLog.push({ cell, ts: Date.now() });
+      session.hintLog.push({ cell, value: solution[row][col], ts: Date.now() });
       session.grid[cell] = solution[row][col];
       session.hintsUsed++;
     }

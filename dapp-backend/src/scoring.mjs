@@ -317,7 +317,9 @@ function rebuildSession(row) {
     if (p.correct) grid[p.cell] = p.value;
   }
   for (const h of hintLog) {
-    grid[h.cell] = solution[h.cell];
+    // Use stored value if available; fall back to flat solution lookup
+    // (KenKen/kakuro have 2D solutions, so h.value is required for those)
+    grid[h.cell] = h.value !== undefined ? h.value : solution[h.cell];
   }
 
   return {

@@ -1243,7 +1243,7 @@ var G = (function() {
   }
 
   // ── Abandon ───────────────────────────────────────────────────────
-  function abandon() {
+  async function abandon() {
     if (done) return;
     if (!confirm('Abandon this game?')) return;
 
@@ -1251,6 +1251,19 @@ var G = (function() {
     if (timerStarted) stopTimer();
 
     var remaining = 52 - totalFoundationCards();
+
+    // Submit score 0 to league on abandon
+    if (leagueMode && leagueId) {
+      try {
+        var leagueResult = await api('/league/' + leagueId + '/submit', {
+          puzzleIndex: leaguePuzzleIndex, score: 0, timeMs: getElapsedMs(), mistakes: 0, hints: 0
+        });
+        if (leagueResult.error) setMsg('League score failed to save: ' + leagueResult.error);
+      } catch (e) {
+        setMsg('League score failed to save \u2014 check your connection.');
+      }
+    }
+
     showModal(false, 0, getElapsedMs(), remaining);
   }
 
@@ -1457,8 +1470,54 @@ var G = (function() {
   async function startLeagueGame() {
     setMsg('');
 
+    // Try to resume an existing session first
+    try {
+      var resumeData = await api('/session/resume', {
+        contextType: 'league', contextId: leagueId
+      });
+      if (resumeData.exists) {
+        sessionToken = resumeData.token;
+        var rq = resumeData.question;
+
+        columns = rq.columns;
+        freeCells = rq.freeCells;
+        foundations = rq.foundations;
+        dealNum = rq.seed || 0;
+        moveCount = rq.moveCount || 0;
+        undoCount = rq.undoCount || 0;
+        undoStack = [];
+        done = false;
+        selectedCard = null;
+
+        if (resumeData.puzzleIndex !== undefined) leaguePuzzleIndex = resumeData.puzzleIndex;
+
+        // Restore timer from elapsed time
+        var elapsed = resumeData.elapsedMs || 0;
+        timerStarted = true;
+        startTime = Date.now() - elapsed;
+        finalTimeMs = 0;
+        timerInterval = setInterval(function() {
+          document.getElementById('sv-t').textContent = formatTime(getElapsedMs());
+        }, 200);
+
+        document.getElementById('pre-game').style.display = 'none';
+        document.getElementById('status-bar').style.display = 'flex';
+        document.getElementById('board-area').style.display = 'flex';
+        document.getElementById('game-controls').style.display = 'flex';
+        document.getElementById('si-moves').style.display = 'none';
+
+        render();
+        setMsg('Session resumed.', true);
+        return;
+      }
+    } catch (e) { /* no existing session — fall through to start */ }
+
     try {
       var data = await api('/session/start', { gameId: GAME_ID, leagueId: leagueId });
+
+      if (data.error === 'ACTIVE_SESSION_EXISTS') {
+        return startLeagueGame();
+      }
 
       if (data.error) {
         setMsg(data.error);

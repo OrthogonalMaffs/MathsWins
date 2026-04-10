@@ -868,7 +868,7 @@ var G = (function() {
   }
 
   // ── Detonation ──────────────────────────────────────────────────────
-  function handleDetonation(detonated, mines, incorrectFlags, partialScore) {
+  async function handleDetonation(detonated, mines, incorrectFlags, partialScore) {
     done = true;
     stopTimer();
     setSmiley(SMILEY_DEAD);
@@ -898,8 +898,24 @@ var G = (function() {
       }
     }
 
+    // League score submission on loss
+    if (leagueMode && leagueId) {
+      try {
+        var leagueResult = await api('/league/' + leagueId + '/submit', {
+          puzzleIndex: leaguePuzzleIndex,
+          score: partialScore || 0,
+          timeMs: finalTimeMs,
+          mistakes: 1,
+          hints: 0
+        });
+        if (leagueResult.error) alert('League score failed to save: ' + leagueResult.error);
+      } catch (e) {
+        alert('League score failed to save \u2014 check your connection.');
+      }
+    }
+
     var safeCellsRemaining = (boardWidth * boardHeight - mineCount) - revealedCount;
-    showModal(false, 0, finalTimeMs, safeCellsRemaining);
+    showModal(false, partialScore || 0, finalTimeMs, safeCellsRemaining);
   }
 
   // ── Results modal ───────────────────────────────────────────────────
@@ -990,8 +1006,71 @@ var G = (function() {
   async function startLeagueGame() {
     setMsg('');
 
+    // Try to resume an existing session first
+    try {
+      var resumeData = await api('/session/resume', {
+        contextType: 'league', contextId: leagueId
+      });
+      if (resumeData.exists) {
+        sessionToken = resumeData.token;
+        var rq = resumeData.question;
+
+        boardWidth = rq.width;
+        boardHeight = rq.height;
+        mineCount = rq.mineCount;
+        difficulty = rq.difficulty || 'beginner';
+        flagCount = 0;
+        done = false;
+        revealedCount = 0;
+        timerStarted = false;
+        finalTimeMs = 0;
+
+        if (resumeData.puzzleIndex !== undefined) leaguePuzzleIndex = resumeData.puzzleIndex;
+
+        document.getElementById('pre-game').style.display = 'none';
+        document.getElementById('game-area').style.display = 'flex';
+
+        document.getElementById('lcd-mines').textContent = padLcd(mineCount);
+        document.getElementById('lcd-timer').textContent = '000';
+        setSmiley(SMILEY_NORMAL);
+
+        buildBoard();
+
+        // Restore revealed cells and flags from resumed state
+        var resumed = rq.revealed || [];
+        minesPlaced = resumed.length > 0 || (rq.flags && rq.flags.length > 0);
+        applyRevealed(resumed);
+
+        if (rq.flags && rq.flags.length > 0) {
+          for (var fi = 0; fi < rq.flags.length; fi++) {
+            var fIdx = rq.flags[fi];
+            cellState[fIdx] = 'flagged';
+            cells[fIdx].className = 'cell flagged';
+            cells[fIdx].innerHTML = '<span class="cell-flag" style="font-size:var(--flag-font)">&#9873;</span>';
+            flagCount++;
+          }
+          updateMineCounter();
+        }
+
+        // Resume the timer accounting for elapsed time
+        var elapsed = resumeData.elapsedMs || 0;
+        startTime = Date.now() - elapsed;
+        timerStarted = true;
+        timerInterval = setInterval(function() {
+          var sec = Math.floor(getElapsedMs() / 1000);
+          document.getElementById('lcd-timer').textContent = padLcd(sec);
+        }, 500);
+
+        return;
+      }
+    } catch (e) { /* no existing session — fall through to start */ }
+
     try {
       var data = await api('/session/start', { gameId: GAME_ID, leagueId: leagueId });
+
+      if (data.error === 'ACTIVE_SESSION_EXISTS') {
+        return startLeagueGame();
+      }
 
       if (data.error) {
         setMsg(data.error);
