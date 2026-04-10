@@ -232,6 +232,12 @@ router.post('/session/start', optionalWallet, (req, res) => {
         else opts.difficulty = 'intermediate';
       }
 
+      // KenKen league difficulty: Bronze = hard, Silver = expert
+      if (gameId === 'kenken' && league.tier) {
+        if (league.tier === 'silver') opts.difficulty = 'expert';
+        else opts.difficulty = 'hard';
+      }
+
       const result = startFreeSession(gameId, weekId, opts);
       result.puzzleIndex = nextIdx;
       result.puzzleSequence = order.indexOf(nextIdx) + 1;

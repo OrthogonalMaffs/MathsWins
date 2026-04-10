@@ -405,7 +405,7 @@ export function evaluator(question, answer, elapsedMs) {
     }
 
     if (!correct) {
-      return { correct: false, points: 0, action: 'submit', errors };
+      return { correct: false, points: 0, action: 'validate', errors };
     }
 
     // Calculate score

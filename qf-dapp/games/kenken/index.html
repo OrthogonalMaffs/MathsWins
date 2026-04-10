@@ -301,6 +301,7 @@ var G = (function() {
       leagueMode = true;
       leagueId = lid;
       leaguePuzzleIndex = parseInt(pidx);
+      document.getElementById('diff-select').style.display = 'none';
     }
   })();
 
@@ -354,7 +355,9 @@ var G = (function() {
     document.getElementById('start-btn').disabled = true;
     document.getElementById('start-btn').textContent = 'Loading...';
     try {
-      var data = await api('/session/start', { gameId: GAME_ID, difficulty: difficulty });
+      var startBody = { gameId: GAME_ID, difficulty: difficulty };
+      if (leagueMode && leagueId) startBody.leagueId = leagueId;
+      var data = await api('/session/start', startBody);
       if (data.error) { setMsg(data.error); document.getElementById('start-btn').disabled = false; document.getElementById('start-btn').textContent = 'Start Game'; return; }
 
       sessionToken = data.token;
@@ -377,6 +380,7 @@ var G = (function() {
 
       buildNumpad();
       buildMistakeDots();
+      if (leagueMode) document.getElementById('mistake-dots').style.display = 'none';
       renderBoard();
       startTimer();
     } catch (e) {
@@ -537,11 +541,13 @@ var G = (function() {
       grid[r][c] = v;
       notes[r][c] = new Set();
 
-      if (!data.isCorrect) {
-        wrongCells.add(selected);
-      } else {
-        wrongCells.delete(selected);
-        setMsg('');
+      if (!leagueMode) {
+        if (!data.isCorrect) {
+          wrongCells.add(selected);
+        } else {
+          wrongCells.delete(selected);
+          setMsg('');
+        }
       }
       renderBoard();
     } catch (e) { setMsg('Connection error'); }
@@ -594,6 +600,7 @@ var G = (function() {
         showModal(true, data.points);
       } else {
         mistakes++;
+        if (leagueMode) document.getElementById('mistake-dots').style.display = 'flex';
         updateMistakes();
         if (data.errors) {
           wrongCells = new Set();
@@ -707,7 +714,7 @@ var G = (function() {
     el.className = 'msg' + (ok ? ' ok' : '');
   }
   async function showModal(won, score) {
-    if (won && leagueMode && leagueId) {
+    if (leagueMode && leagueId) {
       try {
         var lh = { 'Content-Type': 'application/json' };
         if (typeof dappWallet !== 'undefined' && dappWallet && dappWallet.address) lh['X-Wallet-Address'] = dappWallet.address;
@@ -737,6 +744,11 @@ var G = (function() {
       '<div class="ms-item"><span class="ms-val">' + m + ':' + (s < 10 ? '0' : '') + s + '</span><span class="ms-lbl">Time</span></div>' +
       '<div class="ms-item"><span class="ms-val">' + mistakes + '</span><span class="ms-lbl">Mistakes</span></div>' +
       '<div class="ms-item"><span class="ms-val">' + hintsUsed + '</span><span class="ms-lbl">Hints</span></div>';
+
+    if (leagueMode) {
+      var acts = document.querySelector('.modal-acts');
+      acts.innerHTML = '<button class="btn btn-silver" onclick="window.location=\'/qf-dapp/games/kenken/league/\'">Back to League</button>';
+    }
   }
 
   // ── Keyboard ──────────────────────────────────────────────────────
