@@ -46,8 +46,14 @@ body{background:var(--bg);color:var(--text);font-family:'Inter',sans-serif;min-h
 .sv{font-family:'JetBrains Mono',monospace;font-size:1rem;font-weight:500;color:var(--silver-bright)}
 .sl{font-family:'JetBrains Mono',monospace;font-size:0.45rem;letter-spacing:0.12em;text-transform:uppercase;color:var(--muted)}
 .mistake-dots{display:flex;gap:0.35rem}
-.dot{width:8px;height:8px;border-radius:50%;background:var(--border);border:1px solid var(--muted);transition:background 0.3s}
-.dot.active{background:var(--red);border-color:var(--red)}
+.dot{width:14px;height:14px;border-radius:50%;background:var(--border);border:2px solid var(--muted);transition:background 0.3s}
+.dot.active{background:#e53e3e;border-color:#e53e3e;box-shadow:0 0 6px rgba(229,62,62,0.5)}
+.cell.wrong-cell{background:rgba(176,58,58,0.25)!important}
+.cell.wrong-cell .cell-val{color:#e53e3e}
+.cage-error .cage-top{border-top-color:#e53e3e!important}
+.cage-error .cage-bottom{border-bottom-color:#e53e3e!important}
+.cage-error .cage-left{border-left-color:#e53e3e!important}
+.cage-error .cage-right{border-right-color:#e53e3e!important}
 .board-wrap{width:100%;display:flex;justify-content:center}
 .board{display:grid;gap:0;width:min(100%,450px);aspect-ratio:1;border:2px solid var(--silver-border);border-radius:4px;overflow:hidden}
 .cell{position:relative;display:flex;align-items:center;justify-content:center;cursor:pointer;transition:background 0.1s;border:1px solid var(--border2)}
@@ -300,7 +306,7 @@ var G = (function() {
 
   var sessionToken = null;
   var n = 6, difficulty = 'hard';
-  var cages = [], grid = [], notes = [], hintCells = new Set();
+  var cages = [], grid = [], notes = [], hintCells = new Set(), wrongCells = new Set();
   var selected = null, mistakes = 0, hintsUsed = 0, maxHints = 6;
   var notesMode = false, done = false;
   var startTime = null, timerInterval = null;
@@ -358,7 +364,7 @@ var G = (function() {
       maxHints = q.scoring.maxHints;
       grid = Array.from({ length: n }, function() { return new Array(n).fill(0); });
       notes = Array.from({ length: n }, function() { return Array.from({ length: n }, function() { return new Set(); }); });
-      hintCells = new Set();
+      hintCells = new Set(); wrongCells = new Set();
       mistakes = 0; hintsUsed = 0; done = false; history = []; selected = null;
 
       document.getElementById('scoring-panel').style.display = 'none';
@@ -454,6 +460,7 @@ var G = (function() {
       // Selection
       if (i === selected) cell.classList.add('selected');
       if (hintCells.has(i)) cell.classList.add('hint-cell');
+      if (wrongCells.has(i)) cell.classList.add('wrong-cell');
 
       // Row/col highlighting
       if (selected !== null && i !== selected) {
@@ -517,7 +524,7 @@ var G = (function() {
 
     history.push({ idx: selected, val: grid[r][c], notes: new Set(notes[r][c]) });
 
-    if (v === 0) { grid[r][c] = 0; notes[r][c] = new Set(); renderBoard(); return; }
+    if (v === 0) { grid[r][c] = 0; notes[r][c] = new Set(); wrongCells.delete(selected); renderBoard(); return; }
 
     // Validate placement server-side
     try {
@@ -531,11 +538,9 @@ var G = (function() {
       notes[r][c] = new Set();
 
       if (!data.isCorrect) {
-        mistakes++;
-        updateMistakes();
-        var cellEl = document.querySelector('.cell[data-idx="' + selected + '"]');
-        if (cellEl) cellEl.classList.add('shake');
+        wrongCells.add(selected);
       } else {
+        wrongCells.delete(selected);
         setMsg('');
       }
       renderBoard();
@@ -590,15 +595,24 @@ var G = (function() {
       } else {
         mistakes++;
         updateMistakes();
-        setMsg('Incorrect — ' + (data.errors ? data.errors.length + ' cells wrong' : 'check your solution'));
-        // Highlight errors
         if (data.errors) {
+          wrongCells = new Set();
           data.errors.forEach(function(e) {
             var idx = e.row * n + e.col;
-            var cellEl = document.querySelector('.cell[data-idx="' + idx + '"]');
-            if (cellEl) cellEl.classList.add('conflict', 'shake');
+            wrongCells.add(idx);
           });
         }
+        if (mistakes >= 3) {
+          done = true;
+          clearInterval(timerInterval);
+          var pen = Math.max(0, getSecs() - 60) + mistakes * 300 + hintsUsed * 500;
+          var finalScore = Math.max(0, 5000 - Math.round(pen));
+          setMsg('3 mistakes — game over');
+          showModal(false, finalScore);
+        } else {
+          setMsg(data.errors ? data.errors.length + ' cells wrong — ' + (3 - mistakes) + ' attempts remaining' : 'Check your solution');
+        }
+        renderBoard();
       }
     } catch (e) { setMsg('Connection error'); }
   }
