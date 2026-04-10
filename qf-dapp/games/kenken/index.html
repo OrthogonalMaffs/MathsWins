@@ -351,33 +351,87 @@ var G = (function() {
   }
 
   // ── Start ─────────────────────────────────────────────────────────
+  function showGameUI() {
+    document.getElementById('scoring-panel').style.display = 'none';
+    document.getElementById('diff-select').style.display = 'none';
+    document.getElementById('start-btn').style.display = 'none';
+    document.getElementById('create-duel-btn').style.display = 'none';
+    document.querySelector('.htp').style.display = 'none';
+    var ll = document.getElementById('league-link'); if (ll) ll.style.display = 'none';
+    document.getElementById('status-bar').style.display = 'flex';
+    document.getElementById('board-wrap').style.display = 'flex';
+    document.getElementById('numpad').style.display = 'grid';
+    document.getElementById('controls').style.display = 'flex';
+  }
+
+  function initBoardState(q, resumedGrid, resumedHintCells) {
+    n = q.size;
+    cages = q.cages;
+    maxHints = q.scoring.maxHints;
+    if (resumedGrid) {
+      // Convert flat array to 2D grid
+      grid = Array.from({ length: n }, function(_, r) {
+        return Array.from({ length: n }, function(_, c) { return resumedGrid[r * n + c]; });
+      });
+    } else {
+      grid = Array.from({ length: n }, function() { return new Array(n).fill(0); });
+    }
+    notes = Array.from({ length: n }, function() { return Array.from({ length: n }, function() { return new Set(); }); });
+    hintCells = new Set(resumedHintCells || []);
+    wrongCells = new Set();
+    done = false; history = []; selected = null;
+  }
+
   async function startGame() {
     document.getElementById('start-btn').disabled = true;
     document.getElementById('start-btn').textContent = 'Loading...';
+
+    // League mode: try resume first
+    if (leagueMode && leagueId) {
+      try {
+        var resumeData = await api('/session/resume', {
+          contextType: 'league', contextId: leagueId
+        });
+        if (resumeData.exists) {
+          sessionToken = resumeData.token;
+          leaguePuzzleIndex = resumeData.puzzleIndex;
+          mistakes = resumeData.mistakes || 0;
+          hintsUsed = resumeData.hintsUsed || 0;
+          initBoardState(resumeData.question, resumeData.grid, resumeData.hintCells);
+          showGameUI();
+          buildNumpad();
+          buildMistakeDots();
+          updateMistakes();
+          document.getElementById('sv-h').textContent = hintsUsed;
+          if (leagueMode) document.getElementById('mistake-dots').style.display = 'none';
+          renderBoard();
+          // Resume timer from server-calculated elapsed time
+          var elapsed = resumeData.elapsedMs || 0;
+          startTime = Date.now() - elapsed;
+          timerInterval = setInterval(updateTimer, 1000);
+          updateTimer();
+          return;
+        }
+      } catch (e) { /* resume failed, fall through to new session */ }
+    }
+
     try {
       var startBody = { gameId: GAME_ID, difficulty: difficulty };
       if (leagueMode && leagueId) startBody.leagueId = leagueId;
       var data = await api('/session/start', startBody);
-      if (data.error) { setMsg(data.error); document.getElementById('start-btn').disabled = false; document.getElementById('start-btn').textContent = 'Start Game'; return; }
+      if (data.error) {
+        if (data.error === 'ACTIVE_SESSION_EXISTS') {
+          return startGame();
+        }
+        setMsg(data.error); document.getElementById('start-btn').disabled = false; document.getElementById('start-btn').textContent = 'Start Game'; return;
+      }
 
       sessionToken = data.token;
-      var q = data.question;
-      n = q.size;
-      cages = q.cages;
-      maxHints = q.scoring.maxHints;
-      grid = Array.from({ length: n }, function() { return new Array(n).fill(0); });
-      notes = Array.from({ length: n }, function() { return Array.from({ length: n }, function() { return new Set(); }); });
-      hintCells = new Set(); wrongCells = new Set();
-      mistakes = 0; hintsUsed = 0; done = false; history = []; selected = null;
+      if (data.puzzleIndex !== undefined) leaguePuzzleIndex = data.puzzleIndex;
+      mistakes = 0; hintsUsed = 0;
+      initBoardState(data.question, null, null);
 
-      document.getElementById('scoring-panel').style.display = 'none';
-      document.getElementById('diff-select').style.display = 'none';
-      document.getElementById('start-btn').style.display = 'none';
-      document.getElementById('status-bar').style.display = 'flex';
-      document.getElementById('board-wrap').style.display = 'flex';
-      document.getElementById('numpad').style.display = 'grid';
-      document.getElementById('controls').style.display = 'flex';
-
+      showGameUI();
       buildNumpad();
       buildMistakeDots();
       if (leagueMode) document.getElementById('mistake-dots').style.display = 'none';
@@ -404,7 +458,7 @@ var G = (function() {
     document.getElementById('start-btn').style.display = 'none';
     document.getElementById('create-duel-btn').style.display = 'none';
     document.querySelector('.htp').style.display = 'none';
-    document.getElementById('league-link').style.display = 'none';
+    var ll = document.getElementById('league-link'); if (ll) ll.style.display = 'none';
     showCountdown().then(function() { startGame(); });
   }
 

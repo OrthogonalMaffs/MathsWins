@@ -337,7 +337,7 @@ export function selectQuestions(seed, difficulty) {
   }];
 }
 
-export function evaluator(question, answer, elapsedMs) {
+export function evaluator(question, answer, elapsedMs, session) {
   if (typeof answer === 'string') {
     try { answer = JSON.parse(answer); } catch(e) {
       return { correct: false, points: 0, error: 'Invalid action' };
@@ -351,6 +351,12 @@ export function evaluator(question, answer, elapsedMs) {
   const n = question.size;
   const solution = question.solution;
 
+  // Initialise server-authoritative state on session if not present
+  if (session && !session.placements) session.placements = [];
+  if (session && !session.hintLog) session.hintLog = [];
+  if (session && session.mistakes === undefined) session.mistakes = 0;
+  if (session && session.hintsUsed === undefined) session.hintsUsed = 0;
+
   // ── Place a number ──────────────────────────────────────────────
   if (answer.action === 'place') {
     const { row, col, value } = answer;
@@ -360,7 +366,18 @@ export function evaluator(question, answer, elapsedMs) {
     if (value < 1 || value > n) {
       return { correct: false, points: 0, error: 'Invalid value' };
     }
+    const cell = row * n + col;
     const isCorrect = value === solution[row][col];
+
+    if (session) {
+      session.placements.push({ cell, value, correct: isCorrect, ts: Date.now() });
+      if (isCorrect) {
+        session.grid[cell] = value;
+      } else {
+        session.mistakes++;
+      }
+    }
+
     return { correct: isCorrect, points: 0, action: 'place', row, col, isCorrect };
   }
 
@@ -370,6 +387,14 @@ export function evaluator(question, answer, elapsedMs) {
     if (row < 0 || row >= n || col < 0 || col >= n) {
       return { correct: false, points: 0, error: 'Invalid cell' };
     }
+    const cell = row * n + col;
+
+    if (session) {
+      session.hintLog.push({ cell, ts: Date.now() });
+      session.grid[cell] = solution[row][col];
+      session.hintsUsed++;
+    }
+
     return {
       correct: true,
       points: 0,
@@ -382,8 +407,8 @@ export function evaluator(question, answer, elapsedMs) {
   // ── Submit full grid ────────────────────────────────────────────
   if (answer.action === 'submit') {
     const grid = answer.grid;
-    const mistakes = answer.mistakes || 0;
-    const hints = answer.hints || 0;
+    const mistakes = session ? session.mistakes : (answer.mistakes || 0);
+    const hints = session ? session.hintsUsed : (answer.hints || 0);
 
     if (!Array.isArray(grid) || grid.length !== n) {
       return { correct: false, points: 0, error: 'Invalid grid' };
@@ -405,8 +430,10 @@ export function evaluator(question, answer, elapsedMs) {
     }
 
     if (!correct) {
-      // 3rd failed submission = fail-out (client sends mistakes count BEFORE incrementing)
-      if (mistakes >= 2) {
+      if (session) session.mistakes++;
+      const totalMistakes = session ? session.mistakes : ((answer.mistakes || 0) + 1);
+      // 3rd failed submission = fail-out
+      if (totalMistakes >= 3) {
         let correctCells = 0;
         for (let r = 0; r < n; r++) {
           for (let c = 0; c < n; c++) {
@@ -414,10 +441,9 @@ export function evaluator(question, answer, elapsedMs) {
           }
         }
         const pityScore = correctCells * 20;
-        // If time-based formula would score lower, use that instead
         const secs = elapsedMs ? elapsedMs / 1000 : 0;
         const timePenalty = Math.max(0, secs - GRACE_PERIOD);
-        const pen = (mistakes + 1) * MISTAKE_COST + hints * HINT_COST + timePenalty;
+        const pen = totalMistakes * MISTAKE_COST + hints * HINT_COST + timePenalty;
         const timeScore = Math.max(0, Math.round(BASE_SCORE - pen));
         const finalScore = Math.min(pityScore, timeScore);
         return { correct: false, points: finalScore, action: 'validate', errors, failedOut: true, correctCells };
