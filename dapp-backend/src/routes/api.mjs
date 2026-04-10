@@ -12,7 +12,8 @@ import { getDb } from '../db/index.mjs';
 import { doSettleLeague, checkEarlySettlement, recoverStuckLeagues, mintCommemorative } from '../league-settle.mjs';
 import { sendQF, settleDuel } from '../escrow.mjs';
 import { createBattleshipsGame, getBattleshipsGameByCode, getBattleshipsGameById, updateBattleshipsGameStatus, saveBattleshipsPlacement, getBattleshipsPlacement, getBattleshipsPlacements, addBattleshipsRound, getBattleshipsRounds, getBattleshipsRecord, updateBattleshipsRecord, getActiveBattleshipsGames, getBattleshipsGamesByWallet } from '../db/index.mjs';
-import { getAchievementRegistry, getAchievement, awardAchievement, getWalletAchievements, getAllAchievements, getGlobalRecord, getPersonalBests, getLeagueBests, getWalletStats, getWalletLeagueHistory, getWalletTrophies } from '../db/index.mjs';
+import { getAchievementRegistry, getAchievement, awardAchievement, getWalletAchievements, getAllAchievements, getGlobalRecord, getPersonalBests, getLeagueBests, getWalletStats, getWalletLeagueHistory, getWalletTrophies, getGameStateForLeaguePuzzle, getFlaggedSessions } from '../db/index.mjs';
+import { analyseInputPattern } from '../scoring.mjs';
 import { validateFleet, calculateRange, checkHit, checkSunk, checkWin, getGameState as getBattleshipsState, cpuPlaceFleet, cpuShootRecruit, cpuShootOfficer, cpuShootAdmiral, pickSurvivingShip, FLEET } from '../games/battleships.mjs';
 
 const router = Router();
@@ -839,7 +840,27 @@ router.post('/league/:leagueId/submit', optionalWallet, (req, res) => {
   const existing = getLeagueScore(league.id, wallet, puzzleIndex);
   if (existing) return res.status(400).json({ error: 'Already submitted this puzzle' });
 
-  addLeagueScore(league.id, wallet, puzzleIndex, score, timeMs || 0, mistakes || 0, hints || 0, Date.now());
+  // Check for suspicious flags from active_game_state
+  var suspicious = null;
+  var suspiciousDetail = null;
+  var gameState = getGameStateForLeaguePuzzle(wallet, league.id, puzzleIndex);
+  if (gameState) {
+    var flags = [];
+    // Existing flag from evaluator (rapid_input, suspiciously_fast, etc.)
+    if (gameState.flagged) flags.push(gameState.flagged);
+    // Run pattern analysis on stored placements
+    try {
+      var placements = JSON.parse(gameState.placements || '[]');
+      var patternFlag = analyseInputPattern(placements);
+      if (patternFlag) flags.push(patternFlag);
+    } catch (e) { /* malformed placements, skip */ }
+    if (flags.length > 0) {
+      suspicious = 'flagged';
+      suspiciousDetail = flags.join(',');
+    }
+  }
+
+  addLeagueScore(league.id, wallet, puzzleIndex, score, timeMs || 0, mistakes || 0, hints || 0, Date.now(), suspicious, suspiciousDetail);
 
   // Return player's own scores
   const myScores = getLeagueScoresByWallet(league.id, wallet);
@@ -1734,6 +1755,14 @@ router.get('/admin/achievements', requireAdmin, (req, res) => {
   } else {
     res.json({ achievements: all });
   }
+});
+
+// ── Admin: flagged sessions ──────────────────────────────────────────────
+router.get('/admin/flagged-sessions', requireAdmin, (req, res) => {
+  var wallet = req.query.wallet || null;
+  var leagueId = req.query.league_id || null;
+  var results = getFlaggedSessions(wallet, leagueId);
+  res.json({ flagged: results, count: results.length });
 });
 
 // ── Profile endpoint ──────────────────────────────────────────────────────

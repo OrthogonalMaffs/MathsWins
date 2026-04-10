@@ -62,6 +62,39 @@ export function getCurrentWeekId() {
   return now.getUTCFullYear() * 100 + weekNum;
 }
 
+// ── Input pattern analysis (external-solver detection) ──────────────────────
+export function analyseInputPattern(placements) {
+  if (!placements || placements.length < 5) return null;
+
+  var correct = placements.filter(function(p) { return p.correct; });
+  if (correct.length < 5) return null;
+
+  var flags = [];
+
+  // Sequential order: what % of correct placements are in monotonically increasing cell order
+  var sequential = 0;
+  for (var i = 1; i < correct.length; i++) {
+    if (correct[i].cell > correct[i - 1].cell) sequential++;
+  }
+  var seqPct = Math.round((sequential / (correct.length - 1)) * 100);
+  if (seqPct > 70) flags.push('sequential:' + seqPct + '%');
+
+  // Timing uniformity: stddev of intervals between correct placements
+  if (correct.length >= 3) {
+    var intervals = [];
+    for (var j = 1; j < correct.length; j++) {
+      intervals.push(correct[j].ts - correct[j - 1].ts);
+    }
+    var mean = intervals.reduce(function(a, b) { return a + b; }, 0) / intervals.length;
+    var variance = intervals.reduce(function(a, b) { return a + (b - mean) * (b - mean); }, 0) / intervals.length;
+    var stddev = Math.sqrt(variance);
+    if (stddev < 800) flags.push('timing:stddev_' + Math.round(stddev) + 'ms');
+  }
+
+  if (flags.length === 0) return null;
+  return flags.join(',');
+}
+
 // ── Persist session state to SQLite ──────────────────────────────────────────
 function persistSession(sessionId, session) {
   if (!session._persisted) return;
@@ -420,6 +453,11 @@ export function evaluate(sessionToken, answer) {
     }
     // Successful submit
     else if (result.action === 'submit' && result.correct) {
+      // Run input pattern analysis on placements
+      var patternFlag = analyseInputPattern(session.placements);
+      if (patternFlag) {
+        result.flagged = result.flagged ? result.flagged + ',' + patternFlag : patternFlag;
+      }
       session.score = result.points;
       if (!session.freePlay) {
         completeSession(payload.sid, session.score);
@@ -437,6 +475,10 @@ export function evaluate(sessionToken, answer) {
     }
     // Failed submit (incomplete grid)
     else if (result.action === 'submit' && !result.correct) {
+      var failPatternFlag = analyseInputPattern(session.placements);
+      if (failPatternFlag) {
+        result.flagged = result.flagged ? result.flagged + ',' + failPatternFlag : failPatternFlag;
+      }
       const partialScore = result.points || 0;
       session.score = partialScore;
       if (!session.freePlay) completeSession(payload.sid, partialScore);

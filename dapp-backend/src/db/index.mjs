@@ -42,6 +42,8 @@ export function getDb() {
   try { db.exec('ALTER TABLE league_scores ADD COLUMN free_cells_used INTEGER DEFAULT 0'); } catch (e) { /* already exists */ }
   try { db.exec('ALTER TABLE league_scores ADD COLUMN flags_used INTEGER DEFAULT 0'); } catch (e) { /* already exists */ }
   try { db.exec('ALTER TABLE league_scores ADD COLUMN helper_used INTEGER DEFAULT 0'); } catch (e) { /* already exists */ }
+  try { db.exec('ALTER TABLE league_scores ADD COLUMN suspicious TEXT'); } catch (e) { /* already exists */ }
+  try { db.exec('ALTER TABLE league_scores ADD COLUMN suspicious_detail TEXT'); } catch (e) { /* already exists */ }
   try { db.exec('ALTER TABLE achievement_registry ADD COLUMN category TEXT'); } catch (e) { /* already exists */ }
   try { db.exec('ALTER TABLE achievement_registry ADD COLUMN retired INTEGER DEFAULT 0'); } catch (e) { /* already exists */ }
   try { db.exec('ALTER TABLE achievement_registry ADD COLUMN retired_at INTEGER'); } catch (e) { /* already exists */ }
@@ -779,10 +781,10 @@ export function getLeaguePuzzles(leagueId) {
   return db.prepare('SELECT * FROM league_puzzles WHERE league_id = ? ORDER BY puzzle_index ASC').all(leagueId);
 }
 
-export function addLeagueScore(leagueId, wallet, puzzleIndex, score, timeMs, mistakes, hints, submittedAt) {
+export function addLeagueScore(leagueId, wallet, puzzleIndex, score, timeMs, mistakes, hints, submittedAt, suspicious, suspiciousDetail) {
   const db = getDb();
-  db.prepare(`INSERT INTO league_scores (league_id, wallet, puzzle_index, score, time_ms, mistakes, hints, submitted_at)
-    VALUES (?, ?, ?, ?, ?, ?, ?, ?)`).run(leagueId, wallet.toLowerCase(), puzzleIndex, score, timeMs, mistakes, hints, submittedAt);
+  db.prepare(`INSERT INTO league_scores (league_id, wallet, puzzle_index, score, time_ms, mistakes, hints, submitted_at, suspicious, suspicious_detail)
+    VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)`).run(leagueId, wallet.toLowerCase(), puzzleIndex, score, timeMs, mistakes, hints, submittedAt, suspicious || null, suspiciousDetail || null);
 }
 
 export function getLeagueScore(leagueId, wallet, puzzleIndex) {
@@ -802,7 +804,7 @@ export function getLeagueLeaderboard(leagueId) {
   return db.prepare(`
     SELECT wallet, SUM(score) as total_score, COUNT(*) as puzzles_played,
            SUM(time_ms) as total_time, SUM(mistakes) as total_mistakes, SUM(hints) as total_hints
-    FROM league_scores WHERE league_id = ?
+    FROM league_scores WHERE league_id = ? AND suspicious IS NULL
     GROUP BY wallet
     ORDER BY total_score DESC, total_time ASC
   `).all(leagueId);
@@ -1125,4 +1127,26 @@ export function getWalletTrophies(wallet) {
   if (!tableExists) return [];
   return db.prepare('SELECT * FROM commemorative_mints WHERE wallet = ? ORDER BY minted_at DESC')
     .all(wallet.toLowerCase());
+}
+
+export function getGameStateForLeaguePuzzle(wallet, leagueId, puzzleIndex) {
+  const db = getDb();
+  return db.prepare(`SELECT * FROM active_game_state WHERE wallet = ? AND context_type = 'league' AND context_id = ? AND puzzle_index = ? ORDER BY started_at DESC LIMIT 1`)
+    .get(wallet.toLowerCase(), leagueId, puzzleIndex);
+}
+
+export function getFlaggedSessions(walletFilter, leagueFilter) {
+  const db = getDb();
+  let sql = `
+    SELECT ls.*, ags.flagged as ags_flagged, ags.game_id
+    FROM league_scores ls
+    LEFT JOIN active_game_state ags
+      ON ags.wallet = ls.wallet AND ags.context_type = 'league' AND ags.context_id = ls.league_id AND ags.puzzle_index = ls.puzzle_index
+    WHERE (ls.suspicious IS NOT NULL OR ags.flagged IS NOT NULL)
+  `;
+  var params = [];
+  if (walletFilter) { sql += ' AND ls.wallet = ?'; params.push(walletFilter.toLowerCase()); }
+  if (leagueFilter) { sql += ' AND ls.league_id = ?'; params.push(leagueFilter); }
+  sql += ' ORDER BY ls.submitted_at DESC LIMIT 200';
+  return db.prepare(sql).all(...params);
 }
