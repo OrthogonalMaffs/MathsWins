@@ -12,7 +12,7 @@ import { getDb } from '../db/index.mjs';
 import { doSettleLeague, checkEarlySettlement, recoverStuckLeagues, mintCommemorative } from '../league-settle.mjs';
 import { sendQF, settleDuel } from '../escrow.mjs';
 import { createBattleshipsGame, getBattleshipsGameByCode, getBattleshipsGameById, updateBattleshipsGameStatus, saveBattleshipsPlacement, getBattleshipsPlacement, getBattleshipsPlacements, addBattleshipsRound, getBattleshipsRounds, getBattleshipsRecord, updateBattleshipsRecord, getActiveBattleshipsGames, getBattleshipsGamesByWallet } from '../db/index.mjs';
-import { getAchievementRegistry, getAchievement, awardAchievement, getWalletAchievements, getAllAchievements, getGlobalRecord, getPersonalBests, getLeagueBests, getWalletStats, getWalletLeagueHistory } from '../db/index.mjs';
+import { getAchievementRegistry, getAchievement, awardAchievement, getWalletAchievements, getAllAchievements, getGlobalRecord, getPersonalBests, getLeagueBests, getWalletStats, getWalletLeagueHistory, getWalletTrophies } from '../db/index.mjs';
 import { validateFleet, calculateRange, checkHit, checkSunk, checkWin, getGameState as getBattleshipsState, cpuPlaceFleet, cpuShootRecruit, cpuShootOfficer, cpuShootAdmiral, pickSurvivingShip, FLEET } from '../games/battleships.mjs';
 
 const router = Router();
@@ -1762,6 +1762,7 @@ router.get('/profile/:wallet', (req, res) => {
   const achievements = getWalletAchievements(wallet);
   const walletStats = getWalletStats(wallet) || {};
   const leagueHistory = getWalletLeagueHistory(wallet, 20);
+  const trophies = getWalletTrophies(wallet);
 
   res.json({
     wallet: wallet.toLowerCase(),
@@ -1769,7 +1770,8 @@ router.get('/profile/:wallet', (req, res) => {
     league_bests: leagueBests,
     achievements,
     wallet_stats: walletStats,
-    league_history: leagueHistory
+    league_history: leagueHistory,
+    trophies
   });
 });
 

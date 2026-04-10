@@ -1118,3 +1118,11 @@ export function getWalletLeagueHistory(wallet, limit) {
     LIMIT ?
   `).all(w, w, w, limit || 20);
 }
+
+export function getWalletTrophies(wallet) {
+  const db = getDb();
+  const tableExists = db.prepare("SELECT name FROM sqlite_master WHERE type='table' AND name='commemorative_mints'").get();
+  if (!tableExists) return [];
+  return db.prepare('SELECT * FROM commemorative_mints WHERE wallet = ? ORDER BY minted_at DESC')
+    .all(wallet.toLowerCase());
+}
