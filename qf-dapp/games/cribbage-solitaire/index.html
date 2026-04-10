@@ -220,24 +220,7 @@ body{background:var(--bg);color:var(--text);font-family:'Inter',sans-serif;min-h
     <h3>Choose Mode</h3>
     <div class="mode-btns">
       <button class="btn" onclick="G.startFree()">Free Play</button>
-      <button class="btn btn-gold" onclick="G.showStakePicker()">&#9876; Create a Duel</button>
-    </div>
-    <div id="duel-stake-panel" style="display:none;margin-top:.8rem;text-align:center">
-      <p style="font-size:.62rem;color:var(--muted);margin-bottom:.6rem;line-height:1.5">Both players match the same stake. Winner takes 90%.</p>
-      <div style="display:flex;gap:.4rem;justify-content:center;flex-wrap:wrap;margin-bottom:.6rem">
-        <button class="btn btn-gold stake-opt" onclick="G.pickStake(25)" data-stake="25" style="padding:.5rem 1rem;font-size:.7rem">25 QF</button>
-        <button class="btn btn-gold stake-opt" onclick="G.pickStake(100)" data-stake="100" style="padding:.5rem 1rem;font-size:.7rem">100 QF</button>
-        <button class="btn btn-gold stake-opt" onclick="G.pickStake(250)" data-stake="250" style="padding:.5rem 1rem;font-size:.7rem">250 QF</button>
-      </div>
-      <div style="display:flex;gap:.3rem;align-items:center;justify-content:center;margin-bottom:.6rem">
-        <input type="number" id="custom-duel-stake" min="25" placeholder="Custom" style="width:5rem;padding:.35rem .5rem;font-family:'JetBrains Mono',monospace;font-size:.75rem;text-align:center;background:var(--surface2);border:1px solid var(--border2);border-radius:6px;color:var(--text-white)">
-        <span style="font-family:'JetBrains Mono',monospace;font-size:.55rem;color:var(--muted)">QF (min 25)</span>
-      </div>
-      <p style="font-family:'JetBrains Mono',monospace;font-size:.5rem;color:var(--muted);margin-bottom:.6rem;line-height:1.5">5% burned &middot; 5% team &middot; 90% to winner. Full refund if opponent doesn't accept.</p>
-      <div style="display:flex;gap:.4rem;justify-content:center">
-        <button class="btn btn-gold" id="confirm-duel-btn" onclick="G.confirmDuel()" style="padding:.6rem 1.5rem;font-size:.65rem" disabled>Select a stake</button>
-        <button class="btn" onclick="G.cancelStakePicker()" style="padding:.6rem 1rem;font-size:.65rem">Cancel</button>
-      </div>
+      <button class="btn btn-gold" onclick="G.confirmDuel()">&#9876; Create a Duel</button>
     </div>
   </div>
   <div class="msg" id="startMsg"></div>
@@ -258,7 +241,7 @@ body{background:var(--bg);color:var(--text);font-family:'Inter',sans-serif;min-h
   <div class="duel-accept" id="duelAccept">
     <h2>Duel Challenge</h2>
     <p>Challenged by <strong id="challengerName">...</strong></p>
-    <p id="acceptStakeInfo" style="margin:.4rem 0 .8rem"></p>
+    <p id="acceptStakeInfo" style="margin:.4rem 0 .8rem">Same conditions. Best score wins.</p>
     <button class="btn btn-gold" onclick="G.acceptDuel()">Accept &amp; Play</button>
   </div>
 </div>
@@ -564,54 +547,13 @@ var G = (function() {
   }
 
   // ── Duel functions ───────────────────────────────────────────────────
-  var _duelStake = 0;
   var duelStartTime = 0;
 
-  function showStakePicker() {
-    if (!W.address) { alert('Connect your wallet to create a duel.'); return; }
-    document.getElementById('duel-stake-panel').style.display = 'block';
-    _duelStake = 0;
-    document.querySelectorAll('.stake-opt').forEach(function(b) { b.classList.remove('active'); });
-    var ci = document.getElementById('custom-duel-stake'); if (ci) ci.value = '';
-    document.getElementById('confirm-duel-btn').disabled = true;
-    document.getElementById('confirm-duel-btn').textContent = 'Select a stake';
-  }
-
-  function pickStake(amount) {
-    _duelStake = amount;
-    document.querySelectorAll('.stake-opt').forEach(function(b) { b.classList.toggle('active', parseInt(b.dataset.stake) === amount); });
-    var ci = document.getElementById('custom-duel-stake'); if (ci) ci.value = '';
-    document.getElementById('confirm-duel-btn').disabled = false;
-    document.getElementById('confirm-duel-btn').textContent = 'Create Duel \u2014 ' + amount + ' QF';
-  }
-
-  function cancelStakePicker() {
-    document.getElementById('duel-stake-panel').style.display = 'none';
-  }
-
-  (function() {
-    var ci = document.getElementById('custom-duel-stake');
-    if (ci) ci.addEventListener('input', function() {
-      var v = parseInt(this.value);
-      if (v >= 25) {
-        _duelStake = v;
-        document.querySelectorAll('.stake-opt').forEach(function(b) { b.classList.remove('active'); });
-        document.getElementById('confirm-duel-btn').disabled = false;
-        document.getElementById('confirm-duel-btn').textContent = 'Create Duel \u2014 ' + v + ' QF';
-      } else {
-        _duelStake = 0;
-        document.getElementById('confirm-duel-btn').disabled = true;
-        document.getElementById('confirm-duel-btn').textContent = 'Min 25 QF';
-      }
-    });
-  })();
-
   async function confirmDuel() {
-    if (_duelStake < 25) return;
-    document.getElementById('duel-stake-panel').style.display = 'none';
+    if (!W.address) { alert('Connect your wallet to create a duel.'); return; }
     duelMode = true;
     try {
-      var data = await api('/duel/create', { gameId: GAME_ID, stake: _duelStake });
+      var data = await api('/duel/create', { gameId: GAME_ID, stake: 0 });
       if (data.error) { setMsg(data.error); duelMode = false; return; }
       duelCode = data.shareCode;
       duelId = data.duelId;
@@ -702,8 +644,7 @@ var G = (function() {
           if (n) document.getElementById('challengerName').textContent = n;
         });
       }
-      var stake = data.stake || 25;
-      document.getElementById('acceptStakeInfo').textContent = 'Stake: ' + stake + ' QF each \u2014 Winner takes 90% of ' + (stake * 2) + ' QF';
+      document.getElementById('acceptStakeInfo').textContent = 'Same conditions. Best score wins.';
       document.getElementById('duelAccept').style.display = 'block';
     } catch (e) { setMsg('Could not load duel.'); }
   }
@@ -744,9 +685,6 @@ var G = (function() {
     startFree: startFree,
     scoreHand: scoreHand,
     nextHand: nextHand,
-    showStakePicker: showStakePicker,
-    pickStake: pickStake,
-    cancelStakePicker: cancelStakePicker,
     confirmDuel: confirmDuel,
     acceptDuel: acceptDuel,
     copyCode: copyCode,

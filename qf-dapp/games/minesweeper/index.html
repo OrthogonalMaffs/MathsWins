@@ -318,32 +318,12 @@ body{background:var(--bg);color:var(--text);font-family:'Inter',sans-serif;min-h
       <a href="/qf-dapp/games/minesweeper/league/" class="league-link">View Leagues &rarr;</a>
     </div>
 
-    <button class="btn btn-ghost" id="create-duel-btn" onclick="showDuelStakePicker()" style="width:100%;padding:.7rem;margin-top:.5rem;font-size:.65rem">&#9876; Create a Duel</button>
-
-    <!-- DUEL STAKE PICKER -->
-    <div id="duel-stake-panel" style="display:none;width:100%;text-align:center;margin-bottom:1rem">
-      <h3 style="font-family:'Playfair Display','Bebas Neue',serif;font-size:1.3rem;color:#e8eaf0;margin-bottom:.4rem">Set Your Stake</h3>
-      <p style="font-size:.62rem;color:#4a4e5a;margin-bottom:.8rem;line-height:1.5">Both players match the same stake. Winner takes 90%.</p>
-      <div style="display:flex;gap:.4rem;justify-content:center;flex-wrap:wrap;margin-bottom:.6rem">
-        <button class="btn btn-ghost stake-opt" onclick="pickDuelStake(25)" data-stake="25" style="padding:.5rem 1rem;font-size:.7rem">25 QF</button>
-        <button class="btn btn-ghost stake-opt" onclick="pickDuelStake(100)" data-stake="100" style="padding:.5rem 1rem;font-size:.7rem">100 QF</button>
-        <button class="btn btn-ghost stake-opt" onclick="pickDuelStake(250)" data-stake="250" style="padding:.5rem 1rem;font-size:.7rem">250 QF</button>
-      </div>
-      <div style="display:flex;gap:.3rem;align-items:center;justify-content:center;margin-bottom:.6rem">
-        <input type="number" id="custom-duel-stake" min="25" placeholder="Custom" style="width:5rem;padding:.35rem .5rem;font-family:'JetBrains Mono','DM Mono',monospace;font-size:.75rem;text-align:center;background:#1e2025;border:1px solid #2a2e36;border-radius:6px;color:#e8eaf0">
-        <span style="font-family:'JetBrains Mono','DM Mono',monospace;font-size:.55rem;color:#4a4e5a">QF (min 25)</span>
-      </div>
-      <p style="font-family:'JetBrains Mono','DM Mono',monospace;font-size:.5rem;color:#4a4e5a;margin-bottom:.8rem;line-height:1.5">5% burned &middot; 5% team &middot; 90% to winner. Full refund if opponent doesn't accept.</p>
-      <div style="display:flex;gap:.4rem;justify-content:center">
-        <button class="btn btn-silver" id="confirm-duel-btn" onclick="confirmDuelCreate()" style="padding:.6rem 1.5rem;font-size:.65rem" disabled>Select a stake</button>
-        <button class="btn btn-ghost" onclick="cancelDuelCreate()" style="padding:.6rem 1rem;font-size:.65rem">Cancel</button>
-      </div>
-    </div>
+    <button class="btn btn-ghost" id="create-duel-btn" onclick="confirmDuelCreate()" style="width:100%;padding:.7rem;margin-top:.5rem;font-size:.65rem">&#9876; Create a Duel</button>
 
     <!-- DUEL SHARE -->
     <div id="duel-share-panel" style="display:none;width:100%;text-align:center;margin-bottom:1rem">
       <h3 style="font-family:'Playfair Display','Bebas Neue',serif;font-size:1.3rem;color:#e8eaf0;margin-bottom:.3rem">Duel Created</h3>
-      <p style="font-size:.62rem;color:#4a4e5a;margin-bottom:.8rem">Share this code. Opponent has 24 hours.</p>
+      <p style="font-size:.62rem;color:#4a4e5a;margin-bottom:.8rem">Share this code. Opponent has 24 hours to accept.</p>
       <div id="duel-share-code" style="font-family:'JetBrains Mono','DM Mono',monospace;font-size:2rem;letter-spacing:.25em;color:#d4d8e2;background:#16181c;border:2px solid rgba(184,188,198,0.15);border-radius:10px;padding:.8rem 1.5rem;display:inline-block;margin-bottom:.6rem;user-select:all">------</div>
       <div style="display:flex;gap:.4rem;justify-content:center">
         <button class="btn btn-silver" onclick="copyDuelCode()" style="padding:.5rem 1rem;font-size:.6rem">Copy Code</button>
@@ -356,9 +336,8 @@ body{background:var(--bg);color:var(--text);font-family:'Inter',sans-serif;min-h
     <div id="duel-accept-panel" style="display:none;width:100%;text-align:center;margin-bottom:1rem">
       <h3 style="font-family:'Playfair Display','Bebas Neue',serif;font-size:1.3rem;color:#e8eaf0;margin-bottom:.3rem">You've Been Challenged</h3>
       <div id="duel-challenger" style="font-family:'JetBrains Mono','DM Mono',monospace;font-size:.9rem;color:#d4d8e2;margin-bottom:.3rem">---</div>
-      <div id="duel-accept-stake" style="font-family:'JetBrains Mono','DM Mono',monospace;font-size:.75rem;color:#b8bcc6;background:#1e2025;border:1px solid rgba(184,188,198,0.15);border-radius:8px;padding:.5rem;display:inline-block;margin-bottom:.6rem">Stake: -- QF</div>
-      <p style="font-size:.62rem;color:#4a4e5a;margin-bottom:.8rem">Same conditions. Match the stake to play.</p>
-      <button class="btn btn-silver" onclick="acceptDuelChallenge()" style="padding:.7rem 1.5rem;font-size:.68rem">Match Stake &amp; Play</button>
+      <p style="font-size:.62rem;color:#4a4e5a;margin-bottom:.8rem">Same conditions. Best score wins.</p>
+      <button class="btn btn-silver" onclick="acceptDuelChallenge()" style="padding:.7rem 1.5rem;font-size:.68rem">Accept &amp; Play</button>
     </div>
   </div>
 
@@ -969,7 +948,7 @@ var G = (function() {
             '<button class="btn btn-ghost" onclick="shareDuelLink()" style="padding:.4rem 1rem;font-size:.6rem">Share Link</button>' +
           '</div>' +
           '<div id="modal-duel-status" style="font-family:\'JetBrains Mono\',monospace;font-size:.55rem;color:var(--muted);margin-bottom:.3rem">Waiting for opponent\u2026</div>' +
-          '<div style="font-family:\'JetBrains Mono\',monospace;font-size:.5rem;color:var(--muted)">Opponent has 24 hours. Full refund if nobody accepts.</div>' +
+          '<div style="font-family:\'JetBrains Mono\',monospace;font-size:.5rem;color:var(--muted)">Opponent has 24 hours to accept.</div>' +
         '</div>';
     }
   }
@@ -1169,7 +1148,7 @@ var G = (function() {
 </script>
 <script>
 // ── Duel system ──────────────────────────────────────────────────────
-var duelMode = false, duelCode = null, duelId = null, duelStake = 0, _duelStake = 0;
+var duelMode = false, duelCode = null, duelId = null;
 
 (function checkDuelParam() {
   var params = new URLSearchParams(window.location.search);
@@ -1193,63 +1172,17 @@ function duelApi(url, body, method) {
   return fetch(DUEL_API + url, opts).then(function(r) { return r.json(); });
 }
 
-function showDuelStakePicker() {
-  if (typeof qfWallet === 'undefined' || !qfWallet.address) { alert('Connect your wallet to create a duel.'); return; }
-  document.getElementById('duel-stake-panel').style.display = 'block';
-  document.getElementById('start-btn').style.display = 'none';
-  document.getElementById('create-duel-btn').style.display = 'none';
-  _duelStake = 0;
-  document.querySelectorAll('.stake-opt').forEach(function(b) { b.classList.remove('active'); });
-  var ci = document.getElementById('custom-duel-stake'); if (ci) ci.value = '';
-  document.getElementById('confirm-duel-btn').disabled = true;
-  document.getElementById('confirm-duel-btn').textContent = 'Select a stake';
-}
-
-function pickDuelStake(amount) {
-  _duelStake = amount;
-  document.querySelectorAll('.stake-opt').forEach(function(b) { b.classList.toggle('active', parseInt(b.dataset.stake) === amount); });
-  var ci = document.getElementById('custom-duel-stake'); if (ci) ci.value = '';
-  document.getElementById('confirm-duel-btn').disabled = false;
-  document.getElementById('confirm-duel-btn').textContent = 'Create Duel \u2014 ' + amount + ' QF';
-}
-
-(function() {
-  var ci = document.getElementById('custom-duel-stake');
-  if (ci) ci.addEventListener('input', function() {
-    var v = parseInt(this.value);
-    if (v >= 25) {
-      _duelStake = v;
-      document.querySelectorAll('.stake-opt').forEach(function(b) { b.classList.remove('active'); });
-      document.getElementById('confirm-duel-btn').disabled = false;
-      document.getElementById('confirm-duel-btn').textContent = 'Create Duel \u2014 ' + v + ' QF';
-    } else {
-      _duelStake = 0;
-      document.getElementById('confirm-duel-btn').disabled = true;
-      document.getElementById('confirm-duel-btn').textContent = 'Min 25 QF';
-    }
-  });
-})();
-
-function cancelDuelCreate() {
-  document.getElementById('duel-stake-panel').style.display = 'none';
-  document.getElementById('start-btn').style.display = '';
-  document.getElementById('create-duel-btn').style.display = '';
-}
-
 async function confirmDuelCreate() {
-  if (_duelStake < 25) return;
-  document.getElementById('duel-stake-panel').style.display = 'none';
+  if (typeof qfWallet === 'undefined' || !qfWallet.address) { alert('Connect your wallet to create a duel.'); return; }
   try {
-    var data = await duelApi('/duel/create', { gameId: 'minesweeper', stake: _duelStake });
-    if (data.error) { alert(data.error); cancelDuelCreate(); return; }
+    var data = await duelApi('/duel/create', { gameId: 'minesweeper', stake: 0 });
+    if (data.error) { alert(data.error); return; }
     duelMode = true;
     duelCode = data.shareCode;
     duelId = data.duelId;
-    duelStake = _duelStake;
     G.startGame();
   } catch (e) {
     alert('Connection error creating duel');
-    cancelDuelCreate();
   }
 }
 
@@ -1282,7 +1215,6 @@ async function loadDuelAccept() {
     var data = await duelApi('/duel/' + duelCode, null, 'GET');
     if (data.error) { alert(data.error); return; }
     duelId = data.id;
-    duelStake = data.stake || 25;
     var name = (typeof qfWallet !== 'undefined' && qfWallet.formatAddr) ? qfWallet.formatAddr(data.creator_wallet) : data.creator_wallet.slice(0, 6) + '...' + data.creator_wallet.slice(-4);
     document.getElementById('duel-challenger').textContent = name;
     if (typeof qfWallet !== 'undefined' && qfWallet.resolveAny) {
@@ -1290,7 +1222,6 @@ async function loadDuelAccept() {
         if (n) document.getElementById('duel-challenger').textContent = n;
       });
     }
-    document.getElementById('duel-accept-stake').textContent = 'Stake: ' + duelStake + ' QF each \u2014 Winner takes 90% of ' + (duelStake * 2) + ' QF';
     document.getElementById('duel-accept-panel').style.display = 'block';
     document.getElementById('start-btn').style.display = 'none';
     document.getElementById('create-duel-btn').style.display = 'none';

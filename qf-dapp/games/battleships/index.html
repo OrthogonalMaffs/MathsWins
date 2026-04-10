@@ -10,9 +10,9 @@
 </script>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-<meta name="description" content="Naval warfare on QF Network. Place your fleet, hunt the enemy. Turn-based duels with QF stakes.">
+<meta name="description" content="Naval warfare on QF Network. Place your fleet, hunt the enemy. Turn-based duels.">
 <meta property="og:title" content="Battleships - QF Games">
-<meta property="og:description" content="Naval warfare on QF Network. Place your fleet, hunt the enemy. Turn-based duels with QF stakes.">
+<meta property="og:description" content="Naval warfare on QF Network. Place your fleet, hunt the enemy. Turn-based duels.">
 <meta property="og:url" content="https://mathswins.co.uk/qf-dapp/games/battleships/">
 <link rel="canonical" href="https://mathswins.co.uk/qf-dapp/games/battleships/">
 <title>Battleships &middot; QF Games</title>
@@ -74,15 +74,6 @@ body{background:var(--bg);color:var(--text);font-family:'Inter',sans-serif;min-h
 .mode-card:hover{border-color:var(--silver-border);transform:translateY(-1px);box-shadow:0 4px 20px rgba(0,0,0,.3)}
 .mode-card h3{font-family:'Playfair Display',serif;font-size:1.1rem;color:var(--text-white);margin-bottom:.2rem}
 .mode-card p{font-size:.68rem;color:var(--muted);line-height:1.5}
-
-/* ── Stake selector ── */
-.stake-panel{width:100%;display:none;flex-direction:column;gap:.8rem;align-items:center}
-.stake-options{display:flex;gap:.5rem;flex-wrap:wrap;justify-content:center}
-.stake-btn{padding:.6rem 1.2rem;font-family:'JetBrains Mono',monospace;font-size:.6rem;letter-spacing:.06em;border:1px solid var(--border);border-radius:6px;background:transparent;color:var(--muted);cursor:pointer;transition:all .2s}
-.stake-btn:hover{border-color:var(--silver-border);color:var(--silver)}
-.stake-btn.active{border-color:var(--silver);color:var(--silver);background:var(--silver-dim)}
-.stake-custom{width:80px;padding:.5rem;font-family:'JetBrains Mono',monospace;font-size:.6rem;background:var(--surface);border:1px solid var(--border);border-radius:6px;color:var(--text-white);text-align:center}
-.stake-custom:focus{outline:none;border-color:var(--silver-border)}
 
 /* ── Difficulty selector (CPU) ── */
 .diff-select{display:flex;gap:0.4rem;width:100%;flex-wrap:wrap;display:none}
@@ -349,7 +340,7 @@ body{background:var(--bg);color:var(--text);font-family:'Inter',sans-serif;min-h
     <div class="mode-panel" id="mode-panel">
       <div class="mode-card" onclick="G.showCreateDuel()">
         <h3>Create Duel</h3>
-        <p>Stake QF and challenge anyone. Share a code, they join, you battle.</p>
+        <p>Challenge anyone. Share a code, they join, you battle.</p>
       </div>
       <div class="mode-card" onclick="G.showJoinDuel()">
         <h3>Enter Code</h3>
@@ -358,21 +349,6 @@ body{background:var(--bg);color:var(--text);font-family:'Inter',sans-serif;min-h
       <div class="mode-card" onclick="G.showCpuSelect()">
         <h3>vs CPU</h3>
         <p>Practice against the computer. Three difficulty levels.</p>
-      </div>
-    </div>
-
-    <!-- Stake selector -->
-    <div class="stake-panel" id="stake-panel">
-      <p style="font-size:.72rem;color:var(--text-white);margin-bottom:.4rem">Choose your stake</p>
-      <div class="stake-options" id="stake-options">
-        <button class="stake-btn active" data-stake="25">25 QF</button>
-        <button class="stake-btn" data-stake="100">100 QF</button>
-        <button class="stake-btn" data-stake="250">250 QF</button>
-        <input class="stake-custom" id="custom-stake" type="number" placeholder="Custom" min="1">
-      </div>
-      <div class="controls" style="margin-top:.6rem;max-width:300px">
-        <button class="btn btn-ghost" onclick="G.backToMenu()">Back</button>
-        <button class="btn btn-silver" onclick="G.createDuel()">Create Duel</button>
       </div>
     </div>
 
@@ -564,7 +540,6 @@ var G = {};
 G.mode = null;
 G.cpuDiff = 'recruit';
 G.duelCode = null;
-G.duelStake = 25;
 G.orientation = 'h';
 G.selectedPlaceShip = 0;
 G.placedShips = [];
@@ -608,7 +583,6 @@ function seededRandom(seed) {
 // ── Pre-game UI ───────────────────────────────────────────────────────
 G.backToMenu = function() {
   document.getElementById('mode-panel').style.display = 'flex';
-  document.getElementById('stake-panel').style.display = 'none';
   document.getElementById('join-panel').style.display = 'none';
   document.getElementById('diff-select').style.display = 'none';
   document.getElementById('cpu-start-controls').style.display = 'none';
@@ -617,8 +591,7 @@ G.backToMenu = function() {
 
 G.showCreateDuel = function() {
   if (!W.isConnected()) { alert('Connect your wallet to create a duel.'); return; }
-  document.getElementById('mode-panel').style.display = 'none';
-  document.getElementById('stake-panel').style.display = 'flex';
+  G.createDuel();
 };
 
 G.showJoinDuel = function() {
@@ -633,22 +606,6 @@ G.showCpuSelect = function() {
   document.getElementById('cpu-start-controls').style.display = 'flex';
 };
 
-// Stake buttons
-document.querySelectorAll('.stake-btn').forEach(function(btn){
-  btn.addEventListener('click', function(){
-    document.querySelectorAll('.stake-btn').forEach(function(b){ b.classList.remove('active'); });
-    this.classList.add('active');
-    G.duelStake = parseInt(this.dataset.stake);
-    document.getElementById('custom-stake').value = '';
-  });
-});
-document.getElementById('custom-stake').addEventListener('input', function(){
-  if (this.value) {
-    document.querySelectorAll('.stake-btn').forEach(function(b){ b.classList.remove('active'); });
-    G.duelStake = parseInt(this.value) || 25;
-  }
-});
-
 // Difficulty buttons
 document.querySelectorAll('.diff-btn').forEach(function(btn){
   btn.addEventListener('click', function(){
@@ -661,8 +618,9 @@ document.querySelectorAll('.diff-btn').forEach(function(btn){
 // ── Create Duel ───────────────────────────────────────────────────────
 G.createDuel = async function() {
   setMsg('');
+  document.getElementById('mode-panel').style.display = 'none';
   try {
-    var data = await api('/battleships/create', { stake: G.duelStake });
+    var data = await api('/battleships/create', { stake: 0 });
     if (data.error) { setMsg(data.error); return; }
     G.duelCode = data.code;
     G.mode = 'duel';
@@ -1548,15 +1506,11 @@ G.showResults = function(won) {
   if (won) {
     resultEl.textContent = 'Victory';
     resultEl.className = 'modal-result win';
-    if (G.mode === 'duel') {
-      subEl.textContent = 'Prize: ' + (G.duelStake * 2 * 0.9) + ' QF';
-    } else {
-      subEl.textContent = 'You sank the enemy fleet';
-    }
+    subEl.textContent = 'You sank the enemy fleet';
   } else {
     resultEl.textContent = 'Defeated';
     resultEl.className = 'modal-result lose';
-    subEl.textContent = G.mode === 'duel' ? 'Better luck next time' : 'Your fleet was sunk';
+    subEl.textContent = 'Your fleet was sunk';
   }
 
   // Reveal grid

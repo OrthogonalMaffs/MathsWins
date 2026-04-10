@@ -10,7 +10,7 @@
 </script>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-<meta name="description" content="Golf Solitaire on QF Network. Clear 7 columns by playing cards one rank up or down. Duels for QF stakes.">
+<meta name="description" content="Golf Solitaire on QF Network. Clear 7 columns by playing cards one rank up or down. Competitive duels.">
 <meta property="og:title" content="Golf Solitaire &middot; QF Games">
 <meta property="og:description" content="Clear 7 columns by playing cards one rank up or down from the waste pile. Pure skill on QF Network.">
 <meta property="og:url" content="https://mathswins.co.uk/qf-dapp/games/golf-solitaire/">
@@ -161,8 +161,7 @@ body{background:var(--bg);color:var(--text);font-family:'Inter',sans-serif;min-h
     <h3>Choose Mode</h3>
     <div class="mode-btns">
       <button class="btn" onclick="G.startFree()">Free Play</button>
-      <button class="btn btn-gold" onclick="G.createDuel(25)">Duel 25 QF</button>
-      <button class="btn btn-gold" onclick="G.createDuel(50)">Duel 50 QF</button>
+      <button class="btn btn-gold" onclick="G.createDuel()">Create a Duel</button>
     </div>
   </div>
   <div class="msg" id="startMsg"></div>
@@ -176,7 +175,7 @@ body{background:var(--bg);color:var(--text);font-family:'Inter',sans-serif;min-h
   <div class="duel-accept" id="duelAccept">
     <h2>Duel Challenge</h2>
     <p>Challenged by <strong id="challengerName">...</strong></p>
-    <p id="acceptStakeInfo" style="margin:.4rem 0 .8rem"></p>
+    <p id="acceptStakeInfo" style="margin:.4rem 0 .8rem">Same conditions. Best score wins.</p>
     <button class="btn btn-gold" onclick="G.acceptDuel()">Accept &amp; Play</button>
   </div>
 </div>
@@ -439,11 +438,11 @@ var G = (function() {
   function startFree() { startSession(); }
 
   // ── Duel ─────────────────────────────────────────────────────────────
-  async function createDuel(stake) {
+  async function createDuel() {
     if (!W.address) { alert('Connect your wallet to create a duel.'); return; }
     duelMode = true;
     try {
-      var data = await api('/duel/create', { gameId: GAME_ID, difficulty: 'medium', stake: stake || 25 });
+      var data = await api('/duel/create', { gameId: GAME_ID, difficulty: 'medium', stake: 0 });
       if (data.error) { setMsg(data.error); return; }
       duelCode = data.shareCode;
       await startSession(data.puzzleSeed);
@@ -506,7 +505,6 @@ var G = (function() {
       var data = await api('/duel/' + code, null, 'GET');
       if (data.error) { setMsg(data.error); return; }
       document.getElementById('challengerName').textContent = W.displayName(data.creator_wallet);
-      document.getElementById('acceptStakeInfo').textContent = 'Stake: ' + (data.stake || 25) + ' QF each';
       document.getElementById('duelAccept').style.display = 'block';
     } catch (e) { setMsg('Could not load duel.'); }
   }
