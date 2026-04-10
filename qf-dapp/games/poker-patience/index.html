@@ -218,8 +218,24 @@ body{background:var(--bg);color:var(--text);font-family:'Inter',sans-serif;min-h
     <h3>Choose Mode</h3>
     <div class="mode-btns">
       <button class="btn" onclick="G.startFree()">Free Play</button>
-      <button class="btn btn-gold" onclick="G.createDuel(25)">Duel 25 QF</button>
-      <button class="btn btn-gold" onclick="G.createDuel(50)">Duel 50 QF</button>
+      <button class="btn btn-gold" onclick="G.showStakePicker()">&#9876; Create a Duel</button>
+    </div>
+    <div id="duel-stake-panel" style="display:none;margin-top:.8rem;text-align:center">
+      <p style="font-size:.62rem;color:var(--muted);margin-bottom:.6rem;line-height:1.5">Both players match the same stake. Winner takes 90%.</p>
+      <div style="display:flex;gap:.4rem;justify-content:center;flex-wrap:wrap;margin-bottom:.6rem">
+        <button class="btn btn-gold stake-opt" onclick="G.pickStake(25)" data-stake="25" style="padding:.5rem 1rem;font-size:.7rem">25 QF</button>
+        <button class="btn btn-gold stake-opt" onclick="G.pickStake(100)" data-stake="100" style="padding:.5rem 1rem;font-size:.7rem">100 QF</button>
+        <button class="btn btn-gold stake-opt" onclick="G.pickStake(250)" data-stake="250" style="padding:.5rem 1rem;font-size:.7rem">250 QF</button>
+      </div>
+      <div style="display:flex;gap:.3rem;align-items:center;justify-content:center;margin-bottom:.6rem">
+        <input type="number" id="custom-duel-stake" min="25" placeholder="Custom" style="width:5rem;padding:.35rem .5rem;font-family:'JetBrains Mono',monospace;font-size:.75rem;text-align:center;background:var(--surface2);border:1px solid var(--border2);border-radius:6px;color:var(--text-white)">
+        <span style="font-family:'JetBrains Mono',monospace;font-size:.55rem;color:var(--muted)">QF (min 25)</span>
+      </div>
+      <p style="font-family:'JetBrains Mono',monospace;font-size:.5rem;color:var(--muted);margin-bottom:.6rem;line-height:1.5">5% burned &middot; 5% team &middot; 90% to winner. Full refund if opponent doesn't accept.</p>
+      <div style="display:flex;gap:.4rem;justify-content:center">
+        <button class="btn btn-gold" id="confirm-duel-btn" onclick="G.confirmDuel()" style="padding:.6rem 1.5rem;font-size:.65rem" disabled>Select a stake</button>
+        <button class="btn" onclick="G.cancelStakePicker()" style="padding:.6rem 1rem;font-size:.65rem">Cancel</button>
+      </div>
     </div>
   </div>
   <div class="msg" id="startMsg"></div>
@@ -228,7 +244,10 @@ body{background:var(--bg);color:var(--text);font-family:'Inter',sans-serif;min-h
     <h3>Share Your Duel Code</h3>
     <p>Send this code to your opponent. They have 24 hours to play.</p>
     <div class="share-code-display" id="shareCode">------</div>
-    <p id="duelExpire" style="font-size:.55rem;color:var(--muted)"></p>
+    <div style="display:flex;gap:.4rem;justify-content:center;margin-bottom:.4rem">
+      <button class="btn" onclick="G.copyCode()" style="padding:.4rem .8rem;font-size:.6rem">Copy Code</button>
+      <button class="btn" onclick="G.shareLink()" style="padding:.4rem .8rem;font-size:.6rem">Share Link</button>
+    </div>
     <p id="duelStatusMsg" style="font-size:.65rem;color:var(--silver);margin-top:.4rem">Waiting for opponent...</p>
   </div>
 
@@ -568,32 +587,92 @@ var G = (function() {
   function startFree() { startSession(); }
 
   // ── Duel functions ───────────────────────────────────────────────────
-  async function createDuel(stake) {
+  var _duelStake = 0;
+  var duelStartTime = 0;
+
+  function showStakePicker() {
     if (!W.address) { alert('Connect your wallet to create a duel.'); return; }
+    document.getElementById('duel-stake-panel').style.display = 'block';
+    _duelStake = 0;
+    document.querySelectorAll('.stake-opt').forEach(function(b) { b.classList.remove('active'); });
+    var ci = document.getElementById('custom-duel-stake'); if (ci) ci.value = '';
+    document.getElementById('confirm-duel-btn').disabled = true;
+    document.getElementById('confirm-duel-btn').textContent = 'Select a stake';
+  }
+
+  function pickStake(amount) {
+    _duelStake = amount;
+    document.querySelectorAll('.stake-opt').forEach(function(b) { b.classList.toggle('active', parseInt(b.dataset.stake) === amount); });
+    var ci = document.getElementById('custom-duel-stake'); if (ci) ci.value = '';
+    document.getElementById('confirm-duel-btn').disabled = false;
+    document.getElementById('confirm-duel-btn').textContent = 'Create Duel \u2014 ' + amount + ' QF';
+  }
+
+  function cancelStakePicker() {
+    document.getElementById('duel-stake-panel').style.display = 'none';
+  }
+
+  (function() {
+    var ci = document.getElementById('custom-duel-stake');
+    if (ci) ci.addEventListener('input', function() {
+      var v = parseInt(this.value);
+      if (v >= 25) {
+        _duelStake = v;
+        document.querySelectorAll('.stake-opt').forEach(function(b) { b.classList.remove('active'); });
+        document.getElementById('confirm-duel-btn').disabled = false;
+        document.getElementById('confirm-duel-btn').textContent = 'Create Duel \u2014 ' + v + ' QF';
+      } else {
+        _duelStake = 0;
+        document.getElementById('confirm-duel-btn').disabled = true;
+        document.getElementById('confirm-duel-btn').textContent = 'Min 25 QF';
+      }
+    });
+  })();
+
+  async function confirmDuel() {
+    if (_duelStake < 25) return;
+    document.getElementById('duel-stake-panel').style.display = 'none';
     duelMode = true;
     try {
-      var data = await api('/duel/create', { gameId: GAME_ID, difficulty: 'medium', stake: stake || 25 });
-      if (data.error) { setMsg(data.error); return; }
+      var data = await api('/duel/create', { gameId: GAME_ID, stake: _duelStake });
+      if (data.error) { setMsg(data.error); duelMode = false; return; }
       duelCode = data.shareCode;
+      duelStartTime = Date.now();
       await startSession(data.puzzleSeed);
-    } catch (e) { setMsg('Connection error creating duel'); }
+    } catch (e) { setMsg('Connection error creating duel'); duelMode = false; }
   }
 
   async function submitDuelScore() {
+    var timeMs = Date.now() - (duelStartTime || Date.now());
     try {
-      await api('/duel/' + duelCode + '/submit', { score: totalScore });
+      await api('/duel/' + duelCode + '/submit', { score: totalScore, timeMs: timeMs, mistakes: 0, hints: 0 });
       showDuelShare();
     } catch (e) { /* ignore */ }
   }
 
   function showDuelShare() {
-    document.getElementById('finalScreen').style.display = 'none';
-    document.getElementById('startScreen').style.display = '';
-    document.getElementById('modePanel').style.display = 'none';
     document.getElementById('duelShare').style.display = 'block';
     document.getElementById('shareCode').textContent = duelCode;
-    document.getElementById('duelExpire').textContent = 'Expires: ' + new Date(Date.now() + 86400000).toLocaleString();
     pollDuelStatus();
+  }
+
+  function copyCode() {
+    if (navigator.clipboard) {
+      navigator.clipboard.writeText(duelCode);
+      document.getElementById('duelStatusMsg').textContent = 'Code copied!';
+      setTimeout(function() { document.getElementById('duelStatusMsg').textContent = 'Waiting for opponent...'; }, 2000);
+    }
+  }
+
+  function shareLink() {
+    var url = window.location.origin + '/qf-dapp/games/poker-patience/?duel=' + duelCode;
+    if (navigator.share) {
+      navigator.share({ title: 'Poker Patience Duel', text: 'I challenge you!', url: url });
+    } else if (navigator.clipboard) {
+      navigator.clipboard.writeText(url);
+      document.getElementById('duelStatusMsg').textContent = 'Link copied!';
+      setTimeout(function() { document.getElementById('duelStatusMsg').textContent = 'Waiting for opponent...'; }, 2000);
+    }
   }
 
   function pollDuelStatus() {
@@ -605,15 +684,19 @@ var G = (function() {
           clearInterval(duelPollTimer);
           showDuelResults(data);
         } else if (data.opponent_wallet) {
-          document.getElementById('duelStatusMsg').textContent = W.displayName(data.opponent_wallet) + ' is playing...';
+          var oppName = W.formatAddr(data.opponent_wallet);
+          document.getElementById('duelStatusMsg').textContent = oppName + ' is playing...';
         }
       } catch (e) { /* ignore */ }
     }, 5000);
   }
 
   function showDuelResults(data) {
-    var myScore = totalScore;
-    var oppScore = data.creator_wallet === W.address ? data.opponent_score : data.creator_score;
+    var myWallet = W.address ? W.address.toLowerCase() : '';
+    var isCreator = data.creator_wallet && data.creator_wallet.toLowerCase() === myWallet;
+    var myScore = isCreator ? data.creator_score : data.opponent_score;
+    var oppScore = isCreator ? data.opponent_score : data.creator_score;
+    if (myScore === undefined || myScore === null) myScore = totalScore;
     document.getElementById('duelShare').style.display = 'none';
     document.getElementById('finalScreen').style.display = 'block';
     var resultEl = document.getElementById('duelResult');
@@ -632,8 +715,14 @@ var G = (function() {
     try {
       var data = await api('/duel/' + code, null, 'GET');
       if (data.error) { setMsg(data.error); return; }
-      document.getElementById('challengerName').textContent = W.displayName(data.creator_wallet);
-      document.getElementById('acceptStakeInfo').textContent = 'Stake: ' + (data.stake || 25) + ' QF each';
+      var name = W.formatAddr(data.creator_wallet);
+      document.getElementById('challengerName').textContent = name;
+      if (W.resolveAny) {
+        W.resolveAny(data.creator_wallet).then(function(n) {
+          if (n) document.getElementById('challengerName').textContent = n;
+        });
+      }
+      document.getElementById('acceptStakeInfo').textContent = 'Stake: ' + (data.stake || 25) + ' QF each \u2014 Winner takes 90% of ' + ((data.stake || 25) * 2) + ' QF';
       document.getElementById('duelAccept').style.display = 'block';
     } catch (e) { setMsg('Could not load duel.'); }
   }
@@ -644,6 +733,7 @@ var G = (function() {
       var data = await api('/duel/' + duelCode + '/accept', {});
       if (data.error) { setMsg(data.error); return; }
       document.getElementById('duelAccept').style.display = 'none';
+      duelStartTime = Date.now();
       await startSession(data.puzzleSeed);
     } catch (e) { setMsg('Connection error accepting duel'); }
   }
@@ -657,8 +747,13 @@ var G = (function() {
 
   return {
     startFree: startFree,
-    createDuel: createDuel,
+    showStakePicker: showStakePicker,
+    pickStake: pickStake,
+    cancelStakePicker: cancelStakePicker,
+    confirmDuel: confirmDuel,
     acceptDuel: acceptDuel,
+    copyCode: copyCode,
+    shareLink: shareLink,
   };
 })();
 </script>
