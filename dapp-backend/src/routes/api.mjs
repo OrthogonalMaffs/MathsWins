@@ -741,9 +741,10 @@ router.post('/league/:leagueId/join', optionalWallet, (req, res) => {
 
   const newCount = getLeaguePlayerCount(league.id);
 
-  // Auto-start if hit max during registration
-  if (league.status === 'registration' && newCount >= league.max_players) {
+  // Auto-start if hit min or max during registration
+  if (league.status === 'registration' && newCount >= (league.min_players || 4)) {
     activateLeague(league);
+    autoCreateLeague(league);
   }
 
   res.json({ joined: true, player_count: newCount });
