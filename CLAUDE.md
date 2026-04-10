@@ -76,7 +76,7 @@ Split from MaffsGames in March 2025. MaffsGames = free schools games. MathsWins 
 - **API Base:** `https://dapp-api.mathswins.co.uk/api/dapp` (Cloudflare Tunnel 66ac7db5)
 - **Box 2 (37.27.219.31):** bots, indexer, explorer, vector-graphs only — NO dApp backend
 - **Local:** `http://127.0.0.1:3860/api/dapp`
-- **Database:** SQLite at `/home/ubuntu/dapp-backend/data/mathswins.db`
+- **Database:** SQLite at `/home/jon/mathswins-dapp/data/mathswins.db`
 - **Frontend:** `qf-dapp/` directory, single-file HTML games, GitHub Pages
 - **Wallet Module:** `qf-dapp/games/qf-wallet.js` — shared across all games, QNS reverse resolution, EIP-6963, auto-reconnect with 500ms delay
 
@@ -88,19 +88,19 @@ Split from MaffsGames in March 2025. MaffsGames = free schools games. MathsWins 
 **Renamed:** Equatle → Maffsy (slug: /games/maffsy/)
 **Demoted from competitive:** countdown-numbers, cryptarithmetic-club (too short for league play)
 
-### SQLite Tables (22+)
+### SQLite Tables (30)
 | Table | Purpose |
 |-------|---------|
 | `games` | Game registry |
 | `entries` | Paid game entries per wallet/week |
-| `sessions` | Game session records |
-| `best_scores` | Leaderboard — best score per wallet/game/week |
+| `sessions` | Game session records (+ last_activity_at for marathon tracking) |
+| `best_scores` | Leaderboard — best score per wallet/game/week (legacy, empty) |
 | `settlements` | Prize settlement records |
 | `duels` | 1v1 duel challenges |
 | `leagues` | League instances (game, tier, fee, status, schedule, pot) |
 | `league_players` | Players per league (wallet, tx, puzzle_order) |
 | `league_puzzles` | Pre-generated puzzle seeds per league |
-| `league_scores` | Puzzle scores per player per league |
+| `league_scores` | Puzzle scores per player per league (+ mistake_count, hints_used, undos_used, free_cells_used, flags_used, helper_used for achievement tracking) |
 | `league_prizes` | Prize payouts per position |
 | `promo_challenges` | Promo/challenge codes |
 | `promo_claims` | Claims against promo challenges |
@@ -110,10 +110,15 @@ Split from MaffsGames in March 2025. MaffsGames = free schools games. MathsWins 
 | `battleships_placements` | Fleet positions per player per game |
 | `battleships_rounds` | Shot history per game |
 | `battleships_record` | Win/loss/draw per wallet |
-| `achievement_registry` | 47 achievements seeded (names, tiers, fees, pioneer) |
+| `achievement_registry` | 161 achievements (v4 spec), 32 categories, tier + category columns |
 | `achievement_eligibility` | Per-wallet achievement progress and mint status |
 | `global_records` | Community records (e.g. The Tortoise slowest win) |
-| `wallet_stats` | Per-wallet tracking (streaks, spending, consecutive wins) |
+| `wallet_stats` | Per-wallet tracking (streaks, spending, mints, consecutive wins, golf/pyramid failures) |
+| `personal_bests` | Best free play score per wallet/game/difficulty (upserted on completion) |
+| `league_bests` | Best league total score per wallet/game/tier (upserted at settlement) |
+| `game_messages` | Preset messages for duels and leagues |
+| `seasonal_windows` | Seasonal achievement earning windows (pre-populated per year) |
+| `commemorative_mints` | Commemorative NFT mint records per league |
 
 ### API Endpoints (45+)
 **Auth:** POST /auth/challenge, /auth/verify (challenge-sign-verify, JWT 24h)
@@ -125,6 +130,7 @@ Split from MaffsGames in March 2025. MaffsGames = free schools games. MathsWins 
 **League v2:** GET /leagues/my, /leagues/active, /leagues/settled | POST /admin/league/:id/settle, /admin/league/:id/cancel, /admin/league/:id/refund/:wallet | GET /admin/refunds
 **Battleships:** POST /battleships/create, /:code/join, /:code/place, /:code/shoot, /:code/forfeit | GET /battleships/:code, /battleships/history
 **Achievements:** GET /achievements/status, /achievements/all, /achievements/my, /achievements/record/:id | POST /achievement/mint | POST /admin/achievement/register, /admin/achievement/award | GET /admin/achievements
+**Profile:** GET /profile/:wallet (public, no auth, 60/min rate limit — returns personal_bests, league_bests, achievements, wallet_stats, league_history)
 
 ### League System v2
 - Server-authoritative: seeds never reach client, sequential random puzzle delivery
@@ -150,14 +156,35 @@ Split from MaffsGames in March 2025. MaffsGames = free schools games. MathsWins 
 - optionalWallet middleware accepts JWT or legacy X-Wallet-Address header
 - @polkadot/util-crypto installed on Hetzner for Substrate signature verification
 
-### Achievement System (47 achievements, gated by ACHIEVEMENTS_ACTIVE=false)
-- Teaser page live at /qf-dapp/achievements/ — names only, all locked
-- 10 categories: purity, volume, winning, duels, skill, time, absurd, community, meta, impossible
+### Achievement System (v4 spec, 161 achievements, gated by ACHIEVEMENTS_ACTIVE=false)
+- Teaser page live at /qf-dapp/achievements/ — 161 names, all locked
+- 32 categories: purity, volume, winning, shadows, duels, battleships, freecell, minesweeper, poker-patience, cribbage, golf, pyramid, kenken, nonogram, sudoku, comeback, per-game-volume, free-games, streaks, kakuro, time, seasonal, monthly, constants, squared-pi, loyalty, milestones, meta, absurd, founding, wooden-spoons, impossible
+- 5 mint tiers: Free (0 QF), Standard (100 QF), Premium (200 QF), Elite (500 QF), Manual reward
+- achievement_registry has both `tier` and `category` columns (tier for legacy compat, category for v4)
 - Pioneer tag: first mint per achievement, UNIQUE constraint
 - Condition checker hooks into league settlement
+- Mint reward: every 5th paid mint free, every 10th gives 2 free mints (tracked via paid_mint_count, free_mints_banked on wallet_stats)
 - DB: achievement_registry, achievement_eligibility, global_records, wallet_stats
 - Contract: QFAchievement.sol (not yet deployed — after games tested)
 - "Boom" — the impossible achievement (first click safety means it can never be earned)
+- The Grandmaster = FREE to mint, Shadow Legend = 500 QF
+- 19 wooden spoons (shown as ? on teaser page until earned)
+
+### KenKen Scoring
+- Base 5000, -1pt/sec after 60s grace, -300 per incorrect submission, -500 per hint
+- 3 incorrect grid submissions = game over (pity score: correctCells x 20, no other penalties)
+- Server tracks `session.submitFailures` (grid submissions) separately from `session.mistakes` (cell placement errors)
+- Client mirrors with `submitFailures` variable — `mistakes` is for score preview only
+- Results screen shows "Incorrect Submissions" and "Hints Used" (not "Mistakes" / "Hints")
+- Kakuro and Nonogram have the SAME conflation bug (session.mistakes shared) — NOT YET FIXED
+
+### Personal Bests and League Bests
+- `personal_bests` table: upserted on successful free play OR league completion (paths 2 and 4 only — game-overs excluded)
+- Time-primary games (minesweeper, freecell, kenken, nonogram, kakuro, sudoku-duel): lower time = better, upsert uses `<`
+- Score-primary games (estimation-engine, countdown-numbers, etc.): higher score = better, upsert uses `>`
+- `league_bests` table: upserted at settlement for ALL players in the league (not just top 4)
+- `difficulty` field added to in-memory session object in startFreeSession and rebuildSession
+- Profile endpoint: GET /api/dapp/profile/:wallet (public, 60/min rate limit)
 
 ### Battleships
 - Turn-based async duels only (no simultaneous — dropped to avoid WebSocket complexity)
