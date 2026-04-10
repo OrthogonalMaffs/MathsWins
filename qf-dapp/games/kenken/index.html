@@ -266,7 +266,7 @@ body{background:var(--bg);color:var(--text);font-family:'Inter',sans-serif;min-h
 
   <button class="btn btn-silver" id="start-btn" style="width:100%;padding:1rem">Start Game</button>
   <button class="btn btn-ghost" id="create-duel-btn" onclick="showDuelStakePicker()" style="width:100%;padding:.7rem;margin-top:.5rem;font-size:.65rem">&#9876; Create a Duel</button>
-  <a href="/qf-dapp/games/kenken/league/" style="display:block;text-align:center;margin-top:.8rem;font-family:'JetBrains Mono',monospace;font-size:.65rem;color:var(--silver,#b8bcc6);text-decoration:none;padding:.5rem;border:1px solid var(--border,#1e2228);border-radius:6px;transition:all .15s" onmouseover="this.style.borderColor='rgba(184,188,198,0.15)'" onmouseout="this.style.borderColor='var(--border,#1e2228)'">&#9813; View Leagues</a>
+  <a id="league-link" href="/qf-dapp/games/kenken/league/" style="display:block;text-align:center;margin-top:.8rem;font-family:'JetBrains Mono',monospace;font-size:.65rem;color:var(--silver,#b8bcc6);text-decoration:none;padding:.5rem;border:1px solid var(--border,#1e2228);border-radius:6px;transition:all .15s" onmouseover="this.style.borderColor='rgba(184,188,198,0.15)'" onmouseout="this.style.borderColor='var(--border,#1e2228)'">&#9813; View Leagues</a>
 </div>
 
 <div class="countdown-overlay" id="game-countdown"><div style="text-align:center"><div class="countdown-num" id="countdown-num"></div><div class="countdown-hint">Get ready...</div></div></div>
@@ -397,6 +397,16 @@ var G = (function() {
       startGame();
     }
   });
+
+  // League mode: skip lobby, go straight to countdown
+  if (leagueMode) {
+    document.getElementById('scoring-panel').style.display = 'none';
+    document.getElementById('start-btn').style.display = 'none';
+    document.getElementById('create-duel-btn').style.display = 'none';
+    document.querySelector('.htp').style.display = 'none';
+    document.getElementById('league-link').style.display = 'none';
+    showCountdown().then(function() { startGame(); });
+  }
 
   // ── Timer ─────────────────────────────────────────────────────────
   function startTimer() {
