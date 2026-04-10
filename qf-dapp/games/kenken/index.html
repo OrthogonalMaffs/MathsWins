@@ -308,7 +308,7 @@ var G = (function() {
   var sessionToken = null;
   var n = 6, difficulty = 'hard';
   var cages = [], grid = [], notes = [], hintCells = new Set(), wrongCells = new Set();
-  var selected = null, mistakes = 0, hintsUsed = 0, maxHints = 6;
+  var selected = null, mistakes = 0, submitFailures = 0, hintsUsed = 0, maxHints = 6;
   var notesMode = false, done = false;
   var startTime = null, timerInterval = null;
   var history = [];
@@ -664,7 +664,7 @@ var G = (function() {
         await playCompletionWave();
         showModal(true, data.points);
       } else {
-        mistakes++;
+        submitFailures++;
         if (leagueMode) document.getElementById('mistake-dots').style.display = 'flex';
         updateMistakes();
         if (data.errors) {
@@ -674,14 +674,14 @@ var G = (function() {
             wrongCells.add(idx);
           });
         }
-        if (mistakes >= 3) {
+        if (data.failedOut || submitFailures >= 3) {
           done = true;
           clearInterval(timerInterval);
           var finalScore = data.points || 0;
-          setMsg('3 mistakes — game over');
+          setMsg('3 incorrect submissions — game over');
           showModal(false, finalScore);
         } else {
-          setMsg(data.errors ? data.errors.length + ' cells wrong — ' + (3 - mistakes) + ' attempts remaining' : 'Check your solution');
+          setMsg(data.errors ? data.errors.length + ' cells wrong — ' + (3 - submitFailures) + ' submissions remaining' : 'Check your solution');
         }
         renderBoard();
       }
@@ -752,7 +752,7 @@ var G = (function() {
   function updateMistakes() {
     for (var i = 0; i < 3; i++) {
       var d = document.getElementById('mdot' + i);
-      if (d) d.classList.toggle('active', i < mistakes);
+      if (d) d.classList.toggle('active', i < submitFailures);
     }
   }
   function playCompletionWave() {
@@ -784,7 +784,7 @@ var G = (function() {
         if (typeof dappWallet !== 'undefined' && dappWallet && dappWallet.address) lh['X-Wallet-Address'] = dappWallet.address;
         var resp = await fetch((location.hostname === 'localhost' ? 'http://127.0.0.1:3860' : 'https://dapp-api.mathswins.co.uk') + '/api/dapp/league/' + leagueId + '/submit', {
           method: 'POST', headers: lh,
-          body: JSON.stringify({ puzzleIndex: leaguePuzzleIndex, score: score || 0, timeMs: getSecs() * 1000, mistakes: mistakes, hints: hintsUsed })
+          body: JSON.stringify({ puzzleIndex: leaguePuzzleIndex, score: score || 0, timeMs: getSecs() * 1000, mistakes: submitFailures, hints: hintsUsed })
         });
         var result = await resp.json();
         if (!resp.ok || result.error) alert('League score failed to save: ' + (result.error || resp.status));
@@ -793,7 +793,7 @@ var G = (function() {
 
     if (won && window.duelMode && window.duelCode) {
       try {
-        duelApi('/duel/' + window.duelCode + '/submit', { score: score || 0, timeMs: getSecs() * 1000, mistakes: mistakes, hints: hintsUsed });
+        duelApi('/duel/' + window.duelCode + '/submit', { score: score || 0, timeMs: getSecs() * 1000, mistakes: submitFailures, hints: hintsUsed });
       } catch (e) { /* ignore */ }
       showDuelShare();
     }
@@ -806,7 +806,7 @@ var G = (function() {
     document.getElementById('modal-score').innerHTML =
       '<div class="ms-item"><span class="ms-val">' + (score || 0) + '</span><span class="ms-lbl">Final Score</span></div>' +
       '<div class="ms-item"><span class="ms-val">' + m + ':' + (s < 10 ? '0' : '') + s + '</span><span class="ms-lbl">Time</span></div>' +
-      '<div class="ms-item"><span class="ms-val">' + mistakes + '</span><span class="ms-lbl">Incorrect Submissions</span></div>' +
+      '<div class="ms-item"><span class="ms-val">' + submitFailures + '</span><span class="ms-lbl">Incorrect Submissions</span></div>' +
       '<div class="ms-item"><span class="ms-val">' + hintsUsed + '</span><span class="ms-lbl">Hints Used</span></div>';
 
     if (leagueMode) {
@@ -838,7 +838,7 @@ var G = (function() {
       n = q.size; cages = q.cages; maxHints = q.scoring.maxHints;
       grid = Array.from({ length: n }, function() { return new Array(n).fill(0); });
       notes = Array.from({ length: n }, function() { return Array.from({ length: n }, function() { return new Set(); }); });
-      hintCells = new Set(); mistakes = 0; hintsUsed = 0; done = false; history = [];
+      hintCells = new Set(); mistakes = 0; submitFailures = 0; hintsUsed = 0; done = false; history = [];
       document.getElementById('scoring-panel').style.display = 'none';
       document.getElementById('diff-select').style.display = 'none';
       document.getElementById('start-btn').style.display = 'none';
