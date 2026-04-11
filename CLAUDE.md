@@ -80,10 +80,11 @@ Split from MaffsGames in March 2025. MaffsGames = free schools games. MathsWins 
 - **Frontend:** `qf-dapp/` directory, single-file HTML games, GitHub Pages
 - **Wallet Module:** `qf-dapp/games/qf-wallet.js` — shared across all games, QNS reverse resolution, EIP-6963, auto-reconnect with 500ms delay
 
-### Lobby Structure (3 tabs)
+### Lobby Structure (4 tabs)
 **Leagues tab:** 2x2 grid — Sudoku Duel (silver pulse), KenKen, Minesweeper, FreeCell. MW logo centre.
 **Duels tab:** 10 duel-capable games — Sudoku Duel, Battleships, KenKen, Kakuro, Countdown Numbers, Nonogram, Minesweeper, FreeCell, Poker Patience, Cribbage Solitaire. All duels free (no stakes — payment system not built).
 **Free tab:** 12 free games with instant search — Maffsy, Higher or Lower, 52-dle, Towers of Hanoi, Don't Press It, Memory Matrix, RPS vs Machine, Estimation Engine, Sequence Solver, Prime or Composite, Cryptarithmetic Club, Battleships (vs CPU).
+**Leaderboards tab:** Game selector (20 games, Battleships excluded), Daily/Weekly/Monthly period toggle, leaderboard table (Rank/Name/Score/Time), top 10 with "Show more" expand (all if <=25), connected wallet highlighted in gold, empty state message. Fetches from `/api/dapp/global-leaderboard/:gameId/:periodType`.
 
 ### Registered Games
 **Active league games (4):** sudoku-duel, kenken, minesweeper, freecell (league lobby pages live)
@@ -95,7 +96,7 @@ Split from MaffsGames in March 2025. MaffsGames = free schools games. MathsWins 
 
 ### Shared Components
 - **qf-nav.js:** Shared nav injected on all 35+ dApp pages via `<div id="qf-nav"></div>`. Links: Lobby | My Account (wallet connected).
-- **My Account page:** `/qf-dapp/my-account/` — 4 tabs: My Leagues, High Scores, Achievements, Trophies. Wallet-gated (JWT).
+- **My Account page:** `/qf-dapp/my-account/` — 4 tabs: My Leagues, High Scores, Achievements, Trophies. Wallet-gated (JWT). High Scores tab shows leaderboard rankings (from profile `leaderboard_positions`), sorts ranked scores to top, eligibility check for unsubmitted scores, Submit button for second-chance leaderboard entry (requires session_id in personal_bests).
 - **Duel share code:** Displayed inside modal after game completion. Copy/share buttons. "Opponent has 24 hours to accept." Back to Lobby button.
 
 ### SQLite Tables (31)
@@ -124,7 +125,7 @@ Split from MaffsGames in March 2025. MaffsGames = free schools games. MathsWins 
 | `achievement_eligibility` | Per-wallet achievement progress and mint status |
 | `global_records` | Community records (e.g. The Tortoise slowest win) |
 | `wallet_stats` | Per-wallet tracking (streaks, spending, mints, consecutive wins, golf/pyramid failures) |
-| `personal_bests` | Best free play score per wallet/game/difficulty (upserted on completion) |
+| `personal_bests` | Best free play score per wallet/game/difficulty (upserted on completion, includes session_id for leaderboard submission) |
 | `league_bests` | Best league total score per wallet/game/tier (upserted at settlement) |
 | `game_messages` | Preset messages for duels and leagues |
 | `seasonal_windows` | Seasonal achievement earning windows (pre-populated per year) |
@@ -192,11 +193,24 @@ Split from MaffsGames in March 2025. MaffsGames = free schools games. MathsWins 
 
 ### Personal Bests and League Bests
 - `personal_bests` table: upserted on successful free play OR league completion (paths 2 and 4 only — game-overs excluded)
+- Columns: wallet, game_id, difficulty, score, time_ms, achieved_at, session_id (TEXT, nullable — added 2026-04-11)
+- `session_id` stores the session that produced the personal best, enabling second-chance leaderboard submission from My Account
+- Existing rows have session_id = NULL; new completions populate it automatically via scoring.mjs
 - Time-primary games (minesweeper, freecell, kenken, nonogram, kakuro, sudoku-duel): lower time = better, upsert uses `<`
 - Score-primary games (estimation-engine, countdown-numbers, etc.): higher score = better, upsert uses `>`
 - `league_bests` table: upserted at settlement for ALL players in the league (not just top 4)
 - `difficulty` field added to in-memory session object in startFreeSession and rebuildSession
 - Profile endpoint: GET /api/dapp/profile/:wallet (public, 60/min rate limit)
+
+### Global Leaderboard (Phase 4 — live 2026-04-11)
+- Pay-to-appear: 50 QF per entry (server-side via escrow wallet, 2 QF burn + 48 QF team)
+- Periods: daily (YYYY-MM-DD), weekly (YYYY-WNN), monthly (YYYY-MM)
+- One entry per wallet per game per period — duplicate submission returns 400
+- Requires valid completed session_id (anti-cheat: flagged sessions rejected)
+- Lobby Leaderboards tab: game selector, period toggle, top 10 with expand, wallet highlight
+- My Account High Scores: ranked scores sorted to top with star badge, eligibility check for unsubmitted scores, Submit button (requires session_id in personal_bests — pre-migration scores show "play again to submit")
+- Eligibility endpoint: checks if score would rank in top 25, returns shouldPrompt + projected rank
+- Time formatting: null/zero/NaN guard added to prevent MM:SS display bugs
 
 ### Battleships
 - Turn-based async duels only (no simultaneous — dropped to avoid WebSocket complexity)

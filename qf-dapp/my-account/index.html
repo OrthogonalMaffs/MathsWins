@@ -131,6 +131,13 @@ footer a:hover{color:var(--silver-bright)}
 .cookie-accept{background:var(--silver-bright);color:var(--bg)}
 .cookie-decline{background:transparent;border:1px solid var(--border);color:var(--muted)}
 
+/* ── Leaderboard rank badges ── */
+.lb-rank-badge{font-family:'DM Mono',monospace;font-size:.55rem;padding:.15rem .5rem;border-radius:10px;background:rgba(201,168,76,.1);color:var(--gold);border:1px solid rgba(201,168,76,.25);margin-left:.4rem;vertical-align:middle}
+.lb-eligible{font-size:.62rem;color:var(--muted);padding-top:.3rem}
+.lb-submit-btn{font-family:'DM Mono',monospace;font-size:.58rem;padding:.25rem .6rem;border-radius:5px;border:1px solid var(--gold);background:rgba(201,168,76,.1);color:var(--gold);cursor:pointer;transition:all .15s;margin-left:.3rem}
+.lb-submit-btn:hover{background:rgba(201,168,76,.2)}
+.lb-submit-btn:disabled{opacity:.4;cursor:default}
+
 /* ── Responsive ── */
 @media(max-width:600px){
   .trophy-grid{grid-template-columns:1fr}
@@ -280,13 +287,23 @@ pills.forEach(function(pill) {
 function gameName(id) { return GAME_NAMES[id] || id; }
 
 function formatScore(gameId, score) {
-  if (TIME_PRIMARY.indexOf(gameId) !== -1) {
-    var s = Math.round(score / 1000);
-    var m = Math.floor(s / 60);
-    var sec = s % 60;
-    return (m < 10 ? '0' : '') + m + ':' + (sec < 10 ? '0' : '') + sec;
-  }
-  return String(Math.round(score));
+  return String(Math.round(score || 0));
+}
+
+function formatTimeMs(ms) {
+  if (!ms || typeof ms !== 'number' || isNaN(ms) || ms <= 0) return null;
+  var s = Math.round(ms / 1000);
+  var m = Math.floor(s / 60);
+  var sec = s % 60;
+  return (m < 10 ? '0' : '') + m + ':' + (sec < 10 ? '0' : '') + sec;
+}
+
+function ordinal(n) {
+  if (n % 100 >= 11 && n % 100 <= 13) return n + 'th';
+  if (n % 10 === 1) return n + 'st';
+  if (n % 10 === 2) return n + 'nd';
+  if (n % 10 === 3) return n + 'rd';
+  return n + 'th';
 }
 
 function formatDate(ts) {
@@ -409,35 +426,119 @@ async function loadLeagues() {
 }
 
 // ── Render high scores ────────────────────────────────────────────────
-function renderScores() {
+async function renderScores() {
   var container = document.getElementById('scoresContent');
   var loading = document.getElementById('scoresLoading');
   var html = '';
 
-  // Personal bests
   var pb = PROFILE.personal_bests || [];
+  var lbPositions = PROFILE.leaderboard_positions || [];
+
   if (pb.length > 0) {
+    // Build lookup: gameId -> best rank across all periods
+    var lbMap = {};
+    lbPositions.forEach(function(pos) {
+      if (!lbMap[pos.game_id] || pos.rank < lbMap[pos.game_id].rank) {
+        lbMap[pos.game_id] = { rank: pos.rank, periodType: pos.period_type };
+      }
+    });
+
+    // Build set of all entered game+period combos
+    var enteredSet = {};
+    lbPositions.forEach(function(pos) {
+      enteredSet[pos.game_id + ':' + pos.period_type] = true;
+    });
+
     // Group by game
     var games = {};
     pb.forEach(function(r) {
       if (!games[r.game_id]) games[r.game_id] = [];
       games[r.game_id].push(r);
     });
+
+    var gameIds = Object.keys(games);
+
+    // Check eligibility for games not yet on any leaderboard
+    var eligibility = {};
+    var toCheck = gameIds.filter(function(gid) { return !lbMap[gid]; });
+    if (toCheck.length <= 10) {
+      var checks = [];
+      toCheck.forEach(function(gid) {
+        var best = games[gid][0];
+        ['daily', 'weekly', 'monthly'].forEach(function(period) {
+          checks.push(
+            fetch(API + '/global-leaderboard/' + gid + '/eligibility?periodType=' + period +
+              '&score=' + (best.score || 0) + '&timeMs=' + (best.time_ms || 0), {
+              headers: { 'Authorization': 'Bearer ' + JWT }
+            }).then(function(r) { return r.json(); })
+              .then(function(data) {
+                if (data.shouldPrompt && !data.alreadyEntered) {
+                  if (!eligibility[gid] || data.rank < eligibility[gid].rank) {
+                    eligibility[gid] = { rank: data.rank, periodType: period };
+                  }
+                }
+              }).catch(function() {})
+          );
+        });
+      });
+      await Promise.all(checks);
+    }
+
+    // Sort: ranked games first (by rank asc), then alphabetically
+    gameIds.sort(function(a, b) {
+      var aRanked = !!lbMap[a];
+      var bRanked = !!lbMap[b];
+      if (aRanked && !bRanked) return -1;
+      if (!aRanked && bRanked) return 1;
+      if (aRanked && bRanked) return lbMap[a].rank - lbMap[b].rank;
+      return gameName(a).localeCompare(gameName(b));
+    });
+
     html += '<div class="score-section"><h3>Personal Bests</h3>';
-    Object.keys(games).forEach(function(gid) {
+    gameIds.forEach(function(gid) {
       var isTime = TIME_PRIMARY.indexOf(gid) !== -1;
-      html += '<table class="score-table"><thead><tr><th>' + gameName(gid) + '</th><th>' + (isTime ? 'Time' : 'Score') + '</th><th>Set</th></tr></thead><tbody>';
+      var ranked = lbMap[gid];
+      var elig = eligibility[gid];
+
+      var titleHtml = gameName(gid);
+      if (ranked) {
+        var pLabel = ranked.periodType.charAt(0).toUpperCase() + ranked.periodType.slice(1);
+        titleHtml += ' <span class="lb-rank-badge">\u2B50 Rank ' + ranked.rank + ' \u2014 ' + pLabel + '</span>';
+      }
+
+      html += '<table class="score-table"><thead><tr><th>' + titleHtml + '</th><th>' + (isTime ? 'Time' : 'Score') + '</th><th>Set</th></tr></thead><tbody>';
       games[gid].forEach(function(r) {
         var label = r.difficulty || 'standard';
-        var val = isTime ? formatScore(gid, r.best_time || r.best_score) : formatScore(gid, r.best_score);
+        var val;
+        if (isTime) {
+          val = formatTimeMs(r.time_ms) || formatTimeMs(r.score) || formatScore(gid, r.score);
+        } else {
+          val = formatScore(gid, r.score);
+        }
         html += '<tr><td>' + label + '</td><td>' + val + '</td><td>' + formatDate(r.achieved_at) + '</td></tr>';
       });
+
+      // Eligibility row for unsubmitted scores
+      if (elig && !ranked) {
+        var pLabel = elig.periodType.charAt(0).toUpperCase() + elig.periodType.slice(1);
+        var bestRow = games[gid][0];
+        var sid = bestRow.session_id || '';
+        var hasSession = !!sid;
+        html += '<tr><td colspan="3" class="lb-eligible">Would rank ' + ordinal(elig.rank) + ' on ' + pLabel;
+        if (hasSession) {
+          html += ' \u2014 <button class="lb-submit-btn" onclick="submitToLeaderboard(\'' + gid + '\',\'' + elig.periodType + '\',\'' + sid + '\',' + (bestRow.score || 0) + ',' + (bestRow.time_ms || 0) + ',this)">Submit for 50 QF</button>';
+        } else {
+          html += ' \u2014 play again to submit';
+        }
+        html += '</td></tr>';
+      }
+
       html += '</tbody></table>';
     });
     html += '</div>';
   }
 
-  // League bests
+  // League bests (unchanged)
   var lb = PROFILE.league_bests || [];
   if (lb.length > 0) {
     var lGames = {};
@@ -461,6 +562,32 @@ function renderScores() {
   container.innerHTML = html;
   container.style.display = '';
   loading.style.display = 'none';
+}
+
+// ── Submit to leaderboard ─────────────────────────────────────────────
+async function submitToLeaderboard(gameId, periodType, sessionId, score, timeMs, btn) {
+  btn.disabled = true;
+  btn.textContent = 'Submitting...';
+  try {
+    var res = await fetch(API + '/global-leaderboard/enter', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json', 'Authorization': 'Bearer ' + JWT },
+      body: JSON.stringify({ gameId: gameId, score: score, timeMs: timeMs, periodType: periodType, sessionId: sessionId })
+    });
+    var data = await res.json();
+    if (data.success) {
+      var pLabel = periodType.charAt(0).toUpperCase() + periodType.slice(1);
+      var row = btn.closest('tr');
+      row.querySelector('td').innerHTML = '\u2B50 Rank ' + data.rank + ' \u2014 ' + pLabel;
+      btn.remove();
+    } else {
+      btn.textContent = data.error || 'Failed';
+      btn.disabled = false;
+    }
+  } catch (e) {
+    btn.textContent = 'Error';
+    btn.disabled = false;
+  }
 }
 
 // ── Render achievements ───────────────────────────────────────────────

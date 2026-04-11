@@ -155,6 +155,39 @@ footer{text-align:center;padding:2rem 0;font-size:.6rem;color:var(--muted);borde
 footer a{color:var(--muted);text-decoration:none;transition:color .15s}
 footer a:hover{color:var(--silver-bright)}
 
+/* ── Leaderboard tab ── */
+.lb-controls{display:flex;align-items:center;gap:.8rem;margin-bottom:1.2rem;flex-wrap:wrap}
+.lb-game-select{
+  font-family:'JetBrains Mono',monospace;font-size:.72rem;
+  padding:.45rem .8rem;border-radius:8px;border:1px solid var(--border2);
+  background:var(--surface);color:var(--text-white);cursor:pointer;flex:1;min-width:180px;
+}
+.lb-game-select:focus{outline:none;border-color:var(--silver)}
+.lb-period-toggle{display:flex;gap:.3rem}
+.lb-period{
+  font-family:'JetBrains Mono',monospace;font-size:.68rem;font-weight:500;
+  padding:.4rem 1rem;border-radius:16px;border:1px solid var(--border2);
+  background:transparent;color:var(--muted);cursor:pointer;transition:all .15s;
+}
+.lb-period:hover{border-color:var(--silver-border);color:var(--text)}
+.lb-period.active{border-color:var(--silver);background:var(--silver-dim);color:var(--silver-bright)}
+.lb-loading{text-align:center;padding:2rem;font-size:.72rem;color:var(--muted)}
+.lb-empty{text-align:center;padding:2rem;font-size:.72rem;color:var(--muted)}
+.lb-table{width:100%;border-collapse:collapse;margin-bottom:.5rem}
+.lb-table th{
+  font-family:'JetBrains Mono',monospace;font-size:.6rem;font-weight:500;
+  color:var(--muted);text-align:left;padding:.5rem .6rem;border-bottom:1px solid var(--border2);
+}
+.lb-table td{font-size:.75rem;padding:.55rem .6rem;border-bottom:1px solid var(--border);color:var(--text-white)}
+.lb-table tr.lb-highlight{background:rgba(201,168,76,0.08)}
+.lb-table tr.lb-highlight td{color:var(--gold)}
+.lb-show-more{
+  display:block;margin:0 auto;font-family:'JetBrains Mono',monospace;font-size:.68rem;
+  padding:.4rem 1.4rem;border-radius:8px;border:1px solid var(--border2);
+  background:transparent;color:var(--muted);cursor:pointer;transition:all .15s;
+}
+.lb-show-more:hover{border-color:var(--silver-border);color:var(--text)}
+
 /* ── Mobile ── */
 @media(max-width:600px){
   h1{font-size:2rem}
@@ -186,6 +219,7 @@ footer a:hover{color:var(--silver-bright)}
   <button class="lobby-tab active" data-tab="leagues">Leagues</button>
   <button class="lobby-tab" data-tab="duels">Duels</button>
   <button class="lobby-tab" data-tab="free">Free</button>
+  <button class="lobby-tab" data-tab="leaderboards">Leaderboards</button>
 </div>
 
 <!-- ═══════════ TAB: LEAGUES ═══════════ -->
@@ -269,6 +303,28 @@ footer a:hover{color:var(--silver-bright)}
 
 </div>
 
+<!-- ═══════════ TAB: LEADERBOARDS ═══════════ -->
+<div class="tab-panel" id="tab-leaderboards">
+
+  <div class="lb-controls">
+    <select class="lb-game-select" id="lbGameSelect"></select>
+    <div class="lb-period-toggle">
+      <button class="lb-period active" data-period="daily">Daily</button>
+      <button class="lb-period" data-period="weekly">Weekly</button>
+      <button class="lb-period" data-period="monthly">Monthly</button>
+    </div>
+  </div>
+
+  <div id="lbLoading" class="lb-loading" style="display:none">Loading leaderboard...</div>
+  <div id="lbEmpty" class="lb-empty" style="display:none">No entries yet. Be the first to appear.</div>
+  <table class="lb-table" id="lbTable" style="display:none">
+    <thead><tr><th>Rank</th><th>Name</th><th>Score</th><th>Time</th></tr></thead>
+    <tbody id="lbBody"></tbody>
+  </table>
+  <button class="lb-show-more" id="lbShowMore" style="display:none" onclick="lbShowAll()">Show more</button>
+
+</div>
+
 </div>
 
 <footer>
@@ -276,6 +332,10 @@ footer a:hover{color:var(--silver-bright)}
 </footer>
 
 <script>
+// ── API base ─────────────────────────────────────────────────────────────
+var API = 'https://dapp-api.mathswins.co.uk/api/dapp';
+if (location.hostname === 'localhost' || location.hostname === '127.0.0.1') API = 'http://127.0.0.1:3860/api/dapp';
+
 // ── Game Data ───────────────────────────────────────────────────────────────
 
 var DUEL_GAMES = [
@@ -376,8 +436,6 @@ async function acceptCode() {
   }
 
   try {
-    var API = 'https://dapp-api.mathswins.co.uk/api/dapp';
-    if (location.hostname === 'localhost' || location.hostname === '127.0.0.1') API = 'http://127.0.0.1:3860/api/dapp';
     var res = await fetch(API + '/promo/' + encodeURIComponent(code), { method: 'GET' });
     var data = await res.json();
     if (data.error) { alert('Code not found. Check and try again.'); return; }
@@ -389,9 +447,142 @@ document.getElementById('codeInput').addEventListener('keydown', function(e) {
   if (e.key === 'Enter') acceptCode();
 });
 
+// ── Leaderboard tab ──────────────────────────────────────────────────────
+
+var LB_GAMES = [
+  { id:'sudoku-duel', name:'Sudoku Duel' },
+  { id:'kenken', name:'KenKen' },
+  { id:'kakuro', name:'Kakuro' },
+  { id:'countdown-numbers', name:'Countdown Numbers' },
+  { id:'nonogram', name:'Nonogram' },
+  { id:'minesweeper', name:'Minesweeper' },
+  { id:'freecell', name:'FreeCell' },
+  { id:'poker-patience', name:'Poker Patience' },
+  { id:'cribbage-solitaire', name:'Cribbage Solitaire' },
+  { id:'maffsy', name:'Maffsy' },
+  { id:'higher-or-lower', name:'Higher or Lower' },
+  { id:'52dle', name:'52-dle' },
+  { id:'towers-of-hanoi', name:'Towers of Hanoi' },
+  { id:'dont-press-it', name:"Don't Press It" },
+  { id:'memory-matrix', name:'Memory Matrix' },
+  { id:'rps-vs-machine', name:'RPS vs Machine' },
+  { id:'estimation-engine', name:'Estimation Engine' },
+  { id:'sequence-solver', name:'Sequence Solver' },
+  { id:'prime-or-composite', name:'Prime or Composite' },
+  { id:'cryptarithmetic-club', name:'Cryptarithmetic Club' },
+];
+
+var lbCurrentPeriod = 'daily';
+var lbAllEntries = [];
+var lbExpanded = false;
+
+function lbInit() {
+  var sel = document.getElementById('lbGameSelect');
+  LB_GAMES.forEach(function(g) {
+    var opt = document.createElement('option');
+    opt.value = g.id;
+    opt.textContent = g.name;
+    sel.appendChild(opt);
+  });
+  sel.addEventListener('change', function() { lbExpanded = false; lbFetch(); });
+
+  document.querySelectorAll('.lb-period').forEach(function(btn) {
+    btn.addEventListener('click', function() {
+      document.querySelectorAll('.lb-period').forEach(function(b) { b.classList.remove('active'); });
+      btn.classList.add('active');
+      lbCurrentPeriod = btn.dataset.period;
+      lbExpanded = false;
+      lbFetch();
+    });
+  });
+}
+
+async function lbFetch() {
+  var gameId = document.getElementById('lbGameSelect').value;
+  var table = document.getElementById('lbTable');
+  var loading = document.getElementById('lbLoading');
+  var empty = document.getElementById('lbEmpty');
+  var showMore = document.getElementById('lbShowMore');
+
+  table.style.display = 'none';
+  empty.style.display = 'none';
+  showMore.style.display = 'none';
+  loading.style.display = 'block';
+
+  try {
+    var res = await fetch(API + '/global-leaderboard/' + gameId + '/' + lbCurrentPeriod);
+    var data = await res.json();
+    lbAllEntries = data.entries || [];
+  } catch (e) {
+    lbAllEntries = [];
+  }
+
+  loading.style.display = 'none';
+
+  if (lbAllEntries.length === 0) {
+    empty.style.display = 'block';
+    return;
+  }
+
+  lbRender();
+}
+
+function lbRender() {
+  var table = document.getElementById('lbTable');
+  var body = document.getElementById('lbBody');
+  var showMore = document.getElementById('lbShowMore');
+  var limit = (lbExpanded || lbAllEntries.length <= 25) ? lbAllEntries.length : 10;
+  var connectedWallet = (window.qfWallet && window.qfWallet.address) ? window.qfWallet.address.toLowerCase() : '';
+
+  body.innerHTML = '';
+  for (var i = 0; i < limit && i < lbAllEntries.length; i++) {
+    var e = lbAllEntries[i];
+    var tr = document.createElement('tr');
+    var isMe = connectedWallet && e.wallet && e.wallet.toLowerCase() === connectedWallet;
+    if (isMe) tr.className = 'lb-highlight';
+
+    var displayName = e.qns_name || (e.wallet.slice(0, 6) + '...' + e.wallet.slice(-4));
+    var timeStr = e.time_ms ? formatLbTime(e.time_ms) : '-';
+
+    tr.innerHTML =
+      '<td>' + (e.rank || (i + 1)) + '</td>' +
+      '<td>' + escHtml(displayName) + '</td>' +
+      '<td>' + e.score + '</td>' +
+      '<td>' + timeStr + '</td>';
+    body.appendChild(tr);
+  }
+
+  table.style.display = 'table';
+
+  if (!lbExpanded && lbAllEntries.length > 25) {
+    showMore.style.display = 'block';
+  } else {
+    showMore.style.display = 'none';
+  }
+}
+
+function lbShowAll() {
+  lbExpanded = true;
+  lbRender();
+}
+
+function formatLbTime(ms) {
+  var s = Math.floor(ms / 1000);
+  var m = Math.floor(s / 60);
+  s = s % 60;
+  return m + ':' + (s < 10 ? '0' : '') + s;
+}
+
+function escHtml(str) {
+  var d = document.createElement('div');
+  d.textContent = str;
+  return d.innerHTML;
+}
+
 // ── Init ──────────────────────────────────────────────────────────────────
 renderDuelGames();
 renderFreeGames();
+lbInit();
 </script>
 </body>
 </html>
