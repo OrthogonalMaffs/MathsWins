@@ -91,7 +91,9 @@ Split from MaffsGames in March 2025. MaffsGames = free schools games. MathsWins 
 **League-capable but not active (4):** kakuro, nonogram, poker-patience, cribbage-solitaire
 **Duel-capable (10):** All 4 league games + battleships, kakuro, countdown-numbers, nonogram, poker-patience, cribbage-solitaire. All duel flows complete, stakes removed (free score comparisons).
 **Free play (12):** maffsy, higher-or-lower, 52dle, towers-of-hanoi, dont-press-it, memory-matrix, rps-vs-machine, estimation-engine, sequence-solver, prime-or-composite, cryptarithmetic-club, battleships (vs CPU)
-**Renamed:** Equatle → Maffsy (slug: /games/maffsy/)
+**Renamed:** Equatle → Maffsy (slug: /games/maffsy/). Old /games/equatle/ and /qf-dapp/games/equatle/ directories deleted.
+**Free play backend:** POST /session/submit-freeplay — client-reported score, upserts personal_best, fires checkAchievements. All 11 free games wired (battleships uses its own API).
+**Free play reskin (2026-04-11):** All 10 non-battleships free games reskinned to Silver theme (#0e1013), favicons fixed, leaderboards removed, higher-or-lower and 52dle converted from daily to random seed. Back to Lobby buttons added.
 **Demoted from competitive:** countdown-numbers, cryptarithmetic-club (too short for league play)
 
 ### Shared Components
@@ -134,7 +136,7 @@ Split from MaffsGames in March 2025. MaffsGames = free schools games. MathsWins 
 
 ### API Endpoints (45+)
 **Auth:** POST /auth/challenge, /auth/verify (challenge-sign-verify, JWT 24h)
-**Sessions:** POST /session/start, /session/resume, /session/evaluate
+**Sessions:** POST /session/start, /session/resume, /session/evaluate, /session/submit-freeplay
 **Leaderboard:** GET /leaderboard/:gameId, /leaderboard/:gameId/:weekId, /pot/:gameId, /games, /week, /entry/:gameId
 **Duels:** POST /duel/create, /duel/:code/accept, /duel/:code/submit | GET /duel/:code, /duels/history
 **Promos:** POST /promo/create, /promo/:code/submit | GET /promo/:code
@@ -180,9 +182,15 @@ Split from MaffsGames in March 2025. MaffsGames = free schools games. MathsWins 
 - 5 mint tiers: Free (0 QF), Standard (100 QF), Premium (200 QF), Elite (500 QF), Manual reward
 - achievement_registry has both `tier` and `category` columns (tier for legacy compat, category for v4)
 - Pioneer tag: first mint per achievement, UNIQUE constraint
-- Condition checker hooks into league settlement (7 conditions active) + puzzle submission (Founding Member)
+- Condition checker hooks into: league settlement (all players, not just top 4), scoring.mjs evaluate() (all game completions), puzzle submission (Founding Member)
+- Batch 5 live: 23 card/solitaire conditions (poker-patience, cribbage, golf, pyramid) — checkAchievements wired into scoring.mjs for all games
+- the-fish: fires at league settlement for last-place poker-patience finishers (3 times to earn)
 - Founding Member: fires on first league puzzle submission between 2026-04-11 and 2026-07-31 (env: FOUNDING_MEMBER_START/END)
 - Mint endpoint: real on-chain mint via escrow wallet, fee split (5% burn, 95% team), free mints use banked credits
+- On-chain tokenURI uses HTTP gateway URLs (https://gateway.pinata.cloud/ipfs/), NOT ipfs:// protocol
+- 14 bespoke metadata JSONs re-pinned with HTTP gateway image URLs (commit e6d7cba)
+- token_id parsed from Transfer event, stored in achievement_eligibility, returned in mint response
+- Add to Wallet button (EIP-747 wallet_watchAsset) on minted achievements in My Account
 - Mint reward: every 5th paid mint banks 1 free mint, every 10th banks 2 (tracked via paid_mint_count, free_mints_banked on wallet_stats)
 - DB: achievement_registry, achievement_eligibility, global_records, wallet_stats
 - "Boom" — the impossible achievement (first click safety means it can never be earned)
