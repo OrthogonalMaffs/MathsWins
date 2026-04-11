@@ -447,10 +447,11 @@ export function evaluator(question, answer, elapsedMs, session) {
       return { correct: false, points: 0, action: 'validate', errors };
     }
 
-    // Calculate score
+    // Calculate score — penalty is per incorrect GRID SUBMISSION, not per cell error
+    const submitFails = session ? session.submitFailures : (answer.submitFailures || 0);
     const secs = elapsedMs ? elapsedMs / 1000 : 0;
     const timePenalty = Math.max(0, secs - GRACE_PERIOD);
-    const pen = mistakes * MISTAKE_COST + hints * HINT_COST + timePenalty;
+    const pen = submitFails * MISTAKE_COST + hints * HINT_COST + timePenalty;
     const points = Math.max(0, Math.round(BASE_SCORE - pen));
 
     return {
@@ -458,7 +459,7 @@ export function evaluator(question, answer, elapsedMs, session) {
       points,
       action: 'submit',
       time: Math.round(secs),
-      mistakes,
+      mistakes: submitFails,
       hints,
     };
   }

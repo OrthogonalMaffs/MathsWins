@@ -477,6 +477,7 @@ export function evaluator(question, answer, elapsedMs, session) {
   if (session && !session.hintLog) session.hintLog = [];
   if (session && session.mistakes === undefined) session.mistakes = 0;
   if (session && session.hintsUsed === undefined) session.hintsUsed = 0;
+  if (session && session.submitFailures === undefined) session.submitFailures = 0;
 
   // ── Place / toggle a cell ───────────────────────────────────────
   if (answer.action === 'place') {
@@ -548,10 +549,10 @@ export function evaluator(question, answer, elapsedMs, session) {
     }
 
     if (errorCount > 0) {
-      if (session) session.mistakes++;
-      const totalMistakes = session ? session.mistakes : ((answer.mistakes || 0) + 1);
+      if (session) session.submitFailures++;
+      const submitFails = session ? session.submitFailures : ((answer.submitFailures || 0) + 1);
       // 3rd failed submission = fail-out
-      if (totalMistakes >= 3) {
+      if (submitFails >= 3) {
         let correctCells = 0;
         for (let i = 0; i < size * size; i++) {
           if ((grid[i] ? 1 : 0) === solution[i]) correctCells++;
@@ -559,7 +560,7 @@ export function evaluator(question, answer, elapsedMs, session) {
         const pityScore = correctCells * 20;
         const secs = elapsedMs ? elapsedMs / 1000 : 0;
         const timePenalty = Math.max(0, secs - GRACE_PERIOD);
-        const pen = totalMistakes * MISTAKE_COST + hints * HINT_COST + timePenalty;
+        const pen = submitFails * MISTAKE_COST + hints * HINT_COST + timePenalty;
         const timeScore = Math.max(0, Math.round(BASE_SCORE - pen));
         const finalScore = Math.min(pityScore, timeScore);
         return { correct: false, points: finalScore, action: 'validate', errors: errors.slice(0, 20), failedOut: true, correctCells };
@@ -567,9 +568,10 @@ export function evaluator(question, answer, elapsedMs, session) {
       return { correct: false, points: 0, action: 'validate', errorCount, errors: errors.slice(0, 20) };
     }
 
+    const submitFails = session ? session.submitFailures : (answer.submitFailures || 0);
     const secs = elapsedMs ? elapsedMs / 1000 : 0;
     const timePenalty = Math.max(0, secs - GRACE_PERIOD);
-    const pen = mistakes * MISTAKE_COST + hints * HINT_COST + timePenalty;
+    const pen = submitFails * MISTAKE_COST + hints * HINT_COST + timePenalty;
     const points = Math.max(0, Math.round(BASE_SCORE - pen));
 
     return {
@@ -577,7 +579,7 @@ export function evaluator(question, answer, elapsedMs, session) {
       points,
       action: 'submit',
       time: Math.round(secs),
-      mistakes,
+      mistakes: submitFails,
       hints,
       letterName: question.letterName,
     };
