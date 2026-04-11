@@ -3,7 +3,7 @@
  * Called after league settlement, duel completion, or session completion.
  * Gated by ACHIEVEMENTS_ACTIVE env var.
  */
-import { awardAchievement, getWalletAchievements } from './db/index.mjs';
+import { awardAchievement, getWalletAchievements, getWalletStats, incrementWalletCounter, resetWalletCounter } from './db/index.mjs';
 
 const ACHIEVEMENTS_ACTIVE = process.env.ACHIEVEMENTS_ACTIVE === 'true';
 
@@ -129,21 +129,25 @@ export function checkAchievements(wallet, context) {
         if (aceCount >= 2) { tryAward('pocket-rockets'); break; }
       }
     }
-    // the-brick: total score exactly 0
-    if (total === 0) {
-      tryAward('the-brick');
+    // the-brick: opening two cards are a 2 and a 7 with no matching suit
+    if (context.openingCards && context.openingCards.length === 2) {
+      var c0rank = context.openingCards[0] % 13;
+      var c1rank = context.openingCards[1] % 13;
+      var c0suit = Math.floor(context.openingCards[0] / 13);
+      var c1suit = Math.floor(context.openingCards[1] / 13);
+      var hasTwoAndSeven = (c0rank === 1 && c1rank === 6) || (c0rank === 6 && c1rank === 1);
+      if (hasTwoAndSeven && c0suit !== c1suit) {
+        tryAward('the-brick');
+      }
     }
-    // Wooden spoons
-    // bust: total score 0
-    if (total === 0) {
+    // bust: zero scoring hands across all rows and columns (not a single pair or better)
+    if (lines.length === 10 && lines.every(function(l) { return l.points === 0; })) {
       tryAward('bust');
     }
-    // the-fish: total score <= 5
-    if (total <= 5) {
-      tryAward('the-fish');
-    }
-    // mucky-hands: total score <= 10
-    if (total <= 10) {
+    // the-fish: last place in poker-patience league 3 times — fires at league_settle, not here
+    // (requires league-settle.mjs to call checkAchievements for all players — BLOCKED)
+    // mucky-hands: every line is High Card only (no pairs, flushes, straights, etc.)
+    if (lines.length === 10 && lines.every(function(l) { return l.name === 'High Card'; })) {
       tryAward('mucky-hands');
     }
   }
@@ -178,9 +182,15 @@ export function checkAchievements(wallet, context) {
     if (context.remaining <= 7) {
       tryAward('under-par');
     }
-    // back-nine: cleared at least half (17 or fewer remaining, out of 35)
-    if (context.remaining <= 17) {
-      tryAward('back-nine');
+    // back-nine: 9 consecutive Golf completions without failing
+    if (context.won) {
+      incrementWalletCounter(wallet, 'consecutive_golf_wins');
+      var golfStats = getWalletStats(wallet);
+      if (golfStats && golfStats.consecutive_golf_wins >= 9) {
+        tryAward('back-nine');
+      }
+    } else {
+      resetWalletCounter(wallet, 'consecutive_golf_wins');
     }
     // bogey: 25+ remaining (wooden spoon)
     if (context.remaining >= 25) {
@@ -202,8 +212,10 @@ export function checkAchievements(wallet, context) {
     if (context.cleared >= 24) {
       tryAward('kings-ransom');
     }
-    // tutankhamun: cleared 20+
-    if (context.cleared >= 20) {
+    // tutankhamun: completed 10 Pyramid games total
+    incrementWalletCounter(wallet, 'pyramid_completions');
+    var pyramidStats = getWalletStats(wallet);
+    if (pyramidStats && pyramidStats.pyramid_completions >= 10) {
       tryAward('tutankhamun');
     }
     // pharaohs-curse: cleared 5 or fewer (wooden spoon)

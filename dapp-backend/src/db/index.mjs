@@ -51,6 +51,8 @@ export function getDb() {
   try { db.exec('ALTER TABLE achievement_eligibility ADD COLUMN metadata_cid TEXT'); } catch (e) { /* already exists */ }
   try { db.exec('ALTER TABLE achievement_eligibility ADD COLUMN token_id TEXT'); } catch (e) { /* already exists */ }
   try { db.exec('ALTER TABLE wallet_stats ADD COLUMN consecutive_bs_wins_with_battleship INTEGER DEFAULT 0'); } catch (e) { /* already exists */ }
+  try { db.exec('ALTER TABLE wallet_stats ADD COLUMN pyramid_completions INTEGER DEFAULT 0'); } catch (e) { /* already exists */ }
+  try { db.exec('ALTER TABLE wallet_stats ADD COLUMN poker_patience_last_place INTEGER DEFAULT 0'); } catch (e) { /* already exists */ }
 
   // League refunds table
   db.exec(`CREATE TABLE IF NOT EXISTS league_refunds (
@@ -484,6 +486,22 @@ export function upsertWalletStats(wallet, fields) {
     vals.push(w);
     db.prepare('UPDATE wallet_stats SET ' + sets.join(', ') + ' WHERE wallet = ?').run(...vals);
   }
+}
+
+export function incrementWalletCounter(wallet, column) {
+  const db = getDb();
+  const w = wallet.toLowerCase();
+  const now = Date.now();
+  db.prepare('INSERT INTO wallet_stats (wallet, ' + column + ', updated_at) VALUES (?, 1, ?) ON CONFLICT(wallet) DO UPDATE SET ' + column + ' = ' + column + ' + 1, updated_at = ?')
+    .run(w, now, now);
+}
+
+export function resetWalletCounter(wallet, column) {
+  const db = getDb();
+  const w = wallet.toLowerCase();
+  const now = Date.now();
+  db.prepare('INSERT INTO wallet_stats (wallet, ' + column + ', updated_at) VALUES (?, 0, ?) ON CONFLICT(wallet) DO UPDATE SET ' + column + ' = 0, updated_at = ?')
+    .run(w, now, now);
 }
 
 // ── Entry queries ───────────────────────────────────────────────────────────

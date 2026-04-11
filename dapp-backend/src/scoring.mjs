@@ -408,6 +408,11 @@ export function recoverSessions() {
  * Build achievement context from session completion data.
  */
 function buildAchContext(session, result, timeMs, won) {
+  // Extract opening cards from poker-patience deal if available
+  var openingCards = null;
+  if (session.gameId === 'poker-patience' && session.questions && session.questions[0] && session.questions[0].cards) {
+    openingCards = [session.questions[0].cards[0], session.questions[0].cards[1]];
+  }
   var ctx = {
     type: 'session_complete',
     gameId: session.gameId,
@@ -420,6 +425,8 @@ function buildAchContext(session, result, timeMs, won) {
     moveCount: session.moveCount || 0,
     // Poker Patience: finalScores.results array with {name, points} per line
     finalScores: result.finalScores || null,
+    // Poker Patience: first two cards dealt
+    openingCards: openingCards,
     // Golf/Pyramid: remaining cards, cleared cards
     remaining: result.remaining !== undefined ? result.remaining : null,
     cleared: result.cleared !== undefined ? result.cleared : null,
