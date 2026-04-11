@@ -64,6 +64,18 @@ export function checkAchievements(wallet, context) {
     // TODO: the-tortoise — won with the slowest total_time in the league
   }
 
+  // ── League wooden spoon achievements ─────────────────────────────
+  if (context.type === 'league_settle' && context.isLast) {
+    // the-fish: finish last in a Poker Patience league 3 times
+    if (context.gameId === 'poker-patience') {
+      incrementWalletCounter(wallet, 'poker_patience_last_place');
+      var fishStats = getWalletStats(wallet);
+      if (fishStats && fishStats.poker_patience_last_place >= 3) {
+        tryAward('the-fish');
+      }
+    }
+  }
+
   // ── Duel achievements ─────────────────────────────────────────────
   if (context.type === 'duel_complete' && context.won) {
     // first-blood: first duel win
@@ -144,8 +156,6 @@ export function checkAchievements(wallet, context) {
     if (lines.length === 10 && lines.every(function(l) { return l.points === 0; })) {
       tryAward('bust');
     }
-    // the-fish: last place in poker-patience league 3 times — fires at league_settle, not here
-    // (requires league-settle.mjs to call checkAchievements for all players — BLOCKED)
     // mucky-hands: every line is High Card only (no pairs, flushes, straights, etc.)
     if (lines.length === 10 && lines.every(function(l) { return l.name === 'High Card'; })) {
       tryAward('mucky-hands');

@@ -11,7 +11,7 @@ import { getDb } from './db/index.mjs';
 import {
   getLeagueById, getLeagueLeaderboard, getLeaguePlayerCount,
   addLeaguePrize, getLeaguePrizes, updateLeagueStatus,
-  upsertLeagueBest
+  upsertLeagueBest, incrementWalletCounter, getWalletStats
 } from './db/index.mjs';
 import { sendQF, TEAM_WALLET, BURN_ADDRESS } from './escrow.mjs';
 import { checkAchievements } from './achievement-checker.mjs';
@@ -209,30 +209,33 @@ export async function doSettleLeague(leagueId) {
       console.log('  No prize pot — skipping QF distribution');
     }
 
-    // Step 4b: Check achievements for all placed players
-    for (const winner of prizes) {
+    // Step 4b: Check achievements for ALL players in the league
+    var totalPlayers = leaderboard.length;
+    for (var pi = 0; pi < totalPlayers; pi++) {
+      var player = leaderboard[pi];
+      var position = pi + 1;
       try {
-        // Count total leagues and wins for this wallet
-        const walletLeagues = getDb().prepare(
+        var walletLeagues = getDb().prepare(
           "SELECT COUNT(*) as count FROM league_players lp JOIN leagues l ON lp.league_id = l.id WHERE lp.wallet = ? AND lp.refunded = 0 AND l.status IN ('settled', 'settling')"
-        ).get(winner.wallet.toLowerCase());
-        const walletWins = getDb().prepare(
+        ).get(player.wallet.toLowerCase());
+        var walletWins = getDb().prepare(
           "SELECT COUNT(*) as count FROM league_prizes WHERE wallet = ? AND position = 1"
-        ).get(winner.wallet.toLowerCase());
+        ).get(player.wallet.toLowerCase());
 
-        checkAchievements(winner.wallet, {
+        checkAchievements(player.wallet, {
           type: 'league_settle',
           gameId: league.game_id,
           leagueId: league.id,
-          score: winner.score,
-          mistakes: winner.mistakes || 0,
-          position: winner.position,
-          won: winner.position === 1,
+          score: player.total_score,
+          mistakes: player.mistakes || 0,
+          position: position,
+          won: position === 1,
+          isLast: position === totalPlayers && totalPlayers >= 4,
           leagueCount: walletLeagues ? walletLeagues.count : 0,
           winCount: walletWins ? walletWins.count : 0,
         });
       } catch (e) {
-        console.error('Achievement check failed for ' + winner.wallet.slice(0, 8) + '...:', e.message);
+        console.error('Achievement check failed for ' + player.wallet.slice(0, 8) + '...:', e.message);
       }
     }
 
