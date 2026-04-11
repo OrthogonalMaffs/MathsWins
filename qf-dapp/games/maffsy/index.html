@@ -200,9 +200,8 @@ body.cb .tile[data-s=present]::after{content:'▲';position:absolute;bottom:1px;
 <script src="/qf-dapp/qf-nav.js"></script>
 
 <nav>
-  <span class="pill" id="mode-pill">Free Play</span>
+  <span class="pill free">Free Play</span>
   <div class="nav-r">
-    <div class="wchip" id="wchip" onclick="qfWallet.connect()"><div class="wdot"></div><span id="wlbl">Connect</span></div>
     <button class="nb" title="How to Play" onclick="openM('htp')">?</button>
     <button class="nb" title="Statistics"   onclick="openM('stats')">📊</button>
     <button class="nb" title="Settings"     onclick="openM('set')">⚙</button>
@@ -822,7 +821,7 @@ function setHard(v){
 function setFree(v){
   if(G.status==='playing'&&G.guesses.length>0&&!confirm('Switch mode and abandon current puzzle?')){document.getElementById('t-free').checked=!v;return;}
   PREFS.free=v; sp();
-  const pill=document.getElementById('mode-pill'); pill.textContent=v?'Free Play':'Daily'; pill.className='pill'+(v?' free':'');
+  // mode pill removed — always free play
   document.getElementById('gsub').textContent=v?'Free Play — unlimited random puzzles.':'Guess the 8-character equation in 6 tries · BODMAS applies';
   const lbw=document.querySelector('.lbw'); if(lbw) lbw.style.display=v?'none':'block';
   G={target:v?freeTarget():dailyTarget(),guesses:[],status:'playing',t0:Date.now(),t1:null};
@@ -880,8 +879,7 @@ function init(){
   document.getElementById('t-hard').checked=PREFS.hard;
   document.getElementById('t-free').checked=PREFS.free;
   document.getElementById('t-cb').checked=PREFS.cb;
-  document.getElementById('mode-pill').textContent=PREFS.free?'Free Play':'Daily';
-  document.getElementById('mode-pill').className='pill'+(PREFS.free?' free':'');
+  // mode pill removed — always free play
   document.getElementById('gsub').textContent=PREFS.free?'Free Play — unlimited random puzzles.':'Guess the 8-character equation in 6 tries · BODMAS applies';
   if(PREFS.free){const lbw=document.querySelector('.lbw');if(lbw)lbw.style.display='none';}
 
