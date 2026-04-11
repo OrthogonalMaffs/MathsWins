@@ -68,13 +68,31 @@ body{background:var(--bg);color:var(--text);font-family:'Inter',sans-serif;min-h
 .loading{text-align:center;padding:3rem 0;font-size:.75rem;color:var(--muted)}
 .empty{text-align:center;padding:3rem 1rem;font-size:.75rem;color:var(--muted);line-height:1.6}
 
-/* ── Tables ── */
+/* ── Score cards ���─ */
 .score-section{margin-bottom:1.5rem}
 .score-section h3{font-family:'Bebas Neue',sans-serif;font-size:1.1rem;color:var(--silver-bright);letter-spacing:.04em;margin-bottom:.5rem}
-.score-table{width:100%;border-collapse:collapse}
-.score-table th{font-family:'DM Mono',monospace;font-size:.55rem;text-transform:uppercase;letter-spacing:.08em;color:var(--muted);text-align:left;padding:.4rem .6rem;border-bottom:1px solid var(--border)}
-.score-table td{font-family:'DM Mono',monospace;font-size:.68rem;color:var(--text);padding:.5rem .6rem;border-bottom:1px solid var(--border)}
-.score-table tr:last-child td{border-bottom:none}
+.hs-cards{display:flex;flex-direction:column;gap:.6rem}
+.hs-card{background:#252b3b;border:1px solid #2e3650;border-radius:10px;overflow:hidden}
+.hs-card-header{display:flex;align-items:center;padding:.65rem .8rem;gap:.5rem}
+.hs-card-game{font-family:'DM Mono',monospace;font-size:.75rem;color:var(--silver-bright);flex:1;min-width:0;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.hs-card-diff{font-family:'DM Mono',monospace;font-size:.5rem;text-transform:uppercase;letter-spacing:.06em;color:var(--muted);padding:.15rem .45rem;border-radius:4px;border:1px solid var(--border2);flex-shrink:0}
+.hs-card-rank{font-family:'DM Mono',monospace;font-size:.55rem;padding:.15rem .5rem;border-radius:10px;background:rgba(201,168,76,.1);color:var(--gold);border:1px solid rgba(201,168,76,.25);flex-shrink:0;white-space:nowrap}
+.hs-card-stats{display:grid;grid-template-columns:1fr 1fr;border-top:1px solid #2e3650}
+.hs-stat{padding:.5rem .8rem}
+.hs-stat+.hs-stat{border-left:1px solid #2e3650}
+.hs-stat-label{font-family:'DM Mono',monospace;font-size:.45rem;text-transform:uppercase;letter-spacing:.06em;color:var(--muted);margin-bottom:.15rem}
+.hs-stat-val{font-family:'DM Mono',monospace;font-size:.78rem;color:var(--text-white)}
+.hs-stat-val.gold{color:var(--gold)}
+.hs-card-lb{border-top:1px solid #2e3650;padding:.45rem .8rem;display:flex;align-items:center;gap:.4rem;flex-wrap:wrap}
+.hs-lb-label{font-family:'DM Mono',monospace;font-size:.45rem;text-transform:uppercase;letter-spacing:.06em;color:var(--muted);flex-shrink:0}
+.hs-lb-periods{display:flex;gap:.3rem;flex-wrap:wrap}
+.hs-lb-period{font-family:'DM Mono',monospace;font-size:.52rem;padding:.12rem .4rem;border-radius:4px;border:1px solid var(--border2);color:var(--muted)}
+.hs-lb-period.ranked{background:rgba(201,168,76,.1);color:var(--gold);border-color:rgba(201,168,76,.25)}
+.hs-card-footer{background:#1e2436;border-top:1px solid #2e3650;padding:.5rem .8rem;display:flex;align-items:center;justify-content:space-between;gap:.5rem;min-height:44px}
+.hs-footer-text{font-family:'DM Mono',monospace;font-size:.55rem;color:var(--muted);flex:1;min-width:0}
+.hs-submit-btn{font-family:'DM Mono',monospace;font-size:.6rem;padding:.4rem .8rem;border-radius:6px;border:1px solid var(--gold);background:rgba(201,168,76,.1);color:var(--gold);cursor:pointer;transition:all .15s;flex-shrink:0;min-height:44px;min-width:44px}
+.hs-submit-btn:hover{background:rgba(201,168,76,.2)}
+.hs-submit-btn:disabled{opacity:.4;cursor:default}
 
 /* ── League cards ── */
 .league-group{margin-bottom:1.5rem}
@@ -140,12 +158,6 @@ footer a:hover{color:var(--silver-bright)}
 .cookie-accept{background:var(--silver-bright);color:var(--bg)}
 .cookie-decline{background:transparent;border:1px solid var(--border);color:var(--muted)}
 
-/* ── Leaderboard rank badges ── */
-.lb-rank-badge{font-family:'DM Mono',monospace;font-size:.55rem;padding:.15rem .5rem;border-radius:10px;background:rgba(201,168,76,.1);color:var(--gold);border:1px solid rgba(201,168,76,.25);margin-left:.4rem;vertical-align:middle}
-.lb-eligible{font-size:.62rem;color:var(--muted);padding-top:.3rem}
-.lb-submit-btn{font-family:'DM Mono',monospace;font-size:.58rem;padding:.25rem .6rem;border-radius:5px;border:1px solid var(--gold);background:rgba(201,168,76,.1);color:var(--gold);cursor:pointer;transition:all .15s;margin-left:.3rem}
-.lb-submit-btn:hover{background:rgba(201,168,76,.2)}
-.lb-submit-btn:disabled{opacity:.4;cursor:default}
 
 /* ── Responsive ── */
 @media(max-width:600px){
@@ -450,7 +462,14 @@ async function renderScores() {
   var lbPositions = PROFILE.leaderboard_positions || [];
 
   if (pb.length > 0) {
-    // Build lookup: gameId -> best rank across all periods
+    // Build lookup: gameId -> array of all ranked periods
+    var lbByGame = {};
+    lbPositions.forEach(function(pos) {
+      if (!lbByGame[pos.game_id]) lbByGame[pos.game_id] = [];
+      lbByGame[pos.game_id].push({ rank: pos.rank, periodType: pos.period_type });
+    });
+
+    // Build lookup: gameId -> best rank across all periods (for sorting + badge)
     var lbMap = {};
     lbPositions.forEach(function(pos) {
       if (!lbMap[pos.game_id] || pos.rank < lbMap[pos.game_id].rank) {
@@ -458,13 +477,13 @@ async function renderScores() {
       }
     });
 
-    // Build set of all entered game+period combos
+    // Build set of entered game+period combos
     var enteredSet = {};
     lbPositions.forEach(function(pos) {
       enteredSet[pos.game_id + ':' + pos.period_type] = true;
     });
 
-    // Group by game
+    // Group by game — pick the best row per game (first entry after profile sorts)
     var games = {};
     pb.forEach(function(r) {
       if (!games[r.game_id]) games[r.game_id] = [];
@@ -509,51 +528,74 @@ async function renderScores() {
       return gameName(a).localeCompare(gameName(b));
     });
 
-    html += '<div class="score-section"><h3>Personal Bests</h3>';
+    html += '<div class="score-section"><h3>Personal Bests</h3><div class="hs-cards">';
     gameIds.forEach(function(gid) {
       var isTime = TIME_PRIMARY.indexOf(gid) !== -1;
       var ranked = lbMap[gid];
       var elig = eligibility[gid];
+      var bestRow = games[gid][0];
+      var diff = bestRow.difficulty || 'standard';
 
-      var titleHtml = gameName(gid);
+      // Score value
+      var scoreVal;
+      if (isTime) {
+        scoreVal = formatTimeMs(bestRow.time_ms) || formatTimeMs(bestRow.score) || '—';
+      } else {
+        scoreVal = Number(bestRow.score || 0).toLocaleString();
+      }
+
+      // Header: game name | difficulty badge | rank badge
+      html += '<div class="hs-card"><div class="hs-card-header">';
+      html += '<span class="hs-card-game">' + gameName(gid) + '</span>';
+      html += '<span class="hs-card-diff">' + diff + '</span>';
       if (ranked) {
         var pLabel = ranked.periodType.charAt(0).toUpperCase() + ranked.periodType.slice(1);
-        titleHtml += ' <span class="lb-rank-badge">\u2B50 Rank ' + ranked.rank + ' \u2014 ' + pLabel + '</span>';
+        html += '<span class="hs-card-rank">\u2B50 ' + ordinal(ranked.rank) + ' \u00B7 ' + pLabel + '</span>';
       }
+      html += '</div>';
 
-      html += '<table class="score-table"><thead><tr><th>' + titleHtml + '</th><th>' + (isTime ? 'Time' : 'Score') + '</th><th>Set</th></tr></thead><tbody>';
-      games[gid].forEach(function(r) {
-        var label = r.difficulty || 'standard';
-        var val;
-        if (isTime) {
-          val = formatTimeMs(r.time_ms) || formatTimeMs(r.score) || formatScore(gid, r.score);
+      // 2-column stats: Score | Date
+      html += '<div class="hs-card-stats">';
+      html += '<div class="hs-stat"><div class="hs-stat-label">' + (isTime ? 'Time' : 'Score') + '</div><div class="hs-stat-val' + (ranked ? ' gold' : '') + '">' + scoreVal + '</div></div>';
+      html += '<div class="hs-stat"><div class="hs-stat-label">Date Set</div><div class="hs-stat-val">' + formatDate(bestRow.achieved_at) + '</div></div>';
+      html += '</div>';
+
+      // Leaderboard row: Daily / Weekly / Monthly with ranked highlights
+      var rankedPeriods = lbByGame[gid] || [];
+      var rankedMap = {};
+      rankedPeriods.forEach(function(rp) { rankedMap[rp.periodType] = rp.rank; });
+      html += '<div class="hs-card-lb"><span class="hs-lb-label">Leaderboard</span><div class="hs-lb-periods">';
+      ['daily', 'weekly', 'monthly'].forEach(function(p) {
+        var pCap = p.charAt(0).toUpperCase() + p.slice(1);
+        if (rankedMap[p]) {
+          html += '<span class="hs-lb-period ranked">' + pCap + ' #' + rankedMap[p] + '</span>';
         } else {
-          val = formatScore(gid, r.score);
+          html += '<span class="hs-lb-period">' + pCap + '</span>';
         }
-        html += '<tr><td>' + label + '</td><td>' + val + '</td><td>' + formatDate(r.achieved_at) + '</td></tr>';
       });
+      html += '</div></div>';
 
-      // Eligibility row for unsubmitted scores
+      // Footer: eligibility text + submit button
       if (elig && !ranked) {
-        var pLabel = elig.periodType.charAt(0).toUpperCase() + elig.periodType.slice(1);
-        var bestRow = games[gid][0];
+        var ePLabel = elig.periodType.charAt(0).toUpperCase() + elig.periodType.slice(1);
         var sid = bestRow.session_id || '';
         var hasSession = !!sid;
-        html += '<tr><td colspan="3" class="lb-eligible">Would rank ' + ordinal(elig.rank) + ' on ' + pLabel;
+        html += '<div class="hs-card-footer">';
+        html += '<span class="hs-footer-text">Would rank ' + ordinal(elig.rank) + ' on ' + ePLabel;
+        if (!hasSession) html += ' \u2014 play again to submit';
+        html += '</span>';
         if (hasSession) {
-          html += ' \u2014 <button class="lb-submit-btn" onclick="submitToLeaderboard(\'' + gid + '\',\'' + elig.periodType + '\',\'' + sid + '\',' + (bestRow.score || 0) + ',' + (bestRow.time_ms || 0) + ',this)">Submit for 50 QF</button>';
-        } else {
-          html += ' \u2014 play again to submit';
+          html += '<button class="hs-submit-btn" onclick="submitToLeaderboard(\'' + gid + '\',\'' + elig.periodType + '\',\'' + sid + '\',' + (bestRow.score || 0) + ',' + (bestRow.time_ms || 0) + ',this)">Submit 50 QF</button>';
         }
-        html += '</td></tr>';
+        html += '</div>';
       }
 
-      html += '</tbody></table>';
+      html += '</div>';
     });
-    html += '</div>';
+    html += '</div></div>';
   }
 
-  // League bests (unchanged)
+  // League bests — card layout
   var lb = PROFILE.league_bests || [];
   if (lb.length > 0) {
     var lGames = {};
@@ -561,15 +603,20 @@ async function renderScores() {
       if (!lGames[r.game_id]) lGames[r.game_id] = [];
       lGames[r.game_id].push(r);
     });
-    html += '<div class="score-section"><h3>League Bests</h3>';
+    html += '<div class="score-section"><h3>League Bests</h3><div class="hs-cards">';
     Object.keys(lGames).forEach(function(gid) {
-      html += '<table class="score-table"><thead><tr><th>' + gameName(gid) + '</th><th>Total Score</th><th>Set</th></tr></thead><tbody>';
       lGames[gid].forEach(function(r) {
-        html += '<tr><td>' + (r.tier || 'bronze') + '</td><td>' + r.best_total_score + '</td><td>' + formatDate(r.achieved_at) + '</td></tr>';
+        html += '<div class="hs-card"><div class="hs-card-header">';
+        html += '<span class="hs-card-game">' + gameName(gid) + '</span>';
+        html += '<span class="hs-card-diff">' + (r.tier || 'bronze') + '</span>';
+        html += '</div>';
+        html += '<div class="hs-card-stats">';
+        html += '<div class="hs-stat"><div class="hs-stat-label">Total Score</div><div class="hs-stat-val">' + Number(r.best_total_score || 0).toLocaleString() + '</div></div>';
+        html += '<div class="hs-stat"><div class="hs-stat-label">Date Set</div><div class="hs-stat-val">' + formatDate(r.achieved_at) + '</div></div>';
+        html += '</div></div>';
       });
-      html += '</tbody></table>';
     });
-    html += '</div>';
+    html += '</div></div>';
   }
 
   if (!html) html = '<div class="empty">No scores recorded yet. Play a game to get started.</div>';
@@ -592,9 +639,10 @@ async function submitToLeaderboard(gameId, periodType, sessionId, score, timeMs,
     var data = await res.json();
     if (data.success) {
       var pLabel = periodType.charAt(0).toUpperCase() + periodType.slice(1);
-      var row = btn.closest('tr');
-      row.querySelector('td').innerHTML = '\u2B50 Rank ' + data.rank + ' \u2014 ' + pLabel;
-      btn.remove();
+      var footer = btn.closest('.hs-card-footer');
+      if (footer) {
+        footer.innerHTML = '<span class="hs-footer-text">\u2B50 Ranked ' + ordinal(data.rank) + ' on ' + pLabel + '</span>';
+      }
     } else {
       btn.textContent = data.error || 'Failed';
       btn.disabled = false;
