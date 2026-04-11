@@ -95,11 +95,8 @@ body{background:var(--bg);color:var(--text);font-family:'Inter',sans-serif;min-h
 
 /* ── Achievement cards ── */
 .ach-list{display:flex;flex-direction:column;gap:.5rem}
-.ach-card{background:var(--surface);border:1px solid var(--border);border-radius:8px;padding:.8rem 1rem;display:flex;align-items:center;gap:.8rem}
-.ach-img{width:80px;height:80px;border-radius:8px;object-fit:cover;flex-shrink:0}
-.ach-locked{width:80px;height:80px;border-radius:8px;background:var(--surface2);border:1px solid var(--border);display:flex;align-items:center;justify-content:center;flex-shrink:0;font-size:1.4rem;color:var(--muted)}
-.ach-left{display:flex;flex-direction:column;gap:.15rem;flex:1;min-width:0}
-.ach-right{flex-shrink:0;margin-left:auto}
+.ach-card{background:var(--surface);border:1px solid var(--border);border-radius:8px;padding:.8rem 1rem;display:flex;align-items:center;justify-content:space-between;gap:.6rem}
+.ach-left{display:flex;flex-direction:column;gap:.15rem}
 .ach-name{font-family:'DM Mono',monospace;font-size:.75rem;color:var(--silver-bright)}
 .ach-date{font-family:'DM Mono',monospace;font-size:.5rem;color:var(--muted)}
 .ach-right{flex-shrink:0}
@@ -625,17 +622,12 @@ async function renderAchievements() {
   }
 
   if (achs.length > 0) {
+    // Sort by earned_at descending
     achs.sort(function(a, b) { return (b.earned_at || 0) - (a.earned_at || 0); });
     html += '<div class="ach-list">';
     achs.forEach(function(a) {
       var isMinted = !!a.minted_at;
-      var imgHtml;
-      if (isMinted && a.metadata_cid) {
-        imgHtml = '<img class="ach-img" id="ach-img-' + a.achievement_id + '" src="" alt="" data-cid="' + a.metadata_cid + '">';
-      } else {
-        imgHtml = '<div class="ach-locked">\uD83D\uDD12</div>';
-      }
-      html += '<div class="ach-card">' + imgHtml + '<div class="ach-left">' +
+      html += '<div class="ach-card"><div class="ach-left">' +
         '<div class="ach-name">' + (a.achievement_id || a.name || 'Achievement') + '</div>' +
         '<div class="ach-date">Earned ' + formatDate(a.earned_at) + '</div>' +
         '</div><div class="ach-right">';
@@ -650,19 +642,6 @@ async function renderAchievements() {
       html += '</div></div>';
     });
     html += '</div>';
-    // Fetch images from IPFS metadata
-    achs.forEach(function(a) {
-      if (a.minted_at && a.metadata_cid) {
-        fetch('https://gateway.pinata.cloud/ipfs/' + a.metadata_cid)
-          .then(function(r) { return r.json(); })
-          .then(function(meta) {
-            var el = document.getElementById('ach-img-' + a.achievement_id);
-            if (el && meta.image) {
-              el.src = meta.image.replace('ipfs://', 'https://gateway.pinata.cloud/ipfs/');
-            }
-          }).catch(function() {});
-      }
-    });
   } else {
     html += '<div class="empty">No achievements yet. Start playing to earn your first.</div>';
   }
