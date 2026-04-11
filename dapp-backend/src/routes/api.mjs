@@ -1761,7 +1761,7 @@ router.post('/achievement/mint', optionalWallet, async (req, res) => {
   // On-chain mint via QFAchievement contract
   try {
     const ACHIEVEMENT_CONTRACT = process.env.ACHIEVEMENT_CONTRACT;
-    const ACHIEVEMENT_ABI = ['function mint(address to, string uri) returns (uint256)'];
+    const ACHIEVEMENT_ABI = ['function mint(address to, string uri) returns (uint256)', 'function mintBatch(address[] recipients, string[] uris)', 'function setTokenURI(uint256 tokenId, string uri)'];
     const { join } = await import('path');
     const { readFileSync } = await import('fs');
     const keyPath = join(process.cwd(), 'data', 'escrow.key');

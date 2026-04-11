@@ -63,6 +63,32 @@ contract QFAchievement is ERC721, Ownable {
     }
 
     /**
+     * @notice Mint soulbound achievement NFTs in batch.
+     * @param recipients Array of recipient addresses
+     * @param uris Array of IPFS URIs for token metadata
+     */
+    function mintBatch(address[] calldata recipients, string[] calldata uris) external onlyMinter {
+        if (recipients.length != uris.length) revert("Array length mismatch");
+        for (uint256 i = 0; i < recipients.length; i++) {
+            if (recipients[i] == address(0)) revert ZeroAddress();
+            uint256 tokenId = _nextTokenId++;
+            _safeMint(recipients[i], tokenId);
+            _tokenURIs[tokenId] = uris[i];
+            emit AchievementMinted(recipients[i], tokenId, uris[i]);
+        }
+    }
+
+    /**
+     * @notice Update the metadata URI for an existing token.
+     * @param tokenId The token to update
+     * @param uri New metadata URI
+     */
+    function setTokenURI(uint256 tokenId, string calldata uri) external onlyOwner {
+        _requireOwned(tokenId);
+        _tokenURIs[tokenId] = uri;
+    }
+
+    /**
      * @notice Update the authorised minter address.
      * @param newMinter New escrow wallet address
      */

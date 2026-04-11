@@ -170,7 +170,8 @@ Split from MaffsGames in March 2025. MaffsGames = free schools games. MathsWins 
 - @polkadot/util-crypto installed on Hetzner for Substrate signature verification
 
 ### Achievement System (v4 spec, 161 achievements, ACHIEVEMENTS_ACTIVE=true)
-- **Contract:** QFAchievement.sol deployed at `0x8DCe89b4b0BB40e9C9cb092Be91D195EFdC2C77F` (QF Network mainnet)
+- **Contract:** QFAchievement.sol v2 deployed at `0xc519E65Fb767DBEFC46FF0dC797Ccd0318Ae12eD` (QF Network mainnet). Adds setTokenURI (onlyOwner) and mintBatch (onlyMinter).
+- **Retired contract:** `0x8DCe89b4b0BB40e9C9cb092Be91D195EFdC2C77F` — v1, no setTokenURI. Token #1 stranded, superseded by v2 re-mint.
 - **Owner:** `0x76E00079d96A9AFe44D9883fA23A5B6e0297903E` (onlyfans.qf)
 - **Minter:** `0x26b4A4115D184837530a42B34B945D5d1d2aa67e` (escrow)
 - Soulbound ERC-721, mint(address, string tokenURI), same pattern as QFLeagueTrophy
