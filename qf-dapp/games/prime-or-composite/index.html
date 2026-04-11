@@ -523,6 +523,8 @@ body::before{content:'';position:fixed;inset:0;background-image:linear-gradient(
       } catch (e) { alert('League score failed to save — check your connection.'); }
     }
 
+    if (!leagueMode) { submitFreeplay('prime-or-composite', score, 0); }
+
     var maxPossible = totalQuestions * 130;
     var pct = Math.round(score / maxPossible * 100);
 
@@ -620,6 +622,18 @@ body::before{content:'';position:fixed;inset:0;background-image:linear-gradient(
     buildScoreHistory();
     showQuestion(e.detail.question);
   });
+
+var _fpAPI = 'https://dapp-api.mathswins.co.uk/api/dapp';
+if (location.hostname === 'localhost' || location.hostname === '127.0.0.1') _fpAPI = 'http://127.0.0.1:3860/api/dapp';
+function submitFreeplay(gameId, score, timeMs) {
+  try {
+    if (!qfWallet || !qfWallet.isConnected()) return;
+    fetch(_fpAPI + '/session/submit-freeplay', {
+      method: 'POST', headers: qfWallet.authHeaders(),
+      body: JSON.stringify({ gameId: gameId, score: score, timeMs: timeMs })
+    }).catch(function() {});
+  } catch (e) {}
+}
 
 })();
 </script>

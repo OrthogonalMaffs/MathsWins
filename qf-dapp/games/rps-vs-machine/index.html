@@ -337,6 +337,7 @@ function endGame(){
   const total=wins+losses+draws;
   if(total<20){alert('Play at least 20 rounds to submit a score.');return;}
   const wr=Math.round(wins/total*100);
+  submitFreeplay('rps-vs-machine', wr, 0);
   document.getElementById('modal').classList.remove('hidden');
   const v=wr>=60?'Unpredictable.':wr>=50?'Competitive.':wr>=40?'Readable.':'Transparent.';
   document.getElementById('modal-result').textContent=v;
@@ -391,6 +392,17 @@ function submitToLB(){
 }
 
 renderLB('');
+var _fpAPI = 'https://dapp-api.mathswins.co.uk/api/dapp';
+if (location.hostname === 'localhost' || location.hostname === '127.0.0.1') _fpAPI = 'http://127.0.0.1:3860/api/dapp';
+function submitFreeplay(gameId, score, timeMs) {
+  try {
+    if (!qfWallet || !qfWallet.isConnected()) return;
+    fetch(_fpAPI + '/session/submit-freeplay', {
+      method: 'POST', headers: qfWallet.authHeaders(),
+      body: JSON.stringify({ gameId: gameId, score: score, timeMs: timeMs })
+    }).catch(function() {});
+  } catch (e) {}
+}
 </script>
 
 </body>

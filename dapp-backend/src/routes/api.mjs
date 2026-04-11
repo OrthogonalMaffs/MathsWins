@@ -13,7 +13,7 @@ import { doSettleLeague, checkEarlySettlement, recoverStuckLeagues, mintCommemor
 import { checkAchievements } from '../achievement-checker.mjs';
 import { sendQF, settleDuel, BURN_ADDRESS, TEAM_WALLET } from '../escrow.mjs';
 import { createBattleshipsGame, getBattleshipsGameByCode, getBattleshipsGameById, updateBattleshipsGameStatus, saveBattleshipsPlacement, getBattleshipsPlacement, getBattleshipsPlacements, addBattleshipsRound, getBattleshipsRounds, getBattleshipsRecord, updateBattleshipsRecord, getActiveBattleshipsGames, getBattleshipsGamesByWallet } from '../db/index.mjs';
-import { getAchievementRegistry, getAchievement, awardAchievement, getWalletAchievements, getAllAchievements, getGlobalRecord, getPersonalBests, getLeagueBests, getWalletStats, getWalletLeagueHistory, getWalletTrophies, getGameStateForLeaguePuzzle, getFlaggedSessions, getGlobalLeaderboard, getGlobalLeaderboardEntry, addGlobalLeaderboardEntry, getWalletLeaderboardPositions, getGameState } from '../db/index.mjs';
+import { getAchievementRegistry, getAchievement, awardAchievement, getWalletAchievements, getAllAchievements, getGlobalRecord, getPersonalBests, getLeagueBests, getWalletStats, getWalletLeagueHistory, getWalletTrophies, getGameStateForLeaguePuzzle, getFlaggedSessions, getGlobalLeaderboard, getGlobalLeaderboardEntry, addGlobalLeaderboardEntry, getWalletLeaderboardPositions, getGameState, getGame, upsertPersonalBest } from '../db/index.mjs';
 import { analyseInputPattern } from '../scoring.mjs';
 import { validateFleet, calculateRange, checkHit, checkSunk, checkWin, getGameState as getBattleshipsState, cpuPlaceFleet, cpuShootRecruit, cpuShootOfficer, cpuShootAdmiral, pickSurvivingShip, FLEET } from '../games/battleships.mjs';
 
@@ -300,6 +300,50 @@ router.post('/session/evaluate', (req, res) => {
 
     const result = evaluate(sessionToken, answer);
     res.json(result);
+  } catch (e) {
+    res.status(400).json({ error: e.message });
+  }
+});
+
+// ── Free play score submission (client-reported, no server validation) ───────
+router.post('/session/submit-freeplay', optionalWallet, (req, res) => {
+  try {
+    if (!req.wallet) return res.status(401).json({ error: 'Wallet required' });
+    var { gameId, score, timeMs, difficulty } = req.body;
+    if (!gameId) return res.status(400).json({ error: 'gameId required' });
+    if (score === undefined || score === null) return res.status(400).json({ error: 'score required' });
+
+    var game = getGame(gameId);
+    if (!game) return res.status(400).json({ error: 'Unknown game: ' + gameId });
+
+    score = Number(score) || 0;
+    timeMs = Number(timeMs) || 0;
+    var diff = difficulty || 'default';
+
+    upsertPersonalBest(req.wallet, gameId, diff, score, timeMs);
+
+    var awarded = [];
+    try {
+      awarded = checkAchievements(req.wallet, {
+        type: 'session_complete',
+        gameId: gameId,
+        score: score,
+        timeMs: timeMs,
+        won: score > 0,
+        mistakes: 0,
+        hints: 0,
+        undoCount: 0,
+        moveCount: 0,
+        finalScores: null,
+        openingCards: null,
+        remaining: null,
+        cleared: null,
+        maxHandScore: 0,
+        maxHandBreakdown: null,
+      });
+    } catch (e) { /* achievement check must never block */ }
+
+    res.json({ success: true, achievements: awarded });
   } catch (e) {
     res.status(400).json({ error: e.message });
   }
