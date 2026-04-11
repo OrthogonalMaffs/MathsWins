@@ -1844,7 +1844,7 @@ router.post('/achievement/mint', optionalWallet, async (req, res) => {
     var metadataCID;
     if (ACHIEVEMENT_METADATA[achievement_id]) {
       metadataCID = ACHIEVEMENT_METADATA[achievement_id];
-      tokenURI = 'ipfs://' + metadataCID;
+      tokenURI = 'https://gateway.pinata.cloud/ipfs/' + metadataCID;
     } else {
       // Build metadata on the fly with tier fallback image
       var tierKey = registry.category === 'wooden-spoons' ? 'wooden-spoon' : (registry.tier || 'free');
@@ -1868,7 +1868,7 @@ router.post('/achievement/mint', optionalWallet, async (req, res) => {
       });
       var pinData = await pinRes.json();
       metadataCID = pinData.IpfsHash;
-      tokenURI = 'ipfs://' + metadataCID;
+      tokenURI = 'https://gateway.pinata.cloud/ipfs/' + metadataCID;
     }
     const tx = await contract.mint(req.wallet, tokenURI);
     const receipt = await tx.wait();
