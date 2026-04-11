@@ -49,6 +49,7 @@ export function getDb() {
   try { db.exec('ALTER TABLE achievement_registry ADD COLUMN retired_at INTEGER'); } catch (e) { /* already exists */ }
   try { db.exec('ALTER TABLE personal_bests ADD COLUMN session_id TEXT'); } catch (e) { /* already exists */ }
   try { db.exec('ALTER TABLE achievement_eligibility ADD COLUMN metadata_cid TEXT'); } catch (e) { /* already exists */ }
+  try { db.exec('ALTER TABLE achievement_eligibility ADD COLUMN token_id TEXT'); } catch (e) { /* already exists */ }
   try { db.exec('ALTER TABLE wallet_stats ADD COLUMN consecutive_bs_wins_with_battleship INTEGER DEFAULT 0'); } catch (e) { /* already exists */ }
 
   // League refunds table

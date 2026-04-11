@@ -1828,10 +1828,21 @@ router.post('/achievement/mint', optionalWallet, async (req, res) => {
     const receipt = await tx.wait();
     const txHash = receipt.hash;
 
-    db.prepare('UPDATE achievement_eligibility SET minted_at = ?, tx_hash = ?, metadata_cid = ? WHERE wallet = ? AND achievement_id = ?')
-      .run(Date.now(), txHash, metadataCID, req.wallet, achievement_id);
+    // Parse token ID from Transfer event (topic[3] is tokenId)
+    var tokenId = null;
+    var transferSig = ethers.id('Transfer(address,address,uint256)');
+    for (var i = 0; i < receipt.logs.length; i++) {
+      var log = receipt.logs[i];
+      if (log.topics && log.topics[0] === transferSig) {
+        tokenId = BigInt(log.topics[3]).toString();
+        break;
+      }
+    }
 
-    res.json({ minted: true, pioneer: isPioneer, tx_hash: txHash, metadata_cid: metadataCID });
+    db.prepare('UPDATE achievement_eligibility SET minted_at = ?, tx_hash = ?, metadata_cid = ?, token_id = ? WHERE wallet = ? AND achievement_id = ?')
+      .run(Date.now(), txHash, metadataCID, tokenId, req.wallet, achievement_id);
+
+    res.json({ minted: true, pioneer: isPioneer, tx_hash: txHash, metadata_cid: metadataCID, token_id: tokenId });
   } catch (e) {
     res.status(500).json({ error: 'On-chain mint failed: ' + e.message });
   }
