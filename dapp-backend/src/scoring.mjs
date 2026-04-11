@@ -22,6 +22,7 @@ import {
   updateGameState, completeGameState, loadActiveGameStates,
   upsertPersonalBest
 } from './db/index.mjs';
+import { checkAchievements } from './achievement-checker.mjs';
 
 const JWT_SECRET = process.env.JWT_SECRET || 'dev-secret-change-me';
 const SESSION_PREFIX = 'sess_';
@@ -404,6 +405,32 @@ export function recoverSessions() {
 }
 
 /**
+ * Build achievement context from session completion data.
+ */
+function buildAchContext(session, result, timeMs, won) {
+  var ctx = {
+    type: 'session_complete',
+    gameId: session.gameId,
+    score: session.score,
+    timeMs: timeMs,
+    won: won,
+    mistakes: session.mistakes || 0,
+    hints: session.hintsUsed || 0,
+    undoCount: session.undoCount || 0,
+    moveCount: session.moveCount || 0,
+    // Poker Patience: finalScores.results array with {name, points} per line
+    finalScores: result.finalScores || null,
+    // Golf/Pyramid: remaining cards, cleared cards
+    remaining: result.remaining !== undefined ? result.remaining : null,
+    cleared: result.cleared !== undefined ? result.cleared : null,
+    // Cribbage: track max single hand score across session
+    maxHandScore: session._maxHandScore || 0,
+    maxHandBreakdown: session._maxHandBreakdown || null,
+  };
+  return ctx;
+}
+
+/**
  * Evaluate a player's answer/action.
  */
 export function evaluate(sessionToken, answer) {
@@ -450,6 +477,7 @@ export function evaluate(sessionToken, answer) {
       response.finalScore = partialScore;
       response.finished = true;
       if (session.freePlay) response.freePlay = true;
+      try { checkAchievements(session.wallet, buildAchContext(session, result, now - session.startedAt, false)); } catch (e) { /* achievement check must never block */ }
     }
     // Successful submit
     else if (result.action === 'submit' && result.correct) {
@@ -472,6 +500,7 @@ export function evaluate(sessionToken, answer) {
       response.finalScore = session.score;
       response.finished = true;
       if (session.freePlay) response.freePlay = true;
+      try { checkAchievements(session.wallet, buildAchContext(session, result, completionTimeMs, true)); } catch (e) { /* achievement check must never block */ }
     }
     // Failed submit (incomplete grid)
     else if (result.action === 'submit' && !result.correct) {
@@ -488,6 +517,7 @@ export function evaluate(sessionToken, answer) {
       response.finalScore = partialScore;
       response.finished = true;
       if (session.freePlay) response.freePlay = true;
+      try { checkAchievements(session.wallet, buildAchContext(session, result, now - session.startedAt, false)); } catch (e) { /* achievement check must never block */ }
     }
     // Regular action (place/hint) — persist state
     else if (session._persisted) {
@@ -504,6 +534,12 @@ export function evaluate(sessionToken, answer) {
 
   const result = bank.evaluator(q, answer, elapsedMs);
   session.score += result.points || 0;
+
+  // Track max single hand/question score for cribbage achievements
+  if ((result.points || 0) > (session._maxHandScore || 0)) {
+    session._maxHandScore = result.points;
+    session._maxHandBreakdown = q.answer && q.answer.breakdown ? q.answer.breakdown : null;
+  }
 
   session.currentQ++;
   session.questionStartedAt = Date.now();
@@ -533,6 +569,7 @@ export function evaluate(sessionToken, answer) {
     activeSessions.delete(payload.sid);
     response.finalScore = session.score;
     if (session.freePlay) response.freePlay = true;
+    try { checkAchievements(session.wallet, buildAchContext(session, result, completionTimeMs, true)); } catch (e) { /* achievement check must never block */ }
   } else {
     const nextQ = session.questions[session.currentQ];
     response.question = bank.stripQuestion

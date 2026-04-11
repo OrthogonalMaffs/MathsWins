@@ -95,6 +95,127 @@ export function checkAchievements(wallet, context) {
   // TODO: the-undo-king — freecell game with 50+ undos and still win
   // TODO: wrong-answer-streak — get 5 wrong in a row in prime-or-composite
 
+  // ── Poker Patience achievements ────────────────────────────────────
+  if (context.gameId === 'poker-patience' && context.finalScores) {
+    var lines = context.finalScores.results || [];
+    var total = context.finalScores.total || 0;
+    var handNames = lines.map(function(l) { return l.name; });
+
+    // royal-flush: any line is a Royal Flush
+    if (handNames.indexOf('Royal Flush') !== -1) {
+      tryAward('royal-flush');
+    }
+    // all-pairs: every line has at least One Pair (points >= 2)
+    if (lines.length === 10 && lines.every(function(l) { return l.points >= 2; })) {
+      tryAward('all-pairs');
+    }
+    // the-nuts: total score >= 400
+    if (total >= 400) {
+      tryAward('the-nuts');
+    }
+    // dead-mans-hand: any line is Two Pair containing aces and eights
+    for (var di = 0; di < lines.length; di++) {
+      if (lines[di].name === 'Two Pair' && lines[di].cards) {
+        var ranks = lines[di].cards.map(function(c) { return c % 13; });
+        var hasAcePair = ranks.filter(function(r) { return r === 0; }).length >= 2;
+        var hasEightPair = ranks.filter(function(r) { return r === 7; }).length >= 2;
+        if (hasAcePair && hasEightPair) tryAward('dead-mans-hand');
+      }
+    }
+    // pocket-rockets: any line has a pair of aces
+    for (var pi = 0; pi < lines.length; pi++) {
+      if (lines[pi].cards) {
+        var aceCount = lines[pi].cards.filter(function(c) { return c % 13 === 0; }).length;
+        if (aceCount >= 2) { tryAward('pocket-rockets'); break; }
+      }
+    }
+    // the-brick: total score exactly 0
+    if (total === 0) {
+      tryAward('the-brick');
+    }
+    // Wooden spoons
+    // bust: total score 0
+    if (total === 0) {
+      tryAward('bust');
+    }
+    // the-fish: total score <= 5
+    if (total <= 5) {
+      tryAward('the-fish');
+    }
+    // mucky-hands: total score <= 10
+    if (total <= 10) {
+      tryAward('mucky-hands');
+    }
+  }
+
+  // ── Cribbage Solitaire achievements ───────────────────────────────
+  if (context.gameId === 'cribbage-solitaire') {
+    // twenty-nine: a single hand scored 29 (the perfect hand)
+    if (context.maxHandScore >= 29) {
+      tryAward('twenty-nine');
+    }
+    // crib-master: total game score >= 100
+    if (context.score >= 100) {
+      tryAward('crib-master');
+    }
+    // crib-death: total game score <= 10 (wooden spoon)
+    if (context.score <= 10) {
+      tryAward('crib-death');
+    }
+  }
+
+  // ── Golf Solitaire achievements ───────────────────────────────────
+  if (context.gameId === 'golf-solitaire' && context.remaining !== null) {
+    // hole-in-one: perfect clear (0 remaining)
+    if (context.remaining === 0) {
+      tryAward('hole-in-one');
+    }
+    // albatross: 3 or fewer remaining
+    if (context.remaining <= 3) {
+      tryAward('albatross');
+    }
+    // under-par: 7 or fewer remaining
+    if (context.remaining <= 7) {
+      tryAward('under-par');
+    }
+    // back-nine: cleared at least half (17 or fewer remaining, out of 35)
+    if (context.remaining <= 17) {
+      tryAward('back-nine');
+    }
+    // bogey: 25+ remaining (wooden spoon)
+    if (context.remaining >= 25) {
+      tryAward('bogey');
+    }
+  }
+
+  // ── Pyramid achievements ──────────────────────────────────────────
+  if (context.gameId === 'pyramid' && context.cleared !== null) {
+    // perfect-pyramid: cleared all 28 cards
+    if (context.cleared === 28) {
+      tryAward('perfect-pyramid');
+    }
+    // the-archaeologist: cleared 25+
+    if (context.cleared >= 25) {
+      tryAward('the-archaeologist');
+    }
+    // kings-ransom: cleared 24+
+    if (context.cleared >= 24) {
+      tryAward('kings-ransom');
+    }
+    // tutankhamun: cleared 20+
+    if (context.cleared >= 20) {
+      tryAward('tutankhamun');
+    }
+    // pharaohs-curse: cleared 5 or fewer (wooden spoon)
+    if (context.cleared <= 5) {
+      tryAward('pharaohs-curse');
+    }
+    // curse-of-the-mummy: cleared 3 or fewer (wooden spoon)
+    if (context.cleared <= 3) {
+      tryAward('curse-of-the-mummy');
+    }
+  }
+
   // ── Absurd achievements ───────────────────────────────────────────
   if (context.score !== undefined) {
     // the-mathematician: score is exactly 3141
