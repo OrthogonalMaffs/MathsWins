@@ -10,9 +10,9 @@ import { ethers } from 'ethers';
 import { signatureVerify, decodeAddress } from '@polkadot/util-crypto';
 import { getDb } from '../db/index.mjs';
 import { doSettleLeague, checkEarlySettlement, recoverStuckLeagues, mintCommemorative } from '../league-settle.mjs';
-import { sendQF, settleDuel } from '../escrow.mjs';
+import { sendQF, settleDuel, BURN_ADDRESS, TEAM_WALLET } from '../escrow.mjs';
 import { createBattleshipsGame, getBattleshipsGameByCode, getBattleshipsGameById, updateBattleshipsGameStatus, saveBattleshipsPlacement, getBattleshipsPlacement, getBattleshipsPlacements, addBattleshipsRound, getBattleshipsRounds, getBattleshipsRecord, updateBattleshipsRecord, getActiveBattleshipsGames, getBattleshipsGamesByWallet } from '../db/index.mjs';
-import { getAchievementRegistry, getAchievement, awardAchievement, getWalletAchievements, getAllAchievements, getGlobalRecord, getPersonalBests, getLeagueBests, getWalletStats, getWalletLeagueHistory, getWalletTrophies, getGameStateForLeaguePuzzle, getFlaggedSessions } from '../db/index.mjs';
+import { getAchievementRegistry, getAchievement, awardAchievement, getWalletAchievements, getAllAchievements, getGlobalRecord, getPersonalBests, getLeagueBests, getWalletStats, getWalletLeagueHistory, getWalletTrophies, getGameStateForLeaguePuzzle, getFlaggedSessions, getGlobalLeaderboard, getGlobalLeaderboardEntry, addGlobalLeaderboardEntry, getWalletLeaderboardPositions, getGameState } from '../db/index.mjs';
 import { analyseInputPattern } from '../scoring.mjs';
 import { validateFleet, calculateRange, checkHit, checkSunk, checkWin, getGameState as getBattleshipsState, cpuPlaceFleet, cpuShootRecruit, cpuShootOfficer, cpuShootAdmiral, pickSurvivingShip, FLEET } from '../games/battleships.mjs';
 
@@ -1792,6 +1792,7 @@ router.get('/profile/:wallet', (req, res) => {
   const walletStats = getWalletStats(wallet) || {};
   const leagueHistory = getWalletLeagueHistory(wallet, 20);
   const trophies = getWalletTrophies(wallet);
+  const leaderboardPositions = getWalletLeaderboardPositions(wallet);
 
   res.json({
     wallet: wallet.toLowerCase(),
@@ -1800,8 +1801,127 @@ router.get('/profile/:wallet', (req, res) => {
     achievements,
     wallet_stats: walletStats,
     league_history: leagueHistory,
-    trophies
+    trophies,
+    leaderboard_positions: leaderboardPositions
   });
+});
+
+// ── Global Leaderboard ──────────────────────────────────────────────────
+
+function getCurrentPeriodKey(periodType) {
+  var now = new Date();
+  if (periodType === 'daily') return now.toISOString().slice(0, 10);
+  if (periodType === 'monthly') return now.toISOString().slice(0, 7);
+  if (periodType === 'weekly') {
+    var d = new Date(Date.UTC(now.getFullYear(), now.getMonth(), now.getDate()));
+    d.setUTCDate(d.getUTCDate() + 4 - (d.getUTCDay() || 7));
+    var yearStart = new Date(Date.UTC(d.getUTCFullYear(), 0, 1));
+    var week = Math.ceil(((d - yearStart) / 86400000 + 1) / 7);
+    return now.getFullYear() + '-W' + String(week).padStart(2, '0');
+  }
+  return now.toISOString().slice(0, 10);
+}
+
+var TIME_PRIMARY = ['minesweeper','freecell','kenken','nonogram','kakuro','sudoku-duel'];
+
+// Static routes first (before parameterized :gameId/:periodType)
+router.get('/global-leaderboard/my-positions', optionalWallet, (req, res) => {
+  if (!req.wallet) return res.status(401).json({ error: 'Wallet required' });
+  var positions = getWalletLeaderboardPositions(req.wallet);
+  res.json({ positions: positions });
+});
+
+router.post('/global-leaderboard/enter', optionalWallet, async (req, res) => {
+  if (!req.wallet) return res.status(401).json({ error: 'Wallet required' });
+  var { gameId, score, timeMs, periodType, sessionId, txHash, qnsName } = req.body;
+  if (!gameId || score === undefined || !periodType || !sessionId) {
+    return res.status(400).json({ error: 'gameId, score, periodType, and sessionId required' });
+  }
+  if (['daily', 'weekly', 'monthly'].indexOf(periodType) === -1) {
+    return res.status(400).json({ error: 'Invalid periodType' });
+  }
+  var periodKey = getCurrentPeriodKey(periodType);
+  var existing = getGlobalLeaderboardEntry(req.wallet, gameId, periodType, periodKey);
+  if (existing) return res.status(400).json({ error: 'Already entered this leaderboard for the current period' });
+
+  var gs = getGameState(sessionId);
+  if (!gs) return res.status(400).json({ error: 'Session not found' });
+  if (gs.status !== 'completed') return res.status(400).json({ error: 'Session not completed' });
+  if (gs.flagged) return res.status(400).json({ error: 'Session flagged — not eligible' });
+
+  var suspicious = 0;
+
+  // Burn 5% (2.5 QF), team 95% (47.5 QF) of 50 QF entry fee
+  var burnAmount = 2;
+  var teamAmount = 48;
+  try {
+    await sendQF(BURN_ADDRESS, burnAmount);
+    await sendQF(TEAM_WALLET, teamAmount);
+  } catch (e) {
+    return res.status(500).json({ error: 'Payment processing failed: ' + e.message });
+  }
+
+  addGlobalLeaderboardEntry(req.wallet, gameId, score, timeMs || 0, periodType, periodKey, sessionId, txHash || null, qnsName, suspicious);
+
+  var board = getGlobalLeaderboard(gameId, periodType, periodKey);
+  var rank = board.findIndex(function(r) { return r.wallet === req.wallet.toLowerCase(); }) + 1;
+  res.json({ success: true, rank: rank, totalEntries: board.length, periodType: periodType, periodKey: periodKey });
+});
+
+router.get('/global-leaderboard/:gameId/eligibility', optionalWallet, (req, res) => {
+  if (!req.wallet) return res.status(401).json({ error: 'Wallet required' });
+  var gameId = req.params.gameId;
+  var periodType = req.query.periodType || 'daily';
+  var score = parseInt(req.query.score) || 0;
+  var timeMs = parseInt(req.query.timeMs) || 0;
+  var sessionId = req.query.sessionId;
+  if (['daily', 'weekly', 'monthly'].indexOf(periodType) === -1) {
+    return res.status(400).json({ error: 'Invalid periodType' });
+  }
+  var periodKey = getCurrentPeriodKey(periodType);
+  var existing = getGlobalLeaderboardEntry(req.wallet, gameId, periodType, periodKey);
+  if (existing) {
+    return res.json({ shouldPrompt: false, alreadyEntered: true, periodType: periodType, periodKey: periodKey });
+  }
+  if (sessionId) {
+    var gs = getGameState(sessionId);
+    if (gs && gs.flagged) {
+      return res.json({ shouldPrompt: false, alreadyEntered: false, periodType: periodType, periodKey: periodKey });
+    }
+  }
+  var board = getGlobalLeaderboard(gameId, periodType, periodKey);
+  var totalEntries = board.length;
+  var isTime = TIME_PRIMARY.indexOf(gameId) !== -1;
+  var rank = totalEntries + 1;
+  for (var i = 0; i < board.length; i++) {
+    if (isTime ? timeMs < board[i].time_ms : score > board[i].score) { rank = i + 1; break; }
+  }
+  var shouldPrompt = totalEntries < 25 || rank <= 25;
+  res.json({ shouldPrompt: shouldPrompt, rank: rank, totalEntries: totalEntries, alreadyEntered: false, periodType: periodType, periodKey: periodKey });
+});
+
+// Parameterized route LAST (after static routes)
+var glbRateLimit = new Map();
+router.get('/global-leaderboard/:gameId/:periodType', (req, res) => {
+  var ip = req.ip || req.connection.remoteAddress;
+  var now = Date.now();
+  var hits = glbRateLimit.get(ip) || [];
+  var recent = hits.filter(function(t) { return t > now - 60000; });
+  if (recent.length >= 60) return res.status(429).json({ error: 'Rate limit exceeded' });
+  recent.push(now);
+  glbRateLimit.set(ip, recent);
+
+  var gameId = req.params.gameId;
+  var periodType = req.params.periodType;
+  if (['daily', 'weekly', 'monthly'].indexOf(periodType) === -1) {
+    return res.status(400).json({ error: 'periodType must be daily, weekly, or monthly' });
+  }
+  var periodKey = getCurrentPeriodKey(periodType);
+  var board = getGlobalLeaderboard(gameId, periodType, periodKey);
+  var ranked = board.map(function(entry, i) {
+    return { rank: i + 1, wallet: entry.wallet, qns_name: entry.qns_name, score: entry.score, time_ms: entry.time_ms, paid_at: entry.paid_at };
+  });
+  res.json({ game_id: gameId, period_type: periodType, period_key: periodKey, entries: ranked });
 });
 
 export default router;

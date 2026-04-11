@@ -64,6 +64,24 @@ export function getDb() {
   db.exec('CREATE INDEX IF NOT EXISTS idx_league_refunds_status ON league_refunds(status)');
   db.exec('CREATE INDEX IF NOT EXISTS idx_league_refunds_league ON league_refunds(league_id)');
 
+  // ── Global leaderboard ──────────────────────────────────────────────
+  db.exec(`CREATE TABLE IF NOT EXISTS global_leaderboard_entries (
+    id INTEGER PRIMARY KEY AUTOINCREMENT,
+    wallet TEXT NOT NULL,
+    game_id TEXT NOT NULL,
+    score INTEGER NOT NULL,
+    time_ms INTEGER,
+    period_type TEXT NOT NULL,
+    period_key TEXT NOT NULL,
+    session_id TEXT NOT NULL,
+    paid_at INTEGER NOT NULL,
+    tx_hash TEXT,
+    suspicious INTEGER DEFAULT 0,
+    qns_name TEXT,
+    UNIQUE(wallet, game_id, period_type, period_key)
+  )`);
+  db.exec('CREATE INDEX IF NOT EXISTS idx_glb_game_period ON global_leaderboard_entries(game_id, period_type, period_key)');
+
   // ── Achievement tables ──────────────────────────────────────────────
   db.exec(`CREATE TABLE IF NOT EXISTS achievement_registry (
     achievement_id TEXT PRIMARY KEY,
@@ -1149,4 +1167,55 @@ export function getFlaggedSessions(walletFilter, leagueFilter) {
   if (leagueFilter) { sql += ' AND ls.league_id = ?'; params.push(leagueFilter); }
   sql += ' ORDER BY ls.submitted_at DESC LIMIT 200';
   return db.prepare(sql).all(...params);
+}
+
+// ── Global leaderboard queries ──────────────────────────────────────────
+
+export function getGlobalLeaderboard(gameId, periodType, periodKey) {
+  const db = getDb();
+  var isTime = TIME_PRIMARY_GAMES.has(gameId);
+  var orderBy = isTime ? 'time_ms ASC, score DESC' : 'score DESC, time_ms ASC';
+  return db.prepare(
+    'SELECT wallet, qns_name, score, time_ms, paid_at FROM global_leaderboard_entries WHERE game_id = ? AND period_type = ? AND period_key = ? AND suspicious = 0 ORDER BY ' + orderBy
+  ).all(gameId, periodType, periodKey);
+}
+
+export function getGlobalLeaderboardEntry(wallet, gameId, periodType, periodKey) {
+  const db = getDb();
+  return db.prepare(
+    'SELECT * FROM global_leaderboard_entries WHERE wallet = ? AND game_id = ? AND period_type = ? AND period_key = ?'
+  ).get(wallet.toLowerCase(), gameId, periodType, periodKey);
+}
+
+export function addGlobalLeaderboardEntry(wallet, gameId, score, timeMs, periodType, periodKey, sessionId, txHash, qnsName, suspicious) {
+  const db = getDb();
+  db.prepare(
+    'INSERT INTO global_leaderboard_entries (wallet, game_id, score, time_ms, period_type, period_key, session_id, paid_at, tx_hash, qns_name, suspicious) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)'
+  ).run(wallet.toLowerCase(), gameId, score, timeMs || 0, periodType, periodKey, sessionId, Date.now(), txHash || null, qnsName || null, suspicious || 0);
+}
+
+export function getWalletLeaderboardPositions(wallet) {
+  const db = getDb();
+  var w = wallet.toLowerCase();
+  var now = new Date();
+  var dailyKey = now.toISOString().slice(0, 10);
+  var weekKey = now.getFullYear() + '-W' + String(getISOWeek(now)).padStart(2, '0');
+  var monthKey = now.toISOString().slice(0, 7);
+
+  var entries = db.prepare(
+    'SELECT * FROM global_leaderboard_entries WHERE wallet = ? AND ((period_type = ? AND period_key = ?) OR (period_type = ? AND period_key = ?) OR (period_type = ? AND period_key = ?))'
+  ).all(w, 'daily', dailyKey, 'weekly', weekKey, 'monthly', monthKey);
+
+  return entries.map(function(e) {
+    var board = getGlobalLeaderboard(e.game_id, e.period_type, e.period_key);
+    var rank = board.findIndex(function(r) { return r.wallet === w; }) + 1;
+    return { game_id: e.game_id, period_type: e.period_type, rank: rank, score: e.score, total_entries: board.length };
+  });
+}
+
+function getISOWeek(d) {
+  var date = new Date(Date.UTC(d.getFullYear(), d.getMonth(), d.getDate()));
+  date.setUTCDate(date.getUTCDate() + 4 - (date.getUTCDay() || 7));
+  var yearStart = new Date(Date.UTC(date.getUTCFullYear(), 0, 1));
+  return Math.ceil(((date - yearStart) / 86400000 + 1) / 7);
 }
