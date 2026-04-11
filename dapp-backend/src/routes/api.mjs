@@ -1805,10 +1805,12 @@ router.post('/achievement/mint', optionalWallet, async (req, res) => {
       // Build metadata on the fly with tier fallback image
       var tierKey = registry.category === 'wooden-spoons' ? 'wooden-spoon' : (registry.tier || 'free');
       var imageCID = TIER_IMAGES[tierKey] || TIER_IMAGES['free'];
+      var achName = registry.name || achievement_id;
+      var achCategory = registry.category ? registry.category.replace(/-/g, ' ').replace(/\b\w/g, function(c) { return c.toUpperCase(); }) : 'General';
       var metadata = {
-        name: registry.name || achievement_id,
-        description: 'QF Games Achievement — ' + (registry.name || achievement_id),
-        image: 'ipfs://' + imageCID,
+        name: achName,
+        description: achName + ' — ' + achCategory + ' achievement on QF Games.',
+        image: 'https://gateway.pinata.cloud/ipfs/' + imageCID,
         attributes: [
           { trait_type: 'Category', value: registry.category || 'general' },
           { trait_type: 'Tier', value: registry.tier || 'free' },
