@@ -171,7 +171,7 @@ body::before{content:'';position:fixed;inset:0;background-image:linear-gradient(
 
   <button class="btn btn-gold" id="start-btn" onclick="startGame()">Start Game</button>
 
-  <div class="lb-section">
+  <div class="lb-section" style="display:none">
     <div class="lb-header"><span class="lb-title">Leaderboard</span></div>
     <div class="lb-body" id="lb-out"><div class="lb-empty">No scores yet.</div></div>
   </div>
@@ -181,14 +181,14 @@ body::before{content:'';position:fixed;inset:0;background-image:linear-gradient(
   <div class="modal">
     <div class="modal-header"><div class="modal-result" id="modal-result">Game Over</div></div>
     <div class="modal-score" id="modal-score"></div>
-    <div class="modal-name">
+    <div class="modal-name" style="display:none">
       <label>Your name for the leaderboard</label>
       <input class="name-input" id="name-input" type="text" maxlength="20" placeholder="Anonymous">
     </div>
     <div class="modal-acts">
       <button class="btn btn-ghost" onclick="closeModal()">Play Again</button>
-      <button class="btn btn-gold" onclick="submitToLB()">Submit Score</button>
     </div>
+    <div style="text-align:center;margin-top:1rem;padding-bottom:1.4rem"><a href="/qf-dapp/" style="font-family:'JetBrains Mono',monospace;font-size:.6rem;color:#b8bcc6;text-decoration:none;padding:.4rem .8rem;border:1px solid #2a2e36;border-radius:5px">Back to Lobby</a></div>
   </div>
 </div>
 

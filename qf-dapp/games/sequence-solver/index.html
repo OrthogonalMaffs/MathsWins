@@ -391,7 +391,7 @@ body{font-family:'Inter',sans-serif;background:var(--bg);color:var(--text);min-h
   // ── Show question ─────────────────────────────────────────────────────
   function showQuestion(q) {
     if (!q) return;
-    questionNum = q.num;
+    questionNum = q.num || (questionNum + 1);
     qNumEl.textContent = questionNum + '/' + totalQuestions;
 
     // Sequence line

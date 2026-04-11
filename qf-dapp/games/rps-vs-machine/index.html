@@ -27,7 +27,7 @@
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;700&family=JetBrains+Mono:wght@400;500&family=Playfair+Display:wght@700&display=swap" rel="stylesheet">
 <style>
-:root{--ink:#0e1013;--navy:#0b1629;--navy-mid:#0f1f3d;--navy-light:#162847;--gold:#c9a84c;--gold-warm:#d4d8e2;--gold-dim:rgba(184,188,198,0.08);--teal:#b8bcc6;--teal-dim:rgba(184,188,198,0.08);--body:#a8b8d0;--muted:#4a6080;--border:#1a2e4a;--border-dim:#111f33;--success:#2dd4a0;--danger:#ef5350;--warn:#c9a84c}
+:root{--ink:#0e1013;--navy:#16181c;--navy-mid:#1e2025;--navy-light:#26282e;--gold:#c9a84c;--gold-warm:#d4d8e2;--gold-dim:rgba(184,188,198,0.08);--teal:#b8bcc6;--teal-dim:rgba(184,188,198,0.08);--body:#c8cdd8;--muted:#4a5568;--border:#2a2e36;--border-dim:#1e2228;--success:#2dd4a0;--danger:#ef5350;--warn:#c9a84c}
 *,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
 body{background:var(--ink);color:var(--body);font-family:'Inter',sans-serif;min-height:100vh;display:flex;flex-direction:column;align-items:center;overflow-x:hidden}
 body::before{content:'';position:fixed;inset:0;background-image:linear-gradient(rgba(201,168,76,0.03) 1px,transparent 1px),linear-gradient(90deg,rgba(201,168,76,0.03) 1px,transparent 1px);background-size:40px 40px;pointer-events:none;z-index:0}
@@ -190,7 +190,7 @@ body::before{content:'';position:fixed;inset:0;background-image:linear-gradient(
   <button class="btn btn-ghost" id="end-btn" onclick="endGame()" style="display:none">End &amp; Submit (20+ rounds)</button>
   <button class="btn btn-ghost" onclick="resetGame()">Reset</button>
 
-  <div class="lb-section">
+  <div class="lb-section" style="display:none">
     <div class="lb-header"><span class="lb-title">Leaderboard — Win Rate (min. 20 rounds)</span></div>
     <div class="lb-body" id="lb-out"><div class="lb-empty">No entries yet.</div></div>
   </div>
@@ -200,14 +200,14 @@ body::before{content:'';position:fixed;inset:0;background-image:linear-gradient(
   <div class="modal">
     <div class="modal-header"><div class="modal-result" id="modal-result">—</div></div>
     <div class="modal-score" id="modal-score"></div>
-    <div class="modal-name">
+    <div class="modal-name" style="display:none">
       <label>Your name for the leaderboard</label>
       <input class="name-input" id="name-input" type="text" maxlength="20" placeholder="Anonymous">
     </div>
     <div class="modal-acts">
       <button class="btn btn-ghost" onclick="closeModal()">Play Again</button>
-      <button class="btn btn-gold" onclick="submitToLB()">Submit</button>
     </div>
+    <div style="text-align:center;margin-top:1rem;padding-bottom:1.4rem"><a href="/qf-dapp/" style="font-family:'JetBrains Mono',monospace;font-size:.6rem;color:#b8bcc6;text-decoration:none;padding:.4rem .8rem;border:1px solid #2a2e36;border-radius:5px">Back to Lobby</a></div>
   </div>
 </div>
 

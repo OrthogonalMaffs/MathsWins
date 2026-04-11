@@ -302,9 +302,7 @@ body::before{content:'';position:fixed;inset:0;background-image:linear-gradient(
 
   <button class="btn btn-ghost" id="start-btn" onclick="startGame()" style="width:100%">Start Game</button>
   <button class="btn btn-ghost" id="create-duel-btn" onclick="createDuel()" style="width:100%;padding:.7rem;margin-top:.5rem;font-size:.65rem">&#9876; Create a Duel</button>
-  <a href="/qf-dapp/games/cryptarithmetic-club/league/" style="display:block;text-align:center;margin-top:.8rem;font-family:'JetBrains Mono',monospace;font-size:.65rem;color:var(--silver,#b8bcc6);text-decoration:none;padding:.5rem;border:1px solid var(--border,#1e2228);border-radius:6px;transition:all .15s" onmouseover="this.style.borderColor='rgba(184,188,198,0.15)'" onmouseout="this.style.borderColor='var(--border,#1e2228)'">&#9813; View Leagues</a>
-
-  <div class="lb-section">
+  <div class="lb-section" style="display:none">
     <div class="lb-header"><span class="lb-title">Leaderboard</span></div>
     <div class="lb-body" id="lb-out"><div class="lb-empty">No scores yet.</div></div>
   </div>
@@ -316,13 +314,12 @@ body::before{content:'';position:fixed;inset:0;background-image:linear-gradient(
   <div class="modal">
     <div class="modal-header"><div class="modal-result" id="modal-result">—</div></div>
     <div class="modal-score" id="modal-score"></div>
-    <div class="modal-name">
+    <div class="modal-name" style="display:none">
       <label>Your name for the leaderboard</label>
       <input class="name-input" id="name-input" type="text" maxlength="20" placeholder="Anonymous">
     </div>
     <div class="modal-acts">
       <button class="btn btn-ghost" onclick="resetGame()">Play Again</button>
-      <button class="btn btn-silver" onclick="submitToLB()">Submit Score</button>
     </div>
   </div>
 </div>

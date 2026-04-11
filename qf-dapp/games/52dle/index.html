@@ -545,7 +545,7 @@ body::before {
   <div class="game-header">
     <p class="game-kicker">Free Play · Mathematical Deduction</p>
     <h1 class="game-title">52<strong style="color:var(--teal)">-dle</strong></h1>
-    <p class="game-sub">Identify the hidden number. Six guesses. New puzzle every 24 hours.</p>
+    <p class="game-sub">Identify the hidden number. Six guesses. Use mathematical clues and deduction.</p>
   </div>
 
   <div class="status-bar">
@@ -557,7 +557,7 @@ body::before {
 
   <div class="clue-box" id="clue-box">
     <div class="clue-header">
-      <span class="clue-label">Today's Clue</span>
+      <span class="clue-label">Clue</span>
       <span class="cat-badge" id="cat-badge">—</span>
     </div>
     <div class="clue-text" id="clue-text">Loading puzzle…</div>
@@ -578,9 +578,9 @@ body::before {
     <div class="hint-area" id="hint-area"></div>
   </div>
 
-  <div class="lb-section">
+  <div class="lb-section" style="display:none">
     <div class="lb-header">
-      <span class="lb-title">Today's Leaderboard</span>
+      <span class="lb-title">Leaderboard</span>
       <button class="btn btn-ghost" style="padding:0.3rem 0.7rem;font-size:0.5rem;" onclick="renderLB('')">Refresh</button>
     </div>
     <div class="lb-body" id="lb-out"><div class="lb-empty">No scores yet — be the first.</div></div>
@@ -598,7 +598,7 @@ body::before {
     </div>
     <div class="share-grid" id="share-grid"></div>
     <div class="modal-score" id="modal-score"></div>
-    <div class="modal-name" id="modal-name-section">
+    <div class="modal-name" id="modal-name-section" style="display:none">
       <label for="name-input">Your name for the leaderboard</label>
       <input class="name-input" id="name-input" type="text" maxlength="20" placeholder="Anonymous">
     </div>
