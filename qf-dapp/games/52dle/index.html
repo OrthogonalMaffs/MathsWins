@@ -16,31 +16,31 @@
 </script>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<meta name="description" content="Play 52-dle, a daily number-guessing game. Use maths clues and deduction to identify the hidden number in six guesses or fewer.">
+<meta name="description" content="Play 52-dle, a number-guessing game. Use maths clues and deduction to identify the hidden number in six guesses or fewer.">
 <meta property="og:title" content="52-dle · QF Games">
-<meta property="og:description" content="Play 52-dle, a daily number-guessing game. Use maths clues and deduction to identify the hidden number in six guesses or fewer.">
+<meta property="og:description" content="Play 52-dle, a number-guessing game. Use maths clues and deduction to identify the hidden number in six guesses or fewer.">
 <meta property="og:url" content="https://mathswins.co.uk/qf-dapp/games/52dle/">
 <meta property="og:image" content="https://mathswins.co.uk/assets/og-image.png">
 <link rel="canonical" href="https://mathswins.co.uk/qf-dapp/games/52dle/">
-<link rel="icon" type="image/svg+xml" href="../../schools/assets/favicon.svg">
+<link rel="icon" type="image/png" href="/assets/og-image.png">
 <title>52-dle · QF Games</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;700&family=JetBrains+Mono:wght@400;500&family=Playfair+Display:wght@700&display=swap" rel="stylesheet">
 <style>
 :root {
-  --ink:        #070d1a;
-  --navy:       #0b1629;
-  --navy-mid:   #0f1f3d;
-  --navy-light: #162847;
+  --ink:        #0e1013;
+  --navy:       #16181c;
+  --navy-mid:   #1e2025;
+  --navy-light: #26282e;
   --gold:       #c9a84c;
   --gold-warm:  #d4d8e2;
   --gold-dim:   rgba(184,188,198,0.08);
   --teal:       #b8bcc6;
   --teal-dim:   rgba(184,188,198,0.08);
-  --body:       #a8b8d0;
-  --muted:      #4a6080;
-  --border:     #1a2e4a;
-  --border-dim: #111f33;
+  --body:       #8a8f9c;
+  --muted:      #4a4e5a;
+  --border:     #2a2e36;
+  --border-dim: #1e2228;
   --success:    #2dd4a0;
   --danger:     #ef5350;
   --warn:       #c9a84c;
@@ -543,7 +543,7 @@ body::before {
 <div class="page">
 
   <div class="game-header">
-    <p class="game-kicker">Daily · Mathematical Deduction</p>
+    <p class="game-kicker">Free Play · Mathematical Deduction</p>
     <h1 class="game-title">52<strong style="color:var(--teal)">-dle</strong></h1>
     <p class="game-sub">Identify the hidden number. Six guesses. New puzzle every 24 hours.</p>
   </div>
@@ -584,7 +584,7 @@ body::before {
       <button class="btn btn-ghost" style="padding:0.3rem 0.7rem;font-size:0.5rem;" onclick="renderLB('')">Refresh</button>
     </div>
     <div class="lb-body" id="lb-out"><div class="lb-empty">No scores yet — be the first.</div></div>
-    <div class="next-box">Next puzzle in <span id="next-timer">—</span></div>
+    <div class="next-box" style="display:none">Next puzzle in <span id="next-timer">—</span></div>
   </div>
 
 </div>
@@ -645,8 +645,8 @@ function dayIdx() {
   return Math.floor((new Date() - epoch) / 86400000) % PUZZLES.length;
 }
 
-const SKEY = () => '52dle_s_' + dayStr();
-const LKEY = () => '52dle_lb_' + dayStr();
+const SKEY = () => '52dle_s';
+const LKEY = () => '52dle_lb';
 
 const MAX_GUESSES = 6;
 const MAX_HINTS   = 3;
@@ -923,8 +923,8 @@ document.addEventListener('keydown', e => {
 
 // ─── INIT ────────────────────────────────────────────────────────────
 function init() {
-  puzzle = PUZZLES[dayIdx()];
-  state  = loadState();
+  puzzle = PUZZLES[Math.floor(Math.random() * PUZZLES.length)];
+  state  = defaultState();
 
   document.getElementById('clue-text').textContent = puzzle.clue;
   document.getElementById('cat-badge').textContent  = puzzle.cat;
@@ -948,8 +948,6 @@ function init() {
     timerInterval = setInterval(renderTimer, 1000);
   }
 
-  setInterval(renderNextTimer, 1000);
-  renderNextTimer();
 }
 
 init();
