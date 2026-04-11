@@ -169,16 +169,21 @@ Split from MaffsGames in March 2025. MaffsGames = free schools games. MathsWins 
 - optionalWallet middleware accepts JWT or legacy X-Wallet-Address header
 - @polkadot/util-crypto installed on Hetzner for Substrate signature verification
 
-### Achievement System (v4 spec, 161 achievements, gated by ACHIEVEMENTS_ACTIVE=false)
+### Achievement System (v4 spec, 161 achievements, ACHIEVEMENTS_ACTIVE=true)
+- **Contract:** QFAchievement.sol deployed at `0x8DCe89b4b0BB40e9C9cb092Be91D195EFdC2C77F` (QF Network mainnet)
+- **Owner:** `0x76E00079d96A9AFe44D9883fA23A5B6e0297903E` (onlyfans.qf)
+- **Minter:** `0x26b4A4115D184837530a42B34B945D5d1d2aa67e` (escrow)
+- Soulbound ERC-721, mint(address, string tokenURI), same pattern as QFLeagueTrophy
 - Teaser page live at /qf-dapp/achievements/ — 161 names, all locked
 - 32 categories: purity, volume, winning, shadows, duels, battleships, freecell, minesweeper, poker-patience, cribbage, golf, pyramid, kenken, nonogram, sudoku, comeback, per-game-volume, free-games, streaks, kakuro, time, seasonal, monthly, constants, squared-pi, loyalty, milestones, meta, absurd, founding, wooden-spoons, impossible
 - 5 mint tiers: Free (0 QF), Standard (100 QF), Premium (200 QF), Elite (500 QF), Manual reward
 - achievement_registry has both `tier` and `category` columns (tier for legacy compat, category for v4)
 - Pioneer tag: first mint per achievement, UNIQUE constraint
-- Condition checker hooks into league settlement
-- Mint reward: every 5th paid mint free, every 10th gives 2 free mints (tracked via paid_mint_count, free_mints_banked on wallet_stats)
+- Condition checker hooks into league settlement (7 conditions active) + puzzle submission (Founding Member)
+- Founding Member: fires on first league puzzle submission between 2026-04-11 and 2026-07-31 (env: FOUNDING_MEMBER_START/END)
+- Mint endpoint: real on-chain mint via escrow wallet, fee split (5% burn, 95% team), free mints use banked credits
+- Mint reward: every 5th paid mint banks 1 free mint, every 10th banks 2 (tracked via paid_mint_count, free_mints_banked on wallet_stats)
 - DB: achievement_registry, achievement_eligibility, global_records, wallet_stats
-- Contract: QFAchievement.sol (not yet deployed — after games tested)
 - "Boom" — the impossible achievement (first click safety means it can never be earned)
 - The Grandmaster = FREE to mint, Shadow Legend = 500 QF
 - 19 wooden spoons (shown as ? on teaser page until earned)
