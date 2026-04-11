@@ -10,6 +10,7 @@ import { ethers } from 'ethers';
 import { signatureVerify, decodeAddress } from '@polkadot/util-crypto';
 import { getDb } from '../db/index.mjs';
 import { doSettleLeague, checkEarlySettlement, recoverStuckLeagues, mintCommemorative } from '../league-settle.mjs';
+import { checkAchievements } from '../achievement-checker.mjs';
 import { sendQF, settleDuel, BURN_ADDRESS, TEAM_WALLET } from '../escrow.mjs';
 import { createBattleshipsGame, getBattleshipsGameByCode, getBattleshipsGameById, updateBattleshipsGameStatus, saveBattleshipsPlacement, getBattleshipsPlacement, getBattleshipsPlacements, addBattleshipsRound, getBattleshipsRounds, getBattleshipsRecord, updateBattleshipsRecord, getActiveBattleshipsGames, getBattleshipsGamesByWallet } from '../db/index.mjs';
 import { getAchievementRegistry, getAchievement, awardAchievement, getWalletAchievements, getAllAchievements, getGlobalRecord, getPersonalBests, getLeagueBests, getWalletStats, getWalletLeagueHistory, getWalletTrophies, getGameStateForLeaguePuzzle, getFlaggedSessions, getGlobalLeaderboard, getGlobalLeaderboardEntry, addGlobalLeaderboardEntry, getWalletLeaderboardPositions, getGameState } from '../db/index.mjs';
@@ -862,6 +863,22 @@ router.post('/league/:leagueId/submit', optionalWallet, (req, res) => {
 
   addLeagueScore(league.id, wallet, puzzleIndex, score, timeMs || 0, mistakes || 0, hints || 0, Date.now(), suspicious, suspiciousDetail);
 
+  // Founding Member check — first league puzzle submission within the window
+  try {
+    if (process.env.ACHIEVEMENTS_ACTIVE === 'true') {
+      var fmStart = process.env.FOUNDING_MEMBER_START;
+      var fmEnd = process.env.FOUNDING_MEMBER_END;
+      if (fmStart && fmEnd) {
+        var now = Date.now();
+        var startMs = new Date(fmStart + 'T00:00:00Z').getTime();
+        var endMs = new Date(fmEnd + 'T23:59:59Z').getTime();
+        if (now >= startMs && now <= endMs) {
+          awardAchievement(wallet, 'founding-member');
+        }
+      }
+    }
+  } catch (e) { /* achievement check must never block submission */ }
+
   // Return player's own scores
   const myScores = getLeagueScoresByWallet(league.id, wallet);
   const total = myScores.reduce((sum, s) => sum + s.score, 0);
@@ -1392,6 +1409,7 @@ router.post('/battleships/:code/shoot', optionalWallet, (req, res) => {
 
     response.game_status = 'completed';
     response.winner = wallet;
+    try { checkAchievements(wallet, { type: 'battleships_complete', gameId: game.id, won: true, vsCpu: game.vs_cpu }); } catch (e) { /* achievement check failed */ }
   } else if (game.vs_cpu) {
     // CPU responds immediately — no turn swap, no turn_deadline change
     const cpuRounds = getBattleshipsRounds(game.id);
@@ -1468,6 +1486,7 @@ router.post('/battleships/:code/shoot', optionalWallet, (req, res) => {
           updateBattleshipsRecord(wallet, 'loss');
           response.game_status = 'completed';
           response.winner = 'CPU';
+          try { checkAchievements(wallet, { type: 'battleships_complete', gameId: game.id, won: false, vsCpu: true }); } catch (e) { /* achievement check failed */ }
         }
       }
     }
@@ -1549,6 +1568,8 @@ router.post('/battleships/:code/forfeit', optionalWallet, (req, res) => {
       console.error('Battleships forfeit settlement failed:', e.message);
     });
 
+    try { checkAchievements(opponentWallet, { type: 'battleships_complete', gameId: game.id, won: true, vsCpu: false }); } catch (e) { /* achievement check failed */ }
+    try { checkAchievements(wallet, { type: 'battleships_complete', gameId: game.id, won: false, vsCpu: false }); } catch (e) { /* achievement check failed */ }
     return res.json({ status: 'forfeited', winner: opponentWallet });
   }
 
@@ -1630,6 +1651,8 @@ export function checkBattleshipsTimeouts() {
         settleDuel(currentWallet, burnAmount, teamAmount, winnerAmount).catch(e => {
           console.error('Battleships auto-shot settlement failed:', e.message);
         });
+        try { checkAchievements(currentWallet, { type: 'battleships_complete', gameId: game.id, won: true, vsCpu: false }); } catch (e) { /* achievement check failed */ }
+        try { checkAchievements(opponentWallet, { type: 'battleships_complete', gameId: game.id, won: false, vsCpu: false }); } catch (e) { /* achievement check failed */ }
       } else {
         // Swap turn and reset deadline for opponent
         const newDeadline = nowSecs + 86400;
@@ -1679,7 +1702,7 @@ router.get('/achievements/record/:id', (req, res) => {
   res.json(record);
 });
 
-router.post('/achievement/mint', optionalWallet, (req, res) => {
+router.post('/achievement/mint', optionalWallet, async (req, res) => {
   if (!ACHIEVEMENTS_ACTIVE) {
     return res.json({ status: 'coming_soon' });
   }
@@ -1692,14 +1715,10 @@ router.post('/achievement/mint', optionalWallet, (req, res) => {
   if (!registry) return res.status(404).json({ error: 'Achievement not found' });
   if (!registry.active) return res.status(400).json({ error: 'Achievement not active' });
 
-  // Check wallet has eligibility with minted_at = null
   const eligibility = getWalletAchievements(req.wallet);
   const eligible = eligibility.find(e => e.achievement_id === achievement_id && !e.minted_at);
   if (!eligible) return res.status(400).json({ error: 'Not eligible or already minted' });
 
-  // TODO: For 'immaculate' — verify wallet holds all 8 no-errors tokens (requires contract interaction)
-
-  // Pioneer check: if registry.first_claimed_by is null, this wallet is pioneer
   const isPioneer = !registry.first_claimed_by;
   const db = getDb();
 
@@ -1710,12 +1729,112 @@ router.post('/achievement/mint', optionalWallet, (req, res) => {
       .run(req.wallet, achievement_id);
   }
 
-  // TODO: actual on-chain minting will be added when contract is deployed. For now, just update the DB.
-  const fakeTxHash = 'pending-contract-deploy';
-  db.prepare('UPDATE achievement_eligibility SET minted_at = ?, tx_hash = ? WHERE wallet = ? AND achievement_id = ?')
-    .run(Date.now(), fakeTxHash, req.wallet, achievement_id);
+  // Fee handling — paid mints get burn/team split
+  const mintFee = registry.mint_fee_qf || 0;
+  if (mintFee > 0) {
+    // Check free mints banked
+    const stats = getWalletStats(req.wallet) || {};
+    const freeBanked = stats.free_mints_banked || 0;
+    if (freeBanked > 0) {
+      db.prepare('UPDATE wallet_stats SET free_mints_banked = free_mints_banked - 1 WHERE wallet = ?')
+        .run(req.wallet.toLowerCase());
+    } else {
+      try {
+        var burnAmount = Math.floor(mintFee * 0.05);
+        var teamAmount = mintFee - burnAmount;
+        await sendQF(BURN_ADDRESS, burnAmount);
+        await sendQF(TEAM_WALLET, teamAmount);
+      } catch (e) {
+        return res.status(500).json({ error: 'Payment processing failed: ' + e.message });
+      }
+      // Update paid_mint_count and bank free mints
+      var paidCount = (stats.paid_mint_count || 0) + 1;
+      var newFree = 0;
+      if (paidCount % 10 === 0) newFree = 2;
+      else if (paidCount % 5 === 0) newFree = 1;
+      db.prepare(`INSERT INTO wallet_stats (wallet, paid_mint_count, free_mints_banked) VALUES (?, ?, ?)
+        ON CONFLICT(wallet) DO UPDATE SET paid_mint_count = paid_mint_count + 1, free_mints_banked = free_mints_banked + ?`)
+        .run(req.wallet.toLowerCase(), 1, newFree, newFree);
+    }
+  }
 
-  res.json({ minted: true, pioneer: isPioneer, token_id: null });
+  // On-chain mint via QFAchievement contract
+  try {
+    const ACHIEVEMENT_CONTRACT = process.env.ACHIEVEMENT_CONTRACT;
+    const ACHIEVEMENT_ABI = ['function mint(address to, string uri) returns (uint256)'];
+    const { join } = await import('path');
+    const { readFileSync } = await import('fs');
+    const keyPath = join(process.cwd(), 'data', 'escrow.key');
+    const key = readFileSync(keyPath, 'utf-8').trim();
+    const provider = new ethers.JsonRpcProvider(process.env.QF_RPC_URL || 'https://archive.mainnet.qfnode.net/eth');
+    const signer = new ethers.Wallet(key, provider);
+    const contract = new ethers.Contract(ACHIEVEMENT_CONTRACT, ACHIEVEMENT_ABI, signer);
+
+    // Bespoke achievement metadata CIDs (pre-pinned on Pinata)
+    var ACHIEVEMENT_METADATA = {
+      'founding-member': 'QmTPFyj4ejrMfPkskFd3QnqXj29PMUFgy8ke921AhiXuHh',
+      'the-grandmaster': 'QmWm8zLK4XEedY4zbCJxyuDEbNuZr6nykULkGUrPck8Gb1',
+      'shadow-legend': 'QmaC26CwKihPPDWbwjudQ7HSuGc4Hcu827E4Y9EWXYwJZY',
+      'immaculate': 'QmRU9N6ruvvka1X4H4XK8m1fvgwbdbUdXDQWc5dK16fDay',
+      'the-tortoise': 'QmV2t5Ay7yXfQNK4t8zM8FA1aXUoxPotGSDsZaGXR3C35v',
+      'the-mathematicians-collection': 'QmPhLRzb5DHEHwijExvfAkEisZuPdd6jrgGqoT1RBxKRgu',
+      'the-complete-player': 'Qmbp4DVdhTTe1f6HS4XU6ahNDgpdMwmeNT1rSnY7QPsK45',
+      'into-the-shadows': 'QmPdWGz3hxs8b6SC57jx4Q4z8qSSpeakCVrDJjfAHco36g',
+      'from-the-shadows': 'QmZj2ksXd2Ck5Xrf3vST8XZhQ71UUh1WE4Fs9xfADRD1bE',
+      'obsessed': 'QmYtPdUzCHbWUyGnieKCDwt1CXmg2ArnN5LmniWSPyvJwV',
+      'devoted': 'QmYJYm7fCo5ZLxeB9LkJf6me1mZFMgo4JKv1tjC9TCfmTU',
+      'collector': 'QmcnK3vzgZbcV8ET4tGXpfhBDkcMCQYCCutLCL8LaAiiSo',
+      'onlyfans-qf': 'QmcFYm2NPm3HQkdCprE6jyqtxWLbnA47UeBaJiGnGdnTHc',
+      'the-wolf-pack': 'QmcESK5Ekf9T7ubxRmubaKt3MzUgc3U24gkLbu1xJKmPu9',
+    };
+    // Tier fallback image CIDs
+    var TIER_IMAGES = {
+      'free': 'QmUhKP4YE1au5gSiKtMqYwGQYH8EKYKXC8aD28RRrXjdiw',
+      'standard': 'QmQDdnJMpv3xDmkQ3z3bXZEUdGsrU8sXxQWR8Csny2Ciwc',
+      'premium': 'QmaNx8dAwPk59UPY55csZfRx4Cp76tPmnZeuLanQYekvmu',
+      'elite': 'QmNrzHDErnvVp8kyk4zmGBkbm8SNLx45md9EhXJbDPHAHB',
+      'wooden-spoon': 'QmYJKWTuuTDiwaFNnMLL3wMyek11d5qPT5uYgjrJCfxUoM',
+    };
+
+    var tokenURI;
+    var metadataCID;
+    if (ACHIEVEMENT_METADATA[achievement_id]) {
+      metadataCID = ACHIEVEMENT_METADATA[achievement_id];
+      tokenURI = 'ipfs://' + metadataCID;
+    } else {
+      // Build metadata on the fly with tier fallback image
+      var tierKey = registry.category === 'wooden-spoons' ? 'wooden-spoon' : (registry.tier || 'free');
+      var imageCID = TIER_IMAGES[tierKey] || TIER_IMAGES['free'];
+      var metadata = {
+        name: registry.name || achievement_id,
+        description: 'QF Games Achievement — ' + (registry.name || achievement_id),
+        image: 'ipfs://' + imageCID,
+        attributes: [
+          { trait_type: 'Category', value: registry.category || 'general' },
+          { trait_type: 'Tier', value: registry.tier || 'free' },
+          { trait_type: 'Pioneer', value: isPioneer ? 'Yes' : 'No' },
+        ]
+      };
+      var pinRes = await fetch('https://api.pinata.cloud/pinning/pinJSONToIPFS', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json', 'Authorization': 'Bearer ' + process.env.PINATA_JWT },
+        body: JSON.stringify({ pinataContent: metadata, pinataMetadata: { name: 'metadata-' + achievement_id + '-' + req.wallet.slice(0,8) } })
+      });
+      var pinData = await pinRes.json();
+      metadataCID = pinData.IpfsHash;
+      tokenURI = 'ipfs://' + metadataCID;
+    }
+    const tx = await contract.mint(req.wallet, tokenURI);
+    const receipt = await tx.wait();
+    const txHash = receipt.hash;
+
+    db.prepare('UPDATE achievement_eligibility SET minted_at = ?, tx_hash = ?, metadata_cid = ? WHERE wallet = ? AND achievement_id = ?')
+      .run(Date.now(), txHash, metadataCID, req.wallet, achievement_id);
+
+    res.json({ minted: true, pioneer: isPioneer, tx_hash: txHash, metadata_cid: metadataCID });
+  } catch (e) {
+    res.status(500).json({ error: 'On-chain mint failed: ' + e.message });
+  }
 });
 
 // ── Admin achievement endpoints ────────────────────────────────────────────

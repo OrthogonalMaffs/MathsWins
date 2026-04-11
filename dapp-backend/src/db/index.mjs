@@ -47,6 +47,9 @@ export function getDb() {
   try { db.exec('ALTER TABLE achievement_registry ADD COLUMN category TEXT'); } catch (e) { /* already exists */ }
   try { db.exec('ALTER TABLE achievement_registry ADD COLUMN retired INTEGER DEFAULT 0'); } catch (e) { /* already exists */ }
   try { db.exec('ALTER TABLE achievement_registry ADD COLUMN retired_at INTEGER'); } catch (e) { /* already exists */ }
+  try { db.exec('ALTER TABLE personal_bests ADD COLUMN session_id TEXT'); } catch (e) { /* already exists */ }
+  try { db.exec('ALTER TABLE achievement_eligibility ADD COLUMN metadata_cid TEXT'); } catch (e) { /* already exists */ }
+  try { db.exec('ALTER TABLE wallet_stats ADD COLUMN consecutive_bs_wins_with_battleship INTEGER DEFAULT 0'); } catch (e) { /* already exists */ }
 
   // League refunds table
   db.exec(`CREATE TABLE IF NOT EXISTS league_refunds (
@@ -1056,33 +1059,37 @@ export function getRecentlySettledLeagues(gameId, limit) {
 // ── Personal bests ─────────────────────────────────────────────────────────
 
 const TIME_PRIMARY_GAMES = new Set(['minesweeper', 'freecell', 'kenken', 'nonogram', 'kakuro', 'sudoku-duel']);
+const PURE_TIME_GAMES = new Set(['minesweeper', 'freecell', 'sudoku-duel']);
 
-export function upsertPersonalBest(wallet, gameId, difficulty, score, timeMs) {
+export function upsertPersonalBest(wallet, gameId, difficulty, score, timeMs, sessionId) {
   const db = getDb();
   const now = Date.now();
   const diff = difficulty || 'default';
   const w = wallet.toLowerCase();
+  const sid = sessionId || null;
 
-  if (TIME_PRIMARY_GAMES.has(gameId)) {
-    // Lower time is better — only update if new time is faster
-    db.prepare(`INSERT INTO personal_bests (wallet, game_id, difficulty, score, time_ms, achieved_at)
-      VALUES (?, ?, ?, ?, ?, ?)
+  if (PURE_TIME_GAMES.has(gameId)) {
+    // Pure time games: time IS the score, lower is better
+    db.prepare(`INSERT INTO personal_bests (wallet, game_id, difficulty, score, time_ms, achieved_at, session_id)
+      VALUES (?, ?, ?, ?, ?, ?, ?)
       ON CONFLICT(wallet, game_id, difficulty) DO UPDATE SET
         score = excluded.score,
         time_ms = excluded.time_ms,
-        achieved_at = excluded.achieved_at
+        achieved_at = excluded.achieved_at,
+        session_id = excluded.session_id
       WHERE excluded.score < personal_bests.score`)
-      .run(w, gameId, diff, timeMs, timeMs, now);
+      .run(w, gameId, diff, score, timeMs, now, sid);
   } else {
     // Higher score is better
-    db.prepare(`INSERT INTO personal_bests (wallet, game_id, difficulty, score, time_ms, achieved_at)
-      VALUES (?, ?, ?, ?, ?, ?)
+    db.prepare(`INSERT INTO personal_bests (wallet, game_id, difficulty, score, time_ms, achieved_at, session_id)
+      VALUES (?, ?, ?, ?, ?, ?, ?)
       ON CONFLICT(wallet, game_id, difficulty) DO UPDATE SET
         score = excluded.score,
         time_ms = excluded.time_ms,
-        achieved_at = excluded.achieved_at
+        achieved_at = excluded.achieved_at,
+        session_id = excluded.session_id
       WHERE excluded.score > personal_bests.score`)
-      .run(w, gameId, diff, score, timeMs, now);
+      .run(w, gameId, diff, score, timeMs, now, sid);
   }
 }
 
