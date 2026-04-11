@@ -81,8 +81,8 @@ Split from MaffsGames in March 2025. MaffsGames = free schools games. MathsWins 
 - **Wallet Module:** `qf-dapp/games/qf-wallet.js` — shared across all games, QNS reverse resolution, EIP-6963, auto-reconnect with 500ms delay
 
 ### Lobby Structure (4 tabs)
-**Leagues tab:** 2x2 grid — Sudoku Duel (silver pulse), KenKen, Minesweeper, FreeCell. MW logo centre.
-**Duels tab:** 10 duel-capable games — Sudoku Duel, Battleships, KenKen, Kakuro, Countdown Numbers, Nonogram, Minesweeper, FreeCell, Poker Patience, Cribbage Solitaire. All duels free (no stakes — payment system not built).
+**Leagues tab:** 2x2 grid — Sudoku Duel (silver pulse), KenKen, Minesweeper, FreeCell. MW logo centre. Cards link directly to `/league/` lobby pages (not game hubs).
+**Duels tab:** 10 duel-capable games — Sudoku Duel, Battleships, KenKen, Kakuro, Countdown Numbers, Nonogram, Minesweeper, FreeCell, Poker Patience, Cribbage Solitaire. All duels free (no stakes — payment system not built). Cards link to game hubs with `?mode=duel` — scrolls duel button into view with gold highlight flash.
 **Free tab:** 12 free games with instant search — Maffsy, Higher or Lower, 52-dle, Towers of Hanoi, Don't Press It, Memory Matrix, RPS vs Machine, Estimation Engine, Sequence Solver, Prime or Composite, Cryptarithmetic Club, Battleships (vs CPU).
 **Leaderboards tab:** Game selector (20 games, Battleships excluded), Daily/Weekly/Monthly period toggle, leaderboard table (Rank/Name/Score/Time), top 10 with "Show more" expand (all if <=25), connected wallet highlighted in gold, empty state message. Fetches from `/api/dapp/global-leaderboard/:gameId/:periodType`.
 
@@ -98,7 +98,7 @@ Split from MaffsGames in March 2025. MaffsGames = free schools games. MathsWins 
 
 ### Shared Components
 - **qf-nav.js:** Shared nav injected on all 35+ dApp pages via `<div id="qf-nav"></div>`. Links: Lobby | My Account (wallet connected).
-- **My Account page:** `/qf-dapp/my-account/` — 4 tabs: My Leagues, High Scores, Achievements, Trophies. Wallet-gated (JWT). High Scores tab shows leaderboard rankings (from profile `leaderboard_positions`), sorts ranked scores to top, eligibility check for unsubmitted scores, Submit button for second-chance leaderboard entry (requires session_id in personal_bests).
+- **My Account page:** `/qf-dapp/my-account/` — 4 tabs: My Leagues, High Scores, Achievements, Trophies. Wallet-gated (JWT). High Scores tab uses card-per-game layout: header (game name, difficulty badge, rank badge), 2-column stats (score with toLocaleString + date), leaderboard row (Daily/Weekly/Monthly with ranked period highlights), footer with eligibility text and Submit button (44px touch target). Ranked scores in gold. Submit requires session_id in personal_bests (pre-migration scores show "play again to submit").
 - **Duel share code:** Displayed inside modal after game completion. Copy/share buttons. "Opponent has 24 hours to accept." Back to Lobby button.
 
 ### SQLite Tables (31)
