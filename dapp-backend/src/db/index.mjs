@@ -425,7 +425,7 @@ export function awardAchievement(wallet, achievementId) {
 
 export function getWalletAchievements(wallet) {
   const db = getDb();
-  return db.prepare('SELECT * FROM achievement_eligibility WHERE wallet = ? ORDER BY earned_at DESC')
+  return db.prepare('SELECT e.*, r.name FROM achievement_eligibility e LEFT JOIN achievement_registry r ON e.achievement_id = r.achievement_id WHERE e.wallet = ? ORDER BY e.earned_at DESC')
     .all(wallet.toLowerCase());
 }
 
