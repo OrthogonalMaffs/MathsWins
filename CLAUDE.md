@@ -80,15 +80,25 @@ Split from MaffsGames in March 2025. MaffsGames = free schools games. MathsWins 
 - **Frontend:** `qf-dapp/` directory, single-file HTML games, GitHub Pages
 - **Wallet Module:** `qf-dapp/games/qf-wallet.js` — shared across all games, QNS reverse resolution, EIP-6963, auto-reconnect with 500ms delay
 
+### Lobby Structure (3 tabs)
+**Leagues tab:** 2x2 grid — Sudoku Duel (silver pulse), KenKen, Minesweeper, FreeCell. MW logo centre.
+**Duels tab:** 10 duel-capable games — Sudoku Duel, Battleships, KenKen, Kakuro, Countdown Numbers, Nonogram, Minesweeper, FreeCell, Poker Patience, Cribbage Solitaire. All duels free (no stakes — payment system not built).
+**Free tab:** 12 free games with instant search — Maffsy, Higher or Lower, 52-dle, Towers of Hanoi, Don't Press It, Memory Matrix, RPS vs Machine, Estimation Engine, Sequence Solver, Prime or Composite, Cryptarithmetic Club, Battleships (vs CPU).
+
 ### Registered Games
-**League-capable (6):** sudoku-duel, minesweeper, freecell, kenken, nonogram, kakuro
-**Coming Soon (2):** poker-patience, cribbage-solitaire (competitive grid placeholders)
-**Free play (13):** battleships (duel-only), countdown-numbers, cryptarithmetic-club, estimation-engine, sequence-solver, prime-or-composite, higher-or-lower, maffsy, 52dle, towers-of-hanoi, dont-press-it, memory-matrix, rps-vs-machine
-**Card Games section:** FreeCell (live), Cribbage Solitaire, Poker Patience, Golf Solitaire, Pyramid (last 4 Coming Soon)
+**Active league games (4):** sudoku-duel, kenken, minesweeper, freecell (league lobby pages live)
+**League-capable but not active (4):** kakuro, nonogram, poker-patience, cribbage-solitaire
+**Duel-capable (10):** All 4 league games + battleships, kakuro, countdown-numbers, nonogram, poker-patience, cribbage-solitaire. All duel flows complete, stakes removed (free score comparisons).
+**Free play (12):** maffsy, higher-or-lower, 52dle, towers-of-hanoi, dont-press-it, memory-matrix, rps-vs-machine, estimation-engine, sequence-solver, prime-or-composite, cryptarithmetic-club, battleships (vs CPU)
 **Renamed:** Equatle → Maffsy (slug: /games/maffsy/)
 **Demoted from competitive:** countdown-numbers, cryptarithmetic-club (too short for league play)
 
-### SQLite Tables (30)
+### Shared Components
+- **qf-nav.js:** Shared nav injected on all 35+ dApp pages via `<div id="qf-nav"></div>`. Links: Lobby | My Account (wallet connected).
+- **My Account page:** `/qf-dapp/my-account/` — 4 tabs: My Leagues, High Scores, Achievements, Trophies. Wallet-gated (JWT).
+- **Duel share code:** Displayed inside modal after game completion. Copy/share buttons. "Opponent has 24 hours to accept." Back to Lobby button.
+
+### SQLite Tables (31)
 | Table | Purpose |
 |-------|---------|
 | `games` | Game registry |
@@ -119,6 +129,7 @@ Split from MaffsGames in March 2025. MaffsGames = free schools games. MathsWins 
 | `game_messages` | Preset messages for duels and leagues |
 | `seasonal_windows` | Seasonal achievement earning windows (pre-populated per year) |
 | `commemorative_mints` | Commemorative NFT mint records per league |
+| `global_leaderboard_entries` | Pay-to-appear global leaderboard (50 QF, daily/weekly/monthly) |
 
 ### API Endpoints (45+)
 **Auth:** POST /auth/challenge, /auth/verify (challenge-sign-verify, JWT 24h)
@@ -130,7 +141,8 @@ Split from MaffsGames in March 2025. MaffsGames = free schools games. MathsWins 
 **League v2:** GET /leagues/my, /leagues/active, /leagues/settled | POST /admin/league/:id/settle, /admin/league/:id/cancel, /admin/league/:id/refund/:wallet | GET /admin/refunds
 **Battleships:** POST /battleships/create, /:code/join, /:code/place, /:code/shoot, /:code/forfeit | GET /battleships/:code, /battleships/history
 **Achievements:** GET /achievements/status, /achievements/all, /achievements/my, /achievements/record/:id | POST /achievement/mint | POST /admin/achievement/register, /admin/achievement/award | GET /admin/achievements
-**Profile:** GET /profile/:wallet (public, no auth, 60/min rate limit — returns personal_bests, league_bests, achievements, wallet_stats, league_history)
+**Profile:** GET /profile/:wallet (public, no auth, 60/min rate limit — returns personal_bests, league_bests, achievements, wallet_stats, league_history, trophies, leaderboard_positions)
+**Global Leaderboard:** GET /global-leaderboard/:gameId/:periodType, GET /global-leaderboard/:gameId/eligibility, POST /global-leaderboard/enter, GET /global-leaderboard/my-positions
 
 ### League System v2
 - Server-authoritative: seeds never reach client, sequential random puzzle delivery
@@ -176,7 +188,7 @@ Split from MaffsGames in March 2025. MaffsGames = free schools games. MathsWins 
 - Server tracks `session.submitFailures` (grid submissions) separately from `session.mistakes` (cell placement errors)
 - Client mirrors with `submitFailures` variable — `mistakes` is for score preview only
 - Results screen shows "Incorrect Submissions" and "Hints Used" (not "Mistakes" / "Hints")
-- Kakuro and Nonogram have the SAME conflation bug (session.mistakes shared) — NOT YET FIXED
+- KenKen, Kakuro, Nonogram scoring bug FIXED (2026-04-11): now penalises grid submissions not cell errors. submitFailures tracked separately.
 
 ### Personal Bests and League Bests
 - `personal_bests` table: upserted on successful free play OR league completion (paths 2 and 4 only — game-overs excluded)
