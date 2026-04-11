@@ -590,6 +590,15 @@ var duelMode = false, duelCode = null, duelId = null;
     duelMode = true;
     duelCode = code.toUpperCase();
   }
+  if (params.get('mode') === 'duel') {
+    var btn = document.getElementById('create-duel-btn');
+    if (btn) {
+      btn.scrollIntoView({ behavior: 'smooth', block: 'center' });
+      btn.style.borderColor = '#c9a84c';
+      btn.style.boxShadow = '0 0 8px rgba(201,168,76,0.4)';
+      setTimeout(function() { btn.style.borderColor = ''; btn.style.boxShadow = ''; }, 1500);
+    }
+  }
 })();
 
 function duelApi(url, body, method) {

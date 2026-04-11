@@ -226,27 +226,27 @@ footer a:hover{color:var(--silver-bright)}
 <div class="tab-panel active" id="tab-leagues">
 
   <div class="league-grid">
-    <div class="league-card featured" onclick="go('sudoku-duel')">
+    <a class="league-card featured" href="/qf-dapp/games/sudoku-duel/league/" style="text-decoration:none;color:inherit">
       <div class="lc-title">Sudoku Duel</div>
       <div class="lc-desc">Same puzzle, same conditions. Fastest clean solve wins.</div>
       <div class="lc-tiers"><span class="lc-tier bronze">Bronze 100 QF</span><span class="lc-tier silver">Silver 250 QF</span></div>
-    </div>
-    <div class="league-card" onclick="go('kenken')">
+    </a>
+    <a class="league-card" href="/qf-dapp/games/kenken/league/" style="text-decoration:none;color:inherit">
       <div class="lc-title">KenKen</div>
       <div class="lc-desc">Arithmetic and logic. No repeats. Cages must hit their target.</div>
       <div class="lc-tiers"><span class="lc-tier bronze">Bronze 100 QF</span><span class="lc-tier silver">Silver 250 QF</span></div>
-    </div>
+    </a>
     <a href="https://mathswins.co.uk" class="logo-cell"><img src="/qf-dapp/assets/mw-logo.svg" alt="MathsWins"></a>
-    <div class="league-card" onclick="go('minesweeper')">
+    <a class="league-card" href="/qf-dapp/games/minesweeper/league/" style="text-decoration:none;color:inherit">
       <div class="lc-title">Minesweeper</div>
       <div class="lc-desc">Clear the minefield. Logic, deduction, and calculated risk.</div>
       <div class="lc-tiers"><span class="lc-tier bronze">Bronze 100 QF</span><span class="lc-tier silver">Silver 250 QF</span></div>
-    </div>
-    <div class="league-card" onclick="go('freecell')">
+    </a>
+    <a class="league-card" href="/qf-dapp/games/freecell/league/" style="text-decoration:none;color:inherit">
       <div class="lc-title">FreeCell</div>
       <div class="lc-desc">Strategic solitaire. Every deal is solvable. Pure skill.</div>
       <div class="lc-tiers"><span class="lc-tier bronze">Bronze 100 QF</span><span class="lc-tier silver">Silver 250 QF</span></div>
-    </div>
+    </a>
   </div>
 
   <div class="how-leagues">
@@ -384,9 +384,11 @@ function renderDuelGames() {
   var grid = document.getElementById('duelGrid');
   grid.innerHTML = '';
   DUEL_GAMES.forEach(function(g) {
-    var card = document.createElement('div');
+    var card = document.createElement('a');
     card.className = 'game-card';
-    card.onclick = function() { go(g.id); };
+    card.href = '/qf-dapp/games/' + g.id + '/?mode=duel';
+    card.style.textDecoration = 'none';
+    card.style.color = 'inherit';
     card.innerHTML =
       '<div class="gc-title">' + g.name + '</div>' +
       '<div class="gc-desc">' + g.desc + '</div>' +

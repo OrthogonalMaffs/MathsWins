@@ -675,6 +675,18 @@ var G = (function() {
       leagueId = lid;
       return true;
     }
+    if (params.get('mode') === 'duel') {
+      var panel = document.getElementById('modePanel');
+      if (panel) {
+        var btn = panel.querySelector('.btn-gold');
+        if (btn) {
+          btn.scrollIntoView({ behavior: 'smooth', block: 'center' });
+          btn.style.borderColor = '#c9a84c';
+          btn.style.boxShadow = '0 0 8px rgba(201,168,76,0.4)';
+          setTimeout(function() { btn.style.borderColor = ''; btn.style.boxShadow = ''; }, 1500);
+        }
+      }
+    }
     return false;
   }
 

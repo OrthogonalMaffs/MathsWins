@@ -474,6 +474,22 @@ var G = (function() {
         return true;
       }
     }
+
+    // Duel highlight: ?mode=duel
+    if (params.get('mode') === 'duel') {
+      var panel = document.getElementById('mode-panel');
+      if (panel) {
+        var cards = panel.querySelectorAll('.mode-card');
+        var duelCard = cards[1];
+        if (duelCard) {
+          duelCard.scrollIntoView({ behavior: 'smooth', block: 'center' });
+          duelCard.style.borderColor = '#c9a84c';
+          duelCard.style.boxShadow = '0 0 8px rgba(201,168,76,0.4)';
+          setTimeout(function() { duelCard.style.borderColor = ''; duelCard.style.boxShadow = ''; }, 1500);
+        }
+      }
+    }
+
     return false;
   }
 
