@@ -95,11 +95,17 @@ body{background:var(--bg);color:var(--text);font-family:'Inter',sans-serif;min-h
 
 /* ── Achievement cards ── */
 .ach-list{display:flex;flex-direction:column;gap:.5rem}
-.ach-card{background:var(--surface);border:1px solid var(--border);border-radius:8px;padding:.8rem 1rem;display:flex;align-items:center;justify-content:space-between;gap:.6rem}
-.ach-left{display:flex;flex-direction:column;gap:.15rem}
+.ach-card{background:var(--surface);border:1px solid var(--border);border-radius:8px;padding:.8rem 1rem;display:flex;align-items:flex-start;gap:.8rem}
+.ach-img-wrap{width:120px;height:120px;border-radius:8px;overflow:hidden;flex-shrink:0;background:var(--surface2)}
+.ach-img-wrap img{width:100%;height:100%;object-fit:cover;opacity:0;transition:opacity .3s ease}
+.ach-img-wrap img.loaded{opacity:1}
+.ach-placeholder{width:100%;height:100%;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:.3rem;background:var(--surface2);border-radius:8px}
+.ach-placeholder .lock-icon{font-size:1.4rem;color:var(--muted);line-height:1}
+.ach-placeholder .lock-text{font-family:'DM Mono',monospace;font-size:.5rem;color:var(--muted)}
+.ach-body{display:flex;flex-direction:column;gap:.15rem;flex:1;min-width:0}
+.ach-right-col{flex-shrink:0;display:flex;flex-direction:column;align-items:flex-end;gap:.15rem;margin-left:auto}
 .ach-name{font-family:'DM Mono',monospace;font-size:.75rem;color:var(--silver-bright)}
 .ach-date{font-family:'DM Mono',monospace;font-size:.5rem;color:var(--muted)}
-.ach-right{flex-shrink:0}
 .ach-minted{font-family:'DM Mono',monospace;font-size:.55rem;color:var(--green)}
 .ach-tx{font-family:'DM Mono',monospace;font-size:.5rem;color:var(--muted);margin-top:.15rem}
 .ach-mint-btn{font-family:'DM Mono',monospace;font-size:.6rem;padding:.3rem .7rem;border-radius:5px;border:1px solid var(--gold);background:rgba(201,168,76,.1);color:var(--gold);cursor:pointer;transition:all .15s}
@@ -144,6 +150,11 @@ footer a:hover{color:var(--silver-bright)}
   .acct-header h1{font-size:1.8rem}
   .league-card{flex-direction:column;align-items:flex-start}
   .lc-right{width:100%;justify-content:flex-start}
+  .ach-card{flex-wrap:wrap}
+  .ach-img-wrap{width:100px;height:100px}
+}
+@media(max-width:375px){
+  .ach-img-wrap{width:80px;height:80px}
 }
 </style>
 </head>
@@ -625,12 +636,23 @@ async function renderAchievements() {
     // Sort by earned_at descending
     achs.sort(function(a, b) { return (b.earned_at || 0) - (a.earned_at || 0); });
     html += '<div class="ach-list">';
-    achs.forEach(function(a) {
+    achs.forEach(function(a, idx) {
       var isMinted = !!a.minted_at;
-      html += '<div class="ach-card"><div class="ach-left">' +
+      var hasCid = !!a.metadata_cid;
+
+      // Image area: minted with CID gets async image, unminted gets padlock, no CID gets nothing
+      var imgHtml = '';
+      if (isMinted && hasCid) {
+        imgHtml = '<div class="ach-img-wrap" id="ach-img-' + idx + '"></div>';
+      } else if (!isMinted) {
+        imgHtml = '<div class="ach-img-wrap"><div class="ach-placeholder"><span class="lock-icon">&#x1F512;</span><span class="lock-text">Mint to reveal</span></div></div>';
+      }
+
+      html += '<div class="ach-card">' + imgHtml +
+        '<div class="ach-body">' +
         '<div class="ach-name">' + (a.achievement_id || a.name || 'Achievement') + '</div>' +
         '<div class="ach-date">Earned ' + formatDate(a.earned_at) + '</div>' +
-        '</div><div class="ach-right">';
+        '</div><div class="ach-right-col">';
       if (isMinted) {
         html += '<div class="ach-minted">Minted</div>';
         if (a.tx_hash && a.tx_hash !== 'pending-contract-deploy') {
@@ -651,6 +673,41 @@ async function renderAchievements() {
   container.innerHTML = html;
   container.style.display = '';
   loading.style.display = 'none';
+
+  // Async image loading — each fetch isolated in its own try/catch
+  achs.forEach(function(a, idx) {
+    if (!a.minted_at || !a.metadata_cid) return;
+    var wrap = document.getElementById('ach-img-' + idx);
+    if (!wrap) return;
+
+    (function(wrapEl, cid) {
+      try {
+        fetch('https://gateway.pinata.cloud/ipfs/' + cid)
+          .then(function(r) {
+            if (!r.ok) throw new Error('fetch failed');
+            return r.json();
+          })
+          .then(function(meta) {
+            if (!meta || !meta.image) throw new Error('no image in metadata');
+            var imgUrl = meta.image;
+            if (imgUrl.startsWith('ipfs://')) {
+              imgUrl = 'https://gateway.pinata.cloud/ipfs/' + imgUrl.slice(7);
+            }
+            var img = document.createElement('img');
+            img.alt = a.achievement_id || 'Achievement';
+            img.onload = function() { img.classList.add('loaded'); };
+            img.onerror = function() { wrapEl.innerHTML = '<div class="ach-placeholder"><span class="lock-icon">&#x1F5BC;</span></div>'; };
+            img.src = imgUrl;
+            wrapEl.appendChild(img);
+          })
+          .catch(function() {
+            wrapEl.innerHTML = '<div class="ach-placeholder"><span class="lock-icon">&#x1F5BC;</span></div>';
+          });
+      } catch (e) {
+        wrapEl.innerHTML = '<div class="ach-placeholder"><span class="lock-icon">&#x1F5BC;</span></div>';
+      }
+    })(wrap, a.metadata_cid);
+  });
 }
 
 // ── Mint achievement ──────────────────────────────────────────────────
