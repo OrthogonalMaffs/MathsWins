@@ -1772,20 +1772,20 @@ router.post('/achievement/mint', optionalWallet, async (req, res) => {
 
     // Bespoke achievement metadata CIDs (pre-pinned on Pinata)
     var ACHIEVEMENT_METADATA = {
-      'founding-member': 'QmTPFyj4ejrMfPkskFd3QnqXj29PMUFgy8ke921AhiXuHh',
-      'the-grandmaster': 'QmWm8zLK4XEedY4zbCJxyuDEbNuZr6nykULkGUrPck8Gb1',
-      'shadow-legend': 'QmaC26CwKihPPDWbwjudQ7HSuGc4Hcu827E4Y9EWXYwJZY',
-      'immaculate': 'QmRU9N6ruvvka1X4H4XK8m1fvgwbdbUdXDQWc5dK16fDay',
-      'the-tortoise': 'QmV2t5Ay7yXfQNK4t8zM8FA1aXUoxPotGSDsZaGXR3C35v',
-      'the-mathematicians-collection': 'QmPhLRzb5DHEHwijExvfAkEisZuPdd6jrgGqoT1RBxKRgu',
-      'the-complete-player': 'Qmbp4DVdhTTe1f6HS4XU6ahNDgpdMwmeNT1rSnY7QPsK45',
-      'into-the-shadows': 'QmPdWGz3hxs8b6SC57jx4Q4z8qSSpeakCVrDJjfAHco36g',
-      'from-the-shadows': 'QmZj2ksXd2Ck5Xrf3vST8XZhQ71UUh1WE4Fs9xfADRD1bE',
-      'obsessed': 'QmYtPdUzCHbWUyGnieKCDwt1CXmg2ArnN5LmniWSPyvJwV',
-      'devoted': 'QmYJYm7fCo5ZLxeB9LkJf6me1mZFMgo4JKv1tjC9TCfmTU',
-      'collector': 'QmcnK3vzgZbcV8ET4tGXpfhBDkcMCQYCCutLCL8LaAiiSo',
-      'onlyfans-qf': 'QmcFYm2NPm3HQkdCprE6jyqtxWLbnA47UeBaJiGnGdnTHc',
-      'the-wolf-pack': 'QmcESK5Ekf9T7ubxRmubaKt3MzUgc3U24gkLbu1xJKmPu9',
+      'founding-member': 'Qmc4WrJai1QzGafNBRqpPhHo9tGswHoNQFS5biRq3o5gV1',
+      'the-grandmaster': 'QmTPwxE953xPZBCfVuyJxA3HmQgVrBaEUU3EcyNZHmZVa3',
+      'shadow-legend': 'QmaW9gQMjmQRPGiVfn7aokJDf7wnDGus67F5kgHSNQhmEj',
+      'immaculate': 'QmTfk4UEhri2dvwhCsW5xu4R4vqE1YqMFNt74hbJword92',
+      'the-tortoise': 'QmUK7tTFmH5VcKYaQK35AhGuDMhHHraF4jVZYTcAXiFb8N',
+      'the-mathematicians-collection': 'QmQyTQGNvJnNUNSge9dJ8PPFrJMq51ghM76K5NydvMtsvs',
+      'the-complete-player': 'QmRyxQT7WG51iXnhcfwNXWBmSntGNBm7sKbqna6bkg7jzd',
+      'into-the-shadows': 'QmWpkoNmDFRrzQvZMXpnmhqG1AK7gycKc2Sh6R7AuZ4Yup',
+      'from-the-shadows': 'QmXEPcMmKE5FCC9fhnT3wkTWtRrUcuH7SKqS3pZ79VYXLF',
+      'obsessed': 'QmeQeTLagnv7QZppRMoNTRvicWYhhXbBhqCi9jMzx4TBYX',
+      'devoted': 'QmVGfNxW7xZEzPBuekQ4DkfEv8m6vNSi9DyZv9oDkkiL24',
+      'collector': 'QmUZUviotCZaUS8VThdQV23oKM91SBovDVov1JfK2reiqU',
+      'onlyfans-qf': 'QmRobR8sxSM3C5Tnnf5XTMRHo2wVg9zzZ1gNaMW3LEfJtu',
+      'the-wolf-pack': 'QmeNzeiTuX8wsPUkU8FjJxMft7dpzErPGnUAs6GR3xtKYY',
     };
     // Tier fallback image CIDs
     var TIER_IMAGES = {
