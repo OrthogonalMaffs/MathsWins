@@ -27,19 +27,19 @@
 <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;700&family=JetBrains+Mono:wght@400;500&family=Playfair+Display:wght@700&display=swap" rel="stylesheet">
 <style>
 :root{
-  --ink:#0e1013;--navy:#0b1629;--mid:#0f1f3d;--light:#162847;
+  --ink:#0e1013;--navy:#16181c;--mid:#1e2025;--light:#26282e;
   --gold:#c9a84c;--gwarm:#d4d8e2;--gdim:rgba(184,188,198,0.08);
   --teal:#b8bcc6;--tdim:rgba(184,188,198,0.08);
-  --body:#a8b8d0;--muted:#4a6080;--bdr:#1a2e4a;--bdrdim:#111f33;
-  --cor:#2dd4a0;--pre:#d4a847;--abs:#1e3050;--abst:#4a6080;
+  --body:#c8cdd8;--muted:#4a5568;--bdr:#2a2e36;--bdrdim:#1e2228;
+  --cor:#2dd4a0;--pre:#d4a847;--abs:#1e2530;--abst:#4a5568;
   --err:#ef5350;
 }
 body.cb{--cor:#2563eb;--pre:#ea580c;}
 *,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
 body{background:var(--ink);color:var(--body);font-family:'Inter',sans-serif;min-height:100vh;display:flex;flex-direction:column;align-items:center}
-body::before{content:'';position:fixed;inset:0;background-image:linear-gradient(rgba(201,168,76,.03) 1px,transparent 1px),linear-gradient(90deg,rgba(201,168,76,.03) 1px,transparent 1px);background-size:40px 40px;pointer-events:none;z-index:0}
+body::before{display:none}
 
-nav{width:100%;display:flex;align-items:center;justify-content:space-between;padding:0 1rem;height:44px;background:rgba(7,13,26,.96);border-bottom:1px solid var(--bdrdim);gap:.5rem}
+nav{width:100%;display:flex;align-items:center;justify-content:space-between;padding:0 1rem;height:44px;background:rgba(14,16,19,.96);border-bottom:1px solid var(--bdrdim);gap:.5rem}
 .logo{font-family:'Playfair Display',sans-serif;font-size:1.2rem;letter-spacing:.15em;color:var(--gold);text-decoration:none}
 .pill{font-family:'JetBrains Mono',monospace;font-size:.44rem;letter-spacing:.1em;text-transform:uppercase;padding:.2rem .5rem;border-radius:20px;border:1px solid var(--tdim);color:var(--teal)}
 .pill.free{border-color:var(--gdim);color:var(--gold)}
@@ -71,7 +71,7 @@ nav{width:100%;display:flex;align-items:center;justify-content:space-between;pad
 
 .grid{display:flex;flex-direction:column;gap:5px;width:100%;max-width:420px}
 .row{display:grid;grid-template-columns:repeat(8,1fr);gap:5px}
-.tile{aspect-ratio:1;border:2px solid var(--bdrdim);background:var(--mid);border-radius:3px;display:flex;align-items:center;justify-content:center;font-family:'JetBrains Mono',monospace;font-size:clamp(.85rem,3.5vw,1.1rem);font-weight:500;color:var(--body);user-select:none;position:relative}
+.tile{aspect-ratio:1;border:2px solid var(--bdr);background:var(--mid);border-radius:3px;display:flex;align-items:center;justify-content:center;font-family:'JetBrains Mono',monospace;font-size:clamp(.85rem,3.5vw,1.1rem);font-weight:500;color:var(--body);user-select:none;position:relative}
 .tile.f{border-color:var(--muted)}
 .tile.ar.f{border-color:var(--gdim)}
 .tile[data-s=correct]{background:var(--cor);border-color:var(--cor);color:#fff}
@@ -102,7 +102,7 @@ body.cb .tile[data-s=present]::after{content:'▲';position:absolute;bottom:1px;
 .key[data-s=present]{background:var(--pre);color:#fff;border-color:var(--pre)}
 .key[data-s=absent]{background:var(--abs);color:var(--abst);border-color:var(--abs)}
 
-.ov{position:fixed;inset:0;z-index:200;background:rgba(7,13,26,.9);backdrop-filter:blur(10px);display:flex;align-items:center;justify-content:center;padding:1rem}
+.ov{position:fixed;inset:0;z-index:200;background:rgba(14,16,19,.9);backdrop-filter:blur(10px);display:flex;align-items:center;justify-content:center;padding:1rem}
 .ov.hidden{display:none}
 .modal{background:var(--mid);border:1px solid var(--bdr);border-radius:4px;width:100%;max-width:400px;max-height:90vh;overflow-y:auto;position:relative}
 .mc{position:absolute;top:.75rem;right:.75rem;background:transparent;border:none;color:var(--muted);font-size:1.2rem;cursor:pointer;z-index:1}
@@ -200,7 +200,7 @@ body.cb .tile[data-s=present]::after{content:'▲';position:absolute;bottom:1px;
 <script src="/qf-dapp/qf-nav.js"></script>
 
 <nav>
-  <span class="pill" id="mode-pill">Daily</span>
+  <span class="pill" id="mode-pill">Free Play</span>
   <div class="nav-r">
     <div class="wchip" id="wchip" onclick="qfWallet.connect()"><div class="wdot"></div><span id="wlbl">Connect</span></div>
     <button class="nb" title="How to Play" onclick="openM('htp')">?</button>
@@ -221,7 +221,7 @@ body.cb .tile[data-s=present]::after{content:'▲';position:absolute;bottom:1px;
     <div class="si"><span class="sv" id="sbw">—</span><span class="sl">Win %</span></div>
     <div class="si hi"><span class="sv tl" id="sbs">0</span><span class="sl">🔥 Streak</span></div>
     <div class="si"><span class="sv" id="sbm">0</span><span class="sl">Max</span></div>
-    <div class="si"><span class="sv" id="sbn">#—</span><span class="sl">Puzzle</span></div>
+    <div class="si" style="display:none"><span class="sv" id="sbn">#—</span><span class="sl">Puzzle</span></div>
   </div>
 
   <div class="msg" id="msg"></div>
@@ -241,16 +241,13 @@ body.cb .tile[data-s=present]::after{content:'▲';position:absolute;bottom:1px;
   <button class="btn bgh" id="nxtbtn" style="display:none;max-width:420px" onclick="nextFree()">Next Puzzle →</button>
 </div>
 
-<!-- Leaderboard -->
-<div class="lbw">
+<!-- Leaderboard removed — scores submitted to backend via submitFreeplay -->
+<div class="lbw" style="display:none">
   <div class="lbc">
-    <div class="lbh"><span class="lbt">Daily Leaderboard</span><span class="lbdate" id="lbd">—</span></div>
-    <div id="lbgate">
-      <div class="lbgate"><div class="lbgm">Connect a wallet on <strong>QF Network</strong> to submit.<br>Scores are visible to all — submission is wallet-gated.</div><button class="btn bt" onclick="qfWallet.connect()">Connect Wallet</button></div>
-    </div>
+    <div class="lbh"><span class="lbt">Leaderboard</span><span class="lbdate" id="lbd">—</span></div>
+    <div id="lbgate"></div>
     <div id="lbrows"></div>
-    <div id="lbsub" style="display:none"><div class="lbsr"><button class="btn bg" id="lbsbtn" onclick="submitLB()" disabled>Submit Score (finish puzzle first)</button></div></div>
-    <div class="lbnote">Local scores until QF Games launches on-chain.</div>
+    <div id="lbsub" style="display:none"><button class="btn bg" id="lbsbtn" disabled></button></div>
   </div>
 </div>
 
