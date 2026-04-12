@@ -904,7 +904,7 @@ export function completeGameState(sessionId, status, score, flagged) {
 
 export function loadActiveGameStates() {
   const db = getDb();
-  const cutoff = Date.now() - (3600 * 1000);
+  const cutoff = Date.now() - (86400 * 1000);
   return db.prepare(`SELECT * FROM active_game_state WHERE status = 'active' AND started_at > ?`).all(cutoff);
 }
 
