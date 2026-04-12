@@ -405,6 +405,9 @@ var G = (function() {
       answer: JSON.stringify({ action: 'submit' })
     }).then(function(submitData) {
       if (duelMode && duelCode) submitDuelScore();
+      if (!duelMode) {
+        try { api('/session/submit-freeplay', { gameId: 'golf-solitaire', score: submitData.points || 0, timeMs: submitData.time ? submitData.time * 1000 : 0 }); } catch (e) { /* ignore */ }
+      }
     });
   }
 
