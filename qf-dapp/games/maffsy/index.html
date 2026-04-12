@@ -104,11 +104,11 @@ body.cb .tile[data-s=present]::after{content:'▲';position:absolute;bottom:1px;
 
 .ov{position:fixed;inset:0;z-index:200;background:rgba(14,16,19,.9);backdrop-filter:blur(10px);display:flex;align-items:center;justify-content:center;padding:1rem}
 .ov.hidden{display:none}
-.modal{background:var(--mid);border:1px solid var(--bdr);border-radius:4px;width:100%;max-width:400px;max-height:90vh;overflow-y:auto;position:relative}
-.mc{position:absolute;top:.75rem;right:.75rem;background:transparent;border:none;color:var(--muted);font-size:1.2rem;cursor:pointer;z-index:1}
-.mc:hover{color:var(--body)}
+.modal{background:#0a0d14;border:1px solid #3a4255;border-radius:4px;width:100%;max-width:400px;max-height:90vh;overflow-y:auto;position:relative}
+.mc{position:absolute;top:.75rem;right:.75rem;background:transparent;border:none;color:#4a5568;font-size:1.2rem;cursor:pointer;z-index:1}
+.mc:hover{color:#e8ecf4}
 .mh{padding:1.2rem 1.4rem 0;text-align:center}
-.mt{font-family:'Playfair Display',sans-serif;font-size:1.8rem;letter-spacing:.1em;color:var(--gwarm)}
+.mt{font-family:'Playfair Display',sans-serif;font-size:1.8rem;letter-spacing:.1em;color:#e8ecf4}
 .ms{font-family:'JetBrains Mono',monospace;font-size:.5rem;letter-spacing:.1em;text-transform:uppercase;color:var(--muted);margin-top:.15rem}
 .mb{padding:1rem 1.4rem}
 .mf{padding:0 1.4rem 1.2rem;display:flex;gap:.5rem}
@@ -127,27 +127,27 @@ body.cb .tile[data-s=present]::after{content:'▲';position:absolute;bottom:1px;
 .hn strong{color:var(--teal)}
 
 .sg{display:grid;grid-template-columns:repeat(4,1fr);gap:.4rem;margin-bottom:1rem}
-.sb{background:var(--light);border:1px solid var(--bdrdim);border-radius:3px;padding:.6rem .2rem;text-align:center}
-.sbv{font-family:'Playfair Display',sans-serif;font-size:1.5rem;letter-spacing:.06em;color:var(--gold);line-height:1}
-.sbl{font-family:'JetBrains Mono',monospace;font-size:.37rem;letter-spacing:.07em;text-transform:uppercase;color:var(--muted);margin-top:.1rem}
-.dt{font-family:'JetBrains Mono',monospace;font-size:.48rem;letter-spacing:.12em;text-transform:uppercase;color:var(--muted);margin-bottom:.5rem}
+.sb{background:#0f1319;border:1px solid #2a2f3e;border-radius:4px;padding:.6rem .2rem;text-align:center}
+.sbv{font-family:'DM Mono','JetBrains Mono',monospace;font-size:1.5rem;letter-spacing:.06em;color:#e8ecf4;line-height:1}
+.sbl{font-family:'Inter','Outfit',sans-serif;font-size:.37rem;letter-spacing:.05em;text-transform:uppercase;color:#4a5568;margin-top:.1rem}
+.dt{font-family:'Inter','Outfit',sans-serif;font-size:.48rem;letter-spacing:.05em;text-transform:uppercase;color:#4a5568;margin-bottom:.5rem}
 .dr{display:flex;align-items:center;gap:.4rem;margin-bottom:.3rem}
-.dl{font-family:'JetBrains Mono',monospace;font-size:.6rem;color:var(--muted);width:.6rem;text-align:right}
-.db{flex:1;height:18px;background:var(--light);border-radius:2px;display:flex;align-items:center;padding:0 .35rem;min-width:24px}
-.db.cur{background:var(--gdim)}
-.dc{font-family:'JetBrains Mono',monospace;font-size:.52rem;color:var(--body)}
+.dl{font-family:'JetBrains Mono',monospace;font-size:.6rem;color:#4a5568;width:.6rem;text-align:right}
+.db{flex:1;height:18px;background:#2a2f3e;border-radius:2px;display:flex;align-items:center;padding:0 .35rem;min-width:24px}
+.db.cur{background:#c9a84c}
+.dc{font-family:'DM Mono','JetBrains Mono',monospace;font-size:.52rem;color:#e8ecf4}
 
-.srow{display:flex;align-items:center;justify-content:space-between;gap:1rem;padding:.75rem 0;border-bottom:1px solid var(--bdrdim)}
+.srow{display:flex;align-items:center;justify-content:space-between;gap:1rem;padding:.75rem 0;border-bottom:1px solid #2a2f3e}
 .srow:last-child{border-bottom:none}
-.stit{font-size:.82rem;font-weight:500;color:var(--body);margin-bottom:.1rem}
-.sdesc{font-family:'JetBrains Mono',monospace;font-size:.5rem;color:var(--muted);line-height:1.4}
-.snote{font-family:'JetBrains Mono',monospace;font-size:.48rem;color:var(--gdim);margin-top:.25rem;font-style:italic}
+.stit{font-family:'Outfit',sans-serif;font-size:.82rem;font-weight:500;color:#e8ecf4;margin-bottom:.1rem}
+.sdesc{font-family:'Inter',sans-serif;font-size:.5rem;color:#4a5568;line-height:1.4}
+.snote{font-family:'JetBrains Mono',monospace;font-size:.48rem;color:#4a5568;margin-top:.25rem;font-style:italic}
 .tog{position:relative;width:38px;height:20px;flex-shrink:0}
 .tog input{opacity:0;width:0;height:0}
-.ts{position:absolute;inset:0;background:var(--bdr);border-radius:20px;cursor:pointer;transition:.2s}
-.ts::before{content:'';position:absolute;width:14px;height:14px;left:3px;top:3px;background:var(--muted);border-radius:50%;transition:.2s}
-.tog input:checked+.ts{background:var(--tdim)}
-.tog input:checked+.ts::before{transform:translateX(18px);background:var(--teal)}
+.ts{position:absolute;inset:0;background:#2a2f3e;border-radius:20px;cursor:pointer;transition:.2s}
+.ts::before{content:'';position:absolute;width:14px;height:14px;left:3px;top:3px;background:#4a5568;border-radius:50%;transition:.2s}
+.tog input:checked+.ts{background:#c9a84c}
+.tog input:checked+.ts::before{transform:translateX(18px);background:#0a0d14}
 .tog input:disabled+.ts{opacity:.4;cursor:not-allowed}
 
 .eres{font-family:'Playfair Display',sans-serif;font-size:2rem;letter-spacing:.1em;color:var(--gwarm);text-align:center;margin-bottom:.2rem}
@@ -177,12 +177,12 @@ body.cb .tile[data-s=present]::after{content:'▲';position:absolute;bottom:1px;
 .lbnote{font-family:'JetBrains Mono',monospace;font-size:.46rem;color:var(--muted);text-align:center;padding:.5rem .9rem}
 
 .btn{padding:.62rem 1.1rem;font-family:'JetBrains Mono',monospace;font-size:.6rem;letter-spacing:.1em;text-transform:uppercase;cursor:pointer;border-radius:3px;border:none;transition:all .2s;width:100%}
-.bg{background:var(--gold);color:var(--ink);font-weight:500}
-.bg:hover{background:var(--gwarm)}
+.bg{background:transparent;border:1px solid #c9a84c;color:#c9a84c;font-weight:500}
+.bg:hover{background:#c9a84c;color:#0a0d14}
 .bt{background:transparent;border:1px solid var(--tdim);color:var(--teal)}
 .bt:hover{background:var(--tdim)}
-.bgh{background:transparent;border:1px solid var(--bdr);color:var(--muted)}
-.bgh:hover{border-color:var(--gdim);color:var(--gold)}
+.bgh{background:transparent;border:1px solid #2a2f3e;color:#4a5568}
+.bgh:hover{border-color:#c9a84c;color:#e8ecf4}
 .btn:disabled{opacity:.4;cursor:not-allowed}
 
 .toast{position:fixed;top:66px;left:50%;transform:translateX(-50%);background:var(--body);color:var(--ink);z-index:300;padding:.55rem 1.1rem;border-radius:3px;font-family:'JetBrains Mono',monospace;font-size:.62rem;font-weight:500;opacity:0;transition:opacity .2s;pointer-events:none;white-space:nowrap}
@@ -340,7 +340,14 @@ body.cb .tile[data-s=present]::after{content:'▲';position:absolute;bottom:1px;
       <div class="cd" id="cdtxt"></div>
       <div class="sg" id="endsg"></div>
     </div>
-    <div class="mf"><button class="btn bgh" onclick="closeM('end')">See Board</button><button class="btn bt" onclick="share()">Share 📋</button></div>
+    <div class="mf">
+      <button class="btn bgh" onclick="closeM('end')">See Board</button>
+      <button class="btn bt" onclick="share()">Share 📋</button>
+    </div>
+    <div class="mf" id="end-action-row">
+      <button class="btn bgh" id="end-new-puzzle" style="display:none" onclick="nextFree()">New Puzzle</button>
+      <button class="btn bgh" id="end-done" style="display:none" onclick="closeM('end')">Done</button>
+    </div>
   </div>
 </div>
 
@@ -789,6 +796,9 @@ function showEnd(){
     <div class="sb"><div class="sbv">${s.maxStreak||0}</div><div class="sbl">Max</div></div>
     <div class="sb"><div class="sbv">${s.played||0}</div><div class="sbl">Played</div></div>
     <div class="sb"><div class="sbv">${s.played?Math.round((s.won||0)/s.played*100):0}%</div><div class="sbl">Win %</div></div>`;
+  // Show New Puzzle (free play) or Done (daily) in end modal
+  document.getElementById('end-new-puzzle').style.display = PREFS.free ? '' : 'none';
+  document.getElementById('end-done').style.display = PREFS.free ? 'none' : '';
   openM('end');
   if(PREFS.free) document.getElementById('nxtbtn').style.display='block';
 }
