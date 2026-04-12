@@ -285,14 +285,16 @@ body{background:var(--bg);color:var(--text);font-family:'Inter',sans-serif;min-h
   <!-- DUEL SHARE SCREEN (after creating duel) -->
   <div class="duel-share" id="duel-share">
     <h2>Duel Created</h2>
-    <p>Share this code with your opponent. Opponent has 24 hours to accept.</p>
+    <p>Share this code with your opponent. They have 24 hours to accept.</p>
     <div class="share-code-display" id="share-code">------</div>
     <div class="share-actions">
       <button class="btn btn-silver" onclick="G.copyCode()">Copy Code</button>
       <button class="btn btn-ghost" onclick="G.shareDuel()">Share Link</button>
     </div>
+    <button class="btn" id="duel-start-btn" onclick="G.startDuelGame()" style="display:none;margin-top:1.2rem;border:1px solid #c9a84c;color:#c9a84c;background:transparent;padding:.7rem 2rem;font-size:.7rem">Start Playing</button>
     <div class="duel-status-msg" id="duel-status-msg">Waiting for opponent...</div>
     <div class="duel-expire" id="duel-expire"></div>
+    <a href="/qf-dapp/" id="duel-lobby-link" style="display:none;margin-top:.8rem;font-size:.6rem;color:var(--muted);text-decoration:underline">Back to Lobby</a>
   </div>
 
 
@@ -563,6 +565,8 @@ var G = (function() {
   }
 
   // ── Mode: Create Duel ───────────────────────────────────────────────
+  var pendingDuelSeed = null;
+
   async function createDuel() {
     if (!W.state.address) {
       alert('Connect your wallet to create a duel.');
@@ -577,14 +581,27 @@ var G = (function() {
 
       duelCode = data.shareCode;
       duelId = data.duelId;
+      pendingDuelSeed = data.puzzleSeed;
 
-      // Load the game session, then countdown, then start
-      await startGameSession(data.puzzleSeed, true); // true = don't start timer yet
+      // Show share screen with Start Playing button
+      document.getElementById('duel-share').style.display = 'block';
+      document.getElementById('share-code').textContent = duelCode;
+      document.getElementById('duel-start-btn').style.display = '';
+      document.getElementById('duel-lobby-link').style.display = '';
+      var expires = new Date(Date.now() + 24 * 60 * 60 * 1000);
+      document.getElementById('duel-expire').textContent = 'Expires: ' + expires.toLocaleString();
 
     } catch (e) {
       setMsg('Connection error creating duel');
       showPreGame();
     }
+  }
+
+  async function startDuelGame() {
+    document.getElementById('duel-share').style.display = 'none';
+    document.getElementById('duel-start-btn').style.display = 'none';
+    document.getElementById('duel-lobby-link').style.display = 'none';
+    await startGameSession(pendingDuelSeed, true);
   }
 
   // ── Show duel share after creator finishes ──────────────────────────
@@ -1420,7 +1437,7 @@ var G = (function() {
 
   return {
     inputNum: inputNum, undo: undo, toggleNotes: toggleNotes, useHint: useHint,
-    startSolo: startSolo, createDuel: createDuel, acceptAndPlay: acceptAndPlay,
+    startSolo: startSolo, createDuel: createDuel, startDuelGame: startDuelGame, acceptAndPlay: acceptAndPlay,
     copyCode: copyCode, shareDuel: shareDuel, retryPromo: retryPromo,
     showStakePicker: showStakePicker, pickStake: pickStake, confirmStake: confirmStake, cancelStake: cancelStake
   };
