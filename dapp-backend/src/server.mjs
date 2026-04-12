@@ -8,7 +8,7 @@ import { checkLeagueLifecycles, checkBattleshipsTimeouts } from './routes/api.mj
 import { registerAllGames } from './games/index.mjs';
 import { recoverSessions } from './scoring.mjs';
 import { startListener } from './chain-listener.mjs';
-import { initEscrow, getEscrowAddress, getEscrowBalance } from './escrow.mjs';
+import { initEscrow, getEscrowAddress, getEscrowBalance, refundDuel } from './escrow.mjs';
 import { ethers } from 'ethers';
 
 const PORT = process.env.PORT || 3860;
@@ -112,8 +112,28 @@ console.log('Session recovery complete');
 startListener();
 console.log('Chain listener started');
 
-// Expire stale duels every 5 minutes
-setInterval(() => { try { expireOldDuels(); } catch (e) { console.error('Duel expiry sweep error:', e); } }, 5 * 60 * 1000);
+// Expire stale duels every 5 minutes and refund stakes
+setInterval(async () => {
+  try {
+    var expired = expireOldDuels();
+    for (var d of expired) {
+      // Refund creator stake
+      if (d.creator_wallet && d.stake > 0) {
+        try {
+          await refundDuel(d.creator_wallet, d.stake);
+          console.log('Duel ' + d.id.slice(0, 8) + '... expired — refunded ' + d.stake + ' QF to creator ' + d.creator_wallet.slice(0, 8) + '...');
+        } catch (e) { console.error('Duel refund failed for creator ' + d.creator_wallet.slice(0, 8) + '...:', e.message); }
+      }
+      // Refund opponent stake if they had accepted
+      if (d.status === 'accepted' && d.opponent_wallet && d.stake > 0) {
+        try {
+          await refundDuel(d.opponent_wallet, d.stake);
+          console.log('Duel ' + d.id.slice(0, 8) + '... expired — refunded ' + d.stake + ' QF to opponent ' + d.opponent_wallet.slice(0, 8) + '...');
+        } catch (e) { console.error('Duel refund failed for opponent ' + d.opponent_wallet.slice(0, 8) + '...:', e.message); }
+      }
+    }
+  } catch (e) { console.error('Duel expiry sweep error:', e); }
+}, 5 * 60 * 1000);
 
 // Check league lifecycles every 2 minutes
 setInterval(() => { try { checkLeagueLifecycles(); } catch (e) { console.error('League lifecycle check error:', e); } }, 2 * 60 * 1000);

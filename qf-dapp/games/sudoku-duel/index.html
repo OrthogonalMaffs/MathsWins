@@ -258,7 +258,7 @@ body{background:var(--bg);color:var(--text);font-family:'Inter',sans-serif;min-h
     <div class="mode-card" onclick="G.createDuel(0)">
       <div class="mode-icon">&#9876;</div>
       <h3>Create a Duel</h3>
-      <p>Get a code, share with your rival. Same puzzle, same conditions. Highest score wins.</p>
+      <p>25 QF stake. Get a code, share with your rival. Same puzzle, same conditions. Winner takes 90%.</p>
     </div>
     <a class="mode-card" href="/qf-dapp/games/sudoku-duel/league/" style="text-decoration:none;color:inherit">
       <div class="mode-icon">&#9813;</div>
@@ -306,6 +306,7 @@ body{background:var(--bg);color:var(--text);font-family:'Inter',sans-serif;min-h
       <div class="challenger-sub">has challenged you to a Sudoku Duel</div>
     </div>
     <p style="font-size:.68rem;color:var(--muted);text-align:center;line-height:1.5;margin-top:.8rem">Same puzzle, same conditions. Best score wins.</p>
+    <p id="accept-stake-info" style="font-size:.62rem;color:var(--silver);text-align:center;line-height:1.5;margin-top:.5rem">Accepting requires a 25 QF stake. Winner takes 90% of the pot.</p>
     <div style="margin-top:1rem;text-align:center">
       <button class="btn btn-silver" style="padding:.8rem 2rem;font-size:.7rem" onclick="G.acceptAndPlay()">Accept &amp; Play</button>
     </div>
@@ -564,6 +565,25 @@ var G = (function() {
     });
   }
 
+  // ── QF Payment helpers ──────────────────────────────────────────────
+  var duelConfig = null;
+
+  async function getDuelConfig() {
+    if (duelConfig) return duelConfig;
+    var data = await api('/duel/config', null, 'GET');
+    duelConfig = data;
+    return data;
+  }
+
+  async function sendStakePayment(escrowAddress, stakeQF) {
+    var signer = W.signer;
+    if (!signer || !signer.sendTransaction) throw new Error('Wallet signer not available');
+    var value = ethers.parseEther(String(stakeQF));
+    var tx = await signer.sendTransaction({ to: escrowAddress, value: value });
+    var receipt = await tx.wait();
+    return receipt.hash;
+  }
+
   // ── Mode: Create Duel ───────────────────────────────────────────────
   var pendingDuelSeed = null;
 
@@ -576,13 +596,33 @@ var G = (function() {
     hidePreGame();
 
     try {
-      var data = await api('/duel/create', { gameId: GAME_ID, difficulty: 'medium', stake: 0 });
+      var cfg = await getDuelConfig();
+      var stakeQF = cfg.defaultStake || 25;
+
+      // Send stake payment
+      setMsg('Sending ' + stakeQF + ' QF stake...');
+      var txHash = null;
+      try {
+        txHash = await sendStakePayment(cfg.escrowAddress, stakeQF);
+      } catch (e) {
+        if (e.code === 'ACTION_REJECTED' || (e.message && e.message.indexOf('rejected') !== -1)) {
+          setMsg('Transaction cancelled.');
+        } else {
+          setMsg('Payment failed: ' + (e.reason || e.message || 'Unknown error'));
+        }
+        showPreGame();
+        return;
+      }
+
+      setMsg('Creating duel...');
+      var data = await api('/duel/create', { gameId: GAME_ID, difficulty: 'medium', stake: stakeQF, txHash: txHash });
       if (data.error) { setMsg(data.error); showPreGame(); return; }
 
       duelCode = data.shareCode;
       duelId = data.duelId;
       pendingDuelSeed = data.puzzleSeed;
 
+      setMsg('');
       // Show share screen with Start Playing button
       document.getElementById('duel-share').style.display = 'block';
       document.getElementById('share-code').textContent = duelCode;
@@ -648,6 +688,12 @@ var G = (function() {
       duelData = data;
       duelId = data.id;
 
+      // Show stake info
+      var stakeInfo = document.getElementById('accept-stake-info');
+      if (stakeInfo && data.stake) {
+        stakeInfo.textContent = 'Accepting requires a ' + data.stake + ' QF stake. Winner takes 90% of the pot.';
+      }
+
       // Resolve challenger name
       var creatorDisplay = W.displayName(data.creator_wallet);
       W.resolveAny(data.creator_wallet).then(function(n) {
@@ -667,9 +713,28 @@ var G = (function() {
       return;
     }
     try {
-      var data = await api('/duel/' + duelCode + '/accept', {});
+      var cfg = await getDuelConfig();
+      var stakeQF = (duelData && duelData.stake) ? duelData.stake : (cfg.defaultStake || 25);
+
+      // Send stake payment
+      setMsg('Sending ' + stakeQF + ' QF stake...');
+      var txHash = null;
+      try {
+        txHash = await sendStakePayment(cfg.escrowAddress, stakeQF);
+      } catch (e) {
+        if (e.code === 'ACTION_REJECTED' || (e.message && e.message.indexOf('rejected') !== -1)) {
+          setMsg('Transaction cancelled.');
+        } else {
+          setMsg('Payment failed: ' + (e.reason || e.message || 'Unknown error'));
+        }
+        return;
+      }
+
+      setMsg('Accepting duel...');
+      var data = await api('/duel/' + duelCode + '/accept', { txHash: txHash });
       if (data.error) { setMsg(data.error); return; }
 
+      setMsg('');
       document.getElementById('duel-accept').style.display = 'none';
       duelId = data.duelId;
       await startGameSession(data.puzzleSeed, true);
