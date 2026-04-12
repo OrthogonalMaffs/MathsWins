@@ -54,6 +54,8 @@ export function getDb() {
   try { db.exec('ALTER TABLE wallet_stats ADD COLUMN pyramid_completions INTEGER DEFAULT 0'); } catch (e) { /* already exists */ }
   try { db.exec('ALTER TABLE wallet_stats ADD COLUMN poker_patience_last_place INTEGER DEFAULT 0'); } catch (e) { /* already exists */ }
   try { db.exec('ALTER TABLE wallet_stats ADD COLUMN consecutive_league_wins INTEGER DEFAULT 0'); } catch (e) { /* already exists */ }
+  try { db.exec('ALTER TABLE wallet_stats ADD COLUMN sub_hunter_count INTEGER DEFAULT 0'); } catch (e) { /* already exists */ }
+  try { db.exec('ALTER TABLE wallet_stats ADD COLUMN carrier_supremacy_count INTEGER DEFAULT 0'); } catch (e) { /* already exists */ }
 
   // League refunds table
   db.exec(`CREATE TABLE IF NOT EXISTS league_refunds (
@@ -159,6 +161,16 @@ export function getDb() {
     league_id TEXT NOT NULL,
     achieved_at INTEGER NOT NULL,
     PRIMARY KEY (wallet, game_id, tier)
+  )`);
+
+  // Free game completion tracking
+  db.exec(`CREATE TABLE IF NOT EXISTS free_game_completions (
+    wallet TEXT NOT NULL,
+    game_id TEXT NOT NULL,
+    count INTEGER DEFAULT 0,
+    pb_beaten_count INTEGER DEFAULT 0,
+    last_played INTEGER,
+    PRIMARY KEY (wallet, game_id)
   )`);
 
   // Preset messages (duels + leagues)
@@ -395,6 +407,8 @@ function seedAchievements(db) {
     insert.run(a.id, a.name, a.game_id || null, tier, a.fee, a.category);
     updateCat.run(a.category, a.fee, a.id, a.category);
   }
+  // Retire speed-reader (52dle only has 6 guesses, condition was impossible)
+  db.prepare('UPDATE achievement_registry SET active = 0 WHERE achievement_id = ?').run('speed-reader');
 }
 
 function seedSeasonalWindows(db) {
@@ -1228,6 +1242,45 @@ export function getPersonalBests(wallet) {
   const db = getDb();
   return db.prepare('SELECT * FROM personal_bests WHERE wallet = ? ORDER BY game_id, difficulty')
     .all(wallet.toLowerCase());
+}
+
+export function getPersonalBest(wallet, gameId, difficulty) {
+  const db = getDb();
+  return db.prepare('SELECT * FROM personal_bests WHERE wallet = ? AND game_id = ? AND difficulty = ?')
+    .get(wallet.toLowerCase(), gameId, difficulty || 'default');
+}
+
+// ── Free game completions ─────────────────────────────────────────────────
+
+export function incrementFreeGameCompletion(wallet, gameId) {
+  const db = getDb();
+  const w = wallet.toLowerCase();
+  const now = Date.now();
+  db.prepare(`INSERT INTO free_game_completions (wallet, game_id, count, last_played) VALUES (?, ?, 1, ?)
+    ON CONFLICT(wallet, game_id) DO UPDATE SET count = count + 1, last_played = ?`)
+    .run(w, gameId, now, now);
+  return db.prepare('SELECT * FROM free_game_completions WHERE wallet = ? AND game_id = ?').get(w, gameId);
+}
+
+export function incrementPbBeatenCount(wallet, gameId) {
+  const db = getDb();
+  const w = wallet.toLowerCase();
+  const now = Date.now();
+  db.prepare(`INSERT INTO free_game_completions (wallet, game_id, pb_beaten_count, last_played) VALUES (?, ?, 1, ?)
+    ON CONFLICT(wallet, game_id) DO UPDATE SET pb_beaten_count = pb_beaten_count + 1, last_played = ?`)
+    .run(w, gameId, now, now);
+  return db.prepare('SELECT pb_beaten_count FROM free_game_completions WHERE wallet = ? AND game_id = ?').get(w, gameId);
+}
+
+export function getDistinctFreeGamesPlayed(wallet) {
+  const db = getDb();
+  return db.prepare('SELECT COUNT(DISTINCT game_id) as count FROM free_game_completions WHERE wallet = ?')
+    .get(wallet.toLowerCase());
+}
+
+export function retireAchievement(achievementId) {
+  const db = getDb();
+  db.prepare('UPDATE achievement_registry SET active = 0 WHERE achievement_id = ?').run(achievementId);
 }
 
 // ── League bests ───────────────────────────────────────────────────────────

@@ -13,7 +13,7 @@ import { doSettleLeague, checkEarlySettlement, recoverStuckLeagues, mintCommemor
 import { checkAchievements } from '../achievement-checker.mjs';
 import { sendQF, settleDuel, BURN_ADDRESS, TEAM_WALLET } from '../escrow.mjs';
 import { createBattleshipsGame, getBattleshipsGameByCode, getBattleshipsGameById, updateBattleshipsGameStatus, saveBattleshipsPlacement, getBattleshipsPlacement, getBattleshipsPlacements, addBattleshipsRound, getBattleshipsRounds, getBattleshipsRecord, updateBattleshipsRecord, getActiveBattleshipsGames, getBattleshipsGamesByWallet } from '../db/index.mjs';
-import { getAchievementRegistry, getAchievement, awardAchievement, getWalletAchievements, getAllAchievements, getGlobalRecord, getPersonalBests, getLeagueBests, getWalletStats, getWalletLeagueHistory, getWalletTrophies, getGameStateForLeaguePuzzle, completeGameState, getFlaggedSessions, getGlobalLeaderboard, getGlobalLeaderboardEntry, addGlobalLeaderboardEntry, getWalletLeaderboardPositions, getGameState, getGame, upsertPersonalBest } from '../db/index.mjs';
+import { getAchievementRegistry, getAchievement, awardAchievement, getWalletAchievements, getAllAchievements, getGlobalRecord, getPersonalBests, getPersonalBest, getLeagueBests, getWalletStats, getWalletLeagueHistory, getWalletTrophies, getGameStateForLeaguePuzzle, completeGameState, getFlaggedSessions, getGlobalLeaderboard, getGlobalLeaderboardEntry, addGlobalLeaderboardEntry, getWalletLeaderboardPositions, getGameState, getGame, upsertPersonalBest, incrementPbBeatenCount, retireAchievement } from '../db/index.mjs';
 import { analyseInputPattern } from '../scoring.mjs';
 import { validateFleet, calculateRange, checkHit, checkSunk, checkWin, getGameState as getBattleshipsState, cpuPlaceFleet, cpuShootRecruit, cpuShootOfficer, cpuShootAdmiral, pickSurvivingShip, FLEET } from '../games/battleships.mjs';
 
@@ -320,7 +320,29 @@ router.post('/session/submit-freeplay', optionalWallet, (req, res) => {
     timeMs = Number(timeMs) || 0;
     var diff = difficulty || 'default';
 
+    // Check if this beats existing PB (before upsert overwrites it)
+    var pbBeaten = false;
+    try {
+      var TIME_PRIMARY = new Set(['minesweeper', 'freecell', 'kenken', 'nonogram', 'kakuro', 'sudoku-duel']);
+      var existingPb = getPersonalBest(req.wallet, gameId, diff);
+      if (existingPb) {
+        if (TIME_PRIMARY.has(gameId)) {
+          pbBeaten = score < existingPb.score;
+        } else {
+          pbBeaten = score > existingPb.score;
+        }
+      }
+    } catch (e) { /* PB check must never block */ }
+
     upsertPersonalBest(req.wallet, gameId, diff, score, timeMs);
+
+    // If PB was beaten, increment counter and check for personal-best achievement
+    if (pbBeaten) {
+      try {
+        var pbStats = incrementPbBeatenCount(req.wallet, gameId);
+        if (pbStats && pbStats.pb_beaten_count >= 5) pbBeaten = true;
+      } catch (e) { /* must never block */ }
+    }
 
     var awarded = [];
     try {
@@ -340,6 +362,8 @@ router.post('/session/submit-freeplay', optionalWallet, (req, res) => {
         cleared: null,
         maxHandScore: 0,
         maxHandBreakdown: null,
+        freePlay: true,
+        pbBeaten: pbBeaten,
       });
     } catch (e) { /* achievement check must never block */ }
 
@@ -1902,6 +1926,28 @@ router.post('/achievement/mint', optionalWallet, async (req, res) => {
 
     db.prepare('UPDATE achievement_eligibility SET minted_at = ?, tx_hash = ?, metadata_cid = ?, token_id = ? WHERE wallet = ? AND achievement_id = ?')
       .run(Date.now(), txHash, metadataCID, tokenId, req.wallet, achievement_id);
+
+    // Check Immaculate after minting any core purity achievement
+    var PURITY_IDS = ['pure-logic','never-triggered','clean-sheet','first-light','pixel-perfect','the-chain','no-tells','clean-crib'];
+    if (PURITY_IDS.indexOf(achievement_id) !== -1) {
+      var mintedPurity = db.prepare(
+        "SELECT COUNT(*) as count FROM achievement_eligibility WHERE wallet = ? AND achievement_id IN ('pure-logic','never-triggered','clean-sheet','first-light','pixel-perfect','the-chain','no-tells','clean-crib') AND minted_at IS NOT NULL"
+      ).get(req.wallet.toLowerCase());
+      if (mintedPurity && mintedPurity.count === 8) {
+        awardAchievement(req.wallet, 'immaculate');
+      }
+    }
+
+    // Check Wolf Pack after minting wolf/sub-hunter/carrier-supremacy
+    var WOLF_PACK_IDS = ['the-wolf','sub-hunter','carrier-supremacy'];
+    if (WOLF_PACK_IDS.indexOf(achievement_id) !== -1) {
+      var mintedWolf = db.prepare(
+        "SELECT COUNT(*) as count FROM achievement_eligibility WHERE wallet = ? AND achievement_id IN ('the-wolf','sub-hunter','carrier-supremacy') AND minted_at IS NOT NULL"
+      ).get(req.wallet.toLowerCase());
+      if (mintedWolf && mintedWolf.count === 3) {
+        awardAchievement(req.wallet, 'the-wolf-pack');
+      }
+    }
 
     res.json({ minted: true, pioneer: isPioneer, tx_hash: txHash, metadata_cid: metadataCID, token_id: tokenId });
   } catch (e) {

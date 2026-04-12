@@ -3,7 +3,8 @@
  * Called after league settlement, duel completion, or session completion.
  * Gated by ACHIEVEMENTS_ACTIVE env var.
  */
-import { awardAchievement, getWalletAchievements, getWalletStats, incrementWalletCounter, resetWalletCounter, getLeagueScoresByWallet, getLeaguePuzzles, getAllLeagueScores, getGlobalRecord, setGlobalRecord, getEarnedAchievementCount, getActiveSeasonalWindows, getCompletedLeagueCount, getLeagueWinCount, getLeagueWinsByGame, getDuelWinCount, isRecentLeagueChampion } from './db/index.mjs';
+import { awardAchievement, getWalletAchievements, getWalletStats, incrementWalletCounter, resetWalletCounter, getLeagueScoresByWallet, getLeaguePuzzles, getAllLeagueScores, getGlobalRecord, setGlobalRecord, getEarnedAchievementCount, getActiveSeasonalWindows, getCompletedLeagueCount, getLeagueWinCount, getLeagueWinsByGame, getDuelWinCount, isRecentLeagueChampion, getBattleshipsRounds, getBattleshipsPlacement, getBattleshipsGameById, getBattleshipsRecord, incrementFreeGameCompletion, getDistinctFreeGamesPlayed } from './db/index.mjs';
+import { checkSunk } from './games/battleships.mjs';
 
 const ACHIEVEMENTS_ACTIVE = process.env.ACHIEVEMENTS_ACTIVE === 'true';
 
@@ -167,24 +168,28 @@ export function checkAchievements(wallet, context) {
     }
   }
 
-  // ── Purity achievements (no errors) ───────────────────────────────
-  // TODO: no-errors-sudoku — complete sudoku-duel league puzzle with 0 mistakes
-  // TODO: no-errors-minesweeper — complete minesweeper league puzzle with 0 mistakes
-  // TODO: no-errors-freecell — complete freecell league puzzle with 0 mistakes
-  // TODO: no-errors-countdown — complete countdown-numbers league puzzle with 0 mistakes
-  // TODO: no-errors-cryptarithmetic — complete cryptarithmetic-club league puzzle with 0 mistakes
-  // TODO: no-errors-kenken — complete kenken league puzzle with 0 mistakes
-  // TODO: no-errors-nonogram — complete nonogram league puzzle with 0 mistakes
-  // TODO: no-errors-kakuro — complete kakuro league puzzle with 0 mistakes
-  // TODO: immaculate — hold all 8 no-errors achievements (requires contract interaction)
-
-  // ── clientStats-dependent purity achievements ─────────────────────
+  // ── Purity achievements ────────────────────────────────────────────
   if (context.type === 'league_settle' && context.leagueId) {
     var scores = getLeagueScoresByWallet(context.leagueId, wallet);
     var puzzles = getLeaguePuzzles(context.leagueId);
     var completedAll = scores.length === puzzles.length && scores.length > 0;
 
     if (completedAll) {
+      // Core purity: 0 mistakes across all 10 puzzles (game-specific)
+      var zeroMistakes = scores.every(function(s) { return (s.mistakes || 0) === 0; });
+      if (context.gameId === 'sudoku-duel' && zeroMistakes) tryAward('pure-logic');
+      if (context.gameId === 'minesweeper' && zeroMistakes) tryAward('never-triggered');
+      if (context.gameId === 'freecell' && zeroMistakes) tryAward('clean-sheet');
+      if (context.gameId === 'kenken' && zeroMistakes) tryAward('first-light');
+      if (context.gameId === 'nonogram' && zeroMistakes) tryAward('pixel-perfect');
+      if (context.gameId === 'kakuro' && zeroMistakes) tryAward('the-chain');
+      if (context.gameId === 'cribbage-solitaire' && zeroMistakes) tryAward('clean-crib');
+      // no-tells: poker-patience with 0 mistakes AND 0 hints
+      if (context.gameId === 'poker-patience' && zeroMistakes && scores.every(function(s) { return (s.hints || 0) === 0; })) {
+        tryAward('no-tells');
+      }
+
+      // clientStats-dependent purity achievements
       // the-purist: FreeCell league with 0 undos across all puzzles
       if (context.gameId === 'freecell' && scores.every(function(s) { return s.undos_used === 0; })) {
         tryAward('the-purist');
@@ -282,6 +287,146 @@ export function checkAchievements(wallet, context) {
           }
         }
       }
+    }
+  }
+
+  // ── Battleships achievements ──────────────────────────────────────
+  if (context.type === 'battleships_complete' && context.gameId) {
+    try {
+      var bsGame = getBattleshipsGameById(context.gameId);
+      var bsRounds = getBattleshipsRounds(context.gameId);
+      var winnerWallet = bsGame ? (bsGame.winner_wallet || '').toLowerCase() : '';
+      var isWinner = wallet.toLowerCase() === winnerWallet;
+      var isCpu = bsGame && bsGame.vs_cpu;
+      var opponentWallet = '';
+      if (bsGame) {
+        opponentWallet = bsGame.creator_wallet.toLowerCase() === wallet.toLowerCase()
+          ? (bsGame.opponent_wallet || '').toLowerCase()
+          : bsGame.creator_wallet.toLowerCase();
+      }
+
+      var myRounds = bsRounds.filter(function(r) { return r.wallet.toLowerCase() === wallet.toLowerCase(); });
+      var oppRounds = bsRounds.filter(function(r) { return r.wallet.toLowerCase() === opponentWallet; });
+
+      var myPlacement = getBattleshipsPlacement(context.gameId, wallet);
+      var oppPlacement = getBattleshipsPlacement(context.gameId, opponentWallet);
+      var myFleet = myPlacement ? JSON.parse(myPlacement.fleet) : [];
+      var oppFleet = oppPlacement ? JSON.parse(oppPlacement.fleet) : [];
+
+      // 1. FIRST STRIKE — first shot was a hit
+      if (myRounds.length > 0) {
+        var sorted = myRounds.slice().sort(function(a, b) { return a.round_number - b.round_number; });
+        if (sorted[0].result === 'hit' || sorted[0].result === 'sunk') {
+          tryAward('first-strike');
+        }
+      }
+
+      if (isWinner) {
+        // 2. LAST STAND — won with only 1 ship surviving
+        var mySurviving = myFleet.filter(function(s) { return !checkSunk(s.ship, myFleet, oppRounds); });
+        if (mySurviving.length === 1) {
+          tryAward('last-stand');
+        }
+
+        // 3. THE WOLF — won with only submarine surviving
+        if (mySurviving.length === 1 && mySurviving[0].ship === 'Submarine') {
+          tryAward('the-wolf');
+        }
+
+        // 4. UNSINKABLE — battleship survived (track consecutive)
+        var battleshipSurvived = mySurviving.some(function(s) { return s.ship === 'Battleship'; });
+        if (battleshipSurvived) {
+          incrementWalletCounter(wallet, 'consecutive_bs_wins_with_battleship');
+          var unsinkStats = getWalletStats(wallet);
+          if (unsinkStats && unsinkStats.consecutive_bs_wins_with_battleship >= 10) {
+            tryAward('unsinkable');
+          }
+        } else {
+          resetWalletCounter(wallet, 'consecutive_bs_wins_with_battleship');
+        }
+
+        // 5. THE ADMIRAL — 50+ battleships wins
+        var bsRecord = getBattleshipsRecord(wallet);
+        if (bsRecord && bsRecord.wins >= 50) {
+          tryAward('the-admiral');
+        }
+
+        // 6. PERFECT SONAR — zero misses
+        if (myRounds.length > 0 && myRounds.every(function(r) { return r.result === 'hit' || r.result === 'sunk'; })) {
+          tryAward('perfect-sonar');
+        }
+
+        // 8. CARRIER SUPREMACY — carrier survived (track cumulative)
+        var carrierSurvived = mySurviving.some(function(s) { return s.ship === 'Carrier'; });
+        if (carrierSurvived) {
+          incrementWalletCounter(wallet, 'carrier_supremacy_count');
+          var carrierStats = getWalletStats(wallet);
+          if (carrierStats && carrierStats.carrier_supremacy_count >= 100) {
+            tryAward('carrier-supremacy');
+          }
+        }
+      } else {
+        // Loser: reset consecutive battleship streak
+        resetWalletCounter(wallet, 'consecutive_bs_wins_with_battleship');
+      }
+
+      // 7. SUB HUNTER — sunk opponent's submarine (check for this wallet as attacker)
+      if (oppFleet.length > 0 && checkSunk('Submarine', oppFleet, myRounds)) {
+        incrementWalletCounter(wallet, 'sub_hunter_count');
+        var subStats = getWalletStats(wallet);
+        if (subStats && subStats.sub_hunter_count >= 100) {
+          tryAward('sub-hunter');
+        }
+      }
+
+      // 9. SCATTER-GUN / DO YOU EVEN AIM BRO? — all misses
+      var totalShots = myRounds.length;
+      var totalMisses = myRounds.filter(function(r) { return r.result === 'miss'; }).length;
+      if (totalShots >= 50 && totalMisses === totalShots) {
+        tryAward('scatter-gun');
+      }
+      if (totalShots >= 75 && totalMisses === totalShots) {
+        tryAward('do-you-even-aim-bro');
+      }
+
+      // 10. TAX PAYER'S NIGHTMARE (loser only) — carrier sunk + sunk zero of opponent's ships
+      if (!isWinner && oppFleet.length > 0 && myFleet.length > 0) {
+        var myCarrierSunk = checkSunk('Carrier', myFleet, oppRounds);
+        var oppShipsSunkByMe = oppFleet.filter(function(s) { return checkSunk(s.ship, oppFleet, myRounds); }).length;
+        if (myCarrierSunk && oppShipsSunkByMe === 0) {
+          tryAward('tax-payers-nightmare');
+        }
+      }
+    } catch (e) {
+      console.error('Battleships achievement check error:', e.message);
+    }
+  }
+
+  // ── Free game achievements (century, explorer, personal-best) ─────
+  if (context.type === 'session_complete' && context.freePlay) {
+    try {
+      var FREE_GAME_IDS = ['maffsy','higher-or-lower','52dle','towers-of-hanoi','dont-press-it','memory-matrix','rps-vs-machine','estimation-engine','sequence-solver','prime-or-composite','cryptarithmetic-club','battleships'];
+
+      // Century: 100 completions of any single free game
+      var completion = incrementFreeGameCompletion(wallet, context.gameId);
+      if (completion && completion.count >= 100) {
+        tryAward('century');
+      }
+
+      // Explorer: played all 12 free games at least once
+      if (FREE_GAME_IDS.indexOf(context.gameId) !== -1) {
+        var distinct = getDistinctFreeGamesPlayed(wallet);
+        if (distinct && distinct.count >= 12) {
+          tryAward('explorer');
+        }
+      }
+
+      // Personal Best: beaten your own PB 5 times on the same game
+      if (context.pbBeaten) {
+        tryAward('personal-best');
+      }
+    } catch (e) {
+      console.error('Free game achievement check error:', e.message);
     }
   }
 
