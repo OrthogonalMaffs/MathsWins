@@ -856,6 +856,10 @@ var duelMode = false, duelCode = null, duelId = null;
       setTimeout(function() { btn.style.borderColor = ''; btn.style.boxShadow = ''; }, 1500);
     }
   }
+  if (params.get('mode') === 'free') {
+    var db = document.getElementById('create-duel-btn'); if (db) db.style.display = 'none';
+    var ll = document.getElementById('league-link'); if (ll) ll.style.display = 'none';
+  }
 })();
 
 function duelApi(url, body, method) {

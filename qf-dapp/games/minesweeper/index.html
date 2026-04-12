@@ -1175,6 +1175,10 @@ var duelMode = false, duelCode = null, duelId = null;
       setTimeout(function() { btn.style.borderColor = ''; btn.style.boxShadow = ''; }, 1500);
     }
   }
+  if (params.get('mode') === 'free') {
+    var db = document.getElementById('create-duel-btn'); if (db) db.style.display = 'none';
+    var ll = document.querySelector('.league-link'); if (ll) ll.style.display = 'none';
+  }
 })();
 
 var DUEL_API = (location.hostname === 'localhost' || location.hostname === '127.0.0.1') ? 'http://127.0.0.1:3860/api/dapp' : 'https://dapp-api.mathswins.co.uk/api/dapp';

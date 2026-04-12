@@ -1438,7 +1438,9 @@ var G = (function() {
   // ── Init ────────────────────────────────────────────────────────────
   // Check for league or duel params in URL first
   if (!checkUrlParams()) {
-    // Show normal mode selection
+    if (new URLSearchParams(window.location.search).get('mode') === 'free') {
+      startSolo();
+    }
   }
 
   return {
