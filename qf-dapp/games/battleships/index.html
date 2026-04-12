@@ -178,11 +178,6 @@ body{background:var(--bg);color:var(--text);font-family:'Inter',sans-serif;min-h
 .rcell.shot{cursor:default}
 .rcell.shot:hover{background:#080a08;box-shadow:none}
 
-/* Circular mask */
-.radar-container::before{
-  content:'';position:absolute;inset:0;z-index:3;pointer-events:none;
-  box-shadow:0 0 0 40px var(--bg);border-radius:50%;
-}
 /* Outer ring */
 .radar-container::after{
   content:'';position:absolute;inset:-2px;z-index:4;pointer-events:none;
