@@ -495,6 +495,20 @@ export function getWalletAchievements(wallet) {
     .all(wallet.toLowerCase());
 }
 
+export function getDuelWinCount(wallet) {
+  const db = getDb();
+  var row = db.prepare("SELECT COUNT(*) as count FROM duels WHERE winner = ? AND status = 'completed'").get(wallet.toLowerCase());
+  return row ? row.count : 0;
+}
+
+export function isRecentLeagueChampion(wallet) {
+  const db = getDb();
+  var cutoff = Date.now() - (30 * 24 * 3600 * 1000);
+  var row = db.prepare('SELECT COUNT(*) as count FROM league_prizes lp JOIN leagues l ON l.id = lp.league_id WHERE lp.wallet = ? AND lp.position = 1 AND l.settled_at >= ?')
+    .get(wallet.toLowerCase(), cutoff);
+  return row && row.count > 0;
+}
+
 export function getAllAchievements() {
   const db = getDb();
   return db.prepare(`

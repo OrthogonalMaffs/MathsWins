@@ -518,6 +518,15 @@ router.post('/duel/:code/submit', optionalWallet, (req, res) => {
       settlement = { winner: null, creatorPrize: half, opponentPrize: half, burn: burnAmount, team: teamAmount };
     }
 
+    // Check duel achievements
+    if (winner) {
+      var loser = winner.toLowerCase() === updated.creator_wallet.toLowerCase() ? updated.opponent_wallet : updated.creator_wallet;
+      var winnerScore = winner.toLowerCase() === updated.creator_wallet.toLowerCase() ? updated.creator_score : updated.opponent_score;
+      var loserScore = winner.toLowerCase() === updated.creator_wallet.toLowerCase() ? updated.opponent_score : updated.creator_score;
+      try { checkAchievements(winner, { type: 'duel_complete', gameId: duel.game_id, won: true, loserWallet: loser, winnerScore: winnerScore, loserScore: loserScore }); } catch (e) { /* achievement check must never block */ }
+      try { checkAchievements(loser, { type: 'duel_complete', gameId: duel.game_id, won: false, winnerWallet: winner, winnerScore: winnerScore, loserScore: loserScore }); } catch (e) { /* achievement check must never block */ }
+    }
+
     return res.json({ status: 'completed', duel: final, settlement });
   }
 

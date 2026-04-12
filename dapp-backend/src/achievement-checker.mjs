@@ -3,7 +3,7 @@
  * Called after league settlement, duel completion, or session completion.
  * Gated by ACHIEVEMENTS_ACTIVE env var.
  */
-import { awardAchievement, getWalletAchievements, getWalletStats, incrementWalletCounter, resetWalletCounter, getLeagueScoresByWallet, getLeaguePuzzles, getAllLeagueScores, getGlobalRecord, setGlobalRecord, getEarnedAchievementCount, getActiveSeasonalWindows, getCompletedLeagueCount, getLeagueWinCount, getLeagueWinsByGame } from './db/index.mjs';
+import { awardAchievement, getWalletAchievements, getWalletStats, incrementWalletCounter, resetWalletCounter, getLeagueScoresByWallet, getLeaguePuzzles, getAllLeagueScores, getGlobalRecord, setGlobalRecord, getEarnedAchievementCount, getActiveSeasonalWindows, getCompletedLeagueCount, getLeagueWinCount, getLeagueWinsByGame, getDuelWinCount, isRecentLeagueChampion } from './db/index.mjs';
 
 const ACHIEVEMENTS_ACTIVE = process.env.ACHIEVEMENTS_ACTIVE === 'true';
 
@@ -132,14 +132,39 @@ export function checkAchievements(wallet, context) {
   }
 
   // ── Duel achievements ─────────────────────────────────────────────
-  if (context.type === 'duel_complete' && context.won) {
-    // first-blood: first duel win
-    tryAward('first-blood');
-    // TODO: duelist — 10 duel wins
-    // TODO: gladiator — 50 duel wins
-    // TODO: heartbreaker — win by 1 point
-    // TODO: giant-slayer — beat someone with more total wins
-    // TODO: the-wall — win 5 consecutive duels (use wallet_stats.consecutive_duel_wins)
+  if (context.type === 'duel_complete') {
+    if (context.won) {
+      var duelWins = getDuelWinCount(wallet);
+
+      // first-blood: first duel win
+      if (duelWins >= 1) tryAward('first-blood');
+      // duelist: 10 duel wins
+      if (duelWins >= 10) tryAward('duelist');
+      // gladiator: 50 duel wins
+      if (duelWins >= 50) tryAward('gladiator');
+
+      // heartbreaker: win by exactly 1 point
+      if (context.winnerScore !== undefined && context.loserScore !== undefined) {
+        if (Math.abs(context.winnerScore - context.loserScore) === 1) {
+          tryAward('heartbreaker');
+        }
+      }
+
+      // giant-slayer: beat a recent league champion (won a league in last 30 days)
+      if (context.loserWallet && isRecentLeagueChampion(context.loserWallet)) {
+        tryAward('giant-slayer');
+      }
+
+      // the-wall: 10 consecutive duel wins
+      incrementWalletCounter(wallet, 'consecutive_duel_wins');
+      var duelStreak = getWalletStats(wallet);
+      if (duelStreak && duelStreak.consecutive_duel_wins >= 10) {
+        tryAward('the-wall');
+      }
+    } else {
+      // Loser: reset consecutive duel wins
+      resetWalletCounter(wallet, 'consecutive_duel_wins');
+    }
   }
 
   // ── Purity achievements (no errors) ───────────────────────────────
