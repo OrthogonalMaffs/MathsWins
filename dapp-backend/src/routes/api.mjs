@@ -255,6 +255,7 @@ router.post('/session/start', optionalWallet, (req, res) => {
 
     const entry = getEntry(req.wallet, gameId, weekId);
     if (!entry) {
+      opts.wallet = req.wallet;
       const result = startFreeSession(gameId, weekId, opts);
       return res.json(result);
     }
