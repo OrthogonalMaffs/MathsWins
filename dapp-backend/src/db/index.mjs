@@ -58,6 +58,11 @@ export function getDb() {
   try { db.exec('ALTER TABLE wallet_stats ADD COLUMN carrier_supremacy_count INTEGER DEFAULT 0'); } catch (e) { /* already exists */ }
   try { db.exec("ALTER TABLE wallet_stats ADD COLUMN shadow_from_count INTEGER DEFAULT 0"); } catch (e) { /* already exists */ }
   try { db.exec("ALTER TABLE wallet_stats ADD COLUMN duel_wins_by_game TEXT DEFAULT '{}'"); } catch (e) { /* already exists */ }
+  try { db.exec('ALTER TABLE wallet_stats ADD COLUMN expert_detonation_streak INTEGER DEFAULT 0'); } catch (e) { /* already exists */ }
+  try { db.exec('ALTER TABLE wallet_stats ADD COLUMN duel_master_count INTEGER DEFAULT 0'); } catch (e) { /* already exists */ }
+  try { db.exec('ALTER TABLE wallet_stats ADD COLUMN optimist_count INTEGER DEFAULT 0'); } catch (e) { /* already exists */ }
+  try { db.exec('ALTER TABLE wallet_stats ADD COLUMN prime_wrong_streak INTEGER DEFAULT 0'); } catch (e) { /* already exists */ }
+  try { db.exec('ALTER TABLE wallet_stats ADD COLUMN fibonacci_streak INTEGER DEFAULT 0'); } catch (e) { /* already exists */ }
   try { db.exec('ALTER TABLE duels ADD COLUMN creator_tx TEXT'); } catch (e) { /* already exists */ }
   try { db.exec('ALTER TABLE duels ADD COLUMN acceptor_tx TEXT'); } catch (e) { /* already exists */ }
 
@@ -805,7 +810,7 @@ export function completeDuel(duelId, winnerWallet) {
 export function expireOldDuels() {
   const db = getDb();
   const now = Date.now();
-  var expiring = db.prepare(`SELECT id, creator_wallet, opponent_wallet, stake, status FROM duels WHERE status IN ('created', 'accepted') AND expires_at < ?`).all(now);
+  var expiring = db.prepare(`SELECT id, creator_wallet, opponent_wallet, stake, status, creator_tx, acceptor_tx FROM duels WHERE status IN ('created', 'accepted') AND expires_at < ?`).all(now);
   if (expiring.length > 0) {
     db.prepare(`UPDATE duels SET status = 'expired' WHERE status IN ('created', 'accepted') AND expires_at < ?`).run(now);
   }

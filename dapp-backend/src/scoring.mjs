@@ -20,9 +20,9 @@ import {
   getSessionCount, upsertBestScore, getEntry,
   createGameState, getGameState, getActiveGameState,
   updateGameState, completeGameState, loadActiveGameStates,
-  upsertPersonalBest
+  upsertPersonalBest, awardAchievement
 } from './db/index.mjs';
-import { checkAchievements } from './achievement-checker.mjs';
+import { checkAchievements, checkMinesweeperFreePlay, checkFlagEverything, checkBlindEye, checkSumOfAllFears, checkWrongAnswerStreak, checkMidnight, checkFibonacci } from './achievement-checker.mjs';
 
 const JWT_SECRET = process.env.JWT_SECRET || 'dev-secret-change-me';
 const SESSION_PREFIX = 'sess_';
@@ -421,8 +421,9 @@ function buildAchContext(session, result, timeMs, won) {
     won: won,
     mistakes: session.mistakes || 0,
     hints: session.hintsUsed || 0,
-    undoCount: session.undoCount || 0,
-    moveCount: session.moveCount || 0,
+    undoCount: session.undoCount || (session.questions && session.questions[0] && session.questions[0].undoCount) || 0,
+    moveCount: session.moveCount || (session.questions && session.questions[0] && session.questions[0].moveCount) || 0,
+    difficulty: session.difficulty || 'default',
     // Poker Patience: finalScores.results array with {name, points} per line
     finalScores: result.finalScores || null,
     // Poker Patience: first two cards dealt
@@ -461,6 +462,25 @@ export function evaluate(sessionToken, answer) {
   const bank = questionBanks.get(session.gameId);
   const now = Date.now();
 
+  // ── Marathon tracking (4+ hours continuous, no 15-min gap) ──────────
+  try {
+    if (process.env.ACHIEVEMENTS_ACTIVE === 'true' && session.wallet) {
+      var prevActivity = session.lastActivityAt || null;
+      if (prevActivity !== null) {
+        var gap = now - prevActivity;
+        if (gap > 900000) { // 15 minutes
+          session.marathonBroken = true;
+        }
+      }
+      session.lastActivityAt = now;
+
+      var duration = now - session.startedAt;
+      if (duration >= 14400000 && !session.marathonBroken) { // 4 hours
+        awardAchievement(session.wallet, 'the-marathon');
+      }
+    }
+  } catch (e) { /* marathon check must never block */ }
+
   // ── Continuous mode (Sudoku) ────────────────────────────────────────
   if (session.mode === 'continuous') {
     const q = session.questions[0];
@@ -485,6 +505,14 @@ export function evaluate(sessionToken, answer) {
       response.finished = true;
       if (session.freePlay) response.freePlay = true;
       try { checkAchievements(session.wallet, buildAchContext(session, result, now - session.startedAt, false)); } catch (e) { /* achievement check must never block */ }
+      // Minesweeper detonation tracking
+      if (session.gameId === 'minesweeper' && result.detonated !== undefined) {
+        try { checkMinesweeperFreePlay(session.wallet, session.difficulty, false); } catch (e) { /* must never block */ }
+      }
+      // Flag-everything check on Minesweeper game over
+      if (session.gameId === 'minesweeper' && session.questions[0] && session.questions[0].flags) {
+        try { checkFlagEverything(session.wallet, session.difficulty, session.questions[0].flags.size || 0); } catch (e) { /* must never block */ }
+      }
     }
     // Successful submit
     else if (result.action === 'submit' && result.correct) {
@@ -508,6 +536,18 @@ export function evaluate(sessionToken, answer) {
       response.finished = true;
       if (session.freePlay) response.freePlay = true;
       try { checkAchievements(session.wallet, buildAchContext(session, result, completionTimeMs, true)); } catch (e) { /* achievement check must never block */ }
+      // Minesweeper win
+      if (session.gameId === 'minesweeper' && result.won) {
+        try { checkMinesweeperFreePlay(session.wallet, session.difficulty, true); } catch (e) { /* must never block */ }
+      }
+      // Nonogram blind-eye (no hints used)
+      if (session.gameId === 'nonogram') {
+        try { checkBlindEye(session.wallet, session.hintsUsed || 0); } catch (e) { /* must never block */ }
+      }
+      // Kakuro sum-of-all-fears (every cell correct on first attempt)
+      if (session.gameId === 'kakuro' && session.placements) {
+        try { checkSumOfAllFears(session.wallet, session.placements); } catch (e) { /* must never block */ }
+      }
     }
     // Failed submit (incomplete grid)
     else if (result.action === 'submit' && !result.correct) {
@@ -552,6 +592,11 @@ export function evaluate(sessionToken, answer) {
   session.questionStartedAt = Date.now();
   const finished = session.currentQ >= session.questions.length;
 
+  // Prime or Composite wrong-answer-streak
+  if (session.gameId === 'prime-or-composite') {
+    try { checkWrongAnswerStreak(session.wallet, result.correct); } catch (e) { /* must never block */ }
+  }
+
   const response = {
     correct: result.correct,
     points: result.points || 0,
@@ -577,6 +622,8 @@ export function evaluate(sessionToken, answer) {
     response.finalScore = session.score;
     if (session.freePlay) response.freePlay = true;
     try { checkAchievements(session.wallet, buildAchContext(session, result, completionTimeMs, true)); } catch (e) { /* achievement check must never block */ }
+    try { checkMidnight(session.wallet); } catch (e) { /* must never block */ }
+    try { checkFibonacci(session.wallet, session.score); } catch (e) { /* must never block */ }
   } else {
     const nextQ = session.questions[session.currentQ];
     response.question = bank.stripQuestion

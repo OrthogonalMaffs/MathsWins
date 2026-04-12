@@ -3,7 +3,7 @@
  * Called after league settlement, duel completion, or session completion.
  * Gated by ACHIEVEMENTS_ACTIVE env var.
  */
-import { awardAchievement, getWalletAchievements, getWalletStats, incrementWalletCounter, resetWalletCounter, upsertWalletStats, getLeagueScoresByWallet, getLeaguePuzzles, getAllLeagueScores, getGlobalRecord, setGlobalRecord, getEarnedAchievementCount, getActiveSeasonalWindows, getCompletedLeagueCount, getLeagueWinCount, getLeagueWinsByGame, getDuelWinCount, isRecentLeagueChampion, getBattleshipsRounds, getBattleshipsPlacement, getBattleshipsGameById, getBattleshipsRecord, incrementFreeGameCompletion, getDistinctFreeGamesPlayed } from './db/index.mjs';
+import { awardAchievement, getWalletAchievements, getWalletStats, incrementWalletCounter, resetWalletCounter, upsertWalletStats, getLeagueScoresByWallet, getLeaguePuzzles, getAllLeagueScores, getGlobalRecord, setGlobalRecord, getEarnedAchievementCount, getActiveSeasonalWindows, getCompletedLeagueCount, getLeagueWinCount, getLeagueWinsByGame, getDuelWinCount, isRecentLeagueChampion, getBattleshipsRounds, getBattleshipsPlacement, getBattleshipsGameById, getBattleshipsRecord, incrementFreeGameCompletion, getDistinctFreeGamesPlayed, getDb } from './db/index.mjs';
 import { checkSunk } from './games/battleships.mjs';
 
 const ACHIEVEMENTS_ACTIVE = process.env.ACHIEVEMENTS_ACTIVE === 'true';
@@ -530,11 +530,10 @@ export function checkAchievements(wallet, context) {
   }
 
   // ── Skill achievements ────────────────────────────────────────────
-  // TODO: clean-sweep — minesweeper perfect score (no misclicks)
-  // TODO: sub-minute — sudoku-duel completed in under 60 seconds
-  // TODO: untouchable — win a league without using any hints
-  // TODO: the-undo-king — freecell game with 50+ undos and still win
-  // TODO: wrong-answer-streak — get 5 wrong in a row in prime-or-composite
+  // the-undo-king: FreeCell game with 100+ undos and still win
+  if (context.gameId === 'freecell' && context.won && context.undoCount >= 100) {
+    tryAward('the-undo-king');
+  }
 
   // ── Poker Patience achievements ────────────────────────────────────
   if (context.gameId === 'poker-patience' && context.finalScores) {
@@ -736,3 +735,758 @@ export function checkAchievements(wallet, context) {
 
   return awarded;
 }
+
+/**
+ * Check weekend-warrior streak achievement.
+ * Call from any league puzzle submission or free play session completion.
+ */
+export function checkStreakAchievements(wallet) {
+  if (!ACHIEVEMENTS_ACTIVE) return [];
+  if (!wallet) return [];
+
+  var awarded = [];
+  function tryAward(id) {
+    var r = awardAchievement(wallet, id);
+    if (r.awarded) {
+      awarded.push(id);
+      console.log('Achievement awarded: ' + id + ' to ' + wallet.slice(0, 8) + '...' + (r.pioneer ? ' (PIONEER)' : ''));
+    }
+  }
+
+  var now = new Date();
+  if (now.getUTCDay() !== 6) return awarded; // Saturday only
+
+  var today = now.toISOString().slice(0, 10); // YYYY-MM-DD
+  var stats = getWalletStats(wallet);
+  var lastPlayed = stats ? stats.saturday_last_played : null;
+  var streak = stats ? (stats.saturday_streak || 0) : 0;
+
+  if (lastPlayed === today) return awarded; // Already counted today
+
+  if (lastPlayed) {
+    var lastDate = new Date(lastPlayed + 'T00:00:00Z');
+    var daysSince = Math.floor((now.getTime() - lastDate.getTime()) / (1000 * 60 * 60 * 24));
+    if (daysSince > 13) {
+      streak = 1; // Missed a Saturday — reset
+    } else {
+      streak = streak + 1;
+    }
+  } else {
+    streak = 1;
+  }
+
+  upsertWalletStats(wallet, { saturday_streak: streak, saturday_last_played: today });
+
+  if (streak >= 8) tryAward('weekend-warrior');
+
+  return awarded;
+}
+
+/**
+ * Check league-regular achievement (enter a league every week for 8 consecutive weeks).
+ * Call at POST /league/:leagueId/join.
+ */
+export function checkLeagueRegular(wallet) {
+  if (!ACHIEVEMENTS_ACTIVE) return [];
+  if (!wallet) return [];
+
+  var awarded = [];
+  function tryAward(id) {
+    var r = awardAchievement(wallet, id);
+    if (r.awarded) {
+      awarded.push(id);
+      console.log('Achievement awarded: ' + id + ' to ' + wallet.slice(0, 8) + '...' + (r.pioneer ? ' (PIONEER)' : ''));
+    }
+  }
+
+  var db = getDb();
+  var rows = db.prepare('SELECT joined_at FROM league_players WHERE wallet = ? ORDER BY joined_at DESC LIMIT 100')
+    .all(wallet.toLowerCase());
+
+  if (rows.length < 8) return awarded;
+
+  // Get distinct ISO weeks
+  var weeks = new Set();
+  for (var i = 0; i < rows.length; i++) {
+    var d = new Date(rows[i].joined_at);
+    var yr = d.getUTCFullYear();
+    var jan1 = new Date(Date.UTC(yr, 0, 1));
+    var dayOfYear = Math.floor((d.getTime() - jan1.getTime()) / 86400000) + 1;
+    var weekNum = Math.ceil((dayOfYear + jan1.getUTCDay()) / 7);
+    weeks.add(yr + '-W' + String(weekNum).padStart(2, '0'));
+  }
+
+  var sorted = Array.from(weeks).sort().reverse();
+  if (sorted.length < 8) return awarded;
+
+  var consecutive = 1;
+  for (var j = 1; j < sorted.length && consecutive < 8; j++) {
+    var prev = parseISOWeek(sorted[j - 1]);
+    var curr = parseISOWeek(sorted[j]);
+    if (prev && curr && prev - curr === 1) {
+      consecutive++;
+    } else {
+      break;
+    }
+  }
+
+  if (consecutive >= 8) tryAward('league-regular');
+
+  return awarded;
+}
+
+function parseISOWeek(weekStr) {
+  var parts = weekStr.split('-W');
+  return parseInt(parts[0]) * 100 + parseInt(parts[1]);
+}
+
+/**
+ * Check monthly achievements (active-player, grinder, league-month, double-winner).
+ * Call at league join, league settlement, and free play completion.
+ */
+export function checkMonthlyAchievements(wallet) {
+  if (!ACHIEVEMENTS_ACTIVE) return [];
+  if (!wallet) return [];
+
+  var awarded = [];
+  function tryAward(id) {
+    var r = awardAchievement(wallet, id);
+    if (r.awarded) {
+      awarded.push(id);
+      console.log('Achievement awarded: ' + id + ' to ' + wallet.slice(0, 8) + '...' + (r.pioneer ? ' (PIONEER)' : ''));
+    }
+  }
+
+  var db = getDb();
+  var now = new Date();
+  var monthStart = Date.UTC(now.getUTCFullYear(), now.getUTCMonth(), 1);
+  var monthEnd = Date.UTC(now.getUTCFullYear(), now.getUTCMonth() + 1, 1);
+
+  var w = wallet.toLowerCase();
+
+  // Active Player / Grinder: count free_game_completions + league_scores this month
+  var freeCount = db.prepare('SELECT SUM(count) as total FROM free_game_completions WHERE wallet = ? AND last_played >= ? AND last_played < ?')
+    .get(w, monthStart, monthEnd);
+  var leagueCount = db.prepare('SELECT COUNT(*) as total FROM league_scores WHERE wallet = ? AND submitted_at >= ? AND submitted_at < ?')
+    .get(w, monthStart, monthEnd);
+
+  var totalGames = (freeCount ? freeCount.total || 0 : 0) + (leagueCount ? leagueCount.total || 0 : 0);
+  if (totalGames >= 50) tryAward('active-player');
+  if (totalGames >= 100) tryAward('grinder');
+
+  // League Month: 4 league entries this month
+  var leagueEntries = db.prepare('SELECT COUNT(*) as total FROM league_players WHERE wallet = ? AND joined_at >= ? AND joined_at < ?')
+    .get(w, monthStart, monthEnd);
+  if (leagueEntries && leagueEntries.total >= 4) tryAward('league-month');
+
+  // Double Winner: 2 league wins this month
+  var leagueWins = db.prepare('SELECT COUNT(*) as total FROM league_prizes WHERE wallet = ? AND position = 1 AND paid_at >= ? AND paid_at < ?')
+    .get(w, monthStart, monthEnd);
+  if (leagueWins && leagueWins.total >= 2) tryAward('double-winner');
+
+  return awarded;
+}
+
+/**
+ * Check loyalty achievements based on total_qf_spent.
+ * Call after every total_qf_spent increment.
+ */
+export function checkLoyaltyAchievements(wallet) {
+  if (!ACHIEVEMENTS_ACTIVE) return [];
+  if (!wallet) return [];
+
+  var awarded = [];
+  function tryAward(id) {
+    var r = awardAchievement(wallet, id);
+    if (r.awarded) {
+      awarded.push(id);
+      console.log('Achievement awarded: ' + id + ' to ' + wallet.slice(0, 8) + '...' + (r.pioneer ? ' (PIONEER)' : ''));
+    }
+  }
+
+  var stats = getWalletStats(wallet);
+  var spent = stats ? (stats.total_qf_spent || 0) : 0;
+
+  if (spent >= 1000) tryAward('skin-in-the-game');
+  if (spent >= 10000) tryAward('true-believer');
+  if (spent >= 52000) {
+    tryAward('fifty-two-thousand');
+    if (awarded.indexOf('fifty-two-thousand') !== -1) {
+      console.log('[ACHIEVEMENT] fifty-two-thousand earned by ' + wallet + ' — manual 52f airdrop required');
+    }
+  }
+
+  return awarded;
+}
+
+/**
+ * Increment total_qf_spent and check loyalty achievements.
+ * Call at all 5 payment points.
+ */
+export function trackSpend(wallet, amount) {
+  if (!wallet || amount <= 0) return [];
+  var db = getDb();
+  db.prepare('INSERT INTO wallet_stats (wallet, total_qf_spent, updated_at) VALUES (?, ?, ?) ON CONFLICT(wallet) DO UPDATE SET total_qf_spent = total_qf_spent + ?, updated_at = ?')
+    .run(wallet.toLowerCase(), amount, Date.now(), amount, Date.now());
+  return checkLoyaltyAchievements(wallet);
+}
+
+/**
+ * Check night-owl for a specific league puzzle submission timestamp.
+ * Complements the existing night-owl check in checkAchievements which uses current time.
+ */
+export function checkNightOwlSubmission(wallet, submittedAt) {
+  if (!ACHIEVEMENTS_ACTIVE) return [];
+  if (!wallet || !submittedAt) return [];
+
+  var awarded = [];
+  var hour = new Date(submittedAt).getUTCHours();
+  if (hour >= 3 && hour < 5) {
+    var r = awardAchievement(wallet, 'night-owl');
+    if (r.awarded) {
+      awarded.push('night-owl');
+      console.log('Achievement awarded: night-owl to ' + wallet.slice(0, 8) + '...' + (r.pioneer ? ' (PIONEER)' : ''));
+    }
+  }
+
+  return awarded;
+}
+
+/**
+ * Check the-insomniac: all 10 league puzzles completed between 00:00–06:00 UTC.
+ * Call at league settlement, once per player.
+ */
+export function checkInsomniac(wallet, leagueId) {
+  if (!ACHIEVEMENTS_ACTIVE) return [];
+  if (!wallet || !leagueId) return [];
+
+  var awarded = [];
+  var scores = getLeagueScoresByWallet(leagueId, wallet);
+  var puzzles = getLeaguePuzzles(leagueId);
+  if (scores.length !== puzzles.length || scores.length === 0) return awarded;
+
+  var allNighttime = scores.every(function(s) {
+    var hour = new Date(s.submitted_at).getUTCHours();
+    return hour >= 0 && hour < 6;
+  });
+
+  if (allNighttime) {
+    var r = awardAchievement(wallet, 'the-insomniac');
+    if (r.awarded) {
+      awarded.push('the-insomniac');
+      console.log('Achievement awarded: the-insomniac to ' + wallet.slice(0, 8) + '...' + (r.pioneer ? ' (PIONEER)' : ''));
+    }
+  }
+
+  return awarded;
+}
+
+// ── Game-specific achievements (Batch 6) ─────────────────────────────
+
+/**
+ * Check FreeCell league achievements at settlement.
+ * no-cell-used: zero free cells used across all 10 puzzles.
+ */
+export function checkFreeCellLeague(wallet, leagueId) {
+  if (!ACHIEVEMENTS_ACTIVE) return [];
+  if (!wallet || !leagueId) return [];
+
+  var awarded = [];
+  function tryAward(id) {
+    var r = awardAchievement(wallet, id);
+    if (r.awarded) {
+      awarded.push(id);
+      console.log('Achievement awarded: ' + id + ' to ' + wallet.slice(0, 8) + '...' + (r.pioneer ? ' (PIONEER)' : ''));
+    }
+  }
+
+  var scores = getLeagueScoresByWallet(leagueId, wallet);
+  var puzzles = getLeaguePuzzles(leagueId);
+  if (scores.length !== puzzles.length || scores.length === 0) return awarded;
+
+  var totalFreeCells = scores.reduce(function(sum, s) { return sum + (s.free_cells_used || 0); }, 0);
+  if (totalFreeCells === 0) tryAward('no-cell-used');
+
+  return awarded;
+}
+
+/**
+ * Check KenKen league achievement at settlement.
+ * perfect-logic: mistakes=0 AND hints=0 across all 10 puzzles.
+ */
+export function checkKenKenLeague(wallet, leagueId) {
+  if (!ACHIEVEMENTS_ACTIVE) return [];
+  if (!wallet || !leagueId) return [];
+
+  var awarded = [];
+  function tryAward(id) {
+    var r = awardAchievement(wallet, id);
+    if (r.awarded) {
+      awarded.push(id);
+      console.log('Achievement awarded: ' + id + ' to ' + wallet.slice(0, 8) + '...' + (r.pioneer ? ' (PIONEER)' : ''));
+    }
+  }
+
+  var scores = getLeagueScoresByWallet(leagueId, wallet);
+  var puzzles = getLeaguePuzzles(leagueId);
+  if (scores.length !== puzzles.length || scores.length === 0) return awarded;
+
+  var allPerfect = scores.every(function(s) { return (s.mistakes || 0) === 0 && (s.hints || 0) === 0; });
+  if (allPerfect) tryAward('perfect-logic');
+
+  return awarded;
+}
+
+/**
+ * Check Nonogram league achievements at settlement.
+ * the-artist: position=1 AND mistakes=0 AND hints=0 on all 10 puzzles.
+ */
+export function checkNonogramLeague(wallet, leagueId, position) {
+  if (!ACHIEVEMENTS_ACTIVE) return [];
+  if (!wallet || !leagueId) return [];
+
+  var awarded = [];
+  function tryAward(id) {
+    var r = awardAchievement(wallet, id);
+    if (r.awarded) {
+      awarded.push(id);
+      console.log('Achievement awarded: ' + id + ' to ' + wallet.slice(0, 8) + '...' + (r.pioneer ? ' (PIONEER)' : ''));
+    }
+  }
+
+  if (position !== 1) return awarded;
+
+  var scores = getLeagueScoresByWallet(leagueId, wallet);
+  var puzzles = getLeaguePuzzles(leagueId);
+  if (scores.length !== puzzles.length || scores.length === 0) return awarded;
+
+  var allPerfect = scores.every(function(s) { return (s.mistakes || 0) === 0 && (s.hints || 0) === 0; });
+  if (allPerfect) tryAward('the-artist');
+
+  return awarded;
+}
+
+/**
+ * Check Kakuro league achievements at settlement.
+ * the-crossword-king: mistakes=0 AND hints=0 on all 10 puzzles.
+ */
+export function checkKakuroLeague(wallet, leagueId) {
+  if (!ACHIEVEMENTS_ACTIVE) return [];
+  if (!wallet || !leagueId) return [];
+
+  var awarded = [];
+  function tryAward(id) {
+    var r = awardAchievement(wallet, id);
+    if (r.awarded) {
+      awarded.push(id);
+      console.log('Achievement awarded: ' + id + ' to ' + wallet.slice(0, 8) + '...' + (r.pioneer ? ' (PIONEER)' : ''));
+    }
+  }
+
+  var scores = getLeagueScoresByWallet(leagueId, wallet);
+  var puzzles = getLeaguePuzzles(leagueId);
+  if (scores.length !== puzzles.length || scores.length === 0) return awarded;
+
+  var allPerfect = scores.every(function(s) { return (s.mistakes || 0) === 0 && (s.hints || 0) === 0; });
+  if (allPerfect) tryAward('the-crossword-king');
+
+  return awarded;
+}
+
+/**
+ * Check Minesweeper achievements after free play completion.
+ * clean-sweep: win Expert difficulty.
+ * the-comeback: win Expert after 3+ consecutive Expert detonations.
+ */
+export function checkMinesweeperFreePlay(wallet, difficulty, won) {
+  if (!ACHIEVEMENTS_ACTIVE) return [];
+  if (!wallet) return [];
+
+  var awarded = [];
+  function tryAward(id) {
+    var r = awardAchievement(wallet, id);
+    if (r.awarded) {
+      awarded.push(id);
+      console.log('Achievement awarded: ' + id + ' to ' + wallet.slice(0, 8) + '...' + (r.pioneer ? ' (PIONEER)' : ''));
+    }
+  }
+
+  if (difficulty === 'expert') {
+    if (won) {
+      tryAward('clean-sweep');
+      // the-comeback: check if 3+ consecutive Expert detonations preceded this win
+      var stats = getWalletStats(wallet);
+      if (stats && stats.expert_detonation_streak >= 3) {
+        tryAward('the-comeback');
+      }
+      resetWalletCounter(wallet, 'expert_detonation_streak');
+    } else {
+      incrementWalletCounter(wallet, 'expert_detonation_streak');
+    }
+  }
+
+  return awarded;
+}
+
+/**
+ * Check flag-everything achievement.
+ * flags >= total cells for the given difficulty.
+ */
+export function checkFlagEverything(wallet, difficulty, flags) {
+  if (!ACHIEVEMENTS_ACTIVE) return [];
+  if (!wallet || !flags) return [];
+
+  var GRID_SIZES = {
+    pocket: 144, beginner: 81, intermediate: 256, advanced: 324, expert: 480
+  };
+  var totalCells = GRID_SIZES[difficulty];
+  if (!totalCells) return [];
+
+  var awarded = [];
+  if (flags >= totalCells) {
+    var r = awardAchievement(wallet, 'flag-everything');
+    if (r.awarded) {
+      awarded.push('flag-everything');
+      console.log('Achievement awarded: flag-everything to ' + wallet.slice(0, 8) + '...' + (r.pioneer ? ' (PIONEER)' : ''));
+    }
+  }
+
+  return awarded;
+}
+
+/**
+ * Check blind-eye achievement for Nonogram.
+ * Complete a puzzle with zero hints.
+ */
+export function checkBlindEye(wallet, hints) {
+  if (!ACHIEVEMENTS_ACTIVE) return [];
+  if (!wallet) return [];
+
+  var awarded = [];
+  if (hints === 0) {
+    var r = awardAchievement(wallet, 'blind-eye');
+    if (r.awarded) {
+      awarded.push('blind-eye');
+      console.log('Achievement awarded: blind-eye to ' + wallet.slice(0, 8) + '...' + (r.pioneer ? ' (PIONEER)' : ''));
+    }
+  }
+
+  return awarded;
+}
+
+/**
+ * Check sum-of-all-fears for Kakuro.
+ * Every cell correct on first attempt (no duplicate cell entries with incorrect first value).
+ */
+export function checkSumOfAllFears(wallet, placements) {
+  if (!ACHIEVEMENTS_ACTIVE) return [];
+  if (!wallet || !placements || placements.length === 0) return [];
+
+  // Track first attempt per cell
+  var firstAttempts = {};
+  var anyIncorrectFirst = false;
+  for (var i = 0; i < placements.length; i++) {
+    var p = placements[i];
+    if (firstAttempts[p.cell] === undefined) {
+      firstAttempts[p.cell] = p.correct;
+      if (!p.correct) { anyIncorrectFirst = true; break; }
+    }
+  }
+
+  var awarded = [];
+  if (!anyIncorrectFirst && Object.keys(firstAttempts).length > 0) {
+    var r = awardAchievement(wallet, 'sum-of-all-fears');
+    if (r.awarded) {
+      awarded.push('sum-of-all-fears');
+      console.log('Achievement awarded: sum-of-all-fears to ' + wallet.slice(0, 8) + '...' + (r.pioneer ? ' (PIONEER)' : ''));
+    }
+  }
+
+  return awarded;
+}
+
+// ── Batch 7: Meta, per-game volume, absurd, wooden spoons ────────────
+
+var LEAGUE_CAPABLE_GAMES = ['sudoku-duel', 'kenken', 'minesweeper', 'freecell', 'kakuro', 'nonogram', 'poker-patience', 'cribbage-solitaire'];
+
+var FIBONACCI_SET = new Set([1,2,3,5,8,13,21,34,55,89,144,233,377,610,987,1597,2584,4181,6765]);
+
+function tryAwardStandalone(wallet, id) {
+  var r = awardAchievement(wallet, id);
+  if (r.awarded) {
+    console.log('Achievement awarded: ' + id + ' to ' + wallet.slice(0, 8) + '...' + (r.pioneer ? ' (PIONEER)' : ''));
+    return true;
+  }
+  return false;
+}
+
+/**
+ * Check per-game volume and wooden spoon achievements at league settlement.
+ * Call once per player after positions are finalised.
+ */
+export function checkSettlementBatch7(wallet, leagueId, gameId, position, totalPlayers) {
+  if (!ACHIEVEMENTS_ACTIVE) return [];
+  if (!wallet) return [];
+
+  var awarded = [];
+  var db = getDb();
+  var w = wallet.toLowerCase();
+
+  // ── Per-game volume ─────────────────────────────────────────────
+  // specialist: 10 settled leagues on this game
+  var gameLeagues = db.prepare("SELECT COUNT(*) as c FROM league_players lp JOIN leagues l ON lp.league_id = l.id WHERE lp.wallet = ? AND l.game_id = ? AND l.status = 'settled'").get(w, gameId);
+  if (gameLeagues && gameLeagues.c >= 10) {
+    if (tryAwardStandalone(wallet, 'specialist')) awarded.push('specialist');
+  }
+
+  // master-of-one: 3 wins on this game
+  var gameWins = db.prepare("SELECT COUNT(*) as c FROM league_prizes lp JOIN leagues l ON lp.league_id = l.id WHERE lp.wallet = ? AND lp.position = 1 AND l.game_id = ?").get(w, gameId);
+  if (gameWins && gameWins.c >= 3) {
+    if (tryAwardStandalone(wallet, 'master-of-one')) awarded.push('master-of-one');
+  }
+
+  // world-tour: played at least one settled league on every league-capable game
+  var distinctGames = db.prepare("SELECT COUNT(DISTINCT l.game_id) as c FROM league_players lp JOIN leagues l ON lp.league_id = l.id WHERE lp.wallet = ? AND l.status = 'settled' AND l.game_id IN (" + LEAGUE_CAPABLE_GAMES.map(function() { return '?'; }).join(',') + ")").get(w, ...LEAGUE_CAPABLE_GAMES);
+  if (distinctGames && distinctGames.c >= 8) {
+    if (tryAwardStandalone(wallet, 'world-tour')) awarded.push('world-tour');
+  }
+
+  // high-roller: silver league on every league-capable game
+  var silverGames = db.prepare("SELECT COUNT(DISTINCT l.game_id) as c FROM league_players lp JOIN leagues l ON lp.league_id = l.id WHERE lp.wallet = ? AND l.tier = 'silver' AND l.game_id IN (" + LEAGUE_CAPABLE_GAMES.map(function() { return '?'; }).join(',') + ")").get(w, ...LEAGUE_CAPABLE_GAMES);
+  if (silverGames && silverGames.c >= 8) {
+    if (tryAwardStandalone(wallet, 'high-roller')) awarded.push('high-roller');
+  }
+
+  // ── Breadwinner (prizes > entry fees, min 10 leagues) ───────────
+  var leagueCount = db.prepare("SELECT COUNT(*) as c FROM league_players WHERE wallet = ?").get(w);
+  if (leagueCount && leagueCount.c >= 10) {
+    var totalPrizes = db.prepare("SELECT COALESCE(SUM(amount), 0) as total FROM league_prizes WHERE wallet = ?").get(w);
+    var totalFees = db.prepare("SELECT COALESCE(SUM(l.entry_fee), 0) as total FROM league_players lp JOIN leagues l ON lp.league_id = l.id WHERE lp.wallet = ?").get(w);
+    if (totalPrizes && totalFees && totalPrizes.total > totalFees.total) {
+      if (tryAwardStandalone(wallet, 'breadwinner')) awarded.push('breadwinner');
+    }
+  }
+
+  // ── Wooden spoons ───────────────────────────────────────────────
+  // the-optimist: finish last in 10 leagues (with at least 1 puzzle submitted)
+  if (position === totalPlayers && totalPlayers >= 4) {
+    var scores = getLeagueScoresByWallet(leagueId, wallet);
+    if (scores.length >= 1) {
+      incrementWalletCounter(wallet, 'optimist_count');
+      var optStats = getWalletStats(wallet);
+      if (optStats && optStats.optimist_count >= 10) {
+        if (tryAwardStandalone(wallet, 'the-optimist')) awarded.push('the-optimist');
+      }
+    }
+  }
+
+  // score-one: total league score = 1
+  var scores = getLeagueScoresByWallet(leagueId, wallet);
+  var totalScore = scores.reduce(function(s, r) { return s + r.score; }, 0);
+  if (totalScore === 1) {
+    if (tryAwardStandalone(wallet, 'score-one')) awarded.push('score-one');
+  }
+
+  // the-pacifist: Kakuro league, score 0 on all puzzles
+  if (gameId === 'kakuro') {
+    var puzzles = getLeaguePuzzles(leagueId);
+    if (scores.length === puzzles.length && scores.length > 0 && totalScore === 0) {
+      if (tryAwardStandalone(wallet, 'the-pacifist')) awarded.push('the-pacifist');
+    }
+  }
+
+  // dnf-king: in league_players but 0 scores submitted or all scores = 0
+  if (scores.length === 0) {
+    if (tryAwardStandalone(wallet, 'dnf-king')) awarded.push('dnf-king');
+  }
+
+  // memory-loss: Sudoku Duel league puzzle with any mistake
+  if (gameId === 'sudoku-duel') {
+    var anyMistake = scores.some(function(s) { return (s.mistakes || 0) > 0; });
+    if (anyMistake) {
+      if (tryAwardStandalone(wallet, 'memory-loss')) awarded.push('memory-loss');
+    }
+  }
+
+  // slow-burn: Minesweeper league, highest total time of anyone (all 10 submitted)
+  // last-and-slow: last place AND highest total time
+  // These require comparing across all players — handled separately below
+
+  return awarded;
+}
+
+/**
+ * Check slow-burn and last-and-slow at Minesweeper league settlement.
+ * Must be called once per league (not per player) after all players are processed.
+ */
+export function checkSlowBurnAndLastSlow(leagueId, gameId, leaderboard) {
+  if (!ACHIEVEMENTS_ACTIVE) return [];
+  if (gameId !== 'minesweeper') return [];
+
+  var awarded = [];
+  var db = getDb();
+  var puzzles = getLeaguePuzzles(leagueId);
+
+  var playerTimes = [];
+  for (var i = 0; i < leaderboard.length; i++) {
+    var w = leaderboard[i].wallet;
+    var scores = getLeagueScoresByWallet(leagueId, w);
+    if (scores.length !== puzzles.length) continue;
+    var totalTime = scores.reduce(function(s, r) { return s + (r.time_ms || 0); }, 0);
+    playerTimes.push({ wallet: w, totalTime: totalTime, position: i + 1 });
+  }
+
+  if (playerTimes.length < 2) return awarded;
+
+  playerTimes.sort(function(a, b) { return b.totalTime - a.totalTime; });
+  var slowest = playerTimes[0];
+
+  // slow-burn: slowest total time among those who completed all puzzles
+  if (tryAwardStandalone(slowest.wallet, 'slow-burn')) awarded.push('slow-burn');
+
+  // last-and-slow: last place AND slowest time
+  var lastPosition = leaderboard.length;
+  if (slowest.position === lastPosition) {
+    if (tryAwardStandalone(slowest.wallet, 'last-and-slow')) awarded.push('last-and-slow');
+  }
+
+  return awarded;
+}
+
+/**
+ * Check flagless-and-wrong on Minesweeper league puzzle submission.
+ * flags_used = 0 AND detonated (mistakes > 0).
+ */
+export function checkFlaglessAndWrong(wallet, flagsUsed, mistakes) {
+  if (!ACHIEVEMENTS_ACTIVE) return [];
+  if (!wallet) return [];
+
+  var awarded = [];
+  if (flagsUsed === 0 && mistakes > 0) {
+    if (tryAwardStandalone(wallet, 'flagless-and-wrong')) awarded.push('flagless-and-wrong');
+  }
+  return awarded;
+}
+
+/**
+ * Check the-grinder at league join (1,000 QF cumulative entry fees).
+ */
+export function checkTheGrinder(wallet) {
+  if (!ACHIEVEMENTS_ACTIVE) return [];
+  if (!wallet) return [];
+
+  var db = getDb();
+  var w = wallet.toLowerCase();
+  var totalFees = db.prepare("SELECT COALESCE(SUM(l.entry_fee), 0) as total FROM league_players lp JOIN leagues l ON lp.league_id = l.id WHERE lp.wallet = ?").get(w);
+  var awarded = [];
+  if (totalFees && totalFees.total >= 1000) {
+    if (tryAwardStandalone(wallet, 'the-grinder')) awarded.push('the-grinder');
+  }
+  return awarded;
+}
+
+/**
+ * Check pioneer-hunter and the-whale at mint time.
+ */
+export function checkMintMeta(wallet) {
+  if (!ACHIEVEMENTS_ACTIVE) return [];
+  if (!wallet) return [];
+
+  var awarded = [];
+  var db = getDb();
+  var w = wallet.toLowerCase();
+
+  // pioneer-hunter: 5+ pioneer tags minted
+  var pioneers = db.prepare("SELECT COUNT(*) as c FROM achievement_eligibility WHERE wallet = ? AND is_pioneer = 1 AND minted_at IS NOT NULL").get(w);
+  if (pioneers && pioneers.c >= 5) {
+    if (tryAwardStandalone(wallet, 'pioneer-hunter')) awarded.push('pioneer-hunter');
+  }
+
+  // the-whale: 10,000+ QF spent on minting
+  var stats = getWalletStats(wallet);
+  if (stats && stats.total_qf_minted >= 10000) {
+    if (tryAwardStandalone(wallet, 'the-whale')) awarded.push('the-whale');
+  }
+
+  return awarded;
+}
+
+/**
+ * Check duel-master on duel win.
+ * Win against opponent who has at least 1 minted achievement.
+ */
+export function checkDuelMaster(wallet, opponentWallet) {
+  if (!ACHIEVEMENTS_ACTIVE) return [];
+  if (!wallet || !opponentWallet) return [];
+
+  var awarded = [];
+  var db = getDb();
+
+  var oppAch = db.prepare("SELECT COUNT(*) as c FROM achievement_eligibility WHERE wallet = ? AND minted_at IS NOT NULL").get(opponentWallet.toLowerCase());
+  if (oppAch && oppAch.c >= 1) {
+    incrementWalletCounter(wallet, 'duel_master_count');
+    var stats = getWalletStats(wallet);
+    if (stats && stats.duel_master_count >= 10) {
+      if (tryAwardStandalone(wallet, 'duel-master')) awarded.push('duel-master');
+    }
+  }
+
+  return awarded;
+}
+
+/**
+ * Check midnight achievement — game completed between 00:00:00 and 00:00:59 UTC.
+ */
+export function checkMidnight(wallet) {
+  if (!ACHIEVEMENTS_ACTIVE) return [];
+  if (!wallet) return [];
+
+  var now = new Date();
+  var awarded = [];
+  if (now.getUTCHours() === 0 && now.getUTCMinutes() === 0) {
+    if (tryAwardStandalone(wallet, 'midnight')) awarded.push('midnight');
+  }
+  return awarded;
+}
+
+/**
+ * Check fibonacci streak — 5 consecutive games with a Fibonacci score.
+ */
+export function checkFibonacci(wallet, score) {
+  if (!ACHIEVEMENTS_ACTIVE) return [];
+  if (!wallet || score === undefined) return [];
+
+  var awarded = [];
+  if (FIBONACCI_SET.has(score)) {
+    incrementWalletCounter(wallet, 'fibonacci_streak');
+    var stats = getWalletStats(wallet);
+    if (stats && stats.fibonacci_streak >= 5) {
+      if (tryAwardStandalone(wallet, 'fibonacci')) awarded.push('fibonacci');
+    }
+  } else {
+    resetWalletCounter(wallet, 'fibonacci_streak');
+  }
+  return awarded;
+}
+
+/**
+ * Check wrong-answer-streak for Prime or Composite.
+ * Track on the in-memory session and persist to wallet_stats.
+ */
+export function checkWrongAnswerStreak(wallet, correct) {
+  if (!ACHIEVEMENTS_ACTIVE) return [];
+  if (!wallet) return [];
+
+  var awarded = [];
+  if (!correct) {
+    incrementWalletCounter(wallet, 'prime_wrong_streak');
+    var stats = getWalletStats(wallet);
+    if (stats && stats.prime_wrong_streak >= 10) {
+      if (tryAwardStandalone(wallet, 'wrong-answer-streak')) awarded.push('wrong-answer-streak');
+    }
+  } else {
+    resetWalletCounter(wallet, 'prime_wrong_streak');
+  }
+  return awarded;
+}
+

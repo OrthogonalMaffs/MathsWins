@@ -20,6 +20,7 @@
  *
  * SOLUTION NEVER LEAVES THIS FILE.
  */
+import { awardAchievement } from '../db/index.mjs';
 
 export const GAME_ID = 'sudoku-duel';
 
@@ -202,6 +203,18 @@ export function evaluator(question, answer, elapsedMs, session) {
     const isCorrect = value === solution[cell];
 
     session.placements.push({ cell, value, correct: isCorrect, ts: now });
+
+    // six-seven: place a 6 immediately followed by a 7, both correct
+    if (isCorrect && session.placements.length >= 2) {
+      var prev = session.placements[session.placements.length - 2];
+      if (prev.value === 6 && value === 7 && prev.correct) {
+        try {
+          if (process.env.ACHIEVEMENTS_ACTIVE === 'true' && session.wallet) {
+            awardAchievement(session.wallet, 'six-seven');
+          }
+        } catch (e) { /* must never block */ }
+      }
+    }
 
     if (isCorrect) {
       session.grid[cell] = value;

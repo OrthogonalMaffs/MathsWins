@@ -117,15 +117,15 @@ setInterval(async () => {
   try {
     var expired = expireOldDuels();
     for (var d of expired) {
-      // Refund creator stake
-      if (d.creator_wallet && d.stake > 0) {
+      // Refund creator stake only if they actually paid
+      if (d.creator_wallet && d.stake > 0 && d.creator_tx) {
         try {
           await refundDuel(d.creator_wallet, d.stake);
           console.log('Duel ' + d.id.slice(0, 8) + '... expired — refunded ' + d.stake + ' QF to creator ' + d.creator_wallet.slice(0, 8) + '...');
         } catch (e) { console.error('Duel refund failed for creator ' + d.creator_wallet.slice(0, 8) + '...:', e.message); }
       }
-      // Refund opponent stake if they had accepted
-      if (d.status === 'accepted' && d.opponent_wallet && d.stake > 0) {
+      // Refund opponent stake only if they actually paid
+      if (d.status === 'accepted' && d.opponent_wallet && d.stake > 0 && d.acceptor_tx) {
         try {
           await refundDuel(d.opponent_wallet, d.stake);
           console.log('Duel ' + d.id.slice(0, 8) + '... expired — refunded ' + d.stake + ' QF to opponent ' + d.opponent_wallet.slice(0, 8) + '...');

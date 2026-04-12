@@ -10,7 +10,7 @@ import { ethers } from 'ethers';
 import { signatureVerify, decodeAddress } from '@polkadot/util-crypto';
 import { getDb } from '../db/index.mjs';
 import { doSettleLeague, checkEarlySettlement, recoverStuckLeagues, mintCommemorative } from '../league-settle.mjs';
-import { checkAchievements, checkContrarian } from '../achievement-checker.mjs';
+import { checkAchievements, checkContrarian, checkStreakAchievements, checkLeagueRegular, checkMonthlyAchievements, trackSpend, checkNightOwlSubmission, checkMinesweeperFreePlay, checkFlagEverything, checkBlindEye, checkSumOfAllFears, checkTheGrinder, checkMintMeta, checkDuelMaster, checkFlaglessAndWrong, checkMidnight, checkFibonacci, checkWrongAnswerStreak } from '../achievement-checker.mjs';
 import { sendQF, settleDuel, settleDuelDraw, refundDuel, getEscrowAddress, BURN_ADDRESS, TEAM_WALLET } from '../escrow.mjs';
 import { createBattleshipsGame, getBattleshipsGameByCode, getBattleshipsGameById, updateBattleshipsGameStatus, saveBattleshipsPlacement, getBattleshipsPlacement, getBattleshipsPlacements, addBattleshipsRound, getBattleshipsRounds, getBattleshipsRecord, updateBattleshipsRecord, getActiveBattleshipsGames, getBattleshipsGamesByWallet } from '../db/index.mjs';
 import { getAchievementRegistry, getAchievement, awardAchievement, getWalletAchievements, getAllAchievements, getGlobalRecord, getPersonalBests, getPersonalBest, getLeagueBests, getWalletStats, getWalletLeagueHistory, getWalletTrophies, getGameStateForLeaguePuzzle, completeGameState, getFlaggedSessions, getGlobalLeaderboard, getGlobalLeaderboardEntry, addGlobalLeaderboardEntry, getWalletLeaderboardPositions, getGameState, getGame, upsertPersonalBest, incrementPbBeatenCount, retireAchievement } from '../db/index.mjs';
@@ -366,6 +366,10 @@ router.post('/session/submit-freeplay', optionalWallet, (req, res) => {
         pbBeaten: pbBeaten,
       });
     } catch (e) { /* achievement check must never block */ }
+    try { checkStreakAchievements(req.wallet); } catch (e) { /* must never block */ }
+    try { checkMonthlyAchievements(req.wallet); } catch (e) { /* must never block */ }
+    try { checkMidnight(req.wallet); } catch (e) { /* must never block */ }
+    try { checkFibonacci(req.wallet, score); } catch (e) { /* must never block */ }
 
     res.json({ success: true, achievements: awarded });
   } catch (e) {
@@ -471,6 +475,11 @@ router.post('/duel/create', optionalWallet, async (req, res) => {
     db.prepare('UPDATE duels SET creator_tx = ? WHERE id = ?').run(txHash, id);
   }
 
+  // Track spend
+  if (!isBuilder && stakeAmount > 0) {
+    try { trackSpend(wallet, stakeAmount); } catch (e) { /* must never block */ }
+  }
+
   res.json({ duelId: id, shareCode, puzzleSeed, stake: stakeAmount, expiresAt });
 });
 
@@ -517,6 +526,10 @@ router.post('/duel/:code/accept', optionalWallet, (req, res) => {
     if (txHash) {
       const db = getDb();
       db.prepare('UPDATE duels SET acceptor_tx = ? WHERE id = ?').run(txHash, duel.id);
+    }
+    // Track spend
+    if (!isBuilder && duel.stake > 0) {
+      try { trackSpend(wallet, duel.stake); } catch (e) { /* must never block */ }
     }
   }
 
@@ -571,16 +584,21 @@ router.post('/duel/:code/submit', optionalWallet, (req, res) => {
       settlement = { winner: null, creatorPrize: half, opponentPrize: half, burn: burnAmount, team: teamAmount };
     }
 
-    // Settle on-chain (fire and forget — must never block response)
-    if (winner) {
-      settleDuel(winner, burnAmount, teamAmount, prizePool).then(function(r) {
-        console.log('Duel ' + code + ' settled: winner=' + winner.slice(0, 8) + '... prize=' + prizePool + ' burn=' + burnAmount + ' team=' + teamAmount);
-      }).catch(function(e) { console.error('Duel settlement failed for ' + code + ':', e.message); });
+    // Settle on-chain only if both players actually paid (fire and forget — must never block response)
+    var bothPaid = final.creator_tx && final.acceptor_tx;
+    if (bothPaid) {
+      if (winner) {
+        settleDuel(winner, burnAmount, teamAmount, prizePool).then(function(r) {
+          console.log('Duel ' + code + ' settled: winner=' + winner.slice(0, 8) + '... prize=' + prizePool + ' burn=' + burnAmount + ' team=' + teamAmount);
+        }).catch(function(e) { console.error('Duel settlement failed for ' + code + ':', e.message); });
+      } else {
+        var half = Math.floor(prizePool / 2);
+        settleDuelDraw(updated.creator_wallet, updated.opponent_wallet, burnAmount, teamAmount, half).then(function(r) {
+          console.log('Duel ' + code + ' draw settled: each=' + half + ' burn=' + burnAmount + ' team=' + teamAmount);
+        }).catch(function(e) { console.error('Duel draw settlement failed for ' + code + ':', e.message); });
+      }
     } else {
-      var half = Math.floor(prizePool / 2);
-      settleDuelDraw(updated.creator_wallet, updated.opponent_wallet, burnAmount, teamAmount, half).then(function(r) {
-        console.log('Duel ' + code + ' draw settled: each=' + half + ' burn=' + burnAmount + ' team=' + teamAmount);
-      }).catch(function(e) { console.error('Duel draw settlement failed for ' + code + ':', e.message); });
+      console.log('Duel ' + code + ' completed — no on-chain settlement (free duel, missing payment tx)');
     }
 
     // Check duel achievements
@@ -591,6 +609,7 @@ router.post('/duel/:code/submit', optionalWallet, (req, res) => {
       try { checkAchievements(winner, { type: 'duel_complete', gameId: duel.game_id, won: true, loserWallet: loser, winnerScore: winnerScore, loserScore: loserScore }); } catch (e) { /* achievement check must never block */ }
       try { checkAchievements(loser, { type: 'duel_complete', gameId: duel.game_id, won: false, winnerWallet: winner, winnerScore: winnerScore, loserScore: loserScore }); } catch (e) { /* achievement check must never block */ }
       try { checkContrarian(winner, duel.game_id); } catch (e) { /* achievement check must never block */ }
+      try { checkDuelMaster(winner, loser); } catch (e) { /* must never block */ }
     }
 
     return res.json({ status: 'completed', duel: final, settlement });
@@ -866,6 +885,14 @@ router.post('/league/:leagueId/join', optionalWallet, (req, res) => {
   }
   addLeaguePlayer(league.id, wallet, isBuilder ? 'builder-whitelist' : txHash, now);
 
+  // Track spend and check achievements
+  if (!isBuilder && league.entry_fee > 0) {
+    try { trackSpend(wallet, league.entry_fee); } catch (e) { /* must never block */ }
+  }
+  try { checkLeagueRegular(wallet); } catch (e) { /* must never block */ }
+  try { checkMonthlyAchievements(wallet); } catch (e) { /* must never block */ }
+  try { checkTheGrinder(wallet); } catch (e) { /* must never block */ }
+
   const newCount = getLeaguePlayerCount(league.id);
 
   // Auto-start if hit min or max during registration
@@ -1003,6 +1030,24 @@ router.post('/league/:leagueId/submit', optionalWallet, (req, res) => {
       }
     }
   } catch (e) { /* achievement check must never block submission */ }
+
+  // Check time-based and streak achievements
+  try { checkNightOwlSubmission(wallet, Date.now()); } catch (e) { /* must never block */ }
+  try { checkStreakAchievements(wallet); } catch (e) { /* must never block */ }
+  try { checkMonthlyAchievements(wallet); } catch (e) { /* must never block */ }
+  // Nonogram blind-eye on league puzzle submission
+  if (league.game_id === 'nonogram' && (hints || 0) === 0) {
+    try { checkBlindEye(wallet, 0); } catch (e) { /* must never block */ }
+  }
+  // Minesweeper achievements on league puzzle submission
+  if (league.game_id === 'minesweeper' && clientStats.flags) {
+    try { checkFlagEverything(wallet, league.difficulty || 'intermediate', clientStats.flags); } catch (e) { /* must never block */ }
+  }
+  if (league.game_id === 'minesweeper') {
+    try { checkFlaglessAndWrong(wallet, clientStats.flags ?? 0, mistakes || 0); } catch (e) { /* must never block */ }
+  }
+  try { checkMidnight(wallet); } catch (e) { /* must never block */ }
+  try { checkFibonacci(wallet, score); } catch (e) { /* must never block */ }
 
   // Return player's own scores
   const myScores = getLeagueScoresByWallet(league.id, wallet);
@@ -1880,6 +1925,13 @@ router.post('/achievement/mint', optionalWallet, async (req, res) => {
       db.prepare(`INSERT INTO wallet_stats (wallet, paid_mint_count, free_mints_banked) VALUES (?, ?, ?)
         ON CONFLICT(wallet) DO UPDATE SET paid_mint_count = paid_mint_count + 1, free_mints_banked = free_mints_banked + ?`)
         .run(req.wallet.toLowerCase(), 1, newFree, newFree);
+      // Track spend for loyalty achievements
+      try { trackSpend(req.wallet, mintFee); } catch (e) { /* must never block */ }
+      // Increment total_qf_minted for the-whale tracking
+      try {
+        db.prepare('INSERT INTO wallet_stats (wallet, total_qf_minted, updated_at) VALUES (?, ?, ?) ON CONFLICT(wallet) DO UPDATE SET total_qf_minted = total_qf_minted + ?, updated_at = ?')
+          .run(req.wallet.toLowerCase(), mintFee, Date.now(), mintFee, Date.now());
+      } catch (e) { /* must never block */ }
     }
   }
 
@@ -1990,6 +2042,9 @@ router.post('/achievement/mint', optionalWallet, async (req, res) => {
         awardAchievement(req.wallet, 'the-wolf-pack');
       }
     }
+
+    // Check mint-time meta achievements
+    try { checkMintMeta(req.wallet); } catch (e) { /* must never block */ }
 
     res.json({ minted: true, pioneer: isPioneer, tx_hash: txHash, metadata_cid: metadataCID, token_id: tokenId });
   } catch (e) {
@@ -2139,6 +2194,9 @@ router.post('/global-leaderboard/enter', optionalWallet, async (req, res) => {
   } catch (e) {
     return res.status(500).json({ error: 'Payment processing failed: ' + e.message });
   }
+
+  // Track spend for loyalty achievements
+  try { trackSpend(req.wallet, 50); } catch (e) { /* must never block */ }
 
   addGlobalLeaderboardEntry(req.wallet, gameId, score, timeMs || 0, periodType, periodKey, sessionId, txHash || null, qnsName, suspicious);
 

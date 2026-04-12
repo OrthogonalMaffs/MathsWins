@@ -14,7 +14,7 @@ import {
   upsertLeagueBest, incrementWalletCounter, getWalletStats
 } from './db/index.mjs';
 import { sendQF, TEAM_WALLET, BURN_ADDRESS } from './escrow.mjs';
-import { checkAchievements, checkShadowsAchievements } from './achievement-checker.mjs';
+import { checkAchievements, checkShadowsAchievements, checkInsomniac, checkMonthlyAchievements, checkFreeCellLeague, checkKenKenLeague, checkNonogramLeague, checkKakuroLeague, checkSettlementBatch7, checkSlowBurnAndLastSlow } from './achievement-checker.mjs';
 
 const __dirname = dirname(fileURLToPath(import.meta.url));
 
@@ -240,7 +240,7 @@ export async function doSettleLeague(leagueId) {
       }
     }
 
-    // Step 4b2: Check Shadows achievements for ALL players
+    // Step 4b2: Check Shadows, Insomniac, and Monthly achievements for ALL players
     for (var si = 0; si < totalPlayers; si++) {
       var shadowPlayer = leaderboard[si];
       var shadowPosition = si + 1;
@@ -249,7 +249,31 @@ export async function doSettleLeague(leagueId) {
       } catch (e) {
         console.error('Shadows achievement check failed for ' + shadowPlayer.wallet.slice(0, 8) + '...:', e.message);
       }
+      try {
+        checkInsomniac(shadowPlayer.wallet, league.id);
+      } catch (e) {
+        console.error('Insomniac achievement check failed for ' + shadowPlayer.wallet.slice(0, 8) + '...:', e.message);
+      }
+      try {
+        checkMonthlyAchievements(shadowPlayer.wallet);
+      } catch (e) { /* must never block */ }
+      // Game-specific league achievements
+      try {
+        if (league.game_id === 'freecell') checkFreeCellLeague(shadowPlayer.wallet, league.id);
+        if (league.game_id === 'kenken') checkKenKenLeague(shadowPlayer.wallet, league.id);
+        if (league.game_id === 'nonogram') checkNonogramLeague(shadowPlayer.wallet, league.id, shadowPosition);
+        if (league.game_id === 'kakuro') checkKakuroLeague(shadowPlayer.wallet, league.id);
+      } catch (e) { /* must never block */ }
+      // Batch 7: per-game volume, meta, wooden spoons
+      try {
+        checkSettlementBatch7(shadowPlayer.wallet, league.id, league.game_id, shadowPosition, totalPlayers);
+      } catch (e) { /* must never block */ }
     }
+
+    // Step 4b3: Slow-burn and last-and-slow (Minesweeper only, once per league)
+    try {
+      checkSlowBurnAndLastSlow(league.id, league.game_id, leaderboard);
+    } catch (e) { /* must never block */ }
 
     // Step 4c: Upsert league bests for all players
     for (const player of leaderboard) {

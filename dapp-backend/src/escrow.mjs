@@ -148,4 +148,7 @@ export async function sendPromoPrize(winnerAddress, amount) {
   return await sendQF(winnerAddress, amount);
 }
 
+// verifyPaymentTx: PARKED — eth_getTransactionReceipt returns null for valid txs on QF archive node.
+// Revisit when Axe confirms receipt lookup is working. Trust-the-hash stays as-is until then.
+
 export { TEAM_WALLET, BURN_ADDRESS };
