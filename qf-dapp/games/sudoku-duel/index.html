@@ -48,11 +48,11 @@ body{background:var(--bg);color:var(--text);font-family:'Inter',sans-serif;min-h
 .page{width:100%;max-width:560px;padding:2rem 1rem 4rem;display:flex;flex-direction:column;align-items:center;gap:1.2rem}
 
 /* ── Header ── */
-.game-header{text-align:center}
-.game-kicker{font-family:'JetBrains Mono',monospace;font-size:0.55rem;letter-spacing:0.2em;text-transform:uppercase;color:var(--silver);margin-bottom:0.4rem}
-.game-title{font-family:'Playfair Display',serif;font-size:2.6rem;color:var(--text-white);line-height:1}
+.game-header{text-align:left}
+.game-kicker{display:none}
+.game-title{font-family:'Playfair Display',serif;font-size:1.5rem;color:var(--text-white);line-height:1}
 .game-title span{background:linear-gradient(135deg,var(--silver-bright),var(--silver),#8a8f9c);-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text}
-.game-sub{font-size:0.72rem;color:var(--muted);line-height:1.6;margin-top:0.4rem}
+.game-sub{font-size:0.65rem;color:var(--muted);line-height:1.4;margin-top:0.2rem;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
 
 /* ── Mode selection (pre-game) ── */
 .mode-panel{width:100%;display:flex;flex-direction:column;gap:.8rem}
@@ -202,15 +202,22 @@ body{background:var(--bg);color:var(--text);font-family:'Inter',sans-serif;min-h
 .shake{animation:shake 0.35s ease}
 
 @media(max-width:480px){
-  .page{padding:1.5rem 0.5rem 3rem}
+  .page{padding:0.5rem 0.4rem 1rem;gap:0.4rem}
   .game-title{font-size:2rem}
-  .controls{gap:0.3rem}
-  .btn{padding:12px 16px;font-size:0.875rem;min-height:44px}
-  .numpad{grid-template-columns:repeat(3,1fr);gap:0.4rem}
-  .numpad-erase{grid-column:1 / -1;display:flex;gap:0.4rem}
-  .numpad-erase .num-btn{flex:1;aspect-ratio:auto;min-height:44px}
-  .num-btn{min-height:44px;min-width:44px;font-size:0.875rem}
+  .status-bar{padding:0.35rem 0.5rem;gap:0.3rem;border-radius:6px}
+  .si .si-val{font-size:0.75rem}
+  .si .si-lbl{font-size:0.35rem}
+  .mistake-dots{gap:0.2rem}
+  .board{width:min(100%,calc(100vw - 1rem))}
+  .numpad{grid-template-columns:repeat(10,1fr);gap:0.2rem}
+  .num-btn{aspect-ratio:auto;min-height:44px;min-width:0;border-radius:4px}
+  .num-btn .nb-val{font-size:0.85rem}
+  .num-btn .nb-rem{display:none}
+  .controls{gap:0.2rem}
+  .btn{padding:0.45rem 0.5rem;font-size:0.5rem;min-height:40px}
   .share-code-display{font-size:1.8rem;padding:.8rem 1.2rem}
+  .htp{display:none}
+  .msg{min-height:0.5rem;font-size:0.5rem}
 }
 
 /* How to Play — collapsible */
@@ -260,7 +267,7 @@ body{background:var(--bg);color:var(--text);font-family:'Inter',sans-serif;min-h
   </div>
 
   <div class="htp">
-    <button class="htp-toggle">How to Play <span class="htp-arrow">&#9660;</span></button>
+    <button class="htp-toggle">How to Play &amp; Scoring <span class="htp-arrow">&#9660;</span></button>
     <div class="htp-body">
       <p>Fill the 9x9 grid so every <strong>row, column, and 3x3 box</strong> contains the digits 1-9 exactly once.</p>
       <ul>
@@ -270,19 +277,8 @@ body{background:var(--bg);color:var(--text);font-family:'Inter',sans-serif;min-h
         <li>Up to <strong>5 hints</strong> available (each costs 200 points)</li>
         <li>Use <strong>Notes mode</strong> to pencil in candidates</li>
       </ul>
-      <p>Scoring: 5,000 base points minus penalties for mistakes (-300) and hints (-200), multiplied by a time factor. Faster clean solves score highest.</p>
+      <p><strong>Scoring:</strong> 5,000 base &minus; 300/mistake &minus; 200/hint &times; time multiplier. Faster clean solves score highest.</p>
     </div>
-  </div>
-
-  <div class="scoring-info" id="scoring-panel">
-    <h3>How Scoring Works</h3>
-    <div class="si-row"><span class="si-label">Base score</span><span class="si-val">5,000 pts</span></div>
-    <div class="si-row"><span class="si-label">Per mistake</span><span class="si-val">-300 pts</span></div>
-    <div class="si-row"><span class="si-label">Per hint used</span><span class="si-val">-200 pts</span></div>
-    <div class="si-row"><span class="si-label">Max mistakes</span><span class="si-val">3 (game over)</span></div>
-    <div class="si-row"><span class="si-label">Max hints</span><span class="si-val">5</span></div>
-    <div class="si-row"><span class="si-label">Time penalty</span><span class="si-val">Logarithmic decay</span></div>
-    <p class="si-note">Score = (Base - penalties) x time multiplier. Faster solves score higher.</p>
   </div>
 
   <!-- DUEL SHARE SCREEN (after creating duel) -->
@@ -1363,13 +1359,8 @@ var G = (function() {
     var eraseRow = document.getElementById('numpadEraseRow');
     if (eraseRow) eraseRow.remove();
 
-    // On mobile (<480px): 3x3 grid for digits, erase row below
-    var mobileLayout = window.innerWidth < 480;
-    if (mobileLayout) {
-      eraseBtn.style.display = 'none';
-    } else {
-      eraseBtn.style.display = '';
-    }
+    // All layouts: single row of 10 (erase + 9 digits)
+    eraseBtn.style.display = '';
 
     for (var n = 1; n <= 9; n++) {
       var btn = document.createElement('button');
@@ -1378,19 +1369,6 @@ var G = (function() {
       btn.innerHTML = '<span class="nb-val">' + n + '</span><span class="nb-rem" id="nrem' + n + '"></span>';
       (function(num) { btn.onclick = function() { inputNum(num); }; })(n);
       np.appendChild(btn);
-    }
-
-    if (mobileLayout) {
-      eraseRow = document.createElement('div');
-      eraseRow.className = 'numpad-erase';
-      eraseRow.id = 'numpadEraseRow';
-      var eb = document.createElement('button');
-      eb.className = 'num-btn';
-      eb.innerHTML = '<span class="nb-val">&times;</span>';
-      eb.title = 'Erase';
-      eb.onclick = function() { inputNum(0); };
-      eraseRow.appendChild(eb);
-      np.appendChild(eraseRow);
     }
   }
 

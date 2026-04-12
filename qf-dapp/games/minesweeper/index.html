@@ -50,11 +50,11 @@ body{background:var(--bg);color:var(--text);font-family:'Inter',sans-serif;min-h
 .page{width:100%;max-width:620px;padding:2rem 1rem 4rem;display:flex;flex-direction:column;align-items:center;gap:1.2rem}
 
 /* ── Header ── */
-.game-header{text-align:center}
-.game-kicker{font-family:'JetBrains Mono',monospace;font-size:0.55rem;letter-spacing:0.2em;text-transform:uppercase;color:var(--silver);margin-bottom:0.4rem}
-.game-title{font-family:'Playfair Display',serif;font-size:2.6rem;color:var(--text-white);line-height:1}
+.game-header{text-align:left}
+.game-kicker{display:none}
+.game-title{font-family:'Playfair Display',serif;font-size:1.5rem;color:var(--text-white);line-height:1}
 .game-title span{background:linear-gradient(135deg,var(--silver-bright),var(--silver),#8a8f9c);-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text}
-.game-sub{font-size:0.72rem;color:var(--muted);line-height:1.6;margin-top:0.4rem}
+.game-sub{font-size:0.65rem;color:var(--muted);line-height:1.4;margin-top:0.2rem;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
 
 /* ── How to Play — collapsible ── */
 .htp{width:100%;background:var(--surface);border:1px solid var(--border);border-radius:10px;overflow:hidden;margin-bottom:0}
@@ -280,8 +280,8 @@ body{background:var(--bg);color:var(--text);font-family:'Inter',sans-serif;min-h
 
   <!-- PRE-GAME SCREEN -->
   <div id="pre-game">
-    <div class="htp" style="margin-bottom:1.2rem">
-      <button class="htp-toggle">How to Play <span class="htp-arrow">&#9660;</span></button>
+    <div class="htp">
+      <button class="htp-toggle">How to Play &amp; Scoring <span class="htp-arrow">&#9660;</span></button>
       <div class="htp-body">
         <p>Reveal all safe cells without detonating a mine.</p>
         <ul>
@@ -291,16 +291,8 @@ body{background:var(--bg);color:var(--text);font-family:'Inter',sans-serif;min-h
           <li><strong>First click is always safe</strong> — mines are placed after your first move</li>
           <li>Numbers show how many adjacent cells contain mines</li>
         </ul>
-        <p>Scoring: 5,000 base points minus 1 point per second. Clear faster for a higher score.</p>
+        <p><strong>Scoring:</strong> 5,000 base &minus; 1pt/sec. Detonation = game over (0 pts).</p>
       </div>
-    </div>
-
-    <div class="scoring-info" id="scoring-panel">
-      <h3>How Scoring Works</h3>
-      <div class="si-row"><span class="si-label">Base score</span><span class="si-val">5,000 pts</span></div>
-      <div class="si-row"><span class="si-label">Time penalty</span><span class="si-val">-1 pt/second</span></div>
-      <div class="si-row"><span class="si-label">Detonation</span><span class="si-val">Game over (0 pts)</span></div>
-      <p class="si-note">Win score = max(0, 5000 - seconds elapsed). Clear the board as fast as you can.</p>
     </div>
 
     <div class="diff-select" id="diff-select" style="margin-top:.8rem">

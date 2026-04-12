@@ -48,11 +48,11 @@ body{background:var(--bg);color:var(--text);font-family:'Inter',sans-serif;min-h
 .page{width:100%;max-width:600px;padding:2rem 1rem 4rem;display:flex;flex-direction:column;align-items:center;gap:1.2rem}
 
 /* ── Header ── */
-.game-header{text-align:center}
-.game-kicker{font-family:'JetBrains Mono',monospace;font-size:0.55rem;letter-spacing:0.2em;text-transform:uppercase;color:var(--silver);margin-bottom:0.4rem}
-.game-title{font-family:'Playfair Display',serif;font-size:2.6rem;color:var(--text-white);line-height:1}
+.game-header{text-align:left}
+.game-kicker{display:none}
+.game-title{font-family:'Playfair Display',serif;font-size:1.5rem;color:var(--text-white);line-height:1}
 .game-title span{background:linear-gradient(135deg,var(--silver-bright),var(--silver),#8a8f9c);-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text}
-.game-sub{font-size:0.72rem;color:var(--muted);line-height:1.6;margin-top:0.4rem}
+.game-sub{font-size:0.65rem;color:var(--muted);line-height:1.4;margin-top:0.2rem;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
 
 /* ── How to Play — collapsible ── */
 .htp{width:100%;background:var(--surface);border:1px solid var(--border);border-radius:10px;overflow:hidden;margin-bottom:0}
@@ -223,8 +223,8 @@ body{background:var(--bg);color:var(--text);font-family:'Inter',sans-serif;min-h
 
   <!-- PRE-GAME SCREEN -->
   <div id="pre-game">
-    <div class="htp" style="margin-bottom:1.2rem">
-      <button class="htp-toggle">How to Play <span class="htp-arrow">&#9660;</span></button>
+    <div class="htp">
+      <button class="htp-toggle">How to Play &amp; Scoring <span class="htp-arrow">&#9660;</span></button>
       <div class="htp-body">
         <p>Move all 52 cards to the foundations, built up by suit from Ace to King.</p>
         <ul>
@@ -234,15 +234,8 @@ body{background:var(--bg);color:var(--text);font-family:'Inter',sans-serif;min-h
           <li>Auto-complete appears when the game is won &mdash; no decisions left to make.</li>
           <li>Fastest time wins. Undos are free but they're tracked.</li>
         </ul>
+        <p><strong>Scoring:</strong> 5,000 base &minus; 1pt/sec. DNF penalty for remaining cards.</p>
       </div>
-    </div>
-
-    <div class="scoring-info">
-      <h3>How Scoring Works</h3>
-      <div class="si-row"><span class="si-label">Base score</span><span class="si-val">5,000 pts</span></div>
-      <div class="si-row"><span class="si-label">Time penalty</span><span class="si-val">-1 pt/second</span></div>
-      <div class="si-row"><span class="si-label">DNF penalty</span><span class="si-val">-(cards remaining)</span></div>
-      <p class="si-note">Win score = max(0, 5000 - seconds elapsed). Complete the board as fast as you can.</p>
     </div>
 
     <div style="margin-top:1rem">

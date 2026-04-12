@@ -89,27 +89,23 @@ body::before {
 }
 
 /* Header */
-.game-header { text-align: center; }
-.game-kicker {
-  font-family: 'JetBrains Mono', monospace;
-  font-size: 0.6rem;
-  letter-spacing: 0.2em;
-  text-transform: uppercase;
-  color: var(--teal);
-  margin-bottom: 0.4rem;
-}
+.game-header { text-align: left; }
+.game-kicker { display: none; }
 .game-title {
   font-family: 'Playfair Display', sans-serif;
-  font-size: 3.5rem;
+  font-size: 1.5rem;
   letter-spacing: 0.08em;
   color: var(--gold-warm);
   line-height: 1;
 }
 .game-sub {
-  font-size: 0.75rem;
+  font-size: 0.65rem;
   color: var(--muted);
-  line-height: 1.6;
-  margin-top: 0.4rem;
+  line-height: 1.4;
+  margin-top: 0.2rem;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
 }
 
 /* Status bar */

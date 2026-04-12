@@ -28,10 +28,10 @@
 *,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
 body{background:var(--bg);color:var(--text);font-family:'Inter',sans-serif;min-height:100vh;display:flex;flex-direction:column;align-items:center}
 .page{width:100%;max-width:560px;padding:2rem 1rem 4rem;display:flex;flex-direction:column;align-items:center;gap:1.2rem}
-.game-header{text-align:center}
-.game-kicker{font-family:'JetBrains Mono',monospace;font-size:0.6rem;letter-spacing:0.2em;text-transform:uppercase;color:var(--silver);margin-bottom:0.4rem}
-.game-title{font-family:'Playfair Display',sans-serif;font-size:2.6rem;letter-spacing:0.08em;background:linear-gradient(135deg,var(--silver-bright),var(--silver),#8a8f9c);-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;line-height:1}
-.game-sub{font-size:0.75rem;color:var(--muted);line-height:1.6;margin-top:0.4rem}
+.game-header{text-align:left}
+.game-kicker{display:none}
+.game-title{font-family:'Playfair Display',sans-serif;font-size:1.5rem;letter-spacing:0.08em;background:linear-gradient(135deg,var(--silver-bright),var(--silver),#8a8f9c);-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;line-height:1}
+.game-sub{font-size:0.65rem;color:var(--muted);line-height:1.4;margin-top:0.2rem;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
 .scoring-info{width:100%;background:var(--surface2);border:1px solid var(--border);border-radius:8px;padding:1.2rem;font-family:'JetBrains Mono',monospace;font-size:0.65rem;color:var(--muted);line-height:1.8}
 .scoring-info h3{font-family:'Playfair Display',sans-serif;font-size:1.1rem;color:var(--silver);letter-spacing:0.05em;margin-bottom:0.5rem}
 .si-row{display:flex;justify-content:space-between;padding:0.15rem 0}
@@ -149,7 +149,7 @@ body{background:var(--bg);color:var(--text);font-family:'Inter',sans-serif;min-h
   </div>
 
   <div class="htp">
-    <button class="htp-toggle">How to Play <span class="htp-arrow">&#9660;</span></button>
+    <button class="htp-toggle">How to Play &amp; Scoring <span class="htp-arrow">&#9660;</span></button>
     <div class="htp-body">
       <p>Fill the grid with digits so <strong>no number repeats in any row or column</strong>, and each cage's numbers combine to its target using the given operation.</p>
       <ul>
@@ -158,18 +158,8 @@ body{background:var(--bg);color:var(--text);font-family:'Inter',sans-serif;min-h
         <li>Single-cell cages are freebies — the target IS the answer</li>
         <li>For subtraction and division, order doesn't matter</li>
       </ul>
-      <p>Start with single-cell cages and small cages with few possibilities. Use row/column constraints to eliminate candidates.</p>
+      <p><strong>Scoring:</strong> 5,000 base, 60s grace then -1pt/sec, -300/wrong submission, -500/hint.</p>
     </div>
-  </div>
-
-  <div class="scoring-info" id="scoring-panel">
-    <h3>How Scoring Works</h3>
-    <div class="si-row"><span class="si-label">Base score</span><span class="si-val">5,000 pts</span></div>
-    <div class="si-row"><span class="si-label">Grace period</span><span class="si-val">60 seconds</span></div>
-    <div class="si-row"><span class="si-label">After grace</span><span class="si-val">-1 pt/second</span></div>
-    <div class="si-row"><span class="si-label">Per wrong submission</span><span class="si-val">-300 pts</span></div>
-    <div class="si-row"><span class="si-label">Per hint used</span><span class="si-val">-500 pts</span></div>
-    <p class="si-note">Complete the grid correctly. Fewer mistakes + faster time = higher score.</p>
   </div>
 
   <div class="diff-select" id="diff-select">
