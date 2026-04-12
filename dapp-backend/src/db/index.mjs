@@ -849,6 +849,12 @@ export function getLeagueScoresByWallet(leagueId, wallet) {
     .all(leagueId, wallet.toLowerCase());
 }
 
+export function getAllLeagueScores(leagueId) {
+  const db = getDb();
+  return db.prepare('SELECT wallet, score, puzzle_index, submitted_at FROM league_scores WHERE league_id = ? ORDER BY submitted_at ASC')
+    .all(leagueId);
+}
+
 export function getLeagueLeaderboard(leagueId) {
   const db = getDb();
   return db.prepare(`

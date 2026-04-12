@@ -3,7 +3,7 @@
  * Called after league settlement, duel completion, or session completion.
  * Gated by ACHIEVEMENTS_ACTIVE env var.
  */
-import { awardAchievement, getWalletAchievements, getWalletStats, incrementWalletCounter, resetWalletCounter, getLeagueScoresByWallet, getLeaguePuzzles } from './db/index.mjs';
+import { awardAchievement, getWalletAchievements, getWalletStats, incrementWalletCounter, resetWalletCounter, getLeagueScoresByWallet, getLeaguePuzzles, getAllLeagueScores, getGlobalRecord, setGlobalRecord } from './db/index.mjs';
 
 const ACHIEVEMENTS_ACTIVE = process.env.ACHIEVEMENTS_ACTIVE === 'true';
 
@@ -146,6 +146,82 @@ export function checkAchievements(wallet, context) {
     if (now.getUTCMonth() === 2 && now.getUTCDate() === 14) {
       if (scores.some(function(s) { return s.score === 3141; })) {
         tryAward('squared-pi');
+      }
+    }
+
+    // ── The Tortoise (winner with slowest total time ever recorded) ──
+    if (context.won) {
+      var winnerTotalTime = scores.reduce(function(sum, s) { return sum + (s.time_ms || 0); }, 0);
+      var record = getGlobalRecord('tortoise-slowest-win');
+      if (!record || winnerTotalTime > parseInt(record.value)) {
+        setGlobalRecord('tortoise-slowest-win', wallet, winnerTotalTime);
+        tryAward('the-tortoise');
+      }
+    }
+
+    // ── Clean Slate & The Lurker (round-based leaderboard reconstruction) ──
+    if (context.won) {
+      var allScores = getAllLeagueScores(context.leagueId);
+      var puzzleCount = puzzles.length;
+
+      // Group scores by wallet, sorted by submitted_at within each wallet
+      var byWallet = {};
+      for (var gi = 0; gi < allScores.length; gi++) {
+        var gw = allScores[gi].wallet;
+        if (!byWallet[gw]) byWallet[gw] = [];
+        byWallet[gw].push(allScores[gi]);
+      }
+      for (var wk in byWallet) {
+        byWallet[wk].sort(function(a, b) { return a.submitted_at - b.submitted_at; });
+      }
+
+      // Only include wallets that completed all puzzles
+      var completingWallets = [];
+      for (var cw in byWallet) {
+        if (byWallet[cw].length === puzzleCount) completingWallets.push(cw);
+      }
+
+      // Build round snapshots: round N = cumulative score after each wallet's Nth submission
+      var winnerWallet = wallet.toLowerCase();
+      var wasEverLast = false;
+      var wasEverTop3 = false;
+
+      if (completingWallets.length >= 4) {
+        for (var rn = 1; rn <= puzzleCount; rn++) {
+          var round = [];
+          var allHaveN = true;
+          for (var ri = 0; ri < completingWallets.length; ri++) {
+            var wScores = byWallet[completingWallets[ri]];
+            if (wScores.length < rn) { allHaveN = false; break; }
+            var cumulative = 0;
+            for (var rs = 0; rs < rn; rs++) cumulative += wScores[rs].score;
+            round.push({ wallet: completingWallets[ri], cumulative: cumulative });
+          }
+          if (!allHaveN || round.length < 2) continue;
+
+          round.sort(function(a, b) { return b.cumulative - a.cumulative; });
+
+          var isFinalRound = rn === puzzleCount;
+          var winnerPos = -1;
+          for (var wp = 0; wp < round.length; wp++) {
+            if (round[wp].wallet === winnerWallet) { winnerPos = wp + 1; break; }
+          }
+
+          if (!isFinalRound) {
+            if (winnerPos === round.length) wasEverLast = true;
+            if (winnerPos >= 1 && winnerPos <= 3) wasEverTop3 = true;
+          }
+        }
+
+        // Clean Slate: winner never appeared in last place (pre-final rounds)
+        if (!wasEverLast) {
+          tryAward('clean-slate');
+        }
+
+        // The Lurker: winner never appeared in top 3 until final round
+        if (!wasEverTop3) {
+          tryAward('the-lurker');
+        }
       }
     }
   }
