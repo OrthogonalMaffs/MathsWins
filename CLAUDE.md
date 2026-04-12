@@ -94,6 +94,9 @@ Split from MaffsGames in March 2025. MaffsGames = free schools games. MathsWins 
 **Renamed:** Equatle → Maffsy (slug: /games/maffsy/). Old /games/equatle/ and /qf-dapp/games/equatle/ directories deleted.
 **Free play backend:** POST /session/submit-freeplay — client-reported score, upserts personal_best, fires checkAchievements. All 11 free games wired (battleships uses its own API).
 **Free play reskin (2026-04-11):** All 10 non-battleships free games reskinned to Silver theme (#0e1013), favicons fixed, leaderboards removed, higher-or-lower and 52dle converted from daily to random seed. Back to Lobby buttons added.
+**Lobby compaction (2026-04-12):** 6 games (sudoku-duel, kenken, minesweeper, freecell, 52dle, maffsy) — removed eyebrow kicker, shrunk titles to 1.5rem left-aligned, merged HTP+scoring into single collapsed toggle, one-line descriptions.
+**Mobile layout fixes (2026-04-12):** Sudoku Duel (single-row numpad, compact stats, fits 375x667 viewport), KenKen (numpad/action bar no-overflow), Maffsy (keyboard flex-fit, compact stats). Battleships radar: circular mask removed, plain rectangular grid.
+**Maffsy Sabre reskin (2026-04-12):** Statistics + Settings modals restyled (#0a0d14 bg, silver borders, gold toggles, outline buttons). New Puzzle/Done buttons in end modal.
 **Demoted from competitive:** countdown-numbers, cryptarithmetic-club (too short for league play)
 
 ### Shared Components
@@ -101,7 +104,7 @@ Split from MaffsGames in March 2025. MaffsGames = free schools games. MathsWins 
 - **My Account page:** `/qf-dapp/my-account/` — 4 tabs: My Leagues, High Scores, Achievements, Trophies. Wallet-gated (JWT). High Scores tab uses card-per-game layout: header (game name, difficulty badge, rank badge), 2-column stats (score with toLocaleString + date), leaderboard row (Daily/Weekly/Monthly with ranked period highlights), footer with eligibility text and Submit button (44px touch target). Ranked scores in gold. Submit requires session_id in personal_bests (pre-migration scores show "play again to submit").
 - **Duel share code:** Displayed inside modal after game completion. Copy/share buttons. "Opponent has 24 hours to accept." Back to Lobby button.
 
-### SQLite Tables (31)
+### SQLite Tables (32)
 | Table | Purpose |
 |-------|---------|
 | `games` | Game registry |
@@ -133,6 +136,7 @@ Split from MaffsGames in March 2025. MaffsGames = free schools games. MathsWins 
 | `seasonal_windows` | Seasonal achievement earning windows (pre-populated per year) |
 | `commemorative_mints` | Commemorative NFT mint records per league |
 | `global_leaderboard_entries` | Pay-to-appear global leaderboard (50 QF, daily/weekly/monthly) |
+| `free_game_completions` | Per-wallet free game play count + PB beaten tracking |
 
 ### API Endpoints (45+)
 **Auth:** POST /auth/challenge, /auth/verify (challenge-sign-verify, JWT 24h)
@@ -184,6 +188,11 @@ Split from MaffsGames in March 2025. MaffsGames = free schools games. MathsWins 
 - Pioneer tag: first mint per achievement, UNIQUE constraint
 - Condition checker hooks into: league settlement (all players, not just top 4), scoring.mjs evaluate() (all game completions), puzzle submission (Founding Member)
 - Batch 5 live: 23 card/solitaire conditions (poker-patience, cribbage, golf, pyramid) — checkAchievements wired into scoring.mjs for all games
+- Batch 6 live (2026-04-12): 8 core purity + immaculate (mint-time super). Checks SUM(mistakes)=0 across all 10 league puzzles per game.
+- Batch 7 live (2026-04-12): 11 battleships + wolf-pack (mint-time super). Uses checkSunk() from battleships.mjs, fleet JSON from battleships_placements.
+- Batch 8 live (2026-04-12): 3 free game (century, explorer, personal-best) + free_game_completions table. Remaining 11 free game achievements need frontend stats in submit-freeplay payload.
+- speed-reader RETIRED (active=0) — 52dle only has 6 guesses
+- ~109 of 161 conditions wired, ~52 remaining
 - the-fish: fires at league settlement for last-place poker-patience finishers (3 times to earn)
 - Founding Member: fires on first league puzzle submission between 2026-04-11 and 2026-07-31 (env: FOUNDING_MEMBER_START/END)
 - Mint endpoint: real on-chain mint via escrow wallet, fee split (5% burn, 95% team), free mints use banked credits
