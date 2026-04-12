@@ -376,6 +376,7 @@ var G = (function() {
   var foundations = [0,0,0,0]; // count per suit
   var moveCount = 0;
   var undoCount = 0;
+  var freeCellsUsed = 0;
   var undoStack = [];
   var dealNum = 0;
   var done = false;
@@ -541,6 +542,7 @@ var G = (function() {
       for (var i = 0; i < movingCards.length; i++) columns[to.index].push(movingCards[i]);
     } else if (to.type === 'freecell') {
       freeCells[to.index] = movingCards[0];
+      freeCellsUsed++;
     } else if (to.type === 'foundation') {
       var card = movingCards[0];
       foundations[cardSuit(card)]++;
@@ -1211,7 +1213,8 @@ var G = (function() {
     if (leagueMode && leagueId) {
       try {
         var leagueResult = await api('/league/' + leagueId + '/submit', {
-          puzzleIndex: leaguePuzzleIndex, score: points, timeMs: finalTimeMs, mistakes: 0, hints: 0
+          puzzleIndex: leaguePuzzleIndex, score: points, timeMs: finalTimeMs, mistakes: 0, hints: 0,
+          clientStats: { undos: undoCount, freeCellsUsed: freeCellsUsed }
         });
         if (leagueResult.error) alert('League score failed to save: ' + leagueResult.error);
       } catch (e) {
@@ -1241,7 +1244,8 @@ var G = (function() {
     if (leagueMode && leagueId) {
       try {
         var leagueResult = await api('/league/' + leagueId + '/submit', {
-          puzzleIndex: leaguePuzzleIndex, score: 0, timeMs: getElapsedMs(), mistakes: 0, hints: 0
+          puzzleIndex: leaguePuzzleIndex, score: 0, timeMs: getElapsedMs(), mistakes: 0, hints: 0,
+          clientStats: { undos: undoCount, freeCellsUsed: freeCellsUsed }
         });
         if (leagueResult.error) setMsg('League score failed to save: ' + leagueResult.error);
       } catch (e) {
@@ -1431,6 +1435,7 @@ var G = (function() {
     foundations = [0,0,0,0];
     moveCount = 0;
     undoCount = 0;
+    freeCellsUsed = 0;
     undoStack = [];
     done = false;
     selectedCard = null;
@@ -1490,6 +1495,7 @@ var G = (function() {
         dealNum = rq.seed || 0;
         moveCount = rq.moveCount || 0;
         undoCount = rq.undoCount || 0;
+        freeCellsUsed = 0;
         undoStack = [];
         done = false;
         selectedCard = null;
@@ -1538,6 +1544,7 @@ var G = (function() {
       dealNum = q.seed || 0;
       moveCount = 0;
       undoCount = 0;
+      freeCellsUsed = 0;
       undoStack = [];
       done = false;
       selectedCard = null;

@@ -3,7 +3,7 @@
  * Called after league settlement, duel completion, or session completion.
  * Gated by ACHIEVEMENTS_ACTIVE env var.
  */
-import { awardAchievement, getWalletAchievements, getWalletStats, incrementWalletCounter, resetWalletCounter } from './db/index.mjs';
+import { awardAchievement, getWalletAchievements, getWalletStats, incrementWalletCounter, resetWalletCounter, getLeagueScoresByWallet, getLeaguePuzzles } from './db/index.mjs';
 
 const ACHIEVEMENTS_ACTIVE = process.env.ACHIEVEMENTS_ACTIVE === 'true';
 
@@ -96,9 +96,37 @@ export function checkAchievements(wallet, context) {
   // TODO: no-errors-kenken — complete kenken league puzzle with 0 mistakes
   // TODO: no-errors-nonogram — complete nonogram league puzzle with 0 mistakes
   // TODO: no-errors-kakuro — complete kakuro league puzzle with 0 mistakes
-  // TODO: the-purist — complete 10 freecell games with 0 undo and 0 mistakes
-  // TODO: flawless-line — complete minesweeper with 0 mistakes in under 2 minutes
   // TODO: immaculate — hold all 8 no-errors achievements (requires contract interaction)
+
+  // ── clientStats-dependent purity achievements ─────────────────────
+  if (context.type === 'league_settle' && context.leagueId) {
+    var scores = getLeagueScoresByWallet(context.leagueId, wallet);
+    var puzzles = getLeaguePuzzles(context.leagueId);
+    var completedAll = scores.length === puzzles.length && scores.length > 0;
+
+    if (completedAll) {
+      // the-purist: FreeCell league with 0 undos across all puzzles
+      if (context.gameId === 'freecell' && scores.every(function(s) { return s.undos_used === 0; })) {
+        tryAward('the-purist');
+      }
+      // flawless-line: Minesweeper league with 0 flags across all puzzles
+      if (context.gameId === 'minesweeper' && scores.every(function(s) { return s.flags_used === 0; })) {
+        tryAward('flawless-line');
+      }
+      // the-logician: KenKen league with 0 helper usage across all puzzles
+      if (context.gameId === 'kenken' && scores.every(function(s) { return s.helper_used === 0; })) {
+        tryAward('the-logician');
+      }
+      // hintless: Nonogram league with 0 hints across all puzzles
+      if (context.gameId === 'nonogram' && scores.every(function(s) { return s.hints === 0; })) {
+        tryAward('hintless');
+      }
+      // blind-kakuro: Kakuro league with 0 hints AND 0 helper usage across all puzzles
+      if (context.gameId === 'kakuro' && scores.every(function(s) { return s.hints === 0 && s.helper_used === 0; })) {
+        tryAward('blind-kakuro');
+      }
+    }
+  }
 
   // ── Skill achievements ────────────────────────────────────────────
   // TODO: clean-sweep — minesweeper perfect score (no misclicks)

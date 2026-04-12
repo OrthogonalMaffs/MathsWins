@@ -718,6 +718,7 @@ var G = (function() {
     try {
       var body = { gameId: GAME_ID };
       if (forceSeed != null) body.seed = forceSeed;
+      else if (!leagueMode) body.seed = Math.floor(Math.random() * 1000000);
       if (leagueMode && leagueId) {
         body.leagueId = leagueId;
       }

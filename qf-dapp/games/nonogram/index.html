@@ -415,6 +415,7 @@ var G = (function() {
 
     try {
       var startBody = { gameId: GAME_ID };
+      if (!leagueMode) startBody.seed = Math.floor(Math.random() * 1000000);
       if (leagueMode && leagueId) startBody.leagueId = leagueId;
       var data = await api('/session/start', startBody);
       if (data.error) {
@@ -785,7 +786,7 @@ var G = (function() {
         if (typeof dappWallet !== 'undefined' && dappWallet && dappWallet.address) lh['X-Wallet-Address'] = dappWallet.address;
         var resp = await fetch((location.hostname === 'localhost' ? 'http://127.0.0.1:3860' : 'https://dapp-api.mathswins.co.uk') + '/api/dapp/league/' + leagueId + '/submit', {
           method: 'POST', headers: lh,
-          body: JSON.stringify({ puzzleIndex: leaguePuzzleIndex, score: score || 0, timeMs: getSecs() * 1000, mistakes: mistakes, hints: hintsUsed })
+          body: JSON.stringify({ puzzleIndex: leaguePuzzleIndex, score: score || 0, timeMs: getSecs() * 1000, mistakes: mistakes, hints: hintsUsed, clientStats: { hints: hintsUsed } })
         });
         var result = await resp.json();
         if (!resp.ok || result.error) alert('League score failed to save: ' + (result.error || resp.status));

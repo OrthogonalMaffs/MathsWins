@@ -457,6 +457,7 @@ var G = (function() {
   var cellValues = [];  // number for revealed, null otherwise
   var totalCells = 0;
   var flagCount = 0;
+  var flagsPlaced = 0;
   var minesPlaced = false;
   var done = false;
   var revealedCount = 0;
@@ -696,6 +697,7 @@ var G = (function() {
         cells[idx].className = 'cell flagged';
         cells[idx].innerHTML = '<span class="cell-flag" style="font-size:var(--flag-font)">&#9873;</span>';
         flagCount++;
+        flagsPlaced++;
       } else {
         cellState[idx] = 'hidden';
         cells[idx].className = 'cell';
@@ -836,7 +838,8 @@ var G = (function() {
           score: points || 0,
           timeMs: finalTimeMs,
           mistakes: 0,
-          hints: 0
+          hints: 0,
+          clientStats: { flags: flagsPlaced }
         });
         if (leagueResult.error) alert('League score failed to save: ' + leagueResult.error);
       } catch (e) {
@@ -891,7 +894,8 @@ var G = (function() {
           score: partialScore || 0,
           timeMs: finalTimeMs,
           mistakes: 1,
-          hints: 0
+          hints: 0,
+          clientStats: { flags: flagsPlaced }
         });
         if (leagueResult.error) alert('League score failed to save: ' + leagueResult.error);
       } catch (e) {
@@ -984,6 +988,7 @@ var G = (function() {
       boardHeight = q.height;
       mineCount = q.mineCount;
       flagCount = 0;
+      flagsPlaced = 0;
       minesPlaced = false;
       done = false;
       revealedCount = 0;
@@ -1025,6 +1030,7 @@ var G = (function() {
         mineCount = rq.mineCount;
         difficulty = rq.difficulty || 'beginner';
         flagCount = 0;
+        flagsPlaced = 0;
         done = false;
         revealedCount = 0;
         timerStarted = false;
@@ -1053,6 +1059,7 @@ var G = (function() {
             cells[fIdx].className = 'cell flagged';
             cells[fIdx].innerHTML = '<span class="cell-flag" style="font-size:var(--flag-font)">&#9873;</span>';
             flagCount++;
+            flagsPlaced++;
           }
           updateMineCounter();
         }
@@ -1090,6 +1097,7 @@ var G = (function() {
       mineCount = q.mineCount;
       difficulty = q.difficulty || 'beginner';
       flagCount = 0;
+      flagsPlaced = 0;
       minesPlaced = false;
       done = false;
       revealedCount = 0;

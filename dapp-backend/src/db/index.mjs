@@ -88,6 +88,16 @@ export function getDb() {
   )`);
   db.exec('CREATE INDEX IF NOT EXISTS idx_glb_game_period ON global_leaderboard_entries(game_id, period_type, period_key)');
 
+  // ── Cribbage hand scores (per-hand tracking for achievements) ──────
+  db.exec(`CREATE TABLE IF NOT EXISTS cribbage_hand_scores (
+    id INTEGER PRIMARY KEY AUTOINCREMENT,
+    session_id TEXT NOT NULL,
+    wallet TEXT NOT NULL,
+    hand_index INTEGER NOT NULL,
+    score INTEGER NOT NULL,
+    recorded_at DATETIME DEFAULT CURRENT_TIMESTAMP
+  )`);
+
   // ── Achievement tables ──────────────────────────────────────────────
   db.exec(`CREATE TABLE IF NOT EXISTS achievement_registry (
     achievement_id TEXT PRIMARY KEY,
@@ -821,10 +831,10 @@ export function getLeaguePuzzles(leagueId) {
   return db.prepare('SELECT * FROM league_puzzles WHERE league_id = ? ORDER BY puzzle_index ASC').all(leagueId);
 }
 
-export function addLeagueScore(leagueId, wallet, puzzleIndex, score, timeMs, mistakes, hints, submittedAt, suspicious, suspiciousDetail) {
+export function addLeagueScore(leagueId, wallet, puzzleIndex, score, timeMs, mistakes, hints, submittedAt, suspicious, suspiciousDetail, undosUsed, freeCellsUsed, flagsUsed, helperUsed) {
   const db = getDb();
-  db.prepare(`INSERT INTO league_scores (league_id, wallet, puzzle_index, score, time_ms, mistakes, hints, submitted_at, suspicious, suspicious_detail)
-    VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)`).run(leagueId, wallet.toLowerCase(), puzzleIndex, score, timeMs, mistakes, hints, submittedAt, suspicious || null, suspiciousDetail || null);
+  db.prepare(`INSERT INTO league_scores (league_id, wallet, puzzle_index, score, time_ms, mistakes, hints, submitted_at, suspicious, suspicious_detail, undos_used, free_cells_used, flags_used, helper_used)
+    VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)`).run(leagueId, wallet.toLowerCase(), puzzleIndex, score, timeMs, mistakes, hints, submittedAt, suspicious || null, suspiciousDetail || null, undosUsed || 0, freeCellsUsed || 0, flagsUsed || 0, helperUsed || 0);
 }
 
 export function getLeagueScore(leagueId, wallet, puzzleIndex) {

@@ -13,7 +13,7 @@ import { doSettleLeague, checkEarlySettlement, recoverStuckLeagues, mintCommemor
 import { checkAchievements } from '../achievement-checker.mjs';
 import { sendQF, settleDuel, BURN_ADDRESS, TEAM_WALLET } from '../escrow.mjs';
 import { createBattleshipsGame, getBattleshipsGameByCode, getBattleshipsGameById, updateBattleshipsGameStatus, saveBattleshipsPlacement, getBattleshipsPlacement, getBattleshipsPlacements, addBattleshipsRound, getBattleshipsRounds, getBattleshipsRecord, updateBattleshipsRecord, getActiveBattleshipsGames, getBattleshipsGamesByWallet } from '../db/index.mjs';
-import { getAchievementRegistry, getAchievement, awardAchievement, getWalletAchievements, getAllAchievements, getGlobalRecord, getPersonalBests, getLeagueBests, getWalletStats, getWalletLeagueHistory, getWalletTrophies, getGameStateForLeaguePuzzle, getFlaggedSessions, getGlobalLeaderboard, getGlobalLeaderboardEntry, addGlobalLeaderboardEntry, getWalletLeaderboardPositions, getGameState, getGame, upsertPersonalBest } from '../db/index.mjs';
+import { getAchievementRegistry, getAchievement, awardAchievement, getWalletAchievements, getAllAchievements, getGlobalRecord, getPersonalBests, getLeagueBests, getWalletStats, getWalletLeagueHistory, getWalletTrophies, getGameStateForLeaguePuzzle, completeGameState, getFlaggedSessions, getGlobalLeaderboard, getGlobalLeaderboardEntry, addGlobalLeaderboardEntry, getWalletLeaderboardPositions, getGameState, getGame, upsertPersonalBest } from '../db/index.mjs';
 import { analyseInputPattern } from '../scoring.mjs';
 import { validateFleet, calculateRange, checkHit, checkSunk, checkWin, getGameState as getBattleshipsState, cpuPlaceFleet, cpuShootRecruit, cpuShootOfficer, cpuShootAdmiral, pickSurvivingShip, FLEET } from '../games/battleships.mjs';
 
@@ -870,7 +870,7 @@ router.post('/league/:leagueId/submit', optionalWallet, (req, res) => {
     return res.status(403).json({ error: 'Not a league participant' });
   }
 
-  const { puzzleIndex, score, timeMs, mistakes, hints } = req.body;
+  const { puzzleIndex, score, timeMs, mistakes, hints, clientStats = {} } = req.body;
   if (puzzleIndex == null || score == null) {
     return res.status(400).json({ error: 'puzzleIndex and score required' });
   }
@@ -905,7 +905,13 @@ router.post('/league/:leagueId/submit', optionalWallet, (req, res) => {
     }
   }
 
-  addLeagueScore(league.id, wallet, puzzleIndex, score, timeMs || 0, mistakes || 0, hints || 0, Date.now(), suspicious, suspiciousDetail);
+  addLeagueScore(league.id, wallet, puzzleIndex, score, timeMs || 0, mistakes || 0, hints || 0, Date.now(), suspicious, suspiciousDetail,
+    clientStats.undos ?? 0, clientStats.freeCellsUsed ?? 0, clientStats.flags ?? 0, clientStats.helperUsed ? 1 : 0);
+
+  // Mark active_game_state as completed so resume path doesn't serve stale puzzle
+  if (gameState && gameState.session_id) {
+    try { completeGameState(gameState.session_id, 'completed', score, suspicious); } catch (e) { /* must not block submission */ }
+  }
 
   // Founding Member check — first league puzzle submission within the window
   try {
