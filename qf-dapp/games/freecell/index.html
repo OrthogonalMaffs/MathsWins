@@ -380,6 +380,7 @@ var G = (function() {
   var undoStack = [];
   var dealNum = 0;
   var done = false;
+  var autoCompleting = false;
   var selectedCard = null; // { type:'cascade'|'freecell', index:N, cardIndex:N (for cascade), count:N }
   var isMobile = false;
 
@@ -782,13 +783,11 @@ var G = (function() {
 
   function checkAutoCompleteBtn() {
     var btn = document.getElementById('autocomplete-btn');
-    if (!leagueMode && isAutoCompletable() && !checkWin()) {
-      btn.style.display = '';
-    } else if (leagueMode) {
-      // In league mode, check auto-complete from server after each move
-      btn.style.display = 'none';
-    } else {
-      btn.style.display = 'none';
+    btn.style.display = 'none';
+    if (leagueMode) return;
+    if (!autoCompleting && isAutoCompletable() && !checkWin()) {
+      autoCompleting = true;
+      autoCompleteAction();
     }
   }
 
@@ -1438,6 +1437,7 @@ var G = (function() {
     freeCellsUsed = 0;
     undoStack = [];
     done = false;
+    autoCompleting = false;
     selectedCard = null;
     timerStarted = false;
     startTime = null;
@@ -1467,6 +1467,7 @@ var G = (function() {
     document.getElementById('sv-t').textContent = '00:00';
     if (timerInterval) { clearInterval(timerInterval); timerInterval = null; }
     done = false;
+    autoCompleting = false;
     timerStarted = false;
     document.getElementById('deal-input').value = '';
   }
@@ -1498,6 +1499,7 @@ var G = (function() {
         freeCellsUsed = 0;
         undoStack = [];
         done = false;
+        autoCompleting = false;
         selectedCard = null;
 
         if (resumeData.puzzleIndex !== undefined) leaguePuzzleIndex = resumeData.puzzleIndex;
@@ -1547,6 +1549,7 @@ var G = (function() {
       freeCellsUsed = 0;
       undoStack = [];
       done = false;
+      autoCompleting = false;
       selectedCard = null;
       timerStarted = false;
       startTime = null;
