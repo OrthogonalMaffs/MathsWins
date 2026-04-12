@@ -82,14 +82,14 @@ Split from MaffsGames in March 2025. MaffsGames = free schools games. MathsWins 
 
 ### Lobby Structure (4 tabs)
 **Leagues tab:** 2x2 grid — Sudoku Duel (silver pulse), KenKen, Minesweeper, FreeCell. MW logo centre. Cards link directly to `/league/` lobby pages (not game hubs).
-**Duels tab:** 10 duel-capable games — Sudoku Duel, Battleships, KenKen, Kakuro, Countdown Numbers, Nonogram, Minesweeper, FreeCell, Poker Patience, Cribbage Solitaire. All duels free (no stakes — payment system not built). Cards link to game hubs with `?mode=duel` — scrolls duel button into view with gold highlight flash.
+**Duels tab:** 10 duel-capable games — Sudoku Duel, Battleships, KenKen, Kakuro, Countdown Numbers, Nonogram, Minesweeper, FreeCell, Poker Patience, Cribbage Solitaire. QF stakes LIVE (25 QF default, client pays escrow, auto-settlement on completion). Cards link to game hubs with `?mode=duel` — scrolls duel button into view with gold highlight flash.
 **Free tab:** 12 free games with instant search — Maffsy, Higher or Lower, 52-dle, Towers of Hanoi, Don't Press It, Memory Matrix, RPS vs Machine, Estimation Engine, Sequence Solver, Prime or Composite, Cryptarithmetic Club, Battleships (vs CPU).
 **Leaderboards tab:** Game selector (20 games, Battleships excluded), Daily/Weekly/Monthly period toggle, leaderboard table (Rank/Name/Score/Time), top 10 with "Show more" expand (all if <=25), connected wallet highlighted in gold, empty state message. Fetches from `/api/dapp/global-leaderboard/:gameId/:periodType`.
 
 ### Registered Games
 **Active league games (4):** sudoku-duel, kenken, minesweeper, freecell (league lobby pages live)
 **League-capable but not active (4):** kakuro, nonogram, poker-patience, cribbage-solitaire
-**Duel-capable (10):** All 4 league games + battleships, kakuro, countdown-numbers, nonogram, poker-patience, cribbage-solitaire. All duel flows complete, stakes removed (free score comparisons).
+**Duel-capable (10):** All 4 league games + battleships, kakuro, countdown-numbers, nonogram, poker-patience, cribbage-solitaire. All duel flows complete, QF stakes live (25 QF, escrow settlement).
 **Free play (12):** maffsy, higher-or-lower, 52dle, towers-of-hanoi, dont-press-it, memory-matrix, rps-vs-machine, estimation-engine, sequence-solver, prime-or-composite, cryptarithmetic-club, battleships (vs CPU)
 **Renamed:** Equatle → Maffsy (slug: /games/maffsy/). Old /games/equatle/ and /qf-dapp/games/equatle/ directories deleted.
 **Free play backend:** POST /session/submit-freeplay — client-reported score, upserts personal_best, fires checkAchievements. All 11 free games wired (battleships uses its own API).
@@ -168,6 +168,17 @@ Split from MaffsGames in March 2025. MaffsGames = free schools games. MathsWins 
 - Wallet auth: challenge-sign-verify JWT (24h), persisted in localStorage
 - Substrate wallet support: Talisman/Polkadot.js/SubWallet via @polkadot/extension-dapp
 
+### Duel Payment System (live 2026-04-12)
+- Client sends QF to escrow wallet via signer.sendTransaction(), passes txHash to server
+- GET /duel/config returns { escrowAddress, defaultStake: 25 }
+- Server stores txHash in duels.creator_tx / duels.acceptor_tx
+- Settlement fires automatically when both scores submitted (settleDuel / settleDuelDraw)
+- Only settles if both creator_tx AND acceptor_tx present (no payout for free duels)
+- Refund sweep (5min interval) only refunds if tx hash exists
+- Builder-whitelisted wallets bypass payment entirely
+- Share code interstitial shown before game starts (Start Playing button)
+- **BLOCKER:** On-chain verification parked — QF RPC eth_getTransactionReceipt returns null for valid transactions. Trust-the-hash until fixed.
+
 ### Wallet Auth (JWT)
 - Challenge-sign-verify flow in qf-wallet.js
 - JWT stored in localStorage (sign once per 24 hours)
@@ -192,7 +203,7 @@ Split from MaffsGames in March 2025. MaffsGames = free schools games. MathsWins 
 - Batch 7 live (2026-04-12): 11 battleships + wolf-pack (mint-time super). Uses checkSunk() from battleships.mjs, fleet JSON from battleships_placements.
 - Batch 8 live (2026-04-12): 3 free game (century, explorer, personal-best) + free_game_completions table. Remaining 11 free game achievements need frontend stats in submit-freeplay payload.
 - speed-reader RETIRED (active=0) — 52dle only has 6 guesses
-- ~109 of 161 conditions wired, ~52 remaining
+- 155 of 161 conditions wired and live (2026-04-12). 6 deferred: the-novelist (no server Maffsy evaluator), all-wrong (per-cell data cleared), full-hints (variable max), boom (impossible by design), 2 non-existent variants
 - the-fish: fires at league settlement for last-place poker-patience finishers (3 times to earn)
 - Founding Member: fires on first league puzzle submission between 2026-04-11 and 2026-07-31 (env: FOUNDING_MEMBER_START/END)
 - Mint endpoint: real on-chain mint via escrow wallet, fee split (5% burn, 95% team), free mints use banked credits
