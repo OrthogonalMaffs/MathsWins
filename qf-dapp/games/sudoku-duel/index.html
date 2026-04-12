@@ -576,7 +576,7 @@ var G = (function() {
   }
 
   async function sendStakePayment(escrowAddress, stakeQF) {
-    var signer = W.signer;
+    var signer = W.state.signer || qfWallet.signer;
     if (!signer || !signer.sendTransaction) throw new Error('Wallet signer not available');
     var value = ethers.parseEther(String(stakeQF));
     var tx = await signer.sendTransaction({ to: escrowAddress, value: value });
