@@ -56,6 +56,10 @@ export function getDb() {
   try { db.exec('ALTER TABLE wallet_stats ADD COLUMN consecutive_league_wins INTEGER DEFAULT 0'); } catch (e) { /* already exists */ }
   try { db.exec('ALTER TABLE wallet_stats ADD COLUMN sub_hunter_count INTEGER DEFAULT 0'); } catch (e) { /* already exists */ }
   try { db.exec('ALTER TABLE wallet_stats ADD COLUMN carrier_supremacy_count INTEGER DEFAULT 0'); } catch (e) { /* already exists */ }
+  try { db.exec("ALTER TABLE wallet_stats ADD COLUMN shadow_from_count INTEGER DEFAULT 0"); } catch (e) { /* already exists */ }
+  try { db.exec("ALTER TABLE wallet_stats ADD COLUMN duel_wins_by_game TEXT DEFAULT '{}'"); } catch (e) { /* already exists */ }
+  try { db.exec('ALTER TABLE duels ADD COLUMN creator_tx TEXT'); } catch (e) { /* already exists */ }
+  try { db.exec('ALTER TABLE duels ADD COLUMN acceptor_tx TEXT'); } catch (e) { /* already exists */ }
 
   // League refunds table
   db.exec(`CREATE TABLE IF NOT EXISTS league_refunds (
@@ -801,7 +805,11 @@ export function completeDuel(duelId, winnerWallet) {
 export function expireOldDuels() {
   const db = getDb();
   const now = Date.now();
-  db.prepare(`UPDATE duels SET status = 'expired' WHERE status IN ('created', 'accepted') AND expires_at < ?`).run(now);
+  var expiring = db.prepare(`SELECT id, creator_wallet, opponent_wallet, stake, status FROM duels WHERE status IN ('created', 'accepted') AND expires_at < ?`).all(now);
+  if (expiring.length > 0) {
+    db.prepare(`UPDATE duels SET status = 'expired' WHERE status IN ('created', 'accepted') AND expires_at < ?`).run(now);
+  }
+  return expiring;
 }
 
 export function getDuelsByWallet(wallet, limit) {

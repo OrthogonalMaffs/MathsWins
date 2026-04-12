@@ -14,7 +14,7 @@ import {
   upsertLeagueBest, incrementWalletCounter, getWalletStats
 } from './db/index.mjs';
 import { sendQF, TEAM_WALLET, BURN_ADDRESS } from './escrow.mjs';
-import { checkAchievements } from './achievement-checker.mjs';
+import { checkAchievements, checkShadowsAchievements } from './achievement-checker.mjs';
 
 const __dirname = dirname(fileURLToPath(import.meta.url));
 
@@ -210,6 +210,7 @@ export async function doSettleLeague(leagueId) {
     }
 
     // Step 4b: Check achievements for ALL players in the league
+    var settledAt = Date.now();
     var totalPlayers = leaderboard.length;
     for (var pi = 0; pi < totalPlayers; pi++) {
       var player = leaderboard[pi];
@@ -239,6 +240,17 @@ export async function doSettleLeague(leagueId) {
       }
     }
 
+    // Step 4b2: Check Shadows achievements for ALL players
+    for (var si = 0; si < totalPlayers; si++) {
+      var shadowPlayer = leaderboard[si];
+      var shadowPosition = si + 1;
+      try {
+        checkShadowsAchievements(shadowPlayer.wallet, league.id, shadowPosition, settledAt);
+      } catch (e) {
+        console.error('Shadows achievement check failed for ' + shadowPlayer.wallet.slice(0, 8) + '...:', e.message);
+      }
+    }
+
     // Step 4c: Upsert league bests for all players
     for (const player of leaderboard) {
       try {
@@ -251,7 +263,7 @@ export async function doSettleLeague(leagueId) {
     // Step 5: Finalise
     const db = getDb();
     db.prepare('UPDATE leagues SET status = ?, settled_at = ? WHERE id = ?')
-      .run('settled', Date.now(), leagueId);
+      .run('settled', settledAt, leagueId);
 
     const result = {
       status: 'settled',

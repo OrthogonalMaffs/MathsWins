@@ -3,7 +3,7 @@
  * Called after league settlement, duel completion, or session completion.
  * Gated by ACHIEVEMENTS_ACTIVE env var.
  */
-import { awardAchievement, getWalletAchievements, getWalletStats, incrementWalletCounter, resetWalletCounter, getLeagueScoresByWallet, getLeaguePuzzles, getAllLeagueScores, getGlobalRecord, setGlobalRecord, getEarnedAchievementCount, getActiveSeasonalWindows, getCompletedLeagueCount, getLeagueWinCount, getLeagueWinsByGame, getDuelWinCount, isRecentLeagueChampion, getBattleshipsRounds, getBattleshipsPlacement, getBattleshipsGameById, getBattleshipsRecord, incrementFreeGameCompletion, getDistinctFreeGamesPlayed } from './db/index.mjs';
+import { awardAchievement, getWalletAchievements, getWalletStats, incrementWalletCounter, resetWalletCounter, upsertWalletStats, getLeagueScoresByWallet, getLeaguePuzzles, getAllLeagueScores, getGlobalRecord, setGlobalRecord, getEarnedAchievementCount, getActiveSeasonalWindows, getCompletedLeagueCount, getLeagueWinCount, getLeagueWinsByGame, getDuelWinCount, isRecentLeagueChampion, getBattleshipsRounds, getBattleshipsPlacement, getBattleshipsGameById, getBattleshipsRecord, incrementFreeGameCompletion, getDistinctFreeGamesPlayed } from './db/index.mjs';
 import { checkSunk } from './games/battleships.mjs';
 
 const ACHIEVEMENTS_ACTIVE = process.env.ACHIEVEMENTS_ACTIVE === 'true';
@@ -42,6 +42,105 @@ function buildRoundSnapshots(allScores, completingWallets, puzzleCount) {
     snapshots.push(round);
   }
   return snapshots;
+}
+
+const DUEL_CAPABLE_GAMES = [
+  'sudoku-duel', 'battleships', 'kenken', 'kakuro', 'countdown-numbers',
+  'nonogram', 'minesweeper', 'freecell', 'poker-patience', 'cribbage-solitaire'
+];
+
+/**
+ * Check Shadows trilogy achievements for a player after league settlement.
+ * Called once per player from doSettleLeague, after positions are finalised.
+ *
+ * @param {string} wallet - player wallet address
+ * @param {string} leagueId - the league being settled
+ * @param {number} position - player's final position (1 = winner)
+ * @param {number} settledAt - timestamp when the league was settled (passed in, not queried)
+ */
+export function checkShadowsAchievements(wallet, leagueId, position, settledAt) {
+  if (!ACHIEVEMENTS_ACTIVE) return [];
+  if (!wallet || !leagueId || !settledAt) return [];
+
+  var awarded = [];
+
+  function tryAward(achievementId) {
+    var result = awardAchievement(wallet, achievementId);
+    if (result.awarded) {
+      awarded.push(achievementId);
+      console.log('Achievement awarded: ' + achievementId + ' to ' + wallet.slice(0, 8) + '...' + (result.pioneer ? ' (PIONEER)' : ''));
+    }
+  }
+
+  // Get all scores for this player in this league
+  var scores = getLeagueScoresByWallet(leagueId, wallet);
+  var puzzles = getLeaguePuzzles(leagueId);
+
+  // Must have completed all 10 puzzles
+  if (scores.length !== puzzles.length || scores.length === 0) return awarded;
+
+  // Check if ALL submitted_at timestamps are before settledAt
+  var allBeforeSettlement = scores.every(function(s) { return s.submitted_at < settledAt; });
+  if (!allBeforeSettlement) return awarded;
+
+  // into-the-shadows: completed all puzzles before leaderboard went public
+  tryAward('into-the-shadows');
+
+  // from-the-shadows: did the above AND won the league
+  if (position === 1) {
+    tryAward('from-the-shadows');
+
+    // Increment shadow_from_count and check for shadow-legend
+    incrementWalletCounter(wallet, 'shadow_from_count');
+    var stats = getWalletStats(wallet);
+    if (stats && stats.shadow_from_count >= 5) {
+      tryAward('shadow-legend');
+    }
+  }
+
+  return awarded;
+}
+
+/**
+ * Check The Contrarian achievement after a duel win.
+ * Tracks distinct game wins and awards when all 10 duel-capable games have at least 1 win.
+ *
+ * @param {string} wallet - winning player's wallet address
+ * @param {string} gameId - the game that was just won
+ */
+export function checkContrarian(wallet, gameId) {
+  if (!ACHIEVEMENTS_ACTIVE) return [];
+  if (!wallet || !gameId) return [];
+
+  var awarded = [];
+
+  function tryAward(achievementId) {
+    var result = awardAchievement(wallet, achievementId);
+    if (result.awarded) {
+      awarded.push(achievementId);
+      console.log('Achievement awarded: ' + achievementId + ' to ' + wallet.slice(0, 8) + '...' + (result.pioneer ? ' (PIONEER)' : ''));
+    }
+  }
+
+  // Read current duel_wins_by_game from wallet_stats
+  var stats = getWalletStats(wallet);
+  var winsJSON = (stats && stats.duel_wins_by_game) ? stats.duel_wins_by_game : '{}';
+  var wins;
+  try { wins = JSON.parse(winsJSON); } catch (e) { wins = {}; }
+
+  // Increment count for this game
+  wins[gameId] = (wins[gameId] || 0) + 1;
+
+  // Write updated JSON back
+  upsertWalletStats(wallet, { duel_wins_by_game: JSON.stringify(wins) });
+
+  // Check if all 10 duel-capable games have at least 1 win
+  var allGamesWon = DUEL_CAPABLE_GAMES.every(function(g) { return wins[g] && wins[g] >= 1; });
+  if (allGamesWon) {
+    tryAward('the-contrarian');
+  }
+
+  return awarded;
 }
 
 /**

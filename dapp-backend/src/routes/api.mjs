@@ -10,8 +10,8 @@ import { ethers } from 'ethers';
 import { signatureVerify, decodeAddress } from '@polkadot/util-crypto';
 import { getDb } from '../db/index.mjs';
 import { doSettleLeague, checkEarlySettlement, recoverStuckLeagues, mintCommemorative } from '../league-settle.mjs';
-import { checkAchievements } from '../achievement-checker.mjs';
-import { sendQF, settleDuel, BURN_ADDRESS, TEAM_WALLET } from '../escrow.mjs';
+import { checkAchievements, checkContrarian } from '../achievement-checker.mjs';
+import { sendQF, settleDuel, settleDuelDraw, refundDuel, getEscrowAddress, BURN_ADDRESS, TEAM_WALLET } from '../escrow.mjs';
 import { createBattleshipsGame, getBattleshipsGameByCode, getBattleshipsGameById, updateBattleshipsGameStatus, saveBattleshipsPlacement, getBattleshipsPlacement, getBattleshipsPlacements, addBattleshipsRound, getBattleshipsRounds, getBattleshipsRecord, updateBattleshipsRecord, getActiveBattleshipsGames, getBattleshipsGamesByWallet } from '../db/index.mjs';
 import { getAchievementRegistry, getAchievement, awardAchievement, getWalletAchievements, getAllAchievements, getGlobalRecord, getPersonalBests, getPersonalBest, getLeagueBests, getWalletStats, getWalletLeagueHistory, getWalletTrophies, getGameStateForLeaguePuzzle, completeGameState, getFlaggedSessions, getGlobalLeaderboard, getGlobalLeaderboardEntry, addGlobalLeaderboardEntry, getWalletLeaderboardPositions, getGameState, getGame, upsertPersonalBest, incrementPbBeatenCount, retireAchievement } from '../db/index.mjs';
 import { analyseInputPattern } from '../scoring.mjs';
@@ -393,6 +393,11 @@ router.get('/games', (req, res) => {
   res.json({ weekId, games });
 });
 
+// ── Duel config (escrow address for client-side payment) ────────────────────
+router.get('/duel/config', (req, res) => {
+  res.json({ escrowAddress: getEscrowAddress(), defaultStake: 25 });
+});
+
 // ── Week info ───────────────────────────────────────────────────────────────
 
 router.get('/week', (req, res) => {
@@ -425,12 +430,18 @@ function generateShareCode() {
 router.post('/duel/create', optionalWallet, async (req, res) => {
   const wallet = req.wallet;
 
-  const { gameId, difficulty, stake } = req.body;
+  const { gameId, difficulty, stake, txHash } = req.body;
   if (!gameId) return res.status(400).json({ error: 'gameId required' });
 
   // Validate stake
   const stakeAmount = parseInt(stake) || 25;
   if (stakeAmount < 25) return res.status(400).json({ error: 'Minimum stake is 25 QF' });
+
+  // Require payment unless builder-whitelisted
+  const isBuilder = BUILDER_WHITELIST.has(wallet.toLowerCase());
+  if (!isBuilder && !txHash) {
+    return res.status(400).json({ error: 'Payment transaction hash required' });
+  }
 
   // Check active duel cap (max 5 unaccepted duels per wallet)
   const activeCount = getActiveDuelCount(wallet);
@@ -453,6 +464,12 @@ router.post('/duel/create', optionalWallet, async (req, res) => {
   const expiresAt = now + 24 * 60 * 60 * 1000; // 24 hours
 
   createDuel(id, gameId, puzzleSeed, difficulty || 'medium', stakeAmount, wallet, shareCode, now, expiresAt);
+
+  // Store creator txHash
+  if (txHash) {
+    const db = getDb();
+    db.prepare('UPDATE duels SET creator_tx = ? WHERE id = ?').run(txHash, id);
+  }
 
   res.json({ duelId: id, shareCode, puzzleSeed, stake: stakeAmount, expiresAt });
 });
@@ -487,11 +504,23 @@ router.post('/duel/:code/accept', optionalWallet, (req, res) => {
     return res.status(403).json({ error: 'Duel already accepted by another player' });
   }
 
-  if (duel.status === 'created') {
-    acceptDuel(duel.id, wallet);
+  // Require payment unless builder-whitelisted
+  const isBuilder = BUILDER_WHITELIST.has(wallet.toLowerCase());
+  const { txHash } = req.body || {};
+  if (!isBuilder && !txHash && duel.status === 'created') {
+    return res.status(400).json({ error: 'Payment transaction hash required' });
   }
 
-  res.json({ duelId: duel.id, puzzleSeed: duel.puzzle_seed, gameId: duel.game_id, difficulty: duel.difficulty });
+  if (duel.status === 'created') {
+    acceptDuel(duel.id, wallet);
+    // Store acceptor txHash
+    if (txHash) {
+      const db = getDb();
+      db.prepare('UPDATE duels SET acceptor_tx = ? WHERE id = ?').run(txHash, duel.id);
+    }
+  }
+
+  res.json({ duelId: duel.id, puzzleSeed: duel.puzzle_seed, gameId: duel.game_id, difficulty: duel.difficulty, stake: duel.stake });
 });
 
 // Submit duel score (both creator and opponent use this)
@@ -542,6 +571,18 @@ router.post('/duel/:code/submit', optionalWallet, (req, res) => {
       settlement = { winner: null, creatorPrize: half, opponentPrize: half, burn: burnAmount, team: teamAmount };
     }
 
+    // Settle on-chain (fire and forget — must never block response)
+    if (winner) {
+      settleDuel(winner, burnAmount, teamAmount, prizePool).then(function(r) {
+        console.log('Duel ' + code + ' settled: winner=' + winner.slice(0, 8) + '... prize=' + prizePool + ' burn=' + burnAmount + ' team=' + teamAmount);
+      }).catch(function(e) { console.error('Duel settlement failed for ' + code + ':', e.message); });
+    } else {
+      var half = Math.floor(prizePool / 2);
+      settleDuelDraw(updated.creator_wallet, updated.opponent_wallet, burnAmount, teamAmount, half).then(function(r) {
+        console.log('Duel ' + code + ' draw settled: each=' + half + ' burn=' + burnAmount + ' team=' + teamAmount);
+      }).catch(function(e) { console.error('Duel draw settlement failed for ' + code + ':', e.message); });
+    }
+
     // Check duel achievements
     if (winner) {
       var loser = winner.toLowerCase() === updated.creator_wallet.toLowerCase() ? updated.opponent_wallet : updated.creator_wallet;
@@ -549,6 +590,7 @@ router.post('/duel/:code/submit', optionalWallet, (req, res) => {
       var loserScore = winner.toLowerCase() === updated.creator_wallet.toLowerCase() ? updated.opponent_score : updated.creator_score;
       try { checkAchievements(winner, { type: 'duel_complete', gameId: duel.game_id, won: true, loserWallet: loser, winnerScore: winnerScore, loserScore: loserScore }); } catch (e) { /* achievement check must never block */ }
       try { checkAchievements(loser, { type: 'duel_complete', gameId: duel.game_id, won: false, winnerWallet: winner, winnerScore: winnerScore, loserScore: loserScore }); } catch (e) { /* achievement check must never block */ }
+      try { checkContrarian(winner, duel.game_id); } catch (e) { /* achievement check must never block */ }
     }
 
     return res.json({ status: 'completed', duel: final, settlement });
