@@ -515,7 +515,6 @@ var G = (function() {
 
       // Show promo info then start game
       document.getElementById('mode-panel').style.display = 'none';
-      document.getElementById('scoring-panel').style.display = 'none';
 
       // Start game with the promo's puzzle seed
       await startGameSession(data.puzzle_seed);
@@ -621,7 +620,6 @@ var G = (function() {
   // ── Accept Screen (opponent) ────────────────────────────────────────
   async function showAcceptScreen(code) {
     document.getElementById('mode-panel').style.display = 'none';
-    document.getElementById('scoring-panel').style.display = 'none';
     duelCode = code;
     duelMode = true;
 
@@ -760,12 +758,10 @@ var G = (function() {
   // ── Pre-game visibility ─────────────────────────────────────────────
   function hidePreGame() {
     document.getElementById('mode-panel').style.display = 'none';
-    document.getElementById('scoring-panel').style.display = 'none';
   }
 
   function showPreGame() {
     document.getElementById('mode-panel').style.display = 'flex';
-    document.getElementById('scoring-panel').style.display = 'block';
   }
 
   // ── Timer ───────────────────────────────────────────────────────────
