@@ -453,6 +453,17 @@ export function getAllAchievements() {
   `).all();
 }
 
+export function getEarnedAchievementCount(wallet) {
+  const db = getDb();
+  const row = db.prepare('SELECT COUNT(*) as count FROM achievement_eligibility WHERE wallet = ?').get(wallet.toLowerCase());
+  return row ? row.count : 0;
+}
+
+export function getActiveSeasonalWindows(nowMs) {
+  const db = getDb();
+  return db.prepare('SELECT * FROM seasonal_windows WHERE window_start <= ? AND window_end >= ?').all(nowMs, nowMs);
+}
+
 export function getGlobalRecord(recordId) {
   const db = getDb();
   return db.prepare('SELECT * FROM global_records WHERE record_id = ?').get(recordId);

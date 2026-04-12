@@ -3,9 +3,45 @@
  * Called after league settlement, duel completion, or session completion.
  * Gated by ACHIEVEMENTS_ACTIVE env var.
  */
-import { awardAchievement, getWalletAchievements, getWalletStats, incrementWalletCounter, resetWalletCounter, getLeagueScoresByWallet, getLeaguePuzzles, getAllLeagueScores, getGlobalRecord, setGlobalRecord } from './db/index.mjs';
+import { awardAchievement, getWalletAchievements, getWalletStats, incrementWalletCounter, resetWalletCounter, getLeagueScoresByWallet, getLeaguePuzzles, getAllLeagueScores, getGlobalRecord, setGlobalRecord, getEarnedAchievementCount, getActiveSeasonalWindows } from './db/index.mjs';
 
 const ACHIEVEMENTS_ACTIVE = process.env.ACHIEVEMENTS_ACTIVE === 'true';
+
+const MILESTONE_IDS = ['collector', 'devoted', 'obsessed', 'the-complete-player'];
+
+/**
+ * Build round-based leaderboard snapshots for a league.
+ * Returns an array of rounds, each a sorted array of { wallet, cumulative }.
+ * Only includes rounds where all completingWallets have submitted N puzzles.
+ */
+function buildRoundSnapshots(allScores, completingWallets, puzzleCount) {
+  var byWallet = {};
+  for (var i = 0; i < allScores.length; i++) {
+    var w = allScores[i].wallet;
+    if (!byWallet[w]) byWallet[w] = [];
+    byWallet[w].push(allScores[i]);
+  }
+  for (var wk in byWallet) {
+    byWallet[wk].sort(function(a, b) { return a.submitted_at - b.submitted_at; });
+  }
+
+  var snapshots = [];
+  for (var rn = 1; rn <= puzzleCount; rn++) {
+    var round = [];
+    var allHaveN = true;
+    for (var ri = 0; ri < completingWallets.length; ri++) {
+      var wScores = byWallet[completingWallets[ri]];
+      if (!wScores || wScores.length < rn) { allHaveN = false; break; }
+      var cumulative = 0;
+      for (var rs = 0; rs < rn; rs++) cumulative += wScores[rs].score;
+      round.push({ wallet: completingWallets[ri], cumulative: cumulative });
+    }
+    if (!allHaveN || round.length < 2) continue;
+    round.sort(function(a, b) { return b.cumulative - a.cumulative; });
+    snapshots.push(round);
+  }
+  return snapshots;
+}
 
 /**
  * Check and award achievements for a wallet based on context.
@@ -159,68 +195,47 @@ export function checkAchievements(wallet, context) {
       }
     }
 
-    // ── Clean Slate & The Lurker (round-based leaderboard reconstruction) ──
+    // ── Clean Slate, The Lurker, From the Ashes (round-based snapshots) ──
     if (context.won) {
       var allScores = getAllLeagueScores(context.leagueId);
       var puzzleCount = puzzles.length;
 
-      // Group scores by wallet, sorted by submitted_at within each wallet
-      var byWallet = {};
-      for (var gi = 0; gi < allScores.length; gi++) {
-        var gw = allScores[gi].wallet;
-        if (!byWallet[gw]) byWallet[gw] = [];
-        byWallet[gw].push(allScores[gi]);
+      // Derive completing wallets from allScores
+      var walletCounts = {};
+      for (var wci = 0; wci < allScores.length; wci++) {
+        walletCounts[allScores[wci].wallet] = (walletCounts[allScores[wci].wallet] || 0) + 1;
       }
-      for (var wk in byWallet) {
-        byWallet[wk].sort(function(a, b) { return a.submitted_at - b.submitted_at; });
-      }
-
-      // Only include wallets that completed all puzzles
       var completingWallets = [];
-      for (var cw in byWallet) {
-        if (byWallet[cw].length === puzzleCount) completingWallets.push(cw);
+      for (var cwk in walletCounts) {
+        if (walletCounts[cwk] === puzzleCount) completingWallets.push(cwk);
       }
-
-      // Build round snapshots: round N = cumulative score after each wallet's Nth submission
-      var winnerWallet = wallet.toLowerCase();
-      var wasEverLast = false;
-      var wasEverTop3 = false;
 
       if (completingWallets.length >= 4) {
-        for (var rn = 1; rn <= puzzleCount; rn++) {
-          var round = [];
-          var allHaveN = true;
-          for (var ri = 0; ri < completingWallets.length; ri++) {
-            var wScores = byWallet[completingWallets[ri]];
-            if (wScores.length < rn) { allHaveN = false; break; }
-            var cumulative = 0;
-            for (var rs = 0; rs < rn; rs++) cumulative += wScores[rs].score;
-            round.push({ wallet: completingWallets[ri], cumulative: cumulative });
+        var snapshots = buildRoundSnapshots(allScores, completingWallets, puzzleCount);
+        var winnerWallet = wallet.toLowerCase();
+        var preFinal = snapshots.slice(0, -1);
+
+        // Clean Slate: winner never in last place (pre-final rounds)
+        var neverLast = preFinal.every(function(round) {
+          return round[round.length - 1].wallet !== winnerWallet;
+        });
+        if (neverLast) tryAward('clean-slate');
+
+        // The Lurker: winner never in top 3 (pre-final rounds)
+        var neverTop3 = preFinal.every(function(round) {
+          for (var t = 0; t < Math.min(3, round.length); t++) {
+            if (round[t].wallet === winnerWallet) return false;
           }
-          if (!allHaveN || round.length < 2) continue;
+          return true;
+        });
+        if (neverTop3) tryAward('the-lurker');
 
-          round.sort(function(a, b) { return b.cumulative - a.cumulative; });
-
-          var isFinalRound = rn === puzzleCount;
-          var winnerPos = -1;
-          for (var wp = 0; wp < round.length; wp++) {
-            if (round[wp].wallet === winnerWallet) { winnerPos = wp + 1; break; }
+        // From the Ashes: winner was last after round 1
+        if (snapshots.length > 0) {
+          var round1 = snapshots[0];
+          if (round1[round1.length - 1].wallet === winnerWallet) {
+            tryAward('from-the-ashes');
           }
-
-          if (!isFinalRound) {
-            if (winnerPos === round.length) wasEverLast = true;
-            if (winnerPos >= 1 && winnerPos <= 3) wasEverTop3 = true;
-          }
-        }
-
-        // Clean Slate: winner never appeared in last place (pre-final rounds)
-        if (!wasEverLast) {
-          tryAward('clean-slate');
-        }
-
-        // The Lurker: winner never appeared in top 3 until final round
-        if (!wasEverTop3) {
-          tryAward('the-lurker');
         }
       }
     }
@@ -394,12 +409,42 @@ export function checkAchievements(wallet, context) {
   // TODO: onlyfans-qf — manual award only (admin endpoint)
 
   // ── Meta achievements ─────────────────────────────────────────────
-  // TODO: the-collector — earn 10 achievements
   // TODO: pioneer-hunter — be the pioneer for 3 achievements
   // TODO: the-whale — spend 1000+ QF on mint fees
 
   // ── Impossible ────────────────────────────────────────────────────
   // TODO: boom — conditions TBD (admin/manual or extreme edge case)
+
+  // ── Seasonal achievements ─────────────────────────────────────────
+  try {
+    var nowMs = Date.now();
+    var activeWindows = getActiveSeasonalWindows(nowMs);
+    for (var sw = 0; sw < activeWindows.length; sw++) {
+      var win = activeWindows[sw];
+      // VE Day requires Battleships specifically
+      if (win.achievement_id === 've-day' && context.gameId !== 'battleships') continue;
+      tryAward(win.achievement_id);
+    }
+  } catch (e) { /* seasonal check must never block */ }
+
+  // ── Milestone achievements (checked after all other awards) ───────
+  if (awarded.length > 0) {
+    try {
+      var earnedCount = getEarnedAchievementCount(wallet);
+      var milestones = [
+        { id: 'collector',           threshold: 10  },
+        { id: 'devoted',             threshold: 25  },
+        { id: 'obsessed',            threshold: 50  },
+        { id: 'the-complete-player', threshold: 100 },
+      ];
+      for (var mi = 0; mi < milestones.length; mi++) {
+        if (earnedCount >= milestones[mi].threshold) {
+          var mResult = awardAchievement(wallet, milestones[mi].id);
+          if (mResult.awarded) awarded.push(milestones[mi].id);
+        }
+      }
+    } catch (e) { /* milestone check must never block */ }
+  }
 
   return awarded;
 }
