@@ -534,6 +534,10 @@ export function checkAchievements(wallet, context) {
   if (context.gameId === 'freecell' && context.won && context.undoCount >= 100) {
     tryAward('the-undo-king');
   }
+  // lucky-number: win FreeCell deal #7777
+  if (context.gameId === 'freecell' && context.won && context.dealNumber === 7777) {
+    tryAward('lucky-number');
+  }
 
   // ── Poker Patience achievements ────────────────────────────────────
   if (context.gameId === 'poker-patience' && context.finalScores) {

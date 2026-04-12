@@ -251,6 +251,7 @@ export function startFreeSession(gameId, weekId, opts) {
     session.hintLog = [];
     session.mistakes = 0;
     session.hintsUsed = 0;
+    session.dealNumber = sessionQuestions[0].seed || null;
 
     if (contextType === 'league') {
       const actualSeed = sessionQuestions[0].seed || seed;
@@ -434,6 +435,8 @@ function buildAchContext(session, result, timeMs, won) {
     // Cribbage: track max single hand score across session
     maxHandScore: session._maxHandScore || 0,
     maxHandBreakdown: session._maxHandBreakdown || null,
+    // FreeCell deal number
+    dealNumber: session.dealNumber || null,
   };
   return ctx;
 }
