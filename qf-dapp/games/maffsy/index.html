@@ -187,6 +187,22 @@ body.cb .tile[data-s=present]::after{content:'▲';position:absolute;bottom:1px;
 
 .toast{position:fixed;top:66px;left:50%;transform:translateX(-50%);background:var(--body);color:var(--ink);z-index:300;padding:.55rem 1.1rem;border-radius:3px;font-family:'JetBrains Mono',monospace;font-size:.62rem;font-weight:500;opacity:0;transition:opacity .2s;pointer-events:none;white-space:nowrap}
 .toast.on{opacity:1}
+
+@media(max-width:480px){
+  .page{padding:0.5rem 0.4rem 0.5rem;gap:0.4rem}
+  .sbar{border-radius:3px}
+  .si{padding:0.3rem 0.1rem}
+  .sv{font-size:0.75rem}
+  .sl{font-size:0.32rem}
+  .msg{min-height:14px;font-size:0.5rem}
+  .row{gap:3px}
+  .tile{font-size:0.8rem;border-width:1.5px}
+  .grid{gap:3px}
+  .kbd{gap:3px}
+  .kr{gap:3px}
+  .key{min-width:0;max-width:none;flex:1;height:38px;font-size:0.75rem;padding:0}
+  .key.wide{min-width:0;max-width:none;flex:1.5;font-size:0.45rem}
+}
 </style>
 <meta name="twitter:card" content="summary_large_image">
 <meta name="twitter:title" content="QF Games">
