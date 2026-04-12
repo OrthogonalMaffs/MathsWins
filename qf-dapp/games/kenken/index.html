@@ -568,6 +568,7 @@ var G = (function() {
 
       grid[r][c] = v;
       notes[r][c] = new Set();
+      clearRelatedNotes(r, c, v);
 
       if (!leagueMode) {
         if (!data.isCorrect) {
@@ -579,6 +580,13 @@ var G = (function() {
       }
       renderBoard();
     } catch (e) { setMsg('Connection error'); }
+  }
+
+  function clearRelatedNotes(row, col, num) {
+    for (var i = 0; i < n; i++) {
+      if (notes[row][i]) notes[row][i].delete(num);
+      if (notes[i][col]) notes[i][col].delete(num);
+    }
   }
 
   // ── Hint ──────────────────────────────────────────────────────────

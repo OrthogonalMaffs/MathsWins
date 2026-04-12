@@ -126,6 +126,28 @@ export function checkAchievements(wallet, context) {
         tryAward('blind-kakuro');
       }
     }
+
+    // ── Mathematical Constants (individual puzzle scores) ────────────
+    var constantTargets = [
+      { id: 'pi',           score: 3141 },
+      { id: 'euler',        score: 2718 },
+      { id: 'golden-ratio', score: 1618 },
+      { id: 'root-two',     score: 1414 },
+      { id: 'root-three',   score: 1732 },
+    ];
+    for (var ci = 0; ci < constantTargets.length; ci++) {
+      if (scores.some(function(s) { return s.score === constantTargets[ci].score; })) {
+        tryAward(constantTargets[ci].id);
+      }
+    }
+
+    // ── Squared Pi (score 3141 on Pi Day only) ──────────────────────
+    var now = new Date();
+    if (now.getUTCMonth() === 2 && now.getUTCDate() === 14) {
+      if (scores.some(function(s) { return s.score === 3141; })) {
+        tryAward('squared-pi');
+      }
+    }
   }
 
   // ── Skill achievements ────────────────────────────────────────────
