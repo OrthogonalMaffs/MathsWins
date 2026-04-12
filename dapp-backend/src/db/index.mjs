@@ -53,6 +53,7 @@ export function getDb() {
   try { db.exec('ALTER TABLE wallet_stats ADD COLUMN consecutive_bs_wins_with_battleship INTEGER DEFAULT 0'); } catch (e) { /* already exists */ }
   try { db.exec('ALTER TABLE wallet_stats ADD COLUMN pyramid_completions INTEGER DEFAULT 0'); } catch (e) { /* already exists */ }
   try { db.exec('ALTER TABLE wallet_stats ADD COLUMN poker_patience_last_place INTEGER DEFAULT 0'); } catch (e) { /* already exists */ }
+  try { db.exec('ALTER TABLE wallet_stats ADD COLUMN consecutive_league_wins INTEGER DEFAULT 0'); } catch (e) { /* already exists */ }
 
   // League refunds table
   db.exec(`CREATE TABLE IF NOT EXISTS league_refunds (
@@ -182,6 +183,7 @@ export function getDb() {
   )`);
 
   seedAchievements(db);
+  seedSeasonalWindows(db);
 
   return db;
 }
@@ -395,6 +397,57 @@ function seedAchievements(db) {
   }
 }
 
+function seedSeasonalWindows(db) {
+  var count = db.prepare('SELECT COUNT(*) as c FROM seasonal_windows').get();
+  if (count && count.c > 0) return;
+
+  var insert = db.prepare('INSERT INTO seasonal_windows (achievement_id, year, window_start, window_end) VALUES (?, ?, ?, ?)');
+
+  // Helper: UTC day start/end in epoch ms
+  function dayStart(y, m, d) { return Date.UTC(y, m - 1, d, 0, 0, 0); }
+  function dayEnd(y, m, d) { return Date.UTC(y, m - 1, d, 23, 59, 59); }
+
+  // Fixed dates per year
+  var fixed = [
+    { id: 'christmas',    m: 12, d: 25 },
+    { id: 'halloween',    m: 10, d: 31 },
+    { id: 'bonfire-night', m: 11, d: 5 },
+    { id: 'pi-day',       m: 3,  d: 14 },
+    { id: 've-day',       m: 5,  d: 8 },
+  ];
+
+  // Easter: Good Friday + Easter Sunday (pre-calculated 2026–2030)
+  var easter = {
+    2026: [[4,3],[4,5]], 2027: [[3,26],[3,28]], 2028: [[4,14],[4,16]],
+    2029: [[3,30],[4,1]], 2030: [[4,19],[4,21]]
+  };
+
+  // Pancake Day (Shrove Tuesday, pre-calculated 2026–2030)
+  var pancake = { 2026: [2,17], 2027: [2,9], 2028: [2,29], 2029: [2,13], 2030: [3,5] };
+
+  for (var y = 2026; y <= 2030; y++) {
+    // Fixed dates
+    for (var fi = 0; fi < fixed.length; fi++) {
+      insert.run(fixed[fi].id, y, dayStart(y, fixed[fi].m, fixed[fi].d), dayEnd(y, fixed[fi].m, fixed[fi].d));
+    }
+
+    // New Year spans midnight: 31 Dec 23:00 to 1 Jan 01:00
+    insert.run('new-year', y, Date.UTC(y - 1, 11, 31, 23, 0, 0), Date.UTC(y, 0, 1, 1, 0, 0));
+
+    // Easter — single window spanning Good Friday to Easter Sunday
+    if (easter[y]) {
+      var gf = easter[y][0]; // Good Friday
+      var es = easter[y][1]; // Easter Sunday
+      insert.run('easter', y, dayStart(y, gf[0], gf[1]), dayEnd(y, es[0], es[1]));
+    }
+
+    // Pancake Day
+    if (pancake[y]) {
+      insert.run('pancake-day', y, dayStart(y, pancake[y][0], pancake[y][1]), dayEnd(y, pancake[y][0], pancake[y][1]));
+    }
+  }
+}
+
 // ── Achievement queries ─────────────────────────────────────────────────────
 
 export function getAchievementRegistry() {
@@ -475,6 +528,24 @@ export function setGlobalRecord(recordId, wallet, value) {
   db.prepare(`INSERT INTO global_records (record_id, wallet, value, achieved_at, updated_at) VALUES (?, ?, ?, ?, ?)
     ON CONFLICT(record_id) DO UPDATE SET wallet = excluded.wallet, value = excluded.value, updated_at = excluded.updated_at`)
     .run(recordId, wallet.toLowerCase(), String(value), now, now);
+}
+
+export function getCompletedLeagueCount(wallet) {
+  const db = getDb();
+  var row = db.prepare('SELECT COUNT(DISTINCT league_id) as count FROM league_scores WHERE wallet = ?').get(wallet.toLowerCase());
+  return row ? row.count : 0;
+}
+
+export function getLeagueWinCount(wallet) {
+  const db = getDb();
+  var row = db.prepare('SELECT COUNT(*) as count FROM league_prizes WHERE wallet = ? AND position = 1').get(wallet.toLowerCase());
+  return row ? row.count : 0;
+}
+
+export function getLeagueWinsByGame(wallet) {
+  const db = getDb();
+  var rows = db.prepare('SELECT DISTINCT l.game_id FROM league_prizes lp JOIN leagues l ON l.id = lp.league_id WHERE lp.wallet = ? AND lp.position = 1').all(wallet.toLowerCase());
+  return rows.map(function(r) { return r.game_id; });
 }
 
 export function getWalletStats(wallet) {

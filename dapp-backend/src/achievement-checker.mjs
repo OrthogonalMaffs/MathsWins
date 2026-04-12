@@ -3,7 +3,7 @@
  * Called after league settlement, duel completion, or session completion.
  * Gated by ACHIEVEMENTS_ACTIVE env var.
  */
-import { awardAchievement, getWalletAchievements, getWalletStats, incrementWalletCounter, resetWalletCounter, getLeagueScoresByWallet, getLeaguePuzzles, getAllLeagueScores, getGlobalRecord, setGlobalRecord, getEarnedAchievementCount, getActiveSeasonalWindows } from './db/index.mjs';
+import { awardAchievement, getWalletAchievements, getWalletStats, incrementWalletCounter, resetWalletCounter, getLeagueScoresByWallet, getLeaguePuzzles, getAllLeagueScores, getGlobalRecord, setGlobalRecord, getEarnedAchievementCount, getActiveSeasonalWindows, getCompletedLeagueCount, getLeagueWinCount, getLeagueWinsByGame } from './db/index.mjs';
 
 const ACHIEVEMENTS_ACTIVE = process.env.ACHIEVEMENTS_ACTIVE === 'true';
 
@@ -79,9 +79,9 @@ export function checkAchievements(wallet, context) {
     if (context.leagueCount >= 10) {
       tryAward('committed');
     }
-    // TODO: dedicated — leagueCount >= 50
-    // TODO: veteran — leagueCount >= 100
-    // TODO: legend — leagueCount >= 500
+    if (context.leagueCount >= 50) tryAward('dedicated');
+    if (context.leagueCount >= 100) tryAward('veteran');
+    if (context.leagueCount >= 500) tryAward('legend');
   }
 
   // ── Winning achievements ──────────────────────────────────────────
@@ -94,10 +94,29 @@ export function checkAchievements(wallet, context) {
     if (context.winCount !== undefined && context.winCount >= 5) {
       tryAward('on-a-roll');
     }
-    // TODO: dominant — winCount >= 20
-    // TODO: hat-trick — won 3 different game leagues
-    // TODO: the-completionist — won a league in every registered game
-    // TODO: the-tortoise — won with the slowest total_time in the league
+    if (context.winCount !== undefined && context.winCount >= 25) {
+      tryAward('dominant');
+    }
+
+    // the-completionist: won a league on all 4 active league games
+    var wonGames = getLeagueWinsByGame(wallet);
+    var activeLeagueGames = ['sudoku-duel', 'kenken', 'minesweeper', 'freecell'];
+    if (activeLeagueGames.every(function(g) { return wonGames.indexOf(g) !== -1; })) {
+      tryAward('the-completionist');
+    }
+  }
+
+  // ── Hat-Trick (consecutive league wins) ─────────────────────────
+  if (context.type === 'league_settle') {
+    if (context.position === 1) {
+      incrementWalletCounter(wallet, 'consecutive_league_wins');
+      var streakStats = getWalletStats(wallet);
+      if (streakStats && streakStats.consecutive_league_wins >= 3) {
+        tryAward('hat-trick');
+      }
+    } else {
+      resetWalletCounter(wallet, 'consecutive_league_wins');
+    }
   }
 
   // ── League wooden spoon achievements ─────────────────────────────
