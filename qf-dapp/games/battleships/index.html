@@ -449,7 +449,7 @@ body{background:var(--bg);color:var(--text);font-family:'Inter',sans-serif;min-h
     </div>
     <div class="modal-body" id="modal-body"></div>
     <div class="modal-acts" id="modal-acts">
-      <button class="btn btn-ghost" onclick="location.reload()">Play Again</button>
+      <button class="btn btn-ghost" onclick="document.getElementById('modal').classList.add('hidden');G.startCpu()">Play Again</button>
       <button class="btn btn-silver" onclick="window.location='/qf-dapp/'">Back to Lobby</button>
     </div>
   </div>

@@ -238,7 +238,7 @@ body{background:var(--bg);color:var(--text);font-family:'Inter',sans-serif;min-h
     <div class="modal-header"><div class="modal-result" id="modal-result">--</div><div class="modal-sub" id="modal-sub"></div></div>
     <div class="modal-score" id="modal-score"></div>
     <div class="modal-acts">
-      <button class="btn btn-ghost" onclick="location.reload()">Play Again</button>
+      <button class="btn btn-ghost" onclick="document.getElementById('modal').classList.add('hidden');G.startGame()">Play Again</button>
       <button class="btn btn-silver" onclick="window.location='/qf-dapp/'">Lobby</button>
     </div>
   </div>
@@ -833,7 +833,7 @@ var G = (function() {
     }
   });
 
-  return { inputNum: inputNum, undo: undo, toggleNotes: toggleNotes, useHint: useHint, submitGrid: submitGrid };
+  return { inputNum: inputNum, undo: undo, toggleNotes: toggleNotes, useHint: useHint, submitGrid: submitGrid, startGame: startGame };
 })();
 </script>
 <script>

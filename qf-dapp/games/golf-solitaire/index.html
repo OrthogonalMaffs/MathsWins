@@ -210,7 +210,7 @@ body{background:var(--bg);color:var(--text);font-family:'Inter',sans-serif;min-h
       <p class="result-text" id="duelResultText"></p>
     </div>
     <div style="margin-top:1rem;display:flex;gap:.6rem;justify-content:center;flex-wrap:wrap">
-      <button class="btn" onclick="location.reload()">Play Again</button>
+      <button class="btn" onclick="document.getElementById('gameOverPanel').style.display='none';G.startFree()">Play Again</button>
       <a href="/qf-dapp/" class="btn" style="text-decoration:none">Back to Lobby</a>
     </div>
   </div>
