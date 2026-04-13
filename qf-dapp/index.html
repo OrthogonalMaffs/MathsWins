@@ -437,8 +437,14 @@ async function acceptCode() {
   if (!code) return;
 
   if (code.length === 6 && /^[A-Z0-9]+$/.test(code)) {
-    window.location.href = '/qf-dapp/games/sudoku-duel/?duel=' + code;
-    return;
+    try {
+      var duelRes = await fetch(API + '/duel/' + encodeURIComponent(code), { method: 'GET' });
+      var duelData = await duelRes.json();
+      if (!duelData.error && duelData.game_id) {
+        window.location.href = '/qf-dapp/games/' + duelData.game_id + '/?duel=' + code;
+        return;
+      }
+    } catch (e) { /* fall through to promo check */ }
   }
 
   try {
