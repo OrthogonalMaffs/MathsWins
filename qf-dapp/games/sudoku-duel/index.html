@@ -600,7 +600,12 @@ var G = (function() {
       var cfg = await getDuelConfig();
       var stakeQF = cfg.defaultStake || 25;
 
-      // Send stake payment
+      // Pre-check: verify we can create a duel before taking payment
+      setMsg('Checking eligibility...');
+      var preCheck = await api('/duel/precheck', { gameId: GAME_ID }, 'POST');
+      if (preCheck && preCheck.error) { setMsg(preCheck.error); showPreGame(); return; }
+
+      // Send stake payment only after server confirms eligibility
       setMsg('Sending ' + stakeQF + ' QF stake...');
       var txHash = null;
       try {
@@ -686,6 +691,12 @@ var G = (function() {
       var data = await api('/duel/' + code, null, 'GET');
       if (data.error) { setMsg(data.error); return; }
 
+      // Block if duel is not accepting opponents
+      if (data.status !== 'created') {
+        setMsg('This duel is no longer available (' + data.status + ').');
+        return;
+      }
+
       duelData = data;
       duelId = data.id;
 
@@ -714,10 +725,19 @@ var G = (function() {
       return;
     }
     try {
+      // Check duel status BEFORE payment — reject expired/completed/already accepted
+      setMsg('Checking duel status...');
+      var check = await api('/duel/' + duelCode, null, 'GET');
+      if (check.error) { setMsg(check.error); return; }
+      if (check.status !== 'created') {
+        setMsg('This duel is no longer available (' + check.status + ').');
+        return;
+      }
+
       var cfg = await getDuelConfig();
       var stakeQF = (duelData && duelData.stake) ? duelData.stake : (cfg.defaultStake || 25);
 
-      // Send stake payment
+      // Send stake payment only after confirming duel is valid
       setMsg('Sending ' + stakeQF + ' QF stake...');
       var txHash = null;
       try {

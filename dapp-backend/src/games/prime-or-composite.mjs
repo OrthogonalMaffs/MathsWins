@@ -59,13 +59,13 @@ export function selectQuestions() {
 // --- Scoring ---
 
 export function evaluator(question, answer, elapsedMs) {
-  if (elapsedMs > TIME_LIMIT_MS) return 0;
+  if (elapsedMs > TIME_LIMIT_MS) return { correct: false, points: 0 };
 
   const normalised = (typeof answer === 'string') ? answer.toLowerCase() : '';
-  if (normalised !== question.answer) return 0;
+  if (normalised !== question.answer) return { correct: false, points: 0 };
 
   // Speed multiplier: 1.3 at 0ms, linear decay to 1.0 at 5000ms
   const fraction = Math.min(elapsedMs, TIME_LIMIT_MS) / TIME_LIMIT_MS;
   const multiplier = 1.3 - 0.3 * fraction;
-  return Math.round(100 * multiplier);
+  return { correct: true, points: Math.round(100 * multiplier) };
 }

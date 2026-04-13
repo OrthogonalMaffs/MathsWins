@@ -462,6 +462,15 @@ function generateShareCode() {
   return code;
 }
 
+// Pre-check duel eligibility (before client sends payment)
+router.post('/duel/precheck', optionalWallet, (req, res) => {
+  const wallet = req.wallet;
+  if (!wallet) return res.status(401).json({ error: 'Wallet required' });
+  const activeCount = getActiveDuelCount(wallet);
+  if (activeCount >= 5) return res.status(400).json({ error: 'Maximum 5 active duels. Wait for existing duels to be accepted or expire.' });
+  res.json({ ok: true });
+});
+
 // Create a duel
 router.post('/duel/create', optionalWallet, async (req, res) => {
   const wallet = req.wallet;
