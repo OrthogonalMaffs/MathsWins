@@ -908,6 +908,19 @@ var duelMode = false, duelCode = null, duelId = null;
   }
 })();
 
+function getDuelConfig() {
+  return duelApi('/duel/config', null, 'GET');
+}
+
+async function sendStakePayment(escrowAddress, stakeQF) {
+  var signer = qfWallet.signer || (qfWallet.state && qfWallet.state.signer);
+  if (!signer || !signer.sendTransaction) throw new Error('Wallet signer not available');
+  var value = ethers.parseEther(String(stakeQF));
+  var tx = await signer.sendTransaction({ to: escrowAddress, value: value });
+  var receipt = await tx.wait();
+  return receipt.hash;
+}
+
 function duelApi(url, body, method) {
   var headers = { 'Content-Type': 'application/json' };
   if (qfWallet && qfWallet.address) headers['X-Wallet-Address'] = qfWallet.address;
@@ -936,7 +949,19 @@ function _duelCountdown() {
 async function confirmDuelCreate() {
   if (!qfWallet || !qfWallet.isConnected()) { alert('Connect your wallet to create a duel.'); return; }
   try {
-    var data = await duelApi('/duel/create', { gameId: 'nonogram', stake: 0 });
+    var precheck = await duelApi('/duel/precheck', { gameId: 'nonogram' });
+    if (precheck.error) { alert(precheck.error); return; }
+    var config = await getDuelConfig();
+    var escrowAddress = config.escrowAddress;
+    var stakeQF = config.defaultStake;
+    var txHash;
+    try {
+      txHash = await sendStakePayment(escrowAddress, stakeQF);
+    } catch (payErr) {
+      if (payErr.code === 'ACTION_REJECTED') { alert('Transaction rejected.'); return; }
+      throw payErr;
+    }
+    var data = await duelApi('/duel/create', { gameId: 'nonogram', stake: stakeQF, txHash: txHash });
     if (data.error) { alert(data.error); return; }
     duelMode = true;
     duelCode = data.shareCode;
@@ -977,12 +1002,15 @@ async function loadDuelAccept() {
   try {
     var data = await duelApi('/duel/' + duelCode, null, 'GET');
     if (data.error) { alert(data.error); return; }
+    if (data.status !== 'created') { alert('This duel is no longer available (' + data.status + ').'); return; }
     duelId = data.id;
     var name = qfWallet.formatAddr(data.creator_wallet);
     qfWallet.resolveAny(data.creator_wallet).then(function(n) {
       if (n) document.getElementById('duel-challenger').textContent = n;
     });
     document.getElementById('duel-challenger').textContent = name;
+    var stakeNote = document.querySelector('#duel-accept-panel p');
+    if (stakeNote && data.stake) stakeNote.textContent = 'Accepting requires a ' + data.stake + ' QF stake. Winner takes 90% of the pot.';
     document.getElementById('duel-accept-panel').style.display = 'block';
     var startBtn = document.getElementById('start-btn');
     if (startBtn) startBtn.style.display = 'none';
@@ -996,7 +1024,20 @@ async function loadDuelAccept() {
 async function acceptDuelChallenge() {
   if (!qfWallet || !qfWallet.isConnected()) { alert('Connect your wallet first.'); return; }
   try {
-    var data = await duelApi('/duel/' + duelCode + '/accept', {});
+    var check = await duelApi('/duel/' + duelCode, null, 'GET');
+    if (check.error) { alert(check.error); return; }
+    if (check.status !== 'created') { alert('This duel is no longer available (' + check.status + ').'); return; }
+    var config = await getDuelConfig();
+    var escrowAddress = config.escrowAddress;
+    var stakeQF = config.defaultStake;
+    var txHash;
+    try {
+      txHash = await sendStakePayment(escrowAddress, stakeQF);
+    } catch (payErr) {
+      if (payErr.code === 'ACTION_REJECTED') { alert('Transaction rejected.'); return; }
+      throw payErr;
+    }
+    var data = await duelApi('/duel/' + duelCode + '/accept', { txHash: txHash });
     if (data.error) { alert(data.error); return; }
     duelId = data.duelId;
     document.getElementById('duel-accept-panel').style.display = 'none';

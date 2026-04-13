@@ -1637,6 +1637,19 @@ var duelMode = false, duelCode = null, duelId = null;
 
 var DUEL_API = (location.hostname === 'localhost' || location.hostname === '127.0.0.1') ? 'http://127.0.0.1:3860/api/dapp' : 'https://dapp-api.mathswins.co.uk/api/dapp';
 
+function getDuelConfig() {
+  return duelApi('/duel/config', null, 'GET');
+}
+
+async function sendStakePayment(escrowAddress, stakeQF) {
+  var signer = qfWallet.signer || (qfWallet.state && qfWallet.state.signer);
+  if (!signer || !signer.sendTransaction) throw new Error('Wallet signer not available');
+  var value = ethers.parseEther(String(stakeQF));
+  var tx = await signer.sendTransaction({ to: escrowAddress, value: value });
+  var receipt = await tx.wait();
+  return receipt.hash;
+}
+
 function duelApi(url, body, method) {
   var headers = { 'Content-Type': 'application/json' };
   if (typeof qfWallet !== 'undefined' && qfWallet.address) headers['X-Wallet-Address'] = qfWallet.address;
@@ -1651,7 +1664,25 @@ function duelApi(url, body, method) {
 async function confirmDuelCreate() {
   if (typeof qfWallet === 'undefined' || !qfWallet.address) { alert('Connect your wallet to create a duel.'); return; }
   try {
-    var data = await duelApi('/duel/create', { gameId: 'freecell', stake: 0 });
+    var preCheck = await duelApi('/duel/precheck', { gameId: 'freecell' });
+    if (preCheck && preCheck.error) { alert(preCheck.error); return; }
+
+    var cfg = await getDuelConfig();
+    var stakeQF = cfg.defaultStake || 25;
+
+    var txHash = null;
+    try {
+      txHash = await sendStakePayment(cfg.escrowAddress, stakeQF);
+    } catch (e) {
+      if (e.code === 'ACTION_REJECTED' || (e.message && e.message.indexOf('rejected') !== -1)) {
+        alert('Transaction cancelled.');
+      } else {
+        alert('Payment failed: ' + (e.reason || e.message || 'Unknown error'));
+      }
+      return;
+    }
+
+    var data = await duelApi('/duel/create', { gameId: 'freecell', stake: stakeQF, txHash: txHash });
     if (data.error) { alert(data.error); return; }
     duelMode = true;
     duelCode = data.shareCode;
@@ -1690,7 +1721,12 @@ async function loadDuelAccept() {
   try {
     var data = await duelApi('/duel/' + duelCode, null, 'GET');
     if (data.error) { alert(data.error); return; }
+    if (data.status !== 'created') { alert('This duel is no longer available (' + data.status + ').'); return; }
     duelId = data.id;
+    var stakeInfo = document.getElementById('duel-stake-info');
+    if (stakeInfo && data.stake) {
+      stakeInfo.textContent = 'Accepting requires a ' + data.stake + ' QF stake. Winner takes 90% of the pot.';
+    }
     var name = (typeof qfWallet !== 'undefined' && qfWallet.formatAddr) ? qfWallet.formatAddr(data.creator_wallet) : data.creator_wallet.slice(0, 6) + '...' + data.creator_wallet.slice(-4);
     document.getElementById('duel-challenger').textContent = name;
     if (typeof qfWallet !== 'undefined' && qfWallet.resolveAny) {
@@ -1707,7 +1743,26 @@ async function loadDuelAccept() {
 async function acceptDuelChallenge() {
   if (typeof qfWallet === 'undefined' || !qfWallet.address) { alert('Connect your wallet first.'); return; }
   try {
-    var data = await duelApi('/duel/' + duelCode + '/accept', {});
+    var check = await duelApi('/duel/' + duelCode, null, 'GET');
+    if (check.error) { alert(check.error); return; }
+    if (check.status !== 'created') { alert('This duel is no longer available (' + check.status + ').'); return; }
+
+    var cfg = await getDuelConfig();
+    var stakeQF = (check.stake) ? check.stake : (cfg.defaultStake || 25);
+
+    var txHash = null;
+    try {
+      txHash = await sendStakePayment(cfg.escrowAddress, stakeQF);
+    } catch (e) {
+      if (e.code === 'ACTION_REJECTED' || (e.message && e.message.indexOf('rejected') !== -1)) {
+        alert('Transaction cancelled.');
+      } else {
+        alert('Payment failed: ' + (e.reason || e.message || 'Unknown error'));
+      }
+      return;
+    }
+
+    var data = await duelApi('/duel/' + duelCode + '/accept', { txHash: txHash });
     if (data.error) { alert(data.error); return; }
     duelId = data.duelId;
     document.getElementById('duel-accept-panel').style.display = 'none';

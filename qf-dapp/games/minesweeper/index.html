@@ -1180,6 +1180,19 @@ var duelMode = false, duelCode = null, duelId = null;
 
 var DUEL_API = (location.hostname === 'localhost' || location.hostname === '127.0.0.1') ? 'http://127.0.0.1:3860/api/dapp' : 'https://dapp-api.mathswins.co.uk/api/dapp';
 
+function getDuelConfig() {
+  return duelApi('/duel/config', null, 'GET');
+}
+
+async function sendStakePayment(escrowAddress, stakeQF) {
+  var signer = qfWallet.signer || (qfWallet.state && qfWallet.state.signer);
+  if (!signer || !signer.sendTransaction) throw new Error('Wallet signer not available');
+  var value = ethers.parseEther(String(stakeQF));
+  var tx = await signer.sendTransaction({ to: escrowAddress, value: value });
+  var receipt = await tx.wait();
+  return receipt.hash;
+}
+
 function duelApi(url, body, method) {
   var headers = { 'Content-Type': 'application/json' };
   if (typeof qfWallet !== 'undefined' && qfWallet.address) headers['X-Wallet-Address'] = qfWallet.address;
@@ -1194,7 +1207,22 @@ function duelApi(url, body, method) {
 async function confirmDuelCreate() {
   if (typeof qfWallet === 'undefined' || !qfWallet.address) { alert('Connect your wallet to create a duel.'); return; }
   try {
-    var data = await duelApi('/duel/create', { gameId: 'minesweeper', stake: 0 });
+    var precheck = await duelApi('/duel/precheck', { gameId: 'minesweeper' });
+    if (precheck.error) { alert(precheck.error); return; }
+    var config = await getDuelConfig();
+    var escrowAddress = config.escrowAddress;
+    var stakeQF = config.defaultStake;
+    var txHash;
+    try {
+      txHash = await sendStakePayment(escrowAddress, stakeQF);
+    } catch (payErr) {
+      if (payErr.code === 'ACTION_REJECTED' || (payErr.message && payErr.message.indexOf('ACTION_REJECTED') !== -1)) {
+        alert('Transaction cancelled.');
+        return;
+      }
+      throw payErr;
+    }
+    var data = await duelApi('/duel/create', { gameId: 'minesweeper', stake: stakeQF, txHash: txHash });
     if (data.error) { alert(data.error); return; }
     duelMode = true;
     duelCode = data.shareCode;
@@ -1233,6 +1261,7 @@ async function loadDuelAccept() {
   try {
     var data = await duelApi('/duel/' + duelCode, null, 'GET');
     if (data.error) { alert(data.error); return; }
+    if (data.status !== 'created') { alert('This duel is no longer available (' + data.status + ').'); return; }
     duelId = data.id;
     var name = (typeof qfWallet !== 'undefined' && qfWallet.formatAddr) ? qfWallet.formatAddr(data.creator_wallet) : data.creator_wallet.slice(0, 6) + '...' + data.creator_wallet.slice(-4);
     document.getElementById('duel-challenger').textContent = name;
@@ -1240,6 +1269,11 @@ async function loadDuelAccept() {
       qfWallet.resolveAny(data.creator_wallet).then(function(n) {
         if (n) document.getElementById('duel-challenger').textContent = n;
       });
+    }
+    var stakeInfo = document.querySelector('#duel-accept-panel p');
+    if (stakeInfo) {
+      var stakeAmount = (data.stake || 25);
+      stakeInfo.textContent = 'Accepting requires a ' + stakeAmount + ' QF stake. Winner takes 90% of the pot.';
     }
     document.getElementById('duel-accept-panel').style.display = 'block';
     document.getElementById('start-btn').style.display = 'none';
@@ -1251,7 +1285,23 @@ async function loadDuelAccept() {
 async function acceptDuelChallenge() {
   if (typeof qfWallet === 'undefined' || !qfWallet.address) { alert('Connect your wallet first.'); return; }
   try {
-    var data = await duelApi('/duel/' + duelCode + '/accept', {});
+    var check = await duelApi('/duel/' + duelCode, null, 'GET');
+    if (check.error) { alert(check.error); return; }
+    if (check.status !== 'created') { alert('This duel is no longer available (' + check.status + ').'); return; }
+    var config = await getDuelConfig();
+    var escrowAddress = config.escrowAddress;
+    var stakeQF = config.defaultStake;
+    var txHash;
+    try {
+      txHash = await sendStakePayment(escrowAddress, stakeQF);
+    } catch (payErr) {
+      if (payErr.code === 'ACTION_REJECTED' || (payErr.message && payErr.message.indexOf('ACTION_REJECTED') !== -1)) {
+        alert('Transaction cancelled.');
+        return;
+      }
+      throw payErr;
+    }
+    var data = await duelApi('/duel/' + duelCode + '/accept', { txHash: txHash });
     if (data.error) { alert(data.error); return; }
     duelId = data.duelId;
     document.getElementById('duel-accept-panel').style.display = 'none';
