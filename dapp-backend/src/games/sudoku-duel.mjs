@@ -187,25 +187,20 @@ export function evaluator(question, answer, elapsedMs, session) {
     const value = answer.value;
 
     if (cell < 0 || cell > 80 || value < 1 || value > 9) {
-      console.log('[SUDOKU-PLACE] cell=' + cell + ' value=' + value + ' serverHad=' + session.grid[cell] + ' result=rejected-invalid');
       return { correct: false, points: 0, error: 'Invalid cell or value' };
     }
     if (puzzle[cell] !== 0) {
-      console.log('[SUDOKU-PLACE] cell=' + cell + ' value=' + value + ' serverHad=given result=rejected-given');
       return { correct: false, points: 0, error: 'Cannot modify given cell' };
     }
     if (session.grid[cell] !== 0) {
       // Idempotent: if client re-sends the same correct value, just confirm it
       if (session.grid[cell] === value) {
-        console.log('[SUDOKU-PLACE] cell=' + cell + ' value=' + value + ' serverHad=' + session.grid[cell] + ' result=idempotent');
         return { correct: true, points: 0, action: 'place', cell, isCorrect: true, mistakes: session.mistakes, hintsUsed: session.hintsUsed };
       }
-      console.log('[SUDOKU-PLACE] cell=' + cell + ' value=' + value + ' serverHad=' + session.grid[cell] + ' result=rejected-filled');
       return { correct: false, points: 0, error: 'Cell already filled' };
     }
 
     const isCorrect = value === solution[cell];
-    console.log('[SUDOKU-PLACE] cell=' + cell + ' value=' + value + ' serverHad=0 result=' + (isCorrect ? 'accepted' : 'wrong'));
 
     session.placements.push({ cell, value, correct: isCorrect, ts: now });
 
@@ -295,13 +290,10 @@ export function evaluator(question, answer, elapsedMs, session) {
     if (!complete) {
       // Partial credit for game-over or incomplete submit
       let correctCells = 0;
-      let wrongCells = [];
       for (let i = 0; i < 81; i++) {
         if (puzzle[i] === 0 && session.grid[i] === solution[i]) correctCells++;
-        if (puzzle[i] === 0 && session.grid[i] !== solution[i]) wrongCells.push({ cell: i, got: session.grid[i], expected: solution[i] });
       }
       const partialScore = correctCells * 20;
-      console.log('[SUDOKU-DEBUG] INCOMPLETE SUBMIT: correctCells=' + correctCells + ' wrongCells=' + wrongCells.length + ' partialScore=' + partialScore + ' mistakes=' + session.mistakes + ' hints=' + session.hintsUsed + ' wrong=' + JSON.stringify(wrongCells.slice(0, 5)));
       return { correct: false, points: partialScore, action: 'submit', partialCredit: true, correctCells: correctCells };
     }
 
@@ -316,7 +308,6 @@ export function evaluator(question, answer, elapsedMs, session) {
     const pen = session.mistakes * MISTAKE_COST + session.hintsUsed * HINT_COST;
     const mult = 1 / (1 + TIME_DECAY * Math.log(1 + secs));
     const points = Math.max(1, Math.round((BASE_SCORE - pen) * mult));
-    console.log('[SUDOKU-DEBUG] COMPLETE SUBMIT: mistakes=' + session.mistakes + ' hints=' + session.hintsUsed + ' secs=' + Math.round(secs) + ' pen=' + pen + ' mult=' + mult.toFixed(4) + ' points=' + points);
 
     return {
       correct: true,

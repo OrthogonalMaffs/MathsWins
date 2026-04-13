@@ -1217,7 +1217,7 @@ export function getRecentlySettledLeagues(gameId, limit) {
 
 // ── Personal bests ─────────────────────────────────────────────────────────
 
-const TIME_PRIMARY_GAMES = new Set(['minesweeper', 'freecell', 'kenken', 'nonogram', 'kakuro']);
+const TIME_PRIMARY_GAMES = new Set(['minesweeper', 'freecell', 'nonogram', 'kakuro']);
 const PURE_TIME_GAMES = new Set(['minesweeper', 'freecell']);
 
 export function upsertPersonalBest(wallet, gameId, difficulty, score, timeMs, sessionId) {
