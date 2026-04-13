@@ -143,28 +143,14 @@ function canGoToFoundation(card, foundations) {
 }
 
 // ── Auto-complete detection ─────────────────────────────────────────────
-// A position is auto-completable when for every card not yet on a foundation,
-// all cards of lower rank in opposite colours are already on foundations.
+// A position is auto-completable when every column is sorted in descending
+// rank order (highest at bottom, lowest at top). This means no card is
+// buried beneath a higher-rank card, so all cards can reach foundations
+// in order without needing free cells for rearrangement.
 function isAutoCompletable(q) {
-  // Check all cards in cascades and free cells
-  const allCards = [];
   for (const col of q.columns) {
-    for (const card of col) allCards.push(card);
-  }
-  for (const cell of q.freeCells) {
-    if (cell !== null) allCards.push(cell);
-  }
-
-  for (const card of allCards) {
-    const rank = cardRank(card);
-    const color = cardColor(card);
-    // For this card, all cards of lower rank in opposite colour must be on foundations
-    for (let s = 0; s < 4; s++) {
-      const sColor = (s === 1 || s === 2) ? 1 : 0;
-      if (sColor !== color) {
-        // Opposite colour suit — its foundation count must be >= this card's rank
-        if (q.foundations[s] < rank) return false;
-      }
+    for (let i = 1; i < col.length; i++) {
+      if (cardRank(col[i]) >= cardRank(col[i - 1])) return false;
     }
   }
   return true;
