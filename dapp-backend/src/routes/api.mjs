@@ -2068,6 +2068,14 @@ router.post('/achievement/mint', optionalWallet, async (req, res) => {
       'wordy': 'Qma1jDogebAud83UsATy639XwrWuX1noa3AJUofdvWYqSJ',
       'binary-decision': 'QmSD6vUEpbaKu955ULVMLTNUKbS3S1rnqajar7AvYuNhd7',
       'feel-no-pressure': 'QmPL9u5V62txVEzwpaCXjLR8GpWFhfGwE9yAVirAQe5o47',
+      'duelist': 'QmTzJx6ek66mpLkuSRh2y87kZcGP4ihjfLThXa85AvbjD4',
+      'first-blood': 'Qmc9nYmaBDusDW5grQuseFavqXJeUBHjVJBiTVnvZeva2q',
+      'next-in-line': 'QmXCrCtMU4cDW8PA95AiFFqpmfEfpfUMiABrKfpxhjWSP6',
+      'on-the-nose': 'QmUowoScknaNsNj42EAnMsGmCEtzbmBPSJscVhUiqEY9h8',
+      'clairvoyant': 'QmNoQ9EtzoJsVXQk7qpLm2Tgh4CcZ9gPWx1mYfVboRAver',
+      'dead-reckoning': 'QmbdpE5Fx9QhQKt4g9eMM5HG5adq6mgn2zzveUCJe3ggbU',
+      'photographic': 'QmaQFUk8MuPrjkqnvmQ4LsfhGiZxmQr4otDR5s8qHEKBeU',
+      'the-engineer': 'Qmd4a1wKEAN7ioNAeFvpPHT9gyePhjhGQZVCNczDyn7Ed1',
     };
     // Tier fallback image CIDs
     var TIER_IMAGES = {

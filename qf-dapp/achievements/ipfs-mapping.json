@@ -63,5 +63,13 @@
   {"achievement_id": "unbeatable", "name": "Unbeatable", "image_ipfs": "ipfs://QmXUZ1mQxQi8b68yWZpwmLm5hxbtQz476x9AMbwG2i9gsU", "metadata_ipfs": "ipfs://QmagfE3ALu1XEnSDT8qNqY2nrcad1U6vM8mpXfwRgHnhV8"},
   {"achievement_id": "wordy", "name": "Wordy", "image_ipfs": "ipfs://QmdeeShaCnbdBRWWdmDXqixPmQhBJRTDR6yaZpaNxJSdKA", "metadata_ipfs": "ipfs://Qma1jDogebAud83UsATy639XwrWuX1noa3AJUofdvWYqSJ"},
   {"achievement_id": "binary-decision", "name": "Binary Decision", "image_ipfs": "ipfs://QmRdWtxNHepBm1NjCPQ3kw2BXgMZMCrmCvizyy8w8TvLGk", "metadata_ipfs": "ipfs://QmSD6vUEpbaKu955ULVMLTNUKbS3S1rnqajar7AvYuNhd7"},
-  {"achievement_id": "feel-no-pressure", "name": "Feel No Pressure", "image_ipfs": "ipfs://QmapNAznqankqi8sqYV9gCzwT7WnTiMof5Qe5mnVXLKBig", "metadata_ipfs": "ipfs://QmPL9u5V62txVEzwpaCXjLR8GpWFhfGwE9yAVirAQe5o47"}
+  {"achievement_id": "feel-no-pressure", "name": "Feel No Pressure", "image_ipfs": "ipfs://QmapNAznqankqi8sqYV9gCzwT7WnTiMof5Qe5mnVXLKBig", "metadata_ipfs": "ipfs://QmPL9u5V62txVEzwpaCXjLR8GpWFhfGwE9yAVirAQe5o47"},
+  {"achievement_id": "duelist", "name": "Duelist", "image_ipfs": "ipfs://QmfEGz4YqLunxZirgyRsyCYBwe2hgf87NuWr2cQP2FNZgH", "metadata_ipfs": "ipfs://QmTzJx6ek66mpLkuSRh2y87kZcGP4ihjfLThXa85AvbjD4"},
+  {"achievement_id": "first-blood", "name": "First Blood", "image_ipfs": "ipfs://QmPmfBXLmyYknTd4rKVo7oD8bMyxJHYUnmnryrHVU81Wu1", "metadata_ipfs": "ipfs://Qmc9nYmaBDusDW5grQuseFavqXJeUBHjVJBiTVnvZeva2q"},
+  {"achievement_id": "next-in-line", "name": "Next In Line", "image_ipfs": "ipfs://QmbBYqyVPmJJJeDPeZREAWadxSdyJP2n3KVJ49AxRp8o9J", "metadata_ipfs": "ipfs://QmXCrCtMU4cDW8PA95AiFFqpmfEfpfUMiABrKfpxhjWSP6"},
+  {"achievement_id": "on-the-nose", "name": "On the Nose", "image_ipfs": "ipfs://QmaKToJJ2vNUZMypinZ6BaFrahYJZF6bmttjAuRyWaJ8B3", "metadata_ipfs": "ipfs://QmUowoScknaNsNj42EAnMsGmCEtzbmBPSJscVhUiqEY9h8"},
+  {"achievement_id": "clairvoyant", "name": "Clairvoyant", "image_ipfs": "ipfs://QmcthJVZcgDdVVP6m2FCue2XfC68ScNcUsp5bbFCwCwmBh", "metadata_ipfs": "ipfs://QmNoQ9EtzoJsVXQk7qpLm2Tgh4CcZ9gPWx1mYfVboRAver"},
+  {"achievement_id": "dead-reckoning", "name": "Dead Reckoning", "image_ipfs": "ipfs://QmNf2C7Dmff63HRXRGptK6wm41tdFHse7qKGzaVWWQHow4", "metadata_ipfs": "ipfs://QmbdpE5Fx9QhQKt4g9eMM5HG5adq6mgn2zzveUCJe3ggbU"},
+  {"achievement_id": "photographic", "name": "Photographic", "image_ipfs": "ipfs://QmQ7LVS6Gb9Xeyf45axgF1gEDYSbKMjHBaaPE4zYPAhwwk", "metadata_ipfs": "ipfs://QmaQFUk8MuPrjkqnvmQ4LsfhGiZxmQr4otDR5s8qHEKBeU"},
+  {"achievement_id": "the-engineer", "name": "The Engineer", "image_ipfs": "ipfs://QmTgtLjweFHG4CgDNz26oCunMeG1Vn1XqjirNcUnGnaBFu", "metadata_ipfs": "ipfs://Qmd4a1wKEAN7ioNAeFvpPHT9gyePhjhGQZVCNczDyn7Ed1"}
 ]
