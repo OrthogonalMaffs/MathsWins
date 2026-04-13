@@ -35,5 +35,8 @@
   {"achievement_id": "the-pacifist", "name": "The Pacifist", "image_ipfs": "ipfs://Qma4QKPM37S55qMKnJRzKTuF6yfTcc6uT237rkS8gciFpu", "metadata_ipfs": "ipfs://QmRevhD6KsFBrABffYEik35sXRJpEFfw4Canknqy4wvx4T"},
   {"achievement_id": "all-wrong", "name": "All Wrong", "image_ipfs": "ipfs://QmPR4AD8Q4Z1AWevJiu291Vn67iPNDu9UrhSWK2VprEQKr", "metadata_ipfs": "ipfs://QmbWy8eJDNpy2pFjERsu5nEqbXm3njLehLsSh4oBG9t5ca"},
   {"achievement_id": "mucky-hands", "name": "Mucky Hands", "image_ipfs": "ipfs://QmeGdrgHPgEucP9JW7aRkcDapBoAZ7L3fJ9kozsn6XUqTk", "metadata_ipfs": "ipfs://Qmdjb1vJZ1HzuF5fN9n6ywrEtBrrGmVMqnb1q8RgYG5qXx"},
-  {"achievement_id": "the-fish", "name": "The Fish", "image_ipfs": "ipfs://QmSf3GkjN4jwoqH9pgu2mExU9ZmqnTe9svPsTTXrBe5uEW", "metadata_ipfs": "ipfs://QmTCCtGT7iKW8HsuaMGnm5jn8JgA533RKs91HR1mFiNnFY"}
+  {"achievement_id": "the-fish", "name": "The Fish", "image_ipfs": "ipfs://QmSf3GkjN4jwoqH9pgu2mExU9ZmqnTe9svPsTTXrBe5uEW", "metadata_ipfs": "ipfs://QmTCCtGT7iKW8HsuaMGnm5jn8JgA533RKs91HR1mFiNnFY"},
+  {"achievement_id": "crib-death", "name": "Crib Death", "image_ipfs": "ipfs://QmdBaFEcew8CUUZD9DAhnd2o2D1zYmqwHTSifnRjr9uLyw", "metadata_ipfs": "ipfs://QmXbSc8FeoiefMTVFDYQz9YcmDRFcRA7GjqNkE2CPZWhg4"},
+  {"achievement_id": "bust", "name": "Bust", "image_ipfs": "ipfs://QmawLE5tf5BpwBjFAqNADhnFsAvRAL79oNqH9ZDXW9oi2T", "metadata_ipfs": "ipfs://QmaF6BSrJzwzwWxTaNmxdRnzrUvtWW2qFzxQNPbhZAHPBj"},
+  {"achievement_id": "slow-burn", "name": "Slow Burn", "image_ipfs": "ipfs://QmSDo8kEWkry5GYr5JPMaHqfETqPZM5QGwxWXcQdGxBGGh", "metadata_ipfs": "ipfs://QmXKaWJaVAFGcunNNmCSkd9Ua2vdq7PAiPAugmoJfrhPCA"}
 ]

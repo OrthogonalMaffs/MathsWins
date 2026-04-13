@@ -2009,6 +2009,9 @@ router.post('/achievement/mint', optionalWallet, async (req, res) => {
       'all-wrong': 'QmbWy8eJDNpy2pFjERsu5nEqbXm3njLehLsSh4oBG9t5ca',
       'mucky-hands': 'Qmdjb1vJZ1HzuF5fN9n6ywrEtBrrGmVMqnb1q8RgYG5qXx',
       'the-fish': 'QmTCCtGT7iKW8HsuaMGnm5jn8JgA533RKs91HR1mFiNnFY',
+      'crib-death': 'QmXbSc8FeoiefMTVFDYQz9YcmDRFcRA7GjqNkE2CPZWhg4',
+      'bust': 'QmaF6BSrJzwzwWxTaNmxdRnzrUvtWW2qFzxQNPbhZAHPBj',
+      'slow-burn': 'QmXKaWJaVAFGcunNNmCSkd9Ua2vdq7PAiPAugmoJfrhPCA',
     };
     // Tier fallback image CIDs
     var TIER_IMAGES = {
