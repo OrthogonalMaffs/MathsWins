@@ -568,7 +568,13 @@ async function renderScores() {
       }
       html += '</div>';
 
-      // Difficulty breakdown table
+      // Difficulty breakdown table — order easy > medium > hard
+      var DIFF_ORDER = {easy:0, medium:1, hard:2, default:3};
+      rows.sort(function(a, b) {
+        var da = DIFF_ORDER[(a.difficulty||'default').toLowerCase()]; if (da === undefined) da = 99;
+        var db = DIFF_ORDER[(b.difficulty||'default').toLowerCase()]; if (db === undefined) db = 99;
+        return da - db;
+      });
       html += '<table class="hs-diff-table">';
       rows.forEach(function(r) {
         var diff = r.difficulty || 'default';

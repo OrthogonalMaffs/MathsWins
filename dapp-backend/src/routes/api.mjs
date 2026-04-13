@@ -13,7 +13,7 @@ import { doSettleLeague, checkEarlySettlement, recoverStuckLeagues, mintCommemor
 import { checkAchievements, checkContrarian, checkStreakAchievements, checkLeagueRegular, checkMonthlyAchievements, trackSpend, checkNightOwlSubmission, checkMinesweeperFreePlay, checkFlagEverything, checkBlindEye, checkSumOfAllFears, checkTheGrinder, checkMintMeta, checkDuelMaster, checkFlaglessAndWrong, checkMidnight, checkFibonacci, checkWrongAnswerStreak } from '../achievement-checker.mjs';
 import { sendQF, settleDuel, settleDuelDraw, refundDuel, getEscrowAddress, BURN_ADDRESS, TEAM_WALLET } from '../escrow.mjs';
 import { createBattleshipsGame, getBattleshipsGameByCode, getBattleshipsGameById, updateBattleshipsGameStatus, saveBattleshipsPlacement, getBattleshipsPlacement, getBattleshipsPlacements, addBattleshipsRound, getBattleshipsRounds, getBattleshipsRecord, updateBattleshipsRecord, getActiveBattleshipsGames, getBattleshipsGamesByWallet } from '../db/index.mjs';
-import { getAchievementRegistry, getAchievement, awardAchievement, getWalletAchievements, getAllAchievements, getGlobalRecord, getPersonalBests, getPersonalBest, getLeagueBests, getWalletStats, getWalletLeagueHistory, getWalletTrophies, getGameStateForLeaguePuzzle, completeGameState, getFlaggedSessions, getGlobalLeaderboard, getGlobalLeaderboardEntry, addGlobalLeaderboardEntry, getWalletLeaderboardPositions, getGameState, getGame, upsertPersonalBest, incrementPbBeatenCount, retireAchievement } from '../db/index.mjs';
+import { getAchievementRegistry, getAchievement, awardAchievement, getWalletAchievements, getAllAchievements, getGlobalRecord, getPersonalBests, getPersonalBest, getLeagueBests, getWalletStats, getWalletLeagueHistory, getWalletTrophies, getGameStateForLeaguePuzzle, completeGameState, getFlaggedSessions, getGlobalLeaderboard, getGlobalLeaderboardEntry, addGlobalLeaderboardEntry, getWalletLeaderboardPositions, getGameState, getGame, upsertPersonalBest, incrementPbBeatenCount, retireAchievement, recordMaffsyResult, getMaffsyStats } from '../db/index.mjs';
 import { analyseInputPattern } from '../scoring.mjs';
 import { validateFleet, calculateRange, checkHit, checkSunk, checkWin, getGameState as getBattleshipsState, cpuPlaceFleet, cpuShootRecruit, cpuShootOfficer, cpuShootAdmiral, pickSurvivingShip, FLEET } from '../games/battleships.mjs';
 
@@ -373,6 +373,37 @@ router.post('/session/submit-freeplay', optionalWallet, (req, res) => {
     try { checkFibonacci(req.wallet, score); } catch (e) { /* must never block */ }
 
     res.json({ success: true, achievements: awarded });
+  } catch (e) {
+    res.status(400).json({ error: e.message });
+  }
+});
+
+// ── Maffsy streak tracking ─────────────────────────────────────────────────
+
+router.post('/maffsy/complete', optionalWallet, (req, res) => {
+  try {
+    if (!req.wallet) return res.status(401).json({ error: 'Wallet required' });
+    var { won, guesses, wordId } = req.body;
+    if (won === undefined) return res.status(400).json({ error: 'won required' });
+    var today = new Date().toISOString().slice(0, 10);
+    var result = recordMaffsyResult(req.wallet, today, !!won, Number(guesses) || 0, String(wordId || ''));
+
+    // Upsert personal best with max_streak as score (higher is better)
+    if (result.maxStreak > 0) {
+      upsertPersonalBest(req.wallet, 'maffsy', 'default', result.maxStreak, 0);
+    }
+
+    res.json({ success: true, streak: result.currentStreak, maxStreak: result.maxStreak, played: result.played, won: result.won });
+  } catch (e) {
+    res.status(400).json({ error: e.message });
+  }
+});
+
+router.get('/maffsy/stats', optionalWallet, (req, res) => {
+  try {
+    if (!req.wallet) return res.status(401).json({ error: 'Wallet required' });
+    var stats = getMaffsyStats(req.wallet);
+    res.json(stats);
   } catch (e) {
     res.status(400).json({ error: e.message });
   }

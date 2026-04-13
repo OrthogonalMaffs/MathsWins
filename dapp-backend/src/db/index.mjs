@@ -64,6 +64,8 @@ export function getDb() {
   try { db.exec('ALTER TABLE wallet_stats ADD COLUMN optimist_count INTEGER DEFAULT 0'); } catch (e) { /* already exists */ }
   try { db.exec('ALTER TABLE wallet_stats ADD COLUMN prime_wrong_streak INTEGER DEFAULT 0'); } catch (e) { /* already exists */ }
   try { db.exec('ALTER TABLE wallet_stats ADD COLUMN fibonacci_streak INTEGER DEFAULT 0'); } catch (e) { /* already exists */ }
+  try { db.exec('ALTER TABLE wallet_stats ADD COLUMN maffsy_current_streak INTEGER DEFAULT 0'); } catch (e) { /* already exists */ }
+  try { db.exec('ALTER TABLE wallet_stats ADD COLUMN maffsy_max_streak INTEGER DEFAULT 0'); } catch (e) { /* already exists */ }
   try { db.exec('ALTER TABLE duels ADD COLUMN creator_tx TEXT'); } catch (e) { /* already exists */ }
   try { db.exec('ALTER TABLE duels ADD COLUMN acceptor_tx TEXT'); } catch (e) { /* already exists */ }
 
@@ -202,6 +204,15 @@ export function getDb() {
     window_start INTEGER NOT NULL,
     window_end INTEGER NOT NULL,
     UNIQUE(achievement_id, year)
+  )`);
+
+  db.exec(`CREATE TABLE IF NOT EXISTS maffsy_streaks (
+    wallet TEXT NOT NULL,
+    play_date TEXT NOT NULL,
+    won INTEGER DEFAULT 0,
+    guesses INTEGER,
+    word_id TEXT,
+    UNIQUE(wallet, play_date)
   )`);
 
   seedAchievements(db);
@@ -1416,6 +1427,78 @@ export function getWalletLeaderboardPositions(wallet) {
     var rank = board.findIndex(function(r) { return r.wallet === w; }) + 1;
     return { game_id: e.game_id, period_type: e.period_type, rank: rank, score: e.score, total_entries: board.length };
   });
+}
+
+// ── Maffsy streaks ─────────────────────────────────────────────────────────
+
+export function recordMaffsyResult(wallet, playDate, won, guesses, wordId) {
+  const db = getDb();
+  const w = wallet.toLowerCase();
+  db.prepare(
+    `INSERT INTO maffsy_streaks (wallet, play_date, won, guesses, word_id)
+     VALUES (?, ?, ?, ?, ?)
+     ON CONFLICT(wallet, play_date) DO UPDATE SET won = excluded.won, guesses = excluded.guesses, word_id = excluded.word_id`
+  ).run(w, playDate, won ? 1 : 0, guesses, wordId);
+
+  // Calculate current streak: consecutive won=1 days backwards from today
+  var rows = db.prepare(
+    'SELECT play_date, won FROM maffsy_streaks WHERE wallet = ? ORDER BY play_date DESC'
+  ).all(w);
+
+  var currentStreak = 0;
+  var expected = new Date(playDate);
+  for (var i = 0; i < rows.length; i++) {
+    var rowDate = rows[i].play_date;
+    var expStr = expected.toISOString().slice(0, 10);
+    if (rowDate === expStr && rows[i].won === 1) {
+      currentStreak++;
+      expected.setDate(expected.getDate() - 1);
+    } else if (rowDate === expStr && rows[i].won === 0) {
+      break;
+    } else if (rowDate < expStr) {
+      // Missed a day — streak broken
+      break;
+    }
+  }
+
+  // Calculate max streak: scan all rows chronologically
+  var allRows = db.prepare(
+    'SELECT play_date, won FROM maffsy_streaks WHERE wallet = ? ORDER BY play_date ASC'
+  ).all(w);
+  var maxStreak = 0;
+  var run = 0;
+  for (var j = 0; j < allRows.length; j++) {
+    if (allRows[j].won === 1) {
+      run++;
+      if (run > maxStreak) maxStreak = run;
+    } else {
+      run = 0;
+    }
+  }
+
+  // Update wallet_stats
+  upsertWalletStats(w, { maffsy_current_streak: currentStreak, maffsy_max_streak: maxStreak });
+
+  return { currentStreak, maxStreak, played: allRows.length, won: allRows.filter(r => r.won === 1).length };
+}
+
+export function getMaffsyStats(wallet) {
+  const db = getDb();
+  const w = wallet.toLowerCase();
+  var rows = db.prepare('SELECT play_date, won, guesses FROM maffsy_streaks WHERE wallet = ? ORDER BY play_date ASC').all(w);
+  var played = rows.length;
+  var won = rows.filter(r => r.won === 1).length;
+  var dist = [0, 0, 0, 0, 0, 0];
+  rows.forEach(r => { if (r.won === 1 && r.guesses >= 1 && r.guesses <= 6) dist[r.guesses - 1]++; });
+
+  var stats = getWalletStats(w) || {};
+  return {
+    played: played,
+    won: won,
+    streak: stats.maffsy_current_streak || 0,
+    maxStreak: stats.maffsy_max_streak || 0,
+    dist: dist
+  };
 }
 
 function getISOWeek(d) {

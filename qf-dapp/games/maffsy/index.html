@@ -669,7 +669,7 @@ function submit(){
   G.guesses.push(cur); clearMsg();
   reveal(row,sts,cur); updateKbd();
   const won=cur===G.target, lost=!won&&G.guesses.length>=MAX_G;
-  if(won||lost){G.status=won?'won':'lost';G.t1=Date.now();recStats(won,G.guesses.length);renderSbar();submitFreeplay('maffsy',won?G.guesses.length:0,G.t1-G.t0);}
+  if(won||lost){G.status=won?'won':'lost';G.t1=Date.now();recStats(won,G.guesses.length);renderSbar();submitMaffsyComplete(won,G.guesses.length);}
   saveG(); cur='';
   if(won||lost) setTimeout(showEnd,1600); else renderCur();
   enableSub();
@@ -760,7 +760,7 @@ function recStats(won,guesses){
   sstats(s);
 }
 function renderSbar(){
-  const s=lstats();
+  const s=_serverStats||lstats();
   document.getElementById('sbp').textContent=s.played||0;
   document.getElementById('sbw').textContent=(s.played&&s.won)?Math.round(s.won/s.played*100)+'%':'—';
   document.getElementById('sbs').textContent=s.streak||0;
@@ -768,7 +768,7 @@ function renderSbar(){
   document.getElementById('sbn').textContent=PREFS.free?'Free':'#'+pnum();
 }
 function renderStatsModal(){
-  const s=lstats(),p=s.played||0,w=s.won||0;
+  const s=_serverStats||lstats(),p=s.played||0,w=s.won||0;
   document.getElementById('sgrid').innerHTML=`
     <div class="sb"><div class="sbv">${p}</div><div class="sbl">Played</div></div>
     <div class="sb"><div class="sbv">${p?Math.round(w/p*100):0}%</div><div class="sbl">Win %</div></div>
@@ -784,7 +784,7 @@ function renderStatsModal(){
 //  END MODAL
 // ═══════════════════════════════════════════════════════════════════════════════
 function showEnd(){
-  const won=G.status==='won', s=lstats();
+  const won=G.status==='won', s=_serverStats||lstats();
   const v=['Exceptional.','Impressive.','Solid.','That\'ll Do.','Phew.','Better Luck Tomorrow.'];
   document.getElementById('eres').textContent=won?v[G.guesses.length-1]:'Hard Luck.';
   document.getElementById('eres').style.color=won?'var(--gwarm)':'var(--err)';
@@ -823,7 +823,7 @@ function nextFree(){
 //  SHARE
 // ═══════════════════════════════════════════════════════════════════════════════
 function share(){
-  const s=lstats(), score=G.status==='won'?G.guesses.length+'/6':'X/6';
+  const s=_serverStats||lstats(), score=G.status==='won'?G.guesses.length+'/6':'X/6';
   const EM={correct:'🟩',present:'🟨',absent:'⬜'};
   const lines=G.guesses.map(g=>states(g,G.target).map(st=>EM[st]).join(''));
   const text=[`Maffsy #${pnum()} ${score} 🔥${s.streak||0}`,...lines,'mathswins.co.uk/games/maffsy'].join('\n');
@@ -877,7 +877,7 @@ async function submitLB(){
   if(G.status==='playing'){toast('Finish the puzzle first.');return;}
   const lb=llb();
   if(lb.find(e=>e.w.toLowerCase()===qfWallet.address.toLowerCase())){toast('Already submitted today.',2500);return;}
-  const s=lstats(), elapsed=G.t1?Math.round((G.t1-G.t0)/1000):999;
+  const s=_serverStats||lstats(), elapsed=G.t1?Math.round((G.t1-G.t0)/1000):999;
   lb.push({w:qfWallet.address,g:G.status==='won'?G.guesses.length:7,t:elapsed,s:s.streak||0});
   lb.sort((a,b)=>a.g-b.g||a.t-b.t||b.s-a.s);
   slb(lb); renderLB(); toast('Score submitted! 🏆',2500);
@@ -920,16 +920,40 @@ function init(){
   renderSbar(); renderLB(); enableSub();
 }
 
-init();
 var _fpAPI = 'https://dapp-api.mathswins.co.uk/api/dapp';
 if (location.hostname === 'localhost' || location.hostname === '127.0.0.1') _fpAPI = 'http://127.0.0.1:3860/api/dapp';
-function submitFreeplay(gameId, score, timeMs) {
+var _serverStats = null;
+
+init();
+fetchMaffsyStats();
+
+function submitMaffsyComplete(won, guesses) {
+  try {
+    if (PREFS.free) return;
+    if (!qfWallet || !qfWallet.isConnected()) return;
+    fetch(_fpAPI + '/maffsy/complete', {
+      method: 'POST', headers: qfWallet.authHeaders(),
+      body: JSON.stringify({ won: won, guesses: guesses, wordId: String(pnum()) })
+    }).then(function(r) { return r.json(); }).then(function(data) {
+      if (data.success) {
+        _serverStats = { played: data.played, won: data.won, streak: data.streak, maxStreak: data.maxStreak };
+        renderSbar(); if (G.status !== 'playing') showEnd();
+      }
+    }).catch(function() {});
+  } catch (e) {}
+}
+
+function fetchMaffsyStats() {
   try {
     if (!qfWallet || !qfWallet.isConnected()) return;
-    fetch(_fpAPI + '/session/submit-freeplay', {
-      method: 'POST', headers: qfWallet.authHeaders(),
-      body: JSON.stringify({ gameId: gameId, score: score, timeMs: timeMs })
-    }).catch(function() {});
+    fetch(_fpAPI + '/maffsy/stats', { headers: qfWallet.authHeaders() })
+      .then(function(r) { return r.json(); })
+      .then(function(data) {
+        if (data.played !== undefined) {
+          _serverStats = data;
+          renderSbar();
+        }
+      }).catch(function() {});
   } catch (e) {}
 }
 </script>
