@@ -2061,6 +2061,13 @@ router.post('/achievement/mint', optionalWallet, async (req, res) => {
       'the-completionist': 'QmVyS6h7JNe2ucxFBPh4B2JgWZ5XrfcNUnBo8My6giykoF',
       'clean-slate': 'Qma29kF4N5rQea8GBEbqoqNwQ29St9kdX5qy7acemkHijX',
       'the-lurker': 'QmYDHCMcnCdoYFv2WSxJjfuHWTFLvqExyzefMRqGmHeXNA',
+      'century': 'QmRewrCrUP8xjpY7JUw26MDsmHgqqLzjU93jZDdDuT8JGq',
+      'explorer': 'Qmd4c9CxXWtc6SSTW9GGCVM699bXjVdsgsy3ytt1wVTMZM',
+      'personal-best': 'QmfTZtjhpopuf8nxkRsF8ETEC2NvQHiMgJcvpBuDWSktr1',
+      'unbeatable': 'QmagfE3ALu1XEnSDT8qNqY2nrcad1U6vM8mpXfwRgHnhV8',
+      'wordy': 'Qma1jDogebAud83UsATy639XwrWuX1noa3AJUofdvWYqSJ',
+      'binary-decision': 'QmSD6vUEpbaKu955ULVMLTNUKbS3S1rnqajar7AvYuNhd7',
+      'feel-no-pressure': 'QmPL9u5V62txVEzwpaCXjLR8GpWFhfGwE9yAVirAQe5o47',
     };
     // Tier fallback image CIDs
     var TIER_IMAGES = {

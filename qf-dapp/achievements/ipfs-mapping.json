@@ -56,5 +56,12 @@
   {"achievement_id": "hat-trick", "name": "Hat Trick", "image_ipfs": "ipfs://QmSfFFi93cof5wsuvv9rftxywfnC8uxhkskNoBdzm4Y649", "metadata_ipfs": "ipfs://QmSvStHce3gJLHG7Q9SX7L2Pc9r7B8AcWp6UqwLgvUDb6L"},
   {"achievement_id": "the-completionist", "name": "The Completionist", "image_ipfs": "ipfs://QmaEdc1sK1Djj5YGVMJE3NQNDFWpMgCuunSTddcGayo5nc", "metadata_ipfs": "ipfs://QmVyS6h7JNe2ucxFBPh4B2JgWZ5XrfcNUnBo8My6giykoF"},
   {"achievement_id": "clean-slate", "name": "Clean Slate", "image_ipfs": "ipfs://QmUTRugJ1ecp2JN3tDLcfuR4C1TjLZ3JrprvHUHtFEzeC1", "metadata_ipfs": "ipfs://Qma29kF4N5rQea8GBEbqoqNwQ29St9kdX5qy7acemkHijX"},
-  {"achievement_id": "the-lurker", "name": "The Lurker", "image_ipfs": "ipfs://QmWwT1fYSWsNfVGnEQREhjRzRE8nuFFgpy5r4NKm4DHwZr", "metadata_ipfs": "ipfs://QmYDHCMcnCdoYFv2WSxJjfuHWTFLvqExyzefMRqGmHeXNA"}
+  {"achievement_id": "the-lurker", "name": "The Lurker", "image_ipfs": "ipfs://QmWwT1fYSWsNfVGnEQREhjRzRE8nuFFgpy5r4NKm4DHwZr", "metadata_ipfs": "ipfs://QmYDHCMcnCdoYFv2WSxJjfuHWTFLvqExyzefMRqGmHeXNA"},
+  {"achievement_id": "century", "name": "Century", "image_ipfs": "ipfs://QmQ2KkaiiPZmRCbr2ouwYktaj5LXJa6r8Pm7Znkort1cDj", "metadata_ipfs": "ipfs://QmRewrCrUP8xjpY7JUw26MDsmHgqqLzjU93jZDdDuT8JGq"},
+  {"achievement_id": "explorer", "name": "Explorer", "image_ipfs": "ipfs://QmQ7oWSqKRrbTuZSUYDg267RgT2RuPbc9VPRTH9vebA19R", "metadata_ipfs": "ipfs://Qmd4c9CxXWtc6SSTW9GGCVM699bXjVdsgsy3ytt1wVTMZM"},
+  {"achievement_id": "personal-best", "name": "Personal Best", "image_ipfs": "ipfs://QmbA9mF3teQTJd8K17MLcVk1tmXatkUVTwEKWNVU1KVDSg", "metadata_ipfs": "ipfs://QmfTZtjhpopuf8nxkRsF8ETEC2NvQHiMgJcvpBuDWSktr1"},
+  {"achievement_id": "unbeatable", "name": "Unbeatable", "image_ipfs": "ipfs://QmXUZ1mQxQi8b68yWZpwmLm5hxbtQz476x9AMbwG2i9gsU", "metadata_ipfs": "ipfs://QmagfE3ALu1XEnSDT8qNqY2nrcad1U6vM8mpXfwRgHnhV8"},
+  {"achievement_id": "wordy", "name": "Wordy", "image_ipfs": "ipfs://QmdeeShaCnbdBRWWdmDXqixPmQhBJRTDR6yaZpaNxJSdKA", "metadata_ipfs": "ipfs://Qma1jDogebAud83UsATy639XwrWuX1noa3AJUofdvWYqSJ"},
+  {"achievement_id": "binary-decision", "name": "Binary Decision", "image_ipfs": "ipfs://QmRdWtxNHepBm1NjCPQ3kw2BXgMZMCrmCvizyy8w8TvLGk", "metadata_ipfs": "ipfs://QmSD6vUEpbaKu955ULVMLTNUKbS3S1rnqajar7AvYuNhd7"},
+  {"achievement_id": "feel-no-pressure", "name": "Feel No Pressure", "image_ipfs": "ipfs://QmapNAznqankqi8sqYV9gCzwT7WnTiMof5Qe5mnVXLKBig", "metadata_ipfs": "ipfs://QmPL9u5V62txVEzwpaCXjLR8GpWFhfGwE9yAVirAQe5o47"}
 ]
