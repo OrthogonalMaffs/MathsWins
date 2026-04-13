@@ -587,6 +587,13 @@ var G = (function() {
     return receipt.hash;
   }
 
+  function getStoredPayment(code) {
+    try { return sessionStorage.getItem('duel_paid_' + code); } catch(e) { return null; }
+  }
+  function storePayment(code, txHash) {
+    try { sessionStorage.setItem('duel_paid_' + code, txHash); } catch(e) {}
+  }
+
   // ── Duel functions ───────────────────────────────────────────────────
   var duelStartTime = 0;
 
@@ -711,14 +718,17 @@ var G = (function() {
       if (check.status !== 'created') { setMsg('This duel is no longer available (' + check.status + ').'); return; }
       var cfg = await getDuelConfig();
       var stakeQF = cfg.defaultStake || 25;
-      var txHash = null;
-      try {
-        txHash = await sendStakePayment(cfg.escrowAddress, stakeQF);
-      } catch (payErr) {
-        if (payErr.code === 'ACTION_REJECTED' || (payErr.info && payErr.info.error && payErr.info.error.code === 4001)) {
-          setMsg('Payment cancelled'); return;
+      var txHash = getStoredPayment(duelCode);
+      if (!txHash) {
+        try {
+          txHash = await sendStakePayment(cfg.escrowAddress, stakeQF);
+          storePayment(duelCode, txHash);
+        } catch (payErr) {
+          if (payErr.code === 'ACTION_REJECTED' || (payErr.info && payErr.info.error && payErr.info.error.code === 4001)) {
+            setMsg('Payment cancelled'); return;
+          }
+          throw payErr;
         }
-        throw payErr;
       }
       var data = await api('/duel/' + duelCode + '/accept', { txHash: txHash });
       if (data.error) { setMsg(data.error); return; }

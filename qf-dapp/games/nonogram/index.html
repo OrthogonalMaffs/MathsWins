@@ -921,6 +921,13 @@ async function sendStakePayment(escrowAddress, stakeQF) {
   return receipt.hash;
 }
 
+function getStoredPayment(code) {
+  try { return sessionStorage.getItem('duel_paid_' + code); } catch(e) { return null; }
+}
+function storePayment(code, txHash) {
+  try { sessionStorage.setItem('duel_paid_' + code, txHash); } catch(e) {}
+}
+
 function duelApi(url, body, method) {
   var headers = { 'Content-Type': 'application/json' };
   if (qfWallet && qfWallet.address) headers['X-Wallet-Address'] = qfWallet.address;
@@ -1030,12 +1037,15 @@ async function acceptDuelChallenge() {
     var config = await getDuelConfig();
     var escrowAddress = config.escrowAddress;
     var stakeQF = config.defaultStake;
-    var txHash;
-    try {
-      txHash = await sendStakePayment(escrowAddress, stakeQF);
-    } catch (payErr) {
-      if (payErr.code === 'ACTION_REJECTED') { alert('Transaction rejected.'); return; }
-      throw payErr;
+    var txHash = getStoredPayment(duelCode);
+    if (!txHash) {
+      try {
+        txHash = await sendStakePayment(escrowAddress, stakeQF);
+        storePayment(duelCode, txHash);
+      } catch (payErr) {
+        if (payErr.code === 'ACTION_REJECTED') { alert('Transaction rejected.'); return; }
+        throw payErr;
+      }
     }
     var data = await duelApi('/duel/' + duelCode + '/accept', { txHash: txHash });
     if (data.error) { alert(data.error); return; }

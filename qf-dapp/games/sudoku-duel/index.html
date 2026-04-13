@@ -585,6 +585,13 @@ var G = (function() {
     return receipt.hash;
   }
 
+  function getStoredPayment(code) {
+    try { return sessionStorage.getItem('duel_paid_' + code); } catch(e) { return null; }
+  }
+  function storePayment(code, txHash) {
+    try { sessionStorage.setItem('duel_paid_' + code, txHash); } catch(e) {}
+  }
+
   // ── Mode: Create Duel ───────────────────────────────────────────────
   var pendingDuelSeed = null;
 
@@ -737,18 +744,21 @@ var G = (function() {
       var cfg = await getDuelConfig();
       var stakeQF = (duelData && duelData.stake) ? duelData.stake : (cfg.defaultStake || 25);
 
-      // Send stake payment only after confirming duel is valid
-      setMsg('Sending ' + stakeQF + ' QF stake...');
-      var txHash = null;
-      try {
-        txHash = await sendStakePayment(cfg.escrowAddress, stakeQF);
-      } catch (e) {
-        if (e.code === 'ACTION_REJECTED' || (e.message && e.message.indexOf('rejected') !== -1)) {
-          setMsg('Transaction cancelled.');
-        } else {
-          setMsg('Payment failed: ' + (e.reason || e.message || 'Unknown error'));
+      // Check for existing payment (prevents double-pay on refresh)
+      var txHash = getStoredPayment(duelCode);
+      if (!txHash) {
+        setMsg('Sending ' + stakeQF + ' QF stake...');
+        try {
+          txHash = await sendStakePayment(cfg.escrowAddress, stakeQF);
+          storePayment(duelCode, txHash);
+        } catch (e) {
+          if (e.code === 'ACTION_REJECTED' || (e.message && e.message.indexOf('rejected') !== -1)) {
+            setMsg('Transaction cancelled.');
+          } else {
+            setMsg('Payment failed: ' + (e.reason || e.message || 'Unknown error'));
+          }
+          return;
         }
-        return;
       }
 
       setMsg('Accepting duel...');

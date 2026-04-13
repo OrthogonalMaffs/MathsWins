@@ -614,6 +614,20 @@ async function sendStakePayment(escrowAddress, stakeQF) {
   return receipt.hash;
 }
 
+function getStoredPayment(code) {
+  try { return sessionStorage.getItem('duel_paid_' + code); } catch(e) { return null; }
+}
+function storePayment(code, txHash) {
+  try { sessionStorage.setItem('duel_paid_' + code, txHash); } catch(e) {}
+}
+
+function getStoredPayment(code) {
+  try { return sessionStorage.getItem('duel_paid_' + code); } catch(e) { return null; }
+}
+function storePayment(code, txHash) {
+  try { sessionStorage.setItem('duel_paid_' + code, txHash); } catch(e) {}
+}
+
 function duelApi(url, body, method) {
   var headers = { 'Content-Type': 'application/json' };
   if (qfWallet && qfWallet.address) headers['X-Wallet-Address'] = qfWallet.address;
@@ -734,16 +748,19 @@ async function acceptDuelChallenge() {
     if (check.status !== 'created') { alert('This duel is no longer available (' + check.status + ').'); return; }
     var config = await getDuelConfig();
     var stakeQF = config.defaultStake || 25;
-    var txHash = null;
-    try {
-      txHash = await sendStakePayment(config.escrowAddress, stakeQF);
-    } catch (payErr) {
-      if (payErr.code === 'ACTION_REJECTED' || (payErr.info && payErr.info.error && payErr.info.error.code === 4001)) {
-        alert('Payment cancelled.');
-      } else {
-        alert('Payment failed: ' + payErr.message);
+    var txHash = getStoredPayment(duelCode);
+    if (!txHash) {
+      try {
+        txHash = await sendStakePayment(config.escrowAddress, stakeQF);
+        storePayment(duelCode, txHash);
+      } catch (payErr) {
+        if (payErr.code === 'ACTION_REJECTED' || (payErr.info && payErr.info.error && payErr.info.error.code === 4001)) {
+          alert('Payment cancelled.');
+        } else {
+          alert('Payment failed: ' + payErr.message);
+        }
+        return;
       }
-      return;
     }
     var data = await duelApi('/duel/' + duelCode + '/accept', { txHash: txHash });
     if (data.error) { alert(data.error); return; }
