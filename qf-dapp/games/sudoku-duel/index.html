@@ -402,6 +402,7 @@ var G = (function() {
   var sessionToken = null;
   var puzzle = null, grid = null, notes = null;
   var selected = null, mistakes = 0, hintsUsed = 0;
+  var confirmedCells = new Set();
   var notesMode = false, done = false, timerStarted = false;
   var startTime = null, timerInterval = null;
   var history = [];
@@ -771,7 +772,8 @@ var G = (function() {
           grid = resumeData.grid;
           leaguePuzzleIndex = resumeData.puzzleIndex;
           notes = [];
-          for (var i = 0; i < 81; i++) notes.push(new Set());
+          confirmedCells = new Set();
+          for (var i = 0; i < 81; i++) { notes.push(new Set()); if (grid[i] !== 0) confirmedCells.add(i); }
           mistakes = resumeData.mistakes || 0;
           hintsUsed = resumeData.hintsUsed || 0;
           selected = null;
@@ -817,7 +819,8 @@ var G = (function() {
       grid = puzzle.slice();
       if (data.puzzleIndex !== undefined) leaguePuzzleIndex = data.puzzleIndex;
       notes = [];
-      for (var i = 0; i < 81; i++) notes.push(new Set());
+      confirmedCells = new Set();
+      for (var i = 0; i < 81; i++) { notes.push(new Set()); if (puzzle[i] !== 0) confirmedCells.add(i); }
       mistakes = 0;
       hintsUsed = 0;
       selected = null;
@@ -977,6 +980,7 @@ var G = (function() {
 
       if (data.isCorrect) {
         grid[selected] = n;
+        confirmedCells.add(selected);
         notes[selected] = new Set();
         clearRelatedNotes(selected, n);
         setMsg('');
@@ -1082,6 +1086,7 @@ var G = (function() {
 
       if (data.hintsUsed !== undefined) hintsUsed = data.hintsUsed;
       grid[selected] = data.value;
+      confirmedCells.add(selected);
       notes[selected] = new Set();
       document.getElementById('sv-h').textContent = hintsUsed;
 
@@ -1102,9 +1107,7 @@ var G = (function() {
 
   // ── Check completion ────────────────────────────────────────────────
   function checkComplete() {
-    for (var i = 0; i < 81; i++) {
-      if (grid[i] === 0) return;
-    }
+    if (confirmedCells.size < 81) return;
     playCompletionWave();
   }
 
