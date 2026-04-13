@@ -502,5 +502,11 @@
     "name": "Gladiator",
     "image_ipfs": "ipfs://QmbePSAuXJL2RQ6VQECE2dFsgCkMVkwecbon6j641p18tT",
     "metadata_ipfs": "ipfs://QmbKSa59bkPpeSaAe2otpE1mPanWiJdtG38RDpqiKRzFJt"
+  },
+  {
+    "achievement_id": "palindrome",
+    "name": "Palindrome",
+    "image_ipfs": "ipfs://QmWUALCfXfeoDkffRMSbgzbr2XH4NZXNUm1cfmKde6wP41",
+    "metadata_ipfs": "ipfs://QmZAQ24YqjExqqErquJmYRLxGg19yai6isKcGWb6kXBqpE"
   }
 ]
