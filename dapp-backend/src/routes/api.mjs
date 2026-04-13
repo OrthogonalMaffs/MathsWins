@@ -1405,10 +1405,17 @@ router.post('/battleships/create', optionalWallet, (req, res) => {
   const wallet = req.wallet;
   if (!wallet) return res.status(401).json({ error: 'Wallet required' });
 
-  const stakeQf = Math.max(25, parseInt(req.body.stake_qf) || 25);
   const vsCpu = req.body.vs_cpu ? 1 : 0;
+  const stakeQf = vsCpu ? 0 : Math.max(25, parseInt(req.body.stake_qf) || 25);
   const validDifficulties = ['recruit', 'officer', 'admiral'];
   const difficulty = vsCpu && validDifficulties.includes(req.body.difficulty) ? req.body.difficulty : 'recruit';
+
+  // Require payment for PvP unless builder-whitelisted
+  const isBuilder = BUILDER_WHITELIST.has(wallet.toLowerCase());
+  const txHash = req.body.txHash || null;
+  if (!vsCpu && !isBuilder && !txHash) {
+    return res.status(400).json({ error: 'Payment transaction hash required' });
+  }
 
   let shareCode, existing;
   for (let i = 0; i < 10; i++) {
@@ -1421,6 +1428,12 @@ router.post('/battleships/create', optionalWallet, (req, res) => {
   const id = crypto.randomUUID();
   const now = Date.now();
   createBattleshipsGame(id, stakeQf, wallet, shareCode, now, vsCpu, difficulty);
+
+  // Store creator payment tx
+  if (txHash) {
+    const db = getDb();
+    db.prepare('UPDATE battleships_games SET creator_tx = ? WHERE id = ?').run(txHash, id);
+  }
 
   // For CPU games: generate and place CPU fleet immediately
   if (vsCpu) {
@@ -1469,8 +1482,21 @@ router.post('/battleships/:code/join', optionalWallet, (req, res) => {
   if (game.creator_wallet === wallet) return res.status(400).json({ error: 'Cannot join your own game' });
   if (game.opponent_wallet && game.opponent_wallet !== wallet) return res.status(400).json({ error: 'Game already has an opponent' });
 
+  // Require payment unless builder-whitelisted
+  const isBuilder = BUILDER_WHITELIST.has(wallet.toLowerCase());
+  const txHash = req.body.txHash || null;
+  if (!isBuilder && !txHash) {
+    return res.status(400).json({ error: 'Payment transaction hash required' });
+  }
+
   if (!game.opponent_wallet) {
     updateBattleshipsGameStatus(game.id, 'placement', { opponent_wallet: wallet.toLowerCase() });
+  }
+
+  // Store acceptor payment tx
+  if (txHash) {
+    const db = getDb();
+    db.prepare('UPDATE battleships_games SET acceptor_tx = ? WHERE id = ?').run(txHash, game.id);
   }
 
   res.json({ game_id: game.id });
@@ -1618,9 +1644,14 @@ router.post('/battleships/:code/shoot', optionalWallet, (req, res) => {
     updateBattleshipsRecord(wallet, 'win');
     if (!game.vs_cpu) {
       updateBattleshipsRecord(opponentWallet, 'loss');
-      settleDuel(wallet, burnAmount, teamAmount, winnerAmount).catch(e => {
-        console.error('Battleships settlement failed:', e.message);
-      });
+      var bothPaid = game.creator_tx && game.acceptor_tx;
+      if (bothPaid) {
+        settleDuel(wallet, burnAmount, teamAmount, winnerAmount).catch(e => {
+          console.error('Battleships settlement failed:', e.message);
+        });
+      } else {
+        console.log('Battleships ' + game.share_code + ' completed — no settlement (missing payment tx)');
+      }
     }
 
     response.game_status = 'completed';
@@ -1780,9 +1811,14 @@ router.post('/battleships/:code/forfeit', optionalWallet, (req, res) => {
     updateBattleshipsRecord(opponentWallet, 'win');
     updateBattleshipsRecord(wallet, 'loss');
 
-    settleDuel(opponentWallet, burnAmount, teamAmount, winnerAmount).catch(e => {
-      console.error('Battleships forfeit settlement failed:', e.message);
-    });
+    var bothPaidForfeit = game.creator_tx && game.acceptor_tx;
+    if (bothPaidForfeit) {
+      settleDuel(opponentWallet, burnAmount, teamAmount, winnerAmount).catch(e => {
+        console.error('Battleships forfeit settlement failed:', e.message);
+      });
+    } else {
+      console.log('Battleships ' + code + ' forfeit — no settlement (missing payment tx)');
+    }
 
     try { checkAchievements(opponentWallet, { type: 'battleships_complete', gameId: game.id, won: true, vsCpu: false }); } catch (e) { /* achievement check failed */ }
     try { checkAchievements(wallet, { type: 'battleships_complete', gameId: game.id, won: false, vsCpu: false }); } catch (e) { /* achievement check failed */ }
@@ -1864,9 +1900,14 @@ export function checkBattleshipsTimeouts() {
         updateBattleshipsRecord(currentWallet, 'win');
         updateBattleshipsRecord(opponentWallet, 'loss');
 
-        settleDuel(currentWallet, burnAmount, teamAmount, winnerAmount).catch(e => {
-          console.error('Battleships auto-shot settlement failed:', e.message);
-        });
+        var bothPaidAuto = game.creator_tx && game.acceptor_tx;
+        if (bothPaidAuto) {
+          settleDuel(currentWallet, burnAmount, teamAmount, winnerAmount).catch(e => {
+            console.error('Battleships auto-shot settlement failed:', e.message);
+          });
+        } else {
+          console.log('Battleships ' + game.share_code + ' auto-shot win — no settlement (missing payment tx)');
+        }
         try { checkAchievements(currentWallet, { type: 'battleships_complete', gameId: game.id, won: true, vsCpu: false }); } catch (e) { /* achievement check failed */ }
         try { checkAchievements(opponentWallet, { type: 'battleships_complete', gameId: game.id, won: false, vsCpu: false }); } catch (e) { /* achievement check failed */ }
       } else {

@@ -223,6 +223,8 @@ CREATE TABLE IF NOT EXISTS battleships_games (
   turn_deadline INTEGER,
   winner_wallet TEXT,
   share_code TEXT UNIQUE NOT NULL,
+  creator_tx TEXT,
+  acceptor_tx TEXT,
   created_at INTEGER NOT NULL,
   started_at INTEGER,
   completed_at INTEGER

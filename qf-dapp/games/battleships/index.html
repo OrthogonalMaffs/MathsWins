@@ -612,21 +612,59 @@ document.querySelectorAll('.diff-btn').forEach(function(btn){
   });
 });
 
+// ── Payment helpers ───────────────────────────────────────────────────
+var duelConfig = null;
+async function getDuelConfig() {
+  if (duelConfig) return duelConfig;
+  var data = await api('/duel/config', null, 'GET');
+  duelConfig = data;
+  return data;
+}
+
+async function sendStakePayment(escrowAddress, stakeQF) {
+  var signer = W.signer || (W.state && W.state.signer);
+  if (!signer || !signer.sendTransaction) throw new Error('Wallet signer not available');
+  var value = ethers.parseEther(String(stakeQF));
+  var tx = await signer.sendTransaction({ to: escrowAddress, value: value });
+  var receipt = await tx.wait();
+  return receipt.hash;
+}
+
 // ── Create Duel ───────────────────────────────────────────────────────
 G.createDuel = async function() {
   setMsg('');
   document.getElementById('mode-panel').style.display = 'none';
   try {
-    var data = await api('/battleships/create', { stake: 0 });
-    if (data.error) { setMsg(data.error); return; }
-    G.duelCode = data.code;
+    var cfg = await getDuelConfig();
+    var stakeQF = cfg.defaultStake || 25;
+
+    setMsg('Sending ' + stakeQF + ' QF stake...');
+    var txHash = null;
+    try {
+      txHash = await sendStakePayment(cfg.escrowAddress, stakeQF);
+    } catch (e) {
+      if (e.code === 'ACTION_REJECTED' || (e.message && e.message.indexOf('rejected') !== -1)) {
+        setMsg('Transaction cancelled.');
+      } else {
+        setMsg('Payment failed: ' + (e.reason || e.message || 'Unknown error'));
+      }
+      document.getElementById('mode-panel').style.display = '';
+      return;
+    }
+
+    setMsg('Creating duel...');
+    var data = await api('/battleships/create', { stake_qf: stakeQF, txHash: txHash });
+    if (data.error) { setMsg(data.error); document.getElementById('mode-panel').style.display = ''; return; }
+    G.duelCode = data.share_code;
     G.mode = 'duel';
     document.getElementById('pre-game').style.display = 'none';
     document.getElementById('duel-share').style.display = 'block';
-    document.getElementById('share-code-display').textContent = data.code;
+    document.getElementById('share-code-display').textContent = data.share_code;
+    setMsg('');
     G.pollForOpponent();
   } catch (e) {
     setMsg('Connection error creating duel');
+    document.getElementById('mode-panel').style.display = '';
   }
 };
 
@@ -668,11 +706,36 @@ G.joinDuel = async function() {
   if (!code) { setMsg('Enter a duel code'); return; }
   setMsg('');
   try {
-    var data = await api('/battleships/' + code + '/join', {});
+    // Check game status before payment
+    setMsg('Checking duel status...');
+    var check = await api('/battleships/' + code, null, 'GET');
+    if (check.error) { setMsg(check.error); return; }
+    if (check.status !== 'placement') { setMsg('This duel is no longer available (' + check.status + ').'); return; }
+    if (check.opponent_wallet) { setMsg('This duel already has an opponent.'); return; }
+
+    var cfg = await getDuelConfig();
+    var stakeQF = check.stake_qf || cfg.defaultStake || 25;
+
+    setMsg('Sending ' + stakeQF + ' QF stake...');
+    var txHash = null;
+    try {
+      txHash = await sendStakePayment(cfg.escrowAddress, stakeQF);
+    } catch (e) {
+      if (e.code === 'ACTION_REJECTED' || (e.message && e.message.indexOf('rejected') !== -1)) {
+        setMsg('Transaction cancelled.');
+      } else {
+        setMsg('Payment failed: ' + (e.reason || e.message || 'Unknown error'));
+      }
+      return;
+    }
+
+    setMsg('Joining duel...');
+    var data = await api('/battleships/' + code + '/join', { txHash: txHash });
     if (data.error) { setMsg(data.error); return; }
     G.duelCode = code;
     G.mode = 'duel';
     document.getElementById('pre-game').style.display = 'none';
+    setMsg('');
     G.showPlacement();
   } catch (e) {
     setMsg('Connection error joining duel');
