@@ -77,6 +77,12 @@ body{background:var(--bg);color:var(--text);font-family:'Inter',sans-serif;min-h
 .hs-card-game{font-family:'DM Mono',monospace;font-size:.75rem;color:#e8ecf4;flex:1;min-width:0;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
 .hs-card-diff{font-family:'DM Mono',monospace;font-size:.5rem;text-transform:uppercase;letter-spacing:.06em;color:#888;padding:.15rem .45rem;border-radius:10px;border:1px solid #888;flex-shrink:0}
 .hs-card-diff.hard{color:var(--gold);border-color:var(--gold)}
+.hs-diff-table{width:100%;border-collapse:collapse;border-top:1px solid #2e3650}
+.hs-diff-table td{padding:.35rem .8rem;font-family:'DM Mono',monospace;font-size:.6rem}
+.hs-diff-table tr+tr td{border-top:1px solid #1e2436}
+.hs-diff-table .hs-dt-diff{color:#888;text-transform:uppercase;letter-spacing:.04em;font-size:.5rem;width:30%}
+.hs-diff-table .hs-dt-score{color:#c9a84c;text-align:right;width:35%}
+.hs-diff-table .hs-dt-date{color:var(--muted);text-align:right;width:35%;font-size:.5rem}
 .hs-card-rank{font-family:'DM Mono',monospace;font-size:.55rem;padding:.15rem .5rem;border-radius:10px;background:rgba(201,168,76,.1);color:var(--gold);border:1px solid rgba(201,168,76,.25);flex-shrink:0;white-space:nowrap}
 .hs-card-stats{display:grid;grid-template-columns:1fr 1fr;border-top:1px solid #2e3650}
 .hs-stat{padding:.5rem .8rem}
@@ -500,34 +506,33 @@ async function renderScores() {
       enteredSet[pos.game_id + ':' + pos.period_type] = true;
     });
 
-    // Group by game + difficulty — each unique combo gets its own card
+    // Group by game_id — collect all difficulties per game
     var games = {};
     pb.forEach(function(r) {
-      var key = r.game_id + ':' + (r.difficulty || 'default');
-      if (!games[key]) games[key] = [];
-      games[key].push(r);
+      var gid = r.game_id;
+      if (!games[gid]) games[gid] = [];
+      games[gid].push(r);
     });
 
     var gameIds = Object.keys(games);
 
-    // Check eligibility for games not yet on any leaderboard
+    // Check eligibility for games not yet on any leaderboard (use best score per game)
     var eligibility = {};
-    var toCheck = gameIds.filter(function(key) { return !lbMap[key.split(':')[0]]; });
+    var toCheck = gameIds.filter(function(gid) { return !lbMap[gid]; });
     if (toCheck.length <= 10) {
       var checks = [];
-      toCheck.forEach(function(key) {
-        var gameId = key.split(':')[0];
-        var best = games[key][0];
+      toCheck.forEach(function(gid) {
+        var best = games[gid][0];
         ['daily', 'weekly', 'monthly'].forEach(function(period) {
           checks.push(
-            fetch(API + '/global-leaderboard/' + gameId + '/eligibility?periodType=' + period +
+            fetch(API + '/global-leaderboard/' + gid + '/eligibility?periodType=' + period +
               '&score=' + (best.score || 0) + '&timeMs=' + (best.time_ms || 0), {
               headers: { 'Authorization': 'Bearer ' + JWT }
             }).then(function(r) { return r.json(); })
               .then(function(data) {
                 if (data.shouldPrompt && !data.alreadyEntered) {
-                  if (!eligibility[key] || data.rank < eligibility[key].rank) {
-                    eligibility[key] = { rank: data.rank, periodType: period };
+                  if (!eligibility[gid] || data.rank < eligibility[gid].rank) {
+                    eligibility[gid] = { rank: data.rank, periodType: period, row: best };
                   }
                 }
               }).catch(function() {})
@@ -539,50 +544,38 @@ async function renderScores() {
 
     // Sort: ranked games first (by rank asc), then alphabetically
     gameIds.sort(function(a, b) {
-      var aGame = a.split(':')[0], bGame = b.split(':')[0];
-      var aRanked = !!lbMap[aGame];
-      var bRanked = !!lbMap[bGame];
+      var aRanked = !!lbMap[a];
+      var bRanked = !!lbMap[b];
       if (aRanked && !bRanked) return -1;
       if (!aRanked && bRanked) return 1;
-      if (aRanked && bRanked) return lbMap[aGame].rank - lbMap[bGame].rank;
-      var nameComp = gameName(aGame).localeCompare(gameName(bGame));
-      if (nameComp !== 0) return nameComp;
-      return a.localeCompare(b);
+      if (aRanked && bRanked) return lbMap[a].rank - lbMap[b].rank;
+      return gameName(a).localeCompare(gameName(b));
     });
 
     html += '<div class="score-section"><h3>Personal Bests</h3><div class="hs-cards">';
-    gameIds.forEach(function(key) {
-      var gid = key.split(':')[0];
+    gameIds.forEach(function(gid) {
       var isTime = TIME_PRIMARY.indexOf(gid) !== -1;
       var ranked = lbMap[gid];
-      var elig = eligibility[key];
-      var bestRow = games[key][0];
-      var diff = bestRow.difficulty || 'default';
+      var elig = eligibility[gid];
+      var rows = games[gid];
 
-      // Score value
-      var scoreVal;
-      if (isTime) {
-        scoreVal = formatTimeMs(bestRow.time_ms) || formatTimeMs(bestRow.score) || '—';
-      } else {
-        scoreVal = Number(bestRow.score || 0).toLocaleString();
-      }
-
-      // Header: game name | difficulty badge | rank badge
+      // Header: game name | rank badge
       html += '<div class="hs-card"><div class="hs-card-header">';
       html += '<span class="hs-card-game">' + gameName(gid) + '</span>';
-      var diffClass = (diff !== 'default' && diff !== 'standard') ? ' hard' : '';
-      html += '<span class="hs-card-diff' + diffClass + '">' + diff + '</span>';
       if (ranked) {
         var pLabel = ranked.periodType.charAt(0).toUpperCase() + ranked.periodType.slice(1);
         html += '<span class="hs-card-rank">\u2B50 ' + ordinal(ranked.rank) + ' \u00B7 ' + pLabel + '</span>';
       }
       html += '</div>';
 
-      // 2-column stats: Score | Date
-      html += '<div class="hs-card-stats">';
-      html += '<div class="hs-stat"><div class="hs-stat-label">' + (isTime ? 'Time' : 'Score') + '</div><div class="hs-stat-val">' + scoreVal + '</div></div>';
-      html += '<div class="hs-stat"><div class="hs-stat-label">Date Set</div><div class="hs-stat-val">' + formatDate(bestRow.achieved_at) + '</div></div>';
-      html += '</div>';
+      // Difficulty breakdown table
+      html += '<table class="hs-diff-table">';
+      rows.forEach(function(r) {
+        var diff = r.difficulty || 'default';
+        var val = isTime ? (formatTimeMs(r.time_ms) || '—') : Number(r.score || 0).toLocaleString();
+        html += '<tr><td class="hs-dt-diff">' + diff + '</td><td class="hs-dt-score">' + val + '</td><td class="hs-dt-date">' + formatDate(r.achieved_at) + '</td></tr>';
+      });
+      html += '</table>';
 
       // Leaderboard row: Daily / Weekly / Monthly with ranked highlights
       var rankedPeriods = lbByGame[gid] || [];
@@ -599,9 +592,10 @@ async function renderScores() {
       });
       html += '</div></div>';
 
-      // Footer: eligibility text + submit button
+      // Footer: eligibility text + submit button (best score across all difficulties)
       if (elig && !ranked) {
         var ePLabel = elig.periodType.charAt(0).toUpperCase() + elig.periodType.slice(1);
+        var bestRow = elig.row || rows[0];
         var sid = bestRow.session_id || '';
         var hasSession = !!sid;
         html += '<div class="hs-card-footer">';
