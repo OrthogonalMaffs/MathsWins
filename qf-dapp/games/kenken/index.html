@@ -308,7 +308,7 @@ var G = (function() {
 
   // ── Start ─────────────────────────────────────────────────────────
   function showGameUI() {
-    document.getElementById('scoring-panel').style.display = 'none';
+    var sp = document.getElementById('scoring-panel'); if (sp) sp.style.display = 'none';
     document.getElementById('diff-select').style.display = 'none';
     document.getElementById('start-btn').style.display = 'none';
     document.getElementById('create-duel-btn').style.display = 'none';
@@ -411,7 +411,7 @@ var G = (function() {
 
   // League mode: skip lobby, go straight to countdown
   if (leagueMode) {
-    document.getElementById('scoring-panel').style.display = 'none';
+    var sp = document.getElementById('scoring-panel'); if (sp) sp.style.display = 'none';
     document.getElementById('start-btn').style.display = 'none';
     document.getElementById('create-duel-btn').style.display = 'none';
     document.querySelector('.htp').style.display = 'none';
@@ -816,7 +816,7 @@ var G = (function() {
       grid = Array.from({ length: n }, function() { return new Array(n).fill(0); });
       notes = Array.from({ length: n }, function() { return Array.from({ length: n }, function() { return new Set(); }); });
       hintCells = new Set(); mistakes = 0; submitFailures = 0; hintsUsed = 0; done = false; history = [];
-      document.getElementById('scoring-panel').style.display = 'none';
+      var sp = document.getElementById('scoring-panel'); if (sp) sp.style.display = 'none';
       document.getElementById('diff-select').style.display = 'none';
       document.getElementById('start-btn').style.display = 'none';
       document.getElementById('status-bar').style.display = 'flex';
