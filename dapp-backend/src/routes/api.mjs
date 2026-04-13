@@ -2005,6 +2005,10 @@ router.post('/achievement/mint', optionalWallet, async (req, res) => {
       'the-novelist': 'QmXbWVXKeCsHgwTzYZSdEThXt5wkg7SPunf5T7Fx4k8L7V',
       'curse-of-the-mummy': 'QmfB7qLvKfVPiVEZYys7fXy2LGU7DFKH8YtKnZSwjiG3jN',
       'pharaohs-curse': 'QmVWFzTebwQfwDikrmFwiU8tSwffig7U1WYWLfr66padeg',
+      'the-pacifist': 'QmRevhD6KsFBrABffYEik35sXRJpEFfw4Canknqy4wvx4T',
+      'all-wrong': 'QmbWy8eJDNpy2pFjERsu5nEqbXm3njLehLsSh4oBG9t5ca',
+      'mucky-hands': 'Qmdjb1vJZ1HzuF5fN9n6ywrEtBrrGmVMqnb1q8RgYG5qXx',
+      'the-fish': 'QmTCCtGT7iKW8HsuaMGnm5jn8JgA533RKs91HR1mFiNnFY',
     };
     // Tier fallback image CIDs
     var TIER_IMAGES = {

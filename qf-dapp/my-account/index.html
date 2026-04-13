@@ -141,6 +141,13 @@ body{background:var(--bg);color:var(--text);font-family:'Inter',sans-serif;min-h
 .ach-browse{display:block;text-align:center;margin-top:1rem;font-family:'DM Mono',monospace;font-size:.65rem;color:var(--silver);text-decoration:none;transition:color .15s}
 .ach-browse:hover{color:var(--silver-bright)}
 .coming-soon{text-align:center;padding:3rem 1rem;font-size:.8rem;color:var(--muted)}
+.ach-img-wrap.clickable{cursor:pointer}
+.ach-lightbox{position:fixed;inset:0;z-index:500;background:rgba(0,0,0,.85);display:flex;align-items:center;justify-content:center;opacity:0;transition:opacity .25s ease;pointer-events:none}
+.ach-lightbox.open{opacity:1;pointer-events:auto}
+.ach-lightbox img{max-width:90vw;max-height:85vh;border-radius:10px;box-shadow:0 0 40px rgba(0,0,0,.6)}
+.ach-lightbox-close{position:absolute;top:1rem;right:1.2rem;font-size:1.5rem;color:var(--muted);cursor:pointer;line-height:1;transition:color .15s}
+.ach-lightbox-close:hover{color:var(--silver-bright)}
+.ach-lightbox-name{position:absolute;bottom:1.5rem;text-align:center;width:100%;font-family:'DM Mono',monospace;font-size:.75rem;color:var(--silver)}
 
 /* ── Trophy cards ── */
 .trophy-grid{display:grid;grid-template-columns:repeat(2,1fr);gap:.6rem}
@@ -182,6 +189,11 @@ footer a:hover{color:var(--silver-bright)}
 <body>
 <script src="/qf-dapp/games/qf-wallet.js"></script>
 <div id="qf-nav"></div>
+<div class="ach-lightbox" id="achLightbox" onclick="closeLightbox()">
+  <span class="ach-lightbox-close">&times;</span>
+  <img id="achLightboxImg" src="" alt="">
+  <div class="ach-lightbox-name" id="achLightboxName"></div>
+</div>
 <script src="/qf-dapp/qf-nav.js"></script>
 
 <div class="page">
@@ -760,8 +772,8 @@ async function renderAchievements() {
     // Determine image source: minted uses metadata_cid, unminted bespoke uses ipfs-mapping
     var imageSrc = null;
     if (a.minted_at && a.metadata_cid) {
-      // Fetch metadata to get image URL
-      (function(wrapEl, cid) {
+      // Fetch metadata to get image URL — clickable lightbox for minted
+      (function(wrapEl, cid, achName) {
         fetch('https://gateway.pinata.cloud/ipfs/' + cid)
           .then(function(r) { if (!r.ok) throw new Error('fetch failed'); return r.json(); })
           .then(function(meta) {
@@ -769,14 +781,16 @@ async function renderAchievements() {
             var imgUrl = meta.image;
             if (imgUrl.startsWith('ipfs://')) imgUrl = 'https://gateway.pinata.cloud/ipfs/' + imgUrl.slice(7);
             var img = document.createElement('img');
-            img.alt = a.achievement_id || 'Achievement';
+            img.alt = achName;
             img.onload = function() { img.classList.add('loaded'); };
             img.onerror = function() { wrapEl.innerHTML = '<div class="ach-placeholder"><span class="lock-icon">&#x1F5BC;</span></div>'; };
             img.src = imgUrl;
             wrapEl.insertBefore(img, wrapEl.firstChild);
+            wrapEl.classList.add('clickable');
+            wrapEl.onclick = function(e) { e.stopPropagation(); openLightbox(imgUrl, achName); };
           })
           .catch(function() { wrapEl.innerHTML = '<div class="ach-placeholder"><span class="lock-icon">&#x1F5BC;</span></div>'; });
-      })(wrap, a.metadata_cid);
+      })(wrap, a.metadata_cid, a.name || a.achievement_id);
     } else if (isBlur && bespokeEntry) {
       // Unminted bespoke — show blurred image from ipfs-mapping
       (function(wrapEl, entry) {
@@ -910,6 +924,20 @@ async function viewInMetaMask(tokenId, btn) {
     btn.disabled = false;
   }
 }
+
+// ── Achievement image lightbox ───────────────────────────────────────
+function openLightbox(imgSrc, name) {
+  var lb = document.getElementById('achLightbox');
+  document.getElementById('achLightboxImg').src = imgSrc;
+  document.getElementById('achLightboxName').textContent = name || '';
+  lb.classList.add('open');
+}
+function closeLightbox() {
+  var lb = document.getElementById('achLightbox');
+  lb.classList.remove('open');
+  document.getElementById('achLightboxImg').src = '';
+}
+document.addEventListener('keydown', function(e) { if (e.key === 'Escape') closeLightbox(); });
 
 // ── Render trophies ───────────────────────────────────────────────────
 function renderTrophies() {
