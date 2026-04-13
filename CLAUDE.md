@@ -101,7 +101,7 @@ Split from MaffsGames in March 2025. MaffsGames = free schools games. MathsWins 
 
 ### Shared Components
 - **qf-nav.js:** Shared nav injected on all 35+ dApp pages via `<div id="qf-nav"></div>`. Links: Lobby | My Account (wallet connected).
-- **My Account page:** `/qf-dapp/my-account/` — 4 tabs: My Leagues, High Scores, Achievements, Trophies. Wallet-gated (JWT). High Scores tab uses card-per-game layout: header (game name, difficulty badge, rank badge), 2-column stats (score with toLocaleString + date), leaderboard row (Daily/Weekly/Monthly with ranked period highlights), footer with eligibility text and Submit button (44px touch target). Ranked scores in gold. Submit requires session_id in personal_bests (pre-migration scores show "play again to submit").
+- **My Account page:** `/qf-dapp/my-account/` — 5 tabs: My Leagues, My Duels, High Scores, Achievements, Trophies. Wallet-gated (JWT). My Duels tab shows active duels (with share code + game link) and recent completed duels (with win/loss/draw results). High Scores tab uses card-per-game layout: header (game name, difficulty badge, rank badge), 2-column stats (score with toLocaleString + date), leaderboard row (Daily/Weekly/Monthly with ranked period highlights), footer with eligibility text and Submit button (44px touch target). Ranked scores in gold. Submit requires session_id in personal_bests (pre-migration scores show "play again to submit").
 - **Duel share code:** Displayed inside modal after game completion. Copy/share buttons. "Opponent has 24 hours to accept." Back to Lobby button.
 
 ### SQLite Tables (32)
@@ -142,7 +142,7 @@ Split from MaffsGames in March 2025. MaffsGames = free schools games. MathsWins 
 **Auth:** POST /auth/challenge, /auth/verify (challenge-sign-verify, JWT 24h)
 **Sessions:** POST /session/start, /session/resume, /session/evaluate, /session/submit-freeplay
 **Leaderboard:** GET /leaderboard/:gameId, /leaderboard/:gameId/:weekId, /pot/:gameId, /games, /week, /entry/:gameId
-**Duels:** POST /duel/create, /duel/:code/accept, /duel/:code/submit | GET /duel/:code, /duels/history
+**Duels:** POST /duel/precheck, /duel/create, /duel/:code/accept, /duel/:code/submit | GET /duel/config, /duel/:code, /duels/history
 **Promos:** POST /promo/create, /promo/:code/submit | GET /promo/:code
 **Leagues:** GET /leagues/:gameId, /leagues/:gameId/all, /league/:leagueId, /league/:leagueId/puzzles, /league/:leagueId/my-scores | POST /league/:leagueId/join, /league/:leagueId/submit
 **League v2:** GET /leagues/my, /leagues/active, /leagues/settled | POST /admin/league/:id/settle, /admin/league/:id/cancel, /admin/league/:id/refund/:wallet | GET /admin/refunds
@@ -168,15 +168,19 @@ Split from MaffsGames in March 2025. MaffsGames = free schools games. MathsWins 
 - Wallet auth: challenge-sign-verify JWT (24h), persisted in localStorage
 - Substrate wallet support: Talisman/Polkadot.js/SubWallet via @polkadot/extension-dapp
 
-### Duel Payment System (live 2026-04-12)
-- Client sends QF to escrow wallet via signer.sendTransaction(), passes txHash to server
+### Duel Payment System (all 10 games wired 2026-04-13)
+- All 10 duel games require 25 QF payment (Battleships PvP included, CPU games free)
+- Client checks duel status BEFORE payment (prevents farming via expired/completed links)
+- sessionStorage dedup prevents double-pay on page refresh (keyed by duel code)
+- /duel/precheck endpoint validates eligibility before create payment
 - GET /duel/config returns { escrowAddress, defaultStake: 25 }
-- Server stores txHash in duels.creator_tx / duels.acceptor_tx
+- Server stores txHash in duels.creator_tx / duels.acceptor_tx (and battleships_games equivalents)
 - Settlement fires automatically when both scores submitted (settleDuel / settleDuelDraw)
 - Only settles if both creator_tx AND acceptor_tx present (no payout for free duels)
+- Battleships: bothPaid check on all 3 settlement points (win/forfeit/auto-shot)
 - Refund sweep (5min interval) only refunds if tx hash exists
 - Builder-whitelisted wallets bypass payment entirely
-- Share code interstitial shown before game starts (Start Playing button)
+- Lobby code input routes to correct game via duel lookup (was hardcoded to sudoku-duel)
 - **BLOCKER:** On-chain verification parked — QF RPC eth_getTransactionReceipt returns null for valid transactions. Trust-the-hash until fixed.
 
 ### Wallet Auth (JWT)
