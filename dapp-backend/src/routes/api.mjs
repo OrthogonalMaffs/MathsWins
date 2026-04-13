@@ -736,6 +736,11 @@ var BUILDER_WHITELIST = new Set(
   (process.env.BUILDER_WALLETS || '').split(',').map(w => w.trim().toLowerCase()).filter(Boolean)
 );
 
+// Owner whitelist: these wallets can mint achievements without QF payment
+var OWNER_WHITELIST = new Set(
+  (process.env.OWNER_WALLETS || '').split(',').map(w => w.trim().toLowerCase()).filter(Boolean)
+);
+
 var LEAGUE_TIERS = {
   bronze: { fee: 100, label: 'Bronze League' },
   silver: { fee: 250, label: 'Silver League' }
@@ -1873,13 +1878,18 @@ router.get('/achievements/record/:id', (req, res) => {
   res.json(record);
 });
 
+router.get('/achievement/mint-config', optionalWallet, (req, res) => {
+  var isOwner = req.wallet ? OWNER_WHITELIST.has(req.wallet.toLowerCase()) : false;
+  res.json({ escrowAddress: getEscrowAddress(), ownerBypass: isOwner });
+});
+
 router.post('/achievement/mint', optionalWallet, async (req, res) => {
   if (!ACHIEVEMENTS_ACTIVE) {
     return res.json({ status: 'coming_soon' });
   }
   if (!req.wallet) return res.status(401).json({ error: 'Wallet required' });
 
-  const { achievement_id } = req.body;
+  const { achievement_id, txHash } = req.body;
   if (!achievement_id) return res.status(400).json({ error: 'achievement_id required' });
 
   const registry = getAchievement(achievement_id);
@@ -1893,28 +1903,32 @@ router.post('/achievement/mint', optionalWallet, async (req, res) => {
   const isPioneer = !registry.first_claimed_by;
   const db = getDb();
 
-  if (isPioneer) {
-    db.prepare('UPDATE achievement_registry SET first_claimed_by = ?, first_claimed_at = ? WHERE achievement_id = ? AND first_claimed_by IS NULL')
-      .run(req.wallet, Date.now(), achievement_id);
-    db.prepare('UPDATE achievement_eligibility SET is_pioneer = 1 WHERE wallet = ? AND achievement_id = ?')
-      .run(req.wallet, achievement_id);
-  }
-
-  // Fee handling — paid mints get burn/team split
+  // Fee handling — player pays QF to escrow, owner wallets skip payment entirely
+  const isOwner = OWNER_WHITELIST.has(req.wallet.toLowerCase());
   const mintFee = registry.mint_fee_qf || 0;
-  if (mintFee > 0) {
+  var usedFreeMint = false;
+  if (mintFee > 0 && !isOwner) {
     // Check free mints banked
     const stats = getWalletStats(req.wallet) || {};
     const freeBanked = stats.free_mints_banked || 0;
     if (freeBanked > 0) {
       db.prepare('UPDATE wallet_stats SET free_mints_banked = free_mints_banked - 1 WHERE wallet = ?')
         .run(req.wallet.toLowerCase());
+      usedFreeMint = true;
     } else {
+      // Player must have paid — require txHash
+      if (!txHash) return res.status(400).json({ error: 'Payment required. Send ' + mintFee + ' QF to escrow and include txHash.' });
+      // Store payment tx
+      db.prepare('UPDATE achievement_eligibility SET payment_tx = ? WHERE wallet = ? AND achievement_id = ?')
+        .run(txHash, req.wallet, achievement_id);
+      // Burn/team split from escrow (funded by player's payment)
       try {
         var burnAmount = Math.floor(mintFee * 0.05);
         var teamAmount = mintFee - burnAmount;
-        await sendQF(BURN_ADDRESS, burnAmount);
-        await sendQF(TEAM_WALLET, teamAmount);
+        var burnResult = await sendQF(BURN_ADDRESS, burnAmount);
+        if (!burnResult) throw new Error('Burn payment failed');
+        var teamResult = await sendQF(TEAM_WALLET, teamAmount);
+        if (!teamResult) throw new Error('Team payment failed');
       } catch (e) {
         return res.status(500).json({ error: 'Payment processing failed: ' + e.message });
       }
@@ -1934,6 +1948,14 @@ router.post('/achievement/mint', optionalWallet, async (req, res) => {
           .run(req.wallet.toLowerCase(), mintFee, Date.now(), mintFee, Date.now());
       } catch (e) { /* must never block */ }
     }
+  }
+
+  // Pioneer assignment — only after payment confirmed, owner wallets excluded
+  if (isPioneer && !isOwner) {
+    db.prepare('UPDATE achievement_registry SET first_claimed_by = ?, first_claimed_at = ? WHERE achievement_id = ? AND first_claimed_by IS NULL')
+      .run(req.wallet, Date.now(), achievement_id);
+    db.prepare('UPDATE achievement_eligibility SET is_pioneer = 1 WHERE wallet = ? AND achievement_id = ?')
+      .run(req.wallet, achievement_id);
   }
 
   // On-chain mint via QFAchievement contract
@@ -1964,6 +1986,25 @@ router.post('/achievement/mint', optionalWallet, async (req, res) => {
       'collector': 'QmUZUviotCZaUS8VThdQV23oKM91SBovDVov1JfK2reiqU',
       'onlyfans-qf': 'QmRobR8sxSM3C5Tnnf5XTMRHo2wVg9zzZ1gNaMW3LEfJtu',
       'the-wolf-pack': 'QmeNzeiTuX8wsPUkU8FjJxMft7dpzErPGnUAs6GR3xtKYY',
+      'clean-sheet': 'QmPn3QDtL8EtDV5XwraHjGC9g2Z2QQYw7yGVovNAELyhR8',
+      'dnf-king': 'QmS9dpRdUuKaABe8bpHKoQkUyJpxZxcjTXDa86DV4s2ckm',
+      'first-light': 'QmcQJGPBbHs2mLqsJhnYdr3TSzyQHVSXAi2upywS6UPiTm',
+      'never-triggered': 'QmVvQWSEMuc3ymUrkzgru6iidGh8WGb9LwCngEvA9wGLD4',
+      'night-owl': 'QmQUN5n7fJN7QZFvJMmJ7MLhjmqpWjB4NTShHqx1VisemN',
+      'pure-logic': 'QmRnjR5XVmpcuwjF1ysAgG9n8dAUFFkP1Z1TrqfTPnuTpJ',
+      'six-seven': 'QmPVV9icR7FrUAX2vG9SLphCiFV6q5UUpAYQMC6aSrrK4w',
+      'tax-payers-nightmare': 'QmcHa3suWVkkKwEs1UPqJwPbS1MigtLb26oCwyqETXND3y',
+      'the-optimist': 'QmUdvrwYw7nWKxRoZPAeV4FTY9JrAAZWb9mztSBvfY83MJ',
+      'winner': 'QmaJ37RdtY4JwWs4arMhy6Rte1vmPnfzgzxhvQEtLpq7ZN',
+      'bogey': 'QmVe8thsASmUW5TnuzpDAttKdK9TMg86F8v7gzwpHzxTk4',
+      'full-hints': 'QmNUka9G4nYKtVM1ybTH2KiHqESEGs1itrcMYngqQbbZcS',
+      'flagless-and-wrong': 'QmX6Xg8cXspeNuiyv75hGsonmjCKjo6V8Vu1xqFGHVNLRB',
+      'last-and-slow': 'QmdU6bxEjGNtv5UoPygX3Lhr2o6TdFuMnejgXBeWyqowhc',
+      'memory-loss': 'QmVnviRuBkxSUosoPthyko32acReaQDGpoM4wvFu7HoYFy',
+      'score-one': 'QmVkCyT2Fb5Jx9PK2az8Zu5DwoEhhSVUyptUxaY41JLWof',
+      'the-novelist': 'QmXbWVXKeCsHgwTzYZSdEThXt5wkg7SPunf5T7Fx4k8L7V',
+      'curse-of-the-mummy': 'QmfB7qLvKfVPiVEZYys7fXy2LGU7DFKH8YtKnZSwjiG3jN',
+      'pharaohs-curse': 'QmVWFzTebwQfwDikrmFwiU8tSwffig7U1WYWLfr66padeg',
     };
     // Tier fallback image CIDs
     var TIER_IMAGES = {

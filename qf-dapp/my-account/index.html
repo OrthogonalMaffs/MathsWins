@@ -114,9 +114,12 @@ body{background:var(--bg);color:var(--text);font-family:'Inter',sans-serif;min-h
 /* ── Achievement cards ── */
 .ach-list{display:flex;flex-direction:column;gap:.5rem}
 .ach-card{background:var(--surface);border:1px solid var(--border);border-radius:8px;padding:.8rem 1rem;display:flex;align-items:flex-start;gap:.8rem}
-.ach-img-wrap{width:120px;height:120px;border-radius:8px;overflow:hidden;flex-shrink:0;background:var(--surface2)}
-.ach-img-wrap img{width:100%;height:100%;object-fit:cover;opacity:0;transition:opacity .3s ease}
+.ach-img-wrap{position:relative;width:120px;height:120px;border-radius:8px;overflow:hidden;flex-shrink:0;background:var(--surface2)}
+.ach-img-wrap img{width:100%;height:100%;object-fit:cover;opacity:0;transition:opacity .3s ease,filter .5s ease}
 .ach-img-wrap img.loaded{opacity:1}
+.ach-img-wrap img.blurred{filter:blur(12px);transform:scale(1.1)}
+.ach-img-wrap img.blurred.loaded{opacity:1}
+.ach-blur-overlay{position:absolute;bottom:0;left:0;right:0;text-align:center;padding:.3rem 0;font-family:'DM Mono',monospace;font-size:.45rem;color:var(--muted);background:rgba(0,0,0,.5);letter-spacing:.04em}
 .ach-placeholder{width:100%;height:100%;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:.3rem;background:var(--surface2);border-radius:8px}
 .ach-placeholder .lock-icon{font-size:1.4rem;color:var(--muted);line-height:1}
 .ach-placeholder .lock-text{font-family:'DM Mono',monospace;font-size:.5rem;color:var(--muted)}
@@ -653,6 +656,16 @@ async function submitToLeaderboard(gameId, periodType, sessionId, score, timeMs,
   }
 }
 
+// ── IPFS mapping for bespoke achievement images ─────────────────────
+var IPFS_MAP = {};
+(async function() {
+  try {
+    var r = await fetch('/qf-dapp/achievements/ipfs-mapping.json');
+    var arr = await r.json();
+    arr.forEach(function(e) { IPFS_MAP[e.achievement_id] = e; });
+  } catch (e) { /* non-critical */ }
+})();
+
 // ── Render achievements ───────────────────────────────────────────────
 async function renderAchievements() {
   var container = document.getElementById('achievementsContent');
@@ -692,10 +705,13 @@ async function renderAchievements() {
       var isMinted = !!a.minted_at;
       var hasCid = !!a.metadata_cid;
 
-      // Image area: minted with CID gets async image, unminted gets padlock, no CID gets nothing
+      // Image area: minted with CID gets clear image, unminted bespoke gets blurred preview, rest gets padlock
       var imgHtml = '';
+      var bespokeEntry = IPFS_MAP[a.achievement_id];
       if (isMinted && hasCid) {
         imgHtml = '<div class="ach-img-wrap" id="ach-img-' + idx + '"></div>';
+      } else if (!isMinted && bespokeEntry) {
+        imgHtml = '<div class="ach-img-wrap" id="ach-img-' + idx + '" data-blur="1"><span class="ach-blur-overlay">Mint to reveal</span></div>';
       } else if (!isMinted) {
         imgHtml = '<div class="ach-img-wrap"><div class="ach-placeholder"><span class="lock-icon">&#x1F512;</span><span class="lock-text">Mint to reveal</span></div></div>';
       }
@@ -711,10 +727,12 @@ async function renderAchievements() {
           html += '<div class="ach-tx">' + truncTx(a.tx_hash) + '</div>';
         }
         if (a.token_id) {
-          html += '<button class="ach-wallet-btn" onclick="addToWallet(\'' + a.token_id + '\',this)">Add to Wallet</button>';
+          html += '<button class="ach-wallet-btn" onclick="viewInMetaMask(\'' + a.token_id + '\',this)">View in MetaMask</button>';
         }
       } else {
-        html += '<button class="ach-mint-btn" onclick="mintAchievement(\'' + a.achievement_id + '\')">Mint</button>';
+        var fee = a.mint_fee_qf || 0;
+        var feeLabel = fee > 0 ? 'Mint (' + fee + ' QF)' : 'Mint (Free)';
+        html += '<button class="ach-mint-btn" data-fee="' + fee + '" onclick="mintAchievement(\'' + a.achievement_id + '\',' + fee + ',this)">' + feeLabel + '</button>';
       }
       html += '</div></div>';
     });
@@ -729,64 +747,129 @@ async function renderAchievements() {
   container.style.display = '';
   loading.style.display = 'none';
 
-  // Async image loading — each fetch isolated in its own try/catch
+  // Async image loading — minted get clear image, unminted bespoke get blurred preview
   achs.forEach(function(a, idx) {
-    if (!a.minted_at || !a.metadata_cid) return;
     var wrap = document.getElementById('ach-img-' + idx);
     if (!wrap) return;
+    var isBlur = wrap.getAttribute('data-blur') === '1';
+    var bespokeEntry = IPFS_MAP[a.achievement_id];
 
-    (function(wrapEl, cid) {
-      try {
+    // Determine image source: minted uses metadata_cid, unminted bespoke uses ipfs-mapping
+    var imageSrc = null;
+    if (a.minted_at && a.metadata_cid) {
+      // Fetch metadata to get image URL
+      (function(wrapEl, cid) {
         fetch('https://gateway.pinata.cloud/ipfs/' + cid)
-          .then(function(r) {
-            if (!r.ok) throw new Error('fetch failed');
-            return r.json();
-          })
+          .then(function(r) { if (!r.ok) throw new Error('fetch failed'); return r.json(); })
           .then(function(meta) {
-            if (!meta || !meta.image) throw new Error('no image in metadata');
+            if (!meta || !meta.image) throw new Error('no image');
             var imgUrl = meta.image;
-            if (imgUrl.startsWith('ipfs://')) {
-              imgUrl = 'https://gateway.pinata.cloud/ipfs/' + imgUrl.slice(7);
-            }
+            if (imgUrl.startsWith('ipfs://')) imgUrl = 'https://gateway.pinata.cloud/ipfs/' + imgUrl.slice(7);
             var img = document.createElement('img');
             img.alt = a.achievement_id || 'Achievement';
             img.onload = function() { img.classList.add('loaded'); };
             img.onerror = function() { wrapEl.innerHTML = '<div class="ach-placeholder"><span class="lock-icon">&#x1F5BC;</span></div>'; };
             img.src = imgUrl;
-            wrapEl.appendChild(img);
+            wrapEl.insertBefore(img, wrapEl.firstChild);
           })
-          .catch(function() {
-            wrapEl.innerHTML = '<div class="ach-placeholder"><span class="lock-icon">&#x1F5BC;</span></div>';
-          });
-      } catch (e) {
-        wrapEl.innerHTML = '<div class="ach-placeholder"><span class="lock-icon">&#x1F5BC;</span></div>';
-      }
-    })(wrap, a.metadata_cid);
+          .catch(function() { wrapEl.innerHTML = '<div class="ach-placeholder"><span class="lock-icon">&#x1F5BC;</span></div>'; });
+      })(wrap, a.metadata_cid);
+    } else if (isBlur && bespokeEntry) {
+      // Unminted bespoke — show blurred image from ipfs-mapping
+      (function(wrapEl, entry) {
+        var imgUrl = entry.image_ipfs;
+        if (imgUrl.startsWith('ipfs://')) imgUrl = 'https://gateway.pinata.cloud/ipfs/' + imgUrl.slice(7);
+        var img = document.createElement('img');
+        img.alt = 'Blurred preview';
+        img.className = 'blurred';
+        img.onload = function() { img.classList.add('loaded'); };
+        img.onerror = function() { wrapEl.innerHTML = '<div class="ach-placeholder"><span class="lock-icon">&#x1F512;</span><span class="lock-text">Mint to reveal</span></div>'; };
+        img.src = imgUrl;
+        wrapEl.insertBefore(img, wrapEl.firstChild);
+      })(wrap, bespokeEntry);
+    }
   });
 }
 
+// ── Mint config (cached) ─────────────────────────────────────────────
+var mintConfig = null;
+async function getMintConfig() {
+  if (mintConfig) return mintConfig;
+  var r = await fetch(API + '/achievement/mint-config', {
+    headers: { 'Authorization': 'Bearer ' + JWT }
+  });
+  mintConfig = await r.json();
+  return mintConfig;
+}
+
+// ── Send QF payment to escrow ────────────────────────────────────────
+async function sendMintPayment(escrowAddress, amountQF) {
+  var signer = qfWallet.signer || (qfWallet.state && qfWallet.state.signer);
+  if (!signer || !signer.sendTransaction) throw new Error('Wallet signer not available');
+  var value = ethers.parseEther(String(amountQF));
+  var tx = await signer.sendTransaction({ to: escrowAddress, value: value });
+  var receipt = await tx.wait();
+  return receipt.hash;
+}
+
 // ── Mint achievement ──────────────────────────────────────────────────
-async function mintAchievement(achievementId) {
-  var btn = event.target;
+async function mintAchievement(achievementId, fee, btn) {
   btn.disabled = true;
-  btn.textContent = 'Minting...';
+  var originalText = btn.textContent;
   try {
+    var cfg = await getMintConfig();
+    var txHash = null;
+
+    // Player pays if fee > 0 and not owner-whitelisted
+    if (fee > 0 && !cfg.ownerBypass) {
+      // Check free mints first — server will use banked mint if available
+      var stats = PROFILE.wallet_stats || {};
+      var freeBanked = stats.free_mints_banked || 0;
+      if (freeBanked <= 0) {
+        btn.textContent = 'Sending ' + fee + ' QF...';
+        try {
+          txHash = await sendMintPayment(cfg.escrowAddress, fee);
+        } catch (e) {
+          if (e.code === 'ACTION_REJECTED' || (e.message && e.message.indexOf('rejected') !== -1)) {
+            btn.textContent = 'Cancelled';
+          } else {
+            btn.textContent = 'Payment failed';
+          }
+          btn.disabled = false;
+          setTimeout(function() { btn.textContent = originalText; btn.disabled = false; }, 3000);
+          return;
+        }
+      }
+    }
+
+    btn.textContent = 'Minting...';
     var res = await fetch(API + '/achievement/mint', {
       method: 'POST',
       headers: { 'Content-Type': 'application/json', 'Authorization': 'Bearer ' + JWT },
-      body: JSON.stringify({ achievement_id: achievementId })
+      body: JSON.stringify({ achievement_id: achievementId, txHash: txHash })
     });
     var data = await res.json();
     if (data.minted) {
       btn.textContent = 'Minted';
       btn.style.borderColor = 'var(--green)';
       btn.style.color = 'var(--green)';
+      // Unblur image if it was a bespoke blurred preview
+      var card = btn.closest('.ach-card');
+      if (card) {
+        var blurredImg = card.querySelector('img.blurred');
+        if (blurredImg) {
+          blurredImg.classList.remove('blurred');
+        }
+        var overlay = card.querySelector('.ach-blur-overlay');
+        if (overlay) overlay.remove();
+      }
+      // View in MetaMask button
       if (data.token_id) {
-        var walletBtn = document.createElement('button');
-        walletBtn.className = 'ach-wallet-btn';
-        walletBtn.textContent = 'Add to Wallet';
-        walletBtn.onclick = function() { addToWallet(data.token_id, walletBtn); };
-        btn.parentNode.appendChild(walletBtn);
+        var mmBtn = document.createElement('button');
+        mmBtn.className = 'ach-wallet-btn';
+        mmBtn.textContent = 'View in MetaMask';
+        mmBtn.onclick = function() { viewInMetaMask(data.token_id, mmBtn); };
+        btn.parentNode.appendChild(mmBtn);
       }
     } else if (data.status === 'coming_soon') {
       btn.textContent = 'Coming Soon';
@@ -800,10 +883,10 @@ async function mintAchievement(achievementId) {
   }
 }
 
-// ── Add NFT to wallet (EIP-747) ──────────────────────────────────────
-async function addToWallet(tokenId, btn) {
+// ── View in MetaMask (EIP-747 wallet_watchAsset) ────────────────────
+async function viewInMetaMask(tokenId, btn) {
   btn.disabled = true;
-  btn.textContent = 'Adding...';
+  btn.textContent = 'Opening...';
   try {
     var ethereum = window.ethereum;
     if (!ethereum) throw new Error('no provider');
@@ -817,9 +900,10 @@ async function addToWallet(tokenId, btn) {
         }
       }
     });
-    btn.textContent = 'Added \u2713';
+    btn.textContent = 'View in MetaMask';
+    btn.disabled = false;
   } catch (e) {
-    btn.textContent = 'Add to Wallet';
+    btn.textContent = 'View in MetaMask';
     btn.disabled = false;
   }
 }

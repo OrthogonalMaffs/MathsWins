@@ -50,6 +50,7 @@ export function getDb() {
   try { db.exec('ALTER TABLE personal_bests ADD COLUMN session_id TEXT'); } catch (e) { /* already exists */ }
   try { db.exec('ALTER TABLE achievement_eligibility ADD COLUMN metadata_cid TEXT'); } catch (e) { /* already exists */ }
   try { db.exec('ALTER TABLE achievement_eligibility ADD COLUMN token_id TEXT'); } catch (e) { /* already exists */ }
+  try { db.exec('ALTER TABLE achievement_eligibility ADD COLUMN payment_tx TEXT'); } catch (e) { /* already exists */ }
   try { db.exec('ALTER TABLE wallet_stats ADD COLUMN consecutive_bs_wins_with_battleship INTEGER DEFAULT 0'); } catch (e) { /* already exists */ }
   try { db.exec('ALTER TABLE wallet_stats ADD COLUMN pyramid_completions INTEGER DEFAULT 0'); } catch (e) { /* already exists */ }
   try { db.exec('ALTER TABLE wallet_stats ADD COLUMN poker_patience_last_place INTEGER DEFAULT 0'); } catch (e) { /* already exists */ }
@@ -514,7 +515,7 @@ export function awardAchievement(wallet, achievementId) {
 
 export function getWalletAchievements(wallet) {
   const db = getDb();
-  return db.prepare('SELECT e.*, r.name FROM achievement_eligibility e LEFT JOIN achievement_registry r ON e.achievement_id = r.achievement_id WHERE e.wallet = ? ORDER BY e.earned_at DESC')
+  return db.prepare('SELECT e.*, r.name, r.mint_fee_qf FROM achievement_eligibility e LEFT JOIN achievement_registry r ON e.achievement_id = r.achievement_id WHERE e.wallet = ? ORDER BY e.earned_at DESC')
     .all(wallet.toLowerCase());
 }
 
