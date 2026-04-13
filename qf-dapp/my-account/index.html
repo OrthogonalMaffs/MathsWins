@@ -155,6 +155,33 @@ body{background:var(--bg);color:var(--text);font-family:'Inter',sans-serif;min-h
 .ach-lightbox-close:hover{color:var(--silver-bright)}
 .ach-lightbox-name{position:absolute;bottom:1.5rem;text-align:center;width:100%;font-family:'DM Mono',monospace;font-size:.75rem;color:var(--silver)}
 
+/* ── Duel cards ── */
+.duel-group{margin-bottom:1.5rem}
+.duel-group h3{font-family:'Bebas Neue',sans-serif;font-size:1rem;color:var(--silver-bright);letter-spacing:.04em;margin-bottom:.5rem}
+.duel-cards{display:flex;flex-direction:column;gap:.5rem}
+.duel-card{background:var(--surface);border:1px solid var(--border);border-radius:8px;padding:.8rem 1rem;display:flex;align-items:center;justify-content:space-between;gap:.8rem;flex-wrap:wrap;text-decoration:none;color:inherit;transition:border-color .15s}
+.duel-card:hover{border-color:var(--silver-border)}
+.duel-card.active-duel{border-left:2px solid var(--gold)}
+.dc-left{display:flex;flex-direction:column;gap:.2rem;min-width:0}
+.dc-game{font-family:'DM Mono',monospace;font-size:.72rem;color:var(--silver-bright)}
+.dc-meta{font-family:'DM Mono',monospace;font-size:.5rem;color:var(--muted)}
+.dc-right{display:flex;align-items:center;gap:.8rem;flex-shrink:0}
+.dc-code{font-family:'DM Mono',monospace;font-size:.85rem;color:var(--gold);letter-spacing:.12em;user-select:all;cursor:text}
+.dc-status{font-family:'DM Mono',monospace;font-size:.5rem;text-transform:uppercase;letter-spacing:.06em;padding:.15rem .45rem;border-radius:10px;border:1px solid}
+.dc-status.created{color:var(--gold);border-color:rgba(201,168,76,.3)}
+.dc-status.accepted{color:#2dd4a0;border-color:rgba(45,212,160,.3)}
+.dc-status.completed{color:var(--silver);border-color:var(--silver-border)}
+.dc-status.expired{color:var(--muted);border-color:var(--border)}
+.dc-result{font-family:'DM Mono',monospace;font-size:.6rem;padding:.15rem .45rem;border-radius:10px}
+.dc-result.won{background:rgba(45,212,160,.1);color:#2dd4a0;border:1px solid rgba(45,212,160,.25)}
+.dc-result.lost{background:rgba(176,58,58,.1);color:var(--red);border:1px solid rgba(176,58,58,.25)}
+.dc-result.draw{background:var(--silver-dim);color:var(--silver);border:1px solid var(--silver-border)}
+.dc-score{font-family:'DM Mono',monospace;font-size:.55rem;color:var(--muted);text-align:right}
+@media(max-width:600px){
+  .duel-card{flex-direction:column;align-items:flex-start}
+  .dc-right{width:100%;justify-content:flex-start}
+}
+
 /* ── Trophy cards ── */
 .trophy-grid{display:grid;grid-template-columns:repeat(2,1fr);gap:.6rem}
 .trophy-card{background:var(--surface);border:1px solid var(--border);border-radius:8px;padding:1rem;display:flex;flex-direction:column;gap:.3rem}
@@ -215,6 +242,7 @@ footer a:hover{color:var(--silver-bright)}
   <div class="tab-bar">
     <div class="tab-pills" id="tabPills">
       <button class="tab-pill active" data-tab="leagues">My Leagues</button>
+      <button class="tab-pill" data-tab="duels">My Duels</button>
       <button class="tab-pill" data-tab="scores">High Scores</button>
       <button class="tab-pill" data-tab="achievements">Achievements</button>
       <button class="tab-pill" data-tab="trophies">Trophies</button>
@@ -225,6 +253,12 @@ footer a:hover{color:var(--silver-bright)}
   <div class="tab-content active" id="tab-leagues">
     <div class="loading" id="leaguesLoading">Loading leagues...</div>
     <div id="leaguesContent" style="display:none"></div>
+  </div>
+
+  <!-- TAB: MY DUELS -->
+  <div class="tab-content" id="tab-duels">
+    <div class="loading" id="duelsLoading">Loading duels...</div>
+    <div id="duelsContent" style="display:none"></div>
   </div>
 
   <!-- TAB: HIGH SCORES -->
@@ -984,9 +1018,103 @@ function renderTrophies() {
   loading.style.display = 'none';
 }
 
+// ── Load duels ───────────────────────────────────────────────────────
+async function loadDuels() {
+  var container = document.getElementById('duelsContent');
+  var loading = document.getElementById('duelsLoading');
+  try {
+    var res = await fetch(API + '/duels/history', {
+      headers: { 'X-Wallet-Address': WALLET, 'Authorization': 'Bearer ' + JWT }
+    });
+    if (!res.ok) throw new Error('Duels fetch failed');
+    var duels = await res.json();
+
+    var active = [];
+    var finished = [];
+    duels.forEach(function(d) {
+      if (d.status === 'created' || d.status === 'accepted') active.push(d);
+      else finished.push(d);
+    });
+
+    var html = '';
+
+    if (active.length > 0) {
+      html += '<div class="duel-group"><h3>Active Duels</h3><div class="duel-cards">';
+      active.forEach(function(d) {
+        var isCreator = d.creator_wallet && d.creator_wallet.toLowerCase() === WALLET.toLowerCase();
+        var statusLabel = d.status === 'created' ? 'Waiting for opponent' : 'In progress';
+        var gameUrl = '/qf-dapp/games/' + d.game_id + '/?duel=' + d.share_code;
+        html += '<a href="' + gameUrl + '" class="duel-card active-duel">';
+        html += '<div class="dc-left">';
+        html += '<div class="dc-game">' + gameName(d.game_id) + '</div>';
+        html += '<div class="dc-meta">' + (isCreator ? 'You created' : 'You accepted') + ' &middot; ' + formatDate(d.created_at) + '</div>';
+        html += '</div>';
+        html += '<div class="dc-right">';
+        html += '<span class="dc-code">' + d.share_code + '</span>';
+        html += '<span class="dc-status ' + d.status + '">' + statusLabel + '</span>';
+        html += '</div>';
+        html += '</a>';
+      });
+      html += '</div></div>';
+    }
+
+    if (finished.length > 0) {
+      html += '<div class="duel-group"><h3>Recent Duels</h3><div class="duel-cards">';
+      finished.forEach(function(d) {
+        var isCreator = d.creator_wallet && d.creator_wallet.toLowerCase() === WALLET.toLowerCase();
+        var myScore = isCreator ? d.creator_score : d.opponent_score;
+        var theirScore = isCreator ? d.opponent_score : d.creator_score;
+
+        var resultClass = '';
+        var resultText = '';
+        if (d.status === 'expired') {
+          resultClass = 'expired';
+          resultText = 'Expired';
+        } else if (d.winner_wallet) {
+          if (d.winner_wallet.toLowerCase() === WALLET.toLowerCase()) {
+            resultClass = 'won';
+            resultText = 'Won';
+          } else {
+            resultClass = 'lost';
+            resultText = 'Lost';
+          }
+        } else if (d.status === 'completed') {
+          resultClass = 'draw';
+          resultText = 'Draw';
+        }
+
+        html += '<div class="duel-card">';
+        html += '<div class="dc-left">';
+        html += '<div class="dc-game">' + gameName(d.game_id) + '</div>';
+        html += '<div class="dc-meta">' + d.share_code + ' &middot; ' + formatDate(d.created_at) + '</div>';
+        html += '</div>';
+        html += '<div class="dc-right">';
+        if (d.status === 'completed' && myScore != null) {
+          html += '<span class="dc-score">' + Number(myScore).toLocaleString() + ' &ndash; ' + Number(theirScore || 0).toLocaleString() + '</span>';
+        }
+        if (resultText) {
+          html += '<span class="dc-result ' + resultClass + '">' + resultText + '</span>';
+        }
+        html += '</div>';
+        html += '</div>';
+      });
+      html += '</div></div>';
+    }
+
+    if (!html) html = '<div class="empty">No duels yet. Challenge someone from any competitive game page.</div>';
+
+    container.innerHTML = html;
+    container.style.display = '';
+    loading.style.display = 'none';
+  } catch (e) {
+    loading.textContent = 'Failed to load duels.';
+  }
+}
+
 // ── Init ──────────────────────────────────────────────────────────────
 loadProfile();
 loadLeagues();
+loadDuels();
 </script>
 </body>
 </html>
