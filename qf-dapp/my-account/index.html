@@ -114,6 +114,8 @@ body{background:var(--bg);color:var(--text);font-family:'Inter',sans-serif;min-h
 /* ── Achievement cards ── */
 .ach-list{display:flex;flex-direction:column;gap:.5rem}
 .ach-card{background:var(--surface);border:1px solid var(--border);border-radius:8px;padding:.8rem 1rem;display:flex;align-items:flex-start;gap:.8rem}
+.ach-card.pioneer{border:2px solid #c9a84c;box-shadow:0 0 8px #c9a84c,0 0 16px #c9a84c40;animation:pioneer-pulse 2s ease-in-out infinite}
+@keyframes pioneer-pulse{0%,100%{box-shadow:0 0 8px #c9a84c,0 0 16px #c9a84c40}50%{box-shadow:0 0 16px #c9a84c,0 0 32px #c9a84c80}}
 .ach-img-wrap{position:relative;width:120px;height:120px;border-radius:8px;overflow:hidden;flex-shrink:0;background:var(--surface2)}
 .ach-img-wrap img{width:100%;height:100%;object-fit:cover;opacity:0;transition:opacity .3s ease,filter .5s ease}
 .ach-img-wrap img.loaded{opacity:1}
@@ -716,7 +718,8 @@ async function renderAchievements() {
         imgHtml = '<div class="ach-img-wrap"><div class="ach-placeholder"><span class="lock-icon">&#x1F512;</span><span class="lock-text">Mint to reveal</span></div></div>';
       }
 
-      html += '<div class="ach-card">' + imgHtml +
+      var pioneerClass = a.is_pioneer ? ' pioneer' : '';
+      html += '<div class="ach-card' + pioneerClass + '">' + imgHtml +
         '<div class="ach-body">' +
         '<div class="ach-name">' + (a.name || a.achievement_id || 'Achievement') + '</div>' +
         '<div class="ach-date">Earned ' + formatDate(a.earned_at) + '</div>' +
