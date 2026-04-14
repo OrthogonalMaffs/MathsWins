@@ -11,7 +11,7 @@ import { signatureVerify, decodeAddress } from '@polkadot/util-crypto';
 import { getDb } from '../db/index.mjs';
 import { doSettleLeague, checkEarlySettlement, recoverStuckLeagues, mintCommemorative } from '../league-settle.mjs';
 import { checkAchievements, checkContrarian, checkStreakAchievements, checkLeagueRegular, checkMonthlyAchievements, trackSpend, checkNightOwlSubmission, checkMinesweeperFreePlay, checkFlagEverything, checkBlindEye, checkSumOfAllFears, checkTheGrinder, checkMintMeta, checkDuelMaster, checkFlaglessAndWrong, checkMidnight, checkFibonacci, checkWrongAnswerStreak } from '../achievement-checker.mjs';
-import { sendQF, settleDuel, settleDuelDraw, refundDuel, getEscrowAddress, BURN_ADDRESS, TEAM_WALLET } from '../escrow.mjs';
+import { sendQF, settleDuel, settleDuelDraw, refundDuel, getEscrowAddress, logIncoming, BURN_ADDRESS, TEAM_WALLET } from '../escrow.mjs';
 import { createBattleshipsGame, getBattleshipsGameByCode, getBattleshipsGameById, updateBattleshipsGameStatus, saveBattleshipsPlacement, getBattleshipsPlacement, getBattleshipsPlacements, addBattleshipsRound, getBattleshipsRounds, getBattleshipsRecord, updateBattleshipsRecord, getActiveBattleshipsGames, getBattleshipsGamesByWallet } from '../db/index.mjs';
 import { getAchievementRegistry, getAchievement, awardAchievement, getWalletAchievements, getAllAchievements, getGlobalRecord, getPersonalBests, getPersonalBest, getLeagueBests, getWalletStats, getWalletLeagueHistory, getWalletTrophies, getGameStateForLeaguePuzzle, completeGameState, getFlaggedSessions, getGlobalLeaderboard, getGlobalLeaderboardEntry, addGlobalLeaderboardEntry, getWalletLeaderboardPositions, getGameState, getGame, upsertPersonalBest, incrementPbBeatenCount, retireAchievement, recordMaffsyResult, getMaffsyStats } from '../db/index.mjs';
 import { analyseInputPattern } from '../scoring.mjs';
@@ -514,6 +514,7 @@ router.post('/duel/create', optionalWallet, async (req, res) => {
   if (txHash) {
     const db = getDb();
     db.prepare('UPDATE duels SET creator_tx = ? WHERE id = ?').run(txHash, id);
+    logIncoming('stake-create', stakeAmount, wallet, txHash, 'duel', id);
   }
 
   // Track spend
@@ -567,6 +568,7 @@ router.post('/duel/:code/accept', optionalWallet, (req, res) => {
     if (txHash) {
       const db = getDb();
       db.prepare('UPDATE duels SET acceptor_tx = ? WHERE id = ?').run(txHash, duel.id);
+      logIncoming('stake-accept', duel.stake || 25, wallet, txHash, 'duel', duel.id);
     }
     // Track spend
     if (!isBuilder && duel.stake > 0) {
@@ -629,12 +631,12 @@ router.post('/duel/:code/submit', optionalWallet, (req, res) => {
     var bothPaid = final.creator_tx && final.acceptor_tx;
     if (bothPaid) {
       if (winner) {
-        settleDuel(winner, burnAmount, teamAmount, prizePool).then(function(r) {
+        settleDuel(winner, burnAmount, teamAmount, prizePool, 'duel', duel.id).then(function(r) {
           console.log('Duel ' + code + ' settled: winner=' + winner.slice(0, 8) + '... prize=' + prizePool + ' burn=' + burnAmount + ' team=' + teamAmount);
         }).catch(function(e) { console.error('Duel settlement failed for ' + code + ':', e.message); });
       } else {
         var half = Math.floor(prizePool / 2);
-        settleDuelDraw(updated.creator_wallet, updated.opponent_wallet, burnAmount, teamAmount, half).then(function(r) {
+        settleDuelDraw(updated.creator_wallet, updated.opponent_wallet, burnAmount, teamAmount, half, 'duel', duel.id).then(function(r) {
           console.log('Duel ' + code + ' draw settled: each=' + half + ' burn=' + burnAmount + ' team=' + teamAmount);
         }).catch(function(e) { console.error('Duel draw settlement failed for ' + code + ':', e.message); });
       }
@@ -1433,6 +1435,7 @@ router.post('/battleships/create', optionalWallet, (req, res) => {
   if (txHash) {
     const db = getDb();
     db.prepare('UPDATE battleships_games SET creator_tx = ? WHERE id = ?').run(txHash, id);
+    logIncoming('stake-create', stakeQf, wallet, txHash, 'battleships', id);
   }
 
   // For CPU games: generate and place CPU fleet immediately
@@ -1497,6 +1500,7 @@ router.post('/battleships/:code/join', optionalWallet, (req, res) => {
   if (txHash) {
     const db = getDb();
     db.prepare('UPDATE battleships_games SET acceptor_tx = ? WHERE id = ?').run(txHash, game.id);
+    logIncoming('stake-accept', game.stake_qf || 25, wallet, txHash, 'battleships', game.id);
   }
 
   res.json({ game_id: game.id });
@@ -1646,7 +1650,7 @@ router.post('/battleships/:code/shoot', optionalWallet, (req, res) => {
       updateBattleshipsRecord(opponentWallet, 'loss');
       var bothPaid = game.creator_tx && game.acceptor_tx;
       if (bothPaid) {
-        settleDuel(wallet, burnAmount, teamAmount, winnerAmount).catch(e => {
+        settleDuel(wallet, burnAmount, teamAmount, winnerAmount, 'battleships', game.id).catch(e => {
           console.error('Battleships settlement failed:', e.message);
         });
       } else {
@@ -1813,7 +1817,7 @@ router.post('/battleships/:code/forfeit', optionalWallet, (req, res) => {
 
     var bothPaidForfeit = game.creator_tx && game.acceptor_tx;
     if (bothPaidForfeit) {
-      settleDuel(opponentWallet, burnAmount, teamAmount, winnerAmount).catch(e => {
+      settleDuel(opponentWallet, burnAmount, teamAmount, winnerAmount, 'battleships', game.id).catch(e => {
         console.error('Battleships forfeit settlement failed:', e.message);
       });
     } else {
@@ -1902,7 +1906,7 @@ export function checkBattleshipsTimeouts() {
 
         var bothPaidAuto = game.creator_tx && game.acceptor_tx;
         if (bothPaidAuto) {
-          settleDuel(currentWallet, burnAmount, teamAmount, winnerAmount).catch(e => {
+          settleDuel(currentWallet, burnAmount, teamAmount, winnerAmount, 'battleships', game.id).catch(e => {
             console.error('Battleships auto-shot settlement failed:', e.message);
           });
         } else {
@@ -2002,13 +2006,14 @@ router.post('/achievement/mint', optionalWallet, async (req, res) => {
       // Store payment tx
       db.prepare('UPDATE achievement_eligibility SET payment_tx = ? WHERE wallet = ? AND achievement_id = ?')
         .run(txHash, req.wallet, achievement_id);
+      logIncoming('mint-fee', mintFee, req.wallet, txHash, 'mint', achievement_id);
       // Burn/team split from escrow (funded by player's payment)
       try {
         var burnAmount = Math.floor(mintFee * 0.05);
         var teamAmount = mintFee - burnAmount;
-        var burnResult = await sendQF(BURN_ADDRESS, burnAmount);
+        var burnResult = await sendQF(BURN_ADDRESS, burnAmount, { type: 'burn', source: 'mint', referenceId: achievement_id });
         if (!burnResult) throw new Error('Burn payment failed');
-        var teamResult = await sendQF(TEAM_WALLET, teamAmount);
+        var teamResult = await sendQF(TEAM_WALLET, teamAmount, { type: 'team', source: 'mint', referenceId: achievement_id });
         if (!teamResult) throw new Error('Team payment failed');
       } catch (e) {
         return res.status(500).json({ error: 'Payment processing failed: ' + e.message });
@@ -2260,6 +2265,31 @@ router.get('/admin/flagged-sessions', requireAdmin, (req, res) => {
   var leagueId = req.query.league_id || null;
   var results = getFlaggedSessions(wallet, leagueId);
   res.json({ flagged: results, count: results.length });
+});
+
+// ── Admin: escrow ledger ──────────────────────────────────────────────────
+router.get('/admin/ledger', requireAdmin, (req, res) => {
+  const db = getDb();
+  const limit = Math.min(parseInt(req.query.limit) || 100, 500);
+  const direction = req.query.direction; // 'in' or 'out'
+  const source = req.query.source; // 'duel', 'league', 'battleships', 'mint', 'promo'
+  const type = req.query.type; // 'burn', 'team', 'winner', 'refund', 'stake-create', etc.
+
+  let sql = 'SELECT * FROM escrow_ledger WHERE 1=1';
+  const params = [];
+  if (direction) { sql += ' AND direction = ?'; params.push(direction); }
+  if (source) { sql += ' AND source = ?'; params.push(source); }
+  if (type) { sql += ' AND type = ?'; params.push(type); }
+  sql += ' ORDER BY created_at DESC LIMIT ?';
+  params.push(limit);
+
+  const rows = db.prepare(sql).all(...params);
+
+  // Summary totals
+  const sumSql = 'SELECT direction, type, source, SUM(amount_qf) as total, COUNT(*) as count FROM escrow_ledger GROUP BY direction, type, source ORDER BY direction, source, type';
+  const summary = db.prepare(sumSql).all();
+
+  res.json({ entries: rows, summary });
 });
 
 // ── Admin: live DB schema ─────────────────────────────────────────────────

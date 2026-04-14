@@ -264,3 +264,18 @@ CREATE TABLE IF NOT EXISTS battleships_record (
 CREATE INDEX IF NOT EXISTS idx_bs_games_code ON battleships_games(share_code);
 CREATE INDEX IF NOT EXISTS idx_bs_games_wallet ON battleships_games(creator_wallet);
 CREATE INDEX IF NOT EXISTS idx_bs_rounds_game ON battleships_rounds(game_id);
+
+CREATE TABLE IF NOT EXISTS escrow_ledger (
+  id INTEGER PRIMARY KEY AUTOINCREMENT,
+  direction TEXT NOT NULL,
+  type TEXT NOT NULL,
+  amount_qf REAL NOT NULL,
+  recipient TEXT,
+  sender TEXT,
+  tx_hash TEXT,
+  source TEXT,
+  reference_id TEXT,
+  created_at INTEGER NOT NULL
+);
+CREATE INDEX IF NOT EXISTS idx_escrow_ledger_type ON escrow_ledger(type);
+CREATE INDEX IF NOT EXISTS idx_escrow_ledger_created ON escrow_ledger(created_at);

@@ -10,6 +10,7 @@ import { ethers } from 'ethers';
 import { readFileSync, writeFileSync, existsSync, mkdirSync } from 'fs';
 import { join, dirname } from 'path';
 import { fileURLToPath } from 'url';
+import { getDb } from './db/index.mjs';
 
 const __dirname = dirname(fileURLToPath(import.meta.url));
 const KEY_PATH = join(__dirname, '../data/escrow.key');
@@ -53,10 +54,32 @@ export async function getEscrowBalance() {
 }
 
 /**
+ * Log a transaction to the escrow_ledger table.
+ */
+function logLedger(direction, type, amountQF, recipient, sender, txHash, source, referenceId) {
+  try {
+    const db = getDb();
+    db.prepare(
+      'INSERT INTO escrow_ledger (direction, type, amount_qf, recipient, sender, tx_hash, source, reference_id, created_at) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)'
+    ).run(direction, type, amountQF, recipient || null, sender || null, txHash || null, source || null, referenceId || null, Date.now());
+  } catch (e) {
+    console.error('Ledger log failed:', e.message);
+  }
+}
+
+/**
+ * Log an incoming payment (player -> escrow).
+ */
+export function logIncoming(type, amountQF, sender, txHash, source, referenceId) {
+  logLedger('in', type, amountQF, wallet ? wallet.address : null, sender, txHash, source, referenceId);
+}
+
+/**
  * Send QF (native token) to an address.
  * Returns the transaction hash or null on failure.
+ * ctx = { type, source, referenceId } for ledger logging.
  */
-export async function sendQF(to, amountQF) {
+export async function sendQF(to, amountQF, ctx) {
   if (!wallet) throw new Error('Escrow wallet not initialised');
   if (!to || amountQF <= 0) throw new Error('Invalid recipient or amount');
 
@@ -64,6 +87,7 @@ export async function sendQF(to, amountQF) {
     const value = ethers.parseEther(String(amountQF));
     const tx = await wallet.sendTransaction({ to, value });
     const receipt = await tx.wait();
+    if (ctx) logLedger('out', ctx.type || 'unknown', amountQF, to, wallet.address, receipt.hash, ctx.source || null, ctx.referenceId || null);
     return receipt.hash;
   } catch (e) {
     console.error('Escrow send failed:', e.message);
@@ -75,17 +99,19 @@ export async function sendQF(to, amountQF) {
  * Settle a duel: burn + team + winner payout.
  * Amounts in whole QF (not wei).
  */
-export async function settleDuel(winnerAddress, burnAmount, teamAmount, winnerAmount) {
+export async function settleDuel(winnerAddress, burnAmount, teamAmount, winnerAmount, source, referenceId) {
   const results = { burn: null, team: null, winner: null };
+  const ref = referenceId || null;
+  const src = source || 'duel';
 
   if (burnAmount > 0) {
-    results.burn = await sendQF(BURN_ADDRESS, burnAmount);
+    results.burn = await sendQF(BURN_ADDRESS, burnAmount, { type: 'burn', source: src, referenceId: ref });
   }
   if (teamAmount > 0) {
-    results.team = await sendQF(TEAM_WALLET, teamAmount);
+    results.team = await sendQF(TEAM_WALLET, teamAmount, { type: 'team', source: src, referenceId: ref });
   }
   if (winnerAmount > 0 && winnerAddress) {
-    results.winner = await sendQF(winnerAddress, winnerAmount);
+    results.winner = await sendQF(winnerAddress, winnerAmount, { type: 'winner', source: src, referenceId: ref });
   }
 
   return results;
@@ -94,18 +120,20 @@ export async function settleDuel(winnerAddress, burnAmount, teamAmount, winnerAm
 /**
  * Settle a draw: burn + team + split to both players.
  */
-export async function settleDuelDraw(creatorAddress, opponentAddress, burnAmount, teamAmount, eachAmount) {
+export async function settleDuelDraw(creatorAddress, opponentAddress, burnAmount, teamAmount, eachAmount, source, referenceId) {
   const results = { burn: null, team: null, creator: null, opponent: null };
+  const ref = referenceId || null;
+  const src = source || 'duel';
 
   if (burnAmount > 0) {
-    results.burn = await sendQF(BURN_ADDRESS, burnAmount);
+    results.burn = await sendQF(BURN_ADDRESS, burnAmount, { type: 'burn', source: src, referenceId: ref });
   }
   if (teamAmount > 0) {
-    results.team = await sendQF(TEAM_WALLET, teamAmount);
+    results.team = await sendQF(TEAM_WALLET, teamAmount, { type: 'team', source: src, referenceId: ref });
   }
   if (eachAmount > 0) {
-    results.creator = await sendQF(creatorAddress, eachAmount);
-    results.opponent = await sendQF(opponentAddress, eachAmount);
+    results.creator = await sendQF(creatorAddress, eachAmount, { type: 'draw-split', source: src, referenceId: ref });
+    results.opponent = await sendQF(opponentAddress, eachAmount, { type: 'draw-split', source: src, referenceId: ref });
   }
 
   return results;
@@ -114,26 +142,27 @@ export async function settleDuelDraw(creatorAddress, opponentAddress, burnAmount
 /**
  * Refund a duel creator (full amount, no burn).
  */
-export async function refundDuel(creatorAddress, amount) {
-  return await sendQF(creatorAddress, amount);
+export async function refundDuel(creatorAddress, amount, referenceId) {
+  return await sendQF(creatorAddress, amount, { type: 'refund', source: 'duel', referenceId: referenceId || null });
 }
 
 /**
  * Settle a league: burn + team + prizes to top 4.
  * prizes = [{ wallet, amount }, ...]
  */
-export async function settleLeague(burnAmount, teamAmount, prizes) {
+export async function settleLeague(burnAmount, teamAmount, prizes, referenceId) {
   const results = { burn: null, team: null, prizes: [] };
+  const ref = referenceId || null;
 
   if (burnAmount > 0) {
-    results.burn = await sendQF(BURN_ADDRESS, burnAmount);
+    results.burn = await sendQF(BURN_ADDRESS, burnAmount, { type: 'burn', source: 'league', referenceId: ref });
   }
   if (teamAmount > 0) {
-    results.team = await sendQF(TEAM_WALLET, teamAmount);
+    results.team = await sendQF(TEAM_WALLET, teamAmount, { type: 'team', source: 'league', referenceId: ref });
   }
   for (const p of prizes) {
     if (p.amount > 0 && p.wallet) {
-      const txHash = await sendQF(p.wallet, p.amount);
+      const txHash = await sendQF(p.wallet, p.amount, { type: 'prize', source: 'league', referenceId: ref });
       results.prizes.push({ wallet: p.wallet, amount: p.amount, txHash });
     }
   }
@@ -144,8 +173,8 @@ export async function settleLeague(burnAmount, teamAmount, prizes) {
 /**
  * Send a promo prize.
  */
-export async function sendPromoPrize(winnerAddress, amount) {
-  return await sendQF(winnerAddress, amount);
+export async function sendPromoPrize(winnerAddress, amount, referenceId) {
+  return await sendQF(winnerAddress, amount, { type: 'prize', source: 'promo', referenceId: referenceId || null });
 }
 
 // verifyPaymentTx: PARKED — eth_getTransactionReceipt returns null for valid txs on QF archive node.
