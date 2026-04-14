@@ -508,5 +508,65 @@
     "name": "Palindrome",
     "image_ipfs": "ipfs://QmWUALCfXfeoDkffRMSbgzbr2XH4NZXNUm1cfmKde6wP41",
     "metadata_ipfs": "ipfs://QmZAQ24YqjExqqErquJmYRLxGg19yai6isKcGWb6kXBqpE"
+  },
+  {
+    "achievement_id": "wrong-answer-streak",
+    "name": "Wrong Answer Streak",
+    "image_ipfs": "ipfs://QmYe88rXAoJrAXwoqRZeEMEwcKNKBSQpSqxJV7BpHh4DnA",
+    "metadata_ipfs": "ipfs://QmXBoE1k2WhQR2vR6FeverAPWaMNpjeadMP1ppYEdPCp3r"
+  },
+  {
+    "achievement_id": "sub-hunter",
+    "name": "Sub Hunter",
+    "image_ipfs": "ipfs://QmXniZf264HtKmUnE8aVQHRC2jdGY7doWudnnpfWFiDh96",
+    "metadata_ipfs": "ipfs://QmTVv7RCLsL2LjY2RgNFEUc7zT3rHiyJEiMrWBbu8Lbjfa"
+  },
+  {
+    "achievement_id": "do-you-even-aim-bro",
+    "name": "Do You Even Aim Bro?",
+    "image_ipfs": "ipfs://QmYCRd9twZXeYnmCBwLZ7kU9Aje6bN4ZhA9Bn9bSZ32hhL",
+    "metadata_ipfs": "ipfs://QmS24DuSh4cnkHxKa1CyJM1KQPwmieKAA829zDBTCfaSYP"
+  },
+  {
+    "achievement_id": "scatter-gun",
+    "name": "Scatter-gun",
+    "image_ipfs": "ipfs://QmPsqhrLqFof46m3APHAwwgSJC6TMuj5h6qMAikDC4dfp9",
+    "metadata_ipfs": "ipfs://QmXtb9eQ87ivmSsLmjd15CrKC9VBukiXdcx8Yh1B8T4PKK"
+  },
+  {
+    "achievement_id": "squared-pi",
+    "name": "Squared Pi",
+    "image_ipfs": "ipfs://QmPxhGLhJJ5BzTx57HSy2C7QTVuxW3YqLZfbgsRbbiKzgp",
+    "metadata_ipfs": "ipfs://QmdgWjQxgRxYc9Tgvonz72eTWA1F1vcWyguLvu23e27uQB"
+  },
+  {
+    "achievement_id": "root-three",
+    "name": "Root Three",
+    "image_ipfs": "ipfs://QmQpRKqYMxRgGcC7Ldx4f6bfqsDdfQu5TxTQjwKEsEFeNq",
+    "metadata_ipfs": "ipfs://QmdVit4VC1niKBai623a8KMsHtQC5mn1gZcsnRV7DtZUPt"
+  },
+  {
+    "achievement_id": "root-two",
+    "name": "Root Two",
+    "image_ipfs": "ipfs://QmSxLcqLWS4zc91THJpooyyMmcUmU92DvCh2Dhw8aVbp5S",
+    "metadata_ipfs": "ipfs://QmS7gSszRZWBTyNTBMyVFLzcXYDsH3Y3Ca622NFQMqV6U5"
+  },
+  {
+    "achievement_id": "golden-ratio",
+    "name": "Golden Ratio",
+    "image_ipfs": "ipfs://QmT6bh2BJ5njjWXYVFvVpK3xig1NWNec3jdi2F87BTixuA",
+    "metadata_ipfs": "ipfs://QmU4k18EKTZv7BnW7VV58rThDWEmMAFfsmDTFENhkv1CAs"
+  },
+  {
+    "achievement_id": "euler",
+    "name": "Euler",
+    "image_ipfs": "ipfs://Qmdgzc9QEk7V7LrNSxVd7YQTnXUxQ2LPGDxLiQwDHX5kNG",
+    "metadata_ipfs": "ipfs://QmbMTaM1N2Dy4D9dwgVeSAx53GxyZDcNhniFj6N2U5XAFs"
+  },
+  {
+    "achievement_id": "pi",
+    "name": "Pi",
+    "image_ipfs": "ipfs://QmVo1LQ5gKBdSY6PVaFoUCzBBdK8wAtjUbeGZR9YQcB2Zs",
+    "metadata_ipfs": "ipfs://QmNgpiR1rw7qEFDuARSm7NgQCacsPoNu6e5QJBVPFR4hu1"
   }
 ]
