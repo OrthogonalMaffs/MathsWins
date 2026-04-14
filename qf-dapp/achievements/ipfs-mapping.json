@@ -568,5 +568,35 @@
     "name": "Pi",
     "image_ipfs": "ipfs://QmVo1LQ5gKBdSY6PVaFoUCzBBdK8wAtjUbeGZR9YQcB2Zs",
     "metadata_ipfs": "ipfs://QmNgpiR1rw7qEFDuARSm7NgQCacsPoNu6e5QJBVPFR4hu1"
+  },
+  {
+    "achievement_id": "halloween",
+    "name": "Halloween",
+    "image_ipfs": "ipfs://QmTFt31Pt9eAyie9TrDc2VMbeJnK37GyqB98VJmtKLnPt9",
+    "metadata_ipfs": "ipfs://QmQNMtU7z9SziEvpLpL8XDQELGiPHeHi2yHPNr2xKw6fDP"
+  },
+  {
+    "achievement_id": "bonfire-night",
+    "name": "Bonfire Night",
+    "image_ipfs": "ipfs://QmNnk6AbjzPgR58EAo9uZL2HWAQPkmBCYcRQxJtE7W8vaR",
+    "metadata_ipfs": "ipfs://QmfGgVEczX55sFZDwJgmBt4g28pLdYFyNhM9zXzpCJYuFy"
+  },
+  {
+    "achievement_id": "summer-week",
+    "name": "Summer Week",
+    "image_ipfs": "ipfs://QmTgCVgfbY3kHUrobckBrPUvuBonQ95JT8Jipw3AKxgiuP",
+    "metadata_ipfs": "ipfs://QmbYTbJQwVrBJ6Qu5f6hVJcWKEnqL9peVJenJM85xEpv87"
+  },
+  {
+    "achievement_id": "pi-day",
+    "name": "Pi Day",
+    "image_ipfs": "ipfs://QmVjP7HQgmRxVnxmMRkkyw8FcGs7e2EJ5wdutW87zG8DqJ",
+    "metadata_ipfs": "ipfs://QmUf13Bk4Qm1FJfTrAwiMhDRCAFCdLrCefYYGeKJW92tgs"
+  },
+  {
+    "achievement_id": "pancake-day",
+    "name": "Pancake Day",
+    "image_ipfs": "ipfs://QmeJv1yvarG9ZX2BKnT5sWqZTpkxnJuQQPQmwm8UTgPJgA",
+    "metadata_ipfs": "ipfs://Qmb1frhpZKsWw6cjEavdwQdk1e9ntPoog36itSBssBgk5Q"
   }
 ]
