@@ -598,5 +598,29 @@
     "name": "Pancake Day",
     "image_ipfs": "ipfs://QmeJv1yvarG9ZX2BKnT5sWqZTpkxnJuQQPQmwm8UTgPJgA",
     "metadata_ipfs": "ipfs://Qmb1frhpZKsWw6cjEavdwQdk1e9ntPoog36itSBssBgk5Q"
+  },
+  {
+    "achievement_id": "new-year",
+    "name": "New Year",
+    "image_ipfs": "ipfs://QmSgkPVZUeS31B9wzwtMHLfJq5sENBPLEZH9VyQAaTgqmX",
+    "metadata_ipfs": "ipfs://QmRACdyGHWr6omwpSD9Gh7VP3WcwsqZEYZzjDEBjuVLp1C"
+  },
+  {
+    "achievement_id": "christmas",
+    "name": "Christmas",
+    "image_ipfs": "ipfs://QmcqDubQ1PwDqvKcZLBeMUsktgo81GMmhSBgP1fchLBNRp",
+    "metadata_ipfs": "ipfs://QmNdFYQ2vvdEGE2J23TfLKA5zAgn94F8qfSfGGAg8FCftK"
+  },
+  {
+    "achievement_id": "ve-day",
+    "name": "VE Day",
+    "image_ipfs": "ipfs://QmfGjTiUMZd8G6r24UJv816y7XGfbsEJLG7x3GJhEM9939",
+    "metadata_ipfs": "ipfs://QmXTkUdx7mNFjnq3EpDnGKQFM1DTeiCUnR5NsQZFQXX2mC"
+  },
+  {
+    "achievement_id": "platform-anniversary",
+    "name": "Platform Anniversary",
+    "image_ipfs": "ipfs://QmT2LXMXfVhn7U9rWLGgXReP9n2KbuGQir5LXgW1PHag3x",
+    "metadata_ipfs": "ipfs://Qmeb87cozePTxYMuZsGwgSkvrJ94bcqVH91m5umu4oQMbb"
   }
 ]
