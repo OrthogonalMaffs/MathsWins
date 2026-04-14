@@ -628,5 +628,59 @@
     "name": "Easter",
     "image_ipfs": "ipfs://QmWr9bJTo9XNovnj4ST95gWndn5ML5D4twhxDWmNqxaVe6",
     "metadata_ipfs": "ipfs://QmaPiwv9uWZZiW1995w39kWmBgp9YjHyDSQevMPXCPMXuL"
+  },
+  {
+    "achievement_id": "active-player",
+    "name": "Active Player",
+    "image_ipfs": "ipfs://QmXWNmxJ9gmPXtRCReVrARZpSrfDhxescpVJSwLChTmhWM",
+    "metadata_ipfs": "ipfs://QmPCqq69RK3gJgkRwZQYWoGij3X3N8nZHC9Kys1kg8W2yH"
+  },
+  {
+    "achievement_id": "double-winner",
+    "name": "Double Winner",
+    "image_ipfs": "ipfs://QmU5fSZo9xzjQR2oKbpnRoZuXoLv7AKGuuoCiFB5u8vMGZ",
+    "metadata_ipfs": "ipfs://Qme1GXZFFarKgNbaetJADVUA11yyhMFiBv1yN9oKsD7uCn"
+  },
+  {
+    "achievement_id": "from-the-ashes",
+    "name": "From the Ashes",
+    "image_ipfs": "ipfs://QmTGJDWBxarL2UxA3BoKqrqZJuJryWD4hZNHc3EU1pidmL",
+    "metadata_ipfs": "ipfs://QmQK6xaYygrzqvaJXHN6VFN17hGXnfoDLqGmufSWjoc5hG"
+  },
+  {
+    "achievement_id": "grinder",
+    "name": "Grinder",
+    "image_ipfs": "ipfs://QmVhw43sjLtNf9Txa4G9dqyQhLuewjXANeF4YUUJvAfRoQ",
+    "metadata_ipfs": "ipfs://QmVccUaAsfx6JKDATCTpxEb6gLRAMiCwmstNKejmcqygMj"
+  },
+  {
+    "achievement_id": "league-month",
+    "name": "League Month",
+    "image_ipfs": "ipfs://QmercvZwNQGLnFzQZiAy7UEv395Va8qi9rDAYtvgd42KE7",
+    "metadata_ipfs": "ipfs://QmU1ru6bcZ89tBpQBNg39qB8pgv9t465jBYA3iyQ3U9oMb"
+  },
+  {
+    "achievement_id": "league-regular",
+    "name": "League Regular",
+    "image_ipfs": "ipfs://QmRyUaXxabL8Qemeofda6bL13Ane8sqnsfpHs1gTPWPab6",
+    "metadata_ipfs": "ipfs://QmSFSLK4xnuebVvz6Wok4qk8hBR1vgYjMdvNwotYWLH3fF"
+  },
+  {
+    "achievement_id": "the-marathon",
+    "name": "The Marathon",
+    "image_ipfs": "ipfs://QmWsfDJJ8uyRiEm4a8grnzSYYY7fSx51jiqkgKMScAGchD",
+    "metadata_ipfs": "ipfs://QmdBxUR9e9tNfjCnMTRrpQTa7h6Kf7LU21gU3fgSPPYJgJ"
+  },
+  {
+    "achievement_id": "weekend-warrior",
+    "name": "Weekend Warrior",
+    "image_ipfs": "ipfs://Qmf3JGvGVbBHihy6YygcujCevqemKJyuMXD5e7hF3GJR9m",
+    "metadata_ipfs": "ipfs://QmcNnE3NycwGC6WzLxsQN3AzuU41tFuvfQAroWq5UFSd8H"
+  },
+  {
+    "achievement_id": "zero-to-hero",
+    "name": "Zero to Hero",
+    "image_ipfs": "ipfs://QmcEsFFTKFC2qKd9K1N9eUKGCAvP5oSc8NafPBQWn8riEq",
+    "metadata_ipfs": "ipfs://QmPLdiCT72SgvqtqXuREizZoYFx4DCXZmA5XRo1SZ5dKPb"
   }
 ]
