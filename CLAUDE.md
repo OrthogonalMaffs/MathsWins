@@ -208,6 +208,10 @@ Split from MaffsGames in March 2025. MaffsGames = free schools games. MathsWins 
 - Batch 8 live (2026-04-12): 3 free game (century, explorer, personal-best) + free_game_completions table. Remaining 11 free game achievements need frontend stats in submit-freeplay payload.
 - speed-reader RETIRED (active=0) — 52dle only has 6 guesses
 - 155 of 161 conditions wired and live (2026-04-12). 6 deferred: the-novelist (no server Maffsy evaluator), all-wrong (per-cell data cleared), full-hints (variable max), boom (impossible by design), 2 non-existent variants
+- 99 bespoke images uploaded to Pinata, 114 ipfs-mapping entries (2026-04-14)
+- Complete sets: seasonal (10/10), constants (5/5), battleships (11/11), monthly (4/4), comeback (2/2)
+- Admin endpoints live: /admin/schema (inspect live DB), /admin/ledger (escrow accounting). Auth via x-admin-key header. See ecosystem.config.cjs for ADMIN_SECRET.
+- escrow_ledger table logs all sendQF calls with direction/type/amount/source/reference_id (live from 2026-04-14)
 - the-fish: fires at league settlement for last-place poker-patience finishers (3 times to earn)
 - Founding Member: fires on first league puzzle submission between 2026-04-11 and 2026-07-31 (env: FOUNDING_MEMBER_START/END)
 - Mint endpoint: real on-chain mint via escrow wallet, fee split (5% burn, 95% team), free mints use banked credits
