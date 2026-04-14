@@ -1068,10 +1068,10 @@ G.confirmPlacement = async function() {
 
   if (G.mode === 'duel') {
     var shipData = G.placedShips.map(function(ps){
-      return { name: ps.name, size: ps.size, cells: ps.cells };
+      return { ship: ps.name, cells: ps.cells };
     });
     try {
-      var data = await api('/battleships/' + G.duelCode + '/place', { ships: shipData });
+      var data = await api('/battleships/' + G.duelCode + '/place', { fleet: shipData });
       if (data.error) { setMsg(data.error); return; }
     } catch (e) {
       setMsg('Connection error confirming placement');
