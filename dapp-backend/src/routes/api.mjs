@@ -2262,6 +2262,13 @@ router.get('/admin/flagged-sessions', requireAdmin, (req, res) => {
   res.json({ flagged: results, count: results.length });
 });
 
+// ── Admin: live DB schema ─────────────────────────────────────────────────
+router.get('/admin/schema', requireAdmin, (req, res) => {
+  const db = getDb();
+  const tables = db.prepare("SELECT name, sql FROM sqlite_master WHERE type='table' ORDER BY name").all();
+  res.json(tables);
+});
+
 // ── Profile endpoint ──────────────────────────────────────────────────────
 
 const profileRateLimit = new Map();
