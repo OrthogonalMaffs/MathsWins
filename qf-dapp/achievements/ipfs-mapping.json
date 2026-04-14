@@ -622,5 +622,11 @@
     "name": "Platform Anniversary",
     "image_ipfs": "ipfs://QmT2LXMXfVhn7U9rWLGgXReP9n2KbuGQir5LXgW1PHag3x",
     "metadata_ipfs": "ipfs://Qmeb87cozePTxYMuZsGwgSkvrJ94bcqVH91m5umu4oQMbb"
+  },
+  {
+    "achievement_id": "easter",
+    "name": "Easter",
+    "image_ipfs": "ipfs://QmWr9bJTo9XNovnj4ST95gWndn5ML5D4twhxDWmNqxaVe6",
+    "metadata_ipfs": "ipfs://QmaPiwv9uWZZiW1995w39kWmBgp9YjHyDSQevMPXCPMXuL"
   }
 ]
