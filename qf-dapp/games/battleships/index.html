@@ -718,6 +718,16 @@ G.joinDuel = async function() {
     var check = await api('/battleships/' + code, null, 'GET');
     if (check.error) { setMsg(check.error); return; }
     if (check.status !== 'placement') { setMsg('This duel is no longer available (' + check.status + ').'); return; }
+    // Resume: if the connected wallet is already this duel's opponent, skip payment + /join
+    var myAddr = qfWallet.address ? qfWallet.address.toLowerCase() : null;
+    if (check.opponent_wallet && myAddr && check.opponent_wallet.toLowerCase() === myAddr) {
+      G.duelCode = code;
+      G.mode = 'duel';
+      document.getElementById('pre-game').style.display = 'none';
+      setMsg('');
+      G.showPlacement();
+      return;
+    }
     if (check.opponent_wallet) { setMsg('This duel already has an opponent.'); return; }
 
     var cfg = await getDuelConfig();
