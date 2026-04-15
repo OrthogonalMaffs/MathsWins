@@ -1526,6 +1526,10 @@ router.post('/battleships/:code/place', optionalWallet, (req, res) => {
   const validation = validateFleet(fleet);
   if (!validation.valid) return res.status(400).json({ error: validation.reason });
 
+  if (getBattleshipsPlacement(game.id, wallet)) {
+    return res.status(400).json({ error: 'Fleet already confirmed' });
+  }
+
   const now = Date.now();
   saveBattleshipsPlacement(game.id, wallet, JSON.stringify(fleet), now);
 
