@@ -496,18 +496,21 @@ export function evaluate(sessionToken, answer) {
       finished: false
     };
 
-    // Auto game-over from evaluator (3 mistakes)
+    // Auto game-over from evaluator (3 mistakes, auto-clear, or stuck)
     if (result.gameOver) {
-      const partialScore = result.partialScore || 0;
-      session.score = partialScore;
-      if (!session.freePlay) completeSession(payload.sid, partialScore);
-      if (session._persisted) completeGameState(payload.sid, 'gameover', partialScore, null);
+      const finalScore = result.won ? (result.points || 0) : (result.partialScore || 0);
+      session.score = finalScore;
+      if (!session.freePlay) completeSession(payload.sid, finalScore);
+      if (session._persisted) completeGameState(payload.sid, result.won ? 'completed' : 'gameover', finalScore, null);
+      if (result.won) {
+        upsertPersonalBest(session.wallet, session.gameId, session.difficulty, finalScore, now - session.startedAt);
+      }
       activeSessions.delete(payload.sid);
-      response.totalScore = partialScore;
-      response.finalScore = partialScore;
+      response.totalScore = finalScore;
+      response.finalScore = finalScore;
       response.finished = true;
       if (session.freePlay) response.freePlay = true;
-      try { checkAchievements(session.wallet, buildAchContext(session, result, now - session.startedAt, false)); } catch (e) { /* achievement check must never block */ }
+      try { checkAchievements(session.wallet, buildAchContext(session, result, now - session.startedAt, !!result.won)); } catch (e) { /* achievement check must never block */ }
       // Minesweeper detonation tracking
       if (session.gameId === 'minesweeper' && result.detonated !== undefined) {
         try { checkMinesweeperFreePlay(session.wallet, session.difficulty, false); } catch (e) { /* must never block */ }
