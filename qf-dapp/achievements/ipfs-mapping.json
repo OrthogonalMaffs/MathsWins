@@ -682,5 +682,47 @@
     "name": "Zero to Hero",
     "image_ipfs": "ipfs://QmcEsFFTKFC2qKd9K1N9eUKGCAvP5oSc8NafPBQWn8riEq",
     "metadata_ipfs": "ipfs://QmPLdiCT72SgvqtqXuREizZoYFx4DCXZmA5XRo1SZ5dKPb"
+  },
+  {
+    "achievement_id": "specialist",
+    "name": "Specialist",
+    "image_ipfs": "ipfs://QmYBMZaCdKVNDSCbzcwwrC8dehxUmG2ehpeFWQaHJeXQoB",
+    "metadata_ipfs": "ipfs://QmV16PZQ8RPZd8qSt2V37bj7QzGheGWEUha6NGTmt1d1pN"
+  },
+  {
+    "achievement_id": "master-of-one",
+    "name": "Master of One",
+    "image_ipfs": "ipfs://Qme4kJb9dB7A7YMPwUyMcsE1CXxkpgVYbnMkMKeTjEDhUa",
+    "metadata_ipfs": "ipfs://QmR6HPp8D9fD9KydpffdiGv4ZaYdg9ed6sqTDtjdLEdNug"
+  },
+  {
+    "achievement_id": "world-tour",
+    "name": "World Tour",
+    "image_ipfs": "ipfs://QmaewYAnvtYWsqksDWUNY1PptJe9sA9XbUKMz619b9fxAh",
+    "metadata_ipfs": "ipfs://QmXcpFikbHke6eJYmwotxqDBFuieWdPxtbDGnCN1JUm83G"
+  },
+  {
+    "achievement_id": "high-roller",
+    "name": "High Roller",
+    "image_ipfs": "ipfs://QmSrXbcUQMMk26VaD3sjHNsfLfkRYt9G2grKuDTS4kTzt2",
+    "metadata_ipfs": "ipfs://QmT8wjLRxUeEP8r25ijuzxn2x3z8jn8Az7zZT7ysKo1mpN"
+  },
+  {
+    "achievement_id": "skin-in-the-game",
+    "name": "Skin in the Game",
+    "image_ipfs": "ipfs://QmYg6ALLyBH1xJLQAybGRCY5PkPcSSPCr5JjTNq7torLLZ",
+    "metadata_ipfs": "ipfs://QmNRQ9irBR1JFc3G5zZyuJ2BTEriYwNnNEjQ94zAVfgjr5"
+  },
+  {
+    "achievement_id": "true-believer",
+    "name": "True Believer",
+    "image_ipfs": "ipfs://QmWpvBmqUNZBLmoFrHL82tK9NpBW2hCxujGcv5tuQG2xez",
+    "metadata_ipfs": "ipfs://QmYxasWB2g6Gd8PYLcgwV5ec57Nk2oBGySwFnPrGPuPADw"
+  },
+  {
+    "achievement_id": "fifty-two-thousand",
+    "name": "52,000",
+    "image_ipfs": "ipfs://QmZJRenu8XQtfKa4janTYDhbowA8euvppBvxQgyp1J7Jk2",
+    "metadata_ipfs": "ipfs://QmdVu1EPJfdoYYVAHxmMHto9A6Xk46jP1vmfVqVJoD9rKr"
   }
 ]

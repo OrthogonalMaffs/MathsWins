@@ -2131,6 +2131,13 @@ router.post('/achievement/mint', optionalWallet, async (req, res) => {
       'dead-reckoning': 'QmbdpE5Fx9QhQKt4g9eMM5HG5adq6mgn2zzveUCJe3ggbU',
       'photographic': 'QmaQFUk8MuPrjkqnvmQ4LsfhGiZxmQr4otDR5s8qHEKBeU',
       'the-engineer': 'Qmd4a1wKEAN7ioNAeFvpPHT9gyePhjhGQZVCNczDyn7Ed1',
+      'specialist': 'QmV16PZQ8RPZd8qSt2V37bj7QzGheGWEUha6NGTmt1d1pN',
+      'master-of-one': 'QmR6HPp8D9fD9KydpffdiGv4ZaYdg9ed6sqTDtjdLEdNug',
+      'world-tour': 'QmXcpFikbHke6eJYmwotxqDBFuieWdPxtbDGnCN1JUm83G',
+      'high-roller': 'QmT8wjLRxUeEP8r25ijuzxn2x3z8jn8Az7zZT7ysKo1mpN',
+      'skin-in-the-game': 'QmNRQ9irBR1JFc3G5zZyuJ2BTEriYwNnNEjQ94zAVfgjr5',
+      'true-believer': 'QmYxasWB2g6Gd8PYLcgwV5ec57Nk2oBGySwFnPrGPuPADw',
+      'fifty-two-thousand': 'QmdVu1EPJfdoYYVAHxmMHto9A6Xk46jP1vmfVqVJoD9rKr',
     };
     // Tier fallback image CIDs
     var TIER_IMAGES = {
