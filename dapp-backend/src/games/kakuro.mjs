@@ -602,6 +602,34 @@ export function selectQuestions(seed, difficulty) {
     }
   }
 
+  // Pre-fill a fraction of white cells for easier difficulties
+  const whiteIndices = [];
+  for (let r = 0; r < 10; r++) {
+    for (let c = 0; c < 10; c++) {
+      if (puzzle.isWhite[r][c]) whiteIndices.push(r * 10 + c);
+    }
+  }
+  let givenRatio = 0;
+  if (difficulty === 'easy') givenRatio = 0.4;
+  else if (difficulty === 'medium') givenRatio = 0.2;
+  // hard (or any other value) stays at 0 — same as current behaviour
+
+  const prefillRng = mulberry32(s ^ 0x9E3779B1);
+  const shuffled = whiteIndices.slice();
+  for (let i = shuffled.length - 1; i > 0; i--) {
+    const j = Math.floor(prefillRng() * (i + 1));
+    [shuffled[i], shuffled[j]] = [shuffled[j], shuffled[i]];
+  }
+  const givenCount = Math.floor(shuffled.length * givenRatio);
+  const given = shuffled.slice(0, givenCount).sort((a, b) => a - b);
+
+  const initialPuzzle = new Array(100).fill(0);
+  for (const idx of given) {
+    const r = Math.floor(idx / 10);
+    const c = idx % 10;
+    initialPuzzle[idx] = solution[r][c];
+  }
+
   return [{
     type: 'kakuro',
     text: 'Solve the Kakuro puzzle',
@@ -613,9 +641,11 @@ export function selectQuestions(seed, difficulty) {
       len: cl.len,
       sum: cl.sum,
     })),
-    puzzle: new Array(100).fill(0),
+    puzzle: initialPuzzle,
+    given,
     solution,
     whiteCellCount: puzzle.whiteCellCount,
+    difficulty: difficulty || 'hard',
     seed: s,
   }];
 }
@@ -641,6 +671,8 @@ export function evaluator(question, answer, elapsedMs, session) {
   if (session && session.hintsUsed === undefined) session.hintsUsed = 0;
   if (session && session.submitFailures === undefined) session.submitFailures = 0;
 
+  const givenSet = question.given ? new Set(question.given) : null;
+
   // ── Place a number ──────────────────────────────────────────────
   if (answer.action === 'place') {
     const { row, col, value } = answer;
@@ -649,6 +681,9 @@ export function evaluator(question, answer, elapsedMs, session) {
     }
     if (layout[row][col] !== 'W') {
       return { correct: false, points: 0, error: 'Not a white cell' };
+    }
+    if (givenSet && givenSet.has(row * 10 + col)) {
+      return { correct: false, points: 0, error: 'Cell is pre-filled' };
     }
     if (value < 1 || value > 9) {
       return { correct: false, points: 0, error: 'Invalid value (must be 1-9)' };
@@ -676,6 +711,9 @@ export function evaluator(question, answer, elapsedMs, session) {
     }
     if (layout[row][col] !== 'W') {
       return { correct: false, points: 0, error: 'Not a white cell' };
+    }
+    if (givenSet && givenSet.has(row * 10 + col)) {
+      return { correct: false, points: 0, error: 'Cell is pre-filled' };
     }
     const cell = row * 10 + col;
 

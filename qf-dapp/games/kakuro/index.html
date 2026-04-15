@@ -81,6 +81,9 @@ body{background:var(--bg);color:var(--text);font-family:'Inter',sans-serif;min-h
 .cell.wave{transition:background 0.3s ease}
 .cell.white.conflict{background:rgba(239,68,68,0.12)}
 .cell.white.hint-cell{background:var(--silver-glow)}
+.cell.white.given-cell{background:#1a1f1a;cursor:default}
+.cell.given-cell .cell-val{color:var(--gold);font-weight:700}
+.diff-btn.active{border-color:var(--silver);color:var(--silver-bright,#e8eaf0);background:rgba(184,188,198,0.08)}
 .cell.white.run-highlight{background:var(--silver-dim)}
 
 .cell .cell-val{font-family:'JetBrains Mono',monospace;font-size:clamp(0.9rem,3vw,1.3rem);font-weight:500;color:var(--text-white);user-select:none}
@@ -183,14 +186,28 @@ body{background:var(--bg);color:var(--text);font-family:'Inter',sans-serif;min-h
   <div class="htp">
     <button class="htp-toggle">How to Play <span class="htp-arrow">&#9660;</span></button>
     <div class="htp-body">
-      <p>Fill white cells with digits 1-9 so each horizontal and vertical run <strong>sums to its clue number</strong>. No digit repeats within a run.</p>
+      <p><strong>Goal:</strong> fill every white cell with a digit 1&ndash;9 so each run of consecutive white cells sums to its clue. No digit may repeat within the same run.</p>
+
+      <p><strong>Reading a clue cell.</strong> Dark cells with split numbers are clues. The <span style="color:var(--gold)">gold number (bottom-right)</span> is the target sum for the run going <strong>right</strong>. The <span style="color:var(--silver)">silver number (top-left)</span> is the target sum for the run going <strong>down</strong>. A clue may have one or both.</p>
+
+      <p><strong>Run rules.</strong> A run is the group of white cells immediately to the right of (or below) a clue, stopping at the next dark cell or grid edge. Digits 1&ndash;9 only; within a single run every digit is different. The same digit <em>can</em> reappear in the same row or column if it belongs to a different run.</p>
+
+      <p><strong>The unlock trick &mdash; forced combinations.</strong> Short runs at extreme sums have only one possible set of digits. Find these first, then cross-check where runs intersect.</p>
+
       <ul>
-        <li>Dark cells with numbers are clues — the top-right number is for the run going right, bottom-left is for the run going down</li>
-        <li>Each run is a consecutive group of white cells</li>
-        <li>Digits 1-9 only — no zeros, no repeats within a single run</li>
-        <li>The same digit CAN appear in the same row or column if it's in a different run</li>
+        <li>2 cells summing to <strong>3</strong> &rarr; {1, 2}</li>
+        <li>2 cells summing to <strong>4</strong> &rarr; {1, 3}</li>
+        <li>2 cells summing to <strong>16</strong> &rarr; {7, 9}</li>
+        <li>2 cells summing to <strong>17</strong> &rarr; {8, 9}</li>
+        <li>3 cells summing to <strong>6</strong> &rarr; {1, 2, 3}</li>
+        <li>3 cells summing to <strong>7</strong> &rarr; {1, 2, 4}</li>
+        <li>3 cells summing to <strong>23</strong> &rarr; {6, 8, 9}</li>
+        <li>3 cells summing to <strong>24</strong> &rarr; {7, 8, 9}</li>
       </ul>
-      <p>Start with short runs: a 2-cell run summing to 3 must be {1,2}, a 2-cell run summing to 17 must be {8,9}. These forced combinations unlock the rest.</p>
+
+      <p>Where a forced run crosses another, the intersection pins specific digits. That is how the grid unravels.</p>
+
+      <p><strong>Controls.</strong> Tap a white cell and enter a digit with the numpad. <em>Notes</em> lets you pencil in candidates (no score cost). <em>Sums</em> opens the combination helper for the currently selected run (&minus;10% final score). <em>Hint</em> reveals a single cell (&minus;500). <em>Submit</em> checks the whole grid &mdash; you have three attempts before a game-over pity score.</p>
     </div>
   </div>
 
@@ -243,18 +260,33 @@ body{background:var(--bg);color:var(--text);font-family:'Inter',sans-serif;min-h
   <div class="help-overlay hidden" id="helpOverlay" onclick="if(event.target===this)toggleHelp()">
     <div class="help-box">
       <h3>How to Play Kakuro</h3>
-      <p>Fill white cells with digits <strong>1&ndash;9</strong> so each horizontal and vertical run <strong>sums to its clue number</strong>.</p>
-      <ul>
-        <li>Dark cells with numbers are clues &mdash; <strong>top-right</strong> = run going right, <strong>bottom-left</strong> = run going down</li>
-        <li>No digit repeats within a single run</li>
-        <li>The same digit CAN appear in the same row or column if it belongs to a different run</li>
-      </ul>
+
+      <p><strong>Goal.</strong> Fill every white cell with a digit 1&ndash;9 so each run of consecutive white cells sums to its clue. No digit repeats within the same run.</p>
+
+      <p><strong>Reading a clue cell.</strong> The <span style="color:var(--gold)">gold number (bottom-right)</span> is the sum of the run going <strong>right</strong>. The <span style="color:var(--silver)">silver number (top-left)</span> is the sum of the run going <strong>down</strong>. A clue may have one or both.</p>
+
+      <p><strong>Runs.</strong> A run is the white cells immediately to the right of (or below) a clue, stopping at the next dark cell or grid edge. Within one run every digit must be different. The same digit may reappear in the same row or column if it&rsquo;s in a different run.</p>
+
       <div class="example">
-        <strong>Example:</strong> A 2-cell run with clue 7<br>
-        Possible: 1+6, 2+5, 3+4 (any order)<br>
-        Not allowed: 3+3 (no repeats)
+        <strong>Example &mdash; 2-cell run summing to 7:</strong><br>
+        Possible: {1,6}, {2,5}, {3,4} in either order.<br>
+        Not allowed: {3,3} &mdash; no repeats.
       </div>
-      <p>Start with <strong>short runs</strong>. A 2-cell run summing to 3 must be {1,2}. A 2-cell run summing to 17 must be {8,9}. These forced combinations unlock the rest.</p>
+
+      <p><strong>Unlock trick &mdash; forced combinations.</strong> At extreme sums the digit set is unique. Solve these first, then use intersections.</p>
+
+      <ul>
+        <li>2 cells = <strong>3</strong> &rarr; {1, 2} &nbsp; | &nbsp; <strong>4</strong> &rarr; {1, 3} &nbsp; | &nbsp; <strong>16</strong> &rarr; {7, 9} &nbsp; | &nbsp; <strong>17</strong> &rarr; {8, 9}</li>
+        <li>3 cells = <strong>6</strong> &rarr; {1, 2, 3} &nbsp; | &nbsp; <strong>7</strong> &rarr; {1, 2, 4} &nbsp; | &nbsp; <strong>23</strong> &rarr; {6, 8, 9} &nbsp; | &nbsp; <strong>24</strong> &rarr; {7, 8, 9}</li>
+        <li>4 cells = <strong>10</strong> &rarr; {1, 2, 3, 4} &nbsp; | &nbsp; <strong>30</strong> &rarr; {6, 7, 8, 9}</li>
+      </ul>
+
+      <p>Where a forced run crosses another, the intersecting cell must use a digit that exists in <em>both</em> sets. That constraint is how Kakuro unravels.</p>
+
+      <p><strong>Controls.</strong> Tap a cell, enter a digit from the numpad. <em>Notes</em> pencils candidates (no cost). <em>Sums</em> opens the combination helper for the current run (&minus;10% final score). <em>Hint</em> reveals one cell (&minus;500). <em>Submit</em> checks the whole grid &mdash; three attempts before game-over pity score.</p>
+
+      <p><strong>Tip.</strong> Start with the shortest runs and the most extreme sums &mdash; they commit you to specific digits. Use Notes liberally in longer runs until intersections narrow things down.</p>
+
       <button class="help-close" onclick="toggleHelp()">Got It</button>
     </div>
   </div>
@@ -280,6 +312,12 @@ body{background:var(--bg);color:var(--text);font-family:'Inter',sans-serif;min-h
     <button class="btn btn-silver" onclick="acceptDuelChallenge()" style="padding:.7rem 1.5rem;font-size:.68rem">Accept & Play</button>
   </div>
 
+  <div id="difficulty-selector" style="display:flex;gap:.4rem;margin-bottom:.6rem">
+    <button class="btn btn-ghost diff-btn" data-diff="easy" style="flex:1;padding:.6rem;font-size:.65rem">Easy</button>
+    <button class="btn btn-ghost diff-btn" data-diff="medium" style="flex:1;padding:.6rem;font-size:.65rem">Medium</button>
+    <button class="btn btn-ghost diff-btn active" data-diff="hard" style="flex:1;padding:.6rem;font-size:.65rem">Hard</button>
+  </div>
+  <p id="difficulty-hint" style="font-family:'JetBrains Mono',monospace;font-size:.58rem;color:var(--muted);text-align:center;margin-bottom:.6rem">Hard &mdash; no cells revealed. Pure Kakuro.</p>
   <button class="btn btn-silver" id="start-btn" style="width:100%;padding:1rem">Start Game</button>
   <button class="btn btn-ghost" id="create-duel-btn" onclick="confirmDuelCreate()" style="width:100%;padding:.7rem;margin-top:.5rem;font-size:.65rem">&#9876; Create a Duel</button>
   <a id="league-link" href="/qf-dapp/games/kakuro/league/" style="display:block;text-align:center;margin-top:.8rem;font-family:'JetBrains Mono',monospace;font-size:.65rem;color:var(--silver,#b8bcc6);text-decoration:none;padding:.5rem;border:1px solid var(--border,#1e2228);border-radius:6px;transition:all .15s" onmouseover="this.style.borderColor='rgba(184,188,198,0.15)'" onmouseout="this.style.borderColor='var(--border,#1e2228)'">&#9813; View Leagues</a>
@@ -327,6 +365,8 @@ var G = (function() {
   var grid = [];       // 10x10, 0 = empty, 1-9 = placed
   var notes = [];      // 10x10, each a Set
   var hintCells = {};  // "r,c" => true
+  var givenCells = {}; // "r,c" => true (pre-filled, uneditable)
+  var selectedDifficulty = 'hard';
   var selected = null; // {r, c} or null
   var mistakes = 0, hintsUsed = 0, maxHints = 10;
   var notesMode = false, helperUsed = false, helperOpen = false;
@@ -414,7 +454,8 @@ var G = (function() {
     document.getElementById('scoring-panel').style.display = 'none';
     document.getElementById('start-btn').style.display = 'none';
     document.getElementById('create-duel-btn').style.display = 'none';
-    document.querySelector('.htp').style.display = 'none';
+    var dsEl = document.getElementById('difficulty-selector'); if (dsEl) dsEl.style.display = 'none';
+    var dhEl = document.getElementById('difficulty-hint'); if (dhEl) dhEl.style.display = 'none';
     var ll = document.getElementById('league-link'); if (ll) ll.style.display = 'none';
     document.getElementById('status-bar').style.display = 'flex';
     document.getElementById('board-wrap').style.display = 'flex';
@@ -428,6 +469,19 @@ var G = (function() {
     maxHints = q.scoring.maxHints;
     initGrid();
     buildClueMap();
+    // Apply pre-filled (given) cells from easier difficulties
+    if (Array.isArray(q.given)) {
+      for (var gi = 0; gi < q.given.length; gi++) {
+        var gidx = q.given[gi];
+        var gr = Math.floor(gidx / 10);
+        var gc = gidx % 10;
+        var gv = Array.isArray(q.puzzle) ? q.puzzle[gidx] : 0;
+        if (gv > 0 && layout[gr][gc] === 'W') {
+          grid[gr][gc] = gv;
+          givenCells[gr + ',' + gc] = true;
+        }
+      }
+    }
     if (resumedGrid) {
       // Convert flat array (row * 10 + col) back to 2D grid
       for (var r = 0; r < SIZE; r++) {
@@ -487,7 +541,11 @@ var G = (function() {
 
     try {
       var startBody = { gameId: GAME_ID };
-      if (!leagueMode) startBody.seed = Math.floor(Math.random() * 1000000);
+      if (!leagueMode) {
+        startBody.seed = Math.floor(Math.random() * 1000000);
+        // Duel mode forces hard — both players need identical conditions
+        startBody.difficulty = duelMode ? 'hard' : selectedDifficulty;
+      }
       if (leagueMode && leagueId) startBody.leagueId = leagueId;
       var data = await api('/session/start', startBody);
       if (data.error) {
@@ -525,6 +583,7 @@ var G = (function() {
       notes.push(row);
     }
     hintCells = {};
+    givenCells = {};
     mistakes = 0; hintsUsed = 0; done = false; helperUsed = false; helperOpen = false;
     history = []; selected = null; notesMode = false;
   }
@@ -537,11 +596,27 @@ var G = (function() {
     }
   });
 
+  var DIFF_HINTS = {
+    easy: 'Easy &mdash; ~40% of cells revealed to get you started.',
+    medium: 'Medium &mdash; ~20% of cells revealed as a foothold.',
+    hard: 'Hard &mdash; no cells revealed. Pure Kakuro.',
+  };
+  document.querySelectorAll('.diff-btn').forEach(function(b) {
+    b.addEventListener('click', function() {
+      document.querySelectorAll('.diff-btn').forEach(function(x) { x.classList.remove('active'); });
+      b.classList.add('active');
+      selectedDifficulty = b.dataset.diff;
+      document.getElementById('difficulty-hint').innerHTML = DIFF_HINTS[selectedDifficulty];
+    });
+  });
+
   // League mode: skip lobby, go straight to countdown
   if (leagueMode) {
     document.getElementById('scoring-panel').style.display = 'none';
     document.getElementById('start-btn').style.display = 'none';
     document.getElementById('create-duel-btn').style.display = 'none';
+    document.getElementById('difficulty-selector').style.display = 'none';
+    document.getElementById('difficulty-hint').style.display = 'none';
     document.querySelector('.htp').style.display = 'none';
     var ll = document.getElementById('league-link'); if (ll) ll.style.display = 'none';
     showCountdown().then(function() { startGame(); });
@@ -602,6 +677,7 @@ var G = (function() {
           cell.classList.add('white');
           if (selected && selected.r === r && selected.c === c) cell.classList.add('selected');
           if (hintCells[cellKey]) cell.classList.add('hint-cell');
+          if (givenCells[cellKey]) cell.classList.add('given-cell');
           if (highlightSet[cellKey] && !(selected && selected.r === r && selected.c === c)) cell.classList.add('run-highlight');
 
           // Highlight same number
@@ -689,6 +765,7 @@ var G = (function() {
     var r = selected.r, c = selected.c;
     if (layout[r][c] !== 'W') return;
     if (hintCells[r + ',' + c]) return;
+    if (givenCells[r + ',' + c]) return;
 
     if (notesMode && v !== 0) {
       if (notes[r][c].has(v)) notes[r][c].delete(v); else notes[r][c].add(v);
@@ -727,6 +804,7 @@ var G = (function() {
     var r = selected.r, c = selected.c;
     if (layout[r][c] !== 'W') return;
     if (hintCells[r + ',' + c]) return;
+    if (givenCells[r + ',' + c]) return;
 
     try {
       var data = await api('/session/evaluate', {
@@ -1022,6 +1100,10 @@ var duelMode = false, duelCode = null, duelId = null;
   if (code && code.length === 6) {
     duelMode = true;
     duelCode = code.toUpperCase();
+    var ds = document.getElementById('difficulty-selector');
+    var dh = document.getElementById('difficulty-hint');
+    if (ds) ds.style.display = 'none';
+    if (dh) dh.style.display = 'none';
   }
   if (params.get('mode') === 'duel') {
     var btn = document.getElementById('create-duel-btn');
