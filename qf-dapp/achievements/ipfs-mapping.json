@@ -922,5 +922,47 @@
     "name": "King\u2019s Ransom",
     "image_ipfs": "ipfs://QmbMirhk9ogMpPbCsr2CSfKj1zPUPaj8BNgkzxuQeki9Kb",
     "metadata_ipfs": "ipfs://Qmdf7sYgBzxpcwGoC8SLzk5aWdiSRVKqnGUKnPZ4X8413Y"
+  },
+  {
+    "achievement_id": "first-steps",
+    "name": "First Steps",
+    "image_ipfs": "ipfs://QmNvViXrizNC59axpoPFPGiazprZy7QCMXLRBgzhB8LfNH",
+    "metadata_ipfs": "ipfs://QmVBZmst7skwxi1it9FjSavykkKDdrFdNArrKkdJe18v3X"
+  },
+  {
+    "achievement_id": "hintless",
+    "name": "Hintless",
+    "image_ipfs": "ipfs://Qmdki6G7cQ6V6drQcg33aPGBkPB7ByDCmUjumi1tWzZc9T",
+    "metadata_ipfs": "ipfs://QmbhkJSp3MB57PvQBYRRL4gCEscBfMbgJAMSjCnJrptPMB"
+  },
+  {
+    "achievement_id": "perfect-logic",
+    "name": "Perfect Logic",
+    "image_ipfs": "ipfs://QmT8w39gYPRpe5T6c1oQ5Ay1tggU8soZtT7WoZ8MWp973n",
+    "metadata_ipfs": "ipfs://QmQhZcdrdr9Q8ABakg3P7CZLxcfeSWxqKZizumyPaQmAfV"
+  },
+  {
+    "achievement_id": "the-insomniac",
+    "name": "The Insomniac",
+    "image_ipfs": "ipfs://QmRCKJBuxdMyB2gmr1ajEA7kzygVZVEi3dq4Nnx7yTn2Pu",
+    "metadata_ipfs": "ipfs://QmNnyH1whKRWaSTzmQxCvpkRDccdR7FXPcz8qrrN3Lbcq7"
+  },
+  {
+    "achievement_id": "the-wall",
+    "name": "The Wall",
+    "image_ipfs": "ipfs://QmXf3yhaecoZV4JdndpYPcxeL5GAWkUWtUuP1DNebsGKLC",
+    "metadata_ipfs": "ipfs://QmVA6bt2dKxsZxXwLXAqJxNPKNsdkVg9jFWapQ6oVWmDr7"
+  },
+  {
+    "achievement_id": "regicide",
+    "name": "Regicide",
+    "image_ipfs": "ipfs://QmX5Ls3JpQ9msM7MjjnDVh1RGYydfsGpmx8jnmjgFKpMGD",
+    "metadata_ipfs": "ipfs://QmcJBZTkTUzvnhSjm3xpMhGj5JMWqdQkAUxpySWdEAa4z3"
+  },
+  {
+    "achievement_id": "detention",
+    "name": "Detention",
+    "image_ipfs": "ipfs://QmbSokZkZ6rQdEmi9tbCKjmQZWrU5DFBMXEddNAq7tpeeJ",
+    "metadata_ipfs": "ipfs://QmPJBmu5BsbmaqHGp7B4Vybqd6xMxUEgem22M7B1Q9F8Pd"
   }
 ]
