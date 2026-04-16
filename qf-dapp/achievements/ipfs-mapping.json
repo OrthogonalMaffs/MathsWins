@@ -766,5 +766,65 @@
     "name": "The Grinder",
     "image_ipfs": "ipfs://QmVhw43sjLtNf9Txa4G9dqyQhLuewjXANeF4YUUJvAfRoQ",
     "metadata_ipfs": "ipfs://QmWw8PBiKpthF3b262J5TUG9WtActhQeYvqo9YafSNyEVK"
+  },
+  {
+    "achievement_id": "albatross",
+    "name": "Albatross",
+    "image_ipfs": "ipfs://Qmc2ptc9v4KhXFXuZJPkL9vAAD4LdzQo6a9iJADYGL9cxL",
+    "metadata_ipfs": "ipfs://QmcdCdcwm9uiYgQYgeS2h9UwKYkHhyUbcjkyeb3tSivrao"
+  },
+  {
+    "achievement_id": "back-nine",
+    "name": "Back Nine",
+    "image_ipfs": "ipfs://QmU6rSehdz28s6KRhvwoMqhZ4xyL6Ex5ccd8vYzrL1J7c5",
+    "metadata_ipfs": "ipfs://Qmc5EVKyTzD5rpCWEJ8hmmzT9fbFDpcP1oPiW45FcMhxdh"
+  },
+  {
+    "achievement_id": "hole-in-one",
+    "name": "Hole in One",
+    "image_ipfs": "ipfs://QmVdhrfS9aof8DdQZiDmutp7HVgwpwckaoxQFFfagEq4xN",
+    "metadata_ipfs": "ipfs://QmV5v9t5X6Rs1MBeoeMTsmAX3LonvSLFvezTvjUJJEeUo2"
+  },
+  {
+    "achievement_id": "under-par",
+    "name": "Under Par",
+    "image_ipfs": "ipfs://QmcyFscVQFmQ7QwCQ41b6xbhkHUszWSCC6B2pwYqDrhfoG",
+    "metadata_ipfs": "ipfs://QmVKxb4E6VYjWQpHTy7aFyYvgczELjsBkerxCF9AzLLJiM"
+  },
+  {
+    "achievement_id": "breadwinner",
+    "name": "Breadwinner",
+    "image_ipfs": "ipfs://QmSoVTkmn7ZsHcyiiNTxxsse7EeuEWCzgavY1iota4Z4QW",
+    "metadata_ipfs": "ipfs://QmcZgkk7jAVw1iLjLBNqur5dd8RwXdRwBLUN43su7a93Bm"
+  },
+  {
+    "achievement_id": "duel-master",
+    "name": "Duel Master",
+    "image_ipfs": "ipfs://QmXUxAGNQuWcK4AEQyxGk1eiSJaAkBvYBAGFYyWwpEjY8u",
+    "metadata_ipfs": "ipfs://QmdXKUEQbMySiw8uWob1yuSKHVDPsT3nUWQkqw95JLaMaf"
+  },
+  {
+    "achievement_id": "pioneer-hunter",
+    "name": "Pioneer Hunter",
+    "image_ipfs": "ipfs://QmemwjPUqyk3UnBNyPjNDhEXsgMgyjwCQtJbRWesMvEw6q",
+    "metadata_ipfs": "ipfs://QmVXqTj4stBq6yi5SvPZAUDV2xywnRtcRJ8wxeJ3PzGdU6"
+  },
+  {
+    "achievement_id": "the-whale",
+    "name": "The Whale",
+    "image_ipfs": "ipfs://QmQwnPhFVSqh8wdjngSyZg85rUy7fCKCKaP54m2YLNsqGc",
+    "metadata_ipfs": "ipfs://QmeHs6tjdTo69X8SRAZFnorqBR7xT6YH69ncHCqpzbTcxj"
+  },
+  {
+    "achievement_id": "the-archaeologist",
+    "name": "The Archaeologist",
+    "image_ipfs": "ipfs://QmTCxZXvvZEcioUAzXnidUhqaeUgTSmJyFUmA4hWQtvR2R",
+    "metadata_ipfs": "ipfs://QmZze5kP4RunuWJRcsVymWVFkJ2U471WHHp2jz1yitv5nD"
+  },
+  {
+    "achievement_id": "perfect-pyramid",
+    "name": "Perfect Pyramid",
+    "image_ipfs": "ipfs://QmdqwPUNYZjqqmvVFesbVpEWq36kc1JgzbR33TPLH2dUft",
+    "metadata_ipfs": "ipfs://QmY3oAT1jKKQvdzQ2Woy7yVcZ3gqa5hoVkywrhYcX7mang"
   }
 ]
