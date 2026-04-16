@@ -724,5 +724,47 @@
     "name": "52,000",
     "image_ipfs": "ipfs://QmZJRenu8XQtfKa4janTYDhbowA8euvppBvxQgyp1J7Jk2",
     "metadata_ipfs": "ipfs://QmdVu1EPJfdoYYVAHxmMHto9A6Xk46jP1vmfVqVJoD9rKr"
+  },
+  {
+    "achievement_id": "royal-flush",
+    "name": "Royal Flush",
+    "image_ipfs": "ipfs://QmX69zqzNujmsBLUXm16JKy3GSNy7FYCFudtDLwbqzvvAX",
+    "metadata_ipfs": "ipfs://QmYNDWn9xaKheFmCnGc1jsoGEoYHYJcwfVWhDdS8rwg2sy"
+  },
+  {
+    "achievement_id": "all-pairs",
+    "name": "All Pairs",
+    "image_ipfs": "ipfs://QmbJTRz2ntjnnJvhGAw2DpZ2ANdj4QVeChiaXN1DbKSYik",
+    "metadata_ipfs": "ipfs://QmYDtQKaET5GsgB5sTChV2qgSqbDwPFg6zeJsCuV9HuV6x"
+  },
+  {
+    "achievement_id": "the-nuts",
+    "name": "The Nuts",
+    "image_ipfs": "ipfs://QmSkmmhiZ1WEcv6KPeKdQerJtvbSy85kF8d6z4KRBrPXHc",
+    "metadata_ipfs": "ipfs://QmRVbKbbds1mjp6YRf2dFV6nvRJguUZQCZf2CrcfEg23WF"
+  },
+  {
+    "achievement_id": "dead-mans-hand",
+    "name": "Dead Man\u2019s Hand",
+    "image_ipfs": "ipfs://QmVVV7tqcPcCHqEpU5RR17bDNc75Kj5qnc6QfPyCabmFv7",
+    "metadata_ipfs": "ipfs://QmfVadyRY13NRKbu4g7XCgo2GxSo6h1XKNcrVEF4oMtmvC"
+  },
+  {
+    "achievement_id": "pocket-rockets",
+    "name": "Pocket Rockets",
+    "image_ipfs": "ipfs://QmZtFAJohfbaJL5CdJBeGqPNGjGTE6RUBXySN7eok3Evhi",
+    "metadata_ipfs": "ipfs://QmUvzHnkcSseJvXfau7kPZrn6jLbchrBArpW7rsHWWthB4"
+  },
+  {
+    "achievement_id": "the-brick",
+    "name": "The Brick",
+    "image_ipfs": "ipfs://QmVkhBWezFvt414EY8HhUgWXanErDFsAJR1NJFtrKfCemr",
+    "metadata_ipfs": "ipfs://QmeA2Gjf5BpVCWdQqUavPpGyKGQDFqrEuaS6aHE3vLjKi4"
+  },
+  {
+    "achievement_id": "the-grinder",
+    "name": "The Grinder",
+    "image_ipfs": "ipfs://QmVhw43sjLtNf9Txa4G9dqyQhLuewjXANeF4YUUJvAfRoQ",
+    "metadata_ipfs": "ipfs://QmWw8PBiKpthF3b262J5TUG9WtActhQeYvqo9YafSNyEVK"
   }
 ]
