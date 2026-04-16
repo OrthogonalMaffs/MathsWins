@@ -3,7 +3,7 @@ import crypto from 'crypto';
 import jwt from 'jsonwebtoken';
 import { getLeaderboard, getEntry, getPaidGames } from '../db/index.mjs';
 import { createDuel, getDuelByCode, getDuelById, updateDuelCreatorScore, acceptDuel, updateDuelOpponentScore, completeDuel, expireOldDuels, getDuelsByWallet, getActiveDuelCount } from '../db/index.mjs';
-import { createLeague, getLeagueById, getActiveLeagues, getAllLeagues, updateLeagueStatus, startLeague, settleLeague, cancelLeague, addLeaguePlayer, getLeaguePlayers, getLeaguePlayerCount, isLeaguePlayer, markRefunded, addLeaguePuzzle, getLeaguePuzzles, addLeagueScore, getLeagueScore, getLeagueScoresByWallet, getLeagueLeaderboard, addLeaguePrize, getLeaguePrizes, getPlayerPuzzleOrder, setPlayerPuzzleOrder, addLeagueRefund, getPendingRefunds, getFailedRefunds, getLeagueRefunds, updateRefundStatus, cancelLeagueWithReason, forceSettleLeague, getLeaguesByWallet, getOpenAndActiveLeagues, getRecentlySettledLeagues } from '../db/index.mjs';
+import { createLeague, getLeagueById, getActiveLeagues, getAllLeagues, updateLeagueStatus, startLeague, settleLeague, cancelLeague, addLeaguePlayer, getLeaguePlayers, getLeaguePlayerCount, getPaidLeaguePlayerCount, isLeaguePlayer, markRefunded, addLeaguePuzzle, getLeaguePuzzles, addLeagueScore, getLeagueScore, getLeagueScoresByWallet, getLeagueLeaderboard, addLeaguePrize, getLeaguePrizes, getPlayerPuzzleOrder, setPlayerPuzzleOrder, addLeagueRefund, getPendingRefunds, getFailedRefunds, getLeagueRefunds, updateRefundStatus, cancelLeagueWithReason, forceSettleLeague, getLeaguesByWallet, getOpenAndActiveLeagues, getRecentlySettledLeagues } from '../db/index.mjs';
 import { createPromoChallenge, getPromoByCode, getPromoById, getPromoClaim, addPromoClaim, getPromoClaims } from '../db/index.mjs';
 import { startSession, startFreeSession, evaluate, getCurrentWeekId, resumeSession } from '../scoring.mjs';
 import { ethers } from 'ethers';
@@ -1126,7 +1126,8 @@ function activateLeague(league) {
   const joinClosesAt = now + JOIN_WINDOW_MS;
   const playClosesAt = now + PLAY_WINDOW_MS;
   const playerCount = getLeaguePlayerCount(league.id);
-  const totalPot = playerCount * league.entry_fee;
+  const paidCount = getPaidLeaguePlayerCount(league.id);
+  const totalPot = paidCount * league.entry_fee;
   const burnAmount = Math.floor(totalPot * BURN_PCT);
   const teamAmount = Math.floor(totalPot * TEAM_PCT);
   const prizePool = totalPot - burnAmount - teamAmount;
@@ -1147,8 +1148,8 @@ function activateLeague(league) {
 function recalculateLeaguePot(leagueId) {
   const league = getLeagueById(leagueId);
   if (!league || league.status !== 'active') return;
-  const playerCount = getLeaguePlayerCount(leagueId);
-  const totalPot = playerCount * league.entry_fee;
+  const paidCount = getPaidLeaguePlayerCount(leagueId);
+  const totalPot = paidCount * league.entry_fee;
   const burnAmount = Math.floor(totalPot * BURN_PCT);
   const teamAmount = Math.floor(totalPot * TEAM_PCT);
   const prizePool = totalPot - burnAmount - teamAmount;

@@ -7,6 +7,7 @@ import { awardAchievement, getWalletAchievements, getWalletStats, incrementWalle
 import { checkSunk } from './games/battleships.mjs';
 
 const ACHIEVEMENTS_ACTIVE = process.env.ACHIEVEMENTS_ACTIVE === 'true';
+const OWNER_WALLETS = (process.env.OWNER_WALLETS || '').split(',').map(function(w) { return w.trim().toLowerCase(); }).filter(Boolean);
 
 const MILESTONE_IDS = ['collector', 'devoted', 'obsessed', 'the-complete-player'];
 
@@ -1491,6 +1492,58 @@ export function checkWrongAnswerStreak(wallet, correct) {
   } else {
     resetWalletCounter(wallet, 'prime_wrong_streak');
   }
+  return awarded;
+}
+
+/**
+ * Check Regicide and Detention at league settlement.
+ * Regicide: finish above an OWNER_WALLET in a league.
+ * Detention: finish below an OWNER_WALLET in a league.
+ * Owner wallets themselves are excluded from both.
+ *
+ * @param {Array} leaderboard - sorted array of { wallet, total_score }, position 0 = 1st
+ */
+export function checkRegicideDetention(leaderboard) {
+  if (!ACHIEVEMENTS_ACTIVE) return [];
+  if (!leaderboard || leaderboard.length < 2) return [];
+  if (OWNER_WALLETS.length === 0) return [];
+
+  var awarded = [];
+
+  // Find the best-placed owner wallet in this league
+  var ownerPosition = -1;
+  for (var i = 0; i < leaderboard.length; i++) {
+    if (OWNER_WALLETS.indexOf(leaderboard[i].wallet.toLowerCase()) !== -1) {
+      ownerPosition = i;
+      break;
+    }
+  }
+
+  // No owner wallet in this league — nothing to award
+  if (ownerPosition === -1) return awarded;
+
+  for (var j = 0; j < leaderboard.length; j++) {
+    var w = leaderboard[j].wallet.toLowerCase();
+    // Skip owner wallets
+    if (OWNER_WALLETS.indexOf(w) !== -1) continue;
+
+    if (j < ownerPosition) {
+      // Finished above the owner — Regicide
+      var r = awardAchievement(w, 'regicide');
+      if (r.awarded) {
+        awarded.push('regicide:' + w.slice(0, 8));
+        console.log('Achievement awarded: regicide to ' + w.slice(0, 8) + '...' + (r.pioneer ? ' (PIONEER)' : ''));
+      }
+    } else if (j > ownerPosition) {
+      // Finished below the owner — Detention
+      var d = awardAchievement(w, 'detention');
+      if (d.awarded) {
+        awarded.push('detention:' + w.slice(0, 8));
+        console.log('Achievement awarded: detention to ' + w.slice(0, 8) + '...' + (d.pioneer ? ' (PIONEER)' : ''));
+      }
+    }
+  }
+
   return awarded;
 }
 

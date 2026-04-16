@@ -417,6 +417,9 @@ const ACHIEVEMENTS = [
   { id: 'the-novelist', name: 'The Novelist', game_id: 'maffsy', category: 'wooden-spoons', fee: 100 },
   // ── Category 32 — Impossible (FREE) ──
   { id: 'boom', name: 'Boom', game_id: null, category: 'impossible', fee: 0 },
+  // ── Category 33 — Rivals (Vector achievements) ──
+  { id: 'regicide', name: 'Regicide', game_id: null, category: 'meta', fee: 500 },
+  { id: 'detention', name: 'Detention', game_id: null, category: 'wooden-spoons', fee: 100 },
 ];
 
 function seedAchievements(db) {
@@ -943,6 +946,12 @@ export function getLeaguePlayers(leagueId) {
 export function getLeaguePlayerCount(leagueId) {
   const db = getDb();
   const row = db.prepare('SELECT COUNT(*) as count FROM league_players WHERE league_id = ? AND refunded = 0').get(leagueId);
+  return row.count;
+}
+
+export function getPaidLeaguePlayerCount(leagueId) {
+  const db = getDb();
+  const row = db.prepare("SELECT COUNT(*) as count FROM league_players WHERE league_id = ? AND refunded = 0 AND tx_hash IS NOT NULL AND tx_hash != 'builder-whitelist'").get(leagueId);
   return row.count;
 }
 

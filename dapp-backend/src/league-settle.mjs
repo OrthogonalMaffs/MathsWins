@@ -14,7 +14,7 @@ import {
   upsertLeagueBest, incrementWalletCounter, getWalletStats
 } from './db/index.mjs';
 import { sendQF, TEAM_WALLET, BURN_ADDRESS } from './escrow.mjs';
-import { checkAchievements, checkShadowsAchievements, checkInsomniac, checkMonthlyAchievements, checkFreeCellLeague, checkKenKenLeague, checkNonogramLeague, checkKakuroLeague, checkSettlementBatch7, checkSlowBurnAndLastSlow } from './achievement-checker.mjs';
+import { checkAchievements, checkShadowsAchievements, checkInsomniac, checkMonthlyAchievements, checkFreeCellLeague, checkKenKenLeague, checkNonogramLeague, checkKakuroLeague, checkSettlementBatch7, checkSlowBurnAndLastSlow, checkRegicideDetention } from './achievement-checker.mjs';
 
 const __dirname = dirname(fileURLToPath(import.meta.url));
 
@@ -273,6 +273,11 @@ export async function doSettleLeague(leagueId) {
     // Step 4b3: Slow-burn and last-and-slow (Minesweeper only, once per league)
     try {
       checkSlowBurnAndLastSlow(league.id, league.game_id, leaderboard);
+    } catch (e) { /* must never block */ }
+
+    // Step 4b4: Regicide and Detention (owner wallet rival achievements)
+    try {
+      checkRegicideDetention(leaderboard);
     } catch (e) { /* must never block */ }
 
     // Step 4c: Upsert league bests for all players
