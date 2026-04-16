@@ -826,5 +826,71 @@
     "name": "Perfect Pyramid",
     "image_ipfs": "ipfs://QmdqwPUNYZjqqmvVFesbVpEWq36kc1JgzbR33TPLH2dUft",
     "metadata_ipfs": "ipfs://QmY3oAT1jKKQvdzQ2Woy7yVcZ3gqa5hoVkywrhYcX7mang"
+  },
+  {
+    "achievement_id": "clean-sweep",
+    "name": "Clean Sweep",
+    "image_ipfs": "ipfs://QmfQAkxVxbfwbVfsGgUxYL4zkEjU9i2FUbtLCxdfmReY5z",
+    "metadata_ipfs": "ipfs://QmcFQ2Xw8nVvuEAW56iAkyJXZTY3SMsLAgnZTQfNJPJrHy"
+  },
+  {
+    "achievement_id": "flag-everything",
+    "name": "Flag Everything",
+    "image_ipfs": "ipfs://QmeXn61JyoqfHYtAGniuVtQzGqFntoBoe4YG3gMaoNqD1s",
+    "metadata_ipfs": "ipfs://QmajDvsY4KpnaZ3xcBrEHBT2vkefQEu8hc8DNHvGgJh8no"
+  },
+  {
+    "achievement_id": "the-comeback",
+    "name": "The Comeback",
+    "image_ipfs": "ipfs://QmNqQr5dPQxYCKGXJNBBj2ZHohEXDdhtNaepMSVANegnuH",
+    "metadata_ipfs": "ipfs://QmNnfXKiZtPPHKRQjWMbA1BuNhs32hSYaFTK4ihjpz8swT"
+  },
+  {
+    "achievement_id": "lucky-number",
+    "name": "Lucky Number",
+    "image_ipfs": "ipfs://QmTzzZ9w7WR7Q2LkDNrCmvSJ9kcgtWkuHsNqsvpNibciVJ",
+    "metadata_ipfs": "ipfs://QmNNBXAnE1QFdQmqjdsnyrXbAisPTafSZP3o33qeos97jp"
+  },
+  {
+    "achievement_id": "no-cell-used",
+    "name": "No Cell Used",
+    "image_ipfs": "ipfs://QmRhkVosgfk9Vgxt83ZZkzio5UiMxmps4ntqSHby6znC9t",
+    "metadata_ipfs": "ipfs://QmRp2iLZZdYuZCmaDC7repYv7rb1v4ETazZejUiNP6ACud"
+  },
+  {
+    "achievement_id": "the-undo-king",
+    "name": "The Undo King",
+    "image_ipfs": "ipfs://QmezEs6h25C79JGazSd7icH8vxLw3MDVMusdbUAJN5x5aH",
+    "metadata_ipfs": "ipfs://QmcViKpMbNToG512rnGEN2pniS8vJtqydkMCsMXUfZa9a1"
+  },
+  {
+    "achievement_id": "tutankhamun",
+    "name": "Tutankhamun",
+    "image_ipfs": "ipfs://QmTqBzqXh9C3h7jQkiEFHc1htjwoSbzxEjF3VGgDJUsTtB",
+    "metadata_ipfs": "ipfs://QmYewVMjHRzSo5mXCNw1rJ1YS9UqESs2g1Mwz4UM6tNLms"
+  },
+  {
+    "achievement_id": "crib-master",
+    "name": "Crib Master",
+    "image_ipfs": "ipfs://QmfSGumNZEof8VuSZouHva9BUmZvQQYMTitxSh5PrxmYan",
+    "metadata_ipfs": "ipfs://QmS7MoAfchgvQbpJa1X3k6sCjTtrSNMqMjWTeK7rz8tfBg"
+  },
+  {
+    "achievement_id": "twenty-nine",
+    "name": "Twenty-Nine",
+    "image_ipfs": "ipfs://QmVdmSViNRypLctaXkYoBJRQqkVj8TrA2hS9YwsyccbRQo",
+    "metadata_ipfs": "ipfs://QmWnNgNoS5hTfHKebDjU4FbjZACty2Awj5xLvZSpikoemq"
+  },
+  {
+    "achievement_id": "fibonacci",
+    "name": "Fibonacci",
+    "image_ipfs": "ipfs://QmS4U3PACkW6HqfXQvsuKsrBuTSE5j8ZcAmDQPZ54DFU7c",
+    "metadata_ipfs": "ipfs://QmRGffsM2EFtaWgPyCb2z1PebPUmpmUBLSahjbfiLtSQcD"
+  },
+  {
+    "achievement_id": "midnight",
+    "name": "Midnight",
+    "image_ipfs": "ipfs://QmeRtMsj8PNcJvHtHNzGjrNS2FU6v6LrAyqvNt6tqSTEN8",
+    "metadata_ipfs": "ipfs://QmbpkeEpNMJgtH13W9VDWg5U66ghM4v1NnoBDC6tdQCty4"
   }
 ]
