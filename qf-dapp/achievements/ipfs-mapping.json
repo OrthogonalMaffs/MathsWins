@@ -892,5 +892,35 @@
     "name": "Midnight",
     "image_ipfs": "ipfs://QmeRtMsj8PNcJvHtHNzGjrNS2FU6v6LrAyqvNt6tqSTEN8",
     "metadata_ipfs": "ipfs://QmbpkeEpNMJgtH13W9VDWg5U66ghM4v1NnoBDC6tdQCty4"
+  },
+  {
+    "achievement_id": "blind-eye",
+    "name": "Blind Eye",
+    "image_ipfs": "ipfs://QmXDaQkv49aMZ4SMuzcJL8GLRtSjTeDLvLGabnk78Vyq3z",
+    "metadata_ipfs": "ipfs://QmZgodhtpfREas5Thqf9ECUXh4RXeLrFJbs9fHen5VVPxt"
+  },
+  {
+    "achievement_id": "the-artist",
+    "name": "The Artist",
+    "image_ipfs": "ipfs://QmaLhZeCQzDujZdN4h1vCkc366yemQ1DwZFRDfRrqNdbYo",
+    "metadata_ipfs": "ipfs://QmeLtkcXQTvXDgCtWvcU4KRsxzmkXeBAuxd832i6MZtHit"
+  },
+  {
+    "achievement_id": "the-crossword-king",
+    "name": "The Crossword King",
+    "image_ipfs": "ipfs://Qmbc3DfwKV9LjJ1umoAhunexQwfhADt73FGy7jrp3UgdKW",
+    "metadata_ipfs": "ipfs://QmeAyMHeS3N9VxyApSDEUzheHzSY6TcWZQ3EwSoR3ZRG1m"
+  },
+  {
+    "achievement_id": "sum-of-all-fears",
+    "name": "Sum of All Fears",
+    "image_ipfs": "ipfs://QmbV9rPqoRa5TM7C9Ava711sjiiC84Cs1dYRpBafMzbDJd",
+    "metadata_ipfs": "ipfs://Qmc2i9Kah7bcmKB53VFEi1rNbGQXxpaNqzUWaDZbTMj3tY"
+  },
+  {
+    "achievement_id": "kings-ransom",
+    "name": "King\u2019s Ransom",
+    "image_ipfs": "ipfs://QmbMirhk9ogMpPbCsr2CSfKj1zPUPaj8BNgkzxuQeki9Kb",
+    "metadata_ipfs": "ipfs://Qmdf7sYgBzxpcwGoC8SLzk5aWdiSRVKqnGUKnPZ4X8413Y"
   }
 ]
