@@ -1,6 +1,9 @@
 import { Router } from 'express';
 import crypto from 'crypto';
 import jwt from 'jsonwebtoken';
+import { readFileSync } from 'fs';
+import { fileURLToPath } from 'url';
+import { dirname, join } from 'path';
 import { getLeaderboard, getEntry, getPaidGames } from '../db/index.mjs';
 import { createDuel, getDuelByCode, getDuelById, updateDuelCreatorScore, acceptDuel, updateDuelOpponentScore, completeDuel, expireOldDuels, getDuelsByWallet, getActiveDuelCount } from '../db/index.mjs';
 import { createLeague, getLeagueById, getActiveLeagues, getAllLeagues, updateLeagueStatus, startLeague, settleLeague, cancelLeague, addLeaguePlayer, getLeaguePlayers, getLeaguePlayerCount, getPaidLeaguePlayerCount, isLeaguePlayer, markRefunded, addLeaguePuzzle, getLeaguePuzzles, addLeagueScore, getLeagueScore, getLeagueScoresByWallet, getLeagueLeaderboard, addLeaguePrize, getLeaguePrizes, getPlayerPuzzleOrder, setPlayerPuzzleOrder, addLeagueRefund, getPendingRefunds, getFailedRefunds, getLeagueRefunds, updateRefundStatus, cancelLeagueWithReason, forceSettleLeague, getLeaguesByWallet, getOpenAndActiveLeagues, getRecentlySettledLeagues } from '../db/index.mjs';
@@ -19,6 +22,34 @@ import { validateFleet, calculateRange, checkHit, checkSunk, checkWin, getGameSt
 
 const router = Router();
 const AUTH_SECRET = process.env.AUTH_JWT_SECRET || 'dev-auth-secret-change-me';
+
+// ── Achievement metadata CID mapping ────────────────────────────────────────
+// Loaded from achievements/ipfs-mapping.json at startup. Single source of truth.
+// Frontend authoritative copy lives at qf-dapp/achievements/ipfs-mapping.json;
+// manual copy-over on refresh. Fail loud if missing/malformed so PM2 startup
+// breaks visibly rather than silently falling back to tier-image for every mint.
+const ACHIEVEMENT_METADATA = (() => {
+  const mappingPath = join(dirname(fileURLToPath(import.meta.url)), '..', 'achievements', 'ipfs-mapping.json');
+  const raw = readFileSync(mappingPath, 'utf-8');
+  const parsed = JSON.parse(raw);
+  if (!Array.isArray(parsed) || parsed.length === 0) {
+    throw new Error('[achievement-metadata] ipfs-mapping.json must be a non-empty array');
+  }
+  const dict = {};
+  for (const entry of parsed) {
+    const id = entry.achievement_id;
+    const uri = entry.metadata_ipfs;
+    if (!id || !uri) {
+      throw new Error('[achievement-metadata] entry missing achievement_id or metadata_ipfs: ' + JSON.stringify(entry));
+    }
+    if (dict[id] !== undefined) {
+      throw new Error('[achievement-metadata] duplicate achievement_id in ipfs-mapping.json: ' + id);
+    }
+    dict[id] = uri.replace(/^ipfs:\/\//, '');
+  }
+  console.log('[achievement-metadata] Loaded ' + Object.keys(dict).length + ' bespoke CID mappings from ipfs-mapping.json');
+  return dict;
+})();
 
 // ── Challenge/Verify nonce store (in-memory, 5-minute TTL) ──────────────────
 const challengeStore = new Map();
@@ -2094,89 +2125,6 @@ router.post('/achievement/mint', optionalWallet, async (req, res) => {
     const signer = new ethers.Wallet(key, provider);
     const contract = new ethers.Contract(ACHIEVEMENT_CONTRACT, ACHIEVEMENT_ABI, signer);
 
-    // Bespoke achievement metadata CIDs (pre-pinned on Pinata)
-    var ACHIEVEMENT_METADATA = {
-      'founding-member': 'Qmc4WrJai1QzGafNBRqpPhHo9tGswHoNQFS5biRq3o5gV1',
-      'the-grandmaster': 'QmTPwxE953xPZBCfVuyJxA3HmQgVrBaEUU3EcyNZHmZVa3',
-      'shadow-legend': 'QmaW9gQMjmQRPGiVfn7aokJDf7wnDGus67F5kgHSNQhmEj',
-      'immaculate': 'QmTfk4UEhri2dvwhCsW5xu4R4vqE1YqMFNt74hbJword92',
-      'the-tortoise': 'QmUK7tTFmH5VcKYaQK35AhGuDMhHHraF4jVZYTcAXiFb8N',
-      'the-mathematicians-collection': 'QmQyTQGNvJnNUNSge9dJ8PPFrJMq51ghM76K5NydvMtsvs',
-      'the-complete-player': 'QmRyxQT7WG51iXnhcfwNXWBmSntGNBm7sKbqna6bkg7jzd',
-      'into-the-shadows': 'QmWpkoNmDFRrzQvZMXpnmhqG1AK7gycKc2Sh6R7AuZ4Yup',
-      'from-the-shadows': 'QmXEPcMmKE5FCC9fhnT3wkTWtRrUcuH7SKqS3pZ79VYXLF',
-      'obsessed': 'QmeQeTLagnv7QZppRMoNTRvicWYhhXbBhqCi9jMzx4TBYX',
-      'devoted': 'QmVGfNxW7xZEzPBuekQ4DkfEv8m6vNSi9DyZv9oDkkiL24',
-      'collector': 'QmUZUviotCZaUS8VThdQV23oKM91SBovDVov1JfK2reiqU',
-      'onlyfans-qf': 'QmRobR8sxSM3C5Tnnf5XTMRHo2wVg9zzZ1gNaMW3LEfJtu',
-      'the-wolf-pack': 'QmeNzeiTuX8wsPUkU8FjJxMft7dpzErPGnUAs6GR3xtKYY',
-      'clean-sheet': 'QmPn3QDtL8EtDV5XwraHjGC9g2Z2QQYw7yGVovNAELyhR8',
-      'dnf-king': 'QmS9dpRdUuKaABe8bpHKoQkUyJpxZxcjTXDa86DV4s2ckm',
-      'first-light': 'QmcQJGPBbHs2mLqsJhnYdr3TSzyQHVSXAi2upywS6UPiTm',
-      'never-triggered': 'QmVvQWSEMuc3ymUrkzgru6iidGh8WGb9LwCngEvA9wGLD4',
-      'night-owl': 'QmQUN5n7fJN7QZFvJMmJ7MLhjmqpWjB4NTShHqx1VisemN',
-      'pure-logic': 'QmRnjR5XVmpcuwjF1ysAgG9n8dAUFFkP1Z1TrqfTPnuTpJ',
-      'six-seven': 'QmPVV9icR7FrUAX2vG9SLphCiFV6q5UUpAYQMC6aSrrK4w',
-      'tax-payers-nightmare': 'QmcHa3suWVkkKwEs1UPqJwPbS1MigtLb26oCwyqETXND3y',
-      'the-optimist': 'QmUdvrwYw7nWKxRoZPAeV4FTY9JrAAZWb9mztSBvfY83MJ',
-      'winner': 'QmaJ37RdtY4JwWs4arMhy6Rte1vmPnfzgzxhvQEtLpq7ZN',
-      'bogey': 'QmVe8thsASmUW5TnuzpDAttKdK9TMg86F8v7gzwpHzxTk4',
-      'full-hints': 'QmNUka9G4nYKtVM1ybTH2KiHqESEGs1itrcMYngqQbbZcS',
-      'flagless-and-wrong': 'QmX6Xg8cXspeNuiyv75hGsonmjCKjo6V8Vu1xqFGHVNLRB',
-      'last-and-slow': 'QmdU6bxEjGNtv5UoPygX3Lhr2o6TdFuMnejgXBeWyqowhc',
-      'memory-loss': 'QmVnviRuBkxSUosoPthyko32acReaQDGpoM4wvFu7HoYFy',
-      'score-one': 'QmVkCyT2Fb5Jx9PK2az8Zu5DwoEhhSVUyptUxaY41JLWof',
-      'the-novelist': 'QmXbWVXKeCsHgwTzYZSdEThXt5wkg7SPunf5T7Fx4k8L7V',
-      'curse-of-the-mummy': 'QmfB7qLvKfVPiVEZYys7fXy2LGU7DFKH8YtKnZSwjiG3jN',
-      'pharaohs-curse': 'QmVWFzTebwQfwDikrmFwiU8tSwffig7U1WYWLfr66padeg',
-      'the-pacifist': 'QmRevhD6KsFBrABffYEik35sXRJpEFfw4Canknqy4wvx4T',
-      'all-wrong': 'QmbWy8eJDNpy2pFjERsu5nEqbXm3njLehLsSh4oBG9t5ca',
-      'mucky-hands': 'Qmdjb1vJZ1HzuF5fN9n6ywrEtBrrGmVMqnb1q8RgYG5qXx',
-      'the-fish': 'QmTCCtGT7iKW8HsuaMGnm5jn8JgA533RKs91HR1mFiNnFY',
-      'crib-death': 'QmXbSc8FeoiefMTVFDYQz9YcmDRFcRA7GjqNkE2CPZWhg4',
-      'bust': 'QmaF6BSrJzwzwWxTaNmxdRnzrUvtWW2qFzxQNPbhZAHPBj',
-      'slow-burn': 'QmXKaWJaVAFGcunNNmCSkd9Ua2vdq7PAiPAugmoJfrhPCA',
-      'flawless-line': 'QmWErNqBWnJTxjkSxAdFXyCZTVAbo8J49EjS7SGHQfAmTC',
-      'the-purist': 'QmP6PZxsBug4RaDf9A8AksE5F5smg3buGnoc9qdd8Dc9fT',
-      'clean-crib': 'QmZgZNDyzPxihnYUX3agJ5isQ8qGWYtLHvtbWgp7H9BTKt',
-      'no-tells': 'QmczKjbDxSxpQXXHUQ2ZTZXsgRj8Usr8vRkJKysCXXyyvR',
-      'the-chain': 'QmVVarifmYySozyruiynEiwdJySdFehR5k87VirCcT9ZG3',
-      'pixel-perfect': 'QmZ9qQJZ2znT3cZcezg5k42YvhbrDkZ4VgVSzbsQbsBcYk',
-      'committed': 'QmZed5up7H6f34BEtBCXSUiuEztWrexWjqotMKNtSwJvFS',
-      'dedicated': 'QmcT92T1Q9TV8Bu3V25tVLNsc3eC6CDfnNmAiUDscuRjKU',
-      'veteran': 'QmYk5gFxgQbSGTjLH3fQgsEfY4rT69rywPvzGREXbEuf7z',
-      'legend': 'QmR3HscnpUqBpnP91RG6wBsqWbYmgfiwE1vYoXfcmtWBVN',
-      'blind-kakuro': 'QmS3AfNBY2KhaNApRf6MFJMF9jSkSDTQ8Cj4QPA3L8eTq8',
-      'the-logician': 'QmTfFwpQ2sZvbYbwCm4a2BQV3pkNm63UyMh2YvqXFGBBfo',
-      'on-a-roll': 'QmanwMFigBpb1JywYWyGHxhGinxh6TSFqNiHy7gQ9ES4Vy',
-      'dominant': 'QmV2kaSwAXeiVYETUYwhAxRjvSM9MWF3bLDDyWnVr4ejTh',
-      'hat-trick': 'QmSvStHce3gJLHG7Q9SX7L2Pc9r7B8AcWp6UqwLgvUDb6L',
-      'the-completionist': 'QmVyS6h7JNe2ucxFBPh4B2JgWZ5XrfcNUnBo8My6giykoF',
-      'clean-slate': 'Qma29kF4N5rQea8GBEbqoqNwQ29St9kdX5qy7acemkHijX',
-      'the-lurker': 'QmYDHCMcnCdoYFv2WSxJjfuHWTFLvqExyzefMRqGmHeXNA',
-      'century': 'QmRewrCrUP8xjpY7JUw26MDsmHgqqLzjU93jZDdDuT8JGq',
-      'explorer': 'Qmd4c9CxXWtc6SSTW9GGCVM699bXjVdsgsy3ytt1wVTMZM',
-      'personal-best': 'QmfTZtjhpopuf8nxkRsF8ETEC2NvQHiMgJcvpBuDWSktr1',
-      'unbeatable': 'QmagfE3ALu1XEnSDT8qNqY2nrcad1U6vM8mpXfwRgHnhV8',
-      'wordy': 'Qma1jDogebAud83UsATy639XwrWuX1noa3AJUofdvWYqSJ',
-      'binary-decision': 'QmSD6vUEpbaKu955ULVMLTNUKbS3S1rnqajar7AvYuNhd7',
-      'feel-no-pressure': 'QmPL9u5V62txVEzwpaCXjLR8GpWFhfGwE9yAVirAQe5o47',
-      'duelist': 'QmTzJx6ek66mpLkuSRh2y87kZcGP4ihjfLThXa85AvbjD4',
-      'first-blood': 'Qmc9nYmaBDusDW5grQuseFavqXJeUBHjVJBiTVnvZeva2q',
-      'next-in-line': 'QmXCrCtMU4cDW8PA95AiFFqpmfEfpfUMiABrKfpxhjWSP6',
-      'on-the-nose': 'QmUowoScknaNsNj42EAnMsGmCEtzbmBPSJscVhUiqEY9h8',
-      'clairvoyant': 'QmNoQ9EtzoJsVXQk7qpLm2Tgh4CcZ9gPWx1mYfVboRAver',
-      'dead-reckoning': 'QmbdpE5Fx9QhQKt4g9eMM5HG5adq6mgn2zzveUCJe3ggbU',
-      'photographic': 'QmaQFUk8MuPrjkqnvmQ4LsfhGiZxmQr4otDR5s8qHEKBeU',
-      'the-engineer': 'Qmd4a1wKEAN7ioNAeFvpPHT9gyePhjhGQZVCNczDyn7Ed1',
-      'specialist': 'QmV16PZQ8RPZd8qSt2V37bj7QzGheGWEUha6NGTmt1d1pN',
-      'master-of-one': 'QmR6HPp8D9fD9KydpffdiGv4ZaYdg9ed6sqTDtjdLEdNug',
-      'world-tour': 'QmXcpFikbHke6eJYmwotxqDBFuieWdPxtbDGnCN1JUm83G',
-      'high-roller': 'QmT8wjLRxUeEP8r25ijuzxn2x3z8jn8Az7zZT7ysKo1mpN',
-      'skin-in-the-game': 'QmNRQ9irBR1JFc3G5zZyuJ2BTEriYwNnNEjQ94zAVfgjr5',
-      'true-believer': 'QmYxasWB2g6Gd8PYLcgwV5ec57Nk2oBGySwFnPrGPuPADw',
-      'fifty-two-thousand': 'QmdVu1EPJfdoYYVAHxmMHto9A6Xk46jP1vmfVqVJoD9rKr',
-    };
     // Tier fallback image CIDs
     var TIER_IMAGES = {
       'free': 'QmUhKP4YE1au5gSiKtMqYwGQYH8EKYKXC8aD28RRrXjdiw',
