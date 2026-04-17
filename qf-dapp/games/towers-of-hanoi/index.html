@@ -363,7 +363,7 @@ function checkWin(){
   if(pegs[2].length===numDiscs){
     gameActive=false;
     finalScore=calcScore();
-    submitFreeplay('towers-of-hanoi', finalScore, 0);
+    submitFreeplay('towers-of-hanoi', finalScore, 0, { difficulty: numDiscs, solved: pegs[2].length === numDiscs });
     const opt=optimalMoves(numDiscs);
     const eff=Math.round(opt/moveCount*100);
     setTimeout(()=>{
@@ -425,12 +425,12 @@ renderTowers();
 renderLB('');
 var _fpAPI = 'https://dapp-api.mathswins.co.uk/api/dapp';
 if (location.hostname === 'localhost' || location.hostname === '127.0.0.1') _fpAPI = 'http://127.0.0.1:3860/api/dapp';
-function submitFreeplay(gameId, score, timeMs) {
+function submitFreeplay(gameId, score, timeMs, clientStats) {
   try {
     if (!qfWallet || !qfWallet.isConnected()) return;
     fetch(_fpAPI + '/session/submit-freeplay', {
       method: 'POST', headers: qfWallet.authHeaders(),
-      body: JSON.stringify({ gameId: gameId, score: score, timeMs: timeMs })
+      body: JSON.stringify({ gameId: gameId, score: score, timeMs: timeMs, clientStats: clientStats || {} })
     }).catch(function() {});
   } catch (e) {}
 }

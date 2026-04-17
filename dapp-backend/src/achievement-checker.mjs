@@ -546,6 +546,11 @@ export function checkAchievements(wallet, context) {
       if (context.gameId === 'rps-vs-machine' && context.winStreak >= 10) {
         tryAward('unbeatable');
       }
+
+      // The Engineer: towers-of-hanoi solved on max difficulty (7 discs)
+      if (context.gameId === 'towers-of-hanoi' && context.solved === true && context.difficulty === 7) {
+        tryAward('the-engineer');
+      }
     } catch (e) {
       console.error('Free game achievement check error:', e.message);
     }
