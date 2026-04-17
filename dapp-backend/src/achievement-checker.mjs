@@ -7,6 +7,7 @@ import { awardAchievement, getWalletAchievements, getWalletStats, incrementWalle
 import { checkSunk } from './games/battleships.mjs';
 
 const ACHIEVEMENTS_ACTIVE = process.env.ACHIEVEMENTS_ACTIVE === 'true';
+const DEBUG = process.env.ACHIEVEMENT_DEBUG === 'true';
 const OWNER_WALLETS = (process.env.OWNER_WALLETS || '').split(',').map(function(w) { return w.trim().toLowerCase(); }).filter(Boolean);
 
 const MILESTONE_IDS = ['collector', 'devoted', 'obsessed', 'the-complete-player'];
@@ -69,7 +70,7 @@ export function checkShadowsAchievements(wallet, leagueId, position, settledAt) 
     var result = awardAchievement(wallet, achievementId);
     if (result.awarded) {
       awarded.push(achievementId);
-      console.log('Achievement awarded: ' + achievementId + ' to ' + wallet.slice(0, 8) + '...' + (result.pioneer ? ' (PIONEER)' : ''));
+      if (DEBUG) console.log('Achievement awarded: ' + achievementId + ' to ' + wallet.slice(0, 8) + '...' + (result.pioneer ? ' (PIONEER)' : ''));
     }
   }
 
@@ -119,7 +120,7 @@ export function checkContrarian(wallet, gameId) {
     var result = awardAchievement(wallet, achievementId);
     if (result.awarded) {
       awarded.push(achievementId);
-      console.log('Achievement awarded: ' + achievementId + ' to ' + wallet.slice(0, 8) + '...' + (result.pioneer ? ' (PIONEER)' : ''));
+      if (DEBUG) console.log('Achievement awarded: ' + achievementId + ' to ' + wallet.slice(0, 8) + '...' + (result.pioneer ? ' (PIONEER)' : ''));
     }
   }
 
@@ -166,7 +167,7 @@ export function checkAchievements(wallet, context) {
     const result = awardAchievement(wallet, achievementId);
     if (result.awarded) {
       awarded.push(achievementId);
-      console.log('Achievement awarded: ' + achievementId + ' to ' + wallet.slice(0, 8) + '...' + (result.pioneer ? ' (PIONEER)' : ''));
+      if (DEBUG) console.log('Achievement awarded: ' + achievementId + ' to ' + wallet.slice(0, 8) + '...' + (result.pioneer ? ' (PIONEER)' : ''));
     }
   }
 
@@ -683,9 +684,10 @@ export function checkAchievements(wallet, context) {
       tryAward('palindrome');
     }
   }
-  // TODO: lucky-number — freecell game #7777
-  // TODO: speedrun-to-zero — sudoku-duel score of exactly 0
-  // TODO: flag-everything — flag every cell in minesweeper
+  // speedrun-to-zero: sudoku-duel score of exactly 0
+  if (context.gameId === 'sudoku-duel' && context.score === 0) {
+    tryAward('speedrun-to-zero');
+  }
 
   // ── Time & Dedication achievements ────────────────────────────────
   const hour = new Date().getUTCHours();
@@ -693,11 +695,12 @@ export function checkAchievements(wallet, context) {
   if (hour >= 3 && hour < 5) {
     tryAward('night-owl');
   }
-  // TODO: weekend-warrior — play every Saturday for 4 consecutive weeks (use wallet_stats.saturday_streak)
-  // TODO: the-marathon — single session lasting over 2 hours
+  // the-marathon: single session lasting over 2 hours
+  if (context.timeMs >= 7200000) {
+    tryAward('the-marathon');
+  }
 
   // ── Community achievements ────────────────────────────────────────
-  // TODO: duel-master — create 10 duels that get accepted and completed
   // TODO: onlyfans-qf — manual award only (admin endpoint)
 
   // ── Meta achievements ─────────────────────────────────────────────
@@ -754,7 +757,7 @@ export function checkStreakAchievements(wallet) {
     var r = awardAchievement(wallet, id);
     if (r.awarded) {
       awarded.push(id);
-      console.log('Achievement awarded: ' + id + ' to ' + wallet.slice(0, 8) + '...' + (r.pioneer ? ' (PIONEER)' : ''));
+      if (DEBUG) console.log('Achievement awarded: ' + id + ' to ' + wallet.slice(0, 8) + '...' + (r.pioneer ? ' (PIONEER)' : ''));
     }
   }
 
@@ -782,7 +785,7 @@ export function checkStreakAchievements(wallet) {
 
   upsertWalletStats(wallet, { saturday_streak: streak, saturday_last_played: today });
 
-  if (streak >= 8) tryAward('weekend-warrior');
+  if (streak >= 4) tryAward('weekend-warrior');
 
   return awarded;
 }
@@ -800,7 +803,7 @@ export function checkLeagueRegular(wallet) {
     var r = awardAchievement(wallet, id);
     if (r.awarded) {
       awarded.push(id);
-      console.log('Achievement awarded: ' + id + ' to ' + wallet.slice(0, 8) + '...' + (r.pioneer ? ' (PIONEER)' : ''));
+      if (DEBUG) console.log('Achievement awarded: ' + id + ' to ' + wallet.slice(0, 8) + '...' + (r.pioneer ? ' (PIONEER)' : ''));
     }
   }
 
@@ -858,7 +861,7 @@ export function checkMonthlyAchievements(wallet) {
     var r = awardAchievement(wallet, id);
     if (r.awarded) {
       awarded.push(id);
-      console.log('Achievement awarded: ' + id + ' to ' + wallet.slice(0, 8) + '...' + (r.pioneer ? ' (PIONEER)' : ''));
+      if (DEBUG) console.log('Achievement awarded: ' + id + ' to ' + wallet.slice(0, 8) + '...' + (r.pioneer ? ' (PIONEER)' : ''));
     }
   }
 
@@ -905,7 +908,7 @@ export function checkLoyaltyAchievements(wallet) {
     var r = awardAchievement(wallet, id);
     if (r.awarded) {
       awarded.push(id);
-      console.log('Achievement awarded: ' + id + ' to ' + wallet.slice(0, 8) + '...' + (r.pioneer ? ' (PIONEER)' : ''));
+      if (DEBUG) console.log('Achievement awarded: ' + id + ' to ' + wallet.slice(0, 8) + '...' + (r.pioneer ? ' (PIONEER)' : ''));
     }
   }
 
@@ -950,7 +953,7 @@ export function checkNightOwlSubmission(wallet, submittedAt) {
     var r = awardAchievement(wallet, 'night-owl');
     if (r.awarded) {
       awarded.push('night-owl');
-      console.log('Achievement awarded: night-owl to ' + wallet.slice(0, 8) + '...' + (r.pioneer ? ' (PIONEER)' : ''));
+      if (DEBUG) console.log('Achievement awarded: night-owl to ' + wallet.slice(0, 8) + '...' + (r.pioneer ? ' (PIONEER)' : ''));
     }
   }
 
@@ -979,7 +982,7 @@ export function checkInsomniac(wallet, leagueId) {
     var r = awardAchievement(wallet, 'the-insomniac');
     if (r.awarded) {
       awarded.push('the-insomniac');
-      console.log('Achievement awarded: the-insomniac to ' + wallet.slice(0, 8) + '...' + (r.pioneer ? ' (PIONEER)' : ''));
+      if (DEBUG) console.log('Achievement awarded: the-insomniac to ' + wallet.slice(0, 8) + '...' + (r.pioneer ? ' (PIONEER)' : ''));
     }
   }
 
@@ -1001,7 +1004,7 @@ export function checkFreeCellLeague(wallet, leagueId) {
     var r = awardAchievement(wallet, id);
     if (r.awarded) {
       awarded.push(id);
-      console.log('Achievement awarded: ' + id + ' to ' + wallet.slice(0, 8) + '...' + (r.pioneer ? ' (PIONEER)' : ''));
+      if (DEBUG) console.log('Achievement awarded: ' + id + ' to ' + wallet.slice(0, 8) + '...' + (r.pioneer ? ' (PIONEER)' : ''));
     }
   }
 
@@ -1028,7 +1031,7 @@ export function checkKenKenLeague(wallet, leagueId) {
     var r = awardAchievement(wallet, id);
     if (r.awarded) {
       awarded.push(id);
-      console.log('Achievement awarded: ' + id + ' to ' + wallet.slice(0, 8) + '...' + (r.pioneer ? ' (PIONEER)' : ''));
+      if (DEBUG) console.log('Achievement awarded: ' + id + ' to ' + wallet.slice(0, 8) + '...' + (r.pioneer ? ' (PIONEER)' : ''));
     }
   }
 
@@ -1055,7 +1058,7 @@ export function checkNonogramLeague(wallet, leagueId, position) {
     var r = awardAchievement(wallet, id);
     if (r.awarded) {
       awarded.push(id);
-      console.log('Achievement awarded: ' + id + ' to ' + wallet.slice(0, 8) + '...' + (r.pioneer ? ' (PIONEER)' : ''));
+      if (DEBUG) console.log('Achievement awarded: ' + id + ' to ' + wallet.slice(0, 8) + '...' + (r.pioneer ? ' (PIONEER)' : ''));
     }
   }
 
@@ -1084,7 +1087,7 @@ export function checkKakuroLeague(wallet, leagueId) {
     var r = awardAchievement(wallet, id);
     if (r.awarded) {
       awarded.push(id);
-      console.log('Achievement awarded: ' + id + ' to ' + wallet.slice(0, 8) + '...' + (r.pioneer ? ' (PIONEER)' : ''));
+      if (DEBUG) console.log('Achievement awarded: ' + id + ' to ' + wallet.slice(0, 8) + '...' + (r.pioneer ? ' (PIONEER)' : ''));
     }
   }
 
@@ -1112,7 +1115,7 @@ export function checkMinesweeperFreePlay(wallet, difficulty, won) {
     var r = awardAchievement(wallet, id);
     if (r.awarded) {
       awarded.push(id);
-      console.log('Achievement awarded: ' + id + ' to ' + wallet.slice(0, 8) + '...' + (r.pioneer ? ' (PIONEER)' : ''));
+      if (DEBUG) console.log('Achievement awarded: ' + id + ' to ' + wallet.slice(0, 8) + '...' + (r.pioneer ? ' (PIONEER)' : ''));
     }
   }
 
@@ -1152,7 +1155,7 @@ export function checkFlagEverything(wallet, difficulty, flags) {
     var r = awardAchievement(wallet, 'flag-everything');
     if (r.awarded) {
       awarded.push('flag-everything');
-      console.log('Achievement awarded: flag-everything to ' + wallet.slice(0, 8) + '...' + (r.pioneer ? ' (PIONEER)' : ''));
+      if (DEBUG) console.log('Achievement awarded: flag-everything to ' + wallet.slice(0, 8) + '...' + (r.pioneer ? ' (PIONEER)' : ''));
     }
   }
 
@@ -1172,7 +1175,7 @@ export function checkBlindEye(wallet, hints) {
     var r = awardAchievement(wallet, 'blind-eye');
     if (r.awarded) {
       awarded.push('blind-eye');
-      console.log('Achievement awarded: blind-eye to ' + wallet.slice(0, 8) + '...' + (r.pioneer ? ' (PIONEER)' : ''));
+      if (DEBUG) console.log('Achievement awarded: blind-eye to ' + wallet.slice(0, 8) + '...' + (r.pioneer ? ' (PIONEER)' : ''));
     }
   }
 
@@ -1203,7 +1206,7 @@ export function checkSumOfAllFears(wallet, placements) {
     var r = awardAchievement(wallet, 'sum-of-all-fears');
     if (r.awarded) {
       awarded.push('sum-of-all-fears');
-      console.log('Achievement awarded: sum-of-all-fears to ' + wallet.slice(0, 8) + '...' + (r.pioneer ? ' (PIONEER)' : ''));
+      if (DEBUG) console.log('Achievement awarded: sum-of-all-fears to ' + wallet.slice(0, 8) + '...' + (r.pioneer ? ' (PIONEER)' : ''));
     }
   }
 
@@ -1219,7 +1222,7 @@ var FIBONACCI_SET = new Set([1,2,3,5,8,13,21,34,55,89,144,233,377,610,987,1597,2
 function tryAwardStandalone(wallet, id) {
   var r = awardAchievement(wallet, id);
   if (r.awarded) {
-    console.log('Achievement awarded: ' + id + ' to ' + wallet.slice(0, 8) + '...' + (r.pioneer ? ' (PIONEER)' : ''));
+    if (DEBUG) console.log('Achievement awarded: ' + id + ' to ' + wallet.slice(0, 8) + '...' + (r.pioneer ? ' (PIONEER)' : ''));
     return true;
   }
   return false;
@@ -1401,9 +1404,9 @@ export function checkMintMeta(wallet) {
   var db = getDb();
   var w = wallet.toLowerCase();
 
-  // pioneer-hunter: 5+ pioneer tags minted
+  // pioneer-hunter: 4+ pioneer tags minted
   var pioneers = db.prepare("SELECT COUNT(*) as c FROM achievement_eligibility WHERE wallet = ? AND is_pioneer = 1 AND minted_at IS NOT NULL").get(w);
-  if (pioneers && pioneers.c >= 5) {
+  if (pioneers && pioneers.c >= 4) {
     if (tryAwardStandalone(wallet, 'pioneer-hunter')) awarded.push('pioneer-hunter');
   }
 
@@ -1418,22 +1421,16 @@ export function checkMintMeta(wallet) {
 
 /**
  * Check duel-master on duel win.
- * Win against opponent who has at least 1 minted achievement.
+ * 10 completed duel wins regardless of opponent.
  */
-export function checkDuelMaster(wallet, opponentWallet) {
+export function checkDuelMaster(wallet) {
   if (!ACHIEVEMENTS_ACTIVE) return [];
-  if (!wallet || !opponentWallet) return [];
+  if (!wallet) return [];
 
   var awarded = [];
-  var db = getDb();
-
-  var oppAch = db.prepare("SELECT COUNT(*) as c FROM achievement_eligibility WHERE wallet = ? AND minted_at IS NOT NULL").get(opponentWallet.toLowerCase());
-  if (oppAch && oppAch.c >= 1) {
-    incrementWalletCounter(wallet, 'duel_master_count');
-    var stats = getWalletStats(wallet);
-    if (stats && stats.duel_master_count >= 10) {
-      if (tryAwardStandalone(wallet, 'duel-master')) awarded.push('duel-master');
-    }
+  var wins = getDuelWinCount(wallet);
+  if (wins >= 10) {
+    if (tryAwardStandalone(wallet, 'duel-master')) awarded.push('duel-master');
   }
 
   return awarded;
@@ -1532,14 +1529,14 @@ export function checkRegicideDetention(leaderboard) {
       var r = awardAchievement(w, 'regicide');
       if (r.awarded) {
         awarded.push('regicide:' + w.slice(0, 8));
-        console.log('Achievement awarded: regicide to ' + w.slice(0, 8) + '...' + (r.pioneer ? ' (PIONEER)' : ''));
+        if (DEBUG) console.log('Achievement awarded: regicide to ' + w.slice(0, 8) + '...' + (r.pioneer ? ' (PIONEER)' : ''));
       }
     } else if (j > ownerPosition) {
       // Finished below the owner — Detention
       var d = awardAchievement(w, 'detention');
       if (d.awarded) {
         awarded.push('detention:' + w.slice(0, 8));
-        console.log('Achievement awarded: detention to ' + w.slice(0, 8) + '...' + (d.pioneer ? ' (PIONEER)' : ''));
+        if (DEBUG) console.log('Achievement awarded: detention to ' + w.slice(0, 8) + '...' + (d.pioneer ? ' (PIONEER)' : ''));
       }
     }
   }

@@ -652,7 +652,7 @@ router.post('/duel/:code/submit', optionalWallet, (req, res) => {
       try { checkAchievements(winner, { type: 'duel_complete', gameId: duel.game_id, won: true, loserWallet: loser, winnerScore: winnerScore, loserScore: loserScore }); } catch (e) { /* achievement check must never block */ }
       try { checkAchievements(loser, { type: 'duel_complete', gameId: duel.game_id, won: false, winnerWallet: winner, winnerScore: winnerScore, loserScore: loserScore }); } catch (e) { /* achievement check must never block */ }
       try { checkContrarian(winner, duel.game_id); } catch (e) { /* achievement check must never block */ }
-      try { checkDuelMaster(winner, loser); } catch (e) { /* must never block */ }
+      try { checkDuelMaster(winner); } catch (e) { /* must never block */ }
     }
 
     return res.json({ status: 'completed', duel: final, settlement });

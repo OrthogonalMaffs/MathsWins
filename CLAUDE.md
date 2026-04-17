@@ -204,7 +204,7 @@ Split from MaffsGames in March 2025. MaffsGames = free schools games. MathsWins 
 - **Owner:** `0xB21039b9A7e360561d9AE7EE0A8B1b722f2057A3` (onlyfans.qf)
 - **Minter:** `0x26b4A4115D184837530a42B34B945D5d1d2aa67e` (escrow)
 - Soulbound ERC-721, mint(address, string tokenURI), same pattern as QFLeagueTrophy
-- Teaser page live at /qf-dapp/achievements/ — 161 names, all locked
+- Achievements page LIVE at /qf-dapp/achievements/ — ACHIEVEMENTS_ACTIVE=true
 - 32 categories: purity, volume, winning, shadows, duels, battleships, freecell, minesweeper, poker-patience, cribbage, golf, pyramid, kenken, nonogram, sudoku, comeback, per-game-volume, free-games, streaks, kakuro, time, seasonal, monthly, constants, squared-pi, loyalty, milestones, meta, absurd, founding, wooden-spoons, impossible
 - 5 mint tiers: Free (0 QF), Standard (100 QF), Premium (200 QF), Elite (500 QF), Manual reward
 - achievement_registry has both `tier` and `category` columns (tier for legacy compat, category for v4)
@@ -215,7 +215,9 @@ Split from MaffsGames in March 2025. MaffsGames = free schools games. MathsWins 
 - Batch 7 live (2026-04-12): 11 battleships + wolf-pack (mint-time super). Uses checkSunk() from battleships.mjs, fleet JSON from battleships_placements.
 - Batch 8 live (2026-04-12): 3 free game (century, explorer, personal-best) + free_game_completions table. Remaining 11 free game achievements need frontend stats in submit-freeplay payload.
 - speed-reader RETIRED (active=0) — 52dle only has 6 guesses
-- 155 of 161 conditions wired and live (2026-04-12). 6 deferred: the-novelist (no server Maffsy evaluator), all-wrong (per-cell data cleared), full-hints (variable max), boom (impossible by design), 2 non-existent variants
+- 157 of 161 conditions wired and live (2026-04-16). speedrun-to-zero + the-marathon added. 4 deferred: the-novelist (no server Maffsy evaluator), all-wrong (per-cell data cleared), full-hints (variable max), boom (impossible by design)
+- **Thresholds (corrected 2026-04-16):** weekend-warrior = 4 consecutive Saturdays, pioneer-hunter = 4 pioneers minted, duel-master = 10 completed duel wins (any opponent)
+- **DEBUG flag:** `ACHIEVEMENT_DEBUG=true` env var to enable achievement award console.log (off by default in production). The fifty-two-thousand airdrop log remains always-on.
 - 99 bespoke images uploaded to Pinata, 114 ipfs-mapping entries (2026-04-14)
 - Complete sets: seasonal (10/10), constants (5/5), battleships (11/11), monthly (4/4), comeback (2/2)
 - Admin endpoints live: /admin/schema (inspect live DB), /admin/ledger (escrow accounting). Auth via x-admin-key header. See ecosystem.config.cjs for ADMIN_SECRET.
