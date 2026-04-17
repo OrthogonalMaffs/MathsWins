@@ -2398,6 +2398,7 @@ router.post('/global-leaderboard/enter', optionalWallet, async (req, res) => {
   if (!gameId || score === undefined || !periodType || !sessionId) {
     return res.status(400).json({ error: 'gameId, score, periodType, and sessionId required' });
   }
+  if (!txHash) return res.status(400).json({ error: 'txHash required — pay 50 QF to escrow from your wallet' });
   if (['daily', 'weekly', 'monthly'].indexOf(periodType) === -1) {
     return res.status(400).json({ error: 'Invalid periodType' });
   }
@@ -2411,6 +2412,9 @@ router.post('/global-leaderboard/enter', optionalWallet, async (req, res) => {
   if (gs.flagged) return res.status(400).json({ error: 'Session flagged — not eligible' });
 
   var suspicious = 0;
+
+  // Log user-paid inbound (trust-the-hash, mirrors mint flow)
+  logIncoming('leaderboard-fee', 50, req.wallet, txHash, 'leaderboard', gameId + ':' + periodType + ':' + periodKey);
 
   // Atomic burn/team split via QFSettlement contract (5% burn, 95% team)
   try {
