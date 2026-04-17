@@ -674,20 +674,17 @@ export function checkAchievements(wallet, context) {
 
   // ── Absurd achievements ───────────────────────────────────────────
   if (context.score !== undefined) {
-    // the-mathematician: score is exactly 3141
-    if (context.score === 3141) {
-      tryAward('the-mathematician');
-    }
     // palindrome: score reads the same forwards and backwards
     const scoreStr = String(context.score);
     if (scoreStr.length > 1 && scoreStr === scoreStr.split('').reverse().join('')) {
       tryAward('palindrome');
     }
   }
+  // TODO: speedrun-to-zero not in registry, spec session needed to determine intent and add registry row. Commented 2026-04-17.
   // speedrun-to-zero: sudoku-duel score of exactly 0
-  if (context.gameId === 'sudoku-duel' && context.score === 0) {
-    tryAward('speedrun-to-zero');
-  }
+  // if (context.gameId === 'sudoku-duel' && context.score === 0) {
+  //   tryAward('speedrun-to-zero');
+  // }
 
   // ── Time & Dedication achievements ────────────────────────────────
   const hour = new Date().getUTCHours();

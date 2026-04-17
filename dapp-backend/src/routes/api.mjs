@@ -310,7 +310,7 @@ router.post('/session/evaluate', (req, res) => {
 router.post('/session/submit-freeplay', optionalWallet, (req, res) => {
   try {
     if (!req.wallet) return res.status(401).json({ error: 'Wallet required' });
-    var { gameId, score, timeMs, difficulty } = req.body;
+    var { gameId, score, timeMs, difficulty, clientStats = {} } = req.body;
     if (!gameId) return res.status(400).json({ error: 'gameId required' });
     if (score === undefined || score === null) return res.status(400).json({ error: 'score required' });
 
@@ -353,16 +353,20 @@ router.post('/session/submit-freeplay', optionalWallet, (req, res) => {
         score: score,
         timeMs: timeMs,
         won: score > 0,
-        mistakes: 0,
-        hints: 0,
-        undoCount: 0,
-        moveCount: 0,
-        finalScores: null,
-        openingCards: null,
-        remaining: null,
-        cleared: null,
-        maxHandScore: 0,
-        maxHandBreakdown: null,
+        mistakes: Number(clientStats.mistakes) || 0,
+        hints: Number(clientStats.hints) || 0,
+        undoCount: Number(clientStats.undoCount) || 0,
+        moveCount: Number(clientStats.moveCount) || 0,
+        finalScores: clientStats.finalScores ?? null,
+        openingCards: clientStats.openingCards ?? null,
+        remaining: clientStats.remaining ?? null,
+        cleared: clientStats.cleared ?? null,
+        maxHandScore: Number(clientStats.maxHandScore) || 0,
+        maxHandBreakdown: clientStats.maxHandBreakdown ?? null,
+        dealNumber: clientStats.dealNumber ?? null,
+        flags: Number(clientStats.flags) || 0,
+        freeCellsUsed: Number(clientStats.freeCellsUsed) || 0,
+        helperUsed: !!clientStats.helperUsed,
         freePlay: true,
         pbBeaten: pbBeaten,
       });
@@ -653,6 +657,9 @@ router.post('/duel/:code/submit', optionalWallet, (req, res) => {
       try { checkAchievements(loser, { type: 'duel_complete', gameId: duel.game_id, won: false, winnerWallet: winner, winnerScore: winnerScore, loserScore: loserScore }); } catch (e) { /* achievement check must never block */ }
       try { checkContrarian(winner, duel.game_id); } catch (e) { /* achievement check must never block */ }
       try { checkDuelMaster(winner); } catch (e) { /* must never block */ }
+      if (winnerScore === 0) {
+        try { awardAchievement(winner, 'zero-to-hero'); } catch (e) { /* must never block */ }
+      }
     }
 
     return res.json({ status: 'completed', duel: final, settlement });
@@ -2237,6 +2244,28 @@ router.post('/achievement/mint', optionalWallet, async (req, res) => {
       ).get(req.wallet.toLowerCase());
       if (mintedWolf && mintedWolf.count === 3) {
         awardAchievement(req.wallet, 'the-wolf-pack');
+      }
+    }
+
+    // Check Grandmaster after minting the-completionist/the-contrarian/shadow-legend
+    var GRANDMASTER_IDS = ['the-completionist','the-contrarian','shadow-legend'];
+    if (GRANDMASTER_IDS.indexOf(achievement_id) !== -1) {
+      var mintedGM = db.prepare(
+        "SELECT COUNT(*) as count FROM achievement_eligibility WHERE wallet = ? AND achievement_id IN ('the-completionist','the-contrarian','shadow-legend') AND minted_at IS NOT NULL"
+      ).get(req.wallet.toLowerCase());
+      if (mintedGM && mintedGM.count === 3) {
+        awardAchievement(req.wallet, 'the-grandmaster');
+      }
+    }
+
+    // Check Mathematician's Collection after minting any of pi/euler/golden-ratio/root-two/root-three
+    var CONSTANTS_IDS = ['pi','euler','golden-ratio','root-two','root-three'];
+    if (CONSTANTS_IDS.indexOf(achievement_id) !== -1) {
+      var mintedConstants = db.prepare(
+        "SELECT COUNT(*) as count FROM achievement_eligibility WHERE wallet = ? AND achievement_id IN ('pi','euler','golden-ratio','root-two','root-three') AND minted_at IS NOT NULL"
+      ).get(req.wallet.toLowerCase());
+      if (mintedConstants && mintedConstants.count === 5) {
+        awardAchievement(req.wallet, 'the-mathematicians-collection');
       }
     }
 
