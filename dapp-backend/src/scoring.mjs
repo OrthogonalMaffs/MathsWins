@@ -253,11 +253,11 @@ export function startFreeSession(gameId, weekId, opts) {
     session.hintsUsed = 0;
     session.dealNumber = sessionQuestions[0].seed || null;
 
-    if (contextType === 'league') {
-      const actualSeed = sessionQuestions[0].seed || seed;
-      createGameState(sessionId, guestWallet, gameId, contextType, contextId, puzzleIndex, actualSeed, now, true, difficulty);
-      session._persisted = true;
-    }
+    // Persist continuous sessions (free-play and league alike) so the
+    // sessionId can be validated by /global-leaderboard/enter on completion.
+    const actualSeed = sessionQuestions[0].seed || seed;
+    createGameState(sessionId, guestWallet, gameId, contextType, contextId, puzzleIndex, actualSeed, now, true, difficulty);
+    session._persisted = true;
   }
 
   activeSessions.set(sessionId, session);
@@ -577,6 +577,7 @@ export function evaluate(sessionToken, answer) {
       persistSession(payload.sid, session);
     }
 
+    response.sessionId = payload.sid;
     return response;
   }
 
@@ -637,6 +638,7 @@ export function evaluate(sessionToken, answer) {
       : defaultStripAnswer(nextQ, session.currentQ);
   }
 
+  response.sessionId = payload.sid;
   return response;
 }
 
