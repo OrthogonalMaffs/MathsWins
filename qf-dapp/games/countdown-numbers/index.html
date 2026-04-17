@@ -119,6 +119,7 @@ footer a{color:var(--muted);text-decoration:none}footer a:hover{color:var(--silv
 <div id="qf-nav"></div>
 <script src="/qf-dapp/games/qf-wallet.js"></script>
 <script src="/qf-dapp/qf-nav.js"></script>
+<script src="/qf-dapp/games/qf-leaderboard-prompt.js"></script>
 
 <div class="game-container">
 
@@ -535,6 +536,11 @@ footer a{color:var(--muted);text-decoration:none}footer a:hover{color:var(--silv
       try {
         duelApi('/duel/' + window.duelCode + '/submit', { score: G.totalScore, timeMs: 0, mistakes: G.totalQuestions - G.roundsExact, hints: 0 });
       } catch (e) { /* ignore */ }
+    }
+
+    // Free-play only: offer global-leaderboard submission (skipped in league/duel)
+    if (!leagueMode && !window.duelMode && window.promptLeaderboardSubmit) {
+      window.promptLeaderboardSubmit({ gameId: 'countdown-numbers', score: G.totalScore || 0, timeMs: 0, sessionId: G.sessionToken });
     }
 
     // Hide game screen content behind modal

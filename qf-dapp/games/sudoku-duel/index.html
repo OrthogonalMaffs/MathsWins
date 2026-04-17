@@ -240,6 +240,7 @@ body{background:var(--bg);color:var(--text);font-family:'Inter',sans-serif;min-h
 <div id="qf-nav"></div>
 <script src="/qf-dapp/games/qf-wallet.js"></script>
 <script src="/qf-dapp/qf-nav.js"></script>
+<script src="/qf-dapp/games/qf-leaderboard-prompt.js"></script>
 
 <div class="page">
   <div class="game-header">
@@ -1250,6 +1251,11 @@ var G = (function() {
           var promoResult = await api('/promo/' + encodeURIComponent(promoCode) + '/submit', { score: finalScore });
           showPromoResult(promoResult, secs, finalScore);
           return;
+        }
+
+        // Free-play only: offer global-leaderboard submission (skipped in league/duel)
+        if (!leagueMode && !duelMode && window.promptLeaderboardSubmit) {
+          window.promptLeaderboardSubmit({ gameId: 'sudoku-duel', score: finalScore, timeMs: timeMs, sessionId: sessionToken });
         }
 
         showModal(true, secs, finalScore);

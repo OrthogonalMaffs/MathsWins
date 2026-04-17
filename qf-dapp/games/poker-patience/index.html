@@ -176,6 +176,7 @@ body{background:var(--bg);color:var(--text);font-family:'Inter',sans-serif;min-h
 <div id="qf-nav"></div>
 <script src="/qf-dapp/games/qf-wallet.js"></script>
 <script src="/qf-dapp/qf-nav.js"></script>
+<script src="/qf-dapp/games/qf-leaderboard-prompt.js"></script>
 <script src="../qf-cards.js"></script>
 
 <div class="page">
@@ -535,6 +536,11 @@ var G = (function() {
 
     if (duelMode && duelCode) {
       submitDuelScore();
+    }
+
+    // Free-play only: offer global-leaderboard submission (skipped in duel)
+    if (!duelMode && window.promptLeaderboardSubmit) {
+      window.promptLeaderboardSubmit({ gameId: 'poker-patience', score: totalScore || 0, timeMs: 0, sessionId: sessionToken });
     }
   }
 

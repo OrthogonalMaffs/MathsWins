@@ -119,6 +119,7 @@ body{background:var(--bg);color:var(--text);font-family:'Inter',sans-serif;min-h
 <div id="qf-nav"></div>
 <script src="/qf-dapp/games/qf-wallet.js"></script>
 <script src="/qf-dapp/qf-nav.js"></script>
+<script src="/qf-dapp/games/qf-leaderboard-prompt.js"></script>
 <script src="../qf-cards.js"></script>
 
 <div class="page">
@@ -439,7 +440,17 @@ var G = (function() {
     }).then(function(submitData) {
       if (duelMode && duelCode) submitDuelScore();
       if (!duelMode) {
-        try { api('/session/submit-freeplay', { gameId: 'pyramid', score: submitData.points || 0, timeMs: submitData.time ? submitData.time * 1000 : 0 }); } catch (e) { /* ignore */ }
+        var _score = submitData.points || 0;
+        var _timeMs = submitData.time ? submitData.time * 1000 : 0;
+        try {
+          api('/session/submit-freeplay', { gameId: 'pyramid', score: _score, timeMs: _timeMs })
+            .then(function(data) {
+              if (data && data.sessionId && window.promptLeaderboardSubmit) {
+                window.promptLeaderboardSubmit({ gameId: 'pyramid', score: _score, timeMs: _timeMs, sessionId: data.sessionId });
+              }
+            })
+            .catch(function() {});
+        } catch (e) { /* ignore */ }
       }
     });
   }

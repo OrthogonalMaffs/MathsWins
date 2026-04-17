@@ -212,6 +212,7 @@ body{background:var(--bg);color:var(--text);font-family:'Inter',sans-serif;min-h
 <div id="qf-nav"></div>
 <script src="/qf-dapp/games/qf-wallet.js"></script>
 <script src="/qf-dapp/qf-nav.js"></script>
+<script src="/qf-dapp/games/qf-leaderboard-prompt.js"></script>
 
 
 <div class="page" id="page-content">
@@ -1237,9 +1238,17 @@ var G = (function() {
       try { duelApi('/duel/' + duelCode + '/submit', { score: points || 0, timeMs: finalTimeMs, mistakes: 0, hints: 0 }); } catch (e) { /* ignore */ }
     }
 
-    // Free play score submission (personal bests + achievements)
+    // Free play score submission (personal bests + achievements) + leaderboard prompt
     if (!leagueMode && !duelMode) {
-      try { api('/session/submit-freeplay', { gameId: 'freecell', score: points, timeMs: finalTimeMs }); } catch (e) { /* ignore */ }
+      try {
+        api('/session/submit-freeplay', { gameId: 'freecell', score: points, timeMs: finalTimeMs })
+          .then(function(data) {
+            if (data && data.sessionId && window.promptLeaderboardSubmit) {
+              window.promptLeaderboardSubmit({ gameId: 'freecell', score: points, timeMs: finalTimeMs, sessionId: data.sessionId });
+            }
+          })
+          .catch(function() {});
+      } catch (e) { /* ignore */ }
     }
 
     showModal(true, points, finalTimeMs);

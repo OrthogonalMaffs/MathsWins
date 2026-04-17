@@ -145,6 +145,7 @@ body{background:var(--bg);color:var(--text);font-family:'Inter',sans-serif;min-h
 <div id="qf-nav"></div>
 <script src="/qf-dapp/games/qf-wallet.js"></script>
 <script src="/qf-dapp/qf-nav.js"></script>
+<script src="/qf-dapp/games/qf-leaderboard-prompt.js"></script>
 <div class="page">
   <div class="game-header">
     <p class="game-kicker">Arithmetic Logic</p>
@@ -777,6 +778,11 @@ var G = (function() {
       try {
         duelApi('/duel/' + window.duelCode + '/submit', { score: score || 0, timeMs: getSecs() * 1000, mistakes: submitFailures, hints: hintsUsed });
       } catch (e) { /* ignore */ }
+    }
+
+    // Free-play only: offer global-leaderboard submission (skipped in league/duel)
+    if (won && !leagueMode && !window.duelMode && window.promptLeaderboardSubmit) {
+      window.promptLeaderboardSubmit({ gameId: 'kenken', score: score || 0, timeMs: getSecs() * 1000, sessionId: sessionToken });
     }
 
     document.getElementById('modal').classList.remove('hidden');

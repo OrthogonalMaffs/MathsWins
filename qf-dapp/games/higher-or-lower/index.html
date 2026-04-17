@@ -129,6 +129,7 @@ body::before{content:'';position:fixed;inset:0;background-image:linear-gradient(
 <div id="qf-nav"></div>
 <script src="/qf-dapp/games/qf-wallet.js"></script>
 <script src="/qf-dapp/qf-nav.js"></script>
+<script src="/qf-dapp/games/qf-leaderboard-prompt.js"></script>
 <div class="page">
   <div class="game-header">
     <p class="game-kicker">Maths · Number Sense</p>
@@ -399,6 +400,10 @@ function submitFreeplay(gameId, score, timeMs) {
     fetch(_fpAPI + '/session/submit-freeplay', {
       method: 'POST', headers: qfWallet.authHeaders(),
       body: JSON.stringify({ gameId: gameId, score: score, timeMs: timeMs })
+    }).then(function(r) { return r.json(); }).then(function(data) {
+      if (data && data.sessionId && window.promptLeaderboardSubmit) {
+        window.promptLeaderboardSubmit({ gameId: gameId, score: score, timeMs: timeMs, sessionId: data.sessionId });
+      }
     }).catch(function() {});
   } catch (e) {}
 }
