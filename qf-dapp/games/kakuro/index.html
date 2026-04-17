@@ -900,7 +900,7 @@ var G = (function() {
         done = true;
         clearInterval(timerInterval);
         await playCompletionWave();
-        showModal(true, data.points);
+        showModal(true, data.points, data.sessionId);
       } else {
         mistakes++;
         if (leagueMode) document.getElementById('mistake-dots').style.display = 'flex';
@@ -1012,7 +1012,7 @@ var G = (function() {
     el.textContent = t;
     el.className = 'msg' + (ok ? ' ok' : '');
   }
-  async function showModal(won, score) {
+  async function showModal(won, score, sessionId) {
     if (leagueMode && leagueId) {
       try {
         var lh = { 'Content-Type': 'application/json' };
@@ -1033,8 +1033,8 @@ var G = (function() {
     }
 
     // Free-play only: offer global-leaderboard submission (skipped in league/duel)
-    if (won && !leagueMode && !window.duelMode && window.promptLeaderboardSubmit) {
-      window.promptLeaderboardSubmit({ gameId: 'kakuro', score: score || 0, timeMs: getSecs() * 1000, sessionId: sessionToken });
+    if (won && !leagueMode && !window.duelMode && window.promptLeaderboardSubmit && sessionId) {
+      window.promptLeaderboardSubmit({ gameId: 'kakuro', score: score || 0, timeMs: getSecs() * 1000, sessionId: sessionId });
     }
 
     document.getElementById('modal').classList.remove('hidden');

@@ -735,7 +735,7 @@ var G = (function() {
         done = true;
         clearInterval(timerInterval);
         await playCompletionWave();
-        showModal(true, data.points, data.letterName);
+        showModal(true, data.points, data.letterName, data.sessionId);
       } else if (data.failedOut) {
         done = true;
         clearInterval(timerInterval);
@@ -798,7 +798,7 @@ var G = (function() {
   });
 
   // ── Modal ────────────────────────────────────────────────────────
-  async function showModal(won, score, letterName) {
+  async function showModal(won, score, letterName, sessionId) {
     if (leagueMode && leagueId) {
       try {
         var lh = { 'Content-Type': 'application/json' };
@@ -819,8 +819,8 @@ var G = (function() {
     }
 
     // Free-play only: offer global-leaderboard submission (skipped in league/duel)
-    if (won && !leagueMode && !window.duelMode && window.promptLeaderboardSubmit) {
-      window.promptLeaderboardSubmit({ gameId: 'nonogram', score: score || 0, timeMs: getSecs() * 1000, sessionId: sessionToken });
+    if (won && !leagueMode && !window.duelMode && window.promptLeaderboardSubmit && sessionId) {
+      window.promptLeaderboardSubmit({ gameId: 'nonogram', score: score || 0, timeMs: getSecs() * 1000, sessionId: sessionId });
     }
 
     document.getElementById('modal').classList.remove('hidden');

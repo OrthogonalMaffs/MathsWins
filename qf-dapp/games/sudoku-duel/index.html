@@ -1254,8 +1254,8 @@ var G = (function() {
         }
 
         // Free-play only: offer global-leaderboard submission (skipped in league/duel)
-        if (!leagueMode && !duelMode && window.promptLeaderboardSubmit) {
-          window.promptLeaderboardSubmit({ gameId: 'sudoku-duel', score: finalScore, timeMs: timeMs, sessionId: sessionToken });
+        if (!leagueMode && !duelMode && window.promptLeaderboardSubmit && data.sessionId) {
+          window.promptLeaderboardSubmit({ gameId: 'sudoku-duel', score: finalScore, timeMs: timeMs, sessionId: data.sessionId });
         }
 
         showModal(true, secs, finalScore);

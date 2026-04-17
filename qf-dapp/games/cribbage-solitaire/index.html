@@ -342,6 +342,7 @@ var G = (function() {
   var totalScore = 0;
   var handScores = []; // { score, breakdown } per hand
   var currentQuestion = null;
+  var completedSessionId = null;
 
   // Duel state
   var duelMode = false;
@@ -475,8 +476,8 @@ var G = (function() {
     }
 
     // Free-play only: offer global-leaderboard submission (skipped in league/duel)
-    if (!leagueMode && !duelMode && window.promptLeaderboardSubmit) {
-      window.promptLeaderboardSubmit({ gameId: 'cribbage-solitaire', score: totalScore || 0, timeMs: 0, sessionId: sessionToken });
+    if (!leagueMode && !duelMode && window.promptLeaderboardSubmit && completedSessionId) {
+      window.promptLeaderboardSubmit({ gameId: 'cribbage-solitaire', score: totalScore || 0, timeMs: 0, sessionId: completedSessionId });
     }
   }
 
@@ -548,6 +549,7 @@ var G = (function() {
 
       // Check if finished
       if (data.finished) {
+        completedSessionId = data.sessionId || null;
         document.getElementById('nextBtn').textContent = 'See Final Score';
       }
 

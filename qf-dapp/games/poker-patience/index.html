@@ -501,7 +501,7 @@ var G = (function() {
         });
 
         totalScore = (submitData.finalScore !== undefined) ? submitData.finalScore : totalScore;
-        showFinalScore(data.finalScores);
+        showFinalScore(data.finalScores, submitData.sessionId);
       } else {
         // Show next card
         currentCard = data.nextCard;
@@ -516,7 +516,7 @@ var G = (function() {
   }
 
   // ── Final score screen ───────────────────────────────────────────────
-  function showFinalScore(finalScores) {
+  function showFinalScore(finalScores, sessionId) {
     document.getElementById('gameScreen').style.display = 'none';
     document.getElementById('finalScreen').style.display = 'block';
 
@@ -539,8 +539,8 @@ var G = (function() {
     }
 
     // Free-play only: offer global-leaderboard submission (skipped in duel)
-    if (!duelMode && window.promptLeaderboardSubmit) {
-      window.promptLeaderboardSubmit({ gameId: 'poker-patience', score: totalScore || 0, timeMs: 0, sessionId: sessionToken });
+    if (!duelMode && window.promptLeaderboardSubmit && sessionId) {
+      window.promptLeaderboardSubmit({ gameId: 'poker-patience', score: totalScore || 0, timeMs: 0, sessionId: sessionId });
     }
   }
 
