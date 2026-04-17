@@ -16,7 +16,7 @@ import { doSettleLeague, checkEarlySettlement, recoverStuckLeagues, mintCommemor
 import { checkAchievements, checkContrarian, checkStreakAchievements, checkLeagueRegular, checkMonthlyAchievements, trackSpend, checkNightOwlSubmission, checkMinesweeperFreePlay, checkFlagEverything, checkBlindEye, checkSumOfAllFears, checkTheGrinder, checkMintMeta, checkDuelMaster, checkFlaglessAndWrong, checkMidnight, checkFibonacci, checkWrongAnswerStreak } from '../achievement-checker.mjs';
 import { sendQF, settleDuel, settleDuelDraw, refundDuel, getEscrowAddress, getSettlementContract, logIncoming, logSplitFromReceipt, BURN_ADDRESS, TEAM_WALLET } from '../escrow.mjs';
 import { createBattleshipsGame, getBattleshipsGameByCode, getBattleshipsGameById, updateBattleshipsGameStatus, saveBattleshipsPlacement, getBattleshipsPlacement, getBattleshipsPlacements, addBattleshipsRound, getBattleshipsRounds, getBattleshipsRecord, updateBattleshipsRecord, getActiveBattleshipsGames, getBattleshipsGamesByWallet, getActiveBattleshipsForWallet } from '../db/index.mjs';
-import { getAchievementRegistry, getAchievement, awardAchievement, getWalletAchievements, getAllAchievements, getGlobalRecord, getPersonalBests, getPersonalBest, getLeagueBests, getWalletStats, getWalletLeagueHistory, getWalletTrophies, getGameStateForLeaguePuzzle, completeGameState, getFlaggedSessions, getGlobalLeaderboard, getGlobalLeaderboardEntry, addGlobalLeaderboardEntry, getWalletLeaderboardPositions, getGameState, getGame, upsertPersonalBest, incrementPbBeatenCount, retireAchievement, recordMaffsyResult, getMaffsyStats } from '../db/index.mjs';
+import { getAchievementRegistry, getAchievement, awardAchievement, getWalletAchievements, getAllAchievements, getGlobalRecord, getPersonalBests, getPersonalBest, getLeagueBests, getWalletStats, getWalletLeagueHistory, getWalletTrophies, getGameStateForLeaguePuzzle, completeGameState, createGameState, getFlaggedSessions, getGlobalLeaderboard, getGlobalLeaderboardEntry, addGlobalLeaderboardEntry, getWalletLeaderboardPositions, getGameState, getGame, upsertPersonalBest, incrementPbBeatenCount, retireAchievement, recordMaffsyResult, getMaffsyStats } from '../db/index.mjs';
 import { analyseInputPattern } from '../scoring.mjs';
 import { validateFleet, calculateRange, checkHit, checkSunk, checkWin, getGameState as getBattleshipsState, cpuPlaceFleet, cpuShootRecruit, cpuShootOfficer, cpuShootAdmiral, pickSurvivingShip, FLEET } from '../games/battleships.mjs';
 
@@ -352,6 +352,18 @@ router.post('/session/submit-freeplay', optionalWallet, (req, res) => {
     timeMs = Number(timeMs) || 0;
     var diff = difficulty || 'default';
 
+    // Persist a completed active_game_state row so this session can be passed
+    // to /global-leaderboard/enter (which validates the sessionId via getGameState).
+    // Mirrors the evaluate path's (create → complete) sequence.
+    var sessionId = 'sess_free_' + crypto.randomUUID();
+    var nowMs = Date.now();
+    try {
+      createGameState(sessionId, req.wallet, gameId, 'free', null, null, null, nowMs, 1, diff);
+      completeGameState(sessionId, 'completed', score, 0);
+    } catch (e) {
+      return res.status(500).json({ error: 'Session persistence failed: ' + e.message });
+    }
+
     // Check if this beats existing PB (before upsert overwrites it)
     var pbBeaten = false;
     try {
@@ -415,7 +427,7 @@ router.post('/session/submit-freeplay', optionalWallet, (req, res) => {
     try { checkMidnight(req.wallet); } catch (e) { /* must never block */ }
     try { checkFibonacci(req.wallet, score); } catch (e) { /* must never block */ }
 
-    res.json({ success: true, achievements: awarded });
+    res.json({ success: true, achievements: awarded, sessionId: sessionId });
   } catch (e) {
     res.status(400).json({ error: e.message });
   }
