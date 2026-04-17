@@ -222,6 +222,7 @@ const LOSES_TO = {rock:'paper',paper:'scissors',scissors:'rock'};
 // Picks whichever model has more data, falls back to random.
 let history = []; // player move history
 let wins=0, losses=0, draws=0;
+let winStreak=(function(){try{return parseInt(localStorage.getItem('qf_rps_winstreak'),10)||0;}catch(e){return 0;}})();
 
 const freq1 = {}; // {move: {rock:0, paper:0, scissors:0}}
 const freq2 = {}; // {move+move: {rock:0, paper:0, scissors:0}}
@@ -291,9 +292,10 @@ function play(playerMove){
 
   // Resolve
   let outcome;
-  if(BEATS[playerMove]===machineMove) { outcome='win'; wins++; }
-  else if(BEATS[machineMove]===playerMove) { outcome='lose'; losses++; }
-  else { outcome='draw'; draws++; }
+  if(BEATS[playerMove]===machineMove) { outcome='win'; wins++; winStreak++; }
+  else if(BEATS[machineMove]===playerMove) { outcome='lose'; losses++; winStreak=0; }
+  else { outcome='draw'; draws++; winStreak=0; }
+  try { localStorage.setItem('qf_rps_winstreak', String(winStreak)); } catch(e) {}
 
   // Display
   document.getElementById('player-move').textContent = EMOJI[playerMove];
@@ -337,7 +339,7 @@ function endGame(){
   const total=wins+losses+draws;
   if(total<20){alert('Play at least 20 rounds to submit a score.');return;}
   const wr=Math.round(wins/total*100);
-  submitFreeplay('rps-vs-machine', wr, 0);
+  submitFreeplay('rps-vs-machine', wr, 0, { winStreak: winStreak });
   document.getElementById('modal').classList.remove('hidden');
   const v=wr>=60?'Unpredictable.':wr>=50?'Competitive.':wr>=40?'Readable.':'Transparent.';
   document.getElementById('modal-result').textContent=v;
@@ -394,12 +396,12 @@ function submitToLB(){
 renderLB('');
 var _fpAPI = 'https://dapp-api.mathswins.co.uk/api/dapp';
 if (location.hostname === 'localhost' || location.hostname === '127.0.0.1') _fpAPI = 'http://127.0.0.1:3860/api/dapp';
-function submitFreeplay(gameId, score, timeMs) {
+function submitFreeplay(gameId, score, timeMs, clientStats) {
   try {
     if (!qfWallet || !qfWallet.isConnected()) return;
     fetch(_fpAPI + '/session/submit-freeplay', {
       method: 'POST', headers: qfWallet.authHeaders(),
-      body: JSON.stringify({ gameId: gameId, score: score, timeMs: timeMs })
+      body: JSON.stringify({ gameId: gameId, score: score, timeMs: timeMs, clientStats: clientStats || {} })
     }).catch(function() {});
   } catch (e) {}
 }

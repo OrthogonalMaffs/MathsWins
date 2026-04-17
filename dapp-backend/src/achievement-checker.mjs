@@ -536,6 +536,16 @@ export function checkAchievements(wallet, context) {
       if (context.gameId === 'estimation-engine' && context.totalQuestions > 0 && context.exactHits === context.totalQuestions) {
         tryAward('dead-reckoning');
       }
+
+      // Next In Line: sequence-solver with 10+ consecutive correct sequences (cross-session)
+      if (context.gameId === 'sequence-solver' && context.consecutiveCorrect >= 10) {
+        tryAward('next-in-line');
+      }
+
+      // Unbeatable: rps-vs-machine with 10+ consecutive round wins (cross-session)
+      if (context.gameId === 'rps-vs-machine' && context.winStreak >= 10) {
+        tryAward('unbeatable');
+      }
     } catch (e) {
       console.error('Free game achievement check error:', e.message);
     }
