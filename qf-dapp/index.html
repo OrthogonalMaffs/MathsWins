@@ -198,6 +198,15 @@ footer a:hover{color:var(--silver-bright)}
   .code-banner{flex-direction:column;text-align:center}
   .code-entry{justify-content:center}
 }
+/* Battleships move notification popup */
+.bs-notify{position:fixed;top:1rem;right:1rem;z-index:600;background:#0e1013;border:1px solid rgba(184,188,198,0.2);border-left:3px solid #d4a847;border-radius:10px;padding:1rem 1.2rem;max-width:340px;width:90%;box-shadow:0 4px 20px rgba(0,0,0,0.5);animation:bs-notify-in .3s ease-out}
+.bs-notify-urgent{border-left-color:#ef5350}
+.bs-notify h4{font-family:'Playfair Display','Bebas Neue',serif;font-size:.95rem;color:#e8eaf0;margin:0 0 .4rem}
+.bs-notify p{font-family:'JetBrains Mono','DM Mono',monospace;font-size:.65rem;color:#8a8e96;margin:0 0 .6rem;line-height:1.4}
+.bs-notify .bs-notify-cta{display:inline-block;font-family:'JetBrains Mono',monospace;font-size:.6rem;color:#0e1117;background:#d4a847;border:none;border-radius:5px;padding:.4rem .8rem;cursor:pointer;text-decoration:none}
+.bs-notify .bs-notify-close{position:absolute;top:.4rem;right:.6rem;background:none;border:none;color:#4a4e5a;font-size:.9rem;cursor:pointer;padding:.2rem}
+.bs-notify .bs-notify-more{font-family:'JetBrains Mono',monospace;font-size:.55rem;color:#4a4e5a;margin-top:.3rem}
+@keyframes bs-notify-in{from{opacity:0;transform:translateX(20px)}to{opacity:1;transform:translateX(0)}}
 </style>
 </head>
 <body>
@@ -596,6 +605,141 @@ function escHtml(str) {
 renderDuelGames();
 renderFreeGames();
 lbInit();
+
+// ── Battleships move notification (hub-level) ─────────────────────────────
+(function() {
+  var BS_API = (location.hostname === 'localhost' || location.hostname === '127.0.0.1')
+    ? 'http://127.0.0.1:3860/api/dapp' : 'https://dapp-api.mathswins.co.uk/api/dapp';
+
+  var THRESHOLDS = [
+    { key: 'any', secsRemaining: Infinity, heading: 'Admiral, you\'re needed.', urgent: false },
+    { key: '12h', secsRemaining: 43200, heading: 'Admiral, you\'re needed.', urgent: false },
+    { key: '4h', secsRemaining: 14400, heading: 'Admiral, time is short.', urgent: false },
+    { key: '1h', secsRemaining: 3600, heading: 'Admiral, this is urgent.', urgent: true }
+  ];
+
+  function getDismissed() {
+    try { return JSON.parse(sessionStorage.getItem('bs_notify_dismissed') || '{}'); } catch (e) { return {}; }
+  }
+  function setDismissed(code, key) {
+    var d = getDismissed();
+    if (!d[code]) d[code] = [];
+    if (d[code].indexOf(key) === -1) d[code].push(key);
+    try { sessionStorage.setItem('bs_notify_dismissed', JSON.stringify(d)); } catch (e) {}
+  }
+  function isDismissed(code, key) {
+    var d = getDismissed();
+    return d[code] && d[code].indexOf(key) !== -1;
+  }
+
+  function formatTimeRemaining(secs) {
+    if (secs <= 0) return 'expired';
+    var h = Math.floor(secs / 3600);
+    var m = Math.floor((secs % 3600) / 60);
+    if (h > 0) return h + 'h ' + m + 'm remaining';
+    return m + 'm remaining';
+  }
+
+  function truncAddr(addr) {
+    if (!addr) return '???';
+    return addr.slice(0, 6) + '...' + addr.slice(-4);
+  }
+
+  function removeNotification() {
+    var existing = document.getElementById('bs-move-notify');
+    if (existing) existing.remove();
+  }
+
+  function showNotification(game, threshold, moreCount) {
+    removeNotification();
+    var nowSecs = Math.floor(Date.now() / 1000);
+    var remaining = (game.turn_deadline || 0) - nowSecs;
+    if (remaining <= 0) return;
+
+    var opponentName = truncAddr(game.opponent);
+    if (typeof qfWallet !== 'undefined' && qfWallet.resolveAny) {
+      qfWallet.resolveAny(game.opponent).then(function(n) {
+        var el = document.getElementById('bs-notify-opponent');
+        if (el && n) el.textContent = n;
+      });
+    }
+
+    var bodyText;
+    if (threshold.urgent) {
+      bodyText = '<span id="bs-notify-opponent">' + escHtml(opponentName) + '</span> is waiting. You have less than an hour before your position is auto-fired.';
+    } else {
+      bodyText = '<span id="bs-notify-opponent">' + escHtml(opponentName) + '</span> is waiting for your move in Battleships. ' + formatTimeRemaining(remaining) + '.';
+    }
+
+    var div = document.createElement('div');
+    div.id = 'bs-move-notify';
+    div.className = 'bs-notify' + (threshold.urgent ? ' bs-notify-urgent' : '');
+    div.innerHTML = '<button class="bs-notify-close" id="bs-notify-dismiss">&times;</button>' +
+      '<h4>' + threshold.heading + '</h4>' +
+      '<p>' + bodyText + '</p>' +
+      '<a class="bs-notify-cta" href="/qf-dapp/games/battleships/?code=' + encodeURIComponent(game.code) + '">Take My Shot</a>' +
+      (moreCount > 0 ? '<div class="bs-notify-more">and ' + moreCount + ' more active ' + (moreCount === 1 ? 'game' : 'games') + '</div>' : '');
+
+    document.body.appendChild(div);
+    document.getElementById('bs-notify-dismiss').onclick = function() {
+      setDismissed(game.code, threshold.key);
+      removeNotification();
+    };
+  }
+
+  function pickThreshold(game) {
+    var nowSecs = Math.floor(Date.now() / 1000);
+    var remaining = (game.turn_deadline || 0) - nowSecs;
+    if (remaining <= 0) return null;
+
+    for (var i = THRESHOLDS.length - 1; i >= 0; i--) {
+      var t = THRESHOLDS[i];
+      if (remaining <= t.secsRemaining && !isDismissed(game.code, t.key)) return t;
+    }
+    if (!isDismissed(game.code, 'any')) return THRESHOLDS[0];
+    return null;
+  }
+
+  function bsApiFetch(url) {
+    var headers = qfWallet.authHeaders();
+    return fetch(BS_API + url, { method: 'GET', headers: headers }).then(function(r) { return r.json(); });
+  }
+
+  async function checkActiveGames() {
+    if (typeof qfWallet === 'undefined' || !qfWallet.address) return;
+    try {
+      var games = await bsApiFetch('/battleships/active');
+      if (!games || !games.length) { removeNotification(); return; }
+
+      games.sort(function(a, b) { return (a.turn_deadline || 0) - (b.turn_deadline || 0); });
+
+      var shown = false;
+      for (var i = 0; i < games.length; i++) {
+        var threshold = pickThreshold(games[i]);
+        if (threshold) {
+          showNotification(games[i], threshold, games.length - 1 - i);
+          shown = true;
+          break;
+        }
+      }
+      if (!shown) removeNotification();
+    } catch (e) {}
+  }
+
+  var notifyTimer = null;
+  function startNotifyPoll() {
+    checkActiveGames();
+    if (notifyTimer) clearInterval(notifyTimer);
+    notifyTimer = setInterval(checkActiveGames, 300000);
+  }
+
+  if (typeof qfWallet !== 'undefined' && qfWallet.address) {
+    startNotifyPoll();
+  }
+  if (typeof qfWallet !== 'undefined' && qfWallet.onConnect) {
+    qfWallet.onConnect(function() { startNotifyPoll(); });
+  }
+})();
 </script>
 </body>
 </html>

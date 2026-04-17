@@ -254,6 +254,10 @@ body{background:var(--bg);color:var(--text);font-family:'Inter',sans-serif;min-h
       <a href="/qf-dapp/games/freecell/league/" class="league-link">View Leagues &rarr;</a>
     </div>
 
+    <div id="duel-stake-wrap" style="display:flex;align-items:center;gap:.4rem;margin-top:.5rem;justify-content:center">
+      <label for="duel-stake-input" style="font-family:'JetBrains Mono',monospace;font-size:.6rem;color:#8a8e96">Stake (QF)</label>
+      <input type="number" id="duel-stake-input" value="25" min="25" step="1" style="width:80px;background:#16181c;border:1px solid rgba(184,188,198,0.15);border-radius:6px;color:#e8eaf0;font-family:'JetBrains Mono',monospace;font-size:.75rem;padding:.4rem .5rem;text-align:center">
+    </div>
     <button class="btn btn-ghost" id="create-duel-btn" onclick="confirmDuelCreate()" style="width:100%;padding:.7rem;margin-top:.5rem;font-size:.65rem">&#9876; Create a Duel</button>
 
     <!-- DUEL SHARE -->
@@ -272,8 +276,22 @@ body{background:var(--bg);color:var(--text);font-family:'Inter',sans-serif;min-h
     <div id="duel-accept-panel" style="display:none;width:100%;text-align:center;margin-bottom:1rem">
       <h3 style="font-family:'Playfair Display','Bebas Neue',serif;font-size:1.3rem;color:#e8eaf0;margin-bottom:.3rem">You've Been Challenged</h3>
       <div id="duel-challenger" style="font-family:'JetBrains Mono','DM Mono',monospace;font-size:.9rem;color:#d4d8e2;margin-bottom:.3rem">---</div>
+      <div id="duel-accept-stake" style="font-family:'JetBrains Mono','DM Mono',monospace;font-size:.75rem;color:#b8bcc6;background:#1e2025;border:1px solid rgba(184,188,198,0.15);border-radius:8px;padding:.5rem;display:inline-block;margin-bottom:.6rem">Same puzzle, same conditions. Best score wins.</div>
       <p style="font-size:.62rem;color:#4a4e5a;margin-bottom:.8rem">Same conditions. Best score wins.</p>
       <button class="btn btn-silver" onclick="acceptDuelChallenge()" style="padding:.7rem 1.5rem;font-size:.68rem">Accept &amp; Play</button>
+    </div>
+
+    <div id="duel-stake-modal" style="display:none;position:fixed;inset:0;background:rgba(5,7,9,0.92);z-index:500;align-items:center;justify-content:center">
+      <div style="background:#12141a;border:1px solid rgba(184,188,198,0.15);border-radius:12px;padding:1.5rem;max-width:320px;width:90%;text-align:center">
+        <h3 id="duel-modal-heading" style="font-family:'Playfair Display','Bebas Neue',serif;font-size:1.3rem;color:#e8eaf0;margin-bottom:.6rem"></h3>
+        <div id="duel-modal-challenger" style="display:none;font-family:'JetBrains Mono','DM Mono',monospace;font-size:.85rem;color:#d4d8e2;margin-bottom:.5rem"></div>
+        <div id="duel-modal-amount" style="font-family:'JetBrains Mono','DM Mono',monospace;font-size:2.4rem;color:#d4a847;font-weight:700;margin:.6rem 0 .2rem"></div>
+        <p style="font-size:.62rem;color:#8a8e96;margin-bottom:1.2rem">Winner takes 90% of the pot. Loser loses their stake.</p>
+        <div style="display:flex;gap:.5rem;justify-content:center">
+          <button id="duel-modal-cancel" class="btn btn-ghost" style="padding:.6rem 1.2rem;font-size:.65rem">Cancel</button>
+          <button id="duel-modal-confirm" class="btn btn-silver" style="padding:.6rem 1.2rem;font-size:.65rem"></button>
+        </div>
+      </div>
     </div>
   </div>
 
@@ -1668,14 +1686,30 @@ function duelApi(url, body, method) {
   return fetch(DUEL_API + url, opts).then(function(r) { return r.json(); });
 }
 
+function showDuelModal(opts) {
+  var modal = document.getElementById('duel-stake-modal');
+  document.getElementById('duel-modal-heading').textContent = opts.heading;
+  var chEl = document.getElementById('duel-modal-challenger');
+  if (opts.challenger) { chEl.textContent = opts.challenger; chEl.style.display = ''; } else { chEl.style.display = 'none'; }
+  document.getElementById('duel-modal-amount').textContent = opts.amount + ' QF';
+  document.getElementById('duel-modal-confirm').textContent = opts.confirmText;
+  modal.style.display = 'flex';
+  return new Promise(function(resolve) {
+    document.getElementById('duel-modal-confirm').onclick = function() { modal.style.display = 'none'; resolve(true); };
+    document.getElementById('duel-modal-cancel').onclick = function() { modal.style.display = 'none'; resolve(false); };
+  });
+}
+
 async function confirmDuelCreate() {
   if (typeof qfWallet === 'undefined' || !qfWallet.address) { alert('Connect your wallet to create a duel.'); return; }
   try {
+    var stakeInput = document.getElementById('duel-stake-input'); var stakeQF = Math.max(25, parseInt(stakeInput.value) || 25); stakeInput.value = stakeQF;
     var preCheck = await duelApi('/duel/precheck', { gameId: 'freecell' });
     if (preCheck && preCheck.error) { alert(preCheck.error); return; }
 
     var cfg = await getDuelConfig();
-    var stakeQF = cfg.defaultStake || 25;
+    var confirmed = await showDuelModal({ heading: "You're about to create a duel", amount: stakeQF, confirmText: 'Confirm & Stake ' + stakeQF + ' QF' });
+    if (!confirmed) return;
 
     var txHash = null;
     try {
@@ -1730,9 +1764,9 @@ async function loadDuelAccept() {
     if (data.error) { alert(data.error); return; }
     if (data.status !== 'created') { alert('This duel is no longer available (' + data.status + ').'); return; }
     duelId = data.id;
-    var stakeInfo = document.getElementById('duel-stake-info');
-    if (stakeInfo && data.stake) {
-      stakeInfo.textContent = 'Accepting requires a ' + data.stake + ' QF stake. Winner takes 90% of the pot.';
+    var stakeEl = document.getElementById('duel-accept-stake');
+    if (stakeEl && data.stake) {
+      stakeEl.textContent = 'Accepting requires a ' + data.stake + ' QF stake. Winner takes 90% of the pot.';
     }
     var name = (typeof qfWallet !== 'undefined' && qfWallet.formatAddr) ? qfWallet.formatAddr(data.creator_wallet) : data.creator_wallet.slice(0, 6) + '...' + data.creator_wallet.slice(-4);
     document.getElementById('duel-challenger').textContent = name;
@@ -1759,6 +1793,9 @@ async function acceptDuelChallenge() {
 
     var txHash = getStoredPayment(duelCode);
     if (!txHash) {
+      var challengerName = document.getElementById('duel-challenger').textContent || '???';
+      var confirmed = await showDuelModal({ heading: "You've Been Challenged", challenger: challengerName, amount: stakeQF, confirmText: 'Accept & Stake ' + stakeQF + ' QF' });
+      if (!confirmed) return;
       try {
         txHash = await sendStakePayment(cfg.escrowAddress, stakeQF);
         storePayment(duelCode, txHash);

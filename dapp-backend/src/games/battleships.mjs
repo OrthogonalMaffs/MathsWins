@@ -189,6 +189,7 @@ export function getGameState(game, wallet, rounds, placements) {
     creator_wallet: game.creator_wallet,
     opponent_wallet: game.opponent_wallet,
     current_turn: game.current_turn,
+    turn_deadline: game.turn_deadline || null,
     winner_wallet: game.winner_wallet,
     created_at: game.created_at,
     started_at: game.started_at,

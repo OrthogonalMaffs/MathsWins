@@ -1218,6 +1218,13 @@ export function getActiveBattleshipsGames() {
   return db.prepare("SELECT * FROM battleships_games WHERE status = 'active'").all();
 }
 
+export function getActiveBattleshipsForWallet(wallet) {
+  const db = getDb();
+  const w = wallet.toLowerCase();
+  return db.prepare(`SELECT * FROM battleships_games WHERE (creator_wallet = ? OR opponent_wallet = ?) AND status = 'active' AND current_turn = ?`)
+    .all(w, w, w);
+}
+
 export function getBattleshipsGamesByWallet(wallet, limit) {
   const db = getDb();
   return db.prepare(`SELECT * FROM battleships_games WHERE (creator_wallet = ? OR opponent_wallet = ?) AND status = 'completed' ORDER BY completed_at DESC LIMIT ?`)

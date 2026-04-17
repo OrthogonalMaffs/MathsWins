@@ -218,6 +218,10 @@ body{background:var(--bg);color:var(--text);font-family:'Inter',sans-serif;min-h
     <h3>Choose Mode</h3>
     <div class="mode-btns">
       <button class="btn" onclick="G.startFree()">Free Play</button>
+      <div id="duel-stake-wrap" style="display:flex;align-items:center;gap:.4rem;margin:.4rem 0;justify-content:center">
+        <label for="duel-stake-input" style="font-family:'JetBrains Mono',monospace;font-size:.6rem;color:#8a8e96">Stake (QF)</label>
+        <input type="number" id="duel-stake-input" value="25" min="25" step="1" style="width:80px;background:#16181c;border:1px solid rgba(184,188,198,0.15);border-radius:6px;color:#e8eaf0;font-family:'JetBrains Mono',monospace;font-size:.75rem;padding:.4rem .5rem;text-align:center">
+      </div>
       <button class="btn btn-gold" onclick="G.confirmDuel()">&#9876; Create a Duel</button>
     </div>
   </div>
@@ -239,6 +243,19 @@ body{background:var(--bg);color:var(--text);font-family:'Inter',sans-serif;min-h
     <p>Challenged by <strong id="challengerName">...</strong></p>
     <p id="acceptStakeInfo" style="margin:.4rem 0 .8rem">Same conditions. Best score wins.</p>
     <button class="btn btn-gold" onclick="G.acceptDuel()">Accept &amp; Play</button>
+  </div>
+</div>
+
+<div id="duel-stake-modal" style="display:none;position:fixed;inset:0;background:rgba(5,7,9,0.92);z-index:500;align-items:center;justify-content:center">
+  <div style="background:#12141a;border:1px solid rgba(184,188,198,0.15);border-radius:12px;padding:1.5rem;max-width:320px;width:90%;text-align:center">
+    <h3 id="duel-modal-heading" style="font-family:'Playfair Display','Bebas Neue',serif;font-size:1.3rem;color:#e8eaf0;margin-bottom:.6rem"></h3>
+    <div id="duel-modal-challenger" style="display:none;font-family:'JetBrains Mono','DM Mono',monospace;font-size:.85rem;color:#d4d8e2;margin-bottom:.5rem"></div>
+    <div id="duel-modal-amount" style="font-family:'JetBrains Mono','DM Mono',monospace;font-size:2.4rem;color:#d4a847;font-weight:700;margin:.6rem 0 .2rem"></div>
+    <p style="font-size:.62rem;color:#8a8e96;margin-bottom:1.2rem">Winner takes 90% of the pot. Loser loses their stake.</p>
+    <div style="display:flex;gap:.5rem;justify-content:center">
+      <button id="duel-modal-cancel" class="btn btn-ghost" style="padding:.6rem 1.2rem;font-size:.65rem">Cancel</button>
+      <button id="duel-modal-confirm" class="btn btn-silver" style="padding:.6rem 1.2rem;font-size:.65rem"></button>
+    </div>
   </div>
 </div>
 
@@ -597,14 +614,32 @@ var G = (function() {
   // ── Duel functions ───────────────────────────────────────────────────
   var duelStartTime = 0;
 
+  function showDuelModal(opts) {
+    var modal = document.getElementById('duel-stake-modal');
+    document.getElementById('duel-modal-heading').textContent = opts.heading;
+    var chEl = document.getElementById('duel-modal-challenger');
+    if (opts.challenger) { chEl.textContent = opts.challenger; chEl.style.display = ''; } else { chEl.style.display = 'none'; }
+    document.getElementById('duel-modal-amount').textContent = opts.amount + ' QF';
+    document.getElementById('duel-modal-confirm').textContent = opts.confirmText;
+    modal.style.display = 'flex';
+    return new Promise(function(resolve) {
+      document.getElementById('duel-modal-confirm').onclick = function() { modal.style.display = 'none'; resolve(true); };
+      document.getElementById('duel-modal-cancel').onclick = function() { modal.style.display = 'none'; resolve(false); };
+    });
+  }
+
   async function confirmDuel() {
     if (!W.address) { alert('Connect your wallet to create a duel.'); return; }
     duelMode = true;
+    var stakeInput = document.getElementById('duel-stake-input');
+    var stakeQF = Math.max(25, parseInt(stakeInput.value) || 25);
+    stakeInput.value = stakeQF;
     try {
       var pre = await api('/duel/precheck', { gameId: GAME_ID });
       if (pre.error) { setMsg(pre.error); duelMode = false; return; }
       var cfg = await getDuelConfig();
-      var stakeQF = cfg.defaultStake || 25;
+      var confirmed = await showDuelModal({ heading: "You're about to create a duel", amount: stakeQF, confirmText: 'Confirm & Stake ' + stakeQF + ' QF' });
+      if (!confirmed) { duelMode = false; return; }
       var txHash = null;
       try {
         txHash = await sendStakePayment(cfg.escrowAddress, stakeQF);
@@ -704,7 +739,7 @@ var G = (function() {
         });
       }
       var cfg = await getDuelConfig();
-      var stakeQF = cfg.defaultStake || 25;
+      var stakeQF = data.stake || cfg.defaultStake || 25;
       document.getElementById('acceptStakeInfo').textContent = 'Accepting requires a ' + stakeQF + ' QF stake. Winner takes 90% of the pot.';
       document.getElementById('duelAccept').style.display = 'block';
     } catch (e) { setMsg('Could not load duel.'); }
@@ -717,9 +752,12 @@ var G = (function() {
       if (check.error) { setMsg(check.error); return; }
       if (check.status !== 'created') { setMsg('This duel is no longer available (' + check.status + ').'); return; }
       var cfg = await getDuelConfig();
-      var stakeQF = cfg.defaultStake || 25;
+      var stakeQF = check.stake || cfg.defaultStake || 25;
       var txHash = getStoredPayment(duelCode);
       if (!txHash) {
+        var challengerName = document.getElementById('challengerName').textContent || '???';
+        var confirmed = await showDuelModal({ heading: "You've Been Challenged", challenger: challengerName, amount: stakeQF, confirmText: 'Accept & Stake ' + stakeQF + ' QF' });
+        if (!confirmed) return;
         try {
           txHash = await sendStakePayment(cfg.escrowAddress, stakeQF);
           storePayment(duelCode, txHash);

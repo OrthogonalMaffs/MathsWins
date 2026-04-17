@@ -59,8 +59,10 @@ Split from MaffsGames in March 2025. MaffsGames = free schools games. MathsWins 
 - OG image: `assets/og-image.png` (1200x630)
 
 ## Theme
-- **Dark:** #050709 bg, #d4a847 gold accent, #0d9488 teal secondary
-- **Fonts:** DM Mono (code), Bebas Neue (headings), Crimson Pro (italic), Outfit (UI)
+- **Main site:** #050709 bg, #d4a847 gold accent, #0d9488 teal secondary
+- **dApp (Sabre):** #0e1013 bg, surfaces #16181c/#1e2025/#26282e, silver #b8bcc6, gold #c9a84c, muted #4a4e5a, text-white #e8eaf0, borders rgba(184,188,198,0.15)
+- **Fonts (main site):** DM Mono (code), Bebas Neue (headings), Crimson Pro (italic), Outfit (UI)
+- **Fonts (dApp):** JetBrains Mono (monospace/stats), Playfair Display (headings), Inter (body/UI), DM Mono (fallback)
 - **Tone:** Confident, mathematical, zero-bullshit. Educational, not gambling.
 
 ## Educational Content Patterns
@@ -78,11 +80,11 @@ Split from MaffsGames in March 2025. MaffsGames = free schools games. MathsWins 
 - **Local:** `http://127.0.0.1:3860/api/dapp`
 - **Database:** SQLite at `/home/jon/mathswins-dapp/data/mathswins.db`
 - **Frontend:** `qf-dapp/` directory, single-file HTML games, GitHub Pages
-- **Wallet Module:** `qf-dapp/games/qf-wallet.js` — shared across all games, QNS reverse resolution, EIP-6963, auto-reconnect with 500ms delay
+- **Wallet Module:** `qf-dapp/games/qf-wallet.js` — shared across all games, QNS reverse resolution, EIP-6963, auto-reconnect with 500ms delay. All wallet errors use styled `showWalletError()` banner (no browser alert() popups).
 
 ### Lobby Structure (4 tabs)
 **Leagues tab:** 2x2 grid — Sudoku Duel (silver pulse), KenKen, Minesweeper, FreeCell. MW logo centre. Cards link directly to `/league/` lobby pages (not game hubs).
-**Duels tab:** 10 duel-capable games — Sudoku Duel, Battleships, KenKen, Kakuro, Countdown Numbers, Nonogram, Minesweeper, FreeCell, Poker Patience, Cribbage Solitaire. QF stakes LIVE (25 QF default, client pays escrow, auto-settlement on completion). Cards link to game hubs with `?mode=duel` — scrolls duel button into view with gold highlight flash.
+**Duels tab:** 10 duel-capable games — Sudoku Duel, Battleships, KenKen, Kakuro, Countdown Numbers, Nonogram, Minesweeper, FreeCell, Poker Patience, Cribbage Solitaire. QF stakes LIVE (variable stake, min 25 QF, client pays escrow, auto-settlement on completion). All 10 games have stake confirmation modals (creator + recipient) — wallet popup only fires after explicit confirm. Creator can set stake amount via input (default 25, min 25). Cards link to game hubs with `?mode=duel` — scrolls duel button into view with gold highlight flash.
 **Free tab:** 12 free games with instant search — Maffsy, Higher or Lower, 52-dle, Towers of Hanoi, Don't Press It, Memory Matrix, RPS vs Machine, Estimation Engine, Sequence Solver, Prime or Composite, Cryptarithmetic Club, Battleships (vs CPU).
 **Leaderboards tab:** Game selector (20 games, Battleships excluded), Daily/Weekly/Monthly period toggle, leaderboard table (Rank/Name/Score/Time), top 10 with "Show more" expand (all if <=25), connected wallet highlighted in gold, empty state message. Fetches from `/api/dapp/global-leaderboard/:gameId/:periodType`.
 
@@ -146,7 +148,7 @@ Split from MaffsGames in March 2025. MaffsGames = free schools games. MathsWins 
 **Promos:** POST /promo/create, /promo/:code/submit | GET /promo/:code
 **Leagues:** GET /leagues/:gameId, /leagues/:gameId/all, /league/:leagueId, /league/:leagueId/puzzles, /league/:leagueId/my-scores | POST /league/:leagueId/join, /league/:leagueId/submit
 **League v2:** GET /leagues/my, /leagues/active, /leagues/settled | POST /admin/league/:id/settle, /admin/league/:id/cancel, /admin/league/:id/refund/:wallet | GET /admin/refunds
-**Battleships:** POST /battleships/create, /:code/join, /:code/place, /:code/shoot, /:code/forfeit | GET /battleships/:code, /battleships/history
+**Battleships:** POST /battleships/create, /:code/join, /:code/place, /:code/shoot, /:code/forfeit | GET /battleships/:code, /battleships/history, /battleships/active
 **Achievements:** GET /achievements/status, /achievements/all, /achievements/my, /achievements/record/:id | POST /achievement/mint | POST /admin/achievement/register, /admin/achievement/award | GET /admin/achievements
 **Profile:** GET /profile/:wallet (public, no auth, 60/min rate limit — returns personal_bests, league_bests, achievements, wallet_stats, league_history, trophies, leaderboard_positions)
 **Global Leaderboard:** GET /global-leaderboard/:gameId/:periodType, GET /global-leaderboard/:gameId/eligibility, POST /global-leaderboard/enter, GET /global-leaderboard/my-positions
@@ -169,9 +171,11 @@ Split from MaffsGames in March 2025. MaffsGames = free schools games. MathsWins 
 - Substrate wallet support: Talisman/Polkadot.js/SubWallet via @polkadot/extension-dapp
 
 ### Duel Payment System (all 10 games wired 2026-04-13)
-- All 10 duel games require 25 QF payment (Battleships PvP included, CPU games free)
+- All 10 duel games require QF payment (min 25 QF, variable stake via creator input; Battleships PvP included, CPU games free)
+- **Stake confirmation modals** on all 10 games: creator sees modal after precheck with chosen stake amount; recipient sees modal with actual duel stake before wallet popup fires. Cancel aborts cleanly.
+- **Stake selector** on 9 games (all except cryptarithmetic-club which is free): number input above Create button, default 25, min 25, no max. Backend validates `parseInt(stake) >= 25`.
 - Client checks duel status BEFORE payment (prevents farming via expired/completed links)
-- sessionStorage dedup prevents double-pay on page refresh (keyed by duel code)
+- sessionStorage dedup prevents double-pay on page refresh (keyed by duel code). If payment already stored, modal skipped on accept (payment already committed).
 - /duel/precheck endpoint validates eligibility before create payment
 - GET /duel/config returns { escrowAddress, defaultStake: 25 }
 - Server stores txHash in duels.creator_tx / duels.acceptor_tx (and battleships_games equivalents)
@@ -264,6 +268,10 @@ Split from MaffsGames in March 2025. MaffsGames = free schools games. MathsWins 
 - Admiral uses probability density map AI
 - 24h auto-shot timeout, 5-minute sweep
 - Settlement: 90% winner, 5% burn, 5% team
+- `turn_deadline` (Unix epoch seconds, UTC) exposed in GET /battleships/:code response
+- **GET /battleships/active** — returns active games where it's the authenticated wallet's turn: `[{ code, opponent, turn_deadline, started_at }]`
+- **Move notifications** — hub-level (qf-dapp/index.html) popup system, fires on wallet connect + 5min poll. Thresholds: any outstanding, 12h, 4h, 1h remaining. sessionStorage tracks dismissed thresholds per game code. Naval-themed styling. CTA links to `/qf-dapp/games/battleships/?code=[CODE]`. Deep link uses `?code=` (not `?duel=`).
+- Vertical ship rendering fixed: inner SVG wrapper swaps width/height before CSS rotate(90deg)
 
 ### Trophy NFTs (QFLeagueTrophy.sol)
 - **Contract:** `0xBC41549872d5480b95733e4f29359b7EAB4E05b8` (QF Network mainnet)

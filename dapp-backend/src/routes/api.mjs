@@ -12,7 +12,7 @@ import { getDb } from '../db/index.mjs';
 import { doSettleLeague, checkEarlySettlement, recoverStuckLeagues, mintCommemorative } from '../league-settle.mjs';
 import { checkAchievements, checkContrarian, checkStreakAchievements, checkLeagueRegular, checkMonthlyAchievements, trackSpend, checkNightOwlSubmission, checkMinesweeperFreePlay, checkFlagEverything, checkBlindEye, checkSumOfAllFears, checkTheGrinder, checkMintMeta, checkDuelMaster, checkFlaglessAndWrong, checkMidnight, checkFibonacci, checkWrongAnswerStreak } from '../achievement-checker.mjs';
 import { sendQF, settleDuel, settleDuelDraw, refundDuel, getEscrowAddress, getSettlementContract, logIncoming, BURN_ADDRESS, TEAM_WALLET } from '../escrow.mjs';
-import { createBattleshipsGame, getBattleshipsGameByCode, getBattleshipsGameById, updateBattleshipsGameStatus, saveBattleshipsPlacement, getBattleshipsPlacement, getBattleshipsPlacements, addBattleshipsRound, getBattleshipsRounds, getBattleshipsRecord, updateBattleshipsRecord, getActiveBattleshipsGames, getBattleshipsGamesByWallet } from '../db/index.mjs';
+import { createBattleshipsGame, getBattleshipsGameByCode, getBattleshipsGameById, updateBattleshipsGameStatus, saveBattleshipsPlacement, getBattleshipsPlacement, getBattleshipsPlacements, addBattleshipsRound, getBattleshipsRounds, getBattleshipsRecord, updateBattleshipsRecord, getActiveBattleshipsGames, getBattleshipsGamesByWallet, getActiveBattleshipsForWallet } from '../db/index.mjs';
 import { getAchievementRegistry, getAchievement, awardAchievement, getWalletAchievements, getAllAchievements, getGlobalRecord, getPersonalBests, getPersonalBest, getLeagueBests, getWalletStats, getWalletLeagueHistory, getWalletTrophies, getGameStateForLeaguePuzzle, completeGameState, getFlaggedSessions, getGlobalLeaderboard, getGlobalLeaderboardEntry, addGlobalLeaderboardEntry, getWalletLeaderboardPositions, getGameState, getGame, upsertPersonalBest, incrementPbBeatenCount, retireAchievement, recordMaffsyResult, getMaffsyStats } from '../db/index.mjs';
 import { analyseInputPattern } from '../scoring.mjs';
 import { validateFleet, calculateRange, checkHit, checkSunk, checkWin, getGameState as getBattleshipsState, cpuPlaceFleet, cpuShootRecruit, cpuShootOfficer, cpuShootAdmiral, pickSurvivingShip, FLEET } from '../games/battleships.mjs';
@@ -1449,6 +1449,24 @@ router.post('/battleships/create', optionalWallet, (req, res) => {
   res.json({ share_code: shareCode, game_id: id });
 });
 
+// Get active battleships games where it's the authenticated wallet's turn
+router.get('/battleships/active', optionalWallet, (req, res) => {
+  const wallet = req.wallet;
+  if (!wallet) return res.status(401).json({ error: 'Wallet required' });
+
+  const games = getActiveBattleshipsForWallet(wallet);
+  const result = games.map(g => {
+    const opponent = g.creator_wallet === wallet.toLowerCase() ? g.opponent_wallet : g.creator_wallet;
+    return {
+      code: g.share_code,
+      opponent: opponent,
+      turn_deadline: g.turn_deadline || null,
+      started_at: g.started_at
+    };
+  });
+  res.json(result);
+});
+
 // Get battleships game history for wallet
 router.get('/battleships/history', optionalWallet, (req, res) => {
   const wallet = req.wallet;
@@ -1783,6 +1801,7 @@ router.get('/battleships/:code', optionalWallet, (req, res) => {
     creator_wallet: game.creator_wallet,
     opponent_wallet: game.opponent_wallet,
     current_turn: game.current_turn,
+    turn_deadline: game.turn_deadline || null,
     winner_wallet: game.winner_wallet,
     created_at: game.created_at,
     started_at: game.started_at,

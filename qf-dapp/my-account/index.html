@@ -72,29 +72,29 @@ body{background:var(--bg);color:var(--text);font-family:'Inter',sans-serif;min-h
 .score-section{margin-bottom:1.5rem}
 .score-section h3{font-family:'Bebas Neue',sans-serif;font-size:1.1rem;color:var(--silver-bright);letter-spacing:.04em;margin-bottom:.5rem}
 .hs-cards{display:flex;flex-direction:column;gap:.6rem}
-.hs-card{background:#252b3b;border:1px solid #2e3650;border-left:2px solid #161c28;border-radius:10px;overflow:hidden}
+.hs-card{background:var(--surface);border:1px solid var(--border);border-left:2px solid var(--surface2);border-radius:10px;overflow:hidden}
 .hs-card-header{display:flex;align-items:center;padding:.65rem .8rem;gap:.5rem}
-.hs-card-game{font-family:'DM Mono',monospace;font-size:.75rem;color:#e8ecf4;flex:1;min-width:0;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
-.hs-card-diff{font-family:'DM Mono',monospace;font-size:.5rem;text-transform:uppercase;letter-spacing:.06em;color:#888;padding:.15rem .45rem;border-radius:10px;border:1px solid #888;flex-shrink:0}
+.hs-card-game{font-family:'DM Mono',monospace;font-size:.75rem;color:var(--text-white);flex:1;min-width:0;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.hs-card-diff{font-family:'DM Mono',monospace;font-size:.5rem;text-transform:uppercase;letter-spacing:.06em;color:var(--muted);padding:.15rem .45rem;border-radius:10px;border:1px solid var(--muted);flex-shrink:0}
 .hs-card-diff.hard{color:var(--gold);border-color:var(--gold)}
-.hs-diff-table{width:100%;border-collapse:collapse;border-top:1px solid #2e3650}
+.hs-diff-table{width:100%;border-collapse:collapse;border-top:1px solid var(--border)}
 .hs-diff-table td{padding:.35rem .8rem;font-family:'DM Mono',monospace;font-size:.6rem}
-.hs-diff-table tr+tr td{border-top:1px solid #1e2436}
-.hs-diff-table .hs-dt-diff{color:#888;text-transform:uppercase;letter-spacing:.04em;font-size:.5rem;width:30%}
-.hs-diff-table .hs-dt-score{color:#c9a84c;text-align:right;width:35%}
+.hs-diff-table tr+tr td{border-top:1px solid var(--surface2)}
+.hs-diff-table .hs-dt-diff{color:var(--muted);text-transform:uppercase;letter-spacing:.04em;font-size:.5rem;width:30%}
+.hs-diff-table .hs-dt-score{color:var(--gold);text-align:right;width:35%}
 .hs-diff-table .hs-dt-date{color:var(--muted);text-align:right;width:35%;font-size:.5rem}
 .hs-card-rank{font-family:'DM Mono',monospace;font-size:.55rem;padding:.15rem .5rem;border-radius:10px;background:rgba(201,168,76,.1);color:var(--gold);border:1px solid rgba(201,168,76,.25);flex-shrink:0;white-space:nowrap}
-.hs-card-stats{display:grid;grid-template-columns:1fr 1fr;border-top:1px solid #2e3650}
+.hs-card-stats{display:grid;grid-template-columns:1fr 1fr;border-top:1px solid var(--border)}
 .hs-stat{padding:.5rem .8rem}
-.hs-stat+.hs-stat{border-left:1px solid #2e3650}
+.hs-stat+.hs-stat{border-left:1px solid var(--border)}
 .hs-stat-label{font-family:'DM Mono',monospace;font-size:.45rem;text-transform:uppercase;letter-spacing:.06em;color:var(--muted);margin-bottom:.15rem}
-.hs-stat-val{font-family:'DM Mono',monospace;font-size:.78rem;color:#c9a84c}
-.hs-card-lb{border-top:1px solid #2e3650;padding:.45rem .8rem;display:flex;align-items:center;gap:.4rem;flex-wrap:wrap}
+.hs-stat-val{font-family:'DM Mono',monospace;font-size:.78rem;color:var(--gold)}
+.hs-card-lb{border-top:1px solid var(--border);padding:.45rem .8rem;display:flex;align-items:center;gap:.4rem;flex-wrap:wrap}
 .hs-lb-label{font-family:'DM Mono',monospace;font-size:.45rem;text-transform:uppercase;letter-spacing:.06em;color:var(--muted);flex-shrink:0}
 .hs-lb-periods{display:flex;gap:.3rem;flex-wrap:wrap}
 .hs-lb-period{font-family:'DM Mono',monospace;font-size:.52rem;padding:.12rem .4rem;border-radius:4px;border:1px solid var(--border2);color:var(--muted)}
 .hs-lb-period.ranked{background:rgba(201,168,76,.1);color:var(--gold);border-color:rgba(201,168,76,.25)}
-.hs-card-footer{background:#1e2436;border-top:1px solid #2e3650;padding:.5rem .8rem;display:flex;align-items:center;justify-content:space-between;gap:.5rem;min-height:44px}
+.hs-card-footer{background:var(--surface2);border-top:1px solid var(--border);padding:.5rem .8rem;display:flex;align-items:center;justify-content:space-between;gap:.5rem;min-height:44px}
 .hs-footer-text{font-family:'DM Mono',monospace;font-size:.55rem;color:#2dd4a0;flex:1;min-width:0}
 .hs-submit-btn{font-family:'DM Mono',monospace;font-size:.6rem;padding:.4rem .8rem;border-radius:6px;border:1px solid var(--gold);background:rgba(201,168,76,.1);color:var(--gold);cursor:pointer;transition:all .15s;flex-shrink:0;min-height:44px;min-width:44px}
 .hs-submit-btn:hover{background:rgba(201,168,76,.2)}

@@ -300,6 +300,19 @@ body::before{content:'';position:fixed;inset:0;background-image:linear-gradient(
     <button class="btn btn-silver" onclick="acceptDuelChallenge()" style="padding:.7rem 1.5rem;font-size:.68rem">Accept &amp; Play</button>
   </div>
 
+<div id="duel-stake-modal" style="display:none;position:fixed;inset:0;background:rgba(5,7,9,0.92);z-index:500;align-items:center;justify-content:center">
+  <div style="background:#12141a;border:1px solid rgba(184,188,198,0.15);border-radius:12px;padding:1.5rem;max-width:320px;width:90%;text-align:center">
+    <h3 id="duel-modal-heading" style="font-family:'Playfair Display','Bebas Neue',serif;font-size:1.3rem;color:#e8eaf0;margin-bottom:.6rem"></h3>
+    <div id="duel-modal-challenger" style="display:none;font-family:'JetBrains Mono','DM Mono',monospace;font-size:.85rem;color:#d4d8e2;margin-bottom:.5rem"></div>
+    <div id="duel-modal-amount" style="font-family:'JetBrains Mono','DM Mono',monospace;font-size:2.4rem;color:#d4a847;font-weight:700;margin:.6rem 0 .2rem"></div>
+    <p style="font-size:.62rem;color:#8a8e96;margin-bottom:1.2rem">Winner takes 90% of the pot. Loser loses their stake.</p>
+    <div style="display:flex;gap:.5rem;justify-content:center">
+      <button id="duel-modal-cancel" class="btn btn-ghost" style="padding:.6rem 1.2rem;font-size:.65rem">Cancel</button>
+      <button id="duel-modal-confirm" class="btn btn-silver" style="padding:.6rem 1.2rem;font-size:.65rem"></button>
+    </div>
+  </div>
+</div>
+
   <button class="btn btn-ghost" id="start-btn" onclick="startGame()" style="width:100%">Start Game</button>
   <button class="btn btn-ghost" id="create-duel-btn" onclick="createDuel()" style="width:100%;padding:.7rem;margin-top:.5rem;font-size:.65rem">&#9876; Create a Duel</button>
   <div class="lb-section" style="display:none">
@@ -781,7 +794,7 @@ function submitToLB(){
 renderLB('');
 
 // ── Duel System ─────────────────────────────────────────────────────
-var duelMode = false, duelCode = null, duelId = null;
+var duelMode = false, duelCode = null, duelId = null, _acceptStakeQF = 0;
 
 (function checkDuelParam() {
   var params = new URLSearchParams(window.location.search);
@@ -862,6 +875,7 @@ async function loadDuelAccept() {
     var data = await duelApi('/duel/' + duelCode, null, 'GET');
     if (data.error) { alert(data.error); return; }
     duelId = data.id;
+    _acceptStakeQF = data.stake || 0;
     var name = qfWallet.formatAddr(data.creator_wallet);
     qfWallet.resolveAny(data.creator_wallet).then(function(n) {
       if (n) document.getElementById('duel-challenger').textContent = n;
@@ -877,9 +891,28 @@ async function loadDuelAccept() {
   }
 }
 
+function showDuelModal(opts) {
+  var modal = document.getElementById('duel-stake-modal');
+  document.getElementById('duel-modal-heading').textContent = opts.heading;
+  var chEl = document.getElementById('duel-modal-challenger');
+  if (opts.challenger) { chEl.textContent = opts.challenger; chEl.style.display = ''; } else { chEl.style.display = 'none'; }
+  document.getElementById('duel-modal-amount').textContent = opts.amount + ' QF';
+  document.getElementById('duel-modal-confirm').textContent = opts.confirmText;
+  modal.style.display = 'flex';
+  return new Promise(function(resolve) {
+    document.getElementById('duel-modal-confirm').onclick = function() { modal.style.display = 'none'; resolve(true); };
+    document.getElementById('duel-modal-cancel').onclick = function() { modal.style.display = 'none'; resolve(false); };
+  });
+}
+
 async function acceptDuelChallenge() {
   if (!qfWallet || !qfWallet.isConnected()) { alert('Connect your wallet first.'); return; }
   try {
+    if (_acceptStakeQF > 0) {
+      var challengerName = document.getElementById('duel-challenger').textContent || '???';
+      var confirmed = await showDuelModal({ heading: "You've Been Challenged", challenger: challengerName, amount: _acceptStakeQF, confirmText: 'Accept & Stake ' + _acceptStakeQF + ' QF' });
+      if (!confirmed) return;
+    }
     var data = await duelApi('/duel/' + duelCode + '/accept', {});
     if (data.error) { alert(data.error); return; }
     duelId = data.duelId;
