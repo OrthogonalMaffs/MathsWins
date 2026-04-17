@@ -68,14 +68,88 @@ export async function getEscrowBalance() {
 /**
  * Log a transaction to the escrow_ledger table.
  */
-function logLedger(direction, type, amountQF, recipient, sender, txHash, source, referenceId) {
+function logLedger(direction, type, amountQF, recipient, sender, txHash, source, referenceId, inferred) {
   try {
     const db = getDb();
     db.prepare(
-      'INSERT INTO escrow_ledger (direction, type, amount_qf, recipient, sender, tx_hash, source, reference_id, created_at) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)'
-    ).run(direction, type, amountQF, recipient || null, sender || null, txHash || null, source || null, referenceId || null, Date.now());
+      'INSERT INTO escrow_ledger (direction, type, amount_qf, recipient, sender, tx_hash, source, reference_id, created_at, inferred) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)'
+    ).run(direction, type, amountQF, recipient || null, sender || null, txHash || null, source || null, referenceId || null, Date.now(), inferred ? 1 : 0);
   } catch (e) {
     console.error('Ledger log failed:', e.message);
+  }
+}
+
+/**
+ * Parse QFSettlement event logs from a transaction receipt and write detail
+ * rows to escrow_ledger with exact on-chain amounts. Falls back to computing
+ * expected splits from expectedTotalQf if event parsing yields no matches,
+ * marking those rows with inferred=1 and a -inferred type suffix.
+ */
+export function logSplitFromReceipt(receipt, contractInterface, source, referenceId, expectedTotalQf) {
+  const txHash = receipt && receipt.hash ? receipt.hash : null;
+  const from = wallet ? wallet.address : null;
+  let matched = false;
+
+  if (receipt && receipt.logs && contractInterface) {
+    for (const log of receipt.logs) {
+      let parsed = null;
+      try {
+        parsed = contractInterface.parseLog({ topics: log.topics, data: log.data });
+      } catch (e) { /* not a QFSettlement event — skip */ }
+      if (!parsed) continue;
+
+      if (parsed.name === 'FeeSplit') {
+        const burned = Number(ethers.formatEther(parsed.args.burned));
+        const team = Number(ethers.formatEther(parsed.args.team));
+        logLedger('out', 'burn', burned, BURN_ADDRESS, from, txHash, source, referenceId, 0);
+        logLedger('out', 'team', team, TEAM_WALLET, from, txHash, source, referenceId, 0);
+        matched = true;
+      } else if (parsed.name === 'Settled') {
+        const winner = parsed.args.winner;
+        const winnerAmount = Number(ethers.formatEther(parsed.args.winnerAmount));
+        const burned = Number(ethers.formatEther(parsed.args.burned));
+        const team = Number(ethers.formatEther(parsed.args.team));
+        logLedger('out', 'winner', winnerAmount, winner, from, txHash, source, referenceId, 0);
+        logLedger('out', 'burn', burned, BURN_ADDRESS, from, txHash, source, referenceId, 0);
+        logLedger('out', 'team', team, TEAM_WALLET, from, txHash, source, referenceId, 0);
+        matched = true;
+      } else if (parsed.name === 'SettledDraw') {
+        const p1 = parsed.args.p1;
+        const p2 = parsed.args.p2;
+        const each = Number(ethers.formatEther(parsed.args.eachAmount));
+        const burned = Number(ethers.formatEther(parsed.args.burned));
+        const team = Number(ethers.formatEther(parsed.args.team));
+        logLedger('out', 'draw-payout', each, p1, from, txHash, source, referenceId, 0);
+        logLedger('out', 'draw-payout', each, p2, from, txHash, source, referenceId, 0);
+        logLedger('out', 'burn', burned, BURN_ADDRESS, from, txHash, source, referenceId, 0);
+        logLedger('out', 'team', team, TEAM_WALLET, from, txHash, source, referenceId, 0);
+        matched = true;
+      }
+    }
+  }
+
+  if (matched) return;
+
+  // Fallback: compute expected split from total, write rows with inferred=1
+  console.error('[logSplitFromReceipt] No matching event in receipt for', source, referenceId, '— writing inferred rows');
+  const total = Number(expectedTotalQf) || 0;
+  if (total <= 0) return;
+
+  if (source === 'mint' || source === 'leaderboard') {
+    // 5% burn, 95% team
+    logLedger('out', 'burn-inferred', total * 0.05, BURN_ADDRESS, from, txHash, source, referenceId, 1);
+    logLedger('out', 'team-inferred', total * 0.95, TEAM_WALLET, from, txHash, source, referenceId, 1);
+  } else if (source === 'duel' || source === 'battleships') {
+    // 5% burn, 5% team, 90% winner (recipient unknown in fallback)
+    logLedger('out', 'winner-inferred', total * 0.90, null, from, txHash, source, referenceId, 1);
+    logLedger('out', 'burn-inferred', total * 0.05, BURN_ADDRESS, from, txHash, source, referenceId, 1);
+    logLedger('out', 'team-inferred', total * 0.05, TEAM_WALLET, from, txHash, source, referenceId, 1);
+  } else if (source === 'duel-draw') {
+    // 5% burn, 5% team, 45% + 45% (recipients unknown)
+    logLedger('out', 'draw-payout-inferred', total * 0.45, null, from, txHash, source, referenceId, 1);
+    logLedger('out', 'draw-payout-inferred', total * 0.45, null, from, txHash, source, referenceId, 1);
+    logLedger('out', 'burn-inferred', total * 0.05, BURN_ADDRESS, from, txHash, source, referenceId, 1);
+    logLedger('out', 'team-inferred', total * 0.05, TEAM_WALLET, from, txHash, source, referenceId, 1);
   }
 }
 
@@ -121,7 +195,7 @@ export async function settleDuel(winnerAddress, burnAmount, teamAmount, winnerAm
   const tx = await settlementContract.settle(winnerAddress, { value, gasLimit: 35343055n });
   const receipt = await tx.wait();
 
-  logLedger('out', 'settle', totalPot, SETTLEMENT_ADDRESS, wallet.address, receipt.hash, src, ref);
+  logSplitFromReceipt(receipt, settlementContract.interface, src, ref, totalPot);
   return { burn: receipt.hash, team: receipt.hash, winner: receipt.hash };
 }
 
@@ -132,14 +206,14 @@ export async function settleDuel(winnerAddress, burnAmount, teamAmount, winnerAm
 export async function settleDuelDraw(creatorAddress, opponentAddress, burnAmount, teamAmount, eachAmount, source, referenceId) {
   if (!settlementContract) throw new Error('Settlement contract not initialised');
   const ref = referenceId || null;
-  const src = source || 'duel';
+  const src = 'duel-draw';
   const totalPot = burnAmount + teamAmount + (eachAmount * 2);
   const value = ethers.parseEther(String(totalPot));
 
   const tx = await settlementContract.settleDraw(creatorAddress, opponentAddress, { value, gasLimit: 35343055n });
   const receipt = await tx.wait();
 
-  logLedger('out', 'settle-draw', totalPot, SETTLEMENT_ADDRESS, wallet.address, receipt.hash, src, ref);
+  logSplitFromReceipt(receipt, settlementContract.interface, src, ref, totalPot);
   return { burn: receipt.hash, team: receipt.hash, creator: receipt.hash, opponent: receipt.hash };
 }
 

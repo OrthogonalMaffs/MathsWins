@@ -275,7 +275,8 @@ CREATE TABLE IF NOT EXISTS escrow_ledger (
   tx_hash TEXT,
   source TEXT,
   reference_id TEXT,
-  created_at INTEGER NOT NULL
+  created_at INTEGER NOT NULL,
+  inferred INTEGER DEFAULT 0
 );
 CREATE INDEX IF NOT EXISTS idx_escrow_ledger_type ON escrow_ledger(type);
 CREATE INDEX IF NOT EXISTS idx_escrow_ledger_created ON escrow_ledger(created_at);

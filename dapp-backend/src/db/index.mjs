@@ -68,6 +68,7 @@ export function getDb() {
   try { db.exec('ALTER TABLE wallet_stats ADD COLUMN maffsy_max_streak INTEGER DEFAULT 0'); } catch (e) { /* already exists */ }
   try { db.exec('ALTER TABLE duels ADD COLUMN creator_tx TEXT'); } catch (e) { /* already exists */ }
   try { db.exec('ALTER TABLE duels ADD COLUMN acceptor_tx TEXT'); } catch (e) { /* already exists */ }
+  try { db.exec('ALTER TABLE escrow_ledger ADD COLUMN inferred INTEGER DEFAULT 0'); } catch (e) { /* already exists */ }
 
   // League refunds table
   db.exec(`CREATE TABLE IF NOT EXISTS league_refunds (

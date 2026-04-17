@@ -11,7 +11,7 @@ import { signatureVerify, decodeAddress } from '@polkadot/util-crypto';
 import { getDb } from '../db/index.mjs';
 import { doSettleLeague, checkEarlySettlement, recoverStuckLeagues, mintCommemorative } from '../league-settle.mjs';
 import { checkAchievements, checkContrarian, checkStreakAchievements, checkLeagueRegular, checkMonthlyAchievements, trackSpend, checkNightOwlSubmission, checkMinesweeperFreePlay, checkFlagEverything, checkBlindEye, checkSumOfAllFears, checkTheGrinder, checkMintMeta, checkDuelMaster, checkFlaglessAndWrong, checkMidnight, checkFibonacci, checkWrongAnswerStreak } from '../achievement-checker.mjs';
-import { sendQF, settleDuel, settleDuelDraw, refundDuel, getEscrowAddress, getSettlementContract, logIncoming, BURN_ADDRESS, TEAM_WALLET } from '../escrow.mjs';
+import { sendQF, settleDuel, settleDuelDraw, refundDuel, getEscrowAddress, getSettlementContract, logIncoming, logSplitFromReceipt, BURN_ADDRESS, TEAM_WALLET } from '../escrow.mjs';
 import { createBattleshipsGame, getBattleshipsGameByCode, getBattleshipsGameById, updateBattleshipsGameStatus, saveBattleshipsPlacement, getBattleshipsPlacement, getBattleshipsPlacements, addBattleshipsRound, getBattleshipsRounds, getBattleshipsRecord, updateBattleshipsRecord, getActiveBattleshipsGames, getBattleshipsGamesByWallet, getActiveBattleshipsForWallet } from '../db/index.mjs';
 import { getAchievementRegistry, getAchievement, awardAchievement, getWalletAchievements, getAllAchievements, getGlobalRecord, getPersonalBests, getPersonalBest, getLeagueBests, getWalletStats, getWalletLeagueHistory, getWalletTrophies, getGameStateForLeaguePuzzle, completeGameState, getFlaggedSessions, getGlobalLeaderboard, getGlobalLeaderboardEntry, addGlobalLeaderboardEntry, getWalletLeaderboardPositions, getGameState, getGame, upsertPersonalBest, incrementPbBeatenCount, retireAchievement, recordMaffsyResult, getMaffsyStats } from '../db/index.mjs';
 import { analyseInputPattern } from '../scoring.mjs';
@@ -2051,7 +2051,8 @@ router.post('/achievement/mint', optionalWallet, async (req, res) => {
         var sc = getSettlementContract();
         if (!sc) throw new Error('Settlement contract not initialised');
         var splitTx = await sc.splitFee({ value: ethers.parseEther(String(mintFee)), gasLimit: 35343055n });
-        await splitTx.wait();
+        var splitReceipt = await splitTx.wait();
+        try { logSplitFromReceipt(splitReceipt, sc.interface, 'mint', achievement_id, mintFee); } catch (e) { console.error('mint split log failed:', e.message); }
       } catch (e) {
         return res.status(500).json({ error: 'Payment processing failed: ' + e.message });
       }
@@ -2456,7 +2457,8 @@ router.post('/global-leaderboard/enter', optionalWallet, async (req, res) => {
     var sc = getSettlementContract();
     if (!sc) throw new Error('Settlement contract not initialised');
     var splitTx = await sc.splitFee({ value: ethers.parseEther('50'), gasLimit: 35343055n });
-    await splitTx.wait();
+    var splitReceipt = await splitTx.wait();
+    try { logSplitFromReceipt(splitReceipt, sc.interface, 'leaderboard', gameId + ':' + periodType + ':' + periodKey, 50); } catch (e) { console.error('leaderboard split log failed:', e.message); }
   } catch (e) {
     return res.status(500).json({ error: 'Payment processing failed: ' + e.message });
   }
