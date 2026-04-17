@@ -177,14 +177,48 @@
       modal.addEventListener('click', function (e) { e.stopPropagation(); });
 
       payBtn.addEventListener('click', async function () {
-        payBtn.disabled = true;
-        payBtn.textContent = 'Submitting…';
         err.style.display = 'none';
-        try { sessionStorage.setItem('qf_lb_prompted_' + sessionId, '1'); } catch (e) {}
 
         var jwt;
         try { jwt = localStorage.getItem('qf_auth_token'); } catch (e) { jwt = null; }
         if (!jwt) { showError('Wallet session expired — reconnect and try again.'); return; }
+
+        // Step 1: user pays 50 QF to escrow via their own wallet
+        payBtn.disabled = true;
+        payBtn.textContent = 'Waiting for wallet…';
+
+        var txHash;
+        try {
+          var cfgRes = await fetch(API + '/achievement/mint-config', {
+            headers: { 'Authorization': 'Bearer ' + jwt }
+          });
+          var cfg = await cfgRes.json();
+          if (!cfg || !cfg.escrowAddress) { showError('Could not load payment config — try again.'); return; }
+
+          var signer = (window.qfWallet && window.qfWallet.signer) || null;
+          if (!signer || !signer.sendTransaction) { showError('Wallet not connected — reconnect and try again.'); return; }
+          if (typeof ethers === 'undefined' || !ethers.parseEther) { showError('Wallet library not loaded — reload and try again.'); return; }
+
+          var tx = await signer.sendTransaction({ to: cfg.escrowAddress, value: ethers.parseEther('50') });
+          // Spec: do NOT wait for block confirmation client-side
+          txHash = tx && tx.hash;
+          if (!txHash) { showError('No transaction hash returned — try again.'); return; }
+        } catch (e) {
+          var code = e && (e.code || (e.info && e.info.error && e.info.error.code));
+          var isReject = code === 'ACTION_REJECTED' || code === 4001 ||
+            (e && e.message && /user (rejected|denied)/i.test(e.message));
+          if (isReject) {
+            // Return to idle; dedup NOT set so user can retry
+            showError('Transaction rejected');
+            return;
+          }
+          showError('Wallet error — try again.');
+          return;
+        }
+
+        // Step 2: tx submitted — commit dedup, POST to server
+        try { sessionStorage.setItem('qf_lb_prompted_' + sessionId, '1'); } catch (e) {}
+        payBtn.textContent = 'Processing…';
 
         var chosen = qualifying[0];
         try {
@@ -196,7 +230,8 @@
               score: score,
               timeMs: timeMs || 0,
               periodType: chosen.period,
-              sessionId: sessionId
+              sessionId: sessionId,
+              txHash: txHash
             })
           });
           var data;
