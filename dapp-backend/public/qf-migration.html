@@ -1,0 +1,382 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>QF Migration Tracker</title>
+<style>
+  :root {
+    --bg: #0a0a0a;
+    --card-outer: #0e0e0e;
+    --card-inner: #1a1a1a;
+    --border: rgba(255,255,255,0.05);
+    --border2: rgba(255,255,255,0.08);
+    --fg: #fff;
+    --fg2: rgba(255,255,255,0.5);
+    --fg3: rgba(255,255,255,0.3);
+    --purple: #7F77DD;
+    --teal: #1D9E75;
+    --amber: #EF9F27;
+  }
+  * { box-sizing: border-box; }
+  html, body { margin: 0; background: var(--bg); color: var(--fg); }
+  body {
+    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Inter, Roboto, sans-serif;
+    padding: 24px 16px 48px;
+    -webkit-font-smoothing: antialiased;
+  }
+  .mono { font-family: "JetBrains Mono", ui-monospace, SFMono-Regular, Menlo, Consolas, monospace; }
+  .wrap { max-width: 920px; margin: 0 auto; }
+
+  .card-outer { background: var(--card-outer); border: 1px solid var(--border); border-radius: 16px; padding: 24px; margin-bottom: 20px; }
+  .card-inner { background: var(--card-inner); border: 1px solid rgba(255,255,255,0.04); border-radius: 12px; padding: 16px; }
+
+  .hero-num { font-size: 44px; font-weight: 700; line-height: 1; letter-spacing: -0.02em; }
+  @media (min-width: 640px) { .hero-num { font-size: 56px; } }
+  .hero-sub { margin-top: 12px; font-size: 14px; color: var(--fg2); }
+  .hero-bar { margin-top: 20px; height: 6px; background: var(--card-inner); border-radius: 999px; overflow: hidden; }
+  .hero-bar-fill { height: 100%; width: 0; background: var(--purple); transition: width 1.2s cubic-bezier(0.25,0.1,0.25,1); }
+  .hero-delta { margin-top: 20px; font-size: 12px; color: var(--fg2); }
+
+  .stats { display: grid; grid-template-columns: repeat(2, 1fr); gap: 12px; margin-bottom: 20px; }
+  @media (min-width: 640px) { .stats { grid-template-columns: repeat(4, 1fr); } }
+  .stat-label { font-size: 11px; color: var(--fg2); text-transform: uppercase; letter-spacing: 0.06em; margin-bottom: 8px; }
+  .stat-value { font-size: 20px; color: var(--fg); }
+
+  .tabs { display: flex; gap: 4px; flex-wrap: wrap; margin-bottom: 16px; }
+  .tab { font-size: 12px; padding: 6px 12px; border-radius: 8px; background: transparent; color: var(--fg2); border: 1px solid transparent; cursor: pointer; }
+  .tab.active { background: var(--card-inner); color: var(--fg); border-color: var(--border2); }
+
+  svg.chart { width: 100%; height: 240px; display: block; }
+  svg.chart text { font-family: "JetBrains Mono", ui-monospace, Menlo, Consolas, monospace; fill: var(--fg3); }
+
+  @keyframes drawLine { from { stroke-dashoffset: var(--len); } to { stroke-dashoffset: 0; } }
+  @keyframes growBar { from { transform: scaleY(0); } to { transform: scaleY(1); } }
+  .line-anim { stroke-dasharray: var(--len); stroke-dashoffset: var(--len); animation: drawLine 1.1s cubic-bezier(0.25,0.1,0.25,1) forwards; }
+  .bar-anim { transform-origin: bottom; animation: growBar 0.4s cubic-bezier(0.25,0.1,0.25,1) forwards; }
+
+  .ticker { height: 240px; overflow-y: auto; padding-right: 4px; }
+  .row {
+    display: flex; align-items: center; gap: 12px;
+    padding: 8px; border-radius: 8px;
+    transition: background-color 1.2s ease;
+  }
+  @keyframes flashBg {
+    0% { background-color: var(--card-inner); }
+    100% { background-color: transparent; }
+  }
+  @keyframes slideIn { from { opacity: 0; transform: translateY(-12px); } to { opacity: 1; transform: translateY(0); } }
+  .row.is-new { animation: slideIn 0.3s ease, flashBg 2.5s ease forwards; }
+  .row-avatar { width: 24px; height: 24px; border-radius: 50%; background: var(--card-inner); color: var(--fg2); display: flex; align-items: center; justify-content: center; font-size: 10px; flex-shrink: 0; }
+  .row-avatar img { width: 100%; height: 100%; border-radius: 50%; object-fit: cover; }
+  .row-body { flex: 1 1 auto; min-width: 0; overflow: hidden; }
+  .row-title { display: flex; gap: 8px; align-items: baseline; overflow: hidden; }
+  .row-who { font-size: 13px; color: var(--fg); text-overflow: ellipsis; white-space: nowrap; overflow: hidden; }
+  .row-eth { font-size: 11px; color: var(--fg3); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+  .row-eth:hover { color: var(--fg2); }
+  .row-meta { font-size: 11px; color: var(--fg3); margin-top: 2px; }
+  .row-amt { font-size: 14px; white-space: nowrap; flex-shrink: 0; }
+  .row-amt.is-large { color: var(--purple); }
+
+  a { color: inherit; text-decoration: none; }
+  a:hover { text-decoration: underline; }
+
+  .head { display: flex; justify-content: space-between; align-items: center; margin-bottom: 12px; }
+  .head-title { font-size: 16px; font-weight: 600; }
+  .head-live { font-size: 11px; color: var(--fg3); }
+
+  .empty { height: 240px; display: flex; align-items: center; justify-content: center; color: var(--fg3); font-size: 14px; }
+  .skel { background: var(--card-inner); border-radius: 6px; }
+</style>
+</head>
+<body>
+<div class="wrap">
+  <!-- Hero -->
+  <div class="card-outer" id="hero">
+    <div class="hero-num" id="heroNum"><span class="skel" style="display:inline-block;width:280px;height:52px"></span></div>
+    <div class="hero-sub" id="heroSub">&nbsp;</div>
+    <div class="hero-bar"><div class="hero-bar-fill" id="heroBar"></div></div>
+    <div class="hero-delta" id="heroDelta">&nbsp;</div>
+  </div>
+
+  <!-- Stat cards -->
+  <div class="stats" id="stats">
+    <div class="card-inner"><div class="stat-label">Remaining</div><div class="stat-value mono" data-k="remaining">—</div></div>
+    <div class="card-inner"><div class="stat-label">Wallets migrated</div><div class="stat-value mono" data-k="wallets">—</div></div>
+    <div class="card-inner"><div class="stat-label">Avg QF / day (7d)</div><div class="stat-value mono" data-k="avg">—</div></div>
+    <div class="card-inner"><div class="stat-label">Week on week</div><div class="stat-value mono" data-k="wow">—</div></div>
+  </div>
+
+  <!-- Chart -->
+  <div class="card-outer">
+    <div class="tabs" id="tabs">
+      <button class="tab active" data-tab="cumulative">Cumulative</button>
+      <button class="tab" data-tab="velocity">Daily velocity</button>
+      <button class="tab" data-tab="pace7">7-day pace</button>
+    </div>
+    <div id="chartHost"><div class="empty">Loading chart…</div></div>
+  </div>
+
+  <!-- Ticker -->
+  <div class="card-outer">
+    <div class="head"><div class="head-title">Recent claims</div><div class="head-live">live</div></div>
+    <div class="ticker" id="ticker"><div class="empty">Waiting for claims…</div></div>
+  </div>
+</div>
+
+<script type="module">
+const API = 'https://qf-explorer.mathswins.co.uk/api/migration';
+const SUMMARY_POLL = 10_000;
+const CLAIMS_POLL = 10_000;
+const FLASH_MS = 2_500;
+const PURPLE = '#7F77DD';
+const TEAL = '#1D9E75';
+const AMBER = '#EF9F27';
+
+const parseQF = (s) => { const n = parseFloat(s); return Number.isFinite(n) ? n : 0; };
+const fmtInt = (n) => n.toLocaleString(undefined, { maximumFractionDigits: 0 });
+const fmtQF = (n) => n.toLocaleString(undefined, { maximumFractionDigits: 2 });
+const compact = (n) => {
+  const a = Math.abs(n);
+  if (a >= 1e9) return (n/1e9).toFixed(1) + 'B';
+  if (a >= 1e6) return (n/1e6).toFixed(1) + 'M';
+  if (a >= 1e3) return (n/1e3).toFixed(1) + 'K';
+  return n.toFixed(0);
+};
+const signedCompact = (n) => (n >= 0 ? '+' : '') + compact(n);
+const signedPct = (n) => Number.isFinite(n) ? (n >= 0 ? '+' : '') + n.toFixed(1) + '%' : '—';
+const truncAddr = (a) => a && a.length > 10 ? a.slice(0,4) + '…' + a.slice(-4) : (a || '');
+const relTime = (iso) => {
+  const t = Math.floor(new Date(iso).getTime() / 1000);
+  const diff = Math.floor(Date.now()/1000) - t;
+  if (diff < 60) return 'just now';
+  if (diff < 3600) return Math.floor(diff/60) + ' min ago';
+  if (diff < 86400) return Math.floor(diff/3600) + ' hr ago';
+  if (diff < 604800) return Math.floor(diff/86400) + ' days ago';
+  return new Date(iso).toLocaleDateString('en-GB', { month: 'short', day: 'numeric' });
+};
+const initialFor = (s) => (s || '?').trim().charAt(0).toUpperCase() || '?';
+
+// ── Summary ──
+async function loadSummary() {
+  try {
+    const r = await fetch(`${API}/summary`);
+    if (!r.ok) throw 0;
+    const j = await r.json();
+    renderSummary(j);
+  } catch (e) { /* keep stale */ }
+}
+
+function renderSummary(s) {
+  const total = parseQF(s.totalNativeQF);
+  const supply = parseQF(s.totalSupply);
+  const pct = parseQF(s.pctMigrated) * 100;
+  const remaining = supply - total;
+
+  document.getElementById('heroNum').textContent = fmtInt(total) + ' QF claimed';
+  document.getElementById('heroSub').innerHTML =
+    'of <span class="mono" style="color:rgba(255,255,255,0.7)">' + fmtInt(supply) + '</span> native supply · ' +
+    '<span style="color:' + PURPLE + '">' + pct.toFixed(2) + '%</span> migrated';
+  document.getElementById('heroBar').style.width = Math.min(pct, 100) + '%';
+
+  document.querySelector('[data-k="remaining"]').textContent = compact(remaining) + ' QF';
+  document.querySelector('[data-k="wallets"]').textContent = fmtInt(s.uniqueClaimants);
+}
+
+// ── History (once, with WoW derived) ──
+let history = null;
+async function loadHistory() {
+  try {
+    const r = await fetch(`${API}/history`);
+    if (!r.ok) throw 0;
+    const j = await r.json();
+    const labels = j.buckets.map(b => b.date);
+    const velocity = j.buckets.map(b => parseQF(b.nativeQF));
+    const cumulative = []; let run = 0;
+    for (const v of velocity) { run += v; cumulative.push(run); }
+    const pace7 = velocity.map((_, i) => {
+      if (i < 6) return null;
+      let sum = 0; for (let j = i-6; j <= i; j++) sum += velocity[j];
+      return sum / 7;
+    });
+    history = { labels, velocity, cumulative, pace7 };
+    renderWeekStats();
+    renderChart(currentTab);
+  } catch (e) { /* keep empty */ }
+}
+
+function renderWeekStats() {
+  if (!history) return;
+  const v = history.velocity; const n = v.length;
+  const last7 = v.slice(Math.max(0, n-7)).reduce((a,b)=>a+b, 0);
+  const prior7 = v.slice(Math.max(0, n-14), Math.max(0, n-7)).reduce((a,b)=>a+b, 0);
+  const delta = last7 - prior7;
+  const pct = prior7 > 0 ? (delta/prior7)*100 : 0;
+  const avgDay = last7 / 7;
+
+  document.querySelector('[data-k="avg"]').textContent = compact(avgDay) + ' QF';
+  const wow = document.querySelector('[data-k="wow"]');
+  wow.textContent = signedPct(pct);
+  wow.style.color = pct >= 0 ? TEAL : AMBER;
+
+  const hd = document.getElementById('heroDelta');
+  const colour = delta >= 0 ? TEAL : AMBER;
+  hd.innerHTML = 'Last 7 days: <span class="mono" style="color:' + colour + '">' +
+    signedCompact(delta) + ' QF</span> vs prior week';
+}
+
+// ── Chart (SVG, hand-rolled) ──
+let currentTab = 'cumulative';
+function renderChart(tab) {
+  currentTab = tab;
+  const host = document.getElementById('chartHost');
+  if (!history) { host.innerHTML = '<div class="empty">Loading chart…</div>'; return; }
+
+  const W = 800, H = 240, padL = 56, padR = 12, padT = 12, padB = 28;
+  const innerW = W - padL - padR, innerH = H - padT - padB;
+  const { labels, velocity, cumulative, pace7 } = history;
+  const series = tab === 'cumulative' ? cumulative : tab === 'velocity' ? velocity : pace7;
+  const valid = series.filter(v => v !== null);
+  const maxV = Math.max(1, ...valid);
+  const n = labels.length;
+  const xFor = i => padL + (n === 1 ? innerW/2 : (i/(n-1))*innerW);
+  const yFor = v => padT + innerH - (v/maxV)*innerH;
+
+  const gridSteps = 4;
+  let svg = `<svg class="chart" viewBox="0 0 ${W} ${H}" preserveAspectRatio="none">`;
+  svg += `<defs><linearGradient id="migArea" x1="0" x2="0" y1="0" y2="1"><stop offset="0%" stop-color="${PURPLE}" stop-opacity="0.35"/><stop offset="100%" stop-color="${PURPLE}" stop-opacity="0"/></linearGradient></defs>`;
+
+  for (let k = 0; k <= gridSteps; k++) {
+    const v = (maxV*k)/gridSteps;
+    const y = yFor(v);
+    svg += `<line x1="${padL}" x2="${W-padR}" y1="${y}" y2="${y}" stroke="rgba(255,255,255,0.04)" stroke-width="1"/>`;
+    svg += `<text x="${padL-8}" y="${y+3}" font-size="10" text-anchor="end">${compact(v)}</text>`;
+  }
+
+  if (n > 0) {
+    const ticks = n === 1 ? [0] : [0, Math.floor((n-1)/2), n-1];
+    for (const i of ticks) {
+      const anchor = i === 0 ? 'start' : i === n-1 ? 'end' : 'middle';
+      svg += `<text x="${xFor(i)}" y="${H-8}" font-size="10" text-anchor="${anchor}">${labels[i].slice(5)}</text>`;
+    }
+  }
+
+  if (tab === 'velocity') {
+    const barW = Math.max(2, (innerW/n)*0.75);
+    for (let i = 0; i < series.length; i++) {
+      const v = series[i]; if (v == null || v === 0) continue;
+      const x = xFor(i) - barW/2; const y = yFor(v); const h = padT + innerH - y;
+      svg += `<rect class="bar-anim" x="${x}" y="${padT+innerH}" width="${barW}" height="${h}" fill="${PURPLE}" rx="1" style="transform-origin:${x+barW/2}px ${padT+innerH}px;transform:translateY(${y-padT-innerH}px)"><animate attributeName="height" from="0" to="${h}" dur="0.4s" fill="freeze"/><animate attributeName="y" from="${padT+innerH}" to="${y}" dur="0.4s" fill="freeze"/></rect>`;
+    }
+  } else {
+    const pts = [];
+    for (let i = 0; i < series.length; i++) {
+      const v = series[i]; if (v == null) continue;
+      pts.push(`${xFor(i)},${yFor(v)}`);
+    }
+    if (pts.length > 1) {
+      const firstIdx = series.findIndex(v => v !== null);
+      let lastIdx = -1; for (let i = series.length-1; i >= 0; i--) if (series[i] !== null) { lastIdx = i; break; }
+      const linePath = 'M ' + pts.join(' L ');
+      const areaPath = `${linePath} L ${xFor(lastIdx)},${yFor(0)} L ${xFor(firstIdx)},${yFor(0)} Z`;
+      svg += `<path d="${areaPath}" fill="url(#migArea)"/>`;
+      // Approximate path length for dash animation
+      let len = 0;
+      for (let i = 1; i < pts.length; i++) {
+        const [x1,y1] = pts[i-1].split(',').map(Number);
+        const [x2,y2] = pts[i].split(',').map(Number);
+        len += Math.hypot(x2-x1, y2-y1);
+      }
+      svg += `<path class="line-anim" style="--len:${Math.ceil(len)}" d="${linePath}" fill="none" stroke="${PURPLE}" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>`;
+    }
+  }
+
+  svg += '</svg>';
+  host.innerHTML = svg;
+}
+
+document.getElementById('tabs').addEventListener('click', (e) => {
+  const btn = e.target.closest('.tab'); if (!btn) return;
+  for (const t of document.querySelectorAll('.tab')) t.classList.toggle('active', t === btn);
+  renderChart(btn.dataset.tab);
+});
+
+// ── Claims ticker ──
+let head = 0;
+const rendered = new Map();
+async function loadClaims() {
+  try {
+    const r = await fetch(`${API}/claims?limit=20`);
+    if (!r.ok) throw 0;
+    const j = await r.json();
+    renderClaims(j.claims);
+  } catch (e) { /* keep stale */ }
+}
+
+function renderClaims(claims) {
+  const host = document.getElementById('ticker');
+  if (claims.length === 0) { host.innerHTML = '<div class="empty">Waiting for claims…</div>'; return; }
+  if (host.querySelector('.empty')) host.innerHTML = '';
+
+  if (head === 0) {
+    head = claims[0].blockNum;
+    host.innerHTML = '';
+    for (const c of claims) host.appendChild(rowFor(c, false));
+    return;
+  }
+
+  const incoming = claims.filter(c => c.blockNum > head);
+  if (incoming.length === 0) return;
+  head = incoming[0].blockNum;
+
+  for (const c of incoming.slice().reverse()) {
+    if (rendered.has(c.blockNum)) continue;
+    const el = rowFor(c, true);
+    host.insertBefore(el, host.firstChild);
+    setTimeout(() => el.classList.remove('is-new'), FLASH_MS);
+  }
+  while (host.children.length > 20) host.removeChild(host.lastChild);
+}
+
+function rowFor(c, isNew) {
+  const row = document.createElement('div');
+  row.className = 'row' + (isNew ? ' is-new' : '');
+  rendered.set(c.blockNum, row);
+
+  const display = c.whoName || c.who;
+  const avatar = document.createElement('div');
+  avatar.className = 'row-avatar';
+  if (c.whoAvatar) { const img = document.createElement('img'); img.src = c.whoAvatar; img.alt = ''; avatar.appendChild(img); }
+  else avatar.textContent = initialFor(display);
+
+  const body = document.createElement('div'); body.className = 'row-body';
+  const title = document.createElement('div'); title.className = 'row-title';
+  const whoEl = document.createElement(c.whoName ? 'a' : 'span');
+  whoEl.className = 'row-who' + (c.whoName ? '' : ' mono');
+  whoEl.textContent = c.whoName || truncAddr(c.who);
+  if (c.whoName) whoEl.href = 'https://qf-explorer.mathswins.co.uk/api/resolve/' + encodeURIComponent(c.whoName);
+  const ethEl = document.createElement('a');
+  ethEl.className = 'row-eth mono';
+  ethEl.href = 'https://etherscan.io/address/' + c.ethAddress;
+  ethEl.target = '_blank'; ethEl.rel = 'noreferrer';
+  ethEl.textContent = '← ' + truncAddr(c.ethAddress);
+  title.appendChild(whoEl); title.appendChild(ethEl);
+  const meta = document.createElement('div'); meta.className = 'row-meta';
+  meta.textContent = 'Block ' + compact(c.blockNum) + ' · ' + relTime(c.timestamp);
+  body.appendChild(title); body.appendChild(meta);
+
+  const amt = document.createElement('div');
+  amt.className = 'row-amt mono' + (c.isLarge ? ' is-large' : '');
+  amt.innerHTML = fmtQF(parseQF(c.amountQF)) + ' <span style="color:var(--fg3)">QF</span>';
+
+  row.appendChild(avatar); row.appendChild(body); row.appendChild(amt);
+  return row;
+}
+
+// ── Boot ──
+loadSummary(); setInterval(loadSummary, SUMMARY_POLL);
+loadClaims(); setInterval(loadClaims, CLAIMS_POLL);
+loadHistory();
+</script>
+</body>
+</html>

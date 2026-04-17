@@ -175,9 +175,13 @@ Split from MaffsGames in March 2025. MaffsGames = free schools games. MathsWins 
 - /duel/precheck endpoint validates eligibility before create payment
 - GET /duel/config returns { escrowAddress, defaultStake: 25 }
 - Server stores txHash in duels.creator_tx / duels.acceptor_tx (and battleships_games equivalents)
-- Settlement fires automatically when both scores submitted (settleDuel / settleDuelDraw)
+- Settlement fires automatically when both scores submitted via QFSettlement contract (atomic)
+- settleDuel() calls contract.settle(winner) — single tx, 5% burn + 5% team + 90% winner
+- settleDuelDraw() calls contract.settleDraw(p1, p2) — single tx, 5% burn + 5% team + 45% each
 - Only settles if both creator_tx AND acceptor_tx present (no payout for free duels)
 - Battleships: bothPaid check on all 3 settlement points (win/forfeit/auto-shot)
+- Achievement mint + leaderboard entry fees use contract.splitFee() — atomic 5% burn + 95% team
+- QFSettlement contract: `0x475F350469Cbe5aDd04aae4686339b3b990D013E`
 - Refund sweep (5min interval) only refunds if tx hash exists
 - Builder-whitelisted wallets bypass payment entirely
 - Lobby code input routes to correct game via duel lookup (was hardcoded to sudoku-duel)

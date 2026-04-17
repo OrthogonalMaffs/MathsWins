@@ -11,7 +11,7 @@ import { signatureVerify, decodeAddress } from '@polkadot/util-crypto';
 import { getDb } from '../db/index.mjs';
 import { doSettleLeague, checkEarlySettlement, recoverStuckLeagues, mintCommemorative } from '../league-settle.mjs';
 import { checkAchievements, checkContrarian, checkStreakAchievements, checkLeagueRegular, checkMonthlyAchievements, trackSpend, checkNightOwlSubmission, checkMinesweeperFreePlay, checkFlagEverything, checkBlindEye, checkSumOfAllFears, checkTheGrinder, checkMintMeta, checkDuelMaster, checkFlaglessAndWrong, checkMidnight, checkFibonacci, checkWrongAnswerStreak } from '../achievement-checker.mjs';
-import { sendQF, settleDuel, settleDuelDraw, refundDuel, getEscrowAddress, logIncoming, BURN_ADDRESS, TEAM_WALLET } from '../escrow.mjs';
+import { sendQF, settleDuel, settleDuelDraw, refundDuel, getEscrowAddress, getSettlementContract, logIncoming, BURN_ADDRESS, TEAM_WALLET } from '../escrow.mjs';
 import { createBattleshipsGame, getBattleshipsGameByCode, getBattleshipsGameById, updateBattleshipsGameStatus, saveBattleshipsPlacement, getBattleshipsPlacement, getBattleshipsPlacements, addBattleshipsRound, getBattleshipsRounds, getBattleshipsRecord, updateBattleshipsRecord, getActiveBattleshipsGames, getBattleshipsGamesByWallet } from '../db/index.mjs';
 import { getAchievementRegistry, getAchievement, awardAchievement, getWalletAchievements, getAllAchievements, getGlobalRecord, getPersonalBests, getPersonalBest, getLeagueBests, getWalletStats, getWalletLeagueHistory, getWalletTrophies, getGameStateForLeaguePuzzle, completeGameState, getFlaggedSessions, getGlobalLeaderboard, getGlobalLeaderboardEntry, addGlobalLeaderboardEntry, getWalletLeaderboardPositions, getGameState, getGame, upsertPersonalBest, incrementPbBeatenCount, retireAchievement, recordMaffsyResult, getMaffsyStats } from '../db/index.mjs';
 import { analyseInputPattern } from '../scoring.mjs';
@@ -2012,14 +2012,12 @@ router.post('/achievement/mint', optionalWallet, async (req, res) => {
       db.prepare('UPDATE achievement_eligibility SET payment_tx = ? WHERE wallet = ? AND achievement_id = ?')
         .run(txHash, req.wallet, achievement_id);
       logIncoming('mint-fee', mintFee, req.wallet, txHash, 'mint', achievement_id);
-      // Burn/team split from escrow (funded by player's payment)
+      // Atomic burn/team split via QFSettlement contract (5% burn, 95% team)
       try {
-        var burnAmount = Math.floor(mintFee * 0.05);
-        var teamAmount = mintFee - burnAmount;
-        var burnResult = await sendQF(BURN_ADDRESS, burnAmount, { type: 'burn', source: 'mint', referenceId: achievement_id });
-        if (!burnResult) throw new Error('Burn payment failed');
-        var teamResult = await sendQF(TEAM_WALLET, teamAmount, { type: 'team', source: 'mint', referenceId: achievement_id });
-        if (!teamResult) throw new Error('Team payment failed');
+        var sc = getSettlementContract();
+        if (!sc) throw new Error('Settlement contract not initialised');
+        var splitTx = await sc.splitFee({ value: ethers.parseEther(String(mintFee)), gasLimit: 35343055n });
+        await splitTx.wait();
       } catch (e) {
         return res.status(500).json({ error: 'Payment processing failed: ' + e.message });
       }
@@ -2397,12 +2395,12 @@ router.post('/global-leaderboard/enter', optionalWallet, async (req, res) => {
 
   var suspicious = 0;
 
-  // Burn 5% (2.5 QF), team 95% (47.5 QF) of 50 QF entry fee
-  var burnAmount = 2;
-  var teamAmount = 48;
+  // Atomic burn/team split via QFSettlement contract (5% burn, 95% team)
   try {
-    await sendQF(BURN_ADDRESS, burnAmount);
-    await sendQF(TEAM_WALLET, teamAmount);
+    var sc = getSettlementContract();
+    if (!sc) throw new Error('Settlement contract not initialised');
+    var splitTx = await sc.splitFee({ value: ethers.parseEther('50'), gasLimit: 35343055n });
+    await splitTx.wait();
   } catch (e) {
     return res.status(500).json({ error: 'Payment processing failed: ' + e.message });
   }

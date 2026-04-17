@@ -4,8 +4,21 @@ QFGamesHub.sol              # Central hub — badge minting, fee discounts
   ├── PrimeOrCompositeSatellite.sol  # Live satellite for Prime or Composite
   └── AfterYouSatellite.sol  # Standalone queue game (see below)
 IQFSatellite.sol            # Interface for satellite contracts
+QFSettlement.sol            # Atomic settlement — duel/battleships payouts + fee splits (DEPLOYED)
 Academy.sol                 # Planned — subscription/access contract with soulbound access NFTs
 ```
+
+### QFSettlement.sol (DEPLOYED 2026-04-16)
+- **Address:** `0x475F350469Cbe5aDd04aae4686339b3b990D013E`
+- **Owner:** `0xB21039b9A7e360561d9AE7EE0A8B1b722f2057A3` (onlyfans.qf)
+- **Team wallet:** `0x8a542f4F1814fb2C29b96D8619FdaABBf67F3016` (settable by owner)
+- `settle(winner)` — atomic duel/battleships win: 5% burn, 5% team, 90% winner
+- `settleDraw(p1, p2)` — atomic duel draw: 5% burn, 5% team, 45% each
+- `splitFee()` — atomic fee split: 5% burn, 95% team (achievement mints + leaderboard entries)
+- `setTeamWallet(address)` — owner-only, update team wallet
+- ABI at `/home/jon/MathsWins/dapp-backend/contracts/QFSettlement.json`
+- Compiled with resolc v0.5.0 -O2, PVM bytecode at `out-pvm/QFSettlement.sol:QFSettlement.pvm`
+- Called by escrow.mjs (settleDuel, settleDuelDraw) and routes/api.mjs (mint fee, leaderboard fee)
 
 ### QFGamesHub.sol
 - `mintBadge(player, tier)` — mint soulbound NFT badge

@@ -10,6 +10,11 @@ import { recoverSessions } from './scoring.mjs';
 import { startListener } from './chain-listener.mjs';
 import { initEscrow, getEscrowAddress, getEscrowBalance, refundDuel } from './escrow.mjs';
 import { ethers } from 'ethers';
+import path from 'path';
+import { fileURLToPath } from 'url';
+
+const __filename = fileURLToPath(import.meta.url);
+const __dirname = path.dirname(__filename);
 
 const PORT = process.env.PORT || 3860;
 
@@ -95,6 +100,16 @@ app.get('/health', async (req, res) => {
       balance: ethers.formatEther(balance) + ' QF'
     }
   });
+});
+
+// ── QF Migration Tracker (static HTML, relaxed CSP for inline + cross-origin fetch) ──
+app.get(['/qf-migration', '/qf-migration/'], (req, res) => {
+  res.setHeader(
+    'Content-Security-Policy',
+    "default-src 'self'; script-src 'self' 'unsafe-inline'; style-src 'self' 'unsafe-inline'; connect-src 'self' https://qf-explorer.mathswins.co.uk; img-src 'self' data: https:; font-src 'self' data:;"
+  );
+  res.setHeader('Cache-Control', 'public, max-age=60');
+  res.sendFile(path.join(__dirname, '../public/qf-migration.html'));
 });
 
 // ── Start ───────────────────────────────────────────────────────────────────

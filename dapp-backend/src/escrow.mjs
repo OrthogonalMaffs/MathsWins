@@ -20,6 +20,10 @@ const QF_RPC = process.env.QF_RPC_URL || 'https://archive.mainnet.qfnode.net/eth
 const TEAM_WALLET = '0x8a542f4F1814fb2C29b96D8619FdaABBf67F3016';
 const BURN_ADDRESS = '0x000000000000000000000000000000000000dEaD';
 
+const SETTLEMENT_ABI = JSON.parse(readFileSync(join(__dirname, '../contracts/QFSettlement.json'), 'utf8')).abi;
+const SETTLEMENT_ADDRESS = '0x475F350469Cbe5aDd04aae4686339b3b990D013E';
+let settlementContract = null;
+
 let wallet = null;
 let provider = null;
 
@@ -31,6 +35,8 @@ export function initEscrow() {
     const key = readFileSync(KEY_PATH, 'utf-8').trim();
     wallet = new ethers.Wallet(key, provider);
     console.log('Escrow wallet loaded:', wallet.address);
+    settlementContract = new ethers.Contract(SETTLEMENT_ADDRESS, SETTLEMENT_ABI, wallet);
+    console.log('QFSettlement contract:', SETTLEMENT_ADDRESS);
   } else {
     // Generate new wallet
     if (!existsSync(DATA_DIR)) mkdirSync(DATA_DIR, { recursive: true });
@@ -39,6 +45,8 @@ export function initEscrow() {
     wallet = newWallet.connect(provider);
     console.log('Escrow wallet CREATED:', wallet.address);
     console.log('Fund this address with QF to enable settlements.');
+    settlementContract = new ethers.Contract(SETTLEMENT_ADDRESS, SETTLEMENT_ABI, wallet);
+    console.log('QFSettlement contract:', SETTLEMENT_ADDRESS);
   }
 
   return wallet.address;
@@ -46,6 +54,10 @@ export function initEscrow() {
 
 export function getEscrowAddress() {
   return wallet ? wallet.address : null;
+}
+
+export function getSettlementContract() {
+  return settlementContract;
 }
 
 export async function getEscrowBalance() {
@@ -96,47 +108,39 @@ export async function sendQF(to, amountQF, ctx) {
 }
 
 /**
- * Settle a duel: burn + team + winner payout.
- * Amounts in whole QF (not wei).
+ * Settle a duel: burn + team + winner payout via QFSettlement contract (atomic).
+ * Amounts in whole QF (not wei). Contract handles 5/5/90 split.
  */
 export async function settleDuel(winnerAddress, burnAmount, teamAmount, winnerAmount, source, referenceId) {
-  const results = { burn: null, team: null, winner: null };
+  if (!settlementContract) throw new Error('Settlement contract not initialised');
   const ref = referenceId || null;
   const src = source || 'duel';
+  const totalPot = burnAmount + teamAmount + winnerAmount;
+  const value = ethers.parseEther(String(totalPot));
 
-  if (burnAmount > 0) {
-    results.burn = await sendQF(BURN_ADDRESS, burnAmount, { type: 'burn', source: src, referenceId: ref });
-  }
-  if (teamAmount > 0) {
-    results.team = await sendQF(TEAM_WALLET, teamAmount, { type: 'team', source: src, referenceId: ref });
-  }
-  if (winnerAmount > 0 && winnerAddress) {
-    results.winner = await sendQF(winnerAddress, winnerAmount, { type: 'winner', source: src, referenceId: ref });
-  }
+  const tx = await settlementContract.settle(winnerAddress, { value, gasLimit: 35343055n });
+  const receipt = await tx.wait();
 
-  return results;
+  logLedger('out', 'settle', totalPot, SETTLEMENT_ADDRESS, wallet.address, receipt.hash, src, ref);
+  return { burn: receipt.hash, team: receipt.hash, winner: receipt.hash };
 }
 
 /**
- * Settle a draw: burn + team + split to both players.
+ * Settle a draw: burn + team + split to both players via QFSettlement contract (atomic).
+ * Amounts in whole QF (not wei). Contract handles 5/5/90 split, then halves the prize.
  */
 export async function settleDuelDraw(creatorAddress, opponentAddress, burnAmount, teamAmount, eachAmount, source, referenceId) {
-  const results = { burn: null, team: null, creator: null, opponent: null };
+  if (!settlementContract) throw new Error('Settlement contract not initialised');
   const ref = referenceId || null;
   const src = source || 'duel';
+  const totalPot = burnAmount + teamAmount + (eachAmount * 2);
+  const value = ethers.parseEther(String(totalPot));
 
-  if (burnAmount > 0) {
-    results.burn = await sendQF(BURN_ADDRESS, burnAmount, { type: 'burn', source: src, referenceId: ref });
-  }
-  if (teamAmount > 0) {
-    results.team = await sendQF(TEAM_WALLET, teamAmount, { type: 'team', source: src, referenceId: ref });
-  }
-  if (eachAmount > 0) {
-    results.creator = await sendQF(creatorAddress, eachAmount, { type: 'draw-split', source: src, referenceId: ref });
-    results.opponent = await sendQF(opponentAddress, eachAmount, { type: 'draw-split', source: src, referenceId: ref });
-  }
+  const tx = await settlementContract.settleDraw(creatorAddress, opponentAddress, { value, gasLimit: 35343055n });
+  const receipt = await tx.wait();
 
-  return results;
+  logLedger('out', 'settle-draw', totalPot, SETTLEMENT_ADDRESS, wallet.address, receipt.hash, src, ref);
+  return { burn: receipt.hash, team: receipt.hash, creator: receipt.hash, opponent: receipt.hash };
 }
 
 /**
