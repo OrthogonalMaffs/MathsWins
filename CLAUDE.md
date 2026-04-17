@@ -128,7 +128,7 @@ Split from MaffsGames in March 2025. MaffsGames = free schools games. MathsWins 
 | `battleships_placements` | Fleet positions per player per game |
 | `battleships_rounds` | Shot history per game |
 | `battleships_record` | Win/loss/draw per wallet |
-| `achievement_registry` | 161 achievements (v4 spec), 32 categories, tier + category columns |
+| `achievement_registry` | 163 total / 162 active (v4 spec), 32 categories, tier + category columns. speed-reader retired (active=0). +2 vs earlier count: regicide, detention (commit 827c623) |
 | `achievement_eligibility` | Per-wallet achievement progress and mint status |
 | `global_records` | Community records (e.g. The Tortoise slowest win) |
 | `wallet_stats` | Per-wallet tracking (streaks, spending, mints, consecutive wins, golf/pyramid failures) |
@@ -198,7 +198,7 @@ Split from MaffsGames in March 2025. MaffsGames = free schools games. MathsWins 
 - optionalWallet middleware accepts JWT or legacy X-Wallet-Address header
 - @polkadot/util-crypto installed on Hetzner for Substrate signature verification
 
-### Achievement System (v4 spec, 161 achievements, ACHIEVEMENTS_ACTIVE=true)
+### Achievement System (v4 spec, 163 total / 162 active, ACHIEVEMENTS_ACTIVE=true)
 - **Contract:** QFAchievement.sol v2 deployed at `0xc519E65Fb767DBEFC46FF0dC797Ccd0318Ae12eD` (QF Network mainnet). Adds setTokenURI (onlyOwner) and mintBatch (onlyMinter).
 - **Retired contract:** `0x8DCe89b4b0BB40e9C9cb092Be91D195EFdC2C77F` — v1, no setTokenURI. Token #1 stranded, superseded by v2 re-mint.
 - **Owner:** `0xB21039b9A7e360561d9AE7EE0A8B1b722f2057A3` (onlyfans.qf)
@@ -215,7 +215,7 @@ Split from MaffsGames in March 2025. MaffsGames = free schools games. MathsWins 
 - Batch 7 live (2026-04-12): 11 battleships + wolf-pack (mint-time super). Uses checkSunk() from battleships.mjs, fleet JSON from battleships_placements.
 - Batch 8 live (2026-04-12): 3 free game (century, explorer, personal-best) + free_game_completions table. Remaining 11 free game achievements need frontend stats in submit-freeplay payload.
 - speed-reader RETIRED (active=0) — 52dle only has 6 guesses
-- 157 of 161 conditions wired and live (2026-04-16). speedrun-to-zero + the-marathon added. 4 deferred: the-novelist (no server Maffsy evaluator), all-wrong (per-cell data cleared), full-hints (variable max), boom (impossible by design)
+- Audit 2026-04-17: 18 structural orphans + ~20-30 likely-broken context-hardcoded conditions + 2 code-to-registry typo anomalies. See `docs/achievement-audit-2026-04-17.md` for detail. Previous "157 of 161 wired" figure is not reliable — earned via pattern-matching that misclassified several conditions.
 - **Thresholds (corrected 2026-04-16):** weekend-warrior = 4 consecutive Saturdays, pioneer-hunter = 4 pioneers minted, duel-master = 10 completed duel wins (any opponent)
 - **DEBUG flag:** `ACHIEVEMENT_DEBUG=true` env var to enable achievement award console.log (off by default in production). The fifty-two-thousand airdrop log remains always-on.
 - 99 bespoke images uploaded to Pinata, 114 ipfs-mapping entries (2026-04-14)
@@ -234,6 +234,17 @@ Split from MaffsGames in March 2025. MaffsGames = free schools games. MathsWins 
 - "Boom" — the impossible achievement (first click safety means it can never be earned)
 - The Grandmaster = FREE to mint, Shadow Legend = 500 QF
 - 19 wooden spoons (shown as ? on teaser page until earned)
+
+#### Known Issues (2026-04-17)
+See `docs/achievement-audit-2026-04-17.md` for the full audit. Summary of live issues:
+- **submit-freeplay context hardcoded.** `routes/api.mjs:348-368` hardcodes `mistakes`, `hints`, `undoCount`, `moveCount`, `finalScores`, `openingCards`, `remaining`, `cleared`, `maxHandScore`, `maxHandBreakdown` to 0/null and omits `dealNumber` entirely. Any condition reading these fields cannot fire from free-play. Confirmed victims: `lucky-number`, `the-undo-king`. ~20-30 more suspected.
+- **Test-activity exclusion is not enforced.** Project doc v8 and CLAUDE.md both state test sessions are excluded from achievement and record tracking. Inline inspection of `achievement-checker.mjs` and `league-settle.mjs` finds NO enforcement. `BUILDER_WALLETS` only bypasses payment, not achievement/record writes. Architectural fix pending.
+- **18 orphan achievements** registered with `active=1` but no code path awards them. See audit for full table. Categories: 2 by-design, 2 super-meta unwritten, 3 parked in CLAUDE.md, 10 free-game frontend-stats-needed, 1 comeback unwritten.
+- **2 registry-to-code typo anomalies.** `achievement-checker.mjs:679` awards `the-mathematician` (registry has only `the-mathematicians-collection`); line 689 awards `speedrun-to-zero` (not in registry). Both INSERTs succeed silently — no FK constraint between `achievement_eligibility` and `achievement_registry`. Silent drift.
+- **Wrong Answer Streak counter is lifetime.** `wallet_stats.prime_wrong_streak` persists across sessions and counts timeouts (>5s idle) as wrong answers. Jon's "fired after 2 correct answers" report reconciled by this. Spec decision 2026-04-17: behaviour confirmed, not a bug.
+- **FreeCell auto-complete bug.** Does not trigger when all tableau columns are sorted descending by suit and foundations reach 8s. FreeCell UNDO button greys out mid-game — separate issue. Both investigations pending.
+- **`flag-everything` is structurally impossible.** Minesweeper first-click-safety rule prevents flagging every cell (first cell opened can never be a mine). Retire or rewrite condition.
+- **League settlement payout is not atomic.** `doSettleLeague` Step 4 at `league-settle.mjs:186-198` iterates `sendQF` per winner with no throw/break on falsy return. `paid_at` is per-prize, written only on success. Partial-payment states silently possible. Retry or rollback logic needed.
 
 ### KenKen Scoring
 - Base 5000, -1pt/sec after 60s grace, -300 per incorrect submission, -500 per hint
