@@ -234,17 +234,38 @@ Split from MaffsGames in March 2025. MaffsGames = free schools games. MathsWins 
 - "Boom" — the impossible achievement (first click safety means it can never be earned)
 - The Grandmaster = FREE to mint, Shadow Legend = 500 QF
 - 19 wooden spoons (shown as ? on teaser page until earned)
+- **Batch 9/10/11 live (2026-04-17):** 5 achievements wired end-to-end — `photographic` (memory-matrix), `dead-reckoning` (estimation-engine), `next-in-line` (sequence-solver, localStorage streak), `unbeatable` (rps-vs-machine, localStorage streak), `the-engineer` (towers-of-hanoi, max-difficulty solved). Conditions in `achievement-checker.mjs` free-games block; frontend wires `clientStats` per game.
+- **Super-achievement auto-award (2026-04-17):** `the-grandmaster` and `the-mathematicians-collection` now awarded post-mint when all prerequisites hold minted NFTs. Mirrors existing immaculate/the-wolf-pack pattern at `routes/api.mjs` mint handler.
+- **zero-to-hero (2026-04-17):** awarded to duel winner when `winnerScore === 0`. Wired in `/duel/:code/submit` after winner determination.
+- **Typo anomalies resolved (2026-04-17):** `the-mathematician` dead legacy block at `achievement-checker.mjs:676-680` removed; `speedrun-to-zero` awardAchievement commented out with TODO (not in registry, spec session needed).
+- **Pioneer flags wiped 2026-04-17:** 6 rows affected. All `is_pioneer` currently 0 — Pioneer slots reserved for real paying customers from launch day forward. `achievement_registry.first_claimed_by/first_claimed_at` left intact as historical record. DB backup at `mathswins.db.pre-pioneer-wipe.20260417-195155`.
+- **submit-freeplay context builder (2026-04-17):** `routes/api.mjs:350-380` forwards 22 `clientStats` fields to `checkAchievements` (was 14). Added: `exactHits`, `totalQuestions`, `roundsSurvived`, `perfectRounds`, `consecutiveCorrect`, `winStreak`, `difficulty`, `solved`. Still a hand-maintained field-list — each future per-game clientStats field requires adding to the dict. Refactor-to-spread is a future simplification.
 
-#### Known Issues (2026-04-17)
-See `docs/achievement-audit-2026-04-17.md` for the full audit. Summary of live issues:
-- **submit-freeplay context hardcoded.** `routes/api.mjs:348-368` hardcodes `mistakes`, `hints`, `undoCount`, `moveCount`, `finalScores`, `openingCards`, `remaining`, `cleared`, `maxHandScore`, `maxHandBreakdown` to 0/null and omits `dealNumber` entirely. Any condition reading these fields cannot fire from free-play. Confirmed victims: `lucky-number`, `the-undo-king`. ~20-30 more suspected.
+#### Known Issues (2026-04-17, end of session)
+See `docs/achievement-audit-2026-04-17.md` for the original audit. Summary of currently-live issues after today's fixes:
+- **Backend `ACHIEVEMENT_METADATA` dict drift.** Inline dict in `routes/api.mjs` (~80 entries) is a partial copy of the frontend `qf-dapp/achievements/ipfs-mapping.json` (161 entries). When a mint request hits an achievement missing from the backend dict, the handler falls through to a tier-fallback that pins a generic "standard-tier bronze coin" metadata JSON — the NFT is permanently soulbound to the wrong image. Fix pending: load `ipfs-mapping.json` at startup as single source of truth.
+- **Token 11 (`wrong-answer-streak`, Jon's wallet) has wrong on-chain tokenURI.** Points to the tier-fallback metadata CID instead of the bespoke chimp image. Fix: call `setTokenURI(11, <correct CID>)` on QFAchievement contract after dict-drift fix lands.
+- **Global leaderboard post-play submission prompt never fires.** Eligibility check returns correct projected rank (My Account High Scores page shows e.g. "would rank 1st"), but the prompt/modal path from the eligibility response to the user-visible Submit flow is broken. Post-launch diagnosis.
 - **Test-activity exclusion is not enforced.** Project doc v8 and CLAUDE.md both state test sessions are excluded from achievement and record tracking. Inline inspection of `achievement-checker.mjs` and `league-settle.mjs` finds NO enforcement. `BUILDER_WALLETS` only bypasses payment, not achievement/record writes. Architectural fix pending.
-- **18 orphan achievements** registered with `active=1` but no code path awards them. See audit for full table. Categories: 2 by-design, 2 super-meta unwritten, 3 parked in CLAUDE.md, 10 free-game frontend-stats-needed, 1 comeback unwritten.
-- **2 registry-to-code typo anomalies.** `achievement-checker.mjs:679` awards `the-mathematician` (registry has only `the-mathematicians-collection`); line 689 awards `speedrun-to-zero` (not in registry). Both INSERTs succeed silently — no FK constraint between `achievement_eligibility` and `achievement_registry`. Silent drift.
-- **Wrong Answer Streak counter is lifetime.** `wallet_stats.prime_wrong_streak` persists across sessions and counts timeouts (>5s idle) as wrong answers. Jon's "fired after 2 correct answers" report reconciled by this. Spec decision 2026-04-17: behaviour confirmed, not a bug.
+- **13 orphan achievements remain** (was 18 — 5 wired today: photographic, dead-reckoning, next-in-line, unbeatable, the-engineer). Residual categories: 2 by-design (boom, onlyfans-qf), 3 parked (all-wrong, full-hints, the-novelist), ~8 context-hardcoded (lucky-number, the-undo-king, others reading freecell dealNumber / undoCount — no longer hardcoded in submit-freeplay but need per-game frontend wiring of those fields). Super-achievements now wired (the-grandmaster, the-mathematicians-collection).
+- **Wrong Answer Streak counter is lifetime.** `wallet_stats.prime_wrong_streak` persists across sessions and counts timeouts (>5s idle) as wrong answers. Spec decision 2026-04-17: behaviour confirmed, not a bug.
 - **FreeCell auto-complete bug.** Does not trigger when all tableau columns are sorted descending by suit and foundations reach 8s. FreeCell UNDO button greys out mid-game — separate issue. Both investigations pending.
 - **`flag-everything` is structurally impossible.** Minesweeper first-click-safety rule prevents flagging every cell (first cell opened can never be a mine). Retire or rewrite condition.
 - **League settlement payout is not atomic.** `doSettleLeague` Step 4 at `league-settle.mjs:186-198` iterates `sendQF` per winner with no throw/break on falsy return. `paid_at` is per-prize, written only on success. Partial-payment states silently possible. Retry or rollback logic needed.
+
+### Escrow Ledger & Burn Tracking (live 2026-04-17)
+- **`escrow_ledger` schema:** adds `inferred INTEGER DEFAULT 0` column. `inferred=0` rows = exact amounts parsed from on-chain events. `inferred=1` rows = computed from expected splits as fallback when event parsing fails.
+- **Atomic split detail rows:** `splitFee`, `settleDuel`, `settleDuelDraw` receipts parsed at call site via `logSplitFromReceipt()` in `escrow.mjs`. Writes one detail row per inner transfer (burn / team / winner / draw-payout), not a single summary row.
+- **Events parsed from QFSettlement:**
+  - `FeeSplit(burned, team)` — mint fees and leaderboard entries → 2 rows (burn + team)
+  - `Settled(winner, winnerAmount, burned, team)` — duel + battleships wins → 3 rows (winner + burn + team)
+  - `SettledDraw(p1, p2, eachAmount, burned, team)` — duel draws → 4 rows (draw-payout×2 + burn + team)
+- **Fallback:** if no matching event parses, computes expected amounts from `expectedTotalQf` passed in by caller, writes rows with `inferred=1` and type suffix `-inferred` (e.g. `burn-inferred`, `team-inferred`). Operator sees the flag and investigates.
+- **Legacy `type='settle'` / `type='settle-draw'` summary rows** no longer written by `settleDuel`/`settleDuelDraw`. Replaced by detail rows. Pre-2026-04-17 rows with those types remain as historical record — filter by created_at if aggregating.
+- **Receipts are delivered in-band** by the node accepting the tx at submission time. Not affected by the QF RPC pruning that blocks `eth_getTransactionByHash` for historical txs.
+- **Source of truth for total burn:** on-chain burn address `0x...dEaD` balance (~1953.33 QF as of 2026-04-17 pre-mint-testing). Aggregating `SUM(amount_qf) WHERE type='burn'` in escrow_ledger covers only transactions logged after this feature went live — earlier atomic splits aren't backfilled.
+- **Wired call sites (5):** mint (`api.mjs:2053`), leaderboard entry (`api.mjs:2459`), duel settlement (`escrow.mjs settleDuel` — covers duel + battleships), duel draw (`escrow.mjs settleDuelDraw`).
+- Verified 2026-04-17 via the-engineer mint (token 13): ledger rows id=8 burn 5.0 inferred=0, id=9 team 95.0 inferred=0, paired tx hash, source=mint.
 
 ### KenKen Scoring
 - Base 5000, -1pt/sec after 60s grace, -300 per incorrect submission, -500 per hint
