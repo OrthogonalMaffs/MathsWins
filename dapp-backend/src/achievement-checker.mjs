@@ -526,6 +526,16 @@ export function checkAchievements(wallet, context) {
       if (context.pbBeaten) {
         tryAward('personal-best');
       }
+
+      // Photographic: memory-matrix with every round survived played perfectly
+      if (context.gameId === 'memory-matrix' && context.roundsSurvived > 0 && context.perfectRounds === context.roundsSurvived) {
+        tryAward('photographic');
+      }
+
+      // Dead Reckoning: estimation-engine with every question answered exactly
+      if (context.gameId === 'estimation-engine' && context.totalQuestions > 0 && context.exactHits === context.totalQuestions) {
+        tryAward('dead-reckoning');
+      }
     } catch (e) {
       console.error('Free game achievement check error:', e.message);
     }

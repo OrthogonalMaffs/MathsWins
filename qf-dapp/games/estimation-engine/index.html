@@ -204,6 +204,7 @@ body{background:var(--bg);color:var(--text);font-family:'Inter',sans-serif;min-h
   var questionNum = 0;
   var totalScore = 0;
   var correctCount = 0;
+  var exactHits = 0;
   var gameActive = false;
   var timerInterval = null;
   var timerStart = 0;
@@ -282,6 +283,7 @@ body{background:var(--bg);color:var(--text);font-family:'Inter',sans-serif;min-h
       questionNum = 0;
       totalScore = 0;
       correctCount = 0;
+      exactHits = 0;
       gameActive = true;
 
       buildScoreHistory();
@@ -395,6 +397,7 @@ body{background:var(--bg);color:var(--text);font-family:'Inter',sans-serif;min-h
       updateScoreDot(questionNum - 1, 'timeout');
     } else if (data.correct) {
       correctCount++;
+      if (data.accuracy === 100) exactHits++;
       flashEl.className = 'result-flash correct';
       flashEl.textContent = 'Accuracy: ' + data.accuracy + '/100 | Speed: ' + data.multiplier + 'x | +' + data.points + ' pts | Answer: ' + data.correctAnswer;
       updateScoreDot(questionNum - 1, 'hit');
@@ -426,7 +429,7 @@ body{background:var(--bg);color:var(--text);font-family:'Inter',sans-serif;min-h
       } catch (e) { alert('League score failed to save — check your connection.'); }
     }
 
-    if (!leagueMode) { submitFreeplay('estimation-engine', score, 0); }
+    if (!leagueMode) { submitFreeplay('estimation-engine', score, 0, { exactHits: exactHits, totalQuestions: totalQuestions }); }
 
     var maxPossible = totalQuestions * 130;
     var pct = Math.round(score / maxPossible * 100);
@@ -499,6 +502,7 @@ body{background:var(--bg);color:var(--text);font-family:'Inter',sans-serif;min-h
     questionNum = 0;
     totalScore = 0;
     correctCount = 0;
+    exactHits = 0;
     gameActive = true;
     startBtn.style.display = 'none';
     buildScoreHistory();
@@ -507,12 +511,12 @@ body{background:var(--bg);color:var(--text);font-family:'Inter',sans-serif;min-h
 
 var _fpAPI = 'https://dapp-api.mathswins.co.uk/api/dapp';
 if (location.hostname === 'localhost' || location.hostname === '127.0.0.1') _fpAPI = 'http://127.0.0.1:3860/api/dapp';
-function submitFreeplay(gameId, score, timeMs) {
+function submitFreeplay(gameId, score, timeMs, clientStats) {
   try {
     if (!qfWallet || !qfWallet.isConnected()) return;
     fetch(_fpAPI + '/session/submit-freeplay', {
       method: 'POST', headers: qfWallet.authHeaders(),
-      body: JSON.stringify({ gameId: gameId, score: score, timeMs: timeMs })
+      body: JSON.stringify({ gameId: gameId, score: score, timeMs: timeMs, clientStats: clientStats || {} })
     }).catch(function() {});
   } catch (e) {}
 }
