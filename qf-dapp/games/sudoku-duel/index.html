@@ -1198,7 +1198,9 @@ var G = (function() {
 
   // ── Check completion ────────────────────────────────────────────────
   function checkComplete() {
-    if (confirmedCells.size < 81) return;
+    // Verify the grid directly — never rely on confirmedCells.size alone.
+    // If ANY cell is 0, we are not complete regardless of Set state.
+    for (var i = 0; i < 81; i++) { if (grid[i] === 0) return; }
     playCompletionWave();
   }
 
