@@ -439,12 +439,12 @@ function renderLeaderboard(league) {
 
   // Hidden during join window
   if (league.status === 'active' && league.join_closes_at && Date.now() <= league.join_closes_at) {
-    container.innerHTML = '<div class="lb-hidden">Leaderboard is hidden during the 24-hour join window. You can see your own scores above.</div>';
+    container.innerHTML = '<div class="lb-hidden">Leaderboard appears once the league has been running for 24 hours.</div>';
     return;
   }
 
   if (!league.leaderboard || league.leaderboard.length === 0) {
-    container.innerHTML = '<div class="lb-hidden">No scores submitted yet.</div>';
+    container.innerHTML = '<div class="lb-hidden">Leaderboard appears once the league has been running for 24 hours.</div>';
     return;
   }
 
