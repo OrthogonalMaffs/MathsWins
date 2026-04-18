@@ -459,6 +459,10 @@ router.post('/maffsy/complete', optionalWallet, (req, res) => {
       sessionId = null;
     }
 
+    try {
+      checkAchievements(req.wallet, { type: 'maffsy_complete', won: !!won, guesses: Number(guesses) || 0 });
+    } catch (e) { /* must never block */ }
+
     res.json({ success: true, sessionId: sessionId, streak: result.currentStreak, maxStreak: result.maxStreak, played: result.played, won: result.won });
   } catch (e) {
     res.status(400).json({ error: e.message });
