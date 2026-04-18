@@ -2394,17 +2394,21 @@ router.get('/global-leaderboard/my-positions', optionalWallet, (req, res) => {
 
 router.post('/global-leaderboard/enter', optionalWallet, async (req, res) => {
   if (!req.wallet) return res.status(401).json({ error: 'Wallet required' });
-  var { gameId, score, timeMs, periodType, sessionId, txHash, qnsName } = req.body;
-  if (!gameId || score === undefined || !periodType || !sessionId) {
-    return res.status(400).json({ error: 'gameId, score, periodType, and sessionId required' });
+  var { gameId, score, timeMs, periodType, periodTypes, sessionId, txHash, qnsName } = req.body;
+  var periods = Array.isArray(periodTypes) ? periodTypes : (periodType ? [periodType] : []);
+  if (!gameId || score === undefined || periods.length === 0 || !sessionId) {
+    return res.status(400).json({ error: 'gameId, score, periodType or periodTypes, and sessionId required' });
+  }
+  if (periods.length > 3) {
+    return res.status(400).json({ error: 'periodTypes must not exceed 3 entries' });
   }
   if (!txHash) return res.status(400).json({ error: 'txHash required — pay 50 QF to escrow from your wallet' });
-  if (['daily', 'weekly', 'monthly'].indexOf(periodType) === -1) {
-    return res.status(400).json({ error: 'Invalid periodType' });
+  var validPeriods = ['daily', 'weekly', 'monthly'];
+  for (var i = 0; i < periods.length; i++) {
+    if (validPeriods.indexOf(periods[i]) === -1) {
+      return res.status(400).json({ error: 'Invalid periodType: ' + periods[i] });
+    }
   }
-  var periodKey = getCurrentPeriodKey(periodType);
-  var existing = getGlobalLeaderboardEntry(req.wallet, gameId, periodType, periodKey);
-  if (existing) return res.status(400).json({ error: 'Already entered this leaderboard for the current period' });
 
   var gs = getGameState(sessionId);
   if (!gs) return res.status(400).json({ error: 'Session not found' });
@@ -2412,9 +2416,22 @@ router.post('/global-leaderboard/enter', optionalWallet, async (req, res) => {
   if (gs.flagged) return res.status(400).json({ error: 'Session flagged — not eligible' });
 
   var suspicious = 0;
+  var entered = [];
+  var skipped = [];
+  for (var j = 0; j < periods.length; j++) {
+    var pt = periods[j];
+    var pk = getCurrentPeriodKey(pt);
+    var existing = getGlobalLeaderboardEntry(req.wallet, gameId, pt, pk);
+    if (existing) { skipped.push(pt); continue; }
+    entered.push({ periodType: pt, periodKey: pk });
+  }
 
-  // Log user-paid inbound (trust-the-hash, mirrors mint flow)
-  logIncoming('leaderboard-fee', 50, req.wallet, txHash, 'leaderboard', gameId + ':' + periodType + ':' + periodKey);
+  if (entered.length === 0) {
+    return res.status(400).json({ error: 'Already entered all requested periods' });
+  }
+
+  var refLabel = gameId + ':' + entered.map(function(e) { return e.periodType; }).join('+');
+  logIncoming('leaderboard-fee', 50, req.wallet, txHash, 'leaderboard', refLabel);
 
   // Atomic burn/team split via QFSettlement contract (5% burn, 95% team)
   try {
@@ -2422,7 +2439,7 @@ router.post('/global-leaderboard/enter', optionalWallet, async (req, res) => {
     if (!sc) throw new Error('Settlement contract not initialised');
     var splitTx = await sc.splitFee({ value: ethers.parseEther('50'), gasLimit: 35343055n });
     var splitReceipt = await splitTx.wait();
-    try { logSplitFromReceipt(splitReceipt, sc.interface, 'leaderboard', gameId + ':' + periodType + ':' + periodKey, 50); } catch (e) { console.error('leaderboard split log failed:', e.message); }
+    try { logSplitFromReceipt(splitReceipt, sc.interface, 'leaderboard', refLabel, 50); } catch (e) { console.error('leaderboard split log failed:', e.message); }
   } catch (e) {
     return res.status(500).json({ error: 'Payment processing failed: ' + e.message });
   }
@@ -2430,11 +2447,16 @@ router.post('/global-leaderboard/enter', optionalWallet, async (req, res) => {
   // Track spend for loyalty achievements
   try { trackSpend(req.wallet, 50); } catch (e) { /* must never block */ }
 
-  addGlobalLeaderboardEntry(req.wallet, gameId, score, timeMs || 0, periodType, periodKey, sessionId, txHash || null, qnsName, suspicious);
+  var results = [];
+  for (var k = 0; k < entered.length; k++) {
+    var e = entered[k];
+    addGlobalLeaderboardEntry(req.wallet, gameId, score, timeMs || 0, e.periodType, e.periodKey, sessionId, txHash || null, qnsName, suspicious);
+    var board = getGlobalLeaderboard(gameId, e.periodType, e.periodKey);
+    var rank = board.findIndex(function(r) { return r.wallet === req.wallet.toLowerCase(); }) + 1;
+    results.push({ periodType: e.periodType, periodKey: e.periodKey, rank: rank, totalEntries: board.length });
+  }
 
-  var board = getGlobalLeaderboard(gameId, periodType, periodKey);
-  var rank = board.findIndex(function(r) { return r.wallet === req.wallet.toLowerCase(); }) + 1;
-  res.json({ success: true, rank: rank, totalEntries: board.length, periodType: periodType, periodKey: periodKey });
+  res.json({ success: true, entered: results, skipped: skipped });
 });
 
 router.get('/global-leaderboard/:gameId/eligibility', optionalWallet, (req, res) => {
