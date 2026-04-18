@@ -614,6 +614,8 @@ var G = (function() {
     // Apply font sizes
     board.style.setProperty('--cell-font', fontSize + 'px');
     board.style.setProperty('--flag-font', Math.floor(cellPx * 0.5) + 'px');
+
+    board.addEventListener('contextmenu', function(e) { e.preventDefault(); });
   }
 
   // ── Cell interaction handlers ───────────────────────────────────────

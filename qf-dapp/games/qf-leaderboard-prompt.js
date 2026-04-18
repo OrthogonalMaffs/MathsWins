@@ -173,7 +173,9 @@
 
       close.addEventListener('click', cancel);
       cancelBtn.addEventListener('click', cancel);
-      backdrop.addEventListener('click', function (e) { if (e.target === backdrop) cancel(); });
+      var backdropReady = false;
+      setTimeout(function() { backdropReady = true; }, 150);
+      backdrop.addEventListener('click', function (e) { if (backdropReady && e.target === backdrop) cancel(); });
       modal.addEventListener('click', function (e) { e.stopPropagation(); });
 
       payBtn.addEventListener('click', async function () {
