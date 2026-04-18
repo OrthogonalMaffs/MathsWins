@@ -134,6 +134,7 @@ body{background:var(--bg);color:var(--text);font-family:'Inter',sans-serif;min-h
 .ach-body{display:flex;flex-direction:column;gap:.15rem;flex:1;min-width:0}
 .ach-right-col{flex-shrink:0;display:flex;flex-direction:column;align-items:flex-end;gap:.15rem;margin-left:auto}
 .ach-name{font-family:'DM Mono',monospace;font-size:.75rem;color:var(--silver-bright)}
+.ach-desc{font-family:'Inter',sans-serif;font-size:.6rem;color:var(--silver);line-height:1.35;margin-top:.05rem}
 .ach-date{font-family:'DM Mono',monospace;font-size:.5rem;color:var(--muted)}
 .ach-minted{font-family:'DM Mono',monospace;font-size:.55rem;color:var(--green)}
 .ach-tx{font-family:'DM Mono',monospace;font-size:.5rem;color:var(--muted);margin-top:.15rem}
@@ -808,6 +809,7 @@ async function renderAchievements() {
       html += '<div class="ach-card' + pioneerClass + '">' + imgHtml +
         '<div class="ach-body">' +
         '<div class="ach-name">' + (a.name || a.achievement_id || 'Achievement') + '</div>' +
+        (a.description ? '<div class="ach-desc">Earned for: ' + a.description + '</div>' : '') +
         '<div class="ach-date">Earned ' + formatDate(a.earned_at) + '</div>' +
         '</div><div class="ach-right-col">';
       if (isMinted) {

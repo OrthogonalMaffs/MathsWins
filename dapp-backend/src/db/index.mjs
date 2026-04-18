@@ -47,6 +47,7 @@ export function getDb() {
   try { db.exec('ALTER TABLE achievement_registry ADD COLUMN category TEXT'); } catch (e) { /* already exists */ }
   try { db.exec('ALTER TABLE achievement_registry ADD COLUMN retired INTEGER DEFAULT 0'); } catch (e) { /* already exists */ }
   try { db.exec('ALTER TABLE achievement_registry ADD COLUMN retired_at INTEGER'); } catch (e) { /* already exists */ }
+  try { db.exec('ALTER TABLE achievement_registry ADD COLUMN description TEXT'); } catch (e) { /* already exists */ }
   try { db.exec('ALTER TABLE personal_bests ADD COLUMN session_id TEXT'); } catch (e) { /* already exists */ }
   try { db.exec('ALTER TABLE achievement_eligibility ADD COLUMN metadata_cid TEXT'); } catch (e) { /* already exists */ }
   try { db.exec('ALTER TABLE achievement_eligibility ADD COLUMN token_id TEXT'); } catch (e) { /* already exists */ }
@@ -426,6 +427,211 @@ const ACHIEVEMENTS = [
   { id: 'detention', name: 'Detention', game_id: null, category: 'wooden-spoons', fee: 100 },
 ];
 
+// Earned-card descriptions. Surfaced via GET /achievements/my only; /achievements/all
+// stays opaque to preserve the "some impossible, most secret" framing.
+// Tone: one sentence, past tense, says what you did. Exact thresholds left vague
+// where farmable; specifics kept where they describe a skill moment.
+const ACHIEVEMENT_DESCRIPTIONS = {
+  // Purity
+  'pure-logic': 'Cleared an entire sudoku-duel league without a single mistake.',
+  'never-triggered': 'Played an entire minesweeper league without setting off a mine.',
+  'clean-sheet': 'Played an entire freecell league without a wrong move on any deal.',
+  'first-light': 'Cleared a kenken league with no mistakes anywhere.',
+  'pixel-perfect': 'Painted an entire nonogram league without a single misplaced cell.',
+  'the-chain': 'Carried a kakuro league through to the end without a wrong sum.',
+  'no-tells': 'Won a poker-patience league without a single hint or mistake.',
+  'clean-crib': 'Played an entire cribbage-solitaire league without a single mistake.',
+  'the-purist': 'Won a freecell league without ever using the free cells.',
+  'flawless-line': 'Played a minesweeper league without ever planting a flag.',
+  'the-logician': 'Solved a kenken league without touching the helper once.',
+  'hintless': 'Cleared a nonogram league without asking for a single hint.',
+  'blind-kakuro': 'Cleared a kakuro league with no hints and no helpers.',
+  'immaculate': 'Held the line on every purity achievement across the league games.',
+  // Volume
+  'first-steps': 'Completed your first league.',
+  'committed': 'Made the leagues a habit, not a one-off.',
+  'dedicated': 'Reached a serious depth of league play.',
+  'veteran': 'Stayed in the leagues long past the point most players drop off.',
+  'legend': 'Reached the kind of league count almost nobody gets to.',
+  // Winning
+  'winner': 'Won your first league.',
+  'on-a-roll': 'Strung together a meaningful run of league wins.',
+  'dominant': 'Built a league win count most players never approach.',
+  'hat-trick': 'Won three leagues in a row.',
+  'the-completionist': 'Won a league on each of the four active league games.',
+  'the-tortoise': 'Held the slowest winning total time of any league champion.',
+  'clean-slate': 'Won a league without ever being last during the run.',
+  'the-lurker': 'Won a league without ever appearing in the top three until the final round.',
+  // Shadows
+  'into-the-shadows': 'Submitted every puzzle in a league before the leaderboard went public.',
+  'from-the-shadows': 'Did the same — and won the league from cover.',
+  'shadow-legend': 'Made the win-from-the-shadows move a habit, not an accident.',
+  // Duels
+  'first-blood': 'Won your first duel.',
+  'duelist': 'Banked a serious volume of duel wins.',
+  'gladiator': 'Reached the kind of duel win count most players never see.',
+  'heartbreaker': 'Won a duel by exactly one point.',
+  'giant-slayer': 'Beat someone who had recently won a league.',
+  'the-wall': 'Strung together a long run of consecutive duel wins.',
+  'the-contrarian': 'Won at least one duel on every duel-capable game.',
+  // Battleships
+  'first-strike': 'Opened a battleships game with a hit.',
+  'last-stand': 'Won a battleships game with only one ship still afloat.',
+  'the-wolf': 'Won a battleships game with only the submarine still afloat.',
+  'unsinkable': 'Won a long run of battleships games while keeping the battleship alive every time.',
+  'the-admiral': 'Reached an enormous battleships win count.',
+  'perfect-sonar': 'Won a battleships game without missing a single shot.',
+  'sub-hunter': "Sunk the opponent's submarine many times across many games.",
+  'carrier-supremacy': 'Kept the carrier alive across an enormous number of battleships wins.',
+  'scatter-gun': 'Took a heavy volley of shots in a battleships game without landing one.',
+  'do-you-even-aim-bro': 'Took an even heavier volley of shots without landing one.',
+  'the-wolf-pack': 'Held the line on every standard battleships achievement.',
+  // FreeCell
+  'the-undo-king': 'Won a freecell deal after leaning hard on the undo button.',
+  'no-cell-used': 'Won an entire freecell league without ever parking a card.',
+  'lucky-number': 'Won the lucky deal.',
+  // Minesweeper
+  'clean-sweep': 'Won a minesweeper game on Expert difficulty.',
+  'flag-everything': 'Took the policy "flag everything" to its logical conclusion.',
+  'the-comeback': 'Won an Expert minesweeper game right after a brutal losing streak.',
+  // Poker Patience
+  'royal-flush': 'Built a Royal Flush in a poker-patience game.',
+  'all-pairs': 'Built at least a pair on every line of a poker-patience game.',
+  'the-nuts': 'Posted a poker-patience score that puts most players to shame.',
+  'dead-mans-hand': "Built two pair containing aces and eights — the dead man's hand.",
+  'pocket-rockets': 'Built a line containing a pair of aces.',
+  'the-brick': 'Drew the worst possible opening hand — and committed to playing it.',
+  // Cribbage
+  'twenty-nine': 'Posted the perfect cribbage hand — twenty-nine.',
+  'crib-master': 'Posted a cribbage-solitaire game score most players never reach.',
+  // Golf
+  'hole-in-one': 'Cleared every card in a golf-solitaire game.',
+  'albatross': 'Finished a golf-solitaire game with almost the whole pile cleared.',
+  'back-nine': 'Strung together a long run of golf-solitaire wins.',
+  'under-par': 'Finished a golf-solitaire game with the table almost empty.',
+  // Pyramid
+  'perfect-pyramid': 'Cleared every card in a pyramid game.',
+  'the-archaeologist': 'Cleared the pyramid down to a handful of cards.',
+  'tutankhamun': 'Played enough pyramid games to know the pharaoh personally.',
+  'kings-ransom': 'Got within a card or two of clearing the pyramid.',
+  // KenKen
+  'perfect-logic': 'Cleared a kenken league with no mistakes and no hints.',
+  // Nonogram
+  'the-artist': 'Won a nonogram league with no mistakes and no hints.',
+  'blind-eye': 'Solved a nonogram puzzle without asking for a single hint.',
+  // Sudoku
+  'six-seven': 'Placed a correct 6 immediately followed by a correct 7.',
+  // Comeback
+  'from-the-ashes': 'Won a league after sitting last after the first round.',
+  'zero-to-hero': 'Won a duel from a starting score of zero.',
+  // Per-game volume
+  'specialist': 'Settled a serious number of leagues on a single game.',
+  'master-of-one': 'Won several leagues on a single game.',
+  'world-tour': 'Played a settled league on every league-capable game.',
+  'high-roller': 'Played a silver league on every league-capable game.',
+  // Free games
+  'century': 'Played a single free game enough times to make it a hundred.',
+  'personal-best': 'Beat your own personal best.',
+  'explorer': 'Played every free game on the platform at least once.',
+  'unbeatable': "Won an extended run against the rps-vs-machine pattern detector.",
+  'the-engineer': 'Solved towers-of-hanoi at maximum difficulty.',
+  'speed-reader': 'Solved 52dle in record-breaking time.',
+  'photographic': 'Played a perfect game of memory-matrix without fluffing a single round.',
+  'dead-reckoning': 'Hit every estimation-engine question exactly on the nose.',
+  'clairvoyant': 'Won every round of a higher-or-lower game.',
+  'on-the-nose': 'Hit a countdown-numbers target exactly.',
+  'next-in-line': 'Got a long unbroken run of correct sequences in sequence-solver.',
+  'wordy': 'Won a maffsy round in three guesses or fewer.',
+  'binary-decision': 'Won a maffsy round in exactly two guesses.',
+  'feel-no-pressure': 'Won a long unbroken run of maffsy rounds.',
+  // Streaks
+  'weekend-warrior': 'Played on Saturdays for several weekends running.',
+  'the-marathon': 'Held a single league session together for an extraordinary stretch.',
+  'league-regular': 'Joined a league every week for a solid run of weeks.',
+  // Kakuro
+  'the-crossword-king': 'Won a kakuro league with no mistakes and no hints.',
+  'sum-of-all-fears': 'Solved a kakuro puzzle with every cell correct on the first try.',
+  // Time
+  'night-owl': 'Finished a game in the small hours of the morning.',
+  'the-insomniac': 'Submitted every league puzzle in the small hours.',
+  // Seasonal
+  'easter': 'Played during the Easter window.',
+  'christmas': 'Played on Christmas Day.',
+  'new-year': 'Played during the New Year window.',
+  'halloween': 'Played on Halloween.',
+  'bonfire-night': 'Played on Bonfire Night.',
+  'pancake-day': 'Played on Shrove Tuesday.',
+  'pi-day': 'Played on Pi Day.',
+  've-day': 'Played battleships on VE Day.',
+  'summer-week': 'Played during the height of summer.',
+  'platform-anniversary': "Played on the platform's birthday.",
+  // Monthly
+  'active-player': 'Played enough games in a single month to count as active.',
+  'grinder': 'Played a serious volume of games in a single month.',
+  'league-month': 'Joined several leagues in a single month.',
+  'double-winner': 'Won two leagues in a single month.',
+  // Constants
+  'pi': 'Posted a league puzzle score equal to a famous mathematical constant.',
+  'euler': 'Posted a league puzzle score equal to a famous mathematical constant.',
+  'golden-ratio': 'Posted a league puzzle score equal to a famous mathematical constant.',
+  'root-two': 'Posted a league puzzle score equal to a famous mathematical constant.',
+  'root-three': 'Posted a league puzzle score equal to a famous mathematical constant.',
+  'the-mathematicians-collection': 'Held the full set of mathematical constant scores.',
+  // Squared Pi
+  'squared-pi': 'Posted the Pi score on Pi Day itself.',
+  // Loyalty
+  'skin-in-the-game': 'Spent enough QF on the platform to feel it.',
+  'true-believer': 'Spent enough QF on the platform to feel it twice over.',
+  'fifty-two-thousand': 'Reached the platform spend that triggers a 52f airdrop.',
+  // Milestones
+  'collector': 'Earned ten achievements.',
+  'devoted': 'Earned twenty-five achievements.',
+  'obsessed': 'Earned fifty achievements.',
+  'the-complete-player': 'Earned one hundred achievements.',
+  'the-grandmaster': 'Held all three cross-game super-achievements at once.',
+  // Meta
+  'pioneer-hunter': 'Held the pioneer tag on several minted achievements.',
+  'the-whale': 'Spent an enormous amount of QF on minting achievements.',
+  'duel-master': 'Reached a meaningful duel win count.',
+  'breadwinner': 'Earned more from leagues than you ever paid in entry fees.',
+  'the-grinder': 'Paid an enormous amount in cumulative league entry fees.',
+  // Absurd
+  'palindrome': 'Posted a score that reads the same forwards and backwards.',
+  'wrong-answer-streak': 'Got a long unbroken run of wrong answers in prime-or-composite.',
+  'midnight': 'Finished a game in the very first minute of UTC midnight.',
+  'fibonacci': 'Posted Fibonacci-sequence scores across several games in a row.',
+  'onlyfans-qf': 'Awarded by hand. The recipient knows why.',
+  // Founding
+  'founding-member': "Submitted a league puzzle during the platform's opening window.",
+  // Wooden spoons
+  'tax-payers-nightmare': 'Lost a battleships game with the carrier sunk and zero opponent ships taken down.',
+  'the-optimist': 'Finished last in many leagues without ever losing the will to enter the next one.',
+  'slow-burn': 'Held the slowest total time in a settled minesweeper league.',
+  'crib-death': 'Posted a cribbage-solitaire score barely worth counting.',
+  'bust': 'Posted zero scoring hands across an entire poker-patience game.',
+  'the-fish': 'Finished last in poker-patience leagues several times over.',
+  'score-one': 'Finished a league with a total score of one.',
+  'the-pacifist': 'Posted zero on every puzzle of a kakuro league.',
+  'all-wrong': 'Got every kakuro cell wrong on the first attempt.',
+  'full-hints': 'Solved a kenken puzzle by leaning on every available hint.',
+  'dnf-king': 'Joined a league and never submitted a single puzzle.',
+  'flagless-and-wrong': 'Detonated a minesweeper without planting a single flag.',
+  'last-and-slow': 'Finished a minesweeper league last and slowest.',
+  'memory-loss': 'Made at least one mistake in a sudoku-duel league.',
+  'bogey': 'Finished a golf-solitaire game with the table still piled high.',
+  'curse-of-the-mummy': 'Cleared barely any of the pyramid before the run ended.',
+  'pharaohs-curse': 'Cleared not many more than that.',
+  'mucky-hands': 'Posted High Card on every line of a poker-patience game.',
+  'the-novelist': 'Took the maximum number of guesses to lose a maffsy round.',
+  // Impossible
+  'boom': 'The achievement that cannot be earned.',
+  // Rivals
+  'regicide': 'Finished above an owner wallet in a league.',
+  'detention': 'Finished below an owner wallet in a league.',
+  // Community (manually awarded)
+  'bug-hunter': 'Found and reported something that made the platform better.',
+};
+
 function seedAchievements(db) {
   const insert = db.prepare(`INSERT OR IGNORE INTO achievement_registry (achievement_id, name, game_id, tier, mint_fee_qf, category)
     VALUES (?, ?, ?, ?, ?, ?)`);
@@ -437,6 +643,13 @@ function seedAchievements(db) {
   }
   // Retire speed-reader (52dle only has 6 guesses, condition was impossible)
   db.prepare('UPDATE achievement_registry SET active = 0 WHERE achievement_id = ?').run('speed-reader');
+
+  // Fill description if NULL — covers seed array entries plus rows added directly
+  // to DB (e.g. bug-hunter). Re-run safe: only writes where description is missing.
+  const updateDesc = db.prepare('UPDATE achievement_registry SET description = ? WHERE achievement_id = ? AND description IS NULL');
+  for (const id in ACHIEVEMENT_DESCRIPTIONS) {
+    updateDesc.run(ACHIEVEMENT_DESCRIPTIONS[id], id);
+  }
 }
 
 function seedSeasonalWindows(db) {
@@ -533,7 +746,7 @@ export function awardAchievement(wallet, achievementId) {
 
 export function getWalletAchievements(wallet) {
   const db = getDb();
-  return db.prepare('SELECT e.*, r.name, r.mint_fee_qf FROM achievement_eligibility e LEFT JOIN achievement_registry r ON e.achievement_id = r.achievement_id WHERE e.wallet = ? ORDER BY e.earned_at DESC')
+  return db.prepare('SELECT e.*, r.name, r.mint_fee_qf, r.description FROM achievement_eligibility e LEFT JOIN achievement_registry r ON e.achievement_id = r.achievement_id WHERE e.wallet = ? ORDER BY e.earned_at DESC')
     .all(wallet.toLowerCase());
 }
 
