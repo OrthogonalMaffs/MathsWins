@@ -1276,7 +1276,7 @@ async function processLeagueRefunds(leagueId) {
 // ── Auto-create successor league ────────────────────────────────────
 
 // Games eligible for league auto-creation
-var LEAGUE_GAMES = new Set(['sudoku-duel', 'kenken', 'kakuro', 'nonogram', 'cryptarithmetic-club', 'countdown-numbers']);
+var LEAGUE_GAMES = new Set(['sudoku-duel', 'kenken', 'kakuro', 'nonogram', 'cryptarithmetic-club', 'countdown-numbers', 'minesweeper', 'freecell']);
 
 function autoCreateLeague(triggeredByLeague) {
   if (!LEAGUE_GAMES.has(triggeredByLeague.game_id)) return;
