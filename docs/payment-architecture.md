@@ -39,7 +39,7 @@
 
 ## League Settlement
 - Tiers: Bronze (100 QF), Silver (250 QF)
-- Split: 90% prize pool, 5% burn, 5% team
+- Split: 85% prize pool, 5% burn, 10% team
 - Top 4 share prize pool
 - **Non-atomic settlement bug:** `doSettleLeague` at `league-settle.mjs:186-198` iterates `sendQF` per winner with no throw/break on falsy return. Partial-payment states silently possible. Retry/rollback logic needed.
 

@@ -295,7 +295,7 @@ Maffsy (formerly Equatle), Higher or Lower, 52-dle, Towers of Hanoi, Don't Press
 - 10 puzzles, 14 days to complete
 - Late joining: 24 hours after start
 - Leaderboard hidden during join window, live after
-- Revenue: 5% burn, 5% team, 90% prize pool
+- Revenue: 5% burn, 10% team, 85% prize pool
 - Prizes: 1st 50%, 2nd 25%, 3rd 15%, 4th 10%
 - Sub-minimum cancel: full refund from escrow, no burn
 - Auto-create: one new OPEN league per game+tier created when existing league starts

@@ -864,7 +864,7 @@ var LEAGUE_TIERS = {
 };
 var PRIZE_SPLITS = [0.50, 0.25, 0.15, 0.10]; // top 4
 var BURN_PCT = 0.05;
-var TEAM_PCT = 0.05;
+var TEAM_PCT = 0.10;
 var REG_WINDOW_MS = 7 * 24 * 60 * 60 * 1000;   // 7 days
 var JOIN_WINDOW_MS = 24 * 60 * 60 * 1000;       // 24 hours after start
 var PLAY_WINDOW_MS = 14 * 24 * 60 * 60 * 1000;  // 14 days

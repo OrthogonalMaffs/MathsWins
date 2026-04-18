@@ -329,7 +329,7 @@ Flagged sessions:
 
 - Two tiers: Bronze (100 QF) / Silver (250 QF)
 - Minimum 4 players, 10 puzzles, 14 days to complete
-- Revenue: 5% burn, 5% team, 90% prize pool
+- Revenue: 5% burn, 10% team, 85% prize pool
 - Prizes: 1st 50%, 2nd 25%, 3rd 15%, 4th 10%
 - Test leagues excluded from all achievement and record tracking
 - **Scoring (fixed 11 April):** KenKen, Kakuro, Nonogram penalise grid submissions (-300 each), not cell placement errors
@@ -354,7 +354,7 @@ Flagged sessions:
 
 | Payment type | Burn | Team | Player/Prize |
 |-------------|------|------|-------------|
-| League entry | 5% | 5% | 90% prize pool |
+| League entry | 5% | 10% | 85% prize pool |
 | Duel entry | 5% | 5% | 90% to winner (not yet wired) |
 | Achievement mint | 5% | 95% | — |
 | Trophy mint | 5% | 95% | — |

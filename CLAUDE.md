@@ -49,7 +49,7 @@ Platform: Academy (9 courses), Tools (28 calculators), Games (22 dApp + 13 main 
 - **Shared nav:** `qf-nav.js` on all 35+ pages | **My Account:** `/qf-dapp/my-account/` (5 tabs)
 
 ## League & Duel Rules
-- **Leagues:** Bronze 100 QF / Silver 250 QF entry. 10 puzzles, 14-day window, min 4 players. Top 4 share 90% pot, 5% burn, 5% team. Server-authoritative seeds.
+- **Leagues:** Bronze 100 QF / Silver 250 QF entry. 10 puzzles, 14-day window, min 4 players. Top 4 share 85% pot, 5% burn, 10% team. Server-authoritative seeds.
 - **Duels:** Client pays escrow → server settles via QFSettlement (90/5/5). Both txHashes required. Builder wallets bypass payment.
 - **QFSettlement:** `0x475F350469Cbe5aDd04aae4686339b3b990D013E`
 
