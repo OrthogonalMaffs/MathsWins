@@ -13,6 +13,7 @@ import { ethers } from 'ethers';
 import { signatureVerify, decodeAddress } from '@polkadot/util-crypto';
 import { getDb } from '../db/index.mjs';
 import { doSettleLeague, checkEarlySettlement, recoverStuckLeagues, mintCommemorative } from '../league-settle.mjs';
+import { queueNotification, sendTestNotification } from '../telegram.mjs';
 import { checkAchievements, checkContrarian, checkStreakAchievements, checkLeagueRegular, checkMonthlyAchievements, trackSpend, checkNightOwlSubmission, checkMinesweeperFreePlay, checkFlagEverything, checkBlindEye, checkSumOfAllFears, checkTheGrinder, checkMintMeta, checkDuelMaster, checkFlaglessAndWrong, checkMidnight, checkFibonacci, checkWrongAnswerStreak } from '../achievement-checker.mjs';
 import { sendQF, settleDuel, settleDuelDraw, refundDuel, getEscrowAddress, getSettlementContract, logIncoming, logSplitFromReceipt, BURN_ADDRESS, TEAM_WALLET } from '../escrow.mjs';
 import { createBattleshipsGame, getBattleshipsGameByCode, getBattleshipsGameById, updateBattleshipsGameStatus, saveBattleshipsPlacement, getBattleshipsPlacement, getBattleshipsPlacements, addBattleshipsRound, getBattleshipsRounds, getBattleshipsRecord, updateBattleshipsRecord, getActiveBattleshipsGames, getBattleshipsGamesByWallet, getActiveBattleshipsForWallet } from '../db/index.mjs';
@@ -1004,6 +1005,7 @@ router.post('/league/:leagueId/join', optionalWallet, (req, res) => {
   // Auto-start if hit min or max during registration
   if (league.status === 'registration' && newCount >= (league.min_players || 4)) {
     activateLeague(league);
+    try { queueNotification('league_minimum_reached', { dedupKey: 'league_min:' + league.id, tier: league.tier, game: league.game_id }); } catch (e) { /* must never block */ }
     autoCreateLeague(league);
   }
 
@@ -1278,6 +1280,15 @@ function autoCreateLeague(triggeredByLeague) {
   // Set auto_created_by
   db.prepare('UPDATE leagues SET auto_created_by = ? WHERE id = ?').run(triggeredByLeague.id, id);
 
+  try {
+    queueNotification('league_open', {
+      dedupKey: 'league_open:' + id,
+      tier: triggeredByLeague.tier,
+      game: triggeredByLeague.game_id,
+      fee: triggeredByLeague.entry_fee
+    });
+  } catch (e) { /* must never block */ }
+
   // Generate 10 puzzle seeds
   for (var i = 0; i < 10; i++) {
     var seed = (now + i * 7919) ^ (Math.random() * 0xFFFFFFFF >>> 0);
@@ -1324,6 +1335,14 @@ export function checkLeagueLifecycles() {
         });
         continue;
       }
+      try {
+        queueNotification('league_closed', {
+          dedupKey: 'league_closed:' + league.id,
+          tier: league.tier,
+          game: league.game_id,
+          count: count
+        });
+      } catch (e) { /* must never block */ }
     }
 
     // Active league: recalculate pot if still in join window (late joiners)
@@ -2194,6 +2213,16 @@ router.post('/achievement/mint', optionalWallet, async (req, res) => {
     db.prepare('UPDATE achievement_eligibility SET minted_at = ?, tx_hash = ?, metadata_cid = ?, token_id = ? WHERE wallet = ? AND achievement_id = ?')
       .run(Date.now(), txHash, metadataCID, tokenId, req.wallet, achievement_id);
 
+    try {
+      var notifType = (isPioneer && !isOwner) ? 'achievement_pioneer' : 'achievement_minted';
+      queueNotification(notifType, {
+        dedupKey: notifType + ':' + req.wallet.toLowerCase() + ':' + achievement_id,
+        wallet: req.wallet,
+        qnsName: null,
+        achievementName: registry.name || achievement_id
+      });
+    } catch (e) { /* must never block */ }
+
     // Check Immaculate after minting any core purity achievement
     var PURITY_IDS = ['pure-logic','never-triggered','clean-sheet','first-light','pixel-perfect','the-chain','no-tells','clean-crib'];
     if (PURITY_IDS.indexOf(achievement_id) !== -1) {
@@ -2287,6 +2316,13 @@ router.get('/admin/achievements', requireAdmin, (req, res) => {
 });
 
 // ── Admin: flagged sessions ──────────────────────────────────────────────
+router.get('/admin/telegram/test', requireAdmin, (req, res) => {
+  const type = req.query.type;
+  if (!type) return res.status(400).json({ error: 'type query param required' });
+  const result = sendTestNotification(type);
+  res.json(result);
+});
+
 router.get('/admin/flagged-sessions', requireAdmin, (req, res) => {
   var wallet = req.query.wallet || null;
   var leagueId = req.query.league_id || null;

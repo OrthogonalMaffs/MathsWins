@@ -302,6 +302,15 @@ export async function doSettleLeague(leagueId) {
       positions: prizes,
       pot: totalPot
     };
+    try {
+      const { queueNotification } = await import('./telegram.mjs');
+      queueNotification('league_settled', {
+        dedupKey: 'league_settled:' + leagueId,
+        tier: league.tier,
+        game: league.game_id,
+        positions: prizes
+      });
+    } catch (e) { /* must never block */ }
     console.log('League ' + leagueId + ' settled: ' + prizes.length + ' trophies, ' + totalPot + ' QF pot');
     return result;
 
