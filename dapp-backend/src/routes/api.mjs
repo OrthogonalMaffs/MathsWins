@@ -419,6 +419,8 @@ router.post('/session/submit-freeplay', optionalWallet, (req, res) => {
         winStreak: Number(clientStats.winStreak) || 0,
         difficulty: clientStats.difficulty ?? null,
         solved: !!clientStats.solved,
+        perfectGame: !!clientStats.perfectGame,
+        exactHit: !!clientStats.exactHit,
         freePlay: true,
         pbBeaten: pbBeaten,
       });

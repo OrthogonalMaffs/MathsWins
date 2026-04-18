@@ -341,7 +341,8 @@ function updateStatus(){
 
 function endGame(){
   gameActive = false;
-  submitFreeplay('higher-or-lower', score, Date.now() - gameStartTime);
+  var correctCount = document.querySelectorAll('.sd.hit').length;
+  submitFreeplay('higher-or-lower', score, Date.now() - gameStartTime, { perfectGame: correctCount === TOTAL_ROUNDS });
   setTimeout(()=>{
     document.getElementById('modal').classList.remove('hidden');
     const correct = document.querySelectorAll('.sd.hit').length;
@@ -394,12 +395,12 @@ renderLB('');
 
 var _fpAPI = 'https://dapp-api.mathswins.co.uk/api/dapp';
 if (location.hostname === 'localhost' || location.hostname === '127.0.0.1') _fpAPI = 'http://127.0.0.1:3860/api/dapp';
-function submitFreeplay(gameId, score, timeMs) {
+function submitFreeplay(gameId, score, timeMs, clientStats) {
   try {
     if (!qfWallet || !qfWallet.isConnected()) return;
     fetch(_fpAPI + '/session/submit-freeplay', {
       method: 'POST', headers: qfWallet.authHeaders(),
-      body: JSON.stringify({ gameId: gameId, score: score, timeMs: timeMs })
+      body: JSON.stringify({ gameId: gameId, score: score, timeMs: timeMs, clientStats: clientStats || {} })
     }).then(function(r) { return r.json(); }).then(function(data) {
       if (data && data.sessionId && window.promptLeaderboardSubmit) {
         window.promptLeaderboardSubmit({ gameId: gameId, score: score, timeMs: timeMs, sessionId: data.sessionId });

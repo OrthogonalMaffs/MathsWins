@@ -559,6 +559,16 @@ export function checkAchievements(wallet, context) {
         tryAward('next-in-line');
       }
 
+      // Clairvoyant: higher-or-lower with all 20 rounds correct
+      if (context.gameId === 'higher-or-lower' && context.perfectGame === true) {
+        tryAward('clairvoyant');
+      }
+
+      // On-the-nose: countdown-numbers with at least one exact target hit
+      if (context.gameId === 'countdown-numbers' && context.exactHit === true) {
+        tryAward('on-the-nose');
+      }
+
       // Unbeatable: rps-vs-machine with 10+ consecutive round wins (cross-session)
       if (context.gameId === 'rps-vs-machine' && context.winStreak >= 10) {
         tryAward('unbeatable');
