@@ -565,15 +565,17 @@ async function renderScores() {
             }).then(function(r) { return r.json(); })
               .then(function(data) {
                 if (data.shouldPrompt && !data.alreadyEntered) {
-                  if (!eligibility[gid] || data.rank < eligibility[gid].rank) {
-                    eligibility[gid] = { rank: data.rank, periodType: period, row: best };
-                  }
+                  if (!eligibility[gid]) eligibility[gid] = { periods: [], row: best };
+                  eligibility[gid].periods.push({ period: period, rank: data.rank });
                 }
               }).catch(function() {})
           );
         });
       });
       await Promise.all(checks);
+      Object.keys(eligibility).forEach(function(gid) {
+        eligibility[gid].periods.sort(function(a, b) { return a.rank - b.rank; });
+      });
     }
 
     // Sort: ranked games first (by rank asc), then alphabetically
@@ -633,17 +635,19 @@ async function renderScores() {
       html += '</div></div>';
 
       // Footer: eligibility text + submit button (best score across all difficulties)
-      if (elig && !ranked) {
-        var ePLabel = elig.periodType.charAt(0).toUpperCase() + elig.periodType.slice(1);
+      if (elig && elig.periods.length > 0 && !ranked) {
+        var eligLabels = elig.periods.map(function(p) { return p.period.charAt(0).toUpperCase() + p.period.slice(1); });
+        var bestRank = elig.periods[0].rank;
         var bestRow = elig.row || rows[0];
         var sid = bestRow.session_id || '';
         var hasSession = !!sid;
+        var periodsJson = JSON.stringify(elig.periods.map(function(p) { return p.period; })).replace(/'/g, '&#39;');
         html += '<div class="hs-card-footer">';
-        html += '<span class="hs-footer-text">\u2B50 Would rank ' + ordinal(elig.rank) + ' on ' + ePLabel;
+        html += '<span class="hs-footer-text">\u2B50 Would rank ' + ordinal(bestRank) + ' on ' + eligLabels.join(', ');
         if (!hasSession) html += ' \u2014 play again to submit';
         html += '</span>';
         if (hasSession) {
-          html += '<button class="hs-submit-btn" onclick="submitToLeaderboard(\'' + gid + '\',\'' + elig.periodType + '\',\'' + sid + '\',' + (bestRow.score || 0) + ',' + (bestRow.time_ms || 0) + ',this)">Submit 50 QF</button>';
+          html += '<button class="hs-submit-btn" onclick="submitToLeaderboard(\'' + gid + '\',' + periodsJson + ',\'' + sid + '\',' + (bestRow.score || 0) + ',' + (bestRow.time_ms || 0) + ',this)">Submit for 50 QF</button>';
         }
         html += '</div>';
       }
@@ -684,22 +688,47 @@ async function renderScores() {
   loading.style.display = 'none';
 }
 
-// ── Submit to leaderboard ─────────────────────────────────────────────
-async function submitToLeaderboard(gameId, periodType, sessionId, score, timeMs, btn) {
+// ── Submit to leaderboard (mirrors qf-leaderboard-prompt.js pay pattern) ──
+async function submitToLeaderboard(gameId, periodTypes, sessionId, score, timeMs, btn) {
   btn.disabled = true;
-  btn.textContent = 'Submitting...';
+  btn.textContent = 'Waiting for wallet\u2026';
+
+  var txHash;
+  try {
+    var cfgRes = await fetch(API + '/achievement/mint-config', {
+      headers: { 'Authorization': 'Bearer ' + JWT }
+    });
+    var cfg = await cfgRes.json();
+    if (!cfg || !cfg.escrowAddress) { btn.textContent = 'Config error'; btn.disabled = false; return; }
+
+    var signer = (window.qfWallet && window.qfWallet.signer) || null;
+    if (!signer || !signer.sendTransaction) { btn.textContent = 'Wallet not connected'; btn.disabled = false; return; }
+
+    var tx = await signer.sendTransaction({ to: cfg.escrowAddress, value: ethers.parseEther('50') });
+    txHash = tx && tx.hash;
+    if (!txHash) { btn.textContent = 'No tx hash'; btn.disabled = false; return; }
+  } catch (e) {
+    var code = e && (e.code || (e.info && e.info.error && e.info.error.code));
+    var isReject = code === 'ACTION_REJECTED' || code === 4001 ||
+      (e && e.message && /user (rejected|denied)/i.test(e.message));
+    btn.textContent = isReject ? 'Rejected' : 'Wallet error';
+    btn.disabled = false;
+    return;
+  }
+
+  btn.textContent = 'Processing\u2026';
   try {
     var res = await fetch(API + '/global-leaderboard/enter', {
       method: 'POST',
       headers: { 'Content-Type': 'application/json', 'Authorization': 'Bearer ' + JWT },
-      body: JSON.stringify({ gameId: gameId, score: score, timeMs: timeMs, periodType: periodType, sessionId: sessionId })
+      body: JSON.stringify({ gameId: gameId, score: score, timeMs: timeMs, periodTypes: periodTypes, sessionId: sessionId, txHash: txHash })
     });
     var data = await res.json();
     if (data.success) {
-      var pLabel = periodType.charAt(0).toUpperCase() + periodType.slice(1);
+      var enteredNames = (data.entered || []).map(function(e) { return e.periodType.charAt(0).toUpperCase() + e.periodType.slice(1); });
       var footer = btn.closest('.hs-card-footer');
       if (footer) {
-        footer.innerHTML = '<span class="hs-footer-text">\u2B50 Ranked ' + ordinal(data.rank) + ' on ' + pLabel + '</span>';
+        footer.innerHTML = '<span class="hs-footer-text">\u2B50 Ranked on ' + enteredNames.join(', ') + '</span>';
       }
     } else {
       btn.textContent = data.error || 'Failed';
