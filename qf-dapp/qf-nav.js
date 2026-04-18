@@ -25,7 +25,16 @@
     '.qfn-name{font-family:"JetBrains Mono",monospace;font-size:.65rem;color:var(--silver-bright,#d4d8e2);background:var(--surface2,#1e2025);border:1px solid var(--silver-border,rgba(184,188,198,0.15));padding:.2rem .5rem;border-radius:5px}',
     '.qfn-addr{font-family:"JetBrains Mono",monospace;font-size:.65rem;color:var(--muted,#4a4e5a);background:var(--surface,#16181c);border:1px solid var(--border,#1e2228);padding:.2rem .5rem;border-radius:5px}',
     '.qfn-connect{font-family:"Inter",sans-serif;font-weight:600;font-size:.7rem;padding:.35rem .8rem;border-radius:6px;border:1px solid var(--silver-border,rgba(184,188,198,0.15));background:var(--silver-dim,rgba(184,188,198,0.08));color:var(--silver-bright,#d4d8e2);cursor:pointer;transition:all .15s}',
-    '.qfn-connect:hover{background:var(--silver-bright,#d4d8e2);color:var(--bg,#0e1013)}'
+    '.qfn-connect:hover{background:var(--silver-bright,#d4d8e2);color:var(--bg,#0e1013)}',
+    '@media(max-width:480px){',
+      '.qfn{flex-wrap:wrap;padding:.4rem .6rem;gap:.3rem}',
+      '.qfn-left{flex:1 1 auto;min-width:0}',
+      '.qfn-right{flex:0 0 auto}',
+      '.qfn-right.qfn-connected{order:1;flex:1 1 100%;display:flex;align-items:center;justify-content:space-between;border-top:1px solid var(--border,#1e2228);padding-top:.35rem;margin-top:.1rem}',
+      '.qfn-name{max-width:120px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}',
+      '.qfn-addr{max-width:120px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}',
+      '.qfn-link{min-height:44px;display:inline-flex;align-items:center}',
+    '}'
   ].join('\n');
   document.head.appendChild(style);
 
@@ -83,9 +92,11 @@
     qfWallet.onConnect(function(w) {
       if (!w.address) return;
 
-      // Hide connect, show address
+      // Hide connect, show address — add connected class for mobile layout
       var btn = document.getElementById('qfnConnect');
       if (btn) btn.style.display = 'none';
+      var rightEl = btn && btn.parentElement;
+      if (rightEl) rightEl.classList.add('qfn-connected');
 
       var addr = document.getElementById('qfnAddr');
       if (addr) {
@@ -136,6 +147,8 @@
     qfWallet.onDisconnect(function() {
       var btn = document.getElementById('qfnConnect');
       if (btn) btn.style.display = '';
+      var rightEl = btn && btn.parentElement;
+      if (rightEl) rightEl.classList.remove('qfn-connected');
 
       var addr = document.getElementById('qfnAddr');
       if (addr) addr.style.display = 'none';
