@@ -64,3 +64,6 @@
 - Shadow Legend = 500 QF
 - 19 wooden spoons (shown as `?` on teaser page until earned)
 - the-fish: fires at league settlement for last-place poker-patience finishers (3 times to earn)
+
+## Outstanding / Deferred
+- **Fear of Commitment** — wooden spoons, standard tier (100 QF). Condition: exit 50 free games without completing (cumulative, not consecutive). Tracking needed: `incomplete_exits` counter on `wallet_stats` + frontend exit hook on every free game to increment on unmount-without-completion.
