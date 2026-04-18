@@ -51,7 +51,7 @@ Platform: Academy (9 courses), Tools (28 calculators), Games (22 dApp + 13 main 
 ## League & Duel Rules
 - **Leagues:** Bronze 100 QF / Silver 250 QF entry. 10 puzzles, 14-day window, min 4 players. Top 4 share 85% pot, 5% burn, 10% team. Server-authoritative seeds.
 - **Duels:** Client pays escrow → server settles via QFSettlement (90/5/5). Both txHashes required. Builder wallets bypass payment.
-- **QFSettlement:** `0x475F350469Cbe5aDd04aae4686339b3b990D013E`
+- **QFSettlement:** `0xf4C00E9CBC6fe595c4a54ae7e75E9a92D0D513d4` (v2 — owner-settable splits, default 5% burn / 10% team / 85% winner)
 
 ## Achievement System
 - **162 active** achievements (163 registered, 1 retired). `ACHIEVEMENTS_ACTIVE=true`

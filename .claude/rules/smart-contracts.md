@@ -8,17 +8,22 @@ QFSettlement.sol            # Atomic settlement — duel/battleships payouts + f
 Academy.sol                 # Planned — subscription/access contract with soulbound access NFTs
 ```
 
-### QFSettlement.sol (DEPLOYED 2026-04-16)
-- **Address:** `0x475F350469Cbe5aDd04aae4686339b3b990D013E`
-- **Owner:** `0xB21039b9A7e360561d9AE7EE0A8B1b722f2057A3` (onlyfans.qf)
+### QFSettlement.sol v2 (DEPLOYED 2026-04-18)
+- **Address:** `0xf4C00E9CBC6fe595c4a54ae7e75E9a92D0D513d4`
+- **Deployer:** `0xB21039b9A7e360561d9AE7EE0A8B1b722f2057A3` (onlyfans.qf)
+- **Owner:** `0x8a542f4F1814fb2C29b96D8619FdaABBf67F3016` (Ledger) — set via constructor
 - **Team wallet:** `0x8a542f4F1814fb2C29b96D8619FdaABBf67F3016` (settable by owner)
-- `settle(winner)` — atomic duel/battleships win: 5% burn, 5% team, 90% winner
-- `settleDraw(p1, p2)` — atomic duel draw: 5% burn, 5% team, 45% each
-- `splitFee()` — atomic fee split: 5% burn, 95% team (achievement mints + leaderboard entries)
-- `setTeamWallet(address)` — owner-only, update team wallet
-- ABI at `/home/jon/MathsWins/dapp-backend/contracts/QFSettlement.json`
+- **Default splits:** `burnPct=5`, `teamPct=10` → 5% burn / 10% team / 85% winner
+- `settle(winner)` — duel/battleships win: `burnPct` / `teamPct` / remainder to winner
+- `settleDraw(p1, p2)` — duel draw: `burnPct` / `teamPct` / remainder split evenly (42.5% each at defaults)
+- `splitFee()` — **hardcoded 5% burn / 95% team**, ringfenced from `setSplits` (achievement mints + leaderboard entries)
+- `setSplits(burnPct, teamPct)` — owner-only, requires `burn + team < 100`, affects duels only
+- `setTeamWallet(address)` — owner-only
+- `transferOwnership(address)` — owner-only
+- ABI + address at `/home/jon/MathsWins/dapp-backend/contracts/QFSettlement.json`
 - Compiled with resolc v0.5.0 -O2, PVM bytecode at `out-pvm/QFSettlement.sol:QFSettlement.pvm`
 - Called by escrow.mjs (settleDuel, settleDuelDraw) and routes/api.mjs (mint fee, leaderboard fee)
+- **v1 RETIRED:** `0x475F350469Cbe5aDd04aae4686339b3b990D013E` — hardcoded 5/5/90, no setter
 
 ### QFGamesHub.sol
 - `mintBadge(player, tier)` — mint soulbound NFT badge

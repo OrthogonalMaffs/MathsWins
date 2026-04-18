@@ -4,6 +4,11 @@
       "type": "constructor",
       "inputs": [
         {
+          "name": "_owner",
+          "type": "address",
+          "internalType": "address"
+        },
+        {
           "name": "_teamWallet",
           "type": "address",
           "internalType": "address"
@@ -26,6 +31,19 @@
     },
     {
       "type": "function",
+      "name": "burnPct",
+      "inputs": [],
+      "outputs": [
+        {
+          "name": "",
+          "type": "uint256",
+          "internalType": "uint256"
+        }
+      ],
+      "stateMutability": "view"
+    },
+    {
+      "type": "function",
       "name": "owner",
       "inputs": [],
       "outputs": [
@@ -36,6 +54,24 @@
         }
       ],
       "stateMutability": "view"
+    },
+    {
+      "type": "function",
+      "name": "setSplits",
+      "inputs": [
+        {
+          "name": "_burnPct",
+          "type": "uint256",
+          "internalType": "uint256"
+        },
+        {
+          "name": "_teamPct",
+          "type": "uint256",
+          "internalType": "uint256"
+        }
+      ],
+      "outputs": [],
+      "stateMutability": "nonpayable"
     },
     {
       "type": "function",
@@ -90,6 +126,19 @@
     },
     {
       "type": "function",
+      "name": "teamPct",
+      "inputs": [],
+      "outputs": [
+        {
+          "name": "",
+          "type": "uint256",
+          "internalType": "uint256"
+        }
+      ],
+      "stateMutability": "view"
+    },
+    {
+      "type": "function",
       "name": "teamWallet",
       "inputs": [],
       "outputs": [
@@ -100,6 +149,19 @@
         }
       ],
       "stateMutability": "view"
+    },
+    {
+      "type": "function",
+      "name": "transferOwnership",
+      "inputs": [
+        {
+          "name": "_newOwner",
+          "type": "address",
+          "internalType": "address"
+        }
+      ],
+      "outputs": [],
+      "stateMutability": "nonpayable"
     },
     {
       "type": "event",
@@ -116,6 +178,25 @@
           "type": "uint256",
           "indexed": false,
           "internalType": "uint256"
+        }
+      ],
+      "anonymous": false
+    },
+    {
+      "type": "event",
+      "name": "OwnershipTransferred",
+      "inputs": [
+        {
+          "name": "previousOwner",
+          "type": "address",
+          "indexed": true,
+          "internalType": "address"
+        },
+        {
+          "name": "newOwner",
+          "type": "address",
+          "indexed": true,
+          "internalType": "address"
         }
       ],
       "anonymous": false
@@ -187,7 +268,39 @@
         }
       ],
       "anonymous": false
+    },
+    {
+      "type": "event",
+      "name": "SplitsUpdated",
+      "inputs": [
+        {
+          "name": "burnPct",
+          "type": "uint256",
+          "indexed": false,
+          "internalType": "uint256"
+        },
+        {
+          "name": "teamPct",
+          "type": "uint256",
+          "indexed": false,
+          "internalType": "uint256"
+        }
+      ],
+      "anonymous": false
+    },
+    {
+      "type": "event",
+      "name": "TeamWalletUpdated",
+      "inputs": [
+        {
+          "name": "teamWallet",
+          "type": "address",
+          "indexed": false,
+          "internalType": "address"
+        }
+      ],
+      "anonymous": false
     }
   ],
-  "address": "0x475F350469Cbe5aDd04aae4686339b3b990D013E"
+  "address": "0xf4C00E9CBC6fe595c4a54ae7e75E9a92D0D513d4"
 }

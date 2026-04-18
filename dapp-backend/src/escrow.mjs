@@ -21,7 +21,7 @@ const TEAM_WALLET = '0x8a542f4F1814fb2C29b96D8619FdaABBf67F3016';
 const BURN_ADDRESS = '0x000000000000000000000000000000000000dEaD';
 
 const SETTLEMENT_ABI = JSON.parse(readFileSync(join(__dirname, '../contracts/QFSettlement.json'), 'utf8')).abi;
-const SETTLEMENT_ADDRESS = '0x475F350469Cbe5aDd04aae4686339b3b990D013E';
+const SETTLEMENT_ADDRESS = '0xf4C00E9CBC6fe595c4a54ae7e75E9a92D0D513d4';
 let settlementContract = null;
 
 let wallet = null;

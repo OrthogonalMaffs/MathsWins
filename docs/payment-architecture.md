@@ -2,11 +2,14 @@
 
 ## Escrow & Settlement
 
-**QFSettlement contract:** `0x475F350469Cbe5aDd04aae4686339b3b990D013E`
-- `settle(winner)` — duel/battleships win: 5% burn + 5% team + 90% winner
-- `settleDraw(p1, p2)` — duel draw: 5% burn + 5% team + 45% each
-- `splitFee()` — achievement mints + leaderboard entries: 5% burn + 95% team
+**QFSettlement contract (v2):** `0xf4C00E9CBC6fe595c4a54ae7e75E9a92D0D513d4`
+- Defaults: `burnPct=5`, `teamPct=10` (owner-settable via `setSplits`)
+- `settle(winner)` — duel/battleships win: 5% burn + 10% team + 85% winner (at defaults)
+- `settleDraw(p1, p2)` — duel draw: 5% burn + 10% team + 42.5% each (at defaults)
+- `splitFee()` — achievement mints + leaderboard entries: **hardcoded 5% burn + 95% team** (ringfenced from setSplits)
+- `setSplits(burnPct, teamPct)` — owner-only, duel splits only, requires `burn + team < 100`
 - Called by `escrow.mjs` (duel/battleships) and `routes/api.mjs` (mint, leaderboard)
+- **v1 retired:** `0x475F350469Cbe5aDd04aae4686339b3b990D013E` (hardcoded 5/5/90)
 
 **Trust-the-hash:** QF RPC `eth_getTransactionReceipt` returns null for valid txs. Server trusts txHash from client, does not verify on-chain. Blocker until RPC fixed.
 
