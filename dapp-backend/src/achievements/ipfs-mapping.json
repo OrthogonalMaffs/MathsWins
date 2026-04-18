@@ -127,7 +127,7 @@
   },
   {
     "achievement_id": "tax-payers-nightmare",
-    "name": "Tax Payer\u2019s Nightmare",
+    "name": "Tax Payer’s Nightmare",
     "image_ipfs": "ipfs://Qmdq2SqsCSjdC3DoynV58QQ7NQh3kXuymoLQ76DY6TYBkm",
     "metadata_ipfs": "ipfs://QmcHa3suWVkkKwEs1UPqJwPbS1MigtLb26oCwyqETXND3y"
   },
@@ -193,7 +193,7 @@
   },
   {
     "achievement_id": "pharaohs-curse",
-    "name": "Pharaoh\u2019s Curse",
+    "name": "Pharaoh’s Curse",
     "image_ipfs": "ipfs://QmW2hDDqMLzp8RzE8KDg8E1tf2QkZZyj6gv592XZec7RFc",
     "metadata_ipfs": "ipfs://QmVWFzTebwQfwDikrmFwiU8tSwffig7U1WYWLfr66padeg"
   },
@@ -745,7 +745,7 @@
   },
   {
     "achievement_id": "dead-mans-hand",
-    "name": "Dead Man\u2019s Hand",
+    "name": "Dead Man’s Hand",
     "image_ipfs": "ipfs://QmVVV7tqcPcCHqEpU5RR17bDNc75Kj5qnc6QfPyCabmFv7",
     "metadata_ipfs": "ipfs://QmfVadyRY13NRKbu4g7XCgo2GxSo6h1XKNcrVEF4oMtmvC"
   },
@@ -919,7 +919,7 @@
   },
   {
     "achievement_id": "kings-ransom",
-    "name": "King\u2019s Ransom",
+    "name": "King’s Ransom",
     "image_ipfs": "ipfs://QmbMirhk9ogMpPbCsr2CSfKj1zPUPaj8BNgkzxuQeki9Kb",
     "metadata_ipfs": "ipfs://Qmdf7sYgBzxpcwGoC8SLzk5aWdiSRVKqnGUKnPZ4X8413Y"
   },
@@ -964,5 +964,11 @@
     "name": "Detention",
     "image_ipfs": "ipfs://QmbSokZkZ6rQdEmi9tbCKjmQZWrU5DFBMXEddNAq7tpeeJ",
     "metadata_ipfs": "ipfs://QmPJBmu5BsbmaqHGp7B4Vybqd6xMxUEgem22M7B1Q9F8Pd"
+  },
+  {
+    "achievement_id": "bug-hunter",
+    "name": "Bug Hunter",
+    "image_ipfs": "ipfs://QmeVVUM73TGpyJXRqnRjKsDJuuanm2jodH4xankXGYsEQV",
+    "metadata_ipfs": "ipfs://QmbzDPQyhxezUxXhYQ6Ja8s7skzXiSAkqun8BvgrK6CUcY"
   }
 ]
