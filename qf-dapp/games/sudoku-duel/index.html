@@ -1138,6 +1138,7 @@ var G = (function() {
 
   // ── Hint ────────────────────────────────────────────────────────────
   async function useHint() {
+    if (inputLocked) return;
     if (hintsUsed >= MAX_HINTS || done || selected === null) return;
     if (puzzle[selected] !== 0) { setMsg('That cell is given.'); return; }
     if (grid[selected] !== 0) { setMsg('Cell already filled.'); return; }
@@ -1233,6 +1234,9 @@ var G = (function() {
         });
 
         if (data.error) { setMsg(data.error); return; }
+        if (data.correct === false && data.partialCredit === true) {
+          return endGame(false, data.points || 0);
+        }
         var finalScore = data.finalScore || data.points;
 
         if (duelMode && duelCode) {

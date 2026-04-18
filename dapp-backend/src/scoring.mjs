@@ -501,6 +501,7 @@ export function evaluate(sessionToken, answer) {
       const finalScore = result.won ? (result.points || 0) : (result.partialScore || 0);
       session.score = finalScore;
       if (!session.freePlay) completeSession(payload.sid, finalScore);
+      if (session._persisted) persistSession(payload.sid, session);
       if (session._persisted) completeGameState(payload.sid, result.won ? 'completed' : 'gameover', finalScore, null);
       if (result.won) {
         upsertPersonalBest(session.wallet, session.gameId, session.difficulty, finalScore, now - session.startedAt);
@@ -564,6 +565,7 @@ export function evaluate(sessionToken, answer) {
       const partialScore = result.points || 0;
       session.score = partialScore;
       if (!session.freePlay) completeSession(payload.sid, partialScore);
+      if (session._persisted) persistSession(payload.sid, session);
       if (session._persisted) completeGameState(payload.sid, 'gameover', partialScore, result.flagged || null);
       activeSessions.delete(payload.sid);
       response.totalScore = partialScore;
