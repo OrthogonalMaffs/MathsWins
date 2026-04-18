@@ -2476,7 +2476,7 @@ router.get('/global-leaderboard/:gameId/eligibility', optionalWallet, (req, res)
   }
   if (sessionId) {
     var gs = getGameState(sessionId);
-    if (gs && gs.flagged) {
+    if (gs && (gs.flagged || gs.status !== 'completed')) {
       return res.json({ shouldPrompt: false, alreadyEntered: false, periodType: periodType, periodKey: periodKey });
     }
   }
