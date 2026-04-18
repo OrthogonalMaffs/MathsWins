@@ -741,6 +741,12 @@ var G = (function() {
       var data = await api('/duel/' + code, null, 'GET');
       if (data.error) { setMsg(data.error); return; }
       if (data.status !== 'created') { setMsg('This duel is no longer available (' + data.status + ').'); return; }
+      if (data.creator_wallet && W.address && data.creator_wallet.toLowerCase() === W.address.toLowerCase() && (data.creator_score === null || data.creator_score === undefined)) {
+        setMsg('Your duel — starting…');
+        duelStartTime = Date.now();
+        await startSession(data.puzzle_seed);
+        return;
+      }
       var name = W.formatAddr(data.creator_wallet);
       document.getElementById('challengerName').textContent = name;
       if (W.resolveAny) {

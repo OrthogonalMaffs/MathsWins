@@ -1279,6 +1279,20 @@ async function loadDuelAccept() {
     if (data.error) { alert(data.error); return; }
     if (data.status !== 'created') { alert('This duel is no longer available.'); return; }
     duelId = data.id;
+    if (data.creator_wallet && qfWallet && qfWallet.address && data.creator_wallet.toLowerCase() === qfWallet.address.toLowerCase() && (data.creator_score === null || data.creator_score === undefined)) {
+      var panel = document.getElementById('duel-accept-panel');
+      panel.innerHTML = '<h3 style="font-family:\'Playfair Display\',\'Bebas Neue\',serif;font-size:1.3rem;color:#e8eaf0;margin-bottom:.3rem">Your Duel</h3><p style="font-size:.62rem;color:#4a4e5a;margin-bottom:.8rem">Resume your round. Share code: <strong>' + duelCode + '</strong></p><button class="btn btn-silver" id="duel-resume-btn" style="padding:.7rem 1.5rem;font-size:.68rem">Start Playing</button>';
+      panel.style.display = 'block';
+      var sb1 = document.getElementById('start-btn'); if (sb1) sb1.style.display = 'none';
+      var cb1 = document.getElementById('create-duel-btn'); if (cb1) cb1.style.display = 'none';
+      document.getElementById('duel-resume-btn').addEventListener('click', async function() {
+        document.getElementById('duel-accept-panel').style.display = 'none';
+        await _duelCountdown();
+        var sb2 = document.getElementById('start-btn');
+        if (sb2) { sb2.style.display = ''; sb2.click(); }
+      });
+      return;
+    }
     var name = qfWallet.formatAddr(data.creator_wallet);
     qfWallet.resolveAny(data.creator_wallet).then(function(n) {
       if (n) document.getElementById('duel-challenger').textContent = n;

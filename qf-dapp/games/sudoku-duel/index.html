@@ -744,6 +744,15 @@ var G = (function() {
       duelData = data;
       duelId = data.id;
 
+      // Creator resume path — they've returned to their own duel before playing
+      if (data.creator_wallet && W.state && W.state.address && data.creator_wallet.toLowerCase() === W.state.address.toLowerCase() && (data.creator_score === null || data.creator_score === undefined)) {
+        pendingDuelSeed = data.puzzle_seed;
+        document.getElementById('duel-share').style.display = 'block';
+        document.getElementById('share-code').textContent = duelCode;
+        document.getElementById('duel-start-btn').style.display = '';
+        return;
+      }
+
       // Show stake info
       var stakeInfo = document.getElementById('accept-stake-info');
       if (stakeInfo && data.stake) {
