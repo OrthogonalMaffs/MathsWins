@@ -24,7 +24,7 @@
 | Cribbage Solitaire | cribbage-solitaire | capable | ✓ | – | |
 | Battleships | battleships | – | ✓ PvP | ✓ CPU | Deep link: `?code=` not `?duel=` |
 | Countdown Numbers | countdown-numbers | – | ✓ | ✓ | Demoted from competitive |
-| Maffsy | maffsy | – | – | ✓ | Renamed from Equatle. Custom submit path `/maffsy/complete` |
+| Maffsy | maffsy | – | – | ✓ | Renamed from Equatle. `/maffsy/complete` now issues sessionId; leaderboard prompt + 4 achievements wired (2026-04-18) |
 | Higher or Lower | higher-or-lower | – | – | ✓ | |
 | 52-dle | 52dle | – | – | ✓ | |
 | Towers of Hanoi | towers-of-hanoi | – | – | ✓ | |
@@ -36,7 +36,7 @@
 | Prime or Composite | prime-or-composite | – | – | ✓ | |
 | Cryptarithmetic Club | cryptarithmetic-club | – | – | ✓ | Demoted from competitive |
 
-**Leaderboard prompt wiring:** 21 of 23 games wired. **2 skipped:** battleships (`/battleships/:code/shoot`) and maffsy (`/maffsy/complete`) use custom submit paths without `active_game_state` rows — need separate backend pass.
+**Leaderboard prompt wiring:** 22 of 23 games wired (Maffsy added 2026-04-18). **1 skipped:** battleships free-play (vs CPU) — no server-side completion path, no sessionId. Battleships still needs a new backend endpoint or extension of submit-freeplay with a battleships-CPU schema; score field also needs definition (binary win/loss has no numeric score). Duel/PvP battleships goes through QFSettlement, not the leaderboard.
 
 ## Scoring Rules
 

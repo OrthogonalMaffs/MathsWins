@@ -26,7 +26,7 @@
 | `achievement_registry` | 163 total / 162 active (v4 spec), 32 categories, `tier` + `category` columns |
 | `achievement_eligibility` | Per-wallet achievement progress and mint status |
 | `global_records` | Community records (e.g. The Tortoise slowest win) |
-| `wallet_stats` | Per-wallet tracking (streaks, spending, mints, consecutive wins, golf/pyramid failures) |
+| `wallet_stats` | Per-wallet tracking (streaks, spending, mints, consecutive wins, golf/pyramid failures, `maffsy_clean_streak` for feel-no-pressure) |
 | `personal_bests` | Best free play score per wallet/game/difficulty. Columns: wallet, game_id, difficulty, score, time_ms, achieved_at, session_id (nullable) |
 | `league_bests` | Best league total score per wallet/game/tier (upserted at settlement for ALL players) |
 | `game_messages` | Preset messages for duels and leagues |
@@ -46,6 +46,7 @@
 **active_game_state:**
 - `startFreeSession` writes a row for all continuous-mode sessions (not just league) — enabler for leaderboard prompt
 - `evaluate` sets `response.sessionId = payload.sid` at both return points
+- **Gameover persistence (fixed 2026-04-18 commit 95cf734):** scoring.mjs gameover and failed-submit branches now call `persistSession` immediately before `completeGameState`. Prior behaviour: `mistakes` and `hints_used` columns froze one action behind on any gameover (because `completeGameState` only writes status/score/flagged/completed_at, and `persistSession` lived only in the regular-action else-branch). Historical rows pre-fix have stale counters by design.
 
 **escrow_ledger event types:**
 - `FeeSplit(burned, team)` → 2 rows (burn + team)

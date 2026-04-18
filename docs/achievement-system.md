@@ -14,6 +14,7 @@
 - `achievement_registry` has both `tier` and `category` columns (tier for legacy compat)
 - Pioneer tag: first mint per achievement, UNIQUE constraint
 - **Pioneer flags wiped 2026-04-17:** all `is_pioneer=0` — reserved for real paying customers. `first_claimed_by/first_claimed_at` left as historical record. DB backup: `mathswins.db.pre-pioneer-wipe.20260417-195155`
+- **Tier+fee migration applied 2026-04-18** (see `docs/migrations/20260418-achievement-tier-fix.sql`): 22 standard-tier rows had `mint_fee_qf=200`, corrected to 100; `immaculate` retiered obsidian→elite; `pioneer-hunter`, `the-whale`, `dominant`, `legend`, `the-completionist` retiered obsidian/meta→premium. Mint handler reads `mint_fee_qf` directly (no tier→price lookup), so DB is authoritative. `onlyfans-qf` left as `manual/200` pending decision. DB backup: `mathswins.db.pre-tier-fix.20260418-082930`.
 
 ## Mint Mechanics
 - Real on-chain mint via escrow wallet
@@ -50,13 +51,15 @@
 | 7 | 2026-04-12 | 11 battleships + wolf-pack super |
 | 8 | 2026-04-12 | 3 free game (century, explorer, personal-best) + free_game_completions table |
 | 9/10/11 | 2026-04-17 | 5 free-game achievements: photographic, dead-reckoning, next-in-line, unbeatable, the-engineer |
+| 12 | 2026-04-18 | 6 wirings: 4 Maffsy (wordy, binary-decision, the-novelist, feel-no-pressure) via `maffsy_complete` context.type + new `wallet_stats.maffsy_clean_streak` counter; Clairvoyant (HoL `perfectGame`) + On-the-nose (Countdown `exactHit`) via submit-freeplay clientStats |
 
 ## Known Issues (as of 2026-04-18)
-- **13 orphan achievements remain.** 2 by-design (boom, onlyfans-qf), 3 parked (all-wrong, full-hints, the-novelist), ~8 context-hardcoded needing per-game frontend wiring (lucky-number, the-undo-king, freecell dealNumber/undoCount fields)
+- **~7 orphan achievements remain** (down from 13 — Batch 12 wired 4 Maffsy + Clairvoyant + On-the-nose). 2 by-design (boom, onlyfans-qf), 2 parked (all-wrong, full-hints), ~3 context-hardcoded needing per-game frontend wiring (lucky-number, the-undo-king, freecell dealNumber/undoCount fields).
 - **Test-activity exclusion not enforced.** BUILDER_WALLETS bypasses payment only — achievement/record writes still fire for test wallets. Architectural fix pending.
 - **`flag-everything` is structurally impossible.** First-click safety prevents flagging every cell. Retire or rewrite condition.
 - **Wrong Answer Streak counter is lifetime.** `wallet_stats.prime_wrong_streak` persists across sessions. Confirmed spec behaviour, not a bug.
 - **DEBUG flag:** `ACHIEVEMENT_DEBUG=true` env var enables award logs (off by default). The fifty-two-thousand airdrop log is always-on.
+- **`onlyfans-qf` row** has `tier='manual'` but `mint_fee_qf=200` — contradicts "Manual reward" semantics. Left as-is in tier migration pending decision.
 
 ## Special Achievements
 - "Boom" — the impossible achievement (first click safety means it can never be earned)

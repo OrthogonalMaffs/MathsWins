@@ -45,7 +45,7 @@ Platform: Academy (9 courses), Tools (28 calculators), Games (22 dApp + 13 main 
 - **4 active league games:** sudoku-duel, kenken, minesweeper, freecell
 - **10 duel-capable games:** above 4 + battleships, kakuro, countdown-numbers, nonogram, poker-patience, cribbage-solitaire. Min 25 QF stake, variable. Trust-the-hash (RPC blocker).
 - **12 free games:** maffsy, higher-or-lower, 52dle, towers-of-hanoi, dont-press-it, memory-matrix, rps-vs-machine, estimation-engine, sequence-solver, prime-or-composite, cryptarithmetic-club, battleships-cpu
-- **Leaderboard prompt:** 21/23 games wired. 2 skipped: battleships + maffsy (custom submit paths). See `docs/game-roster.md`.
+- **Leaderboard prompt:** 22/23 games wired. Battleships still skipped (no server-side free-play completion path). Maffsy now issues sessionId via `/maffsy/complete`. See `docs/game-roster.md`.
 - **Shared nav:** `qf-nav.js` on all 35+ pages | **My Account:** `/qf-dapp/my-account/` (5 tabs)
 
 ## League & Duel Rules
@@ -65,16 +65,25 @@ Platform: Academy (9 courses), Tools (28 calculators), Games (22 dApp + 13 main 
 - New Resolver: `0x276b7e9343c19bea29d32dd4a8f84e6d1c183111` | Old: `0xd5d12431b2956248861dbec5e8a9bc6023114e80`
 
 ## Known Issues (2026-04-18)
-- **`ACHIEVEMENT_METADATA` dict drift.** `routes/api.mjs` inline dict (~80 entries) vs `ipfs-mapping.json` (161 entries). Missing entries mint wrong image (tier-fallback generic coin — permanently soulbound). Fix: load JSON at startup.
-- **Token 11 wrong tokenURI.** `wrong-answer-streak` points to tier-fallback CID. Fix: `setTokenURI(11, <correct CID>)` after dict-drift fix.
+- **`ACHIEVEMENT_METADATA` dict drift fixed 2026-04-17** (commit 31345b5 — loads `ipfs-mapping.json` at startup). Token 11 setTokenURI fix still pending.
+- **Token 11 wrong tokenURI.** `wrong-answer-streak` points to tier-fallback CID. Fix: `setTokenURI(11, <correct CID>)`.
 - **Test-activity exclusion not enforced.** BUILDER_WALLETS bypasses payment only — achievement/record writes still fire. Architectural fix pending.
-- **13 orphan achievements.** 2 by-design, 3 parked, ~8 needing per-game frontend wiring. See `docs/achievement-system.md`.
+- **~7 orphan achievements** still need per-game frontend wiring (down from 13 — 4 Maffsy + Clairvoyant + On-the-nose wired today). See `docs/achievement-system.md`.
 - **FreeCell auto-complete bug.** Does not trigger when tableau sorted descending + foundations at 8s. UNDO greying mid-game is a separate issue. Both pending.
 - **League settlement not atomic.** `league-settle.mjs:186-198` — partial-payment silent failure possible. See `docs/payment-architecture.md`.
+- **`onlyfans-qf` row pricing TBD** — tier='manual' but mint_fee_qf=200, contradicts "Manual reward" semantics in spec. Awaiting decision (left untouched in tier migration).
+- **Admin auth not configured on Box 1** — neither `ADMIN_SECRET` nor `ADMIN_WALLETS` env var set, so `/admin/*` HTTP endpoints (incl. `/admin/telegram/test`) return 403 from outside. In-process node import works as a workaround.
 
 ## Recent Fixes (2026-04-18)
-- **Minesweeper stake UI** (`qf-dapp/games/minesweeper/index.html`): `duel-stake-wrap` hidden by default, shown only on `?mode=duel`. Commit 915d7ef.
-- **Minesweeper context menu + leaderboard prompt** (`minesweeper/index.html` + `qf-leaderboard-prompt.js`): `contextmenu` preventDefault added to board container; 150ms `backdropReady` delay on leaderboard backdrop click listener. Commit d0a3eaf.
+- **Stake UI sweep** across 9 free-play game pages: `duel-stake-wrap` hidden by default, shown only on `?mode=duel` (kenken, countdown-numbers, sudoku-duel, cribbage-solitaire, nonogram, kakuro, poker-patience, freecell, battleships). Commit 7e6cb1c.
+- **qnsName populated on global leaderboard entries** — both submit call sites now read `qfWallet.qfName` (with `resolveAny()` fallback) and pass to `/global-leaderboard/enter`. Commit 85663b7.
+- **KenKen free-play removes per-cell red feedback.** Gate `!leagueMode` → `duelMode`. Free-play and league now no feedback; duel preserved. Commit 6237b5a.
+- **Telegram broadcast notifications** to @qf_games (`-1003968909110`). 6 event types + daily 08:00 UTC digest. `src/telegram.mjs`, gated by `TELEGRAM_NOTIFICATIONS_ENABLED`. Live on Box 1.
+- **Achievement registry tier+fee migration:** 22 standard@200→100, 5 obsidian/meta→premium, immaculate→elite. SQL at `docs/migrations/20260418-achievement-tier-fix.sql`. DB backup `mathswins.db.pre-tier-fix.20260418-082930` on Box 1.
+- **Maffsy fully wired:** sessionId issuance from `/maffsy/complete` enables leaderboard prompt; 4 achievements activated (wordy, binary-decision, the-novelist, feel-no-pressure). New `wallet_stats.maffsy_clean_streak` column.
+- **Lobby header platform stats:** `GET /stats/platform` (no auth) — games_played + qf_burned chips on lobby hero.
+- **Clairvoyant** (HoL, perfectGame===true) and **On-the-nose** (Countdown, exactHit===true) wired via submit-freeplay clientStats.
+- **Sudoku Duel three-fix** (commit 95cf734): persistSession before completeGameState in scoring.mjs gameover/failed-submit branches (DB mistakes column was freezing one-behind on gameover); useHint respects inputLocked; endGame(true) checks data.correct before showing win modal.
 
 ## Relationship to Other Projects
 - **maffsgames.co.uk** — sister site, schools-only. Shares 5 games. Zero branding crossover.

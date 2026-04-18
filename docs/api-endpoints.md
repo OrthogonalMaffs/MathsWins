@@ -10,7 +10,11 @@ Local dev: `http://127.0.0.1:3860/api/dapp`
 - `POST /session/start` — start game session (params: gameId, difficulty, leagueId)
 - `POST /session/resume` — resume existing session (contextType, contextId)
 - `POST /session/evaluate` — submit move/answer, returns sessionId in response
-- `POST /session/submit-freeplay` — submit free play score, creates active_game_state row, returns sessionId
+- `POST /session/submit-freeplay` — submit free play score, creates active_game_state row, returns sessionId. clientStats forwards 24 fields incl. `perfectGame` (HoL Clairvoyant) and `exactHit` (Countdown On-the-nose)
+
+## Maffsy
+- `POST /maffsy/complete` — record daily Maffsy result (won, guesses, wordId). Returns `{ success, sessionId, streak, maxStreak, played, won }`. sessionId enables global-leaderboard prompt. Fires achievement checks (wordy, binary-decision, the-novelist, feel-no-pressure).
+- `GET /maffsy/stats` — wallet's maffsy streak history
 
 ## Leaderboard (legacy weekly)
 - `GET /leaderboard/:gameId`
@@ -82,5 +86,11 @@ Local dev: `http://127.0.0.1:3860/api/dapp`
 ## Global Leaderboard
 - `GET /global-leaderboard/:gameId/:periodType` — top entries
 - `GET /global-leaderboard/:gameId/eligibility?periodType=&score=&timeMs=` — checks top 25, requires status==='completed'
-- `POST /global-leaderboard/enter` — 50 QF entry, requires txHash, accepts periodTypes array (one payment, multiple periods)
+- `POST /global-leaderboard/enter` — 50 QF entry, requires txHash, accepts periodTypes array (one payment, multiple periods). Body now includes `qnsName` from connected wallet (cached `qfWallet.qfName` with `resolveAny()` fallback).
 - `GET /global-leaderboard/my-positions`
+
+## Platform Stats
+- `GET /stats/platform` — public, no auth. Returns `{ games_played, qf_burned }`. games_played = SUM(free_game_completions.count) + COUNT(league_scores) + COUNT(duels.completed) + COUNT(battleships_games.complete). qf_burned = SUM escrow_ledger out/burn.
+
+## Telegram (admin)
+- `GET /admin/telegram/test?type=X` — fires sample notification (admin-gated). Types: league_open, league_closed, league_minimum_reached, league_settled, achievement_minted, achievement_pioneer. Returns `{ queued, text, enabled }`. **Note:** admin auth not configured on Box 1 — endpoint returns 403 externally; in-process node import bypasses for testing.
