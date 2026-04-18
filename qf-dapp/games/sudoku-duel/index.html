@@ -731,6 +731,13 @@ var G = (function() {
     duelCode = code;
     duelMode = true;
 
+    if (W && W.state && !W.state.address) {
+      await new Promise(function(r) {
+        var tid = setTimeout(r, 3000);
+        if (W.onConnect) W.onConnect(function() { clearTimeout(tid); r(); });
+      });
+    }
+
     try {
       var data = await api('/duel/' + code, null, 'GET');
       if (data.error) { setMsg(data.error); return; }

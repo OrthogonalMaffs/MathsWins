@@ -717,6 +717,12 @@ var G = (function() {
   async function showAcceptScreen(code) {
     duelCode = code; duelMode = true;
     document.getElementById('modePanel').style.display = 'none';
+    if (W && !W.address) {
+      await new Promise(function(r) {
+        var tid = setTimeout(r, 3000);
+        if (W.onConnect) W.onConnect(function() { clearTimeout(tid); r(); });
+      });
+    }
     try {
       var data = await api('/duel/' + code, null, 'GET');
       if (data.error) { setMsg(data.error); return; }

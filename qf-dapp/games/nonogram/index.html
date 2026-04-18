@@ -1059,6 +1059,12 @@ function shareDuelLink() {
 }
 
 async function loadDuelAccept() {
+  if (typeof qfWallet !== 'undefined' && qfWallet && !qfWallet.address) {
+    await new Promise(function(r) {
+      var tid = setTimeout(r, 3000);
+      if (qfWallet.onConnect) qfWallet.onConnect(function() { clearTimeout(tid); r(); });
+    });
+  }
   try {
     var data = await duelApi('/duel/' + duelCode, null, 'GET');
     if (data.error) { alert(data.error); return; }
