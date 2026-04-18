@@ -223,6 +223,10 @@
         payBtn.textContent = 'Processing…';
 
         var allPeriods = qualifying.map(function(q) { return q.period; });
+        var qnsName = (window.qfWallet && window.qfWallet.qfName) || null;
+        if (!qnsName && window.qfWallet && window.qfWallet.resolveAny && window.qfWallet.address) {
+          try { qnsName = await window.qfWallet.resolveAny(window.qfWallet.address); } catch (e) { qnsName = null; }
+        }
         try {
           var res = await fetch(API + '/global-leaderboard/enter', {
             method: 'POST',
@@ -233,7 +237,8 @@
               timeMs: timeMs || 0,
               periodTypes: allPeriods,
               sessionId: sessionId,
-              txHash: txHash
+              txHash: txHash,
+              qnsName: qnsName
             })
           });
           var data;

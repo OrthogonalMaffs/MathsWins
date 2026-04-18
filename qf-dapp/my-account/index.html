@@ -717,11 +717,15 @@ async function submitToLeaderboard(gameId, periodTypes, sessionId, score, timeMs
   }
 
   btn.textContent = 'Processing\u2026';
+  var qnsName = (window.qfWallet && window.qfWallet.qfName) || null;
+  if (!qnsName && window.qfWallet && window.qfWallet.resolveAny && window.qfWallet.address) {
+    try { qnsName = await window.qfWallet.resolveAny(window.qfWallet.address); } catch (e) { qnsName = null; }
+  }
   try {
     var res = await fetch(API + '/global-leaderboard/enter', {
       method: 'POST',
       headers: { 'Content-Type': 'application/json', 'Authorization': 'Bearer ' + JWT },
-      body: JSON.stringify({ gameId: gameId, score: score, timeMs: timeMs, periodTypes: periodTypes, sessionId: sessionId, txHash: txHash })
+      body: JSON.stringify({ gameId: gameId, score: score, timeMs: timeMs, periodTypes: periodTypes, sessionId: sessionId, txHash: txHash, qnsName: qnsName })
     });
     var data = await res.json();
     if (data.success) {
