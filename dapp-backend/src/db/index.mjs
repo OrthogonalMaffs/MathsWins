@@ -69,6 +69,8 @@ export function getDb() {
   try { db.exec('ALTER TABLE wallet_stats ADD COLUMN maffsy_max_streak INTEGER DEFAULT 0'); } catch (e) { /* already exists */ }
   try { db.exec('ALTER TABLE duels ADD COLUMN creator_tx TEXT'); } catch (e) { /* already exists */ }
   try { db.exec('ALTER TABLE duels ADD COLUMN acceptor_tx TEXT'); } catch (e) { /* already exists */ }
+  try { db.exec('ALTER TABLE duels ADD COLUMN broadcast_at INTEGER'); } catch (e) { /* already exists */ }
+  try { db.exec('ALTER TABLE duels ADD COLUMN broadcast_message_id INTEGER'); } catch (e) { /* already exists */ }
   try { db.exec('ALTER TABLE escrow_ledger ADD COLUMN inferred INTEGER DEFAULT 0'); } catch (e) { /* already exists */ }
 
   // League refunds table
@@ -827,7 +829,7 @@ export function completeDuel(duelId, winnerWallet) {
 export function expireOldDuels() {
   const db = getDb();
   const now = Date.now();
-  var expiring = db.prepare(`SELECT id, creator_wallet, opponent_wallet, stake, status, creator_tx, acceptor_tx FROM duels WHERE status IN ('created', 'accepted') AND expires_at < ?`).all(now);
+  var expiring = db.prepare(`SELECT id, game_id, share_code, creator_wallet, opponent_wallet, stake, status, creator_tx, acceptor_tx, broadcast_message_id FROM duels WHERE status IN ('created', 'accepted') AND expires_at < ?`).all(now);
   if (expiring.length > 0) {
     db.prepare(`UPDATE duels SET status = 'expired' WHERE status IN ('created', 'accepted') AND expires_at < ?`).run(now);
   }

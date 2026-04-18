@@ -179,6 +179,118 @@ function startDigestScheduler() {
 }
 startDigestScheduler();
 
+// ─── Duel broadcast (user-initiated, synchronous, message_id tracked) ───
+// These are distinct from the queued notifications above — they need a
+// returned message_id so the server can later edit the post on accept,
+// expire, or settle.
+
+const GAME_DISPLAY_NAMES = {
+  'sudoku-duel': 'Sudoku Duel',
+  'kenken': 'KenKen',
+  'kakuro': 'Kakuro',
+  'nonogram': 'Nonogram',
+  'countdown-numbers': 'Countdown Numbers',
+  'cryptarithmetic-club': 'Cryptarithmetic Club',
+  'poker-patience': 'Poker Patience',
+  'cribbage-solitaire': 'Cribbage Solitaire',
+  'freecell': 'FreeCell',
+  'minesweeper': 'Minesweeper'
+};
+
+function gameDisplay(gameId) {
+  return GAME_DISPLAY_NAMES[gameId] || titleCase(gameId || '');
+}
+
+export function duelAcceptUrl(gameId, code) {
+  return 'https://mathswins.co.uk/qf-dapp/games/' + gameId + '/?duel=' + code;
+}
+
+function buildDuelOpen(duel) {
+  const who = formatWallet(duel.creator_wallet, duel.creator_qns);
+  const url = duelAcceptUrl(duel.game_id, duel.share_code);
+  return '\u2694\ufe0f New Duel from ' + who
+    + '\nGame: ' + gameDisplay(duel.game_id) + '  \u00b7  Stake: ' + duel.stake + ' QF'
+    + '\nCode: ' + duel.share_code
+    + '\nAccept \u2192 ' + url;
+}
+
+function buildDuelAccepted(duel) {
+  return '\u2705 Accepted \u00b7 duel in play'
+    + '\nGame: ' + gameDisplay(duel.game_id) + '  \u00b7  Stake: ' + duel.stake + ' QF'
+    + '\nCode: ' + duel.share_code;
+}
+
+function buildDuelExpired(duel) {
+  return '\u274c Expired \u00b7 no opponent'
+    + '\nGame: ' + gameDisplay(duel.game_id) + '  \u00b7  Stake: ' + duel.stake + ' QF'
+    + '\nCode: ' + duel.share_code;
+}
+
+function buildDuelSettled(duel, winnerWallet, isDraw) {
+  if (isDraw) {
+    return '\ud83e\udd1d Draw \u00b7 duel closed'
+      + '\nGame: ' + gameDisplay(duel.game_id) + '  \u00b7  Stake: ' + duel.stake + ' QF';
+  }
+  const who = formatWallet(winnerWallet, null);
+  return '\ud83c\udfc6 Winner: ' + who
+    + '\nGame: ' + gameDisplay(duel.game_id) + '  \u00b7  Stake: ' + duel.stake + ' QF';
+}
+
+// Post a new duel broadcast. Returns { ok: true, message_id } or { ok: false, error }.
+// Synchronous — awaits Telegram API response so caller can persist message_id.
+export async function postDuelBroadcast(duel) {
+  if (!ENABLED) return { ok: false, error: 'notifications_disabled' };
+  if (!BOT_TOKEN || !CHANNEL_ID) return { ok: false, error: 'bot_not_configured' };
+  const text = buildDuelOpen(duel);
+  try {
+    const res = await fetch('https://api.telegram.org/bot' + BOT_TOKEN + '/sendMessage', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ chat_id: CHANNEL_ID, text: text, disable_web_page_preview: false })
+    });
+    const body = await res.json();
+    if (!res.ok || !body.ok) {
+      console.error('[telegram] postDuelBroadcast failed: ' + JSON.stringify(body));
+      return { ok: false, error: body.description || ('http_' + res.status) };
+    }
+    return { ok: true, message_id: body.result.message_id };
+  } catch (e) {
+    console.error('[telegram] postDuelBroadcast error: ' + e.message);
+    return { ok: false, error: e.message };
+  }
+}
+
+// Edit an existing broadcast message. Fire-and-forget — logs on failure but
+// never throws; a failed edit must not block the duel state transition.
+async function editDuelBroadcast(messageId, text) {
+  if (!ENABLED || !BOT_TOKEN || !CHANNEL_ID || !messageId) return;
+  try {
+    const res = await fetch('https://api.telegram.org/bot' + BOT_TOKEN + '/editMessageText', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ chat_id: CHANNEL_ID, message_id: messageId, text: text, disable_web_page_preview: false })
+    });
+    if (!res.ok) {
+      const body = await res.text();
+      console.error('[telegram] editDuelBroadcast failed (' + res.status + '): ' + body);
+    }
+  } catch (e) {
+    console.error('[telegram] editDuelBroadcast error: ' + e.message);
+  }
+}
+
+export function editDuelBroadcastAccepted(messageId, duel) {
+  editDuelBroadcast(messageId, buildDuelAccepted(duel)).catch(() => {});
+}
+
+export function editDuelBroadcastExpired(messageId, duel) {
+  editDuelBroadcast(messageId, buildDuelExpired(duel)).catch(() => {});
+}
+
+export function editDuelBroadcastSettled(messageId, duel, winnerWallet, isDraw) {
+  editDuelBroadcast(messageId, buildDuelSettled(duel, winnerWallet, !!isDraw)).catch(() => {});
+}
+
 // Build a sample payload for the admin test endpoint, then queue it.
 // Returns { queued: bool, text: string|null, enabled: bool }.
 export function sendTestNotification(type) {

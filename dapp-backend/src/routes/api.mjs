@@ -13,7 +13,7 @@ import { ethers } from 'ethers';
 import { signatureVerify, decodeAddress } from '@polkadot/util-crypto';
 import { getDb } from '../db/index.mjs';
 import { doSettleLeague, checkEarlySettlement, recoverStuckLeagues, mintCommemorative } from '../league-settle.mjs';
-import { queueNotification, sendTestNotification } from '../telegram.mjs';
+import { queueNotification, sendTestNotification, postDuelBroadcast, editDuelBroadcastAccepted, editDuelBroadcastExpired, editDuelBroadcastSettled } from '../telegram.mjs';
 import { checkAchievements, checkContrarian, checkStreakAchievements, checkLeagueRegular, checkMonthlyAchievements, trackSpend, checkNightOwlSubmission, checkMinesweeperFreePlay, checkFlagEverything, checkBlindEye, checkSumOfAllFears, checkTheGrinder, checkMintMeta, checkDuelMaster, checkFlaglessAndWrong, checkMidnight, checkFibonacci, checkWrongAnswerStreak } from '../achievement-checker.mjs';
 import { sendQF, settleDuel, settleDuelDraw, refundDuel, getEscrowAddress, getSettlementContract, logIncoming, logSplitFromReceipt, BURN_ADDRESS, TEAM_WALLET } from '../escrow.mjs';
 import { createBattleshipsGame, getBattleshipsGameByCode, getBattleshipsGameById, updateBattleshipsGameStatus, saveBattleshipsPlacement, getBattleshipsPlacement, getBattleshipsPlacements, addBattleshipsRound, getBattleshipsRounds, getBattleshipsRecord, updateBattleshipsRecord, getActiveBattleshipsGames, getBattleshipsGamesByWallet, getActiveBattleshipsForWallet } from '../db/index.mjs';
@@ -646,6 +646,10 @@ router.post('/duel/:code/accept', optionalWallet, (req, res) => {
     if (!isBuilder && duel.stake > 0) {
       try { trackSpend(wallet, duel.stake); } catch (e) { /* must never block */ }
     }
+    // Edit channel broadcast if one was posted
+    if (duel.broadcast_message_id) {
+      try { editDuelBroadcastAccepted(duel.broadcast_message_id, duel); } catch (e) { /* must never block */ }
+    }
   }
 
   res.json({ duelId: duel.id, puzzleSeed: duel.puzzle_seed, gameId: duel.game_id, difficulty: duel.difficulty, stake: duel.stake });
@@ -699,6 +703,11 @@ router.post('/duel/:code/submit', optionalWallet, (req, res) => {
       settlement = { winner: null, creatorPrize: half, opponentPrize: half, burn: burnAmount, team: teamAmount };
     }
 
+    // Edit channel broadcast if one was posted — winner announcement or draw
+    if (final.broadcast_message_id) {
+      try { editDuelBroadcastSettled(final.broadcast_message_id, final, winner, !winner); } catch (e) { /* must never block */ }
+    }
+
     // Settle on-chain only if both players actually paid (fire and forget — must never block response)
     var bothPaid = final.creator_tx && final.acceptor_tx;
     if (bothPaid) {
@@ -734,6 +743,54 @@ router.post('/duel/:code/submit', optionalWallet, (req, res) => {
   }
 
   res.json({ status: 'waiting', message: 'Waiting for opponent to finish' });
+});
+
+// Broadcast a duel to @qf_games Telegram channel. User-initiated. Idempotent
+// (one post per duel). Rate-limited. Minimum stake applies.
+const BROADCAST_MIN_STAKE = 100;
+const BROADCAST_WINDOW_MS = 24 * 60 * 60 * 1000;
+const BROADCAST_LIMIT_PER_WINDOW = 5;
+
+router.post('/duel/:code/broadcast', requireAuth, async (req, res) => {
+  const code = req.params.code.toUpperCase();
+  const wallet = req.wallet.toLowerCase();
+
+  const duel = getDuelByCode(code);
+  if (!duel) return res.status(404).json({ error: 'Duel not found' });
+  if (duel.creator_wallet.toLowerCase() !== wallet) {
+    return res.status(403).json({ error: 'Only the duel creator can broadcast it' });
+  }
+  if (duel.status !== 'created') {
+    return res.status(409).json({ error: 'Duel is not available for broadcast (' + duel.status + ')' });
+  }
+  if (duel.broadcast_at) {
+    return res.status(409).json({ error: 'Duel already broadcast' });
+  }
+  if ((duel.stake || 0) < BROADCAST_MIN_STAKE) {
+    return res.status(400).json({ error: 'Channel posts require a stake of at least ' + BROADCAST_MIN_STAKE + ' QF' });
+  }
+
+  // Rate limit: count broadcasts by this wallet in the last 24h
+  const db = getDb();
+  const windowStart = Date.now() - BROADCAST_WINDOW_MS;
+  const recent = db.prepare(
+    'SELECT COUNT(*) AS n FROM duels WHERE lower(creator_wallet) = ? AND broadcast_at IS NOT NULL AND broadcast_at > ?'
+  ).get(wallet, windowStart);
+  if (recent && recent.n >= BROADCAST_LIMIT_PER_WINDOW) {
+    return res.status(429).json({ error: 'Rate limit hit — you can broadcast up to ' + BROADCAST_LIMIT_PER_WINDOW + ' duels per 24 hours' });
+  }
+
+  // Post to channel (awaited — we need the message_id)
+  const result = await postDuelBroadcast(duel);
+  if (!result.ok) {
+    console.error('[duel-broadcast] post failed for ' + code + ': ' + result.error);
+    return res.status(502).json({ error: 'Broadcast failed — try again shortly' });
+  }
+
+  db.prepare('UPDATE duels SET broadcast_at = ?, broadcast_message_id = ? WHERE id = ?')
+    .run(Date.now(), result.message_id, duel.id);
+
+  res.json({ ok: true, message_id: result.message_id });
 });
 
 // Get duel history for a wallet

@@ -146,6 +146,7 @@ body{background:var(--bg);color:var(--text);font-family:'Inter',sans-serif;min-h
 <script src="/qf-dapp/games/qf-wallet.js"></script>
 <script src="/qf-dapp/qf-nav.js"></script>
 <script src="/qf-dapp/games/qf-leaderboard-prompt.js"></script>
+<script src="/qf-dapp/games/qf-duel-broadcast.js"></script>
 <div class="page">
   <div class="game-header">
     <p class="game-kicker">Arithmetic Logic</p>
@@ -208,6 +209,7 @@ body{background:var(--bg);color:var(--text);font-family:'Inter',sans-serif;min-h
     <div style="display:flex;gap:.4rem;justify-content:center">
       <button class="btn btn-silver" onclick="copyDuelCode()" style="padding:.5rem 1rem;font-size:.6rem">Copy Code</button>
       <button class="btn btn-ghost" onclick="shareDuelLink()" style="padding:.5rem 1rem;font-size:.6rem">Share Link</button>
+      <button class="btn btn-ghost" id="duel-broadcast-btn" onclick="QFDuelBroadcast.post({code: duelCode, stake: window.duelStake, button: this})" style="padding:.5rem 1rem;font-size:.6rem">Post to @qf_games</button>
     </div>
     <div id="duel-share-status" style="font-family:'JetBrains Mono','DM Mono',monospace;font-size:.55rem;color:#4a4e5a;margin-top:.5rem">Waiting for opponent...</div>
   </div>
@@ -972,6 +974,7 @@ async function confirmDuelCreate() {
     if (data.error) { alert(data.error); if (startBtn) startBtn.style.display = ''; if (createBtn) createBtn.style.display = ''; return; }
     duelMode = true;
     duelCode = data.shareCode;
+    window.duelStake = data.stake;
     duelId = data.duelId;
     await _duelCountdown();
     if (startBtn) startBtn.click();

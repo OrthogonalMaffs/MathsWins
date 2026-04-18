@@ -241,6 +241,7 @@ body{background:var(--bg);color:var(--text);font-family:'Inter',sans-serif;min-h
 <script src="/qf-dapp/games/qf-wallet.js"></script>
 <script src="/qf-dapp/qf-nav.js"></script>
 <script src="/qf-dapp/games/qf-leaderboard-prompt.js"></script>
+<script src="/qf-dapp/games/qf-duel-broadcast.js"></script>
 
 <div class="page">
   <div class="game-header">
@@ -295,6 +296,7 @@ body{background:var(--bg);color:var(--text);font-family:'Inter',sans-serif;min-h
     <div class="share-actions">
       <button class="btn btn-silver" onclick="G.copyCode()">Copy Code</button>
       <button class="btn btn-ghost" onclick="G.shareDuel()">Share Link</button>
+      <button class="btn btn-ghost" id="duel-broadcast-btn" onclick="G.broadcastDuel()">Post to @qf_games</button>
     </div>
     <button class="btn" id="duel-start-btn" onclick="G.startDuelGame()" style="display:none;margin-top:1.2rem;border:1px solid #c9a84c;color:#c9a84c;background:transparent;padding:.7rem 2rem;font-size:.7rem">Start Playing</button>
     <div class="duel-status-msg" id="duel-status-msg">Waiting for opponent...</div>
@@ -429,6 +431,7 @@ var G = (function() {
   var duelMode = false;
   var duelCode = null;
   var duelId = null;
+  var duelStake = 25;
   var duelData = null;
   var duelPollTimer = null;
 
@@ -665,6 +668,7 @@ var G = (function() {
       if (data.error) { setMsg(data.error); showPreGame(); return; }
 
       duelCode = data.shareCode;
+      duelStake = data.stake;
       duelId = data.duelId;
       pendingDuelSeed = data.puzzleSeed;
 
@@ -1578,10 +1582,16 @@ var G = (function() {
     }
   }
 
+  function broadcastDuel() {
+    if (window.QFDuelBroadcast) {
+      QFDuelBroadcast.post({ code: duelCode, stake: duelStake, button: document.getElementById('duel-broadcast-btn') });
+    }
+  }
+
   return {
     inputNum: inputNum, undo: undo, toggleNotes: toggleNotes, useHint: useHint,
     startSolo: startSolo, createDuel: createDuel, startDuelGame: startDuelGame, acceptAndPlay: acceptAndPlay,
-    copyCode: copyCode, shareDuel: shareDuel, retryPromo: retryPromo
+    copyCode: copyCode, shareDuel: shareDuel, broadcastDuel: broadcastDuel, retryPromo: retryPromo
   };
 })();
 </script>

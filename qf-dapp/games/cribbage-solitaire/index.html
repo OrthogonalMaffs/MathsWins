@@ -182,6 +182,7 @@ body{background:var(--bg);color:var(--text);font-family:'Inter',sans-serif;min-h
 <script src="/qf-dapp/games/qf-wallet.js"></script>
 <script src="/qf-dapp/qf-nav.js"></script>
 <script src="/qf-dapp/games/qf-leaderboard-prompt.js"></script>
+<script src="/qf-dapp/games/qf-duel-broadcast.js"></script>
 <script src="../qf-cards.js"></script>
 
 <div class="page">
@@ -238,6 +239,7 @@ body{background:var(--bg);color:var(--text);font-family:'Inter',sans-serif;min-h
     <div style="display:flex;gap:.4rem;justify-content:center;margin-bottom:.4rem">
       <button class="btn" onclick="G.copyCode()" style="padding:.4rem .8rem;font-size:.6rem">Copy Code</button>
       <button class="btn" onclick="G.shareLink()" style="padding:.4rem .8rem;font-size:.6rem">Share Link</button>
+      <button class="btn" id="duel-broadcast-btn" onclick="G.broadcastDuel()" style="padding:.4rem .8rem;font-size:.6rem">Post to @qf_games</button>
     </div>
     <p id="duelStatusMsg" style="font-size:.65rem;color:var(--silver);margin-top:.4rem">Waiting for opponent...</p>
   </div>
@@ -348,6 +350,7 @@ var G = (function() {
   var duelMode = false;
   var duelCode = null;
   var duelId = null;
+  var duelStake = 25;
   var duelPollTimer = null;
 
   // League state
@@ -637,6 +640,7 @@ var G = (function() {
       if (data.error) { setMsg(data.error); duelMode = false; return; }
       duelCode = data.shareCode;
       duelId = data.duelId;
+      duelStake = data.stake;
       duelStartTime = Date.now();
       await startSession(data.puzzleSeed);
     } catch (e) { setMsg('Connection error creating duel'); duelMode = false; }
@@ -797,6 +801,12 @@ var G = (function() {
   // ── Init ─────────────────────────────────────────────────────────────
   checkUrlParams();
 
+  function broadcastDuel() {
+    if (window.QFDuelBroadcast) {
+      QFDuelBroadcast.post({ code: duelCode, stake: duelStake, button: document.getElementById('duel-broadcast-btn') });
+    }
+  }
+
   return {
     startFree: startFree,
     scoreHand: scoreHand,
@@ -805,6 +815,7 @@ var G = (function() {
     acceptDuel: acceptDuel,
     copyCode: copyCode,
     shareLink: shareLink,
+    broadcastDuel: broadcastDuel,
   };
 
 })();

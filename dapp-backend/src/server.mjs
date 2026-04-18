@@ -146,6 +146,13 @@ setInterval(async () => {
           console.log('Duel ' + d.id.slice(0, 8) + '... expired — refunded ' + d.stake + ' QF to opponent ' + d.opponent_wallet.slice(0, 8) + '...');
         } catch (e) { console.error('Duel refund failed for opponent ' + d.opponent_wallet.slice(0, 8) + '...:', e.message); }
       }
+      // Edit channel broadcast if one was posted
+      if (d.broadcast_message_id) {
+        try {
+          const { editDuelBroadcastExpired } = await import('./telegram.mjs');
+          editDuelBroadcastExpired(d.broadcast_message_id, d);
+        } catch (e) { /* must never block */ }
+      }
     }
   } catch (e) { console.error('Duel expiry sweep error:', e); }
 }, 5 * 60 * 1000);
