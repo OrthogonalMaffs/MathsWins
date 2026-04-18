@@ -278,7 +278,7 @@ function renderLeagueCards(leagues) {
       var btn = document.createElement('button');
       btn.className = 'lc-join-btn';
       btn.textContent = 'Join League — ' + fee + ' QF';
-      btn.onclick = function(e) { e.stopPropagation(); joinLeague(l.id); };
+      btn.onclick = function(e) { e.stopPropagation(); joinLeague(l.id, l.entry_fee); };
       card.appendChild(btn);
     }
 
@@ -287,19 +287,92 @@ function renderLeagueCards(leagues) {
   });
 }
 
+// ── QF payment helpers (matches duel pattern) ───────────────────────
+var leagueConfig = null;
+
+async function getLeagueConfig() {
+  if (leagueConfig) return leagueConfig;
+  // /duel/config exposes the platform-wide escrow address — same target for league entry payments
+  leagueConfig = await api('/duel/config', null, 'GET');
+  return leagueConfig;
+}
+
+async function sendLeaguePayment(escrowAddress, feeQF) {
+  var signer = qfWallet.signer;
+  if (!signer || !signer.sendTransaction) throw new Error('Wallet signer not available');
+  var value = ethers.parseEther(String(feeQF));
+  var tx = await signer.sendTransaction({ to: escrowAddress, value: value });
+  var receipt = await tx.wait();
+  return receipt.hash;
+}
+
+function getStoredLeaguePayment(leagueId) {
+  try { return sessionStorage.getItem('league_paid_' + leagueId); } catch(e) { return null; }
+}
+function storeLeaguePayment(leagueId, txHash) {
+  try { sessionStorage.setItem('league_paid_' + leagueId, txHash); } catch(e) {}
+}
+
 // ── Join league ─────────────────────────────────────────────────────
-async function joinLeague(leagueId) {
+async function joinLeague(leagueId, entryFee) {
   if (!qfWallet.isConnected()) {
     qfWallet.connect();
     return;
   }
+
+  // Re-use any stored txHash from a prior payment attempt this session
+  // (covers refresh-after-pay and POST failures between pay and join)
+  var txHash = getStoredLeaguePayment(leagueId);
+
+  if (!txHash) {
+    // Pre-payment eligibility — mirror the backend's three pre-payment gates
+    // so we never take payment for a league the user can't actually join.
+    var fresh;
+    try {
+      fresh = await api('/league/' + leagueId, null, 'GET');
+    } catch (e) {
+      alert('Could not load league details. Try again.');
+      return;
+    }
+    if (fresh.error) { alert(fresh.error); return; }
+    if (fresh.is_player) { alert('Already joined this league.'); return; }
+    var now = Date.now();
+    var inRegistration = fresh.status === 'registration' && now <= fresh.reg_closes_at;
+    var inLateJoin = fresh.status === 'active' && fresh.join_closes_at && now <= fresh.join_closes_at;
+    if (!inRegistration && !inLateJoin) { alert('League is not accepting entries.'); return; }
+    if (fresh.player_count >= (fresh.max_players || 16)) { alert('League is full.'); return; }
+
+    var feeToCharge = fresh.entry_fee || entryFee;
+    if (!confirm('Pay ' + feeToCharge + ' QF to join this league?')) return;
+
+    var cfg;
+    try {
+      cfg = await getLeagueConfig();
+    } catch (e) {
+      alert('Could not load payment configuration. Try again.');
+      return;
+    }
+
+    try {
+      txHash = await sendLeaguePayment(cfg.escrowAddress, feeToCharge);
+      storeLeaguePayment(leagueId, txHash);
+    } catch (e) {
+      if (e.code === 'ACTION_REJECTED' || (e.message && e.message.indexOf('rejected') !== -1)) {
+        alert('Payment cancelled.');
+      } else {
+        alert('Payment failed: ' + (e.reason || e.message || 'Unknown error'));
+      }
+      return;
+    }
+  }
+
   try {
-    var data = await api('/league/' + leagueId + '/join', {});
+    var data = await api('/league/' + leagueId + '/join', { txHash: txHash });
     if (data.error) { alert(data.error); return; }
     loadLeagues();
     viewLeague(leagueId);
   } catch (e) {
-    alert('Failed to join league.');
+    alert('Join failed after payment. Refresh and try again — your payment will not be re-charged. (tx: ' + txHash + ')');
   }
 }
 

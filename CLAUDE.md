@@ -73,6 +73,7 @@ Platform: Academy (9 courses), Tools (28 calculators), Games (22 dApp + 13 main 
 - **League settlement not atomic.** `league-settle.mjs:186-198` — partial-payment silent failure possible. See `docs/payment-architecture.md`.
 - **`onlyfans-qf` row pricing TBD** — tier='manual' but mint_fee_qf=200, contradicts "Manual reward" semantics in spec. Awaiting decision (left untouched in tier migration).
 - **Admin auth not configured on Box 1** — neither `ADMIN_SECRET` nor `ADMIN_WALLETS` env var set, so `/admin/*` HTTP endpoints (incl. `/admin/telegram/test`) return 403 from outside. In-process node import works as a workaround.
+- **`SqliteError: no such table: leagues at getActiveLeagues (db/index.mjs:504)`** — recurring background log spam. The `leagues` table exists and other queries against it work (`getLeagueById`, `createLeague`, etc). Suspected cause: a stray module instantiating its own `better-sqlite3` handle against a wrong path or pre-schema instance. Cosmetic only — not related to league-join flow. Investigate post-launch.
 
 ## Launch-Night Changes (2026-04-18 evening)
 - **League team tax 5% → 10%, prize pool 90% → 85%.** Burn stays 5%. Single constant change at `api.mjs:867` (`TEAM_PCT=0.10`). Prize pool derives automatically. Frontend copy + docs swept. Commit `98efde8`.
