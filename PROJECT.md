@@ -276,7 +276,7 @@ Maffsy (formerly Equatle), Higher or Lower, 52-dle, Towers of Hanoi, Don't Press
 - 1v1 via 6-character share codes
 - Creator plays first, shares code, opponent plays same puzzle
 - 24-hour expiry
-- Settlement: 5% burn, 5% team, 90% to winner; draws split 90% evenly
+- Settlement: 5% burn, 10% team, 85% to winner (via QFSettlement v2); draws split 85% evenly
 
 ### Duel Stake System (Finalised)
 

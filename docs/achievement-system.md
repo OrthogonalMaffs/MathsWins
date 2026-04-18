@@ -8,8 +8,8 @@
 - **v1 RETIRED:** `0x8DCe89b4b0BB40e9C9cb092Be91D195EFdC2C77F` — no setTokenURI, token #1 stranded
 
 ## Registry
-- **163 total / 162 active** (speed-reader retired, active=0)
-- **32 categories:** purity, volume, winning, shadows, duels, battleships, freecell, minesweeper, poker-patience, cribbage, golf, pyramid, kenken, nonogram, sudoku, comeback, per-game-volume, free-games, streaks, kakuro, time, seasonal, monthly, constants, squared-pi, loyalty, milestones, meta, absurd, founding, wooden-spoons, impossible
+- **164 total / 163 active** (speed-reader retired, active=0). Bug Hunter added 2026-04-18 (tier=free, mint_fee=0, category=community, awarded via `POST /admin/achievement/award`).
+- **33 categories:** purity, volume, winning, shadows, duels, battleships, freecell, minesweeper, poker-patience, cribbage, golf, pyramid, kenken, nonogram, sudoku, comeback, per-game-volume, free-games, streaks, kakuro, time, seasonal, monthly, constants, squared-pi, loyalty, milestones, meta, absurd, founding, wooden-spoons, impossible, community
 - **5 mint tiers:** Free (0 QF), Standard (100 QF), Premium (200 QF), Elite (500 QF), Manual reward
 - `achievement_registry` has both `tier` and `category` columns (tier for legacy compat)
 - Pioneer tag: first mint per achievement, UNIQUE constraint

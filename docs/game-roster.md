@@ -54,6 +54,6 @@
 - Turn-based async duels (no simultaneous)
 - vs CPU: 3 difficulties (Recruit, Officer, Admiral — Admiral uses probability density map)
 - 24h auto-shot timeout, 5-min sweep
-- Settlement: 90% winner, 5% burn, 5% team
+- Settlement: 85% winner, 10% team, 5% burn (via QFSettlement v2 `0xf4C00E9CBC6fe595c4a54ae7e75E9a92D0D513d4`)
 - `turn_deadline` exposed in GET /battleships/:code
 - Move notifications: hub-level popup (wallet connect + 5min poll), thresholds at 12h/4h/1h

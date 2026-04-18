@@ -50,11 +50,11 @@ Platform: Academy (9 courses), Tools (28 calculators), Games (22 dApp + 13 main 
 
 ## League & Duel Rules
 - **Leagues:** Bronze 100 QF / Silver 250 QF entry. 10 puzzles, 14-day window, min 4 players. Top 4 share 85% pot, 5% burn, 10% team. Server-authoritative seeds.
-- **Duels:** Client pays escrow → server settles via QFSettlement (90/5/5). Both txHashes required. Builder wallets bypass payment.
+- **Duels:** Client pays escrow → server settles via QFSettlement v2 (5% burn / 10% team / 85% winner, owner-adjustable via `setSplits`). Draws split 85% evenly. Both txHashes required. Builder wallets bypass payment. Creators can broadcast to @qf_games (stake≥100) via `POST /duel/:code/broadcast`.
 - **QFSettlement:** `0xf4C00E9CBC6fe595c4a54ae7e75E9a92D0D513d4` (v2 — owner-settable splits, default 5% burn / 10% team / 85% winner)
 
 ## Achievement System
-- **162 active** achievements (163 registered, 1 retired). `ACHIEVEMENTS_ACTIVE=true`
+- **163 active** achievements (164 registered, 1 retired — `speed-reader`). `ACHIEVEMENTS_ACTIVE=true`. Bug Hunter added at launch (community tier, free, manually awarded).
 - **QFAchievement.sol v2:** `0xc519E65Fb767DBEFC46FF0dC797Ccd0318Ae12eD` | Owner: onlyfans.qf | Minter: escrow
 - Full detail: `docs/achievement-system.md`
 
@@ -73,6 +73,19 @@ Platform: Academy (9 courses), Tools (28 calculators), Games (22 dApp + 13 main 
 - **League settlement not atomic.** `league-settle.mjs:186-198` — partial-payment silent failure possible. See `docs/payment-architecture.md`.
 - **`onlyfans-qf` row pricing TBD** — tier='manual' but mint_fee_qf=200, contradicts "Manual reward" semantics in spec. Awaiting decision (left untouched in tier migration).
 - **Admin auth not configured on Box 1** — neither `ADMIN_SECRET` nor `ADMIN_WALLETS` env var set, so `/admin/*` HTTP endpoints (incl. `/admin/telegram/test`) return 403 from outside. In-process node import works as a workaround.
+
+## Launch-Night Changes (2026-04-18 evening)
+- **League team tax 5% → 10%, prize pool 90% → 85%.** Burn stays 5%. Single constant change at `api.mjs:867` (`TEAM_PCT=0.10`). Prize pool derives automatically. Frontend copy + docs swept. Commit `98efde8`.
+- **QFSettlement v2 deployed at `0xf4C00E9CBC6fe595c4a54ae7e75E9a92D0D513d4`.** Owner-settable duel splits via `setSplits(burnPct, teamPct)` — default 5/10/85. `splitFee()` hardcoded at 5/95 (achievement mint + leaderboard ringfenced from setSplits). `transferOwnership` added. Owner = Ledger (0x8a54…3016). Deployer = onlyfans.qf. v1 (`0x475F…D013E`) retired. Commit `ac7c960`.
+- **8 fresh registration leagues seeded** (sudoku-duel/kenken/minesweeper/freecell × bronze/silver). 6 old leagues cancelled — all builder-whitelist, zero real funds at risk. Pioneer tags cleared (`first_claimed_by` nulled on 7 achievements + `is_pioneer=0` on 1 eligibility row).
+- **`LEAGUE_GAMES` whitelist** now includes minesweeper + freecell so their leagues auto-chain successors. Commit `5dc42c8`.
+- **Duel broadcast to @qf_games** — new `POST /duel/:code/broadcast` (JWT, creator-only, stake≥100, 5/wallet/24h). Bot edits the post on accept / expire / settle. 9 standard duel games wired (battleships excluded — separate state machine). New shared helper `qf-duel-broadcast.js`. Commit `c590dd5`.
+- **`.env` loader added to `server.mjs`** (minimal built-in parser, no dotenv dep). Root cause of "notifications_disabled": `ecosystem.config.cjs` env block never listed TELEGRAM_*, and dotenv wasn't loaded — so the existing queued notifications (league_open, daily digest) were also silently broken. Now loaded with `.trim()` on every value. Commit `eb13dac`.
+- **Self-accept funds-risk blocked** across 9 games. Creator clicking their own duel link used to prompt for stake payment before backend 400'd — orphaning QF until 24h refund. Now pre-payment creator-wallet check bails with a friendly message. Commit `eb13dac`.
+- **Creator-resume flow** on 9 games. After self-accept block landed, creators who navigated away had nowhere to go. `loadDuelAccept` / `showAcceptScreen` now detect `creator_wallet === connected AND creator_score IS NULL` and render a "Your Duel — Start Playing" panel instead of the Accept panel. Commit `96b9bba`. Also waits up to 3s for wallet auto-reconnect before deciding. Commit `e3f14ca`.
+- **Duel copy 90% → 85%** swept across 11 games (static modal text + runtime JS strings). Commit `ed0fdb2`.
+- **Sudoku-duel `checkComplete` defensive fix** — scans `grid[]` directly instead of relying on `confirmedCells.size`, preventing premature submit-on-incomplete-grid gameovers. Commit `487e6e6`.
+- **Bug Hunter achievement wired** (tier=free, mint_fee=0, category=community, active). Image + metadata pinned to IPFS. 162→163 active achievements. Awarded post-launch via `POST /admin/achievement/award`. Commit `3bee78d`.
 
 ## Recent Fixes (2026-04-18)
 - **Stake UI sweep** across 9 free-play game pages: `duel-stake-wrap` hidden by default, shown only on `?mode=duel` (kenken, countdown-numbers, sudoku-duel, cribbage-solitaire, nonogram, kakuro, poker-patience, freecell, battleships). Commit 7e6cb1c.

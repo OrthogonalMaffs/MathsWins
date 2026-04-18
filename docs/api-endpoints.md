@@ -29,6 +29,7 @@ Local dev: `http://127.0.0.1:3860/api/dapp`
 - `POST /duel/create` — create duel (requires txHash)
 - `POST /duel/:code/accept` — accept duel (requires txHash)
 - `POST /duel/:code/submit` — submit duel score
+- `POST /duel/:code/broadcast` — publish duel to @qf_games (JWT-auth, creator-only, stake ≥ 100, rate-limited 5/wallet/24h). Bot edits the post on accept / expire / settle. Idempotent.
 - `GET /duel/config` — returns { escrowAddress, defaultStake: 25 }
 - `GET /duel/:code` — duel status
 - `GET /duels/history` — wallet duel history

@@ -23,7 +23,7 @@
 | `battleships_placements` | Fleet positions per player per game |
 | `battleships_rounds` | Shot history per game |
 | `battleships_record` | Win/loss/draw per wallet |
-| `achievement_registry` | 163 total / 162 active (v4 spec), 32 categories, `tier` + `category` columns |
+| `achievement_registry` | 164 total / 163 active (Bug Hunter added 2026-04-18), 33 categories, `tier` + `category` columns. `broadcast_at` / `broadcast_message_id` live on `duels` for channel post tracking. |
 | `achievement_eligibility` | Per-wallet achievement progress and mint status |
 | `global_records` | Community records (e.g. The Tortoise slowest win) |
 | `wallet_stats` | Per-wallet tracking (streaks, spending, mints, consecutive wins, golf/pyramid failures, `maffsy_clean_streak` for feel-no-pressure) |

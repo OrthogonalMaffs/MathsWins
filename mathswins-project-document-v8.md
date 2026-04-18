@@ -355,7 +355,7 @@ Flagged sessions:
 | Payment type | Burn | Team | Player/Prize |
 |-------------|------|------|-------------|
 | League entry | 5% | 10% | 85% prize pool |
-| Duel entry | 5% | 5% | 90% to winner (not yet wired) |
+| Duel entry | 5% | 10% | 85% to winner (LIVE via QFSettlement v2) |
 | Achievement mint | 5% | 95% | — |
 | Trophy mint | 5% | 95% | — |
 | Leaderboard entry | 5% | 95% | — |
@@ -398,7 +398,7 @@ Key rules:
 - 5% burn, 95% team
 - Pioneer tag: first mint per achievement
 - Test sessions excluded
-- 161 achievements, 32 categories
+- 163 active achievements (164 total, speed-reader retired), 33 categories
 - Mint reward: every 5th paid mint free, every 10th gives 2 free mints
 
 **Achievement system v5 changes (specced, not yet built):**
@@ -440,7 +440,7 @@ Key rules:
 | `battleships_placements` | Fleet positions |
 | `battleships_rounds` | Shot history |
 | `battleships_record` | Win/loss/draw per wallet |
-| `achievement_registry` | 161 achievements |
+| `achievement_registry` | 163 active (164 total) |
 | `achievement_eligibility` | Per-wallet progress and mint status |
 | `global_records` | Community records |
 | `wallet_stats` | Per-wallet tracking |
