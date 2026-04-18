@@ -99,6 +99,10 @@ function buildMessage(type, data) {
       const who = formatWallet(data.wallet, data.qnsName);
       return '\u2b50 PIONEER MINT: ' + who + ' is the first ever to claim ' + data.achievementName + '.';
     }
+    case 'daily_digest':
+      return '\ud83d\udcca Daily Digest\nGames played: ' + (data.games || 0)
+           + '\nAchievements minted: ' + (data.achievements || 0)
+           + '\nQF burned: ' + (Math.round((data.burn || 0) * 10) / 10);
     default:
       return null;
   }
@@ -122,6 +126,58 @@ export function queueNotification(type, data) {
   queue.push(text);
   return true;
 }
+
+// Daily digest — fires once at 08:00 UTC per day.
+// Uses active_game_state.completed_at for free games (post-feature only),
+// league_scores.submitted_at, battleships_games.completed_at. Duels excluded
+// (no completed_at column — added when that lands).
+let _lastDigestDate = null;
+
+function sendDailyDigest() {
+  try {
+    const now = new Date();
+    const todayUtc = Date.UTC(now.getUTCFullYear(), now.getUTCMonth(), now.getUTCDate());
+    const yesterdayUtc = todayUtc - 24 * 60 * 60 * 1000;
+    const db = getDb();
+
+    const free = db.prepare(
+      "SELECT COUNT(*) AS n FROM active_game_state WHERE context_type='free' AND status='completed' AND completed_at >= ? AND completed_at < ?"
+    ).get(yesterdayUtc, todayUtc);
+    const league = db.prepare(
+      "SELECT COUNT(*) AS n FROM league_scores WHERE submitted_at >= ? AND submitted_at < ?"
+    ).get(yesterdayUtc, todayUtc);
+    const bs = db.prepare(
+      "SELECT COUNT(*) AS n FROM battleships_games WHERE status='complete' AND completed_at >= ? AND completed_at < ?"
+    ).get(yesterdayUtc, todayUtc);
+    const ach = db.prepare(
+      "SELECT COUNT(*) AS n FROM achievement_eligibility WHERE minted_at >= ? AND minted_at < ?"
+    ).get(yesterdayUtc, todayUtc);
+    const burn = db.prepare(
+      "SELECT COALESCE(SUM(amount_qf), 0) AS qf FROM escrow_ledger WHERE direction='out' AND type='burn' AND created_at >= ? AND created_at < ?"
+    ).get(yesterdayUtc, todayUtc);
+
+    queueNotification('daily_digest', {
+      games: (free.n || 0) + (league.n || 0) + (bs.n || 0),
+      achievements: ach.n || 0,
+      burn: burn.qf || 0
+    });
+  } catch (e) {
+    console.error('[telegram] daily digest error: ' + e.message);
+  }
+}
+
+function startDigestScheduler() {
+  if (!ENABLED) return;
+  setInterval(() => {
+    const now = new Date();
+    if (now.getUTCHours() !== 8) return;
+    const dateKey = now.getUTCFullYear() + '-' + (now.getUTCMonth() + 1) + '-' + now.getUTCDate();
+    if (_lastDigestDate === dateKey) return;
+    _lastDigestDate = dateKey;
+    sendDailyDigest();
+  }, 60 * 1000);
+}
+startDigestScheduler();
 
 // Build a sample payload for the admin test endpoint, then queue it.
 // Returns { queued: bool, text: string|null, enabled: bool }.
