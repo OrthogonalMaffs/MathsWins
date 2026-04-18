@@ -41,6 +41,9 @@ h1{font-family:'Playfair Display',serif;font-size:2.8rem;color:var(--text-white)
 h1 span{background:linear-gradient(135deg,var(--silver-bright),var(--silver),#8a8f9c);-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text}
 .tagline{font-size:.85rem;color:var(--muted);margin-top:.6rem;max-width:440px;margin-left:auto;margin-right:auto;line-height:1.5}
 h1::after{content:'';display:block;width:80px;height:2px;margin:.8rem auto 0;background:linear-gradient(90deg,transparent,var(--silver-border),var(--silver),var(--silver-border),transparent);border-radius:1px}
+.stat-chips{display:flex;gap:.5rem;justify-content:center;flex-wrap:wrap;margin-top:1rem}
+.stat-chip{font-family:'JetBrains Mono',monospace;font-size:.68rem;padding:.4rem .8rem;border-radius:20px;border:1px solid var(--border2);background:var(--surface);color:var(--muted);letter-spacing:.04em}
+.stat-chip strong{font-family:'DM Mono','JetBrains Mono',monospace;color:var(--silver-bright);font-weight:500;margin-right:.3rem}
 
 /* ── Tab bar ── */
 .lobby-tabs{display:flex;gap:.4rem;margin:1.5rem 0 1.2rem;justify-content:center;flex-wrap:wrap}
@@ -221,6 +224,10 @@ footer a:hover{color:var(--silver-bright)}
 <div class="hero">
   <h1>QF <span>Games</span></h1>
   <p class="tagline">Competitive maths games on QF Network. Leagues, duels, and free play. Pure skill.</p>
+  <div class="stat-chips" id="platformStats" style="display:none">
+    <div class="stat-chip"><strong id="statGames">—</strong>Games Played</div>
+    <div class="stat-chip"><strong id="statBurn">—</strong>QF Burned</div>
+  </div>
 </div>
 
 <!-- TABS -->
@@ -605,6 +612,17 @@ function escHtml(str) {
 renderDuelGames();
 renderFreeGames();
 lbInit();
+fetchPlatformStats();
+
+function fetchPlatformStats() {
+  fetch(API + '/stats/platform').then(function(r) { return r.json(); }).then(function(d) {
+    if (d && typeof d.games_played === 'number') {
+      document.getElementById('statGames').textContent = d.games_played.toLocaleString();
+      document.getElementById('statBurn').textContent = (Math.round((d.qf_burned || 0) * 10) / 10).toLocaleString(undefined, { minimumFractionDigits: 1, maximumFractionDigits: 1 });
+      document.getElementById('platformStats').style.display = 'flex';
+    }
+  }).catch(function() {});
+}
 
 // ── Battleships move notification (hub-level) ─────────────────────────────
 (function() {

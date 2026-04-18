@@ -2326,6 +2326,24 @@ router.get('/admin/achievements', requireAdmin, (req, res) => {
 });
 
 // ── Admin: flagged sessions ──────────────────────────────────────────────
+router.get('/stats/platform', (req, res) => {
+  try {
+    var db = getDb();
+    var games = db.prepare(
+      "SELECT (SELECT COALESCE(SUM(count),0) FROM free_game_completions) " +
+      "+ (SELECT COUNT(*) FROM league_scores) " +
+      "+ (SELECT COUNT(*) FROM duels WHERE status='completed') " +
+      "+ (SELECT COUNT(*) FROM battleships_games WHERE status='complete') AS n"
+    ).get();
+    var burn = db.prepare(
+      "SELECT COALESCE(SUM(amount_qf),0) AS qf FROM escrow_ledger WHERE direction='out' AND type='burn'"
+    ).get();
+    res.json({ games_played: games.n || 0, qf_burned: burn.qf || 0 });
+  } catch (e) {
+    res.status(500).json({ error: e.message });
+  }
+});
+
 router.get('/admin/telegram/test', requireAdmin, (req, res) => {
   const type = req.query.type;
   if (!type) return res.status(400).json({ error: 'type query param required' });
