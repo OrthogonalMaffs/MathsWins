@@ -805,6 +805,10 @@ async function acceptDuelChallenge() {
     var check = await duelApi('/duel/' + duelCode, null, 'GET');
     if (check.error) { alert(check.error); return; }
     if (check.status !== 'created') { alert('This duel is no longer available (' + check.status + ').'); return; }
+    if (check.creator_wallet && qfWallet.address && check.creator_wallet.toLowerCase() === qfWallet.address.toLowerCase()) {
+      alert('You created this duel. Share the code with someone else to play.');
+      return;
+    }
     var config = await getDuelConfig();
     var stakeQF = check.stake || config.defaultStake || 25;
     var txHash = getStoredPayment(duelCode);

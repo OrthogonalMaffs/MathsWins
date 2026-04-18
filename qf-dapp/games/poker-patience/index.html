@@ -761,6 +761,10 @@ var G = (function() {
       var check = await api('/duel/' + duelCode, null, 'GET');
       if (check.error) { setMsg(check.error); return; }
       if (check.status !== 'created') { setMsg('This duel is no longer available (' + check.status + ').'); return; }
+      if (check.creator_wallet && W.address && check.creator_wallet.toLowerCase() === W.address.toLowerCase()) {
+        setMsg('You created this duel. Share the code with someone else.');
+        return;
+      }
       var cfg = await getDuelConfig();
       var stakeQF = check.stake || cfg.defaultStake || 25;
       var txHash = getStoredPayment(duelCode);

@@ -1,3 +1,18 @@
+// Minimal .env loader — no dotenv dep. Populates process.env from .env for
+// keys NOT already set (ecosystem.config.cjs values always take precedence).
+// Trims whitespace so trailing-space drift can't silently disable features.
+import { readFileSync, existsSync } from 'fs';
+import { URL as _URL } from 'url';
+{
+  const envPath = new _URL('../.env', import.meta.url).pathname;
+  if (existsSync(envPath)) {
+    for (const line of readFileSync(envPath, 'utf8').split(/\r?\n/)) {
+      const m = line.match(/^([A-Z_][A-Z0-9_]*)=(.*)$/);
+      if (m && !process.env[m[1]]) process.env[m[1]] = m[2].trim();
+    }
+  }
+}
+
 import express from 'express';
 import cors from 'cors';
 import helmet from 'helmet';

@@ -1302,6 +1302,10 @@ async function acceptDuelChallenge() {
     var statusCheck = await duelApi('/duel/' + duelCode, null, 'GET');
     if (statusCheck.error) { alert(statusCheck.error); return; }
     if (statusCheck.status !== 'created') { alert('This duel is no longer available.'); return; }
+    if (statusCheck.creator_wallet && qfWallet.address && statusCheck.creator_wallet.toLowerCase() === qfWallet.address.toLowerCase()) {
+      alert('You created this duel. Share the code with someone else to play.');
+      return;
+    }
 
     var cfg = await getDuelConfig();
     var stakeQF = statusCheck.stake || cfg.defaultStake || 25;

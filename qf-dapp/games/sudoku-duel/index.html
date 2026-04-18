@@ -777,6 +777,10 @@ var G = (function() {
         setMsg('This duel is no longer available (' + check.status + ').');
         return;
       }
+      if (check.creator_wallet && W.state.address && check.creator_wallet.toLowerCase() === W.state.address.toLowerCase()) {
+        setMsg('You created this duel. Share the code with someone else.');
+        return;
+      }
 
       var cfg = await getDuelConfig();
       var stakeQF = (duelData && duelData.stake) ? duelData.stake : (cfg.defaultStake || 25);
