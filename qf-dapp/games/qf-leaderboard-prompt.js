@@ -220,7 +220,7 @@
         try { sessionStorage.setItem('qf_lb_prompted_' + sessionId, '1'); } catch (e) {}
         payBtn.textContent = 'Processing…';
 
-        var chosen = qualifying[0];
+        var allPeriods = qualifying.map(function(q) { return q.period; });
         try {
           var res = await fetch(API + '/global-leaderboard/enter', {
             method: 'POST',
@@ -229,7 +229,7 @@
               gameId: gameId,
               score: score,
               timeMs: timeMs || 0,
-              periodType: chosen.period,
+              periodTypes: allPeriods,
               sessionId: sessionId,
               txHash: txHash
             })
@@ -240,8 +240,12 @@
             showError(data.error || ('Submit failed (' + res.status + ')'));
             return;
           }
-          modal.innerHTML = '<div class="qflb-ok"><div class="qflb-ok-title">Submitted</div><div class="qflb-ok-sub">You\u2019re on the ' + (chosen.period.charAt(0).toUpperCase() + chosen.period.slice(1)) + ' leaderboard at ' + ordinal(data.rank || chosen.rank) + '.</div></div>';
-          setTimeout(function () { remove(); resolve({ outcome: 'pay', rank: data.rank }); }, 3000);
+          var enteredNames = (data.entered || []).map(function(e) { return e.periodType.charAt(0).toUpperCase() + e.periodType.slice(1); });
+          var confirmMsg = enteredNames.length === 1
+            ? 'You\u2019re on the ' + enteredNames[0] + ' leaderboard.'
+            : 'Submitted \u2014 you\u2019re on the ' + enteredNames.join(', ') + ' leaderboards.';
+          modal.innerHTML = '<div class="qflb-ok"><div class="qflb-ok-title">Submitted</div><div class="qflb-ok-sub">' + confirmMsg + '</div></div>';
+          setTimeout(function () { remove(); resolve({ outcome: 'pay', entered: data.entered }); }, 3000);
         } catch (e) {
           showError('Network error — try again.');
         }
