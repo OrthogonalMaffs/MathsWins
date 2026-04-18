@@ -320,7 +320,7 @@ body{background:var(--bg);color:var(--text);font-family:'Inter',sans-serif;min-h
   </div>
   <p id="difficulty-hint" style="font-family:'JetBrains Mono',monospace;font-size:.58rem;color:var(--muted);text-align:center;margin-bottom:.6rem">Hard &mdash; no cells revealed. Pure Kakuro.</p>
   <button class="btn btn-silver" id="start-btn" style="width:100%;padding:1rem">Start Game</button>
-  <div id="duel-stake-wrap" style="display:flex;align-items:center;gap:.4rem;margin-top:.5rem;justify-content:center">
+  <div id="duel-stake-wrap" style="display:none;align-items:center;gap:.4rem;margin-top:.5rem;justify-content:center">
     <label for="duel-stake-input" style="font-family:'JetBrains Mono',monospace;font-size:.6rem;color:#8a8e96">Stake (QF)</label>
     <input type="number" id="duel-stake-input" value="25" min="25" step="1" style="width:80px;background:#16181c;border:1px solid rgba(184,188,198,0.15);border-radius:6px;color:#e8eaf0;font-family:'JetBrains Mono',monospace;font-size:.75rem;padding:.4rem .5rem;text-align:center">
   </div>
@@ -1129,6 +1129,7 @@ var duelMode = false, duelCode = null, duelId = null;
     if (dh) dh.style.display = 'none';
   }
   if (params.get('mode') === 'duel') {
+    var sw = document.getElementById('duel-stake-wrap'); if (sw) sw.style.display = 'flex';
     var btn = document.getElementById('create-duel-btn');
     if (btn) {
       btn.scrollIntoView({ behavior: 'smooth', block: 'center' });

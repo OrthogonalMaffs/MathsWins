@@ -339,7 +339,7 @@ body{background:var(--bg);color:var(--text);font-family:'Inter',sans-serif;min-h
         <h3>Create Duel</h3>
         <p>Challenge anyone. Share a code, they join, you battle.</p>
       </div>
-      <div id="duel-stake-wrap" style="display:flex;align-items:center;gap:.4rem;margin:.5rem 0;justify-content:center">
+      <div id="duel-stake-wrap" style="display:none;align-items:center;gap:.4rem;margin:.5rem 0;justify-content:center">
         <label for="duel-stake-input" style="font-family:'JetBrains Mono',monospace;font-size:.6rem;color:#8a8e96">Stake (QF)</label>
         <input type="number" id="duel-stake-input" value="25" min="25" step="1" style="width:80px;background:#16181c;border:1px solid rgba(184,188,198,0.15);border-radius:6px;color:#e8eaf0;font-family:'JetBrains Mono',monospace;font-size:.75rem;padding:.4rem .5rem;text-align:center">
       </div>
@@ -1690,6 +1690,7 @@ G.showResults = function(won) {
     });
   }
   if (params.get('mode') === 'duel') {
+    var sw = document.getElementById('duel-stake-wrap'); if (sw) sw.style.display = 'flex';
     var panel = document.getElementById('mode-panel');
     if (panel) {
       var cards = panel.querySelectorAll('.mode-card');
