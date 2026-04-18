@@ -449,7 +449,17 @@ router.post('/maffsy/complete', optionalWallet, (req, res) => {
       upsertPersonalBest(req.wallet, 'maffsy', 'default', result.maxStreak, 0);
     }
 
-    res.json({ success: true, streak: result.currentStreak, maxStreak: result.maxStreak, played: result.played, won: result.won });
+    // Issue a sessionId so the global-leaderboard prompt can verify eligibility.
+    var sessionId = 'sess_maffsy_' + crypto.randomUUID();
+    var nowMs = Date.now();
+    try {
+      createGameState(sessionId, req.wallet, 'maffsy', 'free', null, null, null, nowMs, 1, 'default');
+      completeGameState(sessionId, 'completed', result.maxStreak, 0);
+    } catch (e) {
+      sessionId = null;
+    }
+
+    res.json({ success: true, sessionId: sessionId, streak: result.currentStreak, maxStreak: result.maxStreak, played: result.played, won: result.won });
   } catch (e) {
     res.status(400).json({ error: e.message });
   }
