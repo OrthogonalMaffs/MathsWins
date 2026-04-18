@@ -258,7 +258,7 @@ body{background:var(--bg);color:var(--text);font-family:'Inter',sans-serif;min-h
     <h3 id="duel-modal-heading" style="font-family:'Playfair Display','Bebas Neue',serif;font-size:1.3rem;color:#e8eaf0;margin-bottom:.6rem"></h3>
     <div id="duel-modal-challenger" style="display:none;font-family:'JetBrains Mono','DM Mono',monospace;font-size:.85rem;color:#d4d8e2;margin-bottom:.5rem"></div>
     <div id="duel-modal-amount" style="font-family:'JetBrains Mono','DM Mono',monospace;font-size:2.4rem;color:#d4a847;font-weight:700;margin:.6rem 0 .2rem"></div>
-    <p style="font-size:.62rem;color:#8a8e96;margin-bottom:1.2rem">Winner takes 90% of the pot. Loser loses their stake.</p>
+    <p style="font-size:.62rem;color:#8a8e96;margin-bottom:1.2rem">Winner takes 85% of the pot. Loser loses their stake.</p>
     <div style="display:flex;gap:.5rem;justify-content:center">
       <button id="duel-modal-cancel" class="btn btn-ghost" style="padding:.6rem 1.2rem;font-size:.65rem">Cancel</button>
       <button id="duel-modal-confirm" class="btn btn-silver" style="padding:.6rem 1.2rem;font-size:.65rem"></button>
@@ -731,7 +731,7 @@ var G = (function() {
       }
       var cfg = await getDuelConfig();
       var stakeQF = data.stake || cfg.defaultStake || 25;
-      document.getElementById('acceptStakeInfo').textContent = 'Accepting requires a ' + stakeQF + ' QF stake. Winner takes 90% of the pot.';
+      document.getElementById('acceptStakeInfo').textContent = 'Accepting requires a ' + stakeQF + ' QF stake. Winner takes 85% of the pot.';
       document.getElementById('duelAccept').style.display = 'block';
     } catch (e) { setMsg('Could not load duel.'); }
   }

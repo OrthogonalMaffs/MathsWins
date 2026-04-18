@@ -4,7 +4,7 @@
 
 import { getDb } from './db/index.mjs';
 
-const ENABLED = process.env.TELEGRAM_NOTIFICATIONS_ENABLED === 'true';
+const ENABLED = (process.env.TELEGRAM_NOTIFICATIONS_ENABLED || '').trim() === 'true';
 const BOT_TOKEN = process.env.TELEGRAM_BOT_TOKEN || '';
 const CHANNEL_ID = process.env.TELEGRAM_CHANNEL_ID || '';
 

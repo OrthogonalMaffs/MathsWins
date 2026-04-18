@@ -260,7 +260,7 @@ body{background:var(--bg);color:var(--text);font-family:'Inter',sans-serif;min-h
     <div class="mode-card" onclick="G.createDuel()">
       <div class="mode-icon">&#9876;</div>
       <h3>Create a Duel</h3>
-      <p>Set your stake. Get a code, share with your rival. Same puzzle, same conditions. Winner takes 90%.</p>
+      <p>Set your stake. Get a code, share with your rival. Same puzzle, same conditions. Winner takes 85%.</p>
     </div>
     <div id="duel-stake-wrap" style="display:none;align-items:center;gap:.4rem;margin:.5rem 0;justify-content:center">
       <label for="duel-stake-input" style="font-family:'JetBrains Mono',monospace;font-size:.6rem;color:#8a8e96">Stake (QF)</label>
@@ -313,7 +313,7 @@ body{background:var(--bg);color:var(--text);font-family:'Inter',sans-serif;min-h
       <div class="challenger-sub">has challenged you to a Sudoku Duel</div>
     </div>
     <p style="font-size:.68rem;color:var(--muted);text-align:center;line-height:1.5;margin-top:.8rem">Same puzzle, same conditions. Best score wins.</p>
-    <p id="accept-stake-info" style="font-size:.62rem;color:var(--silver);text-align:center;line-height:1.5;margin-top:.5rem">Accepting requires a 25 QF stake. Winner takes 90% of the pot.</p>
+    <p id="accept-stake-info" style="font-size:.62rem;color:var(--silver);text-align:center;line-height:1.5;margin-top:.5rem">Accepting requires a 25 QF stake. Winner takes 85% of the pot.</p>
     <div style="margin-top:1rem;text-align:center">
       <button class="btn btn-silver" style="padding:.8rem 2rem;font-size:.7rem" onclick="G.acceptAndPlay()">Accept &amp; Play</button>
     </div>
@@ -332,7 +332,7 @@ body{background:var(--bg);color:var(--text);font-family:'Inter',sans-serif;min-h
     <h3 id="duel-modal-heading" style="font-family:'Playfair Display','Bebas Neue',serif;font-size:1.3rem;color:#e8eaf0;margin-bottom:.6rem"></h3>
     <div id="duel-modal-challenger" style="display:none;font-family:'JetBrains Mono','DM Mono',monospace;font-size:.85rem;color:#d4d8e2;margin-bottom:.5rem"></div>
     <div id="duel-modal-amount" style="font-family:'JetBrains Mono','DM Mono',monospace;font-size:2.4rem;color:#d4a847;font-weight:700;margin:.6rem 0 .2rem"></div>
-    <p style="font-size:.62rem;color:#8a8e96;margin-bottom:1.2rem">Winner takes 90% of the pot. Loser loses their stake.</p>
+    <p style="font-size:.62rem;color:#8a8e96;margin-bottom:1.2rem">Winner takes 85% of the pot. Loser loses their stake.</p>
     <div style="display:flex;gap:.5rem;justify-content:center">
       <button id="duel-modal-cancel" class="btn btn-ghost" style="padding:.6rem 1.2rem;font-size:.65rem">Cancel</button>
       <button id="duel-modal-confirm" class="btn btn-silver" style="padding:.6rem 1.2rem;font-size:.65rem"></button>
@@ -747,7 +747,7 @@ var G = (function() {
       // Show stake info
       var stakeInfo = document.getElementById('accept-stake-info');
       if (stakeInfo && data.stake) {
-        stakeInfo.textContent = 'Accepting requires a ' + data.stake + ' QF stake. Winner takes 90% of the pot.';
+        stakeInfo.textContent = 'Accepting requires a ' + data.stake + ' QF stake. Winner takes 85% of the pot.';
       }
 
       // Resolve challenger name
