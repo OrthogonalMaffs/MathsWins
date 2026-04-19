@@ -9,7 +9,9 @@
  * mine count.
  *
  * Scoring:
- *   Win: max(0, 5000 - elapsedMs / 1000) — 5000 base minus 1 pt/sec
+ *   Win: round(BASE × T / (T + elapsedSeconds)) — per-difficulty BASE & T (see SCORING below).
+ *     Half-score at elapsed = T (the difficulty's "target" time). Harder boards have
+ *     higher BASE ceilings so a solid expert run outscores a near-perfect beginner run.
  *   DNF/detonation: -(totalSafeCells - revealedSafeCells)
  *
  * Board sizes:
@@ -44,8 +46,23 @@ const CONFIGS = {
   expert:       { width: 30, height: 16, mineCount: 99 },
 };
 
-// ── Scoring constants ───────────────────────────────────────────────────
-const BASE_SCORE = 5000;
+// ── Scoring ─────────────────────────────────────────────────────────────
+// score = round(BASE × T / (T + elapsedSeconds)).
+// Per-difficulty (BASE, T). Harder boards earn higher ceilings so skill tier
+// separation on the leaderboard reflects the board you chose, not just speed.
+const SCORING = {
+  beginner:     { base: 2500,  t: 15  },
+  pocket:       { base: 3000,  t: 20  },
+  intermediate: { base: 5000,  t: 45  },
+  advanced:     { base: 7500,  t: 90  },
+  expert:       { base: 10000, t: 120 },
+};
+
+function calculateWinScore(difficulty, elapsedMs) {
+  const cfg = SCORING[difficulty] || SCORING.beginner;
+  const elapsedSeconds = elapsedMs / 1000;
+  return Math.round(cfg.base * cfg.t / (cfg.t + elapsedSeconds));
+}
 
 // ── Neighbour helper ────────────────────────────────────────────────────
 function getNeighbours(cell, width, height) {
@@ -208,7 +225,7 @@ export function evaluator(question, answer, elapsedMs) {
 
     // Check win (unlikely on first click but possible on small boards)
     if (question.revealed.size === totalSafeCells) {
-      const points = Math.max(0, Math.round(BASE_SCORE - elapsedMs / 1000));
+      const points = calculateWinScore(question.difficulty, elapsedMs);
       return {
         correct: true,
         points,
@@ -268,7 +285,7 @@ export function evaluator(question, answer, elapsedMs) {
 
     // Check win
     if (question.revealed.size === totalSafeCells) {
-      const points = Math.max(0, Math.round(BASE_SCORE - elapsedMs / 1000));
+      const points = calculateWinScore(question.difficulty, elapsedMs);
       return {
         correct: true,
         points,
@@ -350,7 +367,7 @@ export function evaluator(question, answer, elapsedMs) {
 
     // Check win
     if (question.revealed.size === totalSafeCells) {
-      const points = Math.max(0, Math.round(BASE_SCORE - elapsedMs / 1000));
+      const points = calculateWinScore(question.difficulty, elapsedMs);
       return {
         correct: true,
         points,
@@ -402,7 +419,7 @@ export function evaluator(question, answer, elapsedMs) {
   // ── Submit (game completion scoring) ──────────────────────────────
   if (answer.action === 'submit') {
     if (question.revealed.size === totalSafeCells) {
-      const points = Math.max(0, Math.round(BASE_SCORE - elapsedMs / 1000));
+      const points = calculateWinScore(question.difficulty, elapsedMs);
       return {
         correct: true,
         points,
@@ -436,6 +453,6 @@ export function stripQuestion(question) {
     mineCount: question.mineCount,
     difficulty: question.difficulty,
     seed: question.seed,
-    scoring: { base: BASE_SCORE, timeDecay: '1pt/sec' },
+    scoring: (SCORING[question.difficulty] || SCORING.beginner),
   };
 }
