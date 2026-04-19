@@ -2653,6 +2653,71 @@ router.get('/global-leaderboard/:gameId/eligibility', optionalWallet, (req, res)
   res.json({ shouldPrompt: shouldPrompt, rank: rank, totalEntries: totalEntries, alreadyEntered: !!existing, wouldUpdate: !!existing, periodType: periodType, periodKey: periodKey });
 });
 
+// Batch eligibility — one request for N (gameId, difficulty, score, timeMs, sessionId)
+// tuples × 3 periods. Used by My Account to surface per-difficulty, per-period
+// leaderboard opportunities without 15+ individual GETs. Same per-period logic as
+// the single-tuple GET above (shouldPrompt / alreadyEntered / wouldUpdate / rank).
+router.post('/global-leaderboard/eligibility', optionalWallet, (req, res) => {
+  if (!req.wallet) return res.status(401).json({ error: 'Wallet required' });
+  var tuples = (req.body && req.body.tuples) || [];
+  if (!Array.isArray(tuples) || tuples.length === 0) {
+    return res.status(400).json({ error: 'tuples array required' });
+  }
+  if (tuples.length > 50) {
+    return res.status(400).json({ error: 'tuples must not exceed 50 entries' });
+  }
+
+  var PERIODS = ['daily', 'weekly', 'monthly'];
+  var ownWallet = req.wallet.toLowerCase();
+
+  var results = tuples.map(function(t) {
+    var gameId = t.gameId;
+    var difficulty = t.difficulty || null;
+    var score = parseInt(t.score) || 0;
+    var timeMs = parseInt(t.timeMs) || 0;
+    var sessionId = t.sessionId || null;
+
+    // Resolve session once per tuple — same gate order as POST /enter.
+    var sessionBlocked = false;
+    if (sessionId) {
+      var gs = getGameState(sessionId);
+      if (gs && (gs.flagged || gs.status !== 'completed')) sessionBlocked = true;
+    }
+
+    var periodResults = PERIODS.map(function(periodType) {
+      var periodKey = getCurrentPeriodKey(periodType);
+      var existing = getGlobalLeaderboardEntry(req.wallet, gameId, periodType, periodKey);
+
+      if (sessionBlocked) {
+        return { periodType: periodType, periodKey: periodKey, shouldPrompt: false, alreadyEntered: !!existing, wouldUpdate: false };
+      }
+      if (existing && !isBetterEntry(score, timeMs, existing, gameId)) {
+        return { periodType: periodType, periodKey: periodKey, shouldPrompt: false, alreadyEntered: true, wouldUpdate: false };
+      }
+      var board = getGlobalLeaderboard(gameId, periodType, periodKey).filter(function(r) { return r.wallet.toLowerCase() !== ownWallet; });
+      var totalEntries = board.length;
+      var rank = totalEntries + 1;
+      for (var i = 0; i < board.length; i++) {
+        if (isBetterEntry(score, timeMs, board[i], gameId)) { rank = i + 1; break; }
+      }
+      var shouldPrompt = totalEntries < 25 || rank <= 25;
+      return {
+        periodType: periodType,
+        periodKey: periodKey,
+        shouldPrompt: shouldPrompt,
+        alreadyEntered: !!existing,
+        wouldUpdate: !!existing,
+        rank: rank,
+        totalEntries: totalEntries
+      };
+    });
+
+    return { gameId: gameId, difficulty: difficulty, periods: periodResults };
+  });
+
+  res.json({ results: results });
+});
+
 // Parameterized route LAST (after static routes)
 var glbRateLimit = new Map();
 router.get('/global-leaderboard/:gameId/:periodType', (req, res) => {

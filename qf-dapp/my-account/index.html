@@ -99,6 +99,21 @@ body{background:var(--bg);color:var(--text);font-family:'Inter',sans-serif;min-h
 .hs-submit-btn{font-family:'DM Mono',monospace;font-size:.6rem;padding:.4rem .8rem;border-radius:6px;border:1px solid var(--gold);background:rgba(201,168,76,.1);color:var(--gold);cursor:pointer;transition:all .15s;flex-shrink:0;min-height:44px;min-width:44px}
 .hs-submit-btn:hover{background:rgba(201,168,76,.2)}
 .hs-submit-btn:disabled{opacity:.4;cursor:default}
+.hs-diff-block{border-top:1px solid var(--border)}
+.hs-diff-summary{display:flex;align-items:center;gap:.6rem;padding:.4rem .8rem}
+.hs-diff-name{font-family:'DM Mono',monospace;font-size:.5rem;text-transform:uppercase;letter-spacing:.06em;color:var(--muted);flex:0 0 80px}
+.hs-diff-score{font-family:'DM Mono',monospace;font-size:.72rem;color:var(--gold);flex:1;text-align:right}
+.hs-diff-date{font-family:'DM Mono',monospace;font-size:.5rem;color:var(--muted);flex:0 0 auto}
+.hs-period-row{display:flex;flex-wrap:wrap;gap:.3rem;padding:.2rem .8rem .6rem}
+.hs-period{font-family:'DM Mono',monospace;font-size:.55rem;padding:.3rem .55rem;border-radius:5px;border:1px solid var(--border2);background:var(--surface2);color:var(--muted)}
+.hs-period.ranked{background:rgba(201,168,76,.08);color:var(--gold);border-color:rgba(201,168,76,.25)}
+.hs-period.muted{color:var(--muted);opacity:.7}
+.hs-period-btn{font-family:'DM Mono',monospace;font-size:.55rem;padding:.3rem .55rem;border-radius:5px;border:1px solid var(--gold);background:rgba(201,168,76,.1);color:var(--gold);cursor:pointer;transition:all .15s}
+.hs-period-btn:hover:not(:disabled){background:rgba(201,168,76,.22)}
+.hs-period-btn:disabled{opacity:.55;cursor:default}
+.hs-period-btn.update{border-color:#2dd4a0;background:rgba(45,212,160,.1);color:#2dd4a0}
+.hs-period-btn.update:hover:not(:disabled){background:rgba(45,212,160,.22)}
+.hs-period-btn-done{border-color:#2dd4a0 !important;background:rgba(45,212,160,.12) !important;color:#2dd4a0 !important}
 
 /* ── League cards ── */
 .league-group{margin-bottom:1.5rem}
@@ -552,32 +567,38 @@ async function renderScores() {
     var gameIds = Object.keys(games);
 
     // Check eligibility for games not yet on any leaderboard (use best score per game)
-    var eligibility = {};
-    // Probe every game — even already-ranked ones may have update-eligible periods.
-    var toCheck = gameIds.slice();
-    if (toCheck.length <= 10) {
-      var checks = [];
-      toCheck.forEach(function(gid) {
-        var best = games[gid][0];
-        ['daily', 'weekly', 'monthly'].forEach(function(period) {
-          checks.push(
-            fetch(API + '/global-leaderboard/' + gid + '/eligibility?periodType=' + period +
-              '&score=' + (best.score || 0) + '&timeMs=' + (best.time_ms || 0), {
-              headers: { 'Authorization': 'Bearer ' + JWT }
-            }).then(function(r) { return r.json(); })
-              .then(function(data) {
-                if (data.shouldPrompt) {
-                  if (!eligibility[gid]) eligibility[gid] = { periods: [], row: best };
-                  eligibility[gid].periods.push({ period: period, rank: data.rank, wouldUpdate: !!data.wouldUpdate });
-                }
-              }).catch(function() {})
-          );
+    // Per-(game, difficulty) eligibility — one batch call covers all difficulties
+    // × 3 periods in a single POST. Only rows with session_id participate (needed
+    // for server-side session validation at submit time).
+    var tuples = [];
+    gameIds.forEach(function(gid) {
+      games[gid].forEach(function(r) {
+        if (r.session_id) {
+          tuples.push({
+            gameId: gid,
+            difficulty: r.difficulty || 'default',
+            score: r.score || 0,
+            timeMs: r.time_ms || 0,
+            sessionId: r.session_id
+          });
+        }
+      });
+    });
+
+    // Lookup: `${gameId}:${difficulty}` → [{periodType, shouldPrompt, alreadyEntered, wouldUpdate, rank, ...}, ...]
+    var eligibilityByKey = {};
+    if (tuples.length > 0 && tuples.length <= 50) {
+      try {
+        var eligRes = await fetch(API + '/global-leaderboard/eligibility', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json', 'Authorization': 'Bearer ' + JWT },
+          body: JSON.stringify({ tuples: tuples })
         });
-      });
-      await Promise.all(checks);
-      Object.keys(eligibility).forEach(function(gid) {
-        eligibility[gid].periods.sort(function(a, b) { return a.rank - b.rank; });
-      });
+        var eligData = await eligRes.json();
+        (eligData.results || []).forEach(function(row) {
+          eligibilityByKey[row.gameId + ':' + (row.difficulty || 'default')] = row.periods || [];
+        });
+      } catch (e) { /* eligibility probe is non-fatal — card just won't show per-period prompts */ }
     }
 
     // Sort: ranked games first (by rank asc), then alphabetically
@@ -594,10 +615,9 @@ async function renderScores() {
     gameIds.forEach(function(gid) {
       var isTime = TIME_PRIMARY.indexOf(gid) !== -1;
       var ranked = lbMap[gid];
-      var elig = eligibility[gid];
       var rows = games[gid];
 
-      // Header: game name | rank badge
+      // Header: game name | top rank badge
       html += '<div class="hs-card"><div class="hs-card-header">';
       html += '<span class="hs-card-game">' + gameName(gid) + '</span>';
       if (ranked) {
@@ -606,64 +626,64 @@ async function renderScores() {
       }
       html += '</div>';
 
-      // Difficulty breakdown table — order easy > medium > hard
-      var DIFF_ORDER = {easy:0, medium:1, hard:2, default:3};
+      // Order difficulties easy > medium > hard
+      var DIFF_ORDER = {easy:0, medium:1, hard:2, beginner:0, intermediate:1, advanced:2, expert:3, pocket:0, default:9};
       rows.sort(function(a, b) {
         var da = DIFF_ORDER[(a.difficulty||'default').toLowerCase()]; if (da === undefined) da = 99;
         var db = DIFF_ORDER[(b.difficulty||'default').toLowerCase()]; if (db === undefined) db = 99;
         return da - db;
       });
-      html += '<table class="hs-diff-table">';
-      rows.forEach(function(r) {
-        var diff = r.difficulty || 'default';
-        var val = isTime ? (formatTimeMs(r.time_ms) || '—') : Number(r.score || 0).toLocaleString();
-        html += '<tr><td class="hs-dt-diff">' + diff + '</td><td class="hs-dt-score">' + val + '</td><td class="hs-dt-date">' + formatDate(r.achieved_at) + '</td></tr>';
-      });
-      html += '</table>';
 
-      // Leaderboard row: Daily / Weekly / Monthly with ranked highlights
+      // Ranked-period lookup (shared across all difficulties for this game)
       var rankedPeriods = lbByGame[gid] || [];
       var rankedMap = {};
       rankedPeriods.forEach(function(rp) { rankedMap[rp.periodType] = rp.rank; });
-      html += '<div class="hs-card-lb"><span class="hs-lb-label">Leaderboard</span><div class="hs-lb-periods">';
-      ['daily', 'weekly', 'monthly'].forEach(function(p) {
-        var pCap = p.charAt(0).toUpperCase() + p.slice(1);
-        if (rankedMap[p]) {
-          html += '<span class="hs-lb-period ranked">' + pCap + ' #' + rankedMap[p] + '</span>';
-        } else {
-          html += '<span class="hs-lb-period">' + pCap + '</span>';
-        }
-      });
-      html += '</div></div>';
 
-      // Footer: eligibility text + submit button (best score across all difficulties)
-      // Shown whenever any period is eligible — including update-eligible periods for
-      // already-ranked games.
-      if (elig && elig.periods.length > 0) {
-        var anyUpdate = elig.periods.some(function(p) { return p.wouldUpdate; });
-        var allUpdate = elig.periods.every(function(p) { return p.wouldUpdate; });
-        var eligLabels = elig.periods.map(function(p) {
-          var pc = p.period.charAt(0).toUpperCase() + p.period.slice(1);
-          return p.wouldUpdate ? pc + ' (update)' : pc;
-        });
-        var bestRank = elig.periods[0].rank;
-        var bestRow = elig.row || rows[0];
-        var sid = bestRow.session_id || '';
+      // Per-difficulty section — each row carries its own per-period submit row
+      rows.forEach(function(r) {
+        var diff = r.difficulty || 'default';
+        var val = isTime ? (formatTimeMs(r.time_ms) || '\u2014') : Number(r.score || 0).toLocaleString();
+        var sid = r.session_id || '';
         var hasSession = !!sid;
-        var periodsJson = JSON.stringify(elig.periods.map(function(p) { return p.period; })).replace(/'/g, '&#39;');
-        var verb = allUpdate ? 'Would improve to' : 'Would rank';
-        html += '<div class="hs-card-footer">';
-        html += '<span class="hs-footer-text">\u2B50 ' + verb + ' ' + ordinal(bestRank) + ' on ' + eligLabels.join(', ');
-        if (!hasSession) html += ' \u2014 play again to submit';
-        html += '</span>';
-        if (hasSession) {
-          var btnText = anyUpdate && !allUpdate ? 'Submit / update for 50 QF'
-                      : allUpdate ? 'Update for 50 QF'
-                      : 'Submit for 50 QF';
-          html += '<button class="hs-submit-btn" onclick="submitToLeaderboard(\'' + gid + '\',' + periodsJson + ',\'' + sid + '\',' + (bestRow.score || 0) + ',' + (bestRow.time_ms || 0) + ',this)">' + btnText + '</button>';
-        }
+        var key = gid + ':' + diff;
+        var periodResults = eligibilityByKey[key] || [];
+
+        html += '<div class="hs-diff-block">';
+        html += '<div class="hs-diff-summary">';
+        html += '<span class="hs-diff-name">' + diff + '</span>';
+        html += '<span class="hs-diff-score">' + val + '</span>';
+        html += '<span class="hs-diff-date">' + formatDate(r.achieved_at) + '</span>';
         html += '</div>';
-      }
+
+        html += '<div class="hs-period-row">';
+        ['daily', 'weekly', 'monthly'].forEach(function(p) {
+          var pCap = p.charAt(0).toUpperCase() + p.slice(1);
+          var currentRank = rankedMap[p];
+          var periodRes = hasSession ? (periodResults.filter(function(x) { return x.periodType === p; })[0] || null) : null;
+
+          if (periodRes && periodRes.shouldPrompt) {
+            // Eligible — new or update. Render Submit button with projected rank.
+            var verb = periodRes.wouldUpdate ? 'update to' : 'would rank';
+            var cls = periodRes.wouldUpdate ? 'hs-period-btn update' : 'hs-period-btn';
+            var label = pCap + ' \u2014 ' + verb + ' ' + ordinal(periodRes.rank) + ' \u2014 50 QF';
+            html += '<button class="' + cls + '" onclick="submitToLeaderboard(\'' + gid + '\',[\'' + p + '\'],\'' + sid + '\',' + (r.score || 0) + ',' + (r.time_ms || 0) + ',this)">' + label + '</button>';
+          } else if (currentRank) {
+            // Already ranked on this period (shared across difficulties — may actually be a different difficulty's row)
+            html += '<span class="hs-period ranked">' + pCap + ' \u2B50 ' + ordinal(currentRank) + '</span>';
+          } else if (!hasSession) {
+            // No live session → tell user to play again
+            html += '<span class="hs-period muted">' + pCap + ' \u2014 play again to submit</span>';
+          } else if (periodRes && periodRes.alreadyEntered && !periodRes.wouldUpdate) {
+            // Existing entry already beats this submission
+            html += '<span class="hs-period muted">' + pCap + ' \u2014 already better</span>';
+          } else {
+            // Session valid but wouldn\u2019t crack top 25
+            html += '<span class="hs-period muted">' + pCap + ' \u2014 outside top 25</span>';
+          }
+        });
+        html += '</div>';
+        html += '</div>';
+      });
 
       html += '</div>';
     });
@@ -743,16 +763,20 @@ async function submitToLeaderboard(gameId, periodTypes, sessionId, score, timeMs
     var data = await res.json();
     if (data.success) {
       var entered = data.entered || [];
+      var skipped = data.skipped || [];
       var cap = function(s) { return s.charAt(0).toUpperCase() + s.slice(1); };
-      var newLabels = entered.filter(function(e) { return e.action === 'inserted'; }).map(function(e) { return cap(e.periodType); });
-      var updLabels = entered.filter(function(e) { return e.action === 'updated'; }).map(function(e) { return cap(e.periodType); });
-      var parts = [];
-      if (newLabels.length) parts.push('Ranked on ' + newLabels.join(', '));
-      if (updLabels.length) parts.push('Updated ' + updLabels.join(', '));
-      var footer = btn.closest('.hs-card-footer');
-      if (footer) {
-        footer.innerHTML = '<span class="hs-footer-text">\u2B50 ' + (parts.join(' \u00B7 ') || 'Submitted') + '</span>';
+      // Each click submits a single period now — look up the one result.
+      var only = entered[0];
+      if (only) {
+        var verb = only.action === 'updated' ? 'Updated' : 'Ranked';
+        btn.textContent = '\u2B50 ' + verb + ' ' + cap(only.periodType) + ' \u00B7 ' + ordinal(only.rank);
+        btn.classList.add('hs-period-btn-done');
+      } else if (skipped.length) {
+        btn.textContent = 'Already better \u2014 no change';
+      } else {
+        btn.textContent = '\u2B50 Submitted';
       }
+      // btn stays disabled — this period is done for this session
     } else {
       btn.textContent = data.error || 'Failed';
       btn.disabled = false;
