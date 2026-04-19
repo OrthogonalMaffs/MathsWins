@@ -37,6 +37,8 @@ Composite UNIQUE includes `difficulty` so a wallet can hold one entry per (game,
 | POST | `/global-leaderboard/enter` | Pay 50 QF. Handles new entries AND better-than-existing updates. See gate order in `docs/payment-architecture.md`. |
 | GET  | `/global-leaderboard/my-positions` | Wallet's current ranks across all games/periods. |
 
+GET endpoints in this section are **whitelisted from the global rate limiter** — the lobby grid renders ~26 cards and fires one fetch per card per period toggle, so a normal user blows past any per-route IP cap within seconds. POST `/enter` falls under the global 120/min/IP limit (see `docs/api-endpoints.md` § Rate Limiting).
+
 ## `isBetterEntry` comparator — `routes/api.mjs` (module scope)
 
 Mirrors the sort, including tiebreaker. Imported `TIME_PRIMARY_GAMES` from `db/index.mjs`.

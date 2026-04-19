@@ -2,6 +2,24 @@
 
 Local dev: `http://127.0.0.1:3860/api/dapp`
 
+## Rate Limiting
+
+Single source of truth: **global limiter at `server.mjs`, 120 req/min/IP** for all `/api/dapp/*`. `app.set('trust proxy', true)` so `req.ip` is the real client IP behind the Cloudflare Tunnel — without it, every visitor would share one bucket.
+
+**Whitelisted from the global limiter** (read-only GETs only — fired in bursts by the lobby grid + My Account):
+- `GET /api/dapp/global-leaderboard/*`
+- `GET /api/dapp/profile/*`
+- `GET /api/dapp/achievements/*`
+- `GET /api/dapp/leagues/*`
+- `GET /api/dapp/league/*`
+
+Whitelist matches `req.originalUrl` (Express does not strip the `/api/dapp` mount prefix from `req.path` in this stack — mirror the timing middleware pattern).
+
+**Per-wallet limit (intentionally separate, not the global IP limiter):**
+- `POST /duel/:code/broadcast` — 5 per wallet per 24h. Anti-spam on Telegram broadcast.
+
+Do not add new per-route 429s — they bypass the whitelist and double-count. See `CLAUDE.md` § Standing rules.
+
 ## Auth
 - `POST /auth/challenge` — get sign challenge
 - `POST /auth/verify` — verify signature, return JWT (24h)
@@ -82,7 +100,7 @@ Local dev: `http://127.0.0.1:3860/api/dapp`
 - `GET /admin/ledger` — escrow accounting (auth: x-admin-key header)
 
 ## Profile
-- `GET /profile/:wallet` — public, no auth, 60/min rate limit. Returns: personal_bests, league_bests, achievements, wallet_stats, league_history, trophies, leaderboard_positions
+- `GET /profile/:wallet` — public, no auth. Returns: personal_bests, league_bests, achievements, wallet_stats, league_history, trophies, leaderboard_positions. Whitelisted from global rate limiter (see Rate Limiting section).
 
 ## Global Leaderboard
 - `GET /global-leaderboard/:gameId/:periodType` — top entries
