@@ -870,7 +870,7 @@ var G = (function() {
     // Free play score submission (personal bests + achievements) + leaderboard prompt
     if (!leagueMode && !duelMode) {
       try {
-        api('/session/submit-freeplay', { gameId: 'minesweeper', score: points || 0, timeMs: finalTimeMs })
+        api('/session/submit-freeplay', { gameId: 'minesweeper', score: points || 0, timeMs: finalTimeMs, difficulty: difficulty })
           .then(function(data) {
             if (data && data.sessionId && window.promptLeaderboardSubmit) {
               window.promptLeaderboardSubmit({ gameId: 'minesweeper', score: points || 0, timeMs: finalTimeMs, sessionId: data.sessionId });
