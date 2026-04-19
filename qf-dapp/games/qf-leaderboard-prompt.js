@@ -122,7 +122,8 @@
       var ranksHtml = '<div class="qflb-ranks-lbl">Projected rank</div>';
       qualifying.forEach(function (q) {
         var p = q.period.charAt(0).toUpperCase() + q.period.slice(1);
-        ranksHtml += '<div class="qflb-rank-row"><span class="qflb-rank-period">' + p + '</span><span class="qflb-rank-pos">' + ordinal(q.rank) + '</span></div>';
+        var tag = q.wouldUpdate ? ' <span style="color:#4a4e5a;font-size:.66rem;letter-spacing:0">(update)</span>' : '';
+        ranksHtml += '<div class="qflb-rank-row"><span class="qflb-rank-period">' + p + tag + '</span><span class="qflb-rank-pos">' + ordinal(q.rank) + '</span></div>';
       });
       ranks.innerHTML = ranksHtml;
 
@@ -247,10 +248,19 @@
             showError(data.error || ('Submit failed (' + res.status + ')'));
             return;
           }
-          var enteredNames = (data.entered || []).map(function(e) { return e.periodType.charAt(0).toUpperCase() + e.periodType.slice(1); });
-          var confirmMsg = enteredNames.length === 1
-            ? 'You\u2019re on the ' + enteredNames[0] + ' leaderboard.'
-            : 'Submitted \u2014 you\u2019re on the ' + enteredNames.join(', ') + ' leaderboards.';
+          var entered = data.entered || [];
+          var skipped = data.skipped || [];
+          var cap = function(s) { return s.charAt(0).toUpperCase() + s.slice(1); };
+          var insertedLabels = entered.filter(function(e) { return e.action === 'inserted'; }).map(function(e) { return cap(e.periodType); });
+          var updatedLabels = entered.filter(function(e) { return e.action === 'updated'; }).map(function(e) { return cap(e.periodType); });
+          var skippedLabels = skipped.map(cap);
+          var parts = [];
+          if (insertedLabels.length) parts.push('New on ' + insertedLabels.join(', '));
+          if (updatedLabels.length) parts.push('Updated ' + updatedLabels.join(', '));
+          var confirmMsg = parts.length ? parts.join(' \u00B7 ') + '.' : 'Submitted.';
+          if (skippedLabels.length) {
+            confirmMsg += '<br><span style="color:#4a4e5a;font-size:.72rem">' + skippedLabels.join(', ') + ' \u2014 your existing entry is already better.</span>';
+          }
           modal.innerHTML = '<div class="qflb-ok"><div class="qflb-ok-title">Submitted</div><div class="qflb-ok-sub">' + confirmMsg + '</div></div>';
           setTimeout(function () { remove(); resolve({ outcome: 'pay', entered: data.entered }); }, 3000);
         } catch (e) {
@@ -282,8 +292,8 @@
       var results = await fetchEligibility(gameId, score, timeMs, jwt);
       var qualifying = [];
       results.forEach(function (r) {
-        if (r.data && r.data.shouldPrompt === true && r.data.alreadyEntered === false) {
-          qualifying.push({ period: r.period, rank: r.data.rank });
+        if (r.data && r.data.shouldPrompt === true) {
+          qualifying.push({ period: r.period, rank: r.data.rank, wouldUpdate: !!r.data.wouldUpdate });
         }
       });
       if (qualifying.length === 0) return;

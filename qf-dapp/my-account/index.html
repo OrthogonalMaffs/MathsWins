@@ -553,7 +553,8 @@ async function renderScores() {
 
     // Check eligibility for games not yet on any leaderboard (use best score per game)
     var eligibility = {};
-    var toCheck = gameIds.filter(function(gid) { return !lbMap[gid]; });
+    // Probe every game — even already-ranked ones may have update-eligible periods.
+    var toCheck = gameIds.slice();
     if (toCheck.length <= 10) {
       var checks = [];
       toCheck.forEach(function(gid) {
@@ -565,9 +566,9 @@ async function renderScores() {
               headers: { 'Authorization': 'Bearer ' + JWT }
             }).then(function(r) { return r.json(); })
               .then(function(data) {
-                if (data.shouldPrompt && !data.alreadyEntered) {
+                if (data.shouldPrompt) {
                   if (!eligibility[gid]) eligibility[gid] = { periods: [], row: best };
-                  eligibility[gid].periods.push({ period: period, rank: data.rank });
+                  eligibility[gid].periods.push({ period: period, rank: data.rank, wouldUpdate: !!data.wouldUpdate });
                 }
               }).catch(function() {})
           );
@@ -636,19 +637,30 @@ async function renderScores() {
       html += '</div></div>';
 
       // Footer: eligibility text + submit button (best score across all difficulties)
-      if (elig && elig.periods.length > 0 && !ranked) {
-        var eligLabels = elig.periods.map(function(p) { return p.period.charAt(0).toUpperCase() + p.period.slice(1); });
+      // Shown whenever any period is eligible — including update-eligible periods for
+      // already-ranked games.
+      if (elig && elig.periods.length > 0) {
+        var anyUpdate = elig.periods.some(function(p) { return p.wouldUpdate; });
+        var allUpdate = elig.periods.every(function(p) { return p.wouldUpdate; });
+        var eligLabels = elig.periods.map(function(p) {
+          var pc = p.period.charAt(0).toUpperCase() + p.period.slice(1);
+          return p.wouldUpdate ? pc + ' (update)' : pc;
+        });
         var bestRank = elig.periods[0].rank;
         var bestRow = elig.row || rows[0];
         var sid = bestRow.session_id || '';
         var hasSession = !!sid;
         var periodsJson = JSON.stringify(elig.periods.map(function(p) { return p.period; })).replace(/'/g, '&#39;');
+        var verb = allUpdate ? 'Would improve to' : 'Would rank';
         html += '<div class="hs-card-footer">';
-        html += '<span class="hs-footer-text">\u2B50 Would rank ' + ordinal(bestRank) + ' on ' + eligLabels.join(', ');
+        html += '<span class="hs-footer-text">\u2B50 ' + verb + ' ' + ordinal(bestRank) + ' on ' + eligLabels.join(', ');
         if (!hasSession) html += ' \u2014 play again to submit';
         html += '</span>';
         if (hasSession) {
-          html += '<button class="hs-submit-btn" onclick="submitToLeaderboard(\'' + gid + '\',' + periodsJson + ',\'' + sid + '\',' + (bestRow.score || 0) + ',' + (bestRow.time_ms || 0) + ',this)">Submit for 50 QF</button>';
+          var btnText = anyUpdate && !allUpdate ? 'Submit / update for 50 QF'
+                      : allUpdate ? 'Update for 50 QF'
+                      : 'Submit for 50 QF';
+          html += '<button class="hs-submit-btn" onclick="submitToLeaderboard(\'' + gid + '\',' + periodsJson + ',\'' + sid + '\',' + (bestRow.score || 0) + ',' + (bestRow.time_ms || 0) + ',this)">' + btnText + '</button>';
         }
         html += '</div>';
       }
@@ -730,10 +742,16 @@ async function submitToLeaderboard(gameId, periodTypes, sessionId, score, timeMs
     });
     var data = await res.json();
     if (data.success) {
-      var enteredNames = (data.entered || []).map(function(e) { return e.periodType.charAt(0).toUpperCase() + e.periodType.slice(1); });
+      var entered = data.entered || [];
+      var cap = function(s) { return s.charAt(0).toUpperCase() + s.slice(1); };
+      var newLabels = entered.filter(function(e) { return e.action === 'inserted'; }).map(function(e) { return cap(e.periodType); });
+      var updLabels = entered.filter(function(e) { return e.action === 'updated'; }).map(function(e) { return cap(e.periodType); });
+      var parts = [];
+      if (newLabels.length) parts.push('Ranked on ' + newLabels.join(', '));
+      if (updLabels.length) parts.push('Updated ' + updLabels.join(', '));
       var footer = btn.closest('.hs-card-footer');
       if (footer) {
-        footer.innerHTML = '<span class="hs-footer-text">\u2B50 Ranked on ' + enteredNames.join(', ') + '</span>';
+        footer.innerHTML = '<span class="hs-footer-text">\u2B50 ' + (parts.join(' \u00B7 ') || 'Submitted') + '</span>';
       }
     } else {
       btn.textContent = data.error || 'Failed';

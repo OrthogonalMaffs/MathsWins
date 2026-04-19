@@ -2512,6 +2512,22 @@ function getCurrentPeriodKey(periodType) {
 
 var TIME_PRIMARY = ['minesweeper','freecell','kenken','nonogram','kakuro','sudoku-duel'];
 
+// Would a new (score, timeMs) submission beat `existing` on the board?
+// Mirrors getGlobalLeaderboard's sort in db/index.mjs — TIME_PRIMARY_GAMES uses
+// time ASC (lower is better) with score DESC as tiebreak; everything else the
+// reverse. Exact tie on both → not better (returns false).
+function isBetterEntry(newScore, newTimeMs, existing, gameId) {
+  var isTime = TIME_PRIMARY_GAMES.has(gameId);
+  if (isTime) {
+    if (newTimeMs < existing.time_ms) return true;
+    if (newTimeMs > existing.time_ms) return false;
+    return newScore > existing.score;
+  }
+  if (newScore > existing.score) return true;
+  if (newScore < existing.score) return false;
+  return newTimeMs < existing.time_ms;
+}
+
 // Static routes first (before parameterized :gameId/:periodType)
 router.get('/global-leaderboard/my-positions', optionalWallet, (req, res) => {
   if (!req.wallet) return res.status(401).json({ error: 'Wallet required' });
@@ -2541,19 +2557,6 @@ router.post('/global-leaderboard/enter', optionalWallet, async (req, res) => {
   if (!gs) return res.status(400).json({ error: 'Session not found' });
   if (gs.status !== 'completed') return res.status(400).json({ error: 'Session not completed' });
   if (gs.flagged) return res.status(400).json({ error: 'Session flagged — not eligible' });
-
-  // Mirrors the getGlobalLeaderboard sort in db/index.mjs (primary + tiebreaker)
-  function isBetterEntry(newScore, newTimeMs, existing, game) {
-    var isTime = TIME_PRIMARY_GAMES.has(game);
-    if (isTime) {
-      if (newTimeMs < existing.time_ms) return true;
-      if (newTimeMs > existing.time_ms) return false;
-      return newScore > existing.score;
-    }
-    if (newScore > existing.score) return true;
-    if (newScore < existing.score) return false;
-    return newTimeMs < existing.time_ms;
-  }
 
   // Classify each period: new insert, better update, or notBetter (blocked)
   var suspicious = 0;
@@ -2627,24 +2630,27 @@ router.get('/global-leaderboard/:gameId/eligibility', optionalWallet, (req, res)
   }
   var periodKey = getCurrentPeriodKey(periodType);
   var existing = getGlobalLeaderboardEntry(req.wallet, gameId, periodType, periodKey);
-  if (existing) {
-    return res.json({ shouldPrompt: false, alreadyEntered: true, periodType: periodType, periodKey: periodKey });
-  }
   if (sessionId) {
     var gs = getGameState(sessionId);
     if (gs && (gs.flagged || gs.status !== 'completed')) {
-      return res.json({ shouldPrompt: false, alreadyEntered: false, periodType: periodType, periodKey: periodKey });
+      return res.json({ shouldPrompt: false, alreadyEntered: !!existing, wouldUpdate: false, periodType: periodType, periodKey: periodKey });
     }
   }
-  var board = getGlobalLeaderboard(gameId, periodType, periodKey);
+  // If there's an existing entry and the new submission doesn't beat it, don't prompt.
+  if (existing && !isBetterEntry(score, timeMs, existing, gameId)) {
+    return res.json({ shouldPrompt: false, alreadyEntered: true, wouldUpdate: false, periodType: periodType, periodKey: periodKey });
+  }
+  // Projected rank: compute against the board minus the user's own existing row
+  // so insert + update cases both land on the right spot.
+  var ownWallet = req.wallet.toLowerCase();
+  var board = getGlobalLeaderboard(gameId, periodType, periodKey).filter(function(r) { return r.wallet.toLowerCase() !== ownWallet; });
   var totalEntries = board.length;
-  var isTime = TIME_PRIMARY.indexOf(gameId) !== -1;
   var rank = totalEntries + 1;
   for (var i = 0; i < board.length; i++) {
-    if (isTime ? timeMs < board[i].time_ms : score > board[i].score) { rank = i + 1; break; }
+    if (isBetterEntry(score, timeMs, board[i], gameId)) { rank = i + 1; break; }
   }
   var shouldPrompt = totalEntries < 25 || rank <= 25;
-  res.json({ shouldPrompt: shouldPrompt, rank: rank, totalEntries: totalEntries, alreadyEntered: false, periodType: periodType, periodKey: periodKey });
+  res.json({ shouldPrompt: shouldPrompt, rank: rank, totalEntries: totalEntries, alreadyEntered: !!existing, wouldUpdate: !!existing, periodType: periodType, periodKey: periodKey });
 });
 
 // Parameterized route LAST (after static routes)
