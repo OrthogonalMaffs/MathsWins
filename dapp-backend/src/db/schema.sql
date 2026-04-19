@@ -150,6 +150,7 @@ CREATE TABLE IF NOT EXISTS league_players (
     joined_at       INTEGER NOT NULL,
     refunded        INTEGER DEFAULT 0,
     puzzle_order    TEXT,
+    amount_paid     INTEGER DEFAULT 0,
     PRIMARY KEY (league_id, wallet)
 );
 

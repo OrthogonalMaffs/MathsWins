@@ -991,7 +991,8 @@ router.get('/leagues/:gameId', (req, res) => {
   const result = leagues.map(l => {
     const playerCount = getLeaguePlayerCount(l.id);
     const is_player = wallet ? !!isLeaguePlayer(l.id, wallet) : false;
-    return { ...l, player_count: playerCount, is_player };
+    const prizes = buildPrizesObject(l);
+    return { ...l, player_count: playerCount, is_player, prizes };
   });
   res.json(result);
 });
@@ -1022,8 +1023,11 @@ router.get('/league/:leagueId', optionalWallet, (req, res) => {
     leaderboard = getLeagueLeaderboard(league.id);
   }
 
-  // Prizes if settled
-  const prizes = league.status === 'settled' ? getLeaguePrizes(league.id) : [];
+  // Settled prize ledger (winner-specific), kept under its own key
+  const prizesSettled = league.status === 'settled' ? getLeaguePrizes(league.id) : [];
+
+  // Live prize breakdown for display (1st/2nd/3rd/4th + pot + fixed flag)
+  const prizes = buildPrizesObject(league);
 
   res.json({
     ...league,
@@ -1031,7 +1035,8 @@ router.get('/league/:leagueId', optionalWallet, (req, res) => {
     players: players.map(p => ({ wallet: p.wallet, joined_at: p.joined_at })),
     is_player: isPlayer,
     leaderboard,
-    prizes
+    prizes,
+    prizes_settled: prizesSettled
   });
 });
 
@@ -1063,7 +1068,7 @@ router.post('/league/:leagueId/join', optionalWallet, (req, res) => {
   if (!isBuilder && !txHash) {
     return res.status(400).json({ error: 'Payment transaction hash required' });
   }
-  addLeaguePlayer(league.id, wallet, isBuilder ? 'builder-whitelist' : txHash, now);
+  addLeaguePlayer(league.id, wallet, isBuilder ? 'builder-whitelist' : txHash, now, isBuilder ? 0 : league.entry_fee);
 
   // Track spend and check achievements
   if (!isBuilder && league.entry_fee > 0) {
@@ -1277,18 +1282,43 @@ function activateLeague(league) {
   }
 }
 
-// Recalculate pot when late joiner enters (called from join endpoint indirectly via league check timer)
+// Live pot from actual QF received — single source of truth at all league stages.
 function recalculateLeaguePot(leagueId) {
-  const league = getLeagueById(leagueId);
-  if (!league || league.status !== 'active') return;
-  const paidCount = getPaidLeaguePlayerCount(leagueId);
-  const totalPot = paidCount * league.entry_fee;
+  const db = getDb();
+  const row = db.prepare('SELECT COALESCE(SUM(amount_paid), 0) AS pot FROM league_players WHERE league_id = ? AND refunded = 0').get(leagueId);
+  const totalPot = row.pot || 0;
   const burnAmount = Math.floor(totalPot * BURN_PCT);
   const teamAmount = Math.floor(totalPot * TEAM_PCT);
   const prizePool = totalPot - burnAmount - teamAmount;
-  const db = getDb();
   db.prepare('UPDATE leagues SET total_pot = ?, prize_pool = ?, burn_amount = ?, team_amount = ? WHERE id = ?')
     .run(totalPot, prizePool, burnAmount, teamAmount, leagueId);
+  return { totalPot, prizePool, burnAmount, teamAmount };
+}
+
+const PRIZE_SHARE = [0.50, 0.25, 0.15, 0.10];
+
+function round2(n) { return Math.round(n * 100) / 100; }
+
+function buildPrizesObject(league) {
+  let totalPot, prizePool, fixed;
+  if (league.status === 'registration') {
+    const r = recalculateLeaguePot(league.id);
+    totalPot = r.totalPot;
+    prizePool = r.prizePool;
+    fixed = false;
+  } else {
+    totalPot = league.total_pot || 0;
+    prizePool = league.prize_pool || 0;
+    fixed = true;
+  }
+  return {
+    first: round2(prizePool * PRIZE_SHARE[0]),
+    second: round2(prizePool * PRIZE_SHARE[1]),
+    third: round2(prizePool * PRIZE_SHARE[2]),
+    fourth: round2(prizePool * PRIZE_SHARE[3]),
+    pot: totalPot,
+    fixed
+  };
 }
 
 // ── Refund processing ───────────────────────────────────────────────

@@ -20,6 +20,7 @@ export function getDb() {
 
   // Migrations — add columns that may not exist on older DBs
   try { db.exec('ALTER TABLE league_players ADD COLUMN puzzle_order TEXT'); } catch (e) { /* already exists */ }
+  try { db.exec('ALTER TABLE league_players ADD COLUMN amount_paid INTEGER DEFAULT 0'); } catch (e) { /* already exists */ }
   try { db.exec('ALTER TABLE leagues ADD COLUMN auto_created_by TEXT'); } catch (e) { /* already exists */ }
   try { db.exec('ALTER TABLE leagues ADD COLUMN cancelled_at INTEGER'); } catch (e) { /* already exists */ }
   try { db.exec('ALTER TABLE leagues ADD COLUMN cancel_reason TEXT'); } catch (e) { /* already exists */ }
@@ -1175,10 +1176,10 @@ export function cancelLeague(leagueId) {
   db.prepare(`UPDATE leagues SET status = 'cancelled' WHERE id = ?`).run(leagueId);
 }
 
-export function addLeaguePlayer(leagueId, wallet, txHash, joinedAt) {
+export function addLeaguePlayer(leagueId, wallet, txHash, joinedAt, amountPaid) {
   const db = getDb();
-  db.prepare(`INSERT INTO league_players (league_id, wallet, tx_hash, joined_at) VALUES (?, ?, ?, ?)`)
-    .run(leagueId, wallet.toLowerCase(), txHash, joinedAt);
+  db.prepare(`INSERT INTO league_players (league_id, wallet, tx_hash, joined_at, amount_paid) VALUES (?, ?, ?, ?, ?)`)
+    .run(leagueId, wallet.toLowerCase(), txHash, joinedAt, amountPaid || 0);
 }
 
 export function getPlayerPuzzleOrder(leagueId, wallet) {
