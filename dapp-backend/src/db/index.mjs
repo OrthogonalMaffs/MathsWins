@@ -95,6 +95,7 @@ export function getDb() {
     id INTEGER PRIMARY KEY AUTOINCREMENT,
     wallet TEXT NOT NULL,
     game_id TEXT NOT NULL,
+    difficulty TEXT DEFAULT 'default',
     score INTEGER NOT NULL,
     time_ms INTEGER,
     period_type TEXT NOT NULL,
@@ -104,9 +105,47 @@ export function getDb() {
     tx_hash TEXT,
     suspicious INTEGER DEFAULT 0,
     qns_name TEXT,
-    UNIQUE(wallet, game_id, period_type, period_key)
+    UNIQUE(wallet, game_id, difficulty, period_type, period_key)
   )`);
   db.exec('CREATE INDEX IF NOT EXISTS idx_glb_game_period ON global_leaderboard_entries(game_id, period_type, period_key)');
+
+  // Migration: rebuild global_leaderboard_entries with difficulty column + composite UNIQUE.
+  // SQLite can't ADD a UNIQUE constraint via ALTER, so for pre-existing DBs we do a
+  // BEGIN/INSERT-SELECT/DROP/RENAME swap. Idempotent — skips if schema already has difficulty.
+  try {
+    const tbl = db.prepare("SELECT sql FROM sqlite_master WHERE type='table' AND name='global_leaderboard_entries'").get();
+    if (tbl && !/\bdifficulty\b/.test(tbl.sql)) {
+      console.log('[migration] global_leaderboard_entries — rebuilding with difficulty column + composite UNIQUE');
+      db.exec(`
+        CREATE TABLE global_leaderboard_entries_new (
+          id INTEGER PRIMARY KEY AUTOINCREMENT,
+          wallet TEXT NOT NULL,
+          game_id TEXT NOT NULL,
+          difficulty TEXT DEFAULT 'default',
+          score INTEGER NOT NULL,
+          time_ms INTEGER,
+          period_type TEXT NOT NULL,
+          period_key TEXT NOT NULL,
+          session_id TEXT NOT NULL,
+          paid_at INTEGER NOT NULL,
+          tx_hash TEXT,
+          suspicious INTEGER DEFAULT 0,
+          qns_name TEXT,
+          UNIQUE(wallet, game_id, difficulty, period_type, period_key)
+        );
+        INSERT INTO global_leaderboard_entries_new
+          (id, wallet, game_id, difficulty, score, time_ms, period_type, period_key, session_id, paid_at, tx_hash, suspicious, qns_name)
+        SELECT id, wallet, game_id, 'default', score, time_ms, period_type, period_key, session_id, paid_at, tx_hash, suspicious, qns_name
+        FROM global_leaderboard_entries;
+        DROP TABLE global_leaderboard_entries;
+        ALTER TABLE global_leaderboard_entries_new RENAME TO global_leaderboard_entries;
+        CREATE INDEX IF NOT EXISTS idx_glb_game_period ON global_leaderboard_entries(game_id, period_type, period_key);
+      `);
+      console.log('[migration] global_leaderboard_entries rebuild complete');
+    }
+  } catch (e) {
+    console.error('[migration] global_leaderboard_entries rebuild failed:', e.message);
+  }
 
   // ── Cribbage hand scores (per-hand tracking for achievements) ──────
   db.exec(`CREATE TABLE IF NOT EXISTS cribbage_hand_scores (
@@ -1624,34 +1663,39 @@ export function getFlaggedSessions(walletFilter, leagueFilter) {
 
 // ── Global leaderboard queries ──────────────────────────────────────────
 
-export function getGlobalLeaderboard(gameId, periodType, periodKey) {
+export function getGlobalLeaderboard(gameId, periodType, periodKey, difficulty) {
   const db = getDb();
   var isTime = TIME_PRIMARY_GAMES.has(gameId);
   var orderBy = isTime ? 'time_ms ASC, score DESC' : 'score DESC, time_ms ASC';
+  if (difficulty) {
+    return db.prepare(
+      'SELECT wallet, qns_name, score, time_ms, paid_at, difficulty FROM global_leaderboard_entries WHERE game_id = ? AND period_type = ? AND period_key = ? AND difficulty = ? AND suspicious = 0 ORDER BY ' + orderBy
+    ).all(gameId, periodType, periodKey, difficulty);
+  }
   return db.prepare(
-    'SELECT wallet, qns_name, score, time_ms, paid_at FROM global_leaderboard_entries WHERE game_id = ? AND period_type = ? AND period_key = ? AND suspicious = 0 ORDER BY ' + orderBy
+    'SELECT wallet, qns_name, score, time_ms, paid_at, difficulty FROM global_leaderboard_entries WHERE game_id = ? AND period_type = ? AND period_key = ? AND suspicious = 0 ORDER BY ' + orderBy
   ).all(gameId, periodType, periodKey);
 }
 
-export function getGlobalLeaderboardEntry(wallet, gameId, periodType, periodKey) {
+export function getGlobalLeaderboardEntry(wallet, gameId, periodType, periodKey, difficulty) {
   const db = getDb();
   return db.prepare(
-    'SELECT * FROM global_leaderboard_entries WHERE wallet = ? AND game_id = ? AND period_type = ? AND period_key = ?'
-  ).get(wallet.toLowerCase(), gameId, periodType, periodKey);
+    'SELECT * FROM global_leaderboard_entries WHERE wallet = ? AND game_id = ? AND period_type = ? AND period_key = ? AND difficulty = ?'
+  ).get(wallet.toLowerCase(), gameId, periodType, periodKey, difficulty || 'default');
 }
 
-export function addGlobalLeaderboardEntry(wallet, gameId, score, timeMs, periodType, periodKey, sessionId, txHash, qnsName, suspicious) {
+export function addGlobalLeaderboardEntry(wallet, gameId, score, timeMs, periodType, periodKey, sessionId, txHash, qnsName, suspicious, difficulty) {
   const db = getDb();
   db.prepare(
-    'INSERT INTO global_leaderboard_entries (wallet, game_id, score, time_ms, period_type, period_key, session_id, paid_at, tx_hash, qns_name, suspicious) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)'
-  ).run(wallet.toLowerCase(), gameId, score, timeMs || 0, periodType, periodKey, sessionId, Date.now(), txHash || null, qnsName || null, suspicious || 0);
+    'INSERT INTO global_leaderboard_entries (wallet, game_id, difficulty, score, time_ms, period_type, period_key, session_id, paid_at, tx_hash, qns_name, suspicious) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)'
+  ).run(wallet.toLowerCase(), gameId, difficulty || 'default', score, timeMs || 0, periodType, periodKey, sessionId, Date.now(), txHash || null, qnsName || null, suspicious || 0);
 }
 
-export function updateGlobalLeaderboardEntry(wallet, gameId, score, timeMs, periodType, periodKey, sessionId, txHash, qnsName, suspicious) {
+export function updateGlobalLeaderboardEntry(wallet, gameId, score, timeMs, periodType, periodKey, sessionId, txHash, qnsName, suspicious, difficulty) {
   const db = getDb();
   db.prepare(
-    'UPDATE global_leaderboard_entries SET score = ?, time_ms = ?, session_id = ?, paid_at = ?, tx_hash = ?, qns_name = ?, suspicious = ? WHERE wallet = ? AND game_id = ? AND period_type = ? AND period_key = ?'
-  ).run(score, timeMs || 0, sessionId, Date.now(), txHash || null, qnsName || null, suspicious || 0, wallet.toLowerCase(), gameId, periodType, periodKey);
+    'UPDATE global_leaderboard_entries SET score = ?, time_ms = ?, session_id = ?, paid_at = ?, tx_hash = ?, qns_name = ?, suspicious = ? WHERE wallet = ? AND game_id = ? AND period_type = ? AND period_key = ? AND difficulty = ?'
+  ).run(score, timeMs || 0, sessionId, Date.now(), txHash || null, qnsName || null, suspicious || 0, wallet.toLowerCase(), gameId, periodType, periodKey, difficulty || 'default');
 }
 
 export function getWalletLeaderboardPositions(wallet) {

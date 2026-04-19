@@ -2558,6 +2558,10 @@ router.post('/global-leaderboard/enter', optionalWallet, async (req, res) => {
   if (gs.status !== 'completed') return res.status(400).json({ error: 'Session not completed' });
   if (gs.flagged) return res.status(400).json({ error: 'Session flagged — not eligible' });
 
+  // Difficulty comes from the session, not the client. Keeps minesweeper/freecell entries
+  // correctly scoped to the difficulty the player actually completed.
+  var difficulty = gs.difficulty || 'default';
+
   // Classify each period: new insert, better update, or notBetter (blocked)
   var suspicious = 0;
   var inserts = [];
@@ -2566,7 +2570,7 @@ router.post('/global-leaderboard/enter', optionalWallet, async (req, res) => {
   for (var j = 0; j < periods.length; j++) {
     var pt = periods[j];
     var pk = getCurrentPeriodKey(pt);
-    var existing = getGlobalLeaderboardEntry(req.wallet, gameId, pt, pk);
+    var existing = getGlobalLeaderboardEntry(req.wallet, gameId, pt, pk, difficulty);
     if (!existing) {
       inserts.push({ periodType: pt, periodKey: pk });
     } else if (isBetterEntry(score, timeMs || 0, existing, gameId)) {
@@ -2602,17 +2606,17 @@ router.post('/global-leaderboard/enter', optionalWallet, async (req, res) => {
   var results = [];
   for (var k = 0; k < inserts.length; k++) {
     var ei = inserts[k];
-    addGlobalLeaderboardEntry(req.wallet, gameId, score, timeMs || 0, ei.periodType, ei.periodKey, sessionId, txHash || null, qnsName, suspicious);
-    var boardI = getGlobalLeaderboard(gameId, ei.periodType, ei.periodKey);
+    addGlobalLeaderboardEntry(req.wallet, gameId, score, timeMs || 0, ei.periodType, ei.periodKey, sessionId, txHash || null, qnsName, suspicious, difficulty);
+    var boardI = getGlobalLeaderboard(gameId, ei.periodType, ei.periodKey, difficulty);
     var rankI = boardI.findIndex(function(r) { return r.wallet === req.wallet.toLowerCase(); }) + 1;
-    results.push({ periodType: ei.periodType, periodKey: ei.periodKey, rank: rankI, totalEntries: boardI.length, action: 'inserted' });
+    results.push({ periodType: ei.periodType, periodKey: ei.periodKey, difficulty: difficulty, rank: rankI, totalEntries: boardI.length, action: 'inserted' });
   }
   for (var m = 0; m < updates.length; m++) {
     var eu = updates[m];
-    updateGlobalLeaderboardEntry(req.wallet, gameId, score, timeMs || 0, eu.periodType, eu.periodKey, sessionId, txHash || null, qnsName, suspicious);
-    var boardU = getGlobalLeaderboard(gameId, eu.periodType, eu.periodKey);
+    updateGlobalLeaderboardEntry(req.wallet, gameId, score, timeMs || 0, eu.periodType, eu.periodKey, sessionId, txHash || null, qnsName, suspicious, difficulty);
+    var boardU = getGlobalLeaderboard(gameId, eu.periodType, eu.periodKey, difficulty);
     var rankU = boardU.findIndex(function(r) { return r.wallet === req.wallet.toLowerCase(); }) + 1;
-    results.push({ periodType: eu.periodType, periodKey: eu.periodKey, rank: rankU, totalEntries: boardU.length, action: 'updated' });
+    results.push({ periodType: eu.periodType, periodKey: eu.periodKey, difficulty: difficulty, rank: rankU, totalEntries: boardU.length, action: 'updated' });
   }
 
   res.json({ success: true, entered: results, skipped: notBetter });
@@ -2629,28 +2633,36 @@ router.get('/global-leaderboard/:gameId/eligibility', optionalWallet, (req, res)
     return res.status(400).json({ error: 'Invalid periodType' });
   }
   var periodKey = getCurrentPeriodKey(periodType);
-  var existing = getGlobalLeaderboardEntry(req.wallet, gameId, periodType, periodKey);
+  // Difficulty derived from session when present, so the in-game prompt (which doesn't
+  // pass difficulty) still lands on the correct per-difficulty leaderboard for
+  // minesweeper/freecell/etc.
+  var difficulty = 'default';
   if (sessionId) {
     var gs = getGameState(sessionId);
-    if (gs && (gs.flagged || gs.status !== 'completed')) {
-      return res.json({ shouldPrompt: false, alreadyEntered: !!existing, wouldUpdate: false, periodType: periodType, periodKey: periodKey });
+    if (gs) {
+      difficulty = gs.difficulty || 'default';
+      if (gs.flagged || gs.status !== 'completed') {
+        var existingFlagged = getGlobalLeaderboardEntry(req.wallet, gameId, periodType, periodKey, difficulty);
+        return res.json({ shouldPrompt: false, alreadyEntered: !!existingFlagged, wouldUpdate: false, difficulty: difficulty, periodType: periodType, periodKey: periodKey });
+      }
     }
   }
+  var existing = getGlobalLeaderboardEntry(req.wallet, gameId, periodType, periodKey, difficulty);
   // If there's an existing entry and the new submission doesn't beat it, don't prompt.
   if (existing && !isBetterEntry(score, timeMs, existing, gameId)) {
-    return res.json({ shouldPrompt: false, alreadyEntered: true, wouldUpdate: false, periodType: periodType, periodKey: periodKey });
+    return res.json({ shouldPrompt: false, alreadyEntered: true, wouldUpdate: false, difficulty: difficulty, periodType: periodType, periodKey: periodKey });
   }
   // Projected rank: compute against the board minus the user's own existing row
-  // so insert + update cases both land on the right spot.
+  // so insert + update cases both land on the right spot. Difficulty-scoped.
   var ownWallet = req.wallet.toLowerCase();
-  var board = getGlobalLeaderboard(gameId, periodType, periodKey).filter(function(r) { return r.wallet.toLowerCase() !== ownWallet; });
+  var board = getGlobalLeaderboard(gameId, periodType, periodKey, difficulty).filter(function(r) { return r.wallet.toLowerCase() !== ownWallet; });
   var totalEntries = board.length;
   var rank = totalEntries + 1;
   for (var i = 0; i < board.length; i++) {
     if (isBetterEntry(score, timeMs, board[i], gameId)) { rank = i + 1; break; }
   }
   var shouldPrompt = totalEntries < 25 || rank <= 25;
-  res.json({ shouldPrompt: shouldPrompt, rank: rank, totalEntries: totalEntries, alreadyEntered: !!existing, wouldUpdate: !!existing, periodType: periodType, periodKey: periodKey });
+  res.json({ shouldPrompt: shouldPrompt, rank: rank, totalEntries: totalEntries, alreadyEntered: !!existing, wouldUpdate: !!existing, difficulty: difficulty, periodType: periodType, periodKey: periodKey });
 });
 
 // Batch eligibility — one request for N (gameId, difficulty, score, timeMs, sessionId)
@@ -2686,7 +2698,7 @@ router.post('/global-leaderboard/eligibility', optionalWallet, (req, res) => {
 
     var periodResults = PERIODS.map(function(periodType) {
       var periodKey = getCurrentPeriodKey(periodType);
-      var existing = getGlobalLeaderboardEntry(req.wallet, gameId, periodType, periodKey);
+      var existing = getGlobalLeaderboardEntry(req.wallet, gameId, periodType, periodKey, difficulty);
 
       if (sessionBlocked) {
         return { periodType: periodType, periodKey: periodKey, shouldPrompt: false, alreadyEntered: !!existing, wouldUpdate: false };
@@ -2694,7 +2706,7 @@ router.post('/global-leaderboard/eligibility', optionalWallet, (req, res) => {
       if (existing && !isBetterEntry(score, timeMs, existing, gameId)) {
         return { periodType: periodType, periodKey: periodKey, shouldPrompt: false, alreadyEntered: true, wouldUpdate: false };
       }
-      var board = getGlobalLeaderboard(gameId, periodType, periodKey).filter(function(r) { return r.wallet.toLowerCase() !== ownWallet; });
+      var board = getGlobalLeaderboard(gameId, periodType, periodKey, difficulty).filter(function(r) { return r.wallet.toLowerCase() !== ownWallet; });
       var totalEntries = board.length;
       var rank = totalEntries + 1;
       for (var i = 0; i < board.length; i++) {
@@ -2734,12 +2746,14 @@ router.get('/global-leaderboard/:gameId/:periodType', (req, res) => {
   if (['daily', 'weekly', 'monthly'].indexOf(periodType) === -1) {
     return res.status(400).json({ error: 'periodType must be daily, weekly, or monthly' });
   }
+  // Optional ?difficulty= filter — omit for cross-difficulty board (backwards compat).
+  var difficulty = req.query.difficulty || null;
   var periodKey = getCurrentPeriodKey(periodType);
-  var board = getGlobalLeaderboard(gameId, periodType, periodKey);
+  var board = getGlobalLeaderboard(gameId, periodType, periodKey, difficulty);
   var ranked = board.map(function(entry, i) {
-    return { rank: i + 1, wallet: entry.wallet, qns_name: entry.qns_name, score: entry.score, time_ms: entry.time_ms, paid_at: entry.paid_at };
+    return { rank: i + 1, wallet: entry.wallet, qns_name: entry.qns_name, score: entry.score, time_ms: entry.time_ms, paid_at: entry.paid_at, difficulty: entry.difficulty };
   });
-  res.json({ game_id: gameId, period_type: periodType, period_key: periodKey, entries: ranked });
+  res.json({ game_id: gameId, period_type: periodType, period_key: periodKey, difficulty: difficulty, entries: ranked });
 });
 
 export default router;

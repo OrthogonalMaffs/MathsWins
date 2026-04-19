@@ -160,12 +160,6 @@ footer a:hover{color:var(--silver-bright)}
 
 /* ── Leaderboard tab ── */
 .lb-controls{display:flex;align-items:center;gap:.8rem;margin-bottom:1.2rem;flex-wrap:wrap}
-.lb-game-select{
-  font-family:'JetBrains Mono',monospace;font-size:.72rem;
-  padding:.45rem .8rem;border-radius:8px;border:1px solid var(--border2);
-  background:var(--surface);color:var(--text-white);cursor:pointer;flex:1;min-width:180px;
-}
-.lb-game-select:focus{outline:none;border-color:var(--silver)}
 .lb-period-toggle{display:flex;gap:.3rem}
 .lb-period{
   font-family:'JetBrains Mono',monospace;font-size:.68rem;font-weight:500;
@@ -174,22 +168,54 @@ footer a:hover{color:var(--silver-bright)}
 }
 .lb-period:hover{border-color:var(--silver-border);color:var(--text)}
 .lb-period.active{border-color:var(--silver);background:var(--silver-dim);color:var(--silver-bright)}
-.lb-loading{text-align:center;padding:2rem;font-size:.72rem;color:var(--muted)}
-.lb-empty{text-align:center;padding:2rem;font-size:.72rem;color:var(--muted)}
+
+/* ── Leaderboard grid of game cards ── */
+.lb-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(300px,1fr));gap:12px;margin-bottom:2rem}
+.lb-card{background:var(--surface);border:1px solid var(--border);border-radius:10px;padding:.75rem .9rem;cursor:pointer;transition:border-color .15s, background .15s;display:flex;flex-direction:column;gap:.55rem;min-height:120px}
+.lb-card:hover{border-color:var(--silver-border);background:var(--surface2)}
+.lb-card-head{display:flex;justify-content:space-between;align-items:center;gap:.4rem}
+.lb-card-name{font-family:'Playfair Display',serif;font-size:.95rem;color:var(--text-white);flex:1;min-width:0;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.lb-card-cta{font-family:'JetBrains Mono',monospace;font-size:.5rem;letter-spacing:.08em;text-transform:uppercase;color:var(--muted);white-space:nowrap}
+.lb-card:hover .lb-card-cta{color:var(--silver-bright)}
+.lb-card-rows{display:flex;flex-direction:column;gap:.3rem}
+.lb-card-row{display:grid;grid-template-columns:auto 1fr auto;gap:.5rem;align-items:baseline;font-family:'DM Mono',monospace;font-size:.66rem;color:var(--text-white)}
+.lb-card-row.highlight{color:var(--gold)}
+.lb-card-rank{color:var(--gold);font-size:.58rem;letter-spacing:.04em;min-width:28px}
+.lb-card-row.highlight .lb-card-rank{color:var(--gold)}
+.lb-card-name-text{color:var(--silver-bright);overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.lb-card-row.highlight .lb-card-name-text{color:var(--gold)}
+.lb-card-metric{color:var(--silver);font-variant-numeric:tabular-nums;text-align:right}
+.lb-card-row.highlight .lb-card-metric{color:var(--gold)}
+.lb-card-diff-label{font-family:'JetBrains Mono',monospace;font-size:.5rem;letter-spacing:.06em;text-transform:uppercase;color:var(--muted);min-width:70px}
+.lb-card-empty{font-family:'JetBrains Mono',monospace;font-size:.6rem;color:var(--muted);padding:.3rem 0;font-style:italic}
+
+/* ── Leaderboard full modal ── */
+.lb-modal-backdrop{position:fixed;inset:0;background:rgba(5,7,10,.82);z-index:9000;display:flex;align-items:center;justify-content:center;padding:16px}
+.lb-modal{background:var(--surface);border:1px solid var(--border2);border-radius:12px;max-width:520px;width:100%;max-height:85vh;overflow-y:auto;padding:18px 20px 16px;position:relative;box-shadow:0 24px 60px rgba(0,0,0,.6)}
+.lb-modal-close{position:absolute;top:10px;right:12px;background:none;border:none;color:var(--muted);font-size:22px;line-height:1;cursor:pointer;padding:4px 8px;border-radius:6px}
+.lb-modal-close:hover{color:var(--text-white);background:var(--surface2)}
+.lb-modal-title{font-family:'Playfair Display',serif;font-size:1.25rem;color:var(--text-white);margin:0 0 4px;padding-right:32px}
+.lb-modal-sub{font-family:'JetBrains Mono',monospace;font-size:.55rem;letter-spacing:.1em;text-transform:uppercase;color:var(--muted);margin-bottom:14px}
+.lb-modal-tabs{display:flex;flex-wrap:wrap;gap:.3rem;margin-bottom:14px;padding-bottom:12px;border-bottom:1px solid var(--border)}
+.lb-modal-tab{font-family:'JetBrains Mono',monospace;font-size:.62rem;font-weight:500;padding:.35rem .8rem;border-radius:14px;border:1px solid var(--border2);background:transparent;color:var(--muted);cursor:pointer;transition:all .15s}
+.lb-modal-tab:hover{border-color:var(--silver-border);color:var(--text)}
+.lb-modal-tab.active{border-color:var(--silver);background:var(--silver-dim);color:var(--silver-bright)}
+.lb-modal-body{min-height:120px}
 .lb-table{width:100%;border-collapse:collapse;margin-bottom:.5rem}
 .lb-table th{
   font-family:'JetBrains Mono',monospace;font-size:.6rem;font-weight:500;
   color:var(--muted);text-align:left;padding:.5rem .6rem;border-bottom:1px solid var(--border2);
 }
-.lb-table td{font-size:.75rem;padding:.55rem .6rem;border-bottom:1px solid var(--border);color:var(--text-white)}
+.lb-table td{font-size:.72rem;padding:.5rem .6rem;border-bottom:1px solid var(--border);color:var(--text-white)}
 .lb-table tr.lb-highlight{background:rgba(201,168,76,0.08)}
 .lb-table tr.lb-highlight td{color:var(--gold)}
 .lb-show-more{
-  display:block;margin:0 auto;font-family:'JetBrains Mono',monospace;font-size:.68rem;
-  padding:.4rem 1.4rem;border-radius:8px;border:1px solid var(--border2);
+  display:block;margin:.5rem auto 0;font-family:'JetBrains Mono',monospace;font-size:.65rem;
+  padding:.4rem 1.2rem;border-radius:8px;border:1px solid var(--border2);
   background:transparent;color:var(--muted);cursor:pointer;transition:all .15s;
 }
 .lb-show-more:hover{border-color:var(--silver-border);color:var(--text)}
+.lb-modal-empty{text-align:center;padding:2rem 1rem;font-size:.72rem;color:var(--muted)}
 
 /* ── Mobile ── */
 @media(max-width:600px){
@@ -323,7 +349,6 @@ footer a:hover{color:var(--silver-bright)}
 <div class="tab-panel" id="tab-leaderboards">
 
   <div class="lb-controls">
-    <select class="lb-game-select" id="lbGameSelect"></select>
     <div class="lb-period-toggle">
       <button class="lb-period active" data-period="daily">Daily</button>
       <button class="lb-period" data-period="weekly">Weekly</button>
@@ -331,13 +356,16 @@ footer a:hover{color:var(--silver-bright)}
     </div>
   </div>
 
-  <div id="lbLoading" class="lb-loading" style="display:none">Loading leaderboard...</div>
-  <div id="lbEmpty" class="lb-empty" style="display:none">No entries yet. Be the first to appear.</div>
-  <table class="lb-table" id="lbTable" style="display:none">
-    <thead><tr><th>Rank</th><th>Name</th><th>Score</th><th>Time</th></tr></thead>
-    <tbody id="lbBody"></tbody>
-  </table>
-  <button class="lb-show-more" id="lbShowMore" style="display:none" onclick="lbShowAll()">Show more</button>
+  <div id="lbGrid" class="lb-grid"></div>
+
+  <div class="lb-modal-backdrop" id="lbModalBackdrop" style="display:none" onclick="lbModalBackdropClick(event)">
+    <div class="lb-modal" id="lbModal" onclick="event.stopPropagation()">
+      <button class="lb-modal-close" id="lbModalClose" aria-label="Close">&times;</button>
+      <h3 class="lb-modal-title" id="lbModalTitle"></h3>
+      <div class="lb-modal-tabs" id="lbModalTabs" style="display:none"></div>
+      <div class="lb-modal-body" id="lbModalBody"></div>
+    </div>
+  </div>
 
 </div>
 
@@ -502,110 +530,222 @@ var LB_GAMES = [
 ];
 
 var lbCurrentPeriod = 'daily';
-var lbAllEntries = [];
-var lbExpanded = false;
+// Games with per-difficulty leaderboards. advanced is league-only, not free-play — omitted.
+var LB_DIFFICULTIES = {
+  'minesweeper': ['beginner', 'pocket', 'intermediate', 'expert']
+};
+// Games where time is the primary rank metric (sort matches db/index.mjs TIME_PRIMARY_GAMES)
+var LB_TIME_PRIMARY = { 'minesweeper': 1, 'freecell': 1, 'nonogram': 1, 'kakuro': 1 };
 
 function lbInit() {
-  var sel = document.getElementById('lbGameSelect');
-  LB_GAMES.forEach(function(g) {
-    var opt = document.createElement('option');
-    opt.value = g.id;
-    opt.textContent = g.name;
-    sel.appendChild(opt);
-  });
-  sel.addEventListener('change', function() { lbExpanded = false; lbFetch(); });
-
   document.querySelectorAll('.lb-period').forEach(function(btn) {
     btn.addEventListener('click', function() {
       document.querySelectorAll('.lb-period').forEach(function(b) { b.classList.remove('active'); });
       btn.classList.add('active');
       lbCurrentPeriod = btn.dataset.period;
-      lbExpanded = false;
-      lbFetch();
+      lbRenderGrid();
     });
   });
+  document.getElementById('lbModalClose').addEventListener('click', lbCloseModal);
+  document.addEventListener('keydown', function(e) {
+    if (e.key === 'Escape' && document.getElementById('lbModalBackdrop').style.display !== 'none') lbCloseModal();
+  });
+  lbRenderGrid();
 }
 
-async function lbFetch() {
-  var gameId = document.getElementById('lbGameSelect').value;
-  var table = document.getElementById('lbTable');
-  var loading = document.getElementById('lbLoading');
-  var empty = document.getElementById('lbEmpty');
-  var showMore = document.getElementById('lbShowMore');
-
-  table.style.display = 'none';
-  empty.style.display = 'none';
-  showMore.style.display = 'none';
-  loading.style.display = 'block';
-
-  try {
-    var res = await fetch(API + '/global-leaderboard/' + gameId + '/' + lbCurrentPeriod);
-    var data = await res.json();
-    lbAllEntries = data.entries || [];
-  } catch (e) {
-    lbAllEntries = [];
-  }
-
-  loading.style.display = 'none';
-
-  if (lbAllEntries.length === 0) {
-    empty.style.display = 'block';
-    return;
-  }
-
-  lbRender();
+function lbModalBackdropClick(e) {
+  if (e.target.id === 'lbModalBackdrop') lbCloseModal();
 }
 
-function lbRender() {
-  var table = document.getElementById('lbTable');
-  var body = document.getElementById('lbBody');
-  var showMore = document.getElementById('lbShowMore');
-  var limit = (lbExpanded || lbAllEntries.length <= 25) ? lbAllEntries.length : 10;
-  var connectedWallet = (window.qfWallet && window.qfWallet.address) ? window.qfWallet.address.toLowerCase() : '';
-
-  body.innerHTML = '';
-  for (var i = 0; i < limit && i < lbAllEntries.length; i++) {
-    var e = lbAllEntries[i];
-    var tr = document.createElement('tr');
-    var isMe = connectedWallet && e.wallet && e.wallet.toLowerCase() === connectedWallet;
-    if (isMe) tr.className = 'lb-highlight';
-
-    var displayName = e.qns_name || (e.wallet.slice(0, 6) + '...' + e.wallet.slice(-4));
-    var timeStr = e.time_ms ? formatLbTime(e.time_ms) : '-';
-
-    tr.innerHTML =
-      '<td>' + (e.rank || (i + 1)) + '</td>' +
-      '<td>' + escHtml(displayName) + '</td>' +
-      '<td>' + e.score + '</td>' +
-      '<td>' + timeStr + '</td>';
-    body.appendChild(tr);
-  }
-
-  table.style.display = 'table';
-
-  if (!lbExpanded && lbAllEntries.length > 25) {
-    showMore.style.display = 'block';
-  } else {
-    showMore.style.display = 'none';
-  }
-}
-
-function lbShowAll() {
-  lbExpanded = true;
-  lbRender();
-}
-
-function formatLbTime(ms) {
+function lbFormatTime(ms) {
+  if (!ms || ms <= 0) return null;
   var s = Math.floor(ms / 1000);
   var m = Math.floor(s / 60);
   s = s % 60;
   return m + ':' + (s < 10 ? '0' : '') + s;
 }
+function lbFormatScore(n) { return Number(n || 0).toLocaleString(); }
+function lbDisplayName(entry) { return entry.qns_name || (entry.wallet.slice(0, 6) + '\u2026' + entry.wallet.slice(-4)); }
+function lbDiffLabel(d) { return d.charAt(0).toUpperCase() + d.slice(1); }
+function escHtml(str) { var d = document.createElement('div'); d.textContent = str; return d.innerHTML; }
 
-function escHtml(str) {
-  var d = document.createElement('div');
-  d.textContent = str;
-  return d.innerHTML;
+// Fetch top entry for a (gameId, period, difficulty?) — returns first entry or null.
+async function lbFetchTop(gameId, period, difficulty) {
+  try {
+    var url = API + '/global-leaderboard/' + gameId + '/' + period;
+    if (difficulty) url += '?difficulty=' + encodeURIComponent(difficulty);
+    var res = await fetch(url);
+    var data = await res.json();
+    var entries = data.entries || [];
+    return entries[0] || null;
+  } catch (e) { return null; }
+}
+
+function lbRenderGrid() {
+  var grid = document.getElementById('lbGrid');
+  grid.innerHTML = '';
+  var connected = (window.qfWallet && window.qfWallet.address) ? window.qfWallet.address.toLowerCase() : '';
+
+  LB_GAMES.forEach(function(g) {
+    var card = document.createElement('div');
+    card.className = 'lb-card';
+    card.onclick = function() { lbOpenModal(g.id); };
+    card.innerHTML =
+      '<div class="lb-card-head">' +
+        '<span class="lb-card-name">' + escHtml(g.name) + '</span>' +
+        '<span class="lb-card-cta">View \u2192</span>' +
+      '</div>' +
+      '<div class="lb-card-rows" data-gid="' + g.id + '"><div class="lb-card-empty">Loading\u2026</div></div>';
+    grid.appendChild(card);
+  });
+
+  // Populate each card in parallel.
+  LB_GAMES.forEach(function(g) {
+    var rowsEl = grid.querySelector('[data-gid="' + g.id + '"]');
+    var diffs = LB_DIFFICULTIES[g.id];
+    var isTime = !!LB_TIME_PRIMARY[g.id];
+
+    if (diffs && diffs.length) {
+      // Minesweeper-style — one row per difficulty
+      Promise.all(diffs.map(function(d) { return lbFetchTop(g.id, lbCurrentPeriod, d).then(function(e) { return { d: d, e: e }; }); }))
+        .then(function(results) {
+          rowsEl.innerHTML = '';
+          results.forEach(function(r) {
+            var row = document.createElement('div');
+            row.className = 'lb-card-row';
+            if (r.e && connected && r.e.wallet.toLowerCase() === connected) row.className += ' highlight';
+            var right;
+            if (r.e) {
+              var metric = isTime ? (lbFormatTime(r.e.time_ms) || '\u2014') : lbFormatScore(r.e.score);
+              row.innerHTML =
+                '<span class="lb-card-diff-label">' + lbDiffLabel(r.d) + '</span>' +
+                '<span class="lb-card-name-text">' + escHtml(lbDisplayName(r.e)) + '</span>' +
+                '<span class="lb-card-metric">' + metric + '</span>';
+            } else {
+              row.innerHTML =
+                '<span class="lb-card-diff-label">' + lbDiffLabel(r.d) + '</span>' +
+                '<span class="lb-card-name-text" style="color:var(--muted);font-style:italic">No entries</span>' +
+                '<span class="lb-card-metric">\u2014</span>';
+            }
+            rowsEl.appendChild(row);
+          });
+        });
+    } else {
+      // Single-row — top entry only
+      lbFetchTop(g.id, lbCurrentPeriod).then(function(e) {
+        rowsEl.innerHTML = '';
+        if (!e) {
+          rowsEl.innerHTML = '<div class="lb-card-empty">No entries yet \u2014 be the first</div>';
+          return;
+        }
+        var row = document.createElement('div');
+        row.className = 'lb-card-row';
+        if (connected && e.wallet.toLowerCase() === connected) row.className += ' highlight';
+        var metric = isTime ? (lbFormatTime(e.time_ms) || '\u2014') : lbFormatScore(e.score);
+        row.innerHTML =
+          '<span class="lb-card-rank">\u2B50 1st</span>' +
+          '<span class="lb-card-name-text">' + escHtml(lbDisplayName(e)) + '</span>' +
+          '<span class="lb-card-metric">' + metric + '</span>';
+        rowsEl.appendChild(row);
+      });
+    }
+  });
+}
+
+var lbModalState = { gameId: null, difficulty: null, entries: [], expanded: false };
+
+function lbOpenModal(gameId) {
+  var backdrop = document.getElementById('lbModalBackdrop');
+  var title = document.getElementById('lbModalTitle');
+  var tabs = document.getElementById('lbModalTabs');
+  var body = document.getElementById('lbModalBody');
+  var game = LB_GAMES.filter(function(g) { return g.id === gameId; })[0];
+  if (!game) return;
+  title.textContent = game.name;
+  body.innerHTML = '<div class="lb-modal-empty">Loading\u2026</div>';
+  lbModalState = { gameId: gameId, difficulty: null, entries: [], expanded: false };
+
+  var diffs = LB_DIFFICULTIES[gameId];
+  if (diffs && diffs.length) {
+    tabs.innerHTML = '';
+    diffs.forEach(function(d, idx) {
+      var btn = document.createElement('button');
+      btn.className = 'lb-modal-tab' + (idx === 0 ? ' active' : '');
+      btn.textContent = lbDiffLabel(d);
+      btn.onclick = function() {
+        tabs.querySelectorAll('.lb-modal-tab').forEach(function(b) { b.classList.remove('active'); });
+        btn.classList.add('active');
+        lbModalState.difficulty = d;
+        lbModalState.expanded = false;
+        lbLoadModalBody();
+      };
+      tabs.appendChild(btn);
+    });
+    tabs.style.display = 'flex';
+    lbModalState.difficulty = diffs[0];
+  } else {
+    tabs.innerHTML = '';
+    tabs.style.display = 'none';
+    lbModalState.difficulty = null;
+  }
+
+  backdrop.style.display = 'flex';
+  lbLoadModalBody();
+}
+
+function lbCloseModal() {
+  document.getElementById('lbModalBackdrop').style.display = 'none';
+  lbModalState = { gameId: null, difficulty: null, entries: [], expanded: false };
+}
+
+async function lbLoadModalBody() {
+  var body = document.getElementById('lbModalBody');
+  body.innerHTML = '<div class="lb-modal-empty">Loading\u2026</div>';
+  try {
+    var url = API + '/global-leaderboard/' + lbModalState.gameId + '/' + lbCurrentPeriod;
+    if (lbModalState.difficulty) url += '?difficulty=' + encodeURIComponent(lbModalState.difficulty);
+    var res = await fetch(url);
+    var data = await res.json();
+    lbModalState.entries = data.entries || [];
+  } catch (e) { lbModalState.entries = []; }
+  lbRenderModalBody();
+}
+
+function lbRenderModalBody() {
+  var body = document.getElementById('lbModalBody');
+  var entries = lbModalState.entries;
+  if (entries.length === 0) {
+    body.innerHTML = '<div class="lb-modal-empty">No entries yet \u2014 be the first to appear.</div>';
+    return;
+  }
+  var isTime = !!LB_TIME_PRIMARY[lbModalState.gameId];
+  var connected = (window.qfWallet && window.qfWallet.address) ? window.qfWallet.address.toLowerCase() : '';
+  var limit = (lbModalState.expanded || entries.length <= 10) ? entries.length : 10;
+
+  var html = '<table class="lb-table"><thead><tr><th>Rank</th><th>Name</th><th>Score</th><th>Time</th></tr></thead><tbody>';
+  for (var i = 0; i < limit; i++) {
+    var e = entries[i];
+    var isMe = connected && e.wallet && e.wallet.toLowerCase() === connected;
+    var cls = isMe ? ' class="lb-highlight"' : '';
+    var displayName = lbDisplayName(e);
+    var timeStr = lbFormatTime(e.time_ms) || '\u2014';
+    html += '<tr' + cls + '>' +
+      '<td>' + (e.rank || (i + 1)) + '</td>' +
+      '<td>' + escHtml(displayName) + '</td>' +
+      '<td>' + lbFormatScore(e.score) + '</td>' +
+      '<td>' + timeStr + '</td>' +
+    '</tr>';
+  }
+  html += '</tbody></table>';
+  if (!lbModalState.expanded && entries.length > 10) {
+    html += '<button class="lb-show-more" onclick="lbModalExpand()">Show more (' + entries.length + ' total)</button>';
+  }
+  body.innerHTML = html;
+}
+
+function lbModalExpand() {
+  lbModalState.expanded = true;
+  lbRenderModalBody();
 }
 
 // ── Init ──────────────────────────────────────────────────────────────────
