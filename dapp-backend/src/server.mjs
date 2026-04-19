@@ -35,6 +35,10 @@ const PORT = process.env.PORT || 3860;
 
 const app = express();
 
+// Disable ETag — combined with Cache-Control: no-store below, prevents browsers
+// from sending If-None-Match and getting back an empty 304 that breaks res.json().
+app.set('etag', false);
+
 // ── Middleware ───────────────────────────────────────────────────────────────
 app.use(helmet());
 app.use(cors({
