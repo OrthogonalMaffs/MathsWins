@@ -504,7 +504,7 @@ export function evaluate(sessionToken, answer) {
       if (session._persisted) persistSession(payload.sid, session);
       if (session._persisted) completeGameState(payload.sid, result.won ? 'completed' : 'gameover', finalScore, null);
       if (result.won) {
-        upsertPersonalBest(session.wallet, session.gameId, session.difficulty, finalScore, now - session.startedAt);
+        upsertPersonalBest(session.wallet, session.gameId, session.difficulty, finalScore, now - session.startedAt, payload.sid);
       }
       activeSessions.delete(payload.sid);
       response.totalScore = finalScore;
@@ -536,7 +536,7 @@ export function evaluate(sessionToken, answer) {
       if (session._persisted) completeGameState(payload.sid, 'completed', session.score, result.flagged || null);
       // Personal best — successful completion only
       const completionTimeMs = now - session.startedAt;
-      upsertPersonalBest(session.wallet, session.gameId, session.difficulty, session.score, completionTimeMs);
+      upsertPersonalBest(session.wallet, session.gameId, session.difficulty, session.score, completionTimeMs, payload.sid);
       activeSessions.delete(payload.sid);
       response.totalScore = session.score;
       response.finalScore = session.score;
@@ -626,7 +626,7 @@ export function evaluate(sessionToken, answer) {
     }
     // Personal best — sequential mode completion
     const completionTimeMs = now - session.startedAt;
-    upsertPersonalBest(session.wallet, session.gameId, session.difficulty, session.score, completionTimeMs);
+    upsertPersonalBest(session.wallet, session.gameId, session.difficulty, session.score, completionTimeMs, payload.sid);
     activeSessions.delete(payload.sid);
     response.finalScore = session.score;
     if (session.freePlay) response.freePlay = true;

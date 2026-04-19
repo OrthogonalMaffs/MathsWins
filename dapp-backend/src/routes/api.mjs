@@ -379,7 +379,7 @@ router.post('/session/submit-freeplay', optionalWallet, (req, res) => {
       }
     } catch (e) { /* PB check must never block */ }
 
-    upsertPersonalBest(req.wallet, gameId, diff, score, timeMs);
+    upsertPersonalBest(req.wallet, gameId, diff, score, timeMs, sessionId);
 
     // If PB was beaten, increment counter and check for personal-best achievement
     if (pbBeaten) {
@@ -446,12 +446,8 @@ router.post('/maffsy/complete', optionalWallet, (req, res) => {
     var today = new Date().toISOString().slice(0, 10);
     var result = recordMaffsyResult(req.wallet, today, !!won, Number(guesses) || 0, String(wordId || ''));
 
-    // Upsert personal best with max_streak as score (higher is better)
-    if (result.maxStreak > 0) {
-      upsertPersonalBest(req.wallet, 'maffsy', 'default', result.maxStreak, 0);
-    }
-
     // Issue a sessionId so the global-leaderboard prompt can verify eligibility.
+    // Must come before the PB upsert so the PB row carries session_id.
     var sessionId = 'sess_maffsy_' + crypto.randomUUID();
     var nowMs = Date.now();
     try {
@@ -459,6 +455,11 @@ router.post('/maffsy/complete', optionalWallet, (req, res) => {
       completeGameState(sessionId, 'completed', result.maxStreak, 0);
     } catch (e) {
       sessionId = null;
+    }
+
+    // Upsert personal best with max_streak as score (higher is better)
+    if (result.maxStreak > 0) {
+      upsertPersonalBest(req.wallet, 'maffsy', 'default', result.maxStreak, 0, sessionId);
     }
 
     try {
