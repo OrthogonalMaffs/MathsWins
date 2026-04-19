@@ -561,7 +561,7 @@ const DSK=()=>'eq_d_'+dstr(), FPSK='eq_fp';
 // ═══════════════════════════════════════════════════════════════════════════════
 let G, PREFS, _tt;
 
-function lp(){try{PREFS=JSON.parse(localStorage.getItem(PRFK))||{};}catch{PREFS={}}PREFS.hard=!!PREFS.hard;PREFS.free=!!PREFS.free;PREFS.cb=!!PREFS.cb;}
+function lp(){try{PREFS=JSON.parse(localStorage.getItem(PRFK))||{};}catch{PREFS={}}PREFS.hard=!!PREFS.hard;PREFS.free=PREFS.free===undefined?true:!!PREFS.free;PREFS.cb=!!PREFS.cb;}
 function sp(){localStorage.setItem(PRFK,JSON.stringify(PREFS))}
 function lstats(){try{return JSON.parse(localStorage.getItem(STSK))||{};}catch{return{}}}
 function sstats(s){localStorage.setItem(STSK,JSON.stringify(s))}
