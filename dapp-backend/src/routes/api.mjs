@@ -17,7 +17,7 @@ import { queueNotification, sendTestNotification, postDuelBroadcast, editDuelBro
 import { checkAchievements, checkContrarian, checkStreakAchievements, checkLeagueRegular, checkMonthlyAchievements, trackSpend, checkNightOwlSubmission, checkMinesweeperFreePlay, checkFlagEverything, checkBlindEye, checkSumOfAllFears, checkTheGrinder, checkMintMeta, checkDuelMaster, checkFlaglessAndWrong, checkMidnight, checkFibonacci, checkWrongAnswerStreak } from '../achievement-checker.mjs';
 import { sendQF, settleDuel, settleDuelDraw, refundDuel, getEscrowAddress, getSettlementContract, logIncoming, logSplitFromReceipt, BURN_ADDRESS, TEAM_WALLET } from '../escrow.mjs';
 import { createBattleshipsGame, getBattleshipsGameByCode, getBattleshipsGameById, updateBattleshipsGameStatus, saveBattleshipsPlacement, getBattleshipsPlacement, getBattleshipsPlacements, addBattleshipsRound, getBattleshipsRounds, getBattleshipsRecord, updateBattleshipsRecord, getActiveBattleshipsGames, getBattleshipsGamesByWallet, getActiveBattleshipsForWallet } from '../db/index.mjs';
-import { getAchievementRegistry, getAchievement, awardAchievement, getWalletAchievements, getAllAchievements, getGlobalRecord, getPersonalBests, getPersonalBest, getLeagueBests, getWalletStats, getWalletLeagueHistory, getWalletTrophies, getGameStateForLeaguePuzzle, completeGameState, createGameState, getFlaggedSessions, getGlobalLeaderboard, getGlobalLeaderboardEntry, addGlobalLeaderboardEntry, getWalletLeaderboardPositions, getGameState, getGame, upsertPersonalBest, incrementPbBeatenCount, retireAchievement, recordMaffsyResult, getMaffsyStats } from '../db/index.mjs';
+import { getAchievementRegistry, getAchievement, awardAchievement, getWalletAchievements, getAllAchievements, getGlobalRecord, getPersonalBests, getPersonalBest, getLeagueBests, getWalletStats, getWalletLeagueHistory, getWalletTrophies, getGameStateForLeaguePuzzle, completeGameState, createGameState, getFlaggedSessions, getGlobalLeaderboard, getGlobalLeaderboardEntry, addGlobalLeaderboardEntry, updateGlobalLeaderboardEntry, TIME_PRIMARY_GAMES, getWalletLeaderboardPositions, getGameState, getGame, upsertPersonalBest, incrementPbBeatenCount, retireAchievement, recordMaffsyResult, getMaffsyStats } from '../db/index.mjs';
 import { analyseInputPattern } from '../scoring.mjs';
 import { validateFleet, calculateRange, checkHit, checkSunk, checkWin, getGameState as getBattleshipsState, cpuPlaceFleet, cpuShootRecruit, cpuShootOfficer, cpuShootAdmiral, pickSurvivingShip, FLEET } from '../games/battleships.mjs';
 
@@ -2529,7 +2529,6 @@ router.post('/global-leaderboard/enter', optionalWallet, async (req, res) => {
   if (periods.length > 3) {
     return res.status(400).json({ error: 'periodTypes must not exceed 3 entries' });
   }
-  if (!txHash) return res.status(400).json({ error: 'txHash required — pay 50 QF to escrow from your wallet' });
   var validPeriods = ['daily', 'weekly', 'monthly'];
   for (var i = 0; i < periods.length; i++) {
     if (validPeriods.indexOf(periods[i]) === -1) {
@@ -2537,26 +2536,50 @@ router.post('/global-leaderboard/enter', optionalWallet, async (req, res) => {
     }
   }
 
+  // Session validation runs before txHash + payment so invalid sessions can't orphan funds
   var gs = getGameState(sessionId);
   if (!gs) return res.status(400).json({ error: 'Session not found' });
   if (gs.status !== 'completed') return res.status(400).json({ error: 'Session not completed' });
   if (gs.flagged) return res.status(400).json({ error: 'Session flagged — not eligible' });
 
+  // Mirrors the getGlobalLeaderboard sort in db/index.mjs (primary + tiebreaker)
+  function isBetterEntry(newScore, newTimeMs, existing, game) {
+    var isTime = TIME_PRIMARY_GAMES.has(game);
+    if (isTime) {
+      if (newTimeMs < existing.time_ms) return true;
+      if (newTimeMs > existing.time_ms) return false;
+      return newScore > existing.score;
+    }
+    if (newScore > existing.score) return true;
+    if (newScore < existing.score) return false;
+    return newTimeMs < existing.time_ms;
+  }
+
+  // Classify each period: new insert, better update, or notBetter (blocked)
   var suspicious = 0;
-  var entered = [];
-  var skipped = [];
+  var inserts = [];
+  var updates = [];
+  var notBetter = [];
   for (var j = 0; j < periods.length; j++) {
     var pt = periods[j];
     var pk = getCurrentPeriodKey(pt);
     var existing = getGlobalLeaderboardEntry(req.wallet, gameId, pt, pk);
-    if (existing) { skipped.push(pt); continue; }
-    entered.push({ periodType: pt, periodKey: pk });
+    if (!existing) {
+      inserts.push({ periodType: pt, periodKey: pk });
+    } else if (isBetterEntry(score, timeMs || 0, existing, gameId)) {
+      updates.push({ periodType: pt, periodKey: pk });
+    } else {
+      notBetter.push(pt);
+    }
   }
 
-  if (entered.length === 0) {
-    return res.status(400).json({ error: 'Already entered all requested periods' });
+  if (inserts.length === 0 && updates.length === 0) {
+    return res.status(400).json({ error: 'Your current leaderboard entry already beats this score' });
   }
 
+  if (!txHash) return res.status(400).json({ error: 'txHash required — pay 50 QF to escrow from your wallet' });
+
+  var entered = inserts.concat(updates);
   var refLabel = gameId + ':' + entered.map(function(e) { return e.periodType; }).join('+');
   logIncoming('leaderboard-fee', 50, req.wallet, txHash, 'leaderboard', refLabel);
 
@@ -2571,19 +2594,25 @@ router.post('/global-leaderboard/enter', optionalWallet, async (req, res) => {
     return res.status(500).json({ error: 'Payment processing failed: ' + e.message });
   }
 
-  // Track spend for loyalty achievements
   try { trackSpend(req.wallet, 50); } catch (e) { /* must never block */ }
 
   var results = [];
-  for (var k = 0; k < entered.length; k++) {
-    var e = entered[k];
-    addGlobalLeaderboardEntry(req.wallet, gameId, score, timeMs || 0, e.periodType, e.periodKey, sessionId, txHash || null, qnsName, suspicious);
-    var board = getGlobalLeaderboard(gameId, e.periodType, e.periodKey);
-    var rank = board.findIndex(function(r) { return r.wallet === req.wallet.toLowerCase(); }) + 1;
-    results.push({ periodType: e.periodType, periodKey: e.periodKey, rank: rank, totalEntries: board.length });
+  for (var k = 0; k < inserts.length; k++) {
+    var ei = inserts[k];
+    addGlobalLeaderboardEntry(req.wallet, gameId, score, timeMs || 0, ei.periodType, ei.periodKey, sessionId, txHash || null, qnsName, suspicious);
+    var boardI = getGlobalLeaderboard(gameId, ei.periodType, ei.periodKey);
+    var rankI = boardI.findIndex(function(r) { return r.wallet === req.wallet.toLowerCase(); }) + 1;
+    results.push({ periodType: ei.periodType, periodKey: ei.periodKey, rank: rankI, totalEntries: boardI.length, action: 'inserted' });
+  }
+  for (var m = 0; m < updates.length; m++) {
+    var eu = updates[m];
+    updateGlobalLeaderboardEntry(req.wallet, gameId, score, timeMs || 0, eu.periodType, eu.periodKey, sessionId, txHash || null, qnsName, suspicious);
+    var boardU = getGlobalLeaderboard(gameId, eu.periodType, eu.periodKey);
+    var rankU = boardU.findIndex(function(r) { return r.wallet === req.wallet.toLowerCase(); }) + 1;
+    results.push({ periodType: eu.periodType, periodKey: eu.periodKey, rank: rankU, totalEntries: boardU.length, action: 'updated' });
   }
 
-  res.json({ success: true, entered: results, skipped: skipped });
+  res.json({ success: true, entered: results, skipped: notBetter });
 });
 
 router.get('/global-leaderboard/:gameId/eligibility', optionalWallet, (req, res) => {

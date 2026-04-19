@@ -1461,7 +1461,7 @@ export function getRecentlySettledLeagues(gameId, limit) {
 
 // ── Personal bests ─────────────────────────────────────────────────────────
 
-const TIME_PRIMARY_GAMES = new Set(['minesweeper', 'freecell', 'nonogram', 'kakuro']);
+export const TIME_PRIMARY_GAMES = new Set(['minesweeper', 'freecell', 'nonogram', 'kakuro']);
 const PURE_TIME_GAMES = new Set(['minesweeper', 'freecell']);
 
 export function upsertPersonalBest(wallet, gameId, difficulty, score, timeMs, sessionId) {
@@ -1641,6 +1641,13 @@ export function addGlobalLeaderboardEntry(wallet, gameId, score, timeMs, periodT
   db.prepare(
     'INSERT INTO global_leaderboard_entries (wallet, game_id, score, time_ms, period_type, period_key, session_id, paid_at, tx_hash, qns_name, suspicious) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)'
   ).run(wallet.toLowerCase(), gameId, score, timeMs || 0, periodType, periodKey, sessionId, Date.now(), txHash || null, qnsName || null, suspicious || 0);
+}
+
+export function updateGlobalLeaderboardEntry(wallet, gameId, score, timeMs, periodType, periodKey, sessionId, txHash, qnsName, suspicious) {
+  const db = getDb();
+  db.prepare(
+    'UPDATE global_leaderboard_entries SET score = ?, time_ms = ?, session_id = ?, paid_at = ?, tx_hash = ?, qns_name = ?, suspicious = ? WHERE wallet = ? AND game_id = ? AND period_type = ? AND period_key = ?'
+  ).run(score, timeMs || 0, sessionId, Date.now(), txHash || null, qnsName || null, suspicious || 0, wallet.toLowerCase(), gameId, periodType, periodKey);
 }
 
 export function getWalletLeaderboardPositions(wallet) {
