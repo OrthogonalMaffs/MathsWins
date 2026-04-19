@@ -1022,8 +1022,20 @@ var G = (function() {
     }
   }
 
+  // Pending wrong-entry auto-clear. Holds the cell index, banner element, and a
+  // resolve hook so selectCell can force an immediate clear + continue the
+  // awaiting input flow when the user moves focus mid-countdown.
+  var pendingWrongClear = null;
+
   function selectCell(idx) {
     if (done) return;
+    // Cancel any pending wrong-entry auto-clear — clears the incorrect digit
+    // before the new cell receives focus so the wrong value never leaks onto
+    // another cell (race: selected changed before the old setTimeout fired).
+    if (pendingWrongClear) {
+      clearTimeout(pendingWrongClear.timer);
+      pendingWrongClear.resolve();
+    }
     selected = idx;
     renderBoard();
   }
@@ -1075,13 +1087,16 @@ var G = (function() {
         clearRelatedNotes(selected, n);
         setMsg('');
       } else {
-        // Wrong placement — show it briefly in red, then clear
-        notes[selected] = new Set();
-        grid[selected] = n; // temporarily show the wrong value
+        // Wrong placement — show it briefly in red, then clear.
+        // Capture the index NOW so the cleanup always targets the correct cell
+        // even if the user clicks a different cell during the 1.2s hold.
+        var wrongIdx = selected;
+        notes[wrongIdx] = new Set();
+        grid[wrongIdx] = n; // temporarily show the wrong value
         updateMistakes();
         renderBoard();
 
-        var errCell = document.querySelector('.cell[data-idx="' + selected + '"]');
+        var errCell = document.querySelector('.cell[data-idx="' + wrongIdx + '"]');
         if (errCell) {
           errCell.classList.add('error', 'error-flash', 'shake');
           if (errCell.querySelector('.cell-val')) errCell.querySelector('.cell-val').style.color = 'var(--red)';
@@ -1101,11 +1116,25 @@ var G = (function() {
         var isGameOver = data.gameOver;
         var partialScore = data.partialScore || 0;
 
-        // Hold the error visible for 1.2 seconds
-        await new Promise(function(r) { setTimeout(r, 1200); });
+        // Hold the error visible for up to 1.2s, but resolve early if the
+        // user picks a new cell (selectCell cancels via pendingWrongClear).
+        await new Promise(function(resolve) {
+          var timer = setTimeout(function() { resolve(); }, 1200);
+          pendingWrongClear = {
+            timer: timer,
+            resolve: function() {
+              clearTimeout(timer);
+              pendingWrongClear = null;
+              resolve();
+            }
+          };
+        });
+        pendingWrongClear = null;
 
-        // Remove the wrong value and banner
-        grid[selected] = 0;
+        // Remove the wrong value and banner — always targets wrongIdx, never
+        // the currently-selected cell, so moving focus mid-countdown never
+        // wipes a valid entry on another cell.
+        grid[wrongIdx] = 0;
         if (banner.parentNode) banner.parentNode.removeChild(banner);
 
         if (isGameOver) {

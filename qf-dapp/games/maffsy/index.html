@@ -939,9 +939,11 @@ function submitMaffsyComplete(won, guesses) {
       if (data.success) {
         _serverStats = { played: data.played, won: data.won, streak: data.streak, maxStreak: data.maxStreak };
         renderSbar(); if (G.status !== 'playing') showEnd();
-        if (won && data.sessionId && data.maxStreak > 0 && window.promptLeaderboardSubmit) {
+        if (won && data.sessionId && data.streak > 0 && window.promptLeaderboardSubmit) {
           var elapsed = (G.t1 && G.t0) ? (G.t1 - G.t0) : 0;
-          window.promptLeaderboardSubmit({ gameId: 'maffsy', score: data.maxStreak, timeMs: elapsed, sessionId: data.sessionId });
+          // Leaderboard metric = current consecutive-wins streak (resets on any failure).
+          // Higher streak ranks higher because the leaderboard sorts by score DESC.
+          window.promptLeaderboardSubmit({ gameId: 'maffsy', score: data.streak, timeMs: elapsed, sessionId: data.sessionId });
         }
       }
     }).catch(function() {});

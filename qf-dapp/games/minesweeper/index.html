@@ -408,6 +408,14 @@ body{background:var(--bg);color:var(--text);font-family:'Inter',sans-serif;min-h
 </div>
 
 <script>
+// ── Suppress native context menu page-wide ─────────────────────────────
+// Right-click is the flag action in Minesweeper. A simultaneous L+R "chord"
+// on the final cell could previously slip a native context menu through
+// because the cell element got re-rendered between mousedown and contextmenu
+// (or the winning modal covered the board). A single document-level
+// preventDefault catches every contextmenu regardless of target.
+document.addEventListener('contextmenu', function(e) { e.preventDefault(); });
+
 // ── Cookie consent ────────────────────────────────────────────────────
 (function(){
   var c = localStorage.getItem('mw_cookies');
