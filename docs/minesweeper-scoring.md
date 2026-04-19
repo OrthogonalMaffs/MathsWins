@@ -68,3 +68,11 @@ Problems:
 
 - Before the new formula went live, all pre-existing minesweeper rows were wiped from both `global_leaderboard_entries` and `personal_bests` (per `feedback_scoring-change-wipe-rows.md`). Mixing old-formula scores with new-formula scores on the same leaderboard is unfair — wipe first, then ship.
 - Per-difficulty ceilings mean the leaderboard across difficulties sorts on raw score — but the frontend shows one leaderboard per difficulty (minesweeper popout has per-difficulty tabs) so cross-difficulty comparison isn't user-visible by default.
+
+## How-to-Play copy
+
+The in-game "How to Play & Scoring" section at `qf-dapp/games/minesweeper/index.html` describes the behaviour without leaking the `(BASE, T)` constants:
+
+> **Scoring:** Points awarded based on difficulty and completion time. Harder boards earn higher scores. Faster completions score more — but improvement always counts. Detonation = game over (0 pts).
+
+Updated 2026-04-19 (commit `d564162`) after the formula swap — prior copy still advertised the retired `5000 − 1pt/sec` rule. Keep constants out of player-facing copy — leaderboard behaviour reveals the shape without needing the numbers exposed.

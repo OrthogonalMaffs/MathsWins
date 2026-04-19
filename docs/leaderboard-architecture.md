@@ -105,3 +105,27 @@ As of 2026-04-19:
 - **Trust-the-hash** — server does not verify on-chain payment amount; blocker is QF archive RPC `eth_getTransactionReceipt` returning null for valid txs. Platform-wide, not leaderboard-specific.
 - **`no such table: leagues`** background log spam — cosmetic, a stray `getActiveLeagues` caller hits a handle outside the main `getDb()` singleton. Not blocking any flow. Tracked in CLAUDE.md Known Issues.
 - **qf-leaderboard-prompt.js → batch endpoint** — post-launch cleanup task.
+
+## Payment model — one 50 QF covers all eligible periods
+
+Both submit paths (post-game prompt, My Account second-chance) pay **exactly once** for a given score, regardless of how many of daily/weekly/monthly it qualifies for. Server accepts a `periodTypes` array (max 3) in the `/global-leaderboard/enter` POST body and runs a single `splitFee({ value: ethers.parseEther('50') })` on QFSettlement — 5% burn / 95% team — then loops the insert/update for each listed period using the already-paid txHash. There is no per-period charging path in the backend.
+
+**Post-game prompt** (`qf-dapp/games/qf-leaderboard-prompt.js`): builds `allPeriods = qualifying.map(q => q.period)` after the per-period eligibility probe, sends one `sendTransaction({ value: 50 QF })`, POSTs once with `periodTypes: allPeriods`.
+
+**My Account second-chance** (`qf-dapp/my-account/index.html`): originally rendered one button per period, each triggering its own 50 QF payment — a PB eligible for all three cost 150 QF to fully submit. Fixed 2026-04-19 commit `212107a`:
+- `eligible[]` collects `{p, pCap, rank, wouldUpdate}` for every period where `shouldPrompt === true`.
+- Ineligible periods still render as inline status chips (ranked / already-better / outside top 25 / play-again).
+- A single button follows, reading `Submit to Leaderboard — <P1 Nth · P2 Nth · …> — 50 QF`.
+- On click, `submitToLeaderboard(btn)` reads `data-periods` off the button, issues one `sendTransaction`, POSTs with every eligible period in `periodTypes`, then replaces the button with one ranked chip per entered period (slotting alongside any pre-existing chips).
+
+Same backend, same wallet prompt count, same 50 QF total — the two paths are now behaviourally symmetric.
+
+## PB write path — `session_id` must thread through
+
+Every `upsertPersonalBest` caller must pass `sessionId` as the 6th arg. Before 2026-04-19 commit `8d66c02` none did — every PB row landed with `session_id = NULL`, which (a) caused the My Account batch-eligibility probe at `my-account/index.html:576` to skip every PB (no submit button ever rendered), and (b) made those rows eligible for the morning's "default-difficulty rows with NULL session_id" wipe, taking valid PBs down with the stale ones. Fixed at:
+
+- `scoring.mjs:507` — gameover-win path → `payload.sid`
+- `scoring.mjs:539` — submit-correct path → `payload.sid`
+- `scoring.mjs:629` — sequential-mode completion → `payload.sid`
+- `api.mjs` submit-freeplay route → local `sessionId` (the `sess_free_*` one the route just created)
+- `api.mjs` maffsy `/complete` route → session issuance reordered above the `upsertPersonalBest` call so the sid exists before the PB is written

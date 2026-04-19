@@ -51,7 +51,58 @@ Earned-card layout shows the description beneath the name, in a smaller muted ty
 3. If you need to overwrite an existing description, do it via manual `UPDATE` on Box 1 (the seed loop never overwrites non-NULL descriptions).
 4. Follow the tone rules above. A 5-row sample before populating the rest is Jon's established pre-flight check.
 
+## 2026-04-19 audit — 36 description corrections
+
+Full 164-row catalogue was reviewed row-by-row. 36 rows carried factual errors, wrong thresholds, or off-tone copy relative to the rest of the catalogue. Exact replacements agreed and shipped as a single idempotent migration.
+
+**Migration file:** `docs/migrations/20260419-achievement-descriptions.sql` — one transaction, 36 UPDATEs keyed by `achievement_id` PRIMARY KEY (each affects exactly 1 row). Applied to Box 1 and committed in `7b6dc9c`.
+
+Categories of change:
+
+**Spend-threshold pinning (loyalty):**
+- `skin-in-the-game` → "Spent 1,000 QF on the platform."
+- `true-believer` → "Spent 10,000 QF on the platform."
+
+**League volume pinning (milestones):**
+- `committed` → 10 leagues
+- `dedicated` → 50 leagues
+- `legend` → 500 leagues
+- `dominant` → 25 league wins
+- `specialist` → 10 leagues on a single game
+- `master-of-one` → 3 league wins on a single game
+
+**Duel volume pinning:**
+- `duelist` → 10 duels
+- `gladiator` → 50 duels
+- `the-wall` → 10 consecutive duel wins without a loss
+
+**Battleships series (all numeric thresholds):**
+- `scatter-gun` → fired on 50% of the grid without a hit
+- `do-you-even-aim-bro` → fired on 75% of the grid without a hit
+- `sub-hunter` → sunk 100 submarines
+- `carrier-supremacy` → 100 games with carrier alive
+- `the-admiral` → 50 wins
+- `unsinkable` → 10 consecutive wins without losing the battleship
+
+**Mathematical constants — exact pinned scores:**
+- `pi` → 3,141 · `euler` → 2,718 · `golden-ratio` → 1,618 · `root-two` → 1,414 · `root-three` → 1,732
+
+**Meta/collection achievements — explicit set descriptions:**
+- `the-grandmaster` → "Held The Completionist, The Contrarian, and Shadow Legend simultaneously."
+- `the-wolf-pack` → "Held The Wolf, Sub Hunter, and Carrier Supremacy simultaneously."
+- `the-mathematicians-collection` → "Held all five mathematical constant achievement NFTs simultaneously."
+- `immaculate` → "Held all eight purity achievement NFTs simultaneously."
+
+**Game-specific factual corrections:**
+- `crib-master`, `all-pairs`, `dead-mans-hand` (poker-patience detail)
+- `the-archaeologist`, `kings-ransom`, `pharaohs-curse`, `curse-of-the-mummy`, `tutankhamun` (pyramid mechanics)
+- `lucky-number` → FreeCell deal 7,777
+- `next-in-line` → 10 sequence-solver puzzles without a wrong answer
+
+This audit supersedes the earlier "no exact thresholds" guideline for the cases above — Jon's call on a row-by-row basis to expose numbers where they make the achievement *aspirational* rather than *grindable-and-trivial*. Tone rules at the top of this doc still apply to any new entries.
+
 ## Related
 
 - `docs/achievement-system.md` — full registry structure, mint mechanics, categories, tier costs.
 - `docs/achievement-audit-2026-04-17.md` — earlier orphan/wiring audit.
+- `docs/migrations/20260419-achievement-descriptions.sql` — the 36-row fix.
