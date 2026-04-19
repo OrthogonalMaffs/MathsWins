@@ -655,32 +655,46 @@ async function renderScores() {
         html += '<span class="hs-diff-date">' + formatDate(r.achieved_at) + '</span>';
         html += '</div>';
 
-        html += '<div class="hs-period-row">';
+        // Classify each period for this row. Eligible periods batch into a single
+        // 50 QF button; everything else renders as an inline status chip so the
+        // Daily/Weekly/Monthly slot always shows something.
+        var eligible = [];
+        var inlineChips = [];
         ['daily', 'weekly', 'monthly'].forEach(function(p) {
           var pCap = p.charAt(0).toUpperCase() + p.slice(1);
           var currentRank = rankedMap[p];
           var periodRes = hasSession ? (periodResults.filter(function(x) { return x.periodType === p; })[0] || null) : null;
 
           if (periodRes && periodRes.shouldPrompt) {
-            // Eligible — new or update. Render Submit button with projected rank.
-            var verb = periodRes.wouldUpdate ? 'update to' : 'would rank';
-            var cls = periodRes.wouldUpdate ? 'hs-period-btn update' : 'hs-period-btn';
-            var label = pCap + ' \u2014 ' + verb + ' ' + ordinal(periodRes.rank) + ' \u2014 50 QF';
-            html += '<button class="' + cls + '" onclick="submitToLeaderboard(\'' + gid + '\',[\'' + p + '\'],\'' + sid + '\',' + (r.score || 0) + ',' + (r.time_ms || 0) + ',this)">' + label + '</button>';
+            eligible.push({ p: p, pCap: pCap, rank: periodRes.rank, wouldUpdate: !!periodRes.wouldUpdate });
           } else if (currentRank) {
-            // Already ranked on this period (shared across difficulties — may actually be a different difficulty's row)
-            html += '<span class="hs-period ranked">' + pCap + ' \u2B50 ' + ordinal(currentRank) + '</span>';
+            inlineChips.push('<span class="hs-period ranked">' + pCap + ' \u2B50 ' + ordinal(currentRank) + '</span>');
           } else if (!hasSession) {
-            // No live session → tell user to play again
-            html += '<span class="hs-period muted">' + pCap + ' \u2014 play again to submit</span>';
+            inlineChips.push('<span class="hs-period muted">' + pCap + ' \u2014 play again to submit</span>');
           } else if (periodRes && periodRes.alreadyEntered && !periodRes.wouldUpdate) {
-            // Existing entry already beats this submission
-            html += '<span class="hs-period muted">' + pCap + ' \u2014 already better</span>';
+            inlineChips.push('<span class="hs-period muted">' + pCap + ' \u2014 already better</span>');
           } else {
-            // Session valid but wouldn\u2019t crack top 25
-            html += '<span class="hs-period muted">' + pCap + ' \u2014 outside top 25</span>';
+            inlineChips.push('<span class="hs-period muted">' + pCap + ' \u2014 outside top 25</span>');
           }
         });
+
+        html += '<div class="hs-period-row">';
+        html += inlineChips.join('');
+        if (eligible.length > 0) {
+          var anyUpdate = eligible.some(function(e) { return e.wouldUpdate; });
+          var btnCls = anyUpdate ? 'hs-period-btn update' : 'hs-period-btn';
+          var periodsAttr = eligible.map(function(e) { return e.p; }).join(',');
+          var summary = eligible.map(function(e) { return e.pCap + ' ' + ordinal(e.rank); }).join(' \u00B7 ');
+          var label = 'Submit to Leaderboard \u2014 ' + summary + ' \u2014 50 QF';
+          html += '<button class="' + btnCls + '"'
+            + ' data-game-id="' + gid + '"'
+            + ' data-sid="' + sid + '"'
+            + ' data-score="' + (r.score || 0) + '"'
+            + ' data-time-ms="' + (r.time_ms || 0) + '"'
+            + ' data-periods="' + periodsAttr + '"'
+            + ' onclick="submitToLeaderboard(this)">'
+            + label + '</button>';
+        }
         html += '</div>';
         html += '</div>';
       });
@@ -722,7 +736,18 @@ async function renderScores() {
 }
 
 // ── Submit to leaderboard (mirrors qf-leaderboard-prompt.js pay pattern) ──
-async function submitToLeaderboard(gameId, periodTypes, sessionId, score, timeMs, btn) {
+// Single 50 QF payment batches every eligible period for this PB row.
+async function submitToLeaderboard(btn) {
+  var gameId = btn.getAttribute('data-game-id');
+  var sessionId = btn.getAttribute('data-sid');
+  var score = Number(btn.getAttribute('data-score')) || 0;
+  var timeMs = Number(btn.getAttribute('data-time-ms')) || 0;
+  var periodTypes = (btn.getAttribute('data-periods') || '').split(',').filter(Boolean);
+  if (!gameId || !sessionId || periodTypes.length === 0) {
+    btn.textContent = 'Missing data';
+    return;
+  }
+
   btn.disabled = true;
   btn.textContent = 'Waiting for wallet\u2026';
 
@@ -763,20 +788,12 @@ async function submitToLeaderboard(gameId, periodTypes, sessionId, score, timeMs
     var data = await res.json();
     if (data.success) {
       var entered = data.entered || [];
-      var skipped = data.skipped || [];
       var cap = function(s) { return s.charAt(0).toUpperCase() + s.slice(1); };
-      // Each click submits a single period now — look up the one result.
-      var only = entered[0];
-      if (only) {
-        var verb = only.action === 'updated' ? 'Updated' : 'Ranked';
-        btn.textContent = '\u2B50 ' + verb + ' ' + cap(only.periodType) + ' \u00B7 ' + ordinal(only.rank);
-        btn.classList.add('hs-period-btn-done');
-      } else if (skipped.length) {
-        btn.textContent = 'Already better \u2014 no change';
-      } else {
-        btn.textContent = '\u2B50 Submitted';
-      }
-      // btn stays disabled — this period is done for this session
+      // Replace the single batched button with one ranked chip per entered period.
+      var chips = entered.map(function(e) {
+        return '<span class="hs-period ranked">' + cap(e.periodType) + ' \u2B50 ' + ordinal(e.rank) + '</span>';
+      }).join('');
+      btn.outerHTML = chips || '<span class="hs-period ranked">\u2B50 Submitted</span>';
     } else {
       btn.textContent = data.error || 'Failed';
       btn.disabled = false;
