@@ -47,13 +47,56 @@ const leaguePots = db.prepare(
 // 2. Duel stakes held in escrow
 //    - status='created': creator paid if creator_tx not null
 //    - status='accepted' or 'completed' pending settle: both may have paid
-//    - status='expired' with creator_tx and no matching out/refund row: pending refund
+//    - status='expired' with creator_tx/acceptor_tx → check for:
+//        (a) matching reference_id ledger row (direct link), OR
+//        (b) matching duel_refunds row with status='sent' (new retryable path), OR
+//        (c) heuristic match to an orphan ledger row (legacy before reference_id
+//            was wired — amount + recipient + within 10 min of expiry)
 const duelsRaw = db.prepare(
-  "SELECT id, stake, status, creator_tx, acceptor_tx FROM duels WHERE status IN ('created', 'accepted', 'expired') AND (creator_tx IS NOT NULL OR acceptor_tx IS NOT NULL)"
+  "SELECT id, stake, status, creator_wallet, opponent_wallet, creator_tx, acceptor_tx, expires_at FROM duels WHERE status IN ('created', 'accepted', 'expired') AND (creator_tx IS NOT NULL OR acceptor_tx IS NOT NULL)"
 ).all();
+
+// Candidate pool of orphan (reference_id IS NULL) refund rows — greedy-consumed
+// by the heuristic. At most one duel per orphan row. Sorted by created_at so
+// an earlier-expiring duel claims an earlier ledger row.
+const orphanRefunds = db.prepare(
+  "SELECT id, amount_qf, recipient, created_at FROM escrow_ledger WHERE type = 'refund' AND source = 'duel' AND direction = 'out' AND (reference_id IS NULL OR reference_id = '') ORDER BY created_at ASC"
+).all();
+const consumedOrphanIds = new Set();
+
+function isRefundedOnChain(duelId, wallet, amountQf, expiresAt) {
+  if (!wallet || !(amountQf > 0)) return false;
+  // (a) direct reference_id link
+  const direct = db.prepare(
+    "SELECT 1 FROM escrow_ledger WHERE reference_id = ? AND recipient = ? AND amount_qf = ? AND type = 'refund' AND source = 'duel' AND direction = 'out' LIMIT 1"
+  ).get(duelId, wallet.toLowerCase(), amountQf);
+  if (direct) return true;
+  // (b) duel_refunds row in 'sent' state
+  try {
+    const tracked = db.prepare(
+      "SELECT 1 FROM duel_refunds WHERE duel_id = ? AND wallet = ? AND status = 'sent' LIMIT 1"
+    ).get(duelId, wallet.toLowerCase());
+    if (tracked) return true;
+  } catch (e) { /* table may not exist pre-migration */ }
+  // (c) heuristic: orphan ledger row with matching recipient + amount + time window
+  if (!expiresAt) return false;
+  const windowStart = expiresAt - 60 * 1000;
+  const windowEnd = expiresAt + 600 * 1000;
+  for (const row of orphanRefunds) {
+    if (consumedOrphanIds.has(row.id)) continue;
+    if (row.recipient.toLowerCase() !== wallet.toLowerCase()) continue;
+    if (Math.abs(row.amount_qf - amountQf) > 0.00001) continue;
+    if (row.created_at < windowStart || row.created_at > windowEnd) continue;
+    consumedOrphanIds.add(row.id);
+    return true;
+  }
+  return false;
+}
 
 let duelStakes = 0;
 const duelDetail = { created: 0, accepted: 0, expiredPendingRefund: 0 };
+// Sort expired duels by expires_at ascending so the heuristic pairs earliest first
+duelsRaw.sort((a, b) => (a.expires_at || 0) - (b.expires_at || 0));
 for (const d of duelsRaw) {
   const stake = d.stake || 0;
   const creatorPaid = d.creator_tx ? stake : 0;
@@ -65,13 +108,13 @@ for (const d of duelsRaw) {
     duelStakes += creatorPaid + acceptorPaid;
     duelDetail.accepted += creatorPaid + acceptorPaid;
   } else if (d.status === 'expired') {
-    // Check if refund already went out for this duel id
-    const refunded = db.prepare(
-      "SELECT 1 FROM escrow_ledger WHERE reference_id = ? AND type = 'refund' AND source = 'duel' AND direction = 'out' LIMIT 1"
-    ).get(d.id);
-    if (!refunded) {
-      duelStakes += creatorPaid + acceptorPaid;
-      duelDetail.expiredPendingRefund += creatorPaid + acceptorPaid;
+    if (creatorPaid > 0 && !isRefundedOnChain(d.id, d.creator_wallet, stake, d.expires_at)) {
+      duelStakes += stake;
+      duelDetail.expiredPendingRefund += stake;
+    }
+    if (acceptorPaid > 0 && !isRefundedOnChain(d.id, d.opponent_wallet, stake, d.expires_at)) {
+      duelStakes += stake;
+      duelDetail.expiredPendingRefund += stake;
     }
   }
 }

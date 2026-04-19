@@ -17,7 +17,7 @@ import express from 'express';
 import cors from 'cors';
 import helmet from 'helmet';
 import { getDb } from './db/index.mjs';
-import { expireOldDuels } from './db/index.mjs';
+import { expireOldDuels, addDuelRefund, getPendingDuelRefunds, getFailedDuelRefunds, updateDuelRefundStatus } from './db/index.mjs';
 import apiRoutes from './routes/api.mjs';
 import { checkLeagueLifecycles, checkBattleshipsTimeouts } from './routes/api.mjs';
 import { registerAllGames } from './games/index.mjs';
@@ -142,32 +142,54 @@ console.log('Session recovery complete');
 startListener();
 console.log('Chain listener started');
 
-// Expire stale duels every 5 minutes and refund stakes
+// Expire stale duels every 5 minutes. Queue refund rows first (so RPC
+// failures are retryable), then attempt them immediately, then try any
+// still-pending/failed rows from previous runs.
+async function sendOneDuelRefund(row) {
+  try {
+    const txHash = await refundDuel(row.wallet, row.amount_qf, row.duel_id);
+    if (txHash) {
+      updateDuelRefundStatus(row.id, 'sent', txHash, null);
+      console.log('Duel ' + row.duel_id.slice(0, 8) + '... refunded ' + row.amount_qf + ' QF to ' + row.role + ' ' + row.wallet.slice(0, 8) + '... tx: ' + txHash);
+    } else {
+      updateDuelRefundStatus(row.id, 'failed', null, 'sendQF returned null');
+      console.error('Duel refund failed for ' + row.duel_id.slice(0, 8) + '... (' + row.role + ', ' + row.wallet.slice(0, 8) + '...): sendQF returned null');
+    }
+  } catch (e) {
+    updateDuelRefundStatus(row.id, 'failed', null, e.message);
+    console.error('Duel refund threw for ' + row.duel_id.slice(0, 8) + '... (' + row.role + '):', e.message);
+  }
+}
+
 setInterval(async () => {
   try {
     var expired = expireOldDuels();
+    var now = Date.now();
     for (var d of expired) {
-      // Refund creator stake only if they actually paid
+      // Queue pending refund rows up-front so the intent is persisted
+      // even if the server crashes mid-sweep or an RPC call fails.
       if (d.creator_wallet && d.stake > 0 && d.creator_tx) {
-        try {
-          await refundDuel(d.creator_wallet, d.stake);
-          console.log('Duel ' + d.id.slice(0, 8) + '... expired — refunded ' + d.stake + ' QF to creator ' + d.creator_wallet.slice(0, 8) + '...');
-        } catch (e) { console.error('Duel refund failed for creator ' + d.creator_wallet.slice(0, 8) + '...:', e.message); }
+        addDuelRefund(d.id, d.creator_wallet, 'creator', d.stake, now);
       }
-      // Refund opponent stake only if they actually paid
       if (d.status === 'accepted' && d.opponent_wallet && d.stake > 0 && d.acceptor_tx) {
-        try {
-          await refundDuel(d.opponent_wallet, d.stake);
-          console.log('Duel ' + d.id.slice(0, 8) + '... expired — refunded ' + d.stake + ' QF to opponent ' + d.opponent_wallet.slice(0, 8) + '...');
-        } catch (e) { console.error('Duel refund failed for opponent ' + d.opponent_wallet.slice(0, 8) + '...:', e.message); }
+        addDuelRefund(d.id, d.opponent_wallet, 'opponent', d.stake, now);
       }
-      // Edit channel broadcast if one was posted
       if (d.broadcast_message_id) {
         try {
           const { editDuelBroadcastExpired } = await import('./telegram.mjs');
           editDuelBroadcastExpired(d.broadcast_message_id, d);
         } catch (e) { /* must never block */ }
       }
+    }
+
+    // Process all pending + previously-failed refunds. Retrying failed rows
+    // here gives RPC-blip recovery without needing a separate timer.
+    var pending = getPendingDuelRefunds();
+    for (var r1 of pending) await sendOneDuelRefund(r1);
+    var failed = getFailedDuelRefunds();
+    for (var r2 of failed) {
+      if (r2.attempted_at && (now - r2.attempted_at) < 60000) continue;
+      await sendOneDuelRefund(r2);
     }
   } catch (e) { console.error('Duel expiry sweep error:', e); }
 }, 5 * 60 * 1000);

@@ -93,6 +93,25 @@ CREATE INDEX IF NOT EXISTS idx_duels_share_code ON duels(share_code);
 CREATE INDEX IF NOT EXISTS idx_duels_creator ON duels(creator_wallet);
 CREATE INDEX IF NOT EXISTS idx_duels_status ON duels(status, expires_at);
 
+-- Duel refunds (mirrors league_refunds — tracks pending/sent/failed so
+-- an RPC-time failure on the 5-min expiry sweep is retried rather than
+-- silently orphaning the stake).
+CREATE TABLE IF NOT EXISTS duel_refunds (
+    id              INTEGER PRIMARY KEY AUTOINCREMENT,
+    duel_id         TEXT NOT NULL,
+    wallet          TEXT NOT NULL,
+    role            TEXT NOT NULL,
+    amount_qf       REAL NOT NULL,
+    status          TEXT NOT NULL DEFAULT 'pending',
+    tx_hash         TEXT,
+    attempted_at    INTEGER,
+    sent_at         INTEGER,
+    failed_reason   TEXT,
+    created_at      INTEGER NOT NULL,
+    UNIQUE(duel_id, wallet)
+);
+CREATE INDEX IF NOT EXISTS idx_duel_refunds_status ON duel_refunds(status);
+
 -- Promo challenges (reusable codes like #MAFFS)
 CREATE TABLE IF NOT EXISTS promo_challenges (
     id              TEXT PRIMARY KEY,

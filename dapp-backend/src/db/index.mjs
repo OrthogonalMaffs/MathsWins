@@ -1353,6 +1353,46 @@ export function updateRefundStatus(id, status, txHash, failedReason) {
   }
 }
 
+// ── Duel refunds ──────────────────────────────────────────────────────
+// Mirrors league_refunds. Write a pending row up-front on expiry so
+// RPC-time failures become retryable rather than silent orphans.
+
+export function addDuelRefund(duelId, wallet, role, amountQf, createdAt) {
+  const db = getDb();
+  db.prepare('INSERT OR IGNORE INTO duel_refunds (duel_id, wallet, role, amount_qf, status, created_at) VALUES (?, ?, ?, ?, ?, ?)')
+    .run(duelId, wallet.toLowerCase(), role, amountQf, 'pending', createdAt);
+}
+
+export function getPendingDuelRefunds() {
+  const db = getDb();
+  return db.prepare("SELECT * FROM duel_refunds WHERE status = 'pending'").all();
+}
+
+export function getFailedDuelRefunds() {
+  const db = getDb();
+  return db.prepare("SELECT * FROM duel_refunds WHERE status = 'failed'").all();
+}
+
+export function getDuelRefunds(duelId) {
+  const db = getDb();
+  return db.prepare('SELECT * FROM duel_refunds WHERE duel_id = ? ORDER BY created_at ASC').all(duelId);
+}
+
+export function updateDuelRefundStatus(id, status, txHash, failedReason) {
+  const db = getDb();
+  const now = Date.now();
+  if (status === 'sent') {
+    db.prepare('UPDATE duel_refunds SET status = ?, tx_hash = ?, sent_at = ? WHERE id = ?')
+      .run(status, txHash, now, id);
+  } else if (status === 'failed') {
+    db.prepare('UPDATE duel_refunds SET status = ?, failed_reason = ?, attempted_at = ? WHERE id = ?')
+      .run(status, failedReason, now, id);
+  } else {
+    db.prepare('UPDATE duel_refunds SET status = ?, attempted_at = ? WHERE id = ?')
+      .run(status, now, id);
+  }
+}
+
 export function cancelLeagueWithReason(leagueId, reason) {
   const db = getDb();
   db.prepare("UPDATE leagues SET status = 'cancelled', cancelled_at = ?, cancel_reason = ? WHERE id = ?")
