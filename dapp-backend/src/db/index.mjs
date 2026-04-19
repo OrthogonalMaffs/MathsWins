@@ -1462,7 +1462,11 @@ export function getRecentlySettledLeagues(gameId, limit) {
 // ── Personal bests ─────────────────────────────────────────────────────────
 
 export const TIME_PRIMARY_GAMES = new Set(['minesweeper', 'freecell', 'nonogram', 'kakuro']);
-const PURE_TIME_GAMES = new Set(['minesweeper', 'freecell']);
+// minesweeper and freecell were incorrectly classified here — both store
+// `5000 − seconds` as their score (higher is better), which the reverse
+// branch handles correctly. The set is kept (empty) as a slot for any
+// future game that genuinely stores raw-time-as-score.
+const PURE_TIME_GAMES = new Set();
 
 export function upsertPersonalBest(wallet, gameId, difficulty, score, timeMs, sessionId) {
   const db = getDb();
