@@ -126,6 +126,21 @@ Platform: Academy (9 courses), Tools (28 calculators), Games (22 dApp + 13 main 
 
   Verification: 4 toggles × 26 parallel = 104 GETs all returned 200; 130 POSTs to non-whitelisted endpoint returned exactly 120 × 401 + 10 × 429 (proves global limiter at 120/IP is firing per real client IP). Browser-confirmed by Jon. The unrelated POST `/duel/:code/broadcast` per-wallet 5/24h limiter at `routes/api.mjs:776` is intentionally untouched (anti-abuse, per-wallet not per-IP).
 
+## Late-night 2026-04-19 → 2026-04-20
+
+- **`OWNER_WALLETS` expanded to 4.** Added `0x7a3C15461f89742d8416c560Ba07CF8732a6f8EF` (notabot.qf) to the list in `ecosystem.config.cjs` so Regicide/Detention trigger when Jon's primary wallet places in a league. `.env` also carries the same value but is overridden by the PM2 env block (see `server.mjs` .env-loader comment: "ecosystem.config.cjs values always take precedence"). Lands on overnight 03:05 restart.
+- **Founding Member window narrowed.** `FOUNDING_MEMBER_START=2026-04-19`, `FOUNDING_MEMBER_END=2026-06-18` (60 full days from launch). Read live on every league-puzzle submission at `api.mjs:1205-1219`. Pre-launch testers who minted `founding-member` between April 11–18 keep their NFTs — see memory `mathswins-founding-member-window.md`. Lands on overnight 03:05 restart.
+- **Maffsy default flipped to free play.** `qf-dapp/games/maffsy/index.html:564` — new users now land in unlimited-puzzle mode. Existing users keep their stored `PREFS.free`. Commit `a7db4d3`. **Known bug exposed:** free play short-circuits at `index.html:933` *before* posting to `/maffsy/complete`, so wins in free play don't trigger `wordy` / `binary-decision` / `feel-no-pressure` achievements, streak counter, or leaderboard prompt. Pre-existing — flip amplified exposure. Needs design review with PC before fix (see below).
+- **Bug Hunter minted to Kyle (`0xA3DE…347b`)** — token #20, tx `0x5d29a9e6…35bbe1c8`. Standard mint (Jon holds #18 Pioneer for Bug Hunter, earned).
+- **Wordy earned + minted to notabot.qf** — token #22, tx `0x6095dffb…90171717`. Initially Pioneer; subsequently cleared per new rule (see below).
+- **Pioneer tags cleared on notabot.qf for `league-month` (#21) and `wordy` (#22).** Only `bug-hunter` (#18) Pioneer retained — that one was legitimately earned.
+
+## Change Required (picked up with PC, 2026-04-20)
+
+- **`PIONEER_EXCLUDED_WALLETS` env + `awardAchievement` guard.** Hard rule: notabot.qf (`0x7a3C…f8EF`) must never be Pioneer on any NFT (exception: the already-minted `bug-hunter` #18). Implementation sketch: new env var in `ecosystem.config.cjs` following the `OWNER_WALLETS` pattern; `awardAchievement` in `dapp-backend/src/db/index.mjs:758` reads list and skips the `UPDATE achievement_registry SET first_claimed_by` + `UPDATE achievement_eligibility SET is_pioneer = 1` block when wallet matches. No on-chain change (pioneer is DB-only). Memory rule `feedback_notabot-no-pioneer.md` is the interim safety net. PC to review before code lands.
+- **Maffsy free-play achievement gate.** `qf-dapp/games/maffsy/index.html:933` short-circuits before `/maffsy/complete` when `PREFS.free`. Removing the gate has a subtlety: `recordMaffsyResult` uses `ON CONFLICT(wallet, play_date) DO UPDATE` — firing it on every free-play game overwrites today's row and corrupts streak semantics. Options: (a) split achievement check from streak write (separate handlers), (b) make `recordMaffsyResult` no-op once today's row is a win. PC design call.
+- **Box 1 drift audit (defer).** Box 1 `/home/jon/mathswins-dapp/src/` has 21 files that local GitHub clone doesn't — legacy `api.mjs`/`index.mjs`/`estimation-engine.mjs`/`kenken.mjs` at src root, plus a duplicate `src/games/games/` subtree of all 16 game files. Likely dead code from earlier refactors but requires per-file import audit before deletion. Not restart-adjacent; separate session.
+
 ## Standing rules added 2026-04-19
 
 - **Escrow floor:** wallet must always hold at least `obligations + 100 QF`. Obligations = active league pots + held duel stakes + pending refunds. `scripts/escrow-sweep.mjs` is the canonical tool; manual drains below that floor are unsafe.
