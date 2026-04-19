@@ -35,6 +35,10 @@ const PORT = process.env.PORT || 3860;
 
 const app = express();
 
+// Behind Cloudflare Tunnel: trust X-Forwarded-For so req.ip is the real client IP,
+// not 127.0.0.1. Without this, every visitor shares one rate-limit bucket.
+app.set('trust proxy', true);
+
 // Disable ETag — combined with Cache-Control: no-store below, prevents browsers
 // from sending If-None-Match and getting back an empty 304 that breaks res.json().
 app.set('etag', false);
@@ -62,8 +66,23 @@ app.use((req, res, next) => {
 });
 
 // ── Rate limiting (simple in-memory, replace with Redis for production) ─────
+// Read-only GETs on these prefixes are whitelisted: cheap, public, and the
+// lobby grid + My Account fire 26+ parallel fetches per render.
+// Matched against req.originalUrl (mirrors the timing middleware below) — req.path
+// inside this mounted handler does not strip the /api/dapp prefix in this stack.
+const RATE_LIMIT_GET_WHITELIST = [
+  '/api/dapp/global-leaderboard/',
+  '/api/dapp/profile/',
+  '/api/dapp/achievements/',
+  '/api/dapp/leagues/',
+  '/api/dapp/league/',
+];
 const rateLimits = new Map();
 app.use('/api/dapp', (req, res, next) => {
+  if (req.method === 'GET' && RATE_LIMIT_GET_WHITELIST.some(p => req.originalUrl.startsWith(p))) {
+    return next();
+  }
+
   const key = req.ip;
   const now = Date.now();
   const window = 60000; // 1 minute

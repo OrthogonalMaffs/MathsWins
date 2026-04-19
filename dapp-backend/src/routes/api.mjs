@@ -2485,21 +2485,9 @@ router.get('/admin/schema', requireAdmin, (req, res) => {
 });
 
 // ── Profile endpoint ──────────────────────────────────────────────────────
+// Rate limiting handled globally in server.mjs (whitelisted GET).
 
-const profileRateLimit = new Map();
 router.get('/profile/:wallet', (req, res) => {
-  // Rate limit: 60 requests/minute per IP
-  const ip = req.ip || req.connection.remoteAddress;
-  const now = Date.now();
-  const windowStart = now - 60000;
-  const hits = profileRateLimit.get(ip) || [];
-  const recent = hits.filter(t => t > windowStart);
-  if (recent.length >= 60) {
-    return res.status(429).json({ error: 'Rate limit exceeded' });
-  }
-  recent.push(now);
-  profileRateLimit.set(ip, recent);
-
   const wallet = req.params.wallet;
   if (!wallet || wallet.length < 10) {
     return res.status(400).json({ error: 'Invalid wallet address' });
@@ -2762,16 +2750,8 @@ router.post('/global-leaderboard/eligibility', optionalWallet, (req, res) => {
 });
 
 // Parameterized route LAST (after static routes)
-var glbRateLimit = new Map();
+// Rate limiting handled globally in server.mjs (whitelisted GET).
 router.get('/global-leaderboard/:gameId/:periodType', (req, res) => {
-  var ip = req.ip || req.connection.remoteAddress;
-  var now = Date.now();
-  var hits = glbRateLimit.get(ip) || [];
-  var recent = hits.filter(function(t) { return t > now - 60000; });
-  if (recent.length >= 60) return res.status(429).json({ error: 'Rate limit exceeded' });
-  recent.push(now);
-  glbRateLimit.set(ip, recent);
-
   var gameId = req.params.gameId;
   var periodType = req.params.periodType;
   if (['daily', 'weekly', 'monthly'].indexOf(periodType) === -1) {
