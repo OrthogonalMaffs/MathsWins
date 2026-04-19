@@ -8,6 +8,7 @@
 - `settleDraw(p1, p2)` — duel draw: 5% burn + 10% team + 42.5% each (at defaults)
 - `splitFee()` — achievement mints + leaderboard entries: **hardcoded 5% burn + 95% team** (ringfenced from setSplits)
 - `setSplits(burnPct, teamPct)` — owner-only, duel splits only, requires `burn + team < 100`
+- **Owner (setSplits authority):** `0x8a542f4F1814fb2C29b96D8619FdaABBf67F3016` (Jon's Ledger). `teamWallet()` on the contract returns the same address.
 - Called by `escrow.mjs` (duel/battleships) and `routes/api.mjs` (mint, leaderboard)
 - **v1 retired:** `0x475F350469Cbe5aDd04aae4686339b3b990D013E` (hardcoded 5/5/90)
 
@@ -28,10 +29,13 @@
 **Refund sweep:** 5-min interval, only refunds if tx hash exists. League refunds: full entry fee, no burn.
 
 ## Global Leaderboard Payment
-- 50 QF per entry (user wallet → escrow, split: 2 QF burn + 48 QF team via splitFee)
+- 50 QF per entry (user wallet → escrow, split: 2.5 QF burn + 47.5 QF team via `splitFee()`)
 - `POST /global-leaderboard/enter` requires txHash, accepts `periodTypes` array — one payment writes all qualifying periods
-- Eligibility check requires `status==='completed'` — gameover sessions excluded
+- **Gate order (post-2026-04-19 orphan fix):** periodType valid → session valid (getGameState: not flagged, status=completed) → classify periods (insert / better-update / notBetter via `isBetterEntry` comparator in `routes/api.mjs`) → if all notBetter return 400 "Your current leaderboard entry already beats this score" → **THEN** require txHash and call `splitFee()`. Every pre-payment gate now returns 400 before the user is asked to sign on-chain, eliminating the class of orphan where an invalid session used to pay before validation.
+- **Score updates** accepted: if the new submission beats the existing row per the ranking rule (higher score; tiebreak on time_ms ASC; TIME_PRIMARY_GAMES sort direction inverted) the existing row is overwritten with the new score + txHash. Exact tie = not better, rejected before payment.
+- **Per-difficulty entries** (post-2026-04-19 schema): `global_leaderboard_entries` has `difficulty TEXT DEFAULT 'default'` with `UNIQUE(wallet, game_id, difficulty, period_type, period_key)`. The /enter handler derives difficulty from the session (`gs.difficulty`) so the in-game prompt doesn't need to pass it. Multi-difficulty games (minesweeper) get one entry per (difficulty, period). Single-tier games land on `'default'`.
 - Dedup via sessionStorage `qf_lb_prompted_<sessionId>`
+- See `docs/leaderboard-architecture.md` for the full grid UI + batch eligibility flow.
 
 ## Escrow Ledger (`escrow_ledger` table)
 - Logs all sendQF calls: direction, type, amount_qf, source, reference_id

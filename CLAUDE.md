@@ -11,7 +11,10 @@ Platform: Academy (9 courses), Tools (28 calculators), Games (22 dApp + 13 main 
 - `docs/api-endpoints.md` — all 45+ endpoints with params
 - `docs/game-roster.md` — lobby structure, all games, scoring rules, battleships detail
 - `docs/achievement-system.md` — batch history, categories, mint tiers, known issues, contracts
-- `docs/payment-architecture.md` — escrow flow, burn/split, duel payment, Stripe, non-atomic settlement bug
+- `docs/payment-architecture.md` — escrow flow, burn/split, duel payment, Stripe, non-atomic settlement bug, gate order in /enter
+- `docs/leaderboard-architecture.md` — per-difficulty schema, batch eligibility endpoint, score-update flow, grid UI
+- `docs/minesweeper-scoring.md` — per-difficulty BASE × T / (T + t) curve, constants, migration notes
+- `docs/achievement-descriptions.md` — description column, reveal-on-earn policy, tone rules, Bug Hunter
 - `docs/achievement-audit-2026-04-17.md` — structural orphan audit
 
 ## Tech Stack
@@ -87,6 +90,20 @@ Platform: Academy (9 courses), Tools (28 calculators), Games (22 dApp + 13 main 
 - **Duel copy 90% → 85%** swept across 11 games (static modal text + runtime JS strings). Commit `ed0fdb2`.
 - **Sudoku-duel `checkComplete` defensive fix** — scans `grid[]` directly instead of relying on `confirmedCells.size`, preventing premature submit-on-incomplete-grid gameovers. Commit `487e6e6`.
 - **Bug Hunter achievement wired** (tier=free, mint_fee=0, category=community, active). Image + metadata pinned to IPFS. 162→163 active achievements. Awarded post-launch via `POST /admin/achievement/award`. Commit `3bee78d`.
+
+## Launch-Day Changes (2026-04-19)
+- **`global_leaderboard_entries.difficulty` column added** + composite `UNIQUE(wallet, game_id, difficulty, period_type, period_key)`. Migration is idempotent on `db/index.mjs` init (table-rebuild path, SQLite can't ALTER UNIQUE). `/enter` derives difficulty from `gs.difficulty`; `TIME_PRIMARY_GAMES` exported. See `docs/leaderboard-architecture.md`.
+- **`POST /global-leaderboard/eligibility` (batch) added.** Single-tuple GET unchanged (in-game prompt). Batch used by My Account for per-(game, difficulty, period) probing in one call. My Account now surfaces one submit button per eligible combination — per-period billing (50 QF per click). Post-launch cleanup: migrate `qf-leaderboard-prompt.js` off the legacy GET.
+- **Leaderboard UI rebuilt.** Dropdown + flat table replaced by grid of 20 game cards + click-to-popout modal. Minesweeper card = 4 difficulty rows; modal = per-difficulty tabs. Period toggle re-fetches all cards in parallel. `LB_DIFFICULTIES`, `LB_TIME_PRIMARY` in `qf-dapp/index.html`. Commit `8e893ac`.
+- **Minesweeper scoring curve replaced.** `score = round(BASE × T / (T + elapsedSeconds))` with per-difficulty `(BASE, T)` in `SCORING` at `minesweeper.mjs`. Old flat `5000 − seconds` dropped. See `docs/minesweeper-scoring.md`. Commit `9d217a2`.
+- **Orphan gate-order fix in `/global-leaderboard/enter`.** Session validation, period validation, and `isBetterEntry` classification now run *before* the `txHash required` check. Rejected-pre-payment flows no longer orphan 50 QF in escrow. See `docs/payment-architecture.md` § Global Leaderboard Payment. Commit `d036f46`.
+- **Score-update flow added.** Beating an existing leaderboard row costs another 50 QF and overwrites the row (new score + txHash). Exact tie = not better, rejected pre-payment. Mirrors the sort's direction + tiebreaker.
+- **PURE_TIME_GAMES inversion fix** — minesweeper and freecell store `5000 − seconds` (higher-is-better), never raw time. Removed both from the set so `upsertPersonalBest` uses the higher-score path. Commit `07699a3`.
+- **Submit-freeplay difficulty wiring** — minesweeper client now sends `difficulty: difficulty` in the POST body. Freecell / nonogram / sudoku-duel don't need it (single-tier / deal-based / duel-only difficulty). Kenken + kakuro already send via `/session/start`. Commit `52a1705`.
+- **Achievement descriptions.** `achievement_registry.description TEXT` column + 164-row `ACHIEVEMENT_DESCRIPTIONS` map. Reveal-on-earn only (`/achievements/my` joins description; `/achievements/all` and teaser page stay opaque). See `docs/achievement-descriptions.md`. Bug Hunter text: "Found and reported something that made the platform better."
+- **BUILDER_WALLETS env cleared.** `ecosystem.config.cjs` now `BUILDER_WALLETS: ''` — every wallet pays every trust-the-hash endpoint. `OWNER_WALLETS` kept (3 wallets: onlyfans.qf, Ledger, 0x08ba…70c3) — those still bypass mint fees only, not leagues/duels/leaderboard. Launch state.
+- **Minesweeper PB / leaderboard rows wiped** before the new scoring curve went live. Platform-wide stale `default`-difficulty rows with NULL session_id also cleared (32 rows, 14 games). All `.bak*` and `.pre-*` files on Box 1 swept (17 files). Standing rule: no backup/snapshot files on Box 1 — see global `feedback_no-bak-files.md`.
+- **4 UX niggles fixed pre-launch** (commit `f55e97c`): Sudoku wrong-entry race on cell re-selection, Minesweeper native context menu leak on chord, Estimation Engine Start Game button prominence, Maffsy leaderboard metric switched to current-streak. Sequence Solver answer-reveal deferred — needs PC-authored rule strings for 155+ questions.
 
 ## Recent Fixes (2026-04-18)
 - **Stake UI sweep** across 9 free-play game pages: `duel-stake-wrap` hidden by default, shown only on `?mode=duel` (kenken, countdown-numbers, sudoku-duel, cribbage-solitaire, nonogram, kakuro, poker-patience, freecell, battleships). Commit 7e6cb1c.
