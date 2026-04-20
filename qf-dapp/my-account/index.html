@@ -704,6 +704,12 @@ async function renderScores() {
     html += '</div></div>';
   }
 
+  // Maffsy — special all-time leaderboard (single lifetime-PB board, no periods)
+  try {
+    var maffsyHtml = await renderMaffsyAlltimeSection();
+    if (maffsyHtml) html += maffsyHtml;
+  } catch (e) { /* non-fatal — rest of the tab still renders */ }
+
   // League bests — card layout
   var lb = PROFILE.league_bests || [];
   if (lb.length > 0) {
@@ -794,6 +800,105 @@ async function submitToLeaderboard(btn) {
         return '<span class="hs-period ranked">' + cap(e.periodType) + ' \u2B50 ' + ordinal(e.rank) + '</span>';
       }).join('');
       btn.outerHTML = chips || '<span class="hs-period ranked">\u2B50 Submitted</span>';
+    } else {
+      btn.textContent = data.error || 'Failed';
+      btn.disabled = false;
+    }
+  } catch (e) {
+    btn.textContent = 'Error';
+    btn.disabled = false;
+  }
+}
+
+// ── Maffsy all-time leaderboard section ──────────────────────────────
+async function renderMaffsyAlltimeSection() {
+  // Fetch current stats + submitted row. If wallet isn't set (shouldn't happen on this page) bail.
+  var statsRes, lbRes, stats = null, board = null, yourRow = null;
+  try {
+    statsRes = await fetch(API + '/maffsy/stats', { headers: { 'Authorization': 'Bearer ' + JWT } });
+    if (statsRes.ok) stats = await statsRes.json();
+  } catch (e) { return ''; }
+  try {
+    lbRes = await fetch(API + '/maffsy/leaderboard', { headers: { 'Authorization': 'Bearer ' + JWT } });
+    if (lbRes.ok) board = await lbRes.json();
+  } catch (e) { /* non-fatal */ }
+  if (board) yourRow = board.yourRow || null;
+
+  var maxStreak = (stats && stats.maxStreak) || 0;
+  var submittedScore = yourRow ? yourRow.score : 0;
+  var submittedRank = yourRow ? yourRow.rank : null;
+
+  // Don't render the section at all if the user has never played Maffsy.
+  if (maxStreak === 0 && !yourRow) return '';
+
+  var h = '<div class="score-section"><h3>Maffsy All-Time</h3><div class="hs-cards">';
+  h += '<div class="hs-card"><div class="hs-card-header">';
+  h += '<span class="hs-card-game">Maffsy</span>';
+  if (submittedRank) {
+    h += '<span class="hs-card-rank">\u2B50 ' + ordinal(submittedRank) + ' \u00B7 All-Time</span>';
+  }
+  h += '</div>';
+  h += '<div class="hs-diff-block"><div class="hs-diff-summary">';
+  h += '<span class="hs-diff-name">lifetime</span>';
+  h += '<span class="hs-diff-score">' + maxStreak + ' streak</span>';
+  h += '<span class="hs-diff-date">' + (yourRow ? ('submitted ' + submittedScore) : '—') + '</span>';
+  h += '</div>';
+  h += '<div class="hs-period-row">';
+  if (maxStreak === 0) {
+    h += '<span class="hs-period muted">Play Maffsy to set a streak</span>';
+  } else if (submittedScore >= maxStreak) {
+    h += '<span class="hs-period ranked">All-Time \u2B50 ' + (submittedRank ? ordinal(submittedRank) : 'submitted') + '</span>';
+  } else {
+    var isUpdate = !!yourRow;
+    var btnCls = isUpdate ? 'hs-period-btn update' : 'hs-period-btn';
+    var label = 'Submit to Leaderboard \u2014 All-Time ' + maxStreak + ' \u2014 50 QF';
+    h += '<button class="' + btnCls + '" data-score="' + maxStreak + '" onclick="submitMaffsyLeaderboard(this)">' + label + '</button>';
+  }
+  h += '</div></div></div></div></div>';
+  return h;
+}
+
+async function submitMaffsyLeaderboard(btn) {
+  btn.disabled = true;
+  btn.textContent = 'Waiting for wallet\u2026';
+
+  var txHash;
+  try {
+    var cfgRes = await fetch(API + '/achievement/mint-config', {
+      headers: { 'Authorization': 'Bearer ' + JWT }
+    });
+    var cfg = await cfgRes.json();
+    if (!cfg || !cfg.escrowAddress) { btn.textContent = 'Config error'; btn.disabled = false; return; }
+
+    var signer = (window.qfWallet && window.qfWallet.signer) || null;
+    if (!signer || !signer.sendTransaction) { btn.textContent = 'Wallet not connected'; btn.disabled = false; return; }
+
+    var tx = await signer.sendTransaction({ to: cfg.escrowAddress, value: ethers.parseEther('50') });
+    txHash = tx && tx.hash;
+    if (!txHash) { btn.textContent = 'No tx hash'; btn.disabled = false; return; }
+  } catch (e) {
+    var code = e && (e.code || (e.info && e.info.error && e.info.error.code));
+    var isReject = code === 'ACTION_REJECTED' || code === 4001 ||
+      (e && e.message && /user (rejected|denied)/i.test(e.message));
+    btn.textContent = isReject ? 'Rejected' : 'Wallet error';
+    btn.disabled = false;
+    return;
+  }
+
+  btn.textContent = 'Processing\u2026';
+  var qnsName = (window.qfWallet && window.qfWallet.qfName) || null;
+  if (!qnsName && window.qfWallet && window.qfWallet.resolveAny && window.qfWallet.address) {
+    try { qnsName = await window.qfWallet.resolveAny(window.qfWallet.address); } catch (e) { qnsName = null; }
+  }
+  try {
+    var res = await fetch(API + '/maffsy/leaderboard-submit', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json', 'Authorization': 'Bearer ' + JWT },
+      body: JSON.stringify({ txHash: txHash, qnsName: qnsName })
+    });
+    var data = await res.json();
+    if (data.success) {
+      btn.outerHTML = '<span class="hs-period ranked">All-Time \u2B50 ' + (data.rank ? ordinal(data.rank) : 'submitted') + '</span>';
     } else {
       btn.textContent = data.error || 'Failed';
       btn.disabled = false;

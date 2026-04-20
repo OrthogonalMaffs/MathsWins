@@ -26,15 +26,18 @@
 | `achievement_registry` | 164 total / 163 active (Bug Hunter added 2026-04-18), 33 categories, `tier` + `category` columns. `broadcast_at` / `broadcast_message_id` live on `duels` for channel post tracking. |
 | `achievement_eligibility` | Per-wallet achievement progress and mint status |
 | `global_records` | Community records (e.g. The Tortoise slowest win) |
-| `wallet_stats` | Per-wallet tracking (streaks, spending, mints, consecutive wins, golf/pyramid failures, `maffsy_clean_streak` for feel-no-pressure) |
+| `wallet_stats` | Per-wallet tracking (streaks, spending, mints, consecutive wins, golf/pyramid failures). Maffsy game-level counters: `maffsy_current_streak`, `maffsy_max_streak` (lifetime PB), `maffsy_total_plays`, `maffsy_total_wins`, `maffsy_guesses_1`…`_6`, `maffsy_abandons_today` + `maffsy_abandons_date` (UTC). `maffsy_clean_streak` **deprecated** — no longer written as of 2026-04-20; scheduled for column drop in a later contract. |
 | `personal_bests` | Best free play score per wallet/game/difficulty. Columns: wallet, game_id, difficulty, score, time_ms, achieved_at, session_id (nullable) |
 | `league_bests` | Best league total score per wallet/game/tier (upserted at settlement for ALL players) |
 | `game_messages` | Preset messages for duels and leagues |
 | `seasonal_windows` | Seasonal achievement earning windows (pre-populated per year) |
 | `commemorative_mints` | Commemorative NFT mint records per league |
-| `global_leaderboard_entries` | Pay-to-appear global leaderboard (50 QF, daily/weekly/monthly) |
+| `global_leaderboard_entries` | Pay-to-appear global leaderboard (50 QF, daily/weekly/monthly). **Maffsy excluded** — uses `maffsy_alltime_leaderboard` instead. |
+| `maffsy_alltime_leaderboard` | Maffsy-specific lifetime-PB leaderboard. One row per wallet (PK), 50 QF submit, resubmit-to-beat-own-PB costs another 50 QF. Score = `wallet_stats.maffsy_max_streak` at submit time. Columns: wallet, score, paid_at, tx_hash, qns_name, updated_at. |
+| `maffsy_streaks` | Daily-mode history + word audit. One row per wallet per play_date. No longer feeds any streak counter post-2026-04-20 — those counters live on `wallet_stats`. |
 | `free_game_completions` | Per-wallet free game play count + PB beaten tracking |
 | `escrow_ledger` | All sendQF calls with direction/type/amount/source/reference_id. `inferred` flag (0=on-chain parsed, 1=computed fallback) |
+| `migrations_ran` | Sentinel table for one-off data migrations. Rows: `name TEXT PK`, `ran_at INTEGER`. |
 
 ## Key Notes
 

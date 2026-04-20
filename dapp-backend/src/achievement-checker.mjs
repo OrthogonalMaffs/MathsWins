@@ -242,11 +242,9 @@ export function checkAchievements(wallet, context) {
       if (maffsyGuesses <= 3) tryAward('wordy');
       if (maffsyGuesses === 2) tryAward('binary-decision');
 
-      incrementWalletCounter(wallet, 'maffsy_clean_streak');
       var maffsyStats = getWalletStats(wallet);
-      if (maffsyStats && maffsyStats.maffsy_clean_streak >= 50) tryAward('feel-no-pressure');
+      if (maffsyStats && (maffsyStats.maffsy_current_streak || 0) >= 50) tryAward('feel-no-pressure');
     } else {
-      resetWalletCounter(wallet, 'maffsy_clean_streak');
       if (maffsyGuesses >= 6) tryAward('the-novelist');
     }
   }

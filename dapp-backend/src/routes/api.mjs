@@ -17,7 +17,7 @@ import { queueNotification, sendTestNotification, postDuelBroadcast, editDuelBro
 import { checkAchievements, checkContrarian, checkStreakAchievements, checkLeagueRegular, checkMonthlyAchievements, trackSpend, checkNightOwlSubmission, checkMinesweeperFreePlay, checkFlagEverything, checkBlindEye, checkSumOfAllFears, checkTheGrinder, checkMintMeta, checkDuelMaster, checkFlaglessAndWrong, checkMidnight, checkFibonacci, checkWrongAnswerStreak } from '../achievement-checker.mjs';
 import { sendQF, settleDuel, settleDuelDraw, refundDuel, getEscrowAddress, getSettlementContract, logIncoming, logSplitFromReceipt, BURN_ADDRESS, TEAM_WALLET } from '../escrow.mjs';
 import { createBattleshipsGame, getBattleshipsGameByCode, getBattleshipsGameById, updateBattleshipsGameStatus, saveBattleshipsPlacement, getBattleshipsPlacement, getBattleshipsPlacements, addBattleshipsRound, getBattleshipsRounds, getBattleshipsRecord, updateBattleshipsRecord, getActiveBattleshipsGames, getBattleshipsGamesByWallet, getActiveBattleshipsForWallet } from '../db/index.mjs';
-import { getAchievementRegistry, getAchievement, awardAchievement, getWalletAchievements, getAllAchievements, getGlobalRecord, getPersonalBests, getPersonalBest, getLeagueBests, getWalletStats, getWalletLeagueHistory, getWalletTrophies, getGameStateForLeaguePuzzle, completeGameState, createGameState, getFlaggedSessions, getGlobalLeaderboard, getGlobalLeaderboardEntry, addGlobalLeaderboardEntry, updateGlobalLeaderboardEntry, TIME_PRIMARY_GAMES, getWalletLeaderboardPositions, getGameState, getGame, upsertPersonalBest, incrementPbBeatenCount, retireAchievement, recordMaffsyResult, getMaffsyStats } from '../db/index.mjs';
+import { getAchievementRegistry, getAchievement, awardAchievement, getWalletAchievements, getAllAchievements, getGlobalRecord, getPersonalBests, getPersonalBest, getLeagueBests, getWalletStats, getWalletLeagueHistory, getWalletTrophies, getGameStateForLeaguePuzzle, completeGameState, createGameState, getFlaggedSessions, getGlobalLeaderboard, getGlobalLeaderboardEntry, addGlobalLeaderboardEntry, updateGlobalLeaderboardEntry, TIME_PRIMARY_GAMES, getWalletLeaderboardPositions, getGameState, getGame, upsertPersonalBest, incrementPbBeatenCount, retireAchievement, recordMaffsyResult, recordMaffsyCompletion, startMaffsySession, closeMaffsySession, isMaffsyLbTxHashUsed, getMaffsyLeaderboard, getMaffsyLeaderboardEntry, upsertMaffsyLeaderboardEntry, getMaffsyStats } from '../db/index.mjs';
 import { analyseInputPattern } from '../scoring.mjs';
 import { validateFleet, calculateRange, checkHit, checkSunk, checkWin, getGameState as getBattleshipsState, cpuPlaceFleet, cpuShootRecruit, cpuShootOfficer, cpuShootAdmiral, pickSurvivingShip, FLEET } from '../games/battleships.mjs';
 
@@ -438,35 +438,55 @@ router.post('/session/submit-freeplay', optionalWallet, (req, res) => {
 
 // ── Maffsy streak tracking ─────────────────────────────────────────────────
 
+router.post('/maffsy/start', optionalWallet, (req, res) => {
+  try {
+    if (!req.wallet) return res.status(401).json({ error: 'Wallet required' });
+    var nowMs = Date.now();
+    var todayUtc = new Date(nowMs).toISOString().slice(0, 10);
+    var sessionId = 'sess_maffsy_' + crypto.randomUUID();
+    var result = startMaffsySession(req.wallet, todayUtc, sessionId, nowMs);
+    res.json({ success: true, sessionId: result.sessionId, currentStreak: result.currentStreak, abandonsToday: result.abandonsToday });
+  } catch (e) {
+    res.status(400).json({ error: e.message });
+  }
+});
+
 router.post('/maffsy/complete', optionalWallet, (req, res) => {
   try {
     if (!req.wallet) return res.status(401).json({ error: 'Wallet required' });
-    var { won, guesses, wordId } = req.body;
+    var { won, guesses, wordId, mode, sessionId } = req.body;
     if (won === undefined) return res.status(400).json({ error: 'won required' });
-    var today = new Date().toISOString().slice(0, 10);
-    var result = recordMaffsyResult(req.wallet, today, !!won, Number(guesses) || 0, String(wordId || ''));
+    var g = Number(guesses) || 0;
+    var isWon = !!won;
+    var isDaily = mode === 'daily';
 
-    // Issue a sessionId so the global-leaderboard prompt can verify eligibility.
-    // Must come before the PB upsert so the PB row carries session_id.
-    var sessionId = 'sess_maffsy_' + crypto.randomUUID();
-    var nowMs = Date.now();
-    try {
-      createGameState(sessionId, req.wallet, 'maffsy', 'free', null, null, null, nowMs, 1, 'default');
-      completeGameState(sessionId, 'completed', result.maxStreak, 0);
-    } catch (e) {
-      sessionId = null;
+    // Close the session (silent no-op if missing/mismatched per contract item 4).
+    // Does NOT gate counter/streak/achievement updates — those always fire based on result.
+    try { closeMaffsySession(sessionId, req.wallet, isWon ? 1 : 0); } catch (e) { /* must never block */ }
+
+    // Daily-mode-only: write to the daily history/word-audit table.
+    if (isDaily) {
+      var today = new Date().toISOString().slice(0, 10);
+      try { recordMaffsyResult(req.wallet, today, isWon, g, String(wordId || '')); } catch (e) { /* must never block completion */ }
     }
 
-    // Upsert personal best with max_streak as score (higher is better)
-    if (result.maxStreak > 0) {
-      upsertPersonalBest(req.wallet, 'maffsy', 'default', result.maxStreak, 0, sessionId);
-    }
+    // Cross-mode: update counters, streak, isNewMax.
+    var result = recordMaffsyCompletion(req.wallet, isWon, g);
 
     try {
-      checkAchievements(req.wallet, { type: 'maffsy_complete', won: !!won, guesses: Number(guesses) || 0 });
+      checkAchievements(req.wallet, { type: 'maffsy_complete', won: isWon, guesses: g });
     } catch (e) { /* must never block */ }
 
-    res.json({ success: true, sessionId: sessionId, streak: result.currentStreak, maxStreak: result.maxStreak, played: result.played, won: result.won });
+    res.json({
+      success: true,
+      sessionId: sessionId || null,
+      streak: result.streak,
+      maxStreak: result.maxStreak,
+      played: result.played,
+      won: result.won,
+      dist: result.dist,
+      isNewMax: result.isNewMax
+    });
   } catch (e) {
     res.status(400).json({ error: e.message });
   }
@@ -480,6 +500,75 @@ router.get('/maffsy/stats', optionalWallet, (req, res) => {
   } catch (e) {
     res.status(400).json({ error: e.message });
   }
+});
+
+// ── Maffsy all-time leaderboard ────────────────────────────────────────────
+
+router.get('/maffsy/leaderboard', optionalWallet, (req, res) => {
+  try {
+    var limit = parseInt(req.query.limit) || 100;
+    var entries = getMaffsyLeaderboard(limit);
+    var yourRow = null;
+    if (req.wallet) {
+      var mine = getMaffsyLeaderboardEntry(req.wallet);
+      if (mine) {
+        var idx = entries.findIndex(function(r) { return r.wallet === req.wallet.toLowerCase(); });
+        yourRow = { wallet: mine.wallet, score: mine.score, qns_name: mine.qns_name, updated_at: mine.updated_at, rank: idx >= 0 ? idx + 1 : null };
+      }
+    }
+    res.json({ entries: entries, yourRow: yourRow });
+  } catch (e) {
+    res.status(400).json({ error: e.message });
+  }
+});
+
+router.post('/maffsy/leaderboard-submit', optionalWallet, async (req, res) => {
+  if (!req.wallet) return res.status(401).json({ error: 'Wallet required' });
+  var { txHash, qnsName } = req.body;
+
+  // Gate order (mirrors 2026-04-19 orphan-gate-order fix):
+  //   1. Wallet validation (already via optionalWallet + check above)
+  //   2. Candidate score derivation — must exist and beat existing
+  //   3. tx_hash presence + uniqueness
+  //   4. Payment split
+  //   5. DB write
+
+  var stats = getWalletStats(req.wallet) || {};
+  var candidateScore = stats.maffsy_max_streak || 0;
+  if (candidateScore <= 0) {
+    return res.status(400).json({ error: 'No max streak to submit — play Maffsy and win some games first' });
+  }
+
+  var existing = getMaffsyLeaderboardEntry(req.wallet);
+  if (existing && candidateScore <= existing.score) {
+    return res.status(400).json({ error: 'No improvement to submit — your submitted score (' + existing.score + ') already matches or beats your current max (' + candidateScore + ')' });
+  }
+
+  if (!txHash) return res.status(400).json({ error: 'txHash required — pay 50 QF to escrow from your wallet' });
+  if (isMaffsyLbTxHashUsed(txHash)) return res.status(400).json({ error: 'Payment tx_hash already used for another leaderboard submission' });
+
+  logIncoming('leaderboard-fee', 50, req.wallet, txHash, 'maffsy-leaderboard', req.wallet);
+
+  // Atomic burn/team split via QFSettlement contract (5% burn, 95% team) — same as global leaderboard
+  try {
+    var sc = getSettlementContract();
+    if (!sc) throw new Error('Settlement contract not initialised');
+    var splitTx = await sc.splitFee({ value: ethers.parseEther('50'), gasLimit: 35343055n });
+    var splitReceipt = await splitTx.wait();
+    try { logSplitFromReceipt(splitReceipt, sc.interface, 'maffsy-leaderboard', req.wallet, 50); } catch (e) { console.error('maffsy-leaderboard split log failed:', e.message); }
+  } catch (e) {
+    return res.status(500).json({ error: 'Payment processing failed: ' + e.message });
+  }
+
+  try { trackSpend(req.wallet, 50); } catch (e) { /* must never block */ }
+
+  var nowMs = Date.now();
+  upsertMaffsyLeaderboardEntry(req.wallet, candidateScore, txHash, qnsName || null, nowMs);
+
+  var board = getMaffsyLeaderboard(500);
+  var rank = board.findIndex(function(r) { return r.wallet === req.wallet.toLowerCase(); }) + 1;
+
+  res.json({ success: true, score: candidateScore, rank: rank, action: existing ? 'updated' : 'inserted' });
 });
 
 // ── Entry status ────────────────────────────────────────────────────────────

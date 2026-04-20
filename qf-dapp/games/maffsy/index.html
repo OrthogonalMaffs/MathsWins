@@ -239,6 +239,7 @@ body.cb .tile[data-s=present]::after{content:'▲';position:absolute;bottom:1px;
     <div class="si"><span class="sv" id="sbm">0</span><span class="sl">Max</span></div>
     <div class="si" style="display:none"><span class="sv" id="sbn">#—</span><span class="sl">Puzzle</span></div>
   </div>
+  <div id="nowallet-hint" style="display:none;margin-top:.5rem;padding:.5rem .8rem;font-family:'JetBrains Mono',monospace;font-size:.55rem;color:var(--muted);border:1px dashed var(--bdrdim);border-radius:3px;text-align:center">Connect wallet to save streak, stats, and achievements.</div>
 
   <div class="msg" id="msg"></div>
   <div class="grid" id="grid"></div>
@@ -339,6 +340,8 @@ body.cb .tile[data-s=present]::after{content:'▲';position:absolute;bottom:1px;
     <div class="mb">
       <div class="eeq" id="eeq"></div>
       <div class="cd" id="cdtxt"></div>
+      <div id="epb" style="display:none;text-align:center;margin:.4rem 0;font-family:'Playfair Display',serif;font-size:.9rem;color:var(--teal)">🔥 New personal best</div>
+      <div id="enowallet" style="display:none;margin:.4rem 0;padding:.4rem .6rem;font-family:'JetBrains Mono',monospace;font-size:.55rem;color:var(--muted);border:1px dashed var(--bdrdim);border-radius:3px;text-align:center;line-height:1.5">Games played without a connected wallet do not contribute to server streak counters, stats, or achievements. Connecting a wallet mid-session does not retroactively credit prior games.</div>
       <div class="sg" id="endsg"></div>
     </div>
     <div class="mf">
@@ -792,6 +795,22 @@ function showEnd(){
   document.getElementById('esub').textContent=won?`Solved in ${G.guesses.length}/6 — Puzzle #${pnum()}`:`The equation was:`;
   document.getElementById('eeq').innerHTML=G.target.split('').map(ch=>`<div class="etile">${disp(ch)}</div>`).join('');
   if(!PREFS.free) startCD(); else document.getElementById('cdtxt').textContent='Free Play — tap Next Puzzle for another.';
+  // PB flash (server-decided, shown once per game)
+  const epb = document.getElementById('epb');
+  if (epb) { epb.style.display = _lastIsNewMax ? 'block' : 'none'; _lastIsNewMax = false; }
+  // Unconnected-wallet disclaimer — shown once per session then suppressed (localStorage flag)
+  const enow = document.getElementById('enowallet');
+  if (enow) {
+    const connected = (window.qfWallet && qfWallet.isConnected && qfWallet.isConnected());
+    let dismissed = false;
+    try { dismissed = localStorage.getItem('mw_maffsy_nowallet_seen') === '1'; } catch (e) {}
+    if (!connected && !dismissed) {
+      enow.style.display = 'block';
+      try { localStorage.setItem('mw_maffsy_nowallet_seen', '1'); } catch (e) {}
+    } else {
+      enow.style.display = 'none';
+    }
+  }
   document.getElementById('endsg').innerHTML=`
     <div class="sb"><div class="sbv" style="color:var(--teal)">${s.streak||0}</div><div class="sbl">🔥 Streak</div></div>
     <div class="sb"><div class="sbv">${s.maxStreak||0}</div><div class="sbl">Max</div></div>
@@ -818,6 +837,7 @@ function nextFree(){
   closeM('end'); document.getElementById('nxtbtn').style.display='none';
   G={target:freeTarget(),guesses:[],status:'playing',t0:Date.now(),t1:null};
   saveG(); cur=''; buildGrid(); updateKbd(); clearMsg(); renderSbar(); enableSub();
+  if (typeof maffsyStart === 'function') maffsyStart();
 }
 
 // ═══════════════════════════════════════════════════════════════════════════════
@@ -854,6 +874,7 @@ function setFree(v){
   G={target:v?freeTarget():dailyTarget(),guesses:[],status:'playing',t0:Date.now(),t1:null};
   saveG(); cur=''; buildGrid(); updateKbd(); clearMsg(); renderSbar(); enableSub();
   if(v) document.getElementById('nxtbtn').style.display='none';
+  if (typeof maffsyStart === 'function') maffsyStart();
 }
 function setCB(v){PREFS.cb=v;sp();document.body.classList.toggle('cb',v);toast(v?'Colourblind mode on.':'Off.');}
 
@@ -924,27 +945,59 @@ function init(){
 var _fpAPI = 'https://dapp-api.mathswins.co.uk/api/dapp';
 if (location.hostname === 'localhost' || location.hostname === '127.0.0.1') _fpAPI = 'http://127.0.0.1:3860/api/dapp';
 var _serverStats = null;
+var _maffsySessionId = null;
+var _lastIsNewMax = false;
 
 init();
 fetchMaffsyStats();
+updateWalletHints();
+
+function updateWalletHints() {
+  try {
+    var connected = qfWallet && qfWallet.isConnected();
+    var hint = document.getElementById('nowallet-hint');
+    if (hint) hint.style.display = connected ? 'none' : 'block';
+  } catch (e) {}
+}
+
+if (window.qfWallet && typeof qfWallet.onConnect === 'function') {
+  qfWallet.onConnect(function() { updateWalletHints(); fetchMaffsyStats(); maffsyStart(); });
+}
+if (window.qfWallet && typeof qfWallet.onDisconnect === 'function') {
+  qfWallet.onDisconnect(function() { updateWalletHints(); _maffsySessionId = null; });
+}
+
+function maffsyStart() {
+  try {
+    if (!qfWallet || !qfWallet.isConnected()) { _maffsySessionId = null; return; }
+    fetch(_fpAPI + '/maffsy/start', {
+      method: 'POST', headers: qfWallet.authHeaders(), body: '{}'
+    }).then(function(r) { return r.json(); }).then(function(data) {
+      if (data && data.success) {
+        _maffsySessionId = data.sessionId;
+        // If the abandon-counter reset our streak server-side, pick up the new value.
+        if (_serverStats && typeof data.currentStreak === 'number') {
+          _serverStats.streak = data.currentStreak;
+          renderSbar();
+        }
+      }
+    }).catch(function() {});
+  } catch (e) {}
+}
 
 function submitMaffsyComplete(won, guesses) {
   try {
-    if (PREFS.free) return;
     if (!qfWallet || !qfWallet.isConnected()) return;
+    var mode = PREFS.free ? 'free' : 'daily';
     fetch(_fpAPI + '/maffsy/complete', {
       method: 'POST', headers: qfWallet.authHeaders(),
-      body: JSON.stringify({ won: won, guesses: guesses, wordId: String(pnum()) })
+      body: JSON.stringify({ won: won, guesses: guesses, wordId: String(pnum()), mode: mode, sessionId: _maffsySessionId })
     }).then(function(r) { return r.json(); }).then(function(data) {
       if (data.success) {
-        _serverStats = { played: data.played, won: data.won, streak: data.streak, maxStreak: data.maxStreak };
+        _serverStats = { played: data.played, won: data.won, streak: data.streak, maxStreak: data.maxStreak, dist: data.dist };
+        _lastIsNewMax = !!data.isNewMax;
+        _maffsySessionId = null; // session is now closed server-side
         renderSbar(); if (G.status !== 'playing') showEnd();
-        if (won && data.sessionId && data.streak > 0 && window.promptLeaderboardSubmit) {
-          var elapsed = (G.t1 && G.t0) ? (G.t1 - G.t0) : 0;
-          // Leaderboard metric = current consecutive-wins streak (resets on any failure).
-          // Higher streak ranks higher because the leaderboard sorts by score DESC.
-          window.promptLeaderboardSubmit({ gameId: 'maffsy', score: data.streak, timeMs: elapsed, sessionId: data.sessionId });
-        }
       }
     }).catch(function() {});
   } catch (e) {}
@@ -963,6 +1016,9 @@ function fetchMaffsyStats() {
       }).catch(function() {});
   } catch (e) {}
 }
+
+// On first load, try to open a session (will no-op if wallet not connected).
+setTimeout(maffsyStart, 600);
 </script>
 
 </body>

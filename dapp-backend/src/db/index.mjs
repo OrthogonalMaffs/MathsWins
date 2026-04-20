@@ -69,6 +69,16 @@ export function getDb() {
   try { db.exec('ALTER TABLE wallet_stats ADD COLUMN maffsy_current_streak INTEGER DEFAULT 0'); } catch (e) { /* already exists */ }
   try { db.exec('ALTER TABLE wallet_stats ADD COLUMN maffsy_clean_streak INTEGER DEFAULT 0'); } catch (e) { /* already exists */ }
   try { db.exec('ALTER TABLE wallet_stats ADD COLUMN maffsy_max_streak INTEGER DEFAULT 0'); } catch (e) { /* already exists */ }
+  try { db.exec('ALTER TABLE wallet_stats ADD COLUMN maffsy_total_plays INTEGER DEFAULT 0'); } catch (e) { /* already exists */ }
+  try { db.exec('ALTER TABLE wallet_stats ADD COLUMN maffsy_total_wins INTEGER DEFAULT 0'); } catch (e) { /* already exists */ }
+  try { db.exec('ALTER TABLE wallet_stats ADD COLUMN maffsy_guesses_1 INTEGER DEFAULT 0'); } catch (e) { /* already exists */ }
+  try { db.exec('ALTER TABLE wallet_stats ADD COLUMN maffsy_guesses_2 INTEGER DEFAULT 0'); } catch (e) { /* already exists */ }
+  try { db.exec('ALTER TABLE wallet_stats ADD COLUMN maffsy_guesses_3 INTEGER DEFAULT 0'); } catch (e) { /* already exists */ }
+  try { db.exec('ALTER TABLE wallet_stats ADD COLUMN maffsy_guesses_4 INTEGER DEFAULT 0'); } catch (e) { /* already exists */ }
+  try { db.exec('ALTER TABLE wallet_stats ADD COLUMN maffsy_guesses_5 INTEGER DEFAULT 0'); } catch (e) { /* already exists */ }
+  try { db.exec('ALTER TABLE wallet_stats ADD COLUMN maffsy_guesses_6 INTEGER DEFAULT 0'); } catch (e) { /* already exists */ }
+  try { db.exec('ALTER TABLE wallet_stats ADD COLUMN maffsy_abandons_today INTEGER DEFAULT 0'); } catch (e) { /* already exists */ }
+  try { db.exec('ALTER TABLE wallet_stats ADD COLUMN maffsy_abandons_date TEXT'); } catch (e) { /* already exists */ }
   try { db.exec('ALTER TABLE duels ADD COLUMN creator_tx TEXT'); } catch (e) { /* already exists */ }
   try { db.exec('ALTER TABLE duels ADD COLUMN acceptor_tx TEXT'); } catch (e) { /* already exists */ }
   try { db.exec('ALTER TABLE duels ADD COLUMN broadcast_at INTEGER'); } catch (e) { /* already exists */ }
@@ -258,6 +268,21 @@ export function getDb() {
     guesses INTEGER,
     word_id TEXT,
     UNIQUE(wallet, play_date)
+  )`);
+
+  db.exec(`CREATE TABLE IF NOT EXISTS maffsy_alltime_leaderboard (
+    wallet TEXT PRIMARY KEY,
+    score INTEGER NOT NULL,
+    paid_at INTEGER NOT NULL,
+    tx_hash TEXT NOT NULL,
+    qns_name TEXT,
+    updated_at INTEGER NOT NULL
+  )`);
+  db.exec('CREATE INDEX IF NOT EXISTS idx_maffsy_lb_score ON maffsy_alltime_leaderboard(score DESC)');
+
+  db.exec(`CREATE TABLE IF NOT EXISTS migrations_ran (
+    name TEXT PRIMARY KEY,
+    ran_at INTEGER NOT NULL
   )`);
 
   seedAchievements(db);
@@ -1767,6 +1792,8 @@ export function getWalletLeaderboardPositions(wallet) {
 
 // ── Maffsy streaks ─────────────────────────────────────────────────────────
 
+// Daily-mode only. Writes a row to maffsy_streaks (history + daily-word audit).
+// Game-level streak counters live on wallet_stats and are updated by recordMaffsyCompletion.
 export function recordMaffsyResult(wallet, playDate, won, guesses, wordId) {
   const db = getDb();
   const w = wallet.toLowerCase();
@@ -1775,66 +1802,161 @@ export function recordMaffsyResult(wallet, playDate, won, guesses, wordId) {
      VALUES (?, ?, ?, ?, ?)
      ON CONFLICT(wallet, play_date) DO UPDATE SET won = excluded.won, guesses = excluded.guesses, word_id = excluded.word_id`
   ).run(w, playDate, won ? 1 : 0, guesses, wordId);
+}
 
-  // Calculate current streak: consecutive won=1 days backwards from today
-  var rows = db.prepare(
-    'SELECT play_date, won FROM maffsy_streaks WHERE wallet = ? ORDER BY play_date DESC'
-  ).all(w);
+// Cross-mode. Updates wallet_stats counters (plays, wins, guesses_N), current/max streak.
+// Returns { streak, maxStreak, played, won, dist, isNewMax } for the response.
+export function recordMaffsyCompletion(wallet, won, guesses) {
+  const db = getDb();
+  const w = wallet.toLowerCase();
+  const g = (won && guesses >= 1 && guesses <= 6) ? guesses : null;
 
-  var currentStreak = 0;
-  var expected = new Date(playDate);
-  for (var i = 0; i < rows.length; i++) {
-    var rowDate = rows[i].play_date;
-    var expStr = expected.toISOString().slice(0, 10);
-    if (rowDate === expStr && rows[i].won === 1) {
-      currentStreak++;
-      expected.setDate(expected.getDate() - 1);
-    } else if (rowDate === expStr && rows[i].won === 0) {
-      break;
-    } else if (rowDate < expStr) {
-      // Missed a day — streak broken
-      break;
+  const priorStats = db.prepare('SELECT maffsy_current_streak, maffsy_max_streak FROM wallet_stats WHERE wallet = ?').get(w) || {};
+  const priorCurrent = priorStats.maffsy_current_streak || 0;
+  const priorMax = priorStats.maffsy_max_streak || 0;
+
+  const newCurrent = won ? (priorCurrent + 1) : 0;
+  const newMax = newCurrent > priorMax ? newCurrent : priorMax;
+  const isNewMax = newCurrent > priorMax;
+
+  const updates = {
+    maffsy_current_streak: newCurrent,
+    maffsy_max_streak: newMax
+  };
+  updates.maffsy_total_plays = (db.prepare('SELECT maffsy_total_plays FROM wallet_stats WHERE wallet = ?').get(w)?.maffsy_total_plays || 0) + 1;
+  if (won) {
+    updates.maffsy_total_wins = (db.prepare('SELECT maffsy_total_wins FROM wallet_stats WHERE wallet = ?').get(w)?.maffsy_total_wins || 0) + 1;
+    if (g !== null) {
+      const col = 'maffsy_guesses_' + g;
+      const cur = db.prepare(`SELECT ${col} AS v FROM wallet_stats WHERE wallet = ?`).get(w)?.v || 0;
+      updates[col] = cur + 1;
     }
   }
+  upsertWalletStats(w, updates);
 
-  // Calculate max streak: scan all rows chronologically
-  var allRows = db.prepare(
-    'SELECT play_date, won FROM maffsy_streaks WHERE wallet = ? ORDER BY play_date ASC'
-  ).all(w);
-  var maxStreak = 0;
-  var run = 0;
-  for (var j = 0; j < allRows.length; j++) {
-    if (allRows[j].won === 1) {
-      run++;
-      if (run > maxStreak) maxStreak = run;
-    } else {
-      run = 0;
-    }
-  }
-
-  // Update wallet_stats
-  upsertWalletStats(w, { maffsy_current_streak: currentStreak, maffsy_max_streak: maxStreak });
-
-  return { currentStreak, maxStreak, played: allRows.length, won: allRows.filter(r => r.won === 1).length };
+  const fresh = getWalletStats(w) || {};
+  return {
+    streak: fresh.maffsy_current_streak || 0,
+    maxStreak: fresh.maffsy_max_streak || 0,
+    played: fresh.maffsy_total_plays || 0,
+    won: fresh.maffsy_total_wins || 0,
+    dist: [
+      fresh.maffsy_guesses_1 || 0,
+      fresh.maffsy_guesses_2 || 0,
+      fresh.maffsy_guesses_3 || 0,
+      fresh.maffsy_guesses_4 || 0,
+      fresh.maffsy_guesses_5 || 0,
+      fresh.maffsy_guesses_6 || 0
+    ],
+    isNewMax
+  };
 }
 
 export function getMaffsyStats(wallet) {
-  const db = getDb();
   const w = wallet.toLowerCase();
-  var rows = db.prepare('SELECT play_date, won, guesses FROM maffsy_streaks WHERE wallet = ? ORDER BY play_date ASC').all(w);
-  var played = rows.length;
-  var won = rows.filter(r => r.won === 1).length;
-  var dist = [0, 0, 0, 0, 0, 0];
-  rows.forEach(r => { if (r.won === 1 && r.guesses >= 1 && r.guesses <= 6) dist[r.guesses - 1]++; });
-
-  var stats = getWalletStats(w) || {};
+  const stats = getWalletStats(w) || {};
   return {
-    played: played,
-    won: won,
+    played: stats.maffsy_total_plays || 0,
+    won: stats.maffsy_total_wins || 0,
     streak: stats.maffsy_current_streak || 0,
     maxStreak: stats.maffsy_max_streak || 0,
-    dist: dist
+    dist: [
+      stats.maffsy_guesses_1 || 0,
+      stats.maffsy_guesses_2 || 0,
+      stats.maffsy_guesses_3 || 0,
+      stats.maffsy_guesses_4 || 0,
+      stats.maffsy_guesses_5 || 0,
+      stats.maffsy_guesses_6 || 0
+    ]
   };
+}
+
+// Atomic: mark prior active session (if any) abandoned, increment daily abandon counter,
+// reset streak on threshold, create new active_game_state row. Returns { sessionId, currentStreak, abandonsToday }.
+export function startMaffsySession(wallet, todayUtc, newSessionId, nowMs) {
+  const db = getDb();
+  const w = wallet.toLowerCase();
+  const txn = db.transaction(() => {
+    const prior = db.prepare(
+      "SELECT session_id FROM active_game_state WHERE wallet = ? AND game_id = 'maffsy' AND status = 'active'"
+    ).get(w);
+
+    let abandonsToday = db.prepare('SELECT maffsy_abandons_today, maffsy_abandons_date FROM wallet_stats WHERE wallet = ?').get(w) || {};
+    let todayCount = abandonsToday.maffsy_abandons_date === todayUtc ? (abandonsToday.maffsy_abandons_today || 0) : 0;
+
+    if (prior) {
+      db.prepare("UPDATE active_game_state SET status = 'abandoned', completed_at = ? WHERE session_id = ? AND status = 'active'").run(nowMs, prior.session_id);
+      todayCount += 1;
+      if (todayCount >= 3) {
+        upsertWalletStats(w, {
+          maffsy_abandons_today: todayCount,
+          maffsy_abandons_date: todayUtc,
+          maffsy_current_streak: 0
+        });
+      } else {
+        upsertWalletStats(w, {
+          maffsy_abandons_today: todayCount,
+          maffsy_abandons_date: todayUtc
+        });
+      }
+    } else if (abandonsToday.maffsy_abandons_date !== todayUtc) {
+      upsertWalletStats(w, {
+        maffsy_abandons_today: 0,
+        maffsy_abandons_date: todayUtc
+      });
+    }
+
+    db.prepare(`INSERT INTO active_game_state (session_id, wallet, game_id, context_type, context_id, puzzle_index, seed, started_at, free_play, difficulty)
+      VALUES (?, ?, 'maffsy', 'free', NULL, NULL, NULL, ?, 1, 'default')`).run(newSessionId, w, nowMs);
+
+    return todayCount;
+  });
+
+  const abandonsToday = txn();
+  const fresh = getWalletStats(w) || {};
+  return {
+    sessionId: newSessionId,
+    currentStreak: fresh.maffsy_current_streak || 0,
+    abandonsToday
+  };
+}
+
+// Silent close — called from /maffsy/complete. If the session row exists and is
+// owned by this wallet, mark it completed. Missing/mismatched → no-op (does not
+// affect counters, streak, or achievements per PC contract).
+export function closeMaffsySession(sessionId, wallet, score) {
+  if (!sessionId) return;
+  const db = getDb();
+  const w = wallet.toLowerCase();
+  db.prepare(`UPDATE active_game_state SET status = 'completed', score = ?, completed_at = ?
+    WHERE session_id = ? AND wallet = ? AND game_id = 'maffsy' AND status = 'active'`)
+    .run(score, Date.now(), sessionId, w);
+}
+
+export function isMaffsyLbTxHashUsed(txHash) {
+  if (!txHash || typeof txHash !== 'string' || !txHash.startsWith('0x')) return false;
+  const db = getDb();
+  return !!db.prepare('SELECT 1 FROM maffsy_alltime_leaderboard WHERE tx_hash = ? LIMIT 1').get(txHash);
+}
+
+export function getMaffsyLeaderboard(limit) {
+  const db = getDb();
+  const lim = limit && limit > 0 && limit <= 500 ? limit : 100;
+  return db.prepare(`SELECT wallet, score, qns_name, updated_at FROM maffsy_alltime_leaderboard ORDER BY score DESC, updated_at ASC LIMIT ?`).all(lim);
+}
+
+export function getMaffsyLeaderboardEntry(wallet) {
+  const db = getDb();
+  return db.prepare('SELECT wallet, score, qns_name, updated_at, tx_hash, paid_at FROM maffsy_alltime_leaderboard WHERE wallet = ?').get(wallet.toLowerCase());
+}
+
+export function upsertMaffsyLeaderboardEntry(wallet, score, txHash, qnsName, nowMs) {
+  const db = getDb();
+  const w = wallet.toLowerCase();
+  db.prepare(`INSERT INTO maffsy_alltime_leaderboard (wallet, score, paid_at, tx_hash, qns_name, updated_at)
+    VALUES (?, ?, ?, ?, ?, ?)
+    ON CONFLICT(wallet) DO UPDATE SET score = excluded.score, paid_at = excluded.paid_at, tx_hash = excluded.tx_hash, qns_name = excluded.qns_name, updated_at = excluded.updated_at`)
+    .run(w, score, nowMs, txHash, qnsName || null, nowMs);
 }
 
 function getISOWeek(d) {

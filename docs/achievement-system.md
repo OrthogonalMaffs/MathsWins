@@ -52,6 +52,7 @@
 | 8 | 2026-04-12 | 3 free game (century, explorer, personal-best) + free_game_completions table |
 | 9/10/11 | 2026-04-17 | 5 free-game achievements: photographic, dead-reckoning, next-in-line, unbeatable, the-engineer |
 | 12 | 2026-04-18 | 6 wirings: 4 Maffsy (wordy, binary-decision, the-novelist, feel-no-pressure) via `maffsy_complete` context.type + new `wallet_stats.maffsy_clean_streak` counter; Clairvoyant (HoL `perfectGame`) + On-the-nose (Countdown `exactHit`) via submit-freeplay clientStats |
+| 13 | 2026-04-20 | Maffsy gate fix: free-play wins now hit `/maffsy/complete` so Maffsy achievements fire for both modes. `feel-no-pressure` threshold switched from `maffsy_clean_streak` (deprecated) to `maffsy_current_streak`. No new achievement IDs — trigger scope widened. |
 
 ## Known Issues (as of 2026-04-18)
 - **~7 orphan achievements remain** (down from 13 — Batch 12 wired 4 Maffsy + Clairvoyant + On-the-nose). 2 by-design (boom, onlyfans-qf), 2 parked (all-wrong, full-hints), ~3 context-hardcoded needing per-game frontend wiring (lucky-number, the-undo-king, freecell dealNumber/undoCount fields).
