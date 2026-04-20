@@ -541,18 +541,21 @@ footer a{color:var(--muted);text-decoration:none}footer a:hover{color:var(--silv
       } catch (e) { /* ignore */ }
     }
 
-    // Free-play only: offer global-leaderboard submission (skipped in league/duel)
-    if (!leagueMode && !window.duelMode && window.promptLeaderboardSubmit && data.sessionId) {
-      window.promptLeaderboardSubmit({ gameId: 'countdown-numbers', score: G.totalScore || 0, timeMs: 0, sessionId: data.sessionId });
-    }
-
-    // Free-play only: fire submit-freeplay for achievement signals (on-the-nose)
+    // Free-play only: submit-freeplay creates the active_game_state row,
+    // returns the sessionId that /global-leaderboard/enter validates.
+    // Chain the leaderboard prompt off its response, not /session/evaluate's
+    // sid (sequential-mode JWT sids aren't persisted at start — see
+    // scoring.mjs:248). Also fires achievement signals (on-the-nose).
     if (!leagueMode && !window.duelMode && window.qfWallet && window.qfWallet.isConnected()) {
       try {
         var _fpAPI_cd = (location.hostname === 'localhost' || location.hostname === '127.0.0.1') ? 'http://127.0.0.1:3860/api/dapp' : 'https://dapp-api.mathswins.co.uk/api/dapp';
         fetch(_fpAPI_cd + '/session/submit-freeplay', {
           method: 'POST', headers: qfWallet.authHeaders(),
           body: JSON.stringify({ gameId: 'countdown-numbers', score: G.totalScore || 0, timeMs: 0, clientStats: { exactHit: (G.roundsExact || 0) > 0 } })
+        }).then(function(r) { return r.json(); }).then(function(fpData) {
+          if (fpData && fpData.sessionId && window.promptLeaderboardSubmit) {
+            window.promptLeaderboardSubmit({ gameId: 'countdown-numbers', score: G.totalScore || 0, timeMs: 0, sessionId: fpData.sessionId });
+          }
         }).catch(function() {});
       } catch (e) { /* must never block */ }
     }
