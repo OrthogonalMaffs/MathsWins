@@ -835,6 +835,7 @@ function startCD(){
 function nextFree(){
   if(G.status==='playing'&&G.guesses.length>0&&!confirm('Abandon current puzzle?')) return;
   closeM('end'); document.getElementById('nxtbtn').style.display='none';
+  _maffsySessionId = null;
   G={target:freeTarget(),guesses:[],status:'playing',t0:Date.now(),t1:null};
   saveG(); cur=''; buildGrid(); updateKbd(); clearMsg(); renderSbar(); enableSub();
   if (typeof maffsyStart === 'function') maffsyStart();
@@ -871,6 +872,7 @@ function setFree(v){
   // mode pill removed — always free play
   document.getElementById('gsub').textContent=v?'Free Play — unlimited random puzzles.':'Guess the 8-character equation in 6 tries · BODMAS applies';
   const lbw=document.querySelector('.lbw'); if(lbw) lbw.style.display=v?'none':'block';
+  _maffsySessionId = null;
   G={target:v?freeTarget():dailyTarget(),guesses:[],status:'playing',t0:Date.now(),t1:null};
   saveG(); cur=''; buildGrid(); updateKbd(); clearMsg(); renderSbar(); enableSub();
   if(v) document.getElementById('nxtbtn').style.display='none';
@@ -970,6 +972,7 @@ if (window.qfWallet && typeof qfWallet.onDisconnect === 'function') {
 function maffsyStart() {
   try {
     if (!qfWallet || !qfWallet.isConnected()) { _maffsySessionId = null; return; }
+    if (_maffsySessionId) return;
     fetch(_fpAPI + '/maffsy/start', {
       method: 'POST', headers: qfWallet.authHeaders(), body: '{}'
     }).then(function(r) { return r.json(); }).then(function(data) {

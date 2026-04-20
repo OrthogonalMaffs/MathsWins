@@ -944,6 +944,14 @@ var G = (function() {
       try { duelApi('/duel/' + duelCode + '/submit', { score: partialScore || 0, timeMs: finalTimeMs, mistakes: 1, hints: 0 }); } catch (e) { /* ignore */ }
     }
 
+    // Free-play loss: increments games-played counter via /session/submit-freeplay.
+    // Score=0: server-side zero-gate skips upsertPersonalBest so losses don't pollute the PB table.
+    if (!leagueMode && !duelMode) {
+      try {
+        api('/session/submit-freeplay', { gameId: 'minesweeper', score: 0, timeMs: finalTimeMs, difficulty: difficulty }).catch(function() {});
+      } catch (e) { /* ignore */ }
+    }
+
     var safeCellsRemaining = (boardWidth * boardHeight - mineCount) - revealedCount;
     showModal(false, partialScore || 0, finalTimeMs, safeCellsRemaining);
   }

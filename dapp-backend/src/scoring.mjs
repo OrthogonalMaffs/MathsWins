@@ -20,7 +20,7 @@ import {
   getSessionCount, upsertBestScore, getEntry,
   createGameState, getGameState, getActiveGameState,
   updateGameState, completeGameState, loadActiveGameStates,
-  upsertPersonalBest, awardAchievement
+  upsertPersonalBest, awardAchievement, incrementFreeGameCompletion
 } from './db/index.mjs';
 import { checkAchievements, checkMinesweeperFreePlay, checkFlagEverything, checkBlindEye, checkSumOfAllFears, checkWrongAnswerStreak, checkMidnight, checkFibonacci } from './achievement-checker.mjs';
 
@@ -420,6 +420,7 @@ function buildAchContext(session, result, timeMs, won) {
     score: session.score,
     timeMs: timeMs,
     won: won,
+    freePlay: !!session.freePlay,
     mistakes: session.mistakes || 0,
     hints: session.hintsUsed || 0,
     undoCount: session.undoCount || (session.questions && session.questions[0] && session.questions[0].undoCount) || 0,
@@ -511,6 +512,7 @@ export function evaluate(sessionToken, answer) {
       response.finalScore = finalScore;
       response.finished = true;
       if (session.freePlay) response.freePlay = true;
+      if (session.freePlay) { try { incrementFreeGameCompletion(session.wallet, session.gameId); } catch (e) { /* must never block */ } }
       try { checkAchievements(session.wallet, buildAchContext(session, result, now - session.startedAt, !!result.won)); } catch (e) { /* achievement check must never block */ }
       // Minesweeper detonation tracking
       if (session.gameId === 'minesweeper' && result.detonated !== undefined) {
@@ -542,6 +544,7 @@ export function evaluate(sessionToken, answer) {
       response.finalScore = session.score;
       response.finished = true;
       if (session.freePlay) response.freePlay = true;
+      if (session.freePlay) { try { incrementFreeGameCompletion(session.wallet, session.gameId); } catch (e) { /* must never block */ } }
       try { checkAchievements(session.wallet, buildAchContext(session, result, completionTimeMs, true)); } catch (e) { /* achievement check must never block */ }
       // Minesweeper win
       if (session.gameId === 'minesweeper' && result.won) {
@@ -572,6 +575,7 @@ export function evaluate(sessionToken, answer) {
       response.finalScore = partialScore;
       response.finished = true;
       if (session.freePlay) response.freePlay = true;
+      if (session.freePlay) { try { incrementFreeGameCompletion(session.wallet, session.gameId); } catch (e) { /* must never block */ } }
       try { checkAchievements(session.wallet, buildAchContext(session, result, now - session.startedAt, false)); } catch (e) { /* achievement check must never block */ }
     }
     // Regular action (place/hint) — persist state
@@ -630,6 +634,7 @@ export function evaluate(sessionToken, answer) {
     activeSessions.delete(payload.sid);
     response.finalScore = session.score;
     if (session.freePlay) response.freePlay = true;
+    if (session.freePlay) { try { incrementFreeGameCompletion(session.wallet, session.gameId); } catch (e) { /* must never block */ } }
     try { checkAchievements(session.wallet, buildAchContext(session, result, completionTimeMs, true)); } catch (e) { /* achievement check must never block */ }
     try { checkMidnight(session.wallet); } catch (e) { /* must never block */ }
     try { checkFibonacci(session.wallet, session.score); } catch (e) { /* must never block */ }

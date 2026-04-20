@@ -17,7 +17,7 @@ import { queueNotification, sendTestNotification, postDuelBroadcast, editDuelBro
 import { checkAchievements, checkContrarian, checkStreakAchievements, checkLeagueRegular, checkMonthlyAchievements, trackSpend, checkNightOwlSubmission, checkMinesweeperFreePlay, checkFlagEverything, checkBlindEye, checkSumOfAllFears, checkTheGrinder, checkMintMeta, checkDuelMaster, checkFlaglessAndWrong, checkMidnight, checkFibonacci, checkWrongAnswerStreak } from '../achievement-checker.mjs';
 import { sendQF, settleDuel, settleDuelDraw, refundDuel, getEscrowAddress, getSettlementContract, logIncoming, logSplitFromReceipt, BURN_ADDRESS, TEAM_WALLET } from '../escrow.mjs';
 import { createBattleshipsGame, getBattleshipsGameByCode, getBattleshipsGameById, updateBattleshipsGameStatus, saveBattleshipsPlacement, getBattleshipsPlacement, getBattleshipsPlacements, addBattleshipsRound, getBattleshipsRounds, getBattleshipsRecord, updateBattleshipsRecord, getActiveBattleshipsGames, getBattleshipsGamesByWallet, getActiveBattleshipsForWallet } from '../db/index.mjs';
-import { getAchievementRegistry, getAchievement, awardAchievement, getWalletAchievements, getAllAchievements, getGlobalRecord, getPersonalBests, getPersonalBest, getLeagueBests, getWalletStats, getWalletLeagueHistory, getWalletTrophies, getGameStateForLeaguePuzzle, completeGameState, createGameState, getFlaggedSessions, getGlobalLeaderboard, getGlobalLeaderboardEntry, addGlobalLeaderboardEntry, updateGlobalLeaderboardEntry, TIME_PRIMARY_GAMES, getWalletLeaderboardPositions, getGameState, getGame, upsertPersonalBest, incrementPbBeatenCount, retireAchievement, recordMaffsyResult, recordMaffsyCompletion, startMaffsySession, closeMaffsySession, isMaffsyLbTxHashUsed, getMaffsyLeaderboard, getMaffsyLeaderboardEntry, upsertMaffsyLeaderboardEntry, getMaffsyStats } from '../db/index.mjs';
+import { getAchievementRegistry, getAchievement, awardAchievement, getWalletAchievements, getAllAchievements, getGlobalRecord, getPersonalBests, getPersonalBest, getLeagueBests, getWalletStats, getWalletLeagueHistory, getWalletTrophies, getGameStateForLeaguePuzzle, completeGameState, createGameState, getFlaggedSessions, getGlobalLeaderboard, getGlobalLeaderboardEntry, addGlobalLeaderboardEntry, updateGlobalLeaderboardEntry, TIME_PRIMARY_GAMES, getWalletLeaderboardPositions, getGameState, getGame, upsertPersonalBest, incrementPbBeatenCount, retireAchievement, recordMaffsyResult, recordMaffsyCompletion, startMaffsySession, closeMaffsySession, upsertWalletStats, incrementFreeGameCompletion, isMaffsyLbTxHashUsed, getMaffsyLeaderboard, getMaffsyLeaderboardEntry, upsertMaffsyLeaderboardEntry, getMaffsyStats } from '../db/index.mjs';
 import { analyseInputPattern } from '../scoring.mjs';
 import { validateFleet, calculateRange, checkHit, checkSunk, checkWin, getGameState as getBattleshipsState, cpuPlaceFleet, cpuShootRecruit, cpuShootOfficer, cpuShootAdmiral, pickSurvivingShip, FLEET } from '../games/battleships.mjs';
 
@@ -365,28 +365,36 @@ router.post('/session/submit-freeplay', optionalWallet, (req, res) => {
       return res.status(500).json({ error: 'Session persistence failed: ' + e.message });
     }
 
-    // Check if this beats existing PB (before upsert overwrites it)
+    // Counter increment — centralised seam for every submit-freeplay completion.
+    // Fires regardless of win/loss; Minesweeper detonations POST score=0 here too.
+    try { incrementFreeGameCompletion(req.wallet, gameId); } catch (e) { /* must never block */ }
+
+    // Zero-score PB gate — a score of 0 is not a leaderboard-worthy result.
+    // Skips upsertPersonalBest and the pb_beaten counter so Minesweeper-detonation
+    // losses don't pollute the PB table or trigger personal-best achievements.
     var pbBeaten = false;
-    try {
-      var TIME_PRIMARY = new Set(['minesweeper', 'freecell', 'kenken', 'nonogram', 'kakuro', 'sudoku-duel']);
-      var existingPb = getPersonalBest(req.wallet, gameId, diff);
-      if (existingPb) {
-        if (TIME_PRIMARY.has(gameId)) {
-          pbBeaten = score < existingPb.score;
-        } else {
-          pbBeaten = score > existingPb.score;
-        }
-      }
-    } catch (e) { /* PB check must never block */ }
-
-    upsertPersonalBest(req.wallet, gameId, diff, score, timeMs, sessionId);
-
-    // If PB was beaten, increment counter and check for personal-best achievement
-    if (pbBeaten) {
+    if (score !== 0) {
       try {
-        var pbStats = incrementPbBeatenCount(req.wallet, gameId);
-        if (pbStats && pbStats.pb_beaten_count >= 5) pbBeaten = true;
-      } catch (e) { /* must never block */ }
+        var TIME_PRIMARY = new Set(['minesweeper', 'freecell', 'kenken', 'nonogram', 'kakuro', 'sudoku-duel']);
+        var existingPb = getPersonalBest(req.wallet, gameId, diff);
+        if (existingPb) {
+          if (TIME_PRIMARY.has(gameId)) {
+            pbBeaten = score < existingPb.score;
+          } else {
+            pbBeaten = score > existingPb.score;
+          }
+        }
+      } catch (e) { /* PB check must never block */ }
+
+      upsertPersonalBest(req.wallet, gameId, diff, score, timeMs, sessionId);
+
+      // If PB was beaten, increment counter and check for personal-best achievement
+      if (pbBeaten) {
+        try {
+          var pbStats = incrementPbBeatenCount(req.wallet, gameId);
+          if (pbStats && pbStats.pb_beaten_count >= 5) pbBeaten = true;
+        } catch (e) { /* must never block */ }
+      }
     }
 
     var awarded = [];
@@ -472,6 +480,17 @@ router.post('/maffsy/complete', optionalWallet, (req, res) => {
 
     // Cross-mode: update counters, streak, isNewMax.
     var result = recordMaffsyCompletion(req.wallet, isWon, g);
+
+    // Any completion (win or loss) zeroes today's abandon counter — a few
+    // accidental abandons early in the day must not lock the streak for the rest of it.
+    try {
+      var todayUtcForReset = new Date().toISOString().slice(0, 10);
+      upsertWalletStats(req.wallet, { maffsy_abandons_today: 0, maffsy_abandons_date: todayUtcForReset });
+    } catch (e) { /* must never block completion */ }
+
+    // Counter parity with other free games — Maffsy bypasses the session_complete+freePlay
+    // branch in achievement-checker, so increment explicitly on every completion.
+    try { incrementFreeGameCompletion(req.wallet, 'maffsy'); } catch (e) { /* must never block */ }
 
     try {
       checkAchievements(req.wallet, { type: 'maffsy_complete', won: isWon, guesses: g });

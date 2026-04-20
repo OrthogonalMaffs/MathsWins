@@ -3,7 +3,7 @@
  * Called after league settlement, duel completion, or session completion.
  * Gated by ACHIEVEMENTS_ACTIVE env var.
  */
-import { awardAchievement, getWalletAchievements, getWalletStats, incrementWalletCounter, resetWalletCounter, upsertWalletStats, getLeagueScoresByWallet, getLeaguePuzzles, getAllLeagueScores, getGlobalRecord, setGlobalRecord, getEarnedAchievementCount, getActiveSeasonalWindows, getCompletedLeagueCount, getLeagueWinCount, getLeagueWinsByGame, getDuelWinCount, isRecentLeagueChampion, getBattleshipsRounds, getBattleshipsPlacement, getBattleshipsGameById, getBattleshipsRecord, incrementFreeGameCompletion, getDistinctFreeGamesPlayed, getDb } from './db/index.mjs';
+import { awardAchievement, getWalletAchievements, getWalletStats, incrementWalletCounter, resetWalletCounter, upsertWalletStats, getLeagueScoresByWallet, getLeaguePuzzles, getAllLeagueScores, getGlobalRecord, setGlobalRecord, getEarnedAchievementCount, getActiveSeasonalWindows, getCompletedLeagueCount, getLeagueWinCount, getLeagueWinsByGame, getDuelWinCount, isRecentLeagueChampion, getBattleshipsRounds, getBattleshipsPlacement, getBattleshipsGameById, getBattleshipsRecord, getDistinctFreeGamesPlayed, getDb } from './db/index.mjs';
 import { checkSunk } from './games/battleships.mjs';
 
 const ACHIEVEMENTS_ACTIVE = process.env.ACHIEVEMENTS_ACTIVE === 'true';
@@ -523,8 +523,12 @@ export function checkAchievements(wallet, context) {
     try {
       var FREE_GAME_IDS = ['maffsy','higher-or-lower','52dle','towers-of-hanoi','dont-press-it','memory-matrix','rps-vs-machine','estimation-engine','sequence-solver','prime-or-composite','cryptarithmetic-club','battleships'];
 
-      // Century: 100 completions of any single free game
-      var completion = incrementFreeGameCompletion(wallet, context.gameId);
+      // Century: 100 completions of any single free game.
+      // Counter is incremented at the HTTP seam (submit-freeplay / scoring.mjs terminal branches
+      // / /maffsy/complete), so read the already-updated count here.
+      var completion = getDb().prepare(
+        'SELECT count FROM free_game_completions WHERE wallet = ? AND game_id = ?'
+      ).get(wallet.toLowerCase(), context.gameId);
       if (completion && completion.count >= 100) {
         tryAward('century');
       }

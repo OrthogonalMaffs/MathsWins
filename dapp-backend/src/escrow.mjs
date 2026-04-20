@@ -135,7 +135,7 @@ export function logSplitFromReceipt(receipt, contractInterface, source, referenc
   const total = Number(expectedTotalQf) || 0;
   if (total <= 0) return;
 
-  if (source === 'mint' || source === 'leaderboard') {
+  if (source === 'mint' || source === 'leaderboard' || source === 'maffsy-leaderboard') {
     // 5% burn, 95% team
     logLedger('out', 'burn-inferred', total * 0.05, BURN_ADDRESS, from, txHash, source, referenceId, 1);
     logLedger('out', 'team-inferred', total * 0.95, TEAM_WALLET, from, txHash, source, referenceId, 1);
