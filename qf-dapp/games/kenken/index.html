@@ -405,7 +405,7 @@ var G = (function() {
 
       sessionToken = data.token;
       if (data.puzzleIndex !== undefined) leaguePuzzleIndex = data.puzzleIndex;
-      mistakes = 0; hintsUsed = 0;
+      mistakes = 0; submitFailures = 0; hintsUsed = 0;
       initBoardState(data.question, null, null);
 
       showGameUI();
