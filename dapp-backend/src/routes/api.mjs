@@ -1193,11 +1193,13 @@ router.post('/league/:leagueId/join', optionalWallet, (req, res) => {
 
   const newCount = getLeaguePlayerCount(league.id);
 
-  // Auto-start if hit min or max during registration
+  // Auto-start if hit min or max during registration.
+  // Successor league is NOT created here — it fires when the late-join
+  // window closes (see checkLeagueLifecycles), so only one open-to-entry
+  // league per (game, tier) exists at any time.
   if (league.status === 'registration' && newCount >= (league.min_players || 4)) {
     activateLeague(league);
     try { queueNotification('league_minimum_reached', { dedupKey: 'league_min:' + league.id, tier: league.tier, game: league.game_id }); } catch (e) { /* must never block */ }
-    autoCreateLeague(league);
   }
 
   res.json({ joined: true, player_count: newCount });
@@ -1526,13 +1528,13 @@ export function checkLeagueLifecycles() {
   const leagues = db.prepare(`SELECT * FROM leagues WHERE status IN ('registration', 'active')`).all();
 
   for (const league of leagues) {
-    // Registration closed, check threshold
+    // Registration closed, check threshold.
+    // Successor league deferred to join-window-close so only one open-to-entry
+    // league per (game, tier) exists at any time.
     if (league.status === 'registration' && now > league.reg_closes_at) {
       const count = getLeaguePlayerCount(league.id);
       if (count >= (league.min_players || 4)) {
         activateLeague(league);
-        // Auto-create successor league
-        autoCreateLeague(league);
       } else {
         cancelLeagueWithReason(league.id, 'Insufficient players (' + count + '/' + (league.min_players || 4) + ')');
         processLeagueRefunds(league.id).catch(function(e) {
@@ -1559,6 +1561,8 @@ export function checkLeagueLifecycles() {
           count: count
         });
       } catch (e) { /* must never block */ }
+      // Late-join window has now closed; safe to spawn the successor.
+      autoCreateLeague(league);
     }
 
     // Active league: recalculate pot if still in join window (late joiners)
