@@ -492,7 +492,10 @@ var G = (function() {
   // Long press for flagging
   var longPressTimer = null;
   var longPressTriggered = false;
-  var LONG_PRESS_MS = 300;
+  var longPressStartX = 0;
+  var longPressStartY = 0;
+  var LONG_PRESS_MS = 500;
+  var LONG_PRESS_MOVE_TOLERANCE_PX = 10;
 
   // League state
   var leagueMode = false;
@@ -659,6 +662,8 @@ var G = (function() {
     var idx = parseInt(cell.dataset.idx);
 
     longPressTriggered = false;
+    longPressStartX = touch.clientX;
+    longPressStartY = touch.clientY;
     if (cellState[idx] !== 'revealed') setSmiley(SMILEY_CLICK);
     longPressTimer = setTimeout(function() {
       longPressTriggered = true;
@@ -678,8 +683,16 @@ var G = (function() {
   }
 
   function onCellTouchMove(e) {
-    if (longPressTimer) { clearTimeout(longPressTimer); longPressTimer = null; }
-    setSmiley(SMILEY_NORMAL);
+    if (!longPressTimer) return;
+    var touch = e.touches[0];
+    if (!touch) return;
+    var dx = touch.clientX - longPressStartX;
+    var dy = touch.clientY - longPressStartY;
+    if (dx * dx + dy * dy > LONG_PRESS_MOVE_TOLERANCE_PX * LONG_PRESS_MOVE_TOLERANCE_PX) {
+      clearTimeout(longPressTimer);
+      longPressTimer = null;
+      setSmiley(SMILEY_NORMAL);
+    }
   }
 
   function handleClick(idx) {
@@ -705,7 +718,7 @@ var G = (function() {
   async function toggleFlag(idx) {
     if (done) return;
     if (cellState[idx] === 'revealed') return;
-    if (!minesPlaced) return;
+    if (!minesPlaced) { setMsg('Reveal a cell first, then flag.'); return; }
 
     try {
       var data = await api('/session/evaluate', {
