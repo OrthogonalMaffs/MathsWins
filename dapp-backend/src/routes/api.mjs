@@ -6,7 +6,7 @@ import { fileURLToPath } from 'url';
 import { dirname, join } from 'path';
 import { getLeaderboard, getEntry, getPaidGames } from '../db/index.mjs';
 import { createDuel, getDuelByCode, getDuelById, updateDuelCreatorScore, acceptDuel, updateDuelOpponentScore, completeDuel, expireOldDuels, getDuelsByWallet, getActiveDuelCount } from '../db/index.mjs';
-import { createLeague, getLeagueById, getActiveLeagues, getAllLeagues, updateLeagueStatus, startLeague, settleLeague, cancelLeague, addLeaguePlayer, getLeaguePlayers, getLeaguePlayerCount, getPaidLeaguePlayerCount, isLeaguePlayer, markRefunded, addLeaguePuzzle, getLeaguePuzzles, addLeagueScore, getLeagueScore, getLeagueScoresByWallet, getLeagueLeaderboard, addLeaguePrize, getLeaguePrizes, getPlayerPuzzleOrder, setPlayerPuzzleOrder, addLeagueRefund, getPendingRefunds, getFailedRefunds, getLeagueRefunds, updateRefundStatus, cancelLeagueWithReason, forceSettleLeague, getLeaguesByWallet, getOpenAndActiveLeagues, getRecentlySettledLeagues } from '../db/index.mjs';
+import { createLeague, getLeagueById, getActiveLeagues, getAllLeagues, updateLeagueStatus, startLeague, settleLeague, cancelLeague, addLeaguePlayer, getLeaguePlayers, getLeaguePlayerCount, getPaidLeaguePlayerCount, isLeaguePlayer, isLeagueTxHashUsed, markRefunded, addLeaguePuzzle, getLeaguePuzzles, addLeagueScore, getLeagueScore, getLeagueScoresByWallet, getLeagueLeaderboard, addLeaguePrize, getLeaguePrizes, getPlayerPuzzleOrder, setPlayerPuzzleOrder, addLeagueRefund, getPendingRefunds, getFailedRefunds, getLeagueRefunds, updateRefundStatus, cancelLeagueWithReason, forceSettleLeague, getLeaguesByWallet, getOpenAndActiveLeagues, getRecentlySettledLeagues } from '../db/index.mjs';
 import { createPromoChallenge, getPromoByCode, getPromoById, getPromoClaim, addPromoClaim, getPromoClaims } from '../db/index.mjs';
 import { startSession, startFreeSession, evaluate, getCurrentWeekId, resumeSession } from '../scoring.mjs';
 import { ethers } from 'ethers';
@@ -1069,10 +1069,14 @@ router.post('/league/:leagueId/join', optionalWallet, (req, res) => {
   if (!isBuilder && !txHash) {
     return res.status(400).json({ error: 'Payment transaction hash required' });
   }
+  if (!isBuilder && isLeagueTxHashUsed(txHash)) {
+    return res.status(400).json({ error: 'Payment tx_hash already used for another league join' });
+  }
   addLeaguePlayer(league.id, wallet, isBuilder ? 'builder-whitelist' : txHash, now, isBuilder ? 0 : league.entry_fee);
 
   // Track spend and check achievements
   if (!isBuilder && league.entry_fee > 0) {
+    try { logIncoming('league-join', league.entry_fee, wallet, txHash, 'league', league.id); } catch (e) { /* must never block */ }
     try { trackSpend(wallet, league.entry_fee); } catch (e) { /* must never block */ }
   }
   try { checkLeagueRegular(wallet); } catch (e) { /* must never block */ }

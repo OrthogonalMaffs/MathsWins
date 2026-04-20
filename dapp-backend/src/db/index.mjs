@@ -1217,6 +1217,13 @@ export function isLeaguePlayer(leagueId, wallet) {
   return db.prepare('SELECT * FROM league_players WHERE league_id = ? AND wallet = ? AND refunded = 0').get(leagueId, wallet.toLowerCase());
 }
 
+export function isLeagueTxHashUsed(txHash) {
+  if (!txHash || typeof txHash !== 'string' || !txHash.startsWith('0x')) return false;
+  const db = getDb();
+  const row = db.prepare("SELECT 1 FROM league_players WHERE tx_hash = ? AND tx_hash != 'builder-whitelist' LIMIT 1").get(txHash);
+  return !!row;
+}
+
 export function markRefunded(leagueId, wallet) {
   const db = getDb();
   db.prepare('UPDATE league_players SET refunded = 1 WHERE league_id = ? AND wallet = ?').run(leagueId, wallet.toLowerCase());
