@@ -1551,6 +1551,27 @@ export function checkWrongAnswerStreak(wallet, correct) {
  *
  * @param {Array} leaderboard - sorted array of { wallet, total_score }, position 0 = 1st
  */
+// Foundling — awarded when a paid global leaderboard entry displaces a founder
+// wallet from rank 1 on any game/period. Called post-write from
+// /global-leaderboard/enter with the freshly-sorted leaderboard.
+// Rank 1 = entrant AND rank 2 = founder ⇒ founder was rank 1 pre-write.
+// UNIQUE(wallet, achievement_id) in awardAchievement enforces once-per-wallet.
+export function checkFoundling(wallet, leaderboard) {
+  if (!ACHIEVEMENTS_ACTIVE) return [];
+  if (!leaderboard || leaderboard.length < 2) return [];
+  if (OWNER_WALLETS.length === 0) return [];
+  var w = wallet.toLowerCase();
+  if (OWNER_WALLETS.indexOf(w) !== -1) return [];
+  if (leaderboard[0].wallet.toLowerCase() !== w) return [];
+  if (OWNER_WALLETS.indexOf(leaderboard[1].wallet.toLowerCase()) === -1) return [];
+  var r = awardAchievement(w, 'foundling');
+  if (r.awarded) {
+    if (DEBUG) console.log('Achievement awarded: foundling to ' + w.slice(0, 8) + '...' + (r.pioneer ? ' (PIONEER)' : ''));
+    return ['foundling:' + w.slice(0, 8)];
+  }
+  return [];
+}
+
 export function checkRegicideDetention(leaderboard) {
   if (!ACHIEVEMENTS_ACTIVE) return [];
   if (!leaderboard || leaderboard.length < 2) return [];

@@ -490,6 +490,7 @@ const ACHIEVEMENTS = [
   // ── Category 33 — Rivals (Vector achievements) ──
   { id: 'regicide', name: 'Regicide', game_id: null, category: 'meta', fee: 500 },
   { id: 'detention', name: 'Detention', game_id: null, category: 'wooden-spoons', fee: 100 },
+  { id: 'foundling', name: 'Foundling', game_id: null, category: 'meta', fee: 100 },
 ];
 
 // Earned-card descriptions. Surfaced via GET /achievements/my only; /achievements/all
@@ -693,6 +694,7 @@ const ACHIEVEMENT_DESCRIPTIONS = {
   // Rivals
   'regicide': 'Finished above an owner wallet in a league.',
   'detention': 'Finished below an owner wallet in a league.',
+  'foundling': 'Knocked the founder off the top of a global leaderboard.',
   // Community (manually awarded)
   'bug-hunter': 'Found and reported something that made the platform better.',
 };

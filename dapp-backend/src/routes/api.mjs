@@ -14,7 +14,7 @@ import { signatureVerify, decodeAddress } from '@polkadot/util-crypto';
 import { getDb } from '../db/index.mjs';
 import { doSettleLeague, checkEarlySettlement, recoverStuckLeagues, mintCommemorative } from '../league-settle.mjs';
 import { queueNotification, sendTestNotification, postDuelBroadcast, editDuelBroadcastAccepted, editDuelBroadcastExpired, editDuelBroadcastSettled } from '../telegram.mjs';
-import { checkAchievements, checkContrarian, checkStreakAchievements, checkLeagueRegular, checkMonthlyAchievements, trackSpend, checkNightOwlSubmission, checkMinesweeperFreePlay, checkFlagEverything, checkBlindEye, checkSumOfAllFears, checkTheGrinder, checkMintMeta, checkDuelMaster, checkFlaglessAndWrong, checkMidnight, checkFibonacci, checkWrongAnswerStreak } from '../achievement-checker.mjs';
+import { checkAchievements, checkContrarian, checkStreakAchievements, checkLeagueRegular, checkMonthlyAchievements, trackSpend, checkNightOwlSubmission, checkMinesweeperFreePlay, checkFlagEverything, checkBlindEye, checkSumOfAllFears, checkTheGrinder, checkMintMeta, checkDuelMaster, checkFlaglessAndWrong, checkMidnight, checkFibonacci, checkWrongAnswerStreak, checkFoundling } from '../achievement-checker.mjs';
 import { sendQF, settleDuel, settleDuelDraw, refundDuel, getEscrowAddress, getSettlementContract, logIncoming, logSplitFromReceipt, BURN_ADDRESS, TEAM_WALLET } from '../escrow.mjs';
 import { createBattleshipsGame, getBattleshipsGameByCode, getBattleshipsGameById, updateBattleshipsGameStatus, saveBattleshipsPlacement, getBattleshipsPlacement, getBattleshipsPlacements, addBattleshipsRound, getBattleshipsRounds, getBattleshipsRecord, updateBattleshipsRecord, getActiveBattleshipsGames, getBattleshipsGamesByWallet, getActiveBattleshipsForWallet } from '../db/index.mjs';
 import { getAchievementRegistry, getAchievement, awardAchievement, getWalletAchievements, getAllAchievements, getGlobalRecord, getPersonalBests, getPersonalBest, getLeagueBests, getWalletStats, getWalletLeagueHistory, getWalletTrophies, getGameStateForLeaguePuzzle, completeGameState, createGameState, getFlaggedSessions, getGlobalLeaderboard, getGlobalLeaderboardEntry, addGlobalLeaderboardEntry, updateGlobalLeaderboardEntry, TIME_PRIMARY_GAMES, getWalletLeaderboardPositions, getGameState, getGame, upsertPersonalBest, incrementPbBeatenCount, retireAchievement, recordMaffsyResult, recordMaffsyCompletion, startMaffsySession, closeMaffsySession, upsertWalletStats, incrementFreeGameCompletion, isMaffsyLbTxHashUsed, getMaffsyLeaderboard, getMaffsyLeaderboardEntry, upsertMaffsyLeaderboardEntry, getMaffsyStats } from '../db/index.mjs';
@@ -2744,6 +2744,7 @@ router.post('/global-leaderboard/enter', optionalWallet, async (req, res) => {
     addGlobalLeaderboardEntry(req.wallet, gameId, score, timeMs || 0, ei.periodType, ei.periodKey, sessionId, txHash || null, qnsName, suspicious, difficulty);
     var boardI = getGlobalLeaderboard(gameId, ei.periodType, ei.periodKey, difficulty);
     var rankI = boardI.findIndex(function(r) { return r.wallet === req.wallet.toLowerCase(); }) + 1;
+    try { checkFoundling(req.wallet, boardI); } catch (e) { console.error('foundling check failed:', e.message); }
     results.push({ periodType: ei.periodType, periodKey: ei.periodKey, difficulty: difficulty, rank: rankI, totalEntries: boardI.length, action: 'inserted' });
   }
   for (var m = 0; m < updates.length; m++) {
@@ -2751,6 +2752,7 @@ router.post('/global-leaderboard/enter', optionalWallet, async (req, res) => {
     updateGlobalLeaderboardEntry(req.wallet, gameId, score, timeMs || 0, eu.periodType, eu.periodKey, sessionId, txHash || null, qnsName, suspicious, difficulty);
     var boardU = getGlobalLeaderboard(gameId, eu.periodType, eu.periodKey, difficulty);
     var rankU = boardU.findIndex(function(r) { return r.wallet === req.wallet.toLowerCase(); }) + 1;
+    try { checkFoundling(req.wallet, boardU); } catch (e) { console.error('foundling check failed:', e.message); }
     results.push({ periodType: eu.periodType, periodKey: eu.periodKey, difficulty: difficulty, rank: rankU, totalEntries: boardU.length, action: 'updated' });
   }
 
