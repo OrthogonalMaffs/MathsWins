@@ -186,6 +186,7 @@ footer a{color:var(--muted);text-decoration:none}footer a:hover{color:var(--silv
   </div>
   <button class="btn btn-ghost" id="create-duel-btn" onclick="confirmDuelCreate()" style="width:100%;padding:.7rem;margin-top:.5rem;font-size:.65rem">&#9876; Create a Duel</button>
   <a href="/qf-dapp/games/countdown-numbers/league/" style="display:block;text-align:center;margin-top:.8rem;font-family:'JetBrains Mono',monospace;font-size:.65rem;color:var(--silver,#b8bcc6);text-decoration:none;padding:.5rem;border:1px solid var(--border,#1e2228);border-radius:6px;transition:all .15s" onmouseover="this.style.borderColor='rgba(184,188,198,0.15)'" onmouseout="this.style.borderColor='var(--border,#1e2228)'">&#9813; View Leagues</a>
+  <a href="/qf-dapp/" style="display:block;text-align:center;margin-top:.5rem;font-family:'JetBrains Mono',monospace;font-size:.65rem;color:var(--muted,#4a4e5a);text-decoration:none;padding:.5rem;border:1px solid var(--border,#1e2228);border-radius:6px;transition:all .15s" onmouseover="this.style.borderColor='rgba(184,188,198,0.15)';this.style.color='var(--silver,#b8bcc6)'" onmouseout="this.style.borderColor='var(--border,#1e2228)';this.style.color='var(--muted,#4a4e5a)'">&larr; Back to Lobby</a>
   <div id="startError" class="error-msg" style="display:none"></div>
 </div>
 
@@ -635,6 +636,11 @@ var duelMode = false, duelCode = null, duelId = null;
       btn.style.boxShadow = '0 0 8px rgba(201,168,76,0.4)';
       setTimeout(function() { btn.style.borderColor = ''; btn.style.boxShadow = ''; }, 1500);
     }
+    var sb = document.getElementById('startBtn'); if (sb) sb.style.display = 'none';
+  }
+  if (params.get('mode') === 'free') {
+    ['create-duel-btn','duel-share-panel','duel-accept-panel','duel-stake-wrap','duel-stake-modal']
+      .forEach(function(id) { var el = document.getElementById(id); if (el) el.style.display = 'none'; });
   }
 })();
 
