@@ -77,6 +77,7 @@ Platform: Academy (9 courses), Tools (28 calculators), Games (22 dApp + 13 main 
 - **`onlyfans-qf` row pricing TBD** — tier='manual' but mint_fee_qf=200, contradicts "Manual reward" semantics in spec. Awaiting decision (left untouched in tier migration).
 - **Admin auth not configured on Box 1** — neither `ADMIN_SECRET` nor `ADMIN_WALLETS` env var set, so `/admin/*` HTTP endpoints (incl. `/admin/telegram/test`) return 403 from outside. In-process node import works as a workaround.
 - **`SqliteError: no such table: leagues at getActiveLeagues (db/index.mjs:504)`** — recurring background log spam. The `leagues` table exists and other queries against it work (`getLeagueById`, `createLeague`, etc). Suspected cause: a stray module instantiating its own `better-sqlite3` handle against a wrong path or pre-schema instance. Cosmetic only — not related to league-join flow. Investigate post-launch.
+- **`flag-everything` achievement unreachable.** Minesweeper's first-click-safety means no mine positions exist until the player reveals a cell, and `toggleFlag` bails on `!minesPlaced`. Flagging every mine with zero reveals is therefore impossible by construction. Needs redefining (e.g. "flag all mines without ever mis-flagging") or retiring. Part of the deferred achievement-impossibility audit alongside `docs/achievement-audit-2026-04-17.md`.
 
 ## Launch-Night Changes (2026-04-18 evening)
 - **League team tax 5% → 10%, prize pool 90% → 85%.** Burn stays 5%. Single constant change at `api.mjs:867` (`TEAM_PCT=0.10`). Prize pool derives automatically. Frontend copy + docs swept. Commit `98efde8`.
@@ -149,6 +150,12 @@ Platform: Academy (9 courses), Tools (28 calculators), Games (22 dApp + 13 main 
 - **Frontend:** `qf-dapp/games/maffsy/index.html` — removed `PREFS.free` gate on `/maffsy/complete`; added `/maffsy/start` call on new puzzles, `nextFree`, `setFree`, and initial load; `isNewMax` flag from server drives the 🔥 PB line in end modal; unconnected-wallet disclaimers on status bar (persistent) and end modal (once per session). My Account High Scores tab has a new Maffsy card with current max vs submitted score and a 50 QF submit button when max > submitted.
 - **Migration:** `scripts/migrate-maffsy-counters.mjs` — atomic, transaction-wrapped, idempotent via `migrations_ran` sentinel. Forward-promotes `maffsy_clean_streak` into `_current_streak` / `_max_streak` via MAX(), backfills `_total_plays` / `_total_wins` / `_guesses_N` from `maffsy_streaks`, wipes Maffsy rows from `global_leaderboard_entries`.
 - **Deploy discipline:** attended two-act — Act 1 Jon runs migration script on Box 1 watching output; Act 2 code scp'd + attended PM2 restart (no silent cron for this one).
+
+## Minesweeper mobile long-press fix (2026-04-20)
+
+- **Mobile flagging was unusable.** `onCellTouchMove` cancelled the long-press timer on any movement, so sub-pixel finger jitter during the 300ms hold killed the timer before it fired. Jon reported 6/6 failures on his phone.
+- **Fix in `qf-dapp/games/minesweeper/index.html`:** record touchstart x/y, only cancel the timer when movement exceeds `LONG_PRESS_MOVE_TOLERANCE_PX = 10`, bumped `LONG_PRESS_MS` 300 → 500 (platform convention). `toggleFlag` now surfaces "Reveal a cell first, then flag." via `setMsg` when `!minesPlaced` instead of silently bailing. Commit `f52feb0`.
+- **Desktop right-click path untouched** — mouse handlers, chord, and game engine unchanged.
 
 ## Standing rules added 2026-04-19
 
