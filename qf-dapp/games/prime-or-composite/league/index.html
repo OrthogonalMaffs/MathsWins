@@ -166,7 +166,7 @@ body{background:var(--bg);color:var(--text);font-family:'Inter',sans-serif;min-h
     <div class="explainer-grid">
       <div class="ex-item"><span class="ex-label">Players</span><span class="ex-val">8 &ndash; 16 per league</span></div>
       <div class="ex-item"><span class="ex-label">Puzzles</span><span class="ex-val">10 (sequential, randomised order)</span></div>
-      <div class="ex-item"><span class="ex-label">Registration</span><span class="ex-val">7 days (or fills at 16)</span></div>
+      <div class="ex-item"><span class="ex-label">Registration</span><span class="ex-val">Starts at 4 players (or fills at 16)</span></div>
       <div class="ex-item"><span class="ex-label">Play Window</span><span class="ex-val">14 days from start</span></div>
       <div class="ex-item"><span class="ex-label">Late Joining</span><span class="ex-val">24 hours after start</span></div>
       <div class="ex-item"><span class="ex-label">Leaderboard</span><span class="ex-val">Hidden first 24 hours</span></div>
@@ -262,7 +262,8 @@ function renderLeagueCards(leagues) {
       timeLeft = formatCountdown(l.play_closes_at - now) + ' to play';
     }
 
-    var potDisplay = l.total_pot ? l.total_pot + ' QF pot' : fee + ' QF entry';
+    var prizePool = (l.prizes && l.prizes.first != null) ? Math.round((l.prizes.first + l.prizes.second + l.prizes.third + l.prizes.fourth) * 100) / 100 : 0;
+    var potDisplay = prizePool > 0 ? prizePool + ' QF pot' : fee + ' QF entry';
 
     var card = document.createElement('div');
     card.className = 'league-card ' + tierClass;
@@ -525,7 +526,9 @@ function buildPrizeTableHTML(prizes, status, joinClosesAt) {
     }
     caveat = 'Based on actual entry fees received. Increases as more players join.';
   } else if (status === 'active' && joinClosesAt && Date.now() <= joinClosesAt) {
-    caveat = 'Registration closed. These are your confirmed prizes.';
+    caveat = 'Entries still open. Pot may still grow as more players join.';
+  } else if (status === 'active') {
+    caveat = 'Entries closed. These are your confirmed prizes.';
   } else {
     return '';
   }
