@@ -26,6 +26,11 @@
   var QNS_RESOLVER_NEW = '0x276b7e9343c19bea29d32dd4a8f84e6d1c183111';
   var QNS_ABI = ['function reverseResolve(address _addr) view returns (string)'];
 
+  // WalletConnect AppKit — mobile fallback when no EIP-6963 / window.ethereum / injectedWeb3 is present.
+  // Public project ID (not a secret); safe to ship in client bundle.
+  var APPKIT_PROJECT_ID = 'eeddb553d4f9d0d41252eb77bbaf124d';
+  var appkitModal = null;
+
   var state = {
     address: null, balance: null, chainId: null,
     provider: null, signer: null, qfName: null, walletType: null,
@@ -297,8 +302,9 @@
   async function connect() {
     var wallets = detectWallets();
     if (wallets.length === 0) {
-      createModal();
-      showNoWalletMessage(document.getElementById('qf-wallet-list'));
+      // No injected wallet of any kind (typical mobile browser).
+      // Route to WalletConnect AppKit for QR / deep-link connection.
+      connectViaAppKit();
       return;
     }
     // Single EVM wallet: connect directly, skip chooser modal
@@ -311,6 +317,88 @@
     var list = document.getElementById('qf-wallet-list');
     list.innerHTML = '';
     wallets.forEach(function(w) { list.appendChild(walletButton(w)); });
+  }
+
+  // ── WalletConnect AppKit (mobile fallback) ────────────────────────
+  // Lazy-loaded — nothing executes until connect() routes here, so desktop
+  // users never touch AppKit code paths and cannot be broken by import failure.
+  async function connectViaAppKit() {
+    try {
+      if (!appkitModal) {
+        var appkitMod = await import('https://esm.sh/@reown/appkit@1');
+        var ethersAdapterMod = await import('https://esm.sh/@reown/appkit-adapter-ethers@1');
+        var networksMod = await import('https://esm.sh/@reown/appkit@1/networks');
+        var createAppKit = appkitMod.createAppKit;
+        var EthersAdapter = ethersAdapterMod.EthersAdapter;
+        var defineChain = networksMod.defineChain;
+
+        var qfNetwork = defineChain({
+          id: QF_CHAIN_ID,
+          caipNetworkId: 'eip155:' + QF_CHAIN_ID,
+          chainNamespace: 'eip155',
+          name: 'QF Network',
+          nativeCurrency: { name: 'QF', symbol: 'QF', decimals: 18 },
+          rpcUrls: { default: { http: [QF_RPC] } }
+        });
+
+        appkitModal = createAppKit({
+          adapters: [new EthersAdapter()],
+          networks: [qfNetwork],
+          defaultNetwork: qfNetwork,
+          projectId: APPKIT_PROJECT_ID,
+          metadata: {
+            name: 'QF Games',
+            description: 'Maths puzzle games on QF Network',
+            url: window.location.origin,
+            icons: [window.location.origin + '/qf-dapp/assets/icon-512.png']
+          },
+          features: { email: false, socials: [] }
+        });
+      }
+
+      await appkitModal.open();
+
+      // Wait for a connected account, then hand the provider to the existing
+      // connectWithProvider() flow (chain switch, signer, auth, JWT — unchanged).
+      var walletProvider = await new Promise(function(resolve, reject) {
+        var unsubAccount = null;
+        var unsubState = null;
+        var done = false;
+        function cleanup() {
+          done = true;
+          if (typeof unsubAccount === 'function') unsubAccount();
+          if (typeof unsubState === 'function') unsubState();
+        }
+        unsubAccount = appkitModal.subscribeAccount(function(acct) {
+          if (done) return;
+          if (acct && acct.isConnected && acct.address) {
+            var prov = null;
+            try { prov = appkitModal.getProvider('eip155'); } catch (e) {}
+            cleanup();
+            if (prov) resolve(prov);
+            else reject(new Error('AppKit returned no provider after connect'));
+          }
+        });
+        unsubState = appkitModal.subscribeState(function(s) {
+          if (done) return;
+          // Modal closed without a connection — soft cancel, no error toast.
+          if (s && s.open === false) {
+            var acct = null;
+            try { acct = appkitModal.getAccount && appkitModal.getAccount('eip155'); } catch (e) {}
+            if (!acct || !acct.isConnected) {
+              cleanup();
+              reject(new Error('__cancel__'));
+            }
+          }
+        });
+      });
+
+      connectWithProvider(walletProvider, 'walletconnect');
+    } catch (e) {
+      if (e && e.message === '__cancel__') return;
+      console.error('AppKit connect failed:', e);
+      showWalletError('Could not connect via WalletConnect. Please try again.');
+    }
   }
 
   async function connectWithProvider(ethProvider, walletId, silent) {
