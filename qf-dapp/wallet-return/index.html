@@ -80,6 +80,24 @@
 <script>
 (async function() {
   'use strict';
+  // Visible fatal-error sink — if anything below throws, surface it in
+  // the snap pane instead of leaving "(loading…)" forever.
+  function fatalBanner(err) {
+    try {
+      var snap = document.getElementById('diagSnap');
+      if (snap) snap.textContent = 'FATAL: ' + ((err && err.message) || String(err)) + '\n\nstack: ' + ((err && err.stack) || 'n/a');
+      var status = document.getElementById('status');
+      if (status) status.textContent = 'Script error';
+    } catch (e) {}
+  }
+  window.addEventListener('error', function(ev) { fatalBanner(ev && ev.error); });
+  window.addEventListener('unhandledrejection', function(ev) { fatalBanner(ev && ev.reason); });
+
+  if (typeof qfWallet === 'undefined') {
+    fatalBanner(new Error('qfWallet is undefined — qf-wallet.js failed to load or its IIFE threw. Check network tab for the /qf-dapp/games/qf-wallet.js request.'));
+    return;
+  }
+
   var loading = document.getElementById('loading');
   var needsSig = document.getElementById('needsSig');
   var noSession = document.getElementById('noSession');

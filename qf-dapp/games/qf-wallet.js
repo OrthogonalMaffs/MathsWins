@@ -582,38 +582,62 @@
   });
 
   // ── WalletConnect (headless) ──────────────────────────────────────
-  // Eager init: called from bootWalletNav() on every page load so that
-  // the provider exists and all listeners (display_uri, connect, etc.)
-  // are attached BEFORE the user taps Connect. Attaching listeners inside
-  // the tap handler creates a race — the module import + init can take
-  // hundreds of ms, and the user-gesture token that authorises the
-  // subsequent metamask:// navigation expires.
   async function initWalletConnectRuntime() {
     if (wcProvider) return wcProvider;
     if (wcInitPromise) return wcInitPromise;
     wcInitPromise = (async function() {
-      var mod = await import('https://esm.sh/@walletconnect/ethereum-provider@2.17.0');
+      qfDiag('wc-init: phase=start, importing @walletconnect/ethereum-provider@2.17.0');
+      var importStart = Date.now();
+      var mod;
+      try {
+        mod = await import('https://esm.sh/@walletconnect/ethereum-provider@2.17.0');
+      } catch (e) {
+        qfDiag('wc-init: import FAILED', { message: (e && e.message), ms: Date.now() - importStart });
+        throw e;
+      }
+      qfDiag('wc-init: phase=imported', { ms: Date.now() - importStart, hasDefault: !!(mod && mod.default), hasNamed: !!(mod && mod.EthereumProvider) });
       var EthereumProvider = mod.EthereumProvider || mod.default;
-      var prov = await EthereumProvider.init({
-        projectId: WC_PROJECT_ID,
-        chains: [QF_CHAIN_ID],
-        optionalChains: [QF_CHAIN_ID],
-        rpcMap: { 3426: QF_RPC },
-        showQrModal: false,
-        methods: ['eth_sendTransaction', 'personal_sign', 'eth_sign', 'eth_chainId', 'eth_accounts', 'wallet_switchEthereumChain', 'wallet_addEthereumChain'],
-        events: ['accountsChanged', 'chainChanged', 'connect', 'disconnect'],
-        metadata: {
-          name: 'QF Games',
-          description: 'Maths puzzle games on QF Network',
-          url: window.location.origin,
-          icons: [window.location.origin + '/qf-dapp/assets/icon-512.png']
-        }
-      });
+      qfDiag('wc-init: phase=calling EthereumProvider.init');
+      var initStart = Date.now();
+      var prov;
+      try {
+        prov = await EthereumProvider.init({
+          projectId: WC_PROJECT_ID,
+          chains: [QF_CHAIN_ID],
+          optionalChains: [QF_CHAIN_ID],
+          rpcMap: { 3426: QF_RPC },
+          showQrModal: false,
+          methods: ['eth_sendTransaction', 'personal_sign', 'eth_sign', 'eth_chainId', 'eth_accounts', 'wallet_switchEthereumChain', 'wallet_addEthereumChain'],
+          events: ['accountsChanged', 'chainChanged', 'connect', 'disconnect'],
+          metadata: {
+            name: 'QF Games',
+            description: 'Maths puzzle games on QF Network',
+            url: window.location.origin,
+            icons: [window.location.origin + '/qf-dapp/assets/icon-512.png']
+          }
+        });
+      } catch (e) {
+        qfDiag('wc-init: EthereumProvider.init FAILED', { message: (e && e.message), ms: Date.now() - initStart });
+        throw e;
+      }
+      qfDiag('wc-init: phase=init resolved', { ms: Date.now() - initStart, sessionExists: !!prov.session, accounts: prov.accounts });
       wireWcEvents(prov);
+      qfDiag('wc-init: phase=listeners wired, runtime ready');
       wcProvider = prov;
       return prov;
     })();
     return wcInitPromise;
+  }
+
+  // Timeout wrapper so awaiters don't hang forever if the SDK or relay
+  // stalls — returns the caller-supplied onTimeout value instead.
+  function withTimeout(promise, ms, onTimeout) {
+    return Promise.race([
+      promise,
+      new Promise(function(resolve) {
+        setTimeout(function() { resolve(onTimeout); }, ms);
+      })
+    ]);
   }
 
   // Back-compat alias for anything internal still calling the old name.
