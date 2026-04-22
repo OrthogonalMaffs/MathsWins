@@ -328,6 +328,10 @@
   // ── Verification Gate ──────────────────────────────────────────────
   async function ensureVerified() {
     if (state.verified) return;
+    // WalletConnect: the active session IS the permission grant.
+    // wallet_requestPermissions is not declared on the WC provider and
+    // MetaMask mobile does not respond to it over WC — it would hang.
+    if (state.walletType === 'walletconnect') { state.verified = true; return; }
     if (!state.rawProvider) throw new Error('No wallet connected');
     await state.rawProvider.request({
       method: 'wallet_requestPermissions',
@@ -573,15 +577,38 @@
     }
   }
 
+  function isTouchDevice() {
+    return ('ontouchstart' in window) || (navigator.maxTouchPoints > 0);
+  }
+
+  function foregroundWalletApp() {
+    // Mobile only — desktop has no wallet app to foreground.
+    if (!isTouchDevice()) return;
+    try {
+      var a = document.createElement('a');
+      a.href = 'metamask://';
+      a.rel = 'noopener noreferrer';
+      a.style.display = 'none';
+      document.body.appendChild(a);
+      a.click();
+      a.remove();
+    } catch (e) { /* noop */ }
+  }
+
   function signerProxy(prov, address) {
     // Minimal ethers-like signer that proxies through the WC provider.
+    // Uses the already-connected WC session — no re-pairing.
     return {
       signMessage: async function(message) {
         var msgHex = '0x' + Array.from(new TextEncoder().encode(message)).map(function(b) { return b.toString(16).padStart(2, '0'); }).join('');
-        return prov.request({ method: 'personal_sign', params: [msgHex, address] });
+        var pending = prov.request({ method: 'personal_sign', params: [msgHex, address] });
+        foregroundWalletApp();
+        return pending;
       },
       sendTransaction: async function(tx) {
-        var hash = await prov.request({ method: 'eth_sendTransaction', params: [tx] });
+        var pending = prov.request({ method: 'eth_sendTransaction', params: [tx] });
+        foregroundWalletApp();
+        var hash = await pending;
         return { hash: hash, wait: async function() { return state.provider.waitForTransaction(hash); } };
       }
     };
@@ -877,13 +904,15 @@
 
     if (!interactive) {
       if (s.authStatus !== 'needs_signature') setWalletState({ authStatus: 'needs_signature' });
-      return { status: 'needs_signature' };
-    }
-
-    // Cooldown: never sign within 8s of a deep-link return.
-    var returnedAt = 0;
-    try { returnedAt = parseInt(sessionStorage.getItem(RETURNED_AT_KEY) || '0', 10); } catch (e) {}
-    if (returnedAt && (Date.now() - returnedAt) < POST_RETURN_COOLDOWN_MS) {
+      // Cooldown guards the auto path: within 8s of a deep-link return we
+      // never promote authStatus silently. Interactive calls (user click)
+      // bypass this — the cooldown's purpose is "no auto-signing", not
+      // "no user-initiated signing".
+      var returnedAt = 0;
+      try { returnedAt = parseInt(sessionStorage.getItem(RETURNED_AT_KEY) || '0', 10); } catch (e) {}
+      if (returnedAt && (Date.now() - returnedAt) < POST_RETURN_COOLDOWN_MS) {
+        return { status: 'needs_signature' };
+      }
       return { status: 'needs_signature' };
     }
 
