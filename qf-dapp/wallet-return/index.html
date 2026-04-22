@@ -25,6 +25,10 @@
   .spinner{display:inline-block;width:22px;height:22px;border:2px solid var(--border);border-top-color:var(--silver-bright);border-radius:50%;animation:spin .9s linear infinite;margin:.4rem 0 1rem}
   @keyframes spin{to{transform:rotate(360deg)}}
   .row{display:flex;gap:.6rem;justify-content:center;flex-wrap:wrap;margin-top:.6rem}
+  .diag{margin-top:1.2rem;border-top:1px solid var(--border);padding-top:.8rem;text-align:left}
+  .diag h4{font-family:'JetBrains Mono',monospace;font-size:.55rem;color:var(--muted);letter-spacing:.08em;text-transform:uppercase;margin:0 0 .4rem}
+  .diag pre{font-family:'JetBrains Mono',monospace;font-size:.52rem;color:var(--silver);background:var(--surface2);border:1px solid var(--border);border-radius:6px;padding:.6rem;margin:0 0 .6rem;max-height:220px;overflow:auto;white-space:pre-wrap;word-break:break-all;line-height:1.5}
+  .diag .row{justify-content:flex-start;margin-top:0}
 </style>
 </head>
 <body>
@@ -58,6 +62,16 @@
   </div>
   <div id="signed" style="display:none">
     <p class="msg">Signed in — redirecting…</p>
+  </div>
+  <div class="diag" id="diagPanel">
+    <h4>Session snapshot</h4>
+    <pre id="diagSnap">(loading…)</pre>
+    <h4>Event log</h4>
+    <pre id="diagLog"></pre>
+    <div class="row">
+      <button class="btn secondary" id="copyDiagBtn" style="font-size:.6rem;padding:.35rem .7rem">Copy diagnostics</button>
+      <button class="btn secondary" id="refreshSnapBtn" style="font-size:.6rem;padding:.35rem .7rem">Refresh snapshot</button>
+    </div>
   </div>
 </div>
 
@@ -99,15 +113,69 @@
 
   try { sessionStorage.setItem('qf_wallet_returned_at', String(Date.now())); } catch (e) {}
 
+  // ── Diagnostics plumbing ──────────────────────────────────────────
+  var diagSnap = document.getElementById('diagSnap');
+  var diagLog = document.getElementById('diagLog');
+  var copyBtn = document.getElementById('copyDiagBtn');
+  var refreshBtn = document.getElementById('refreshSnapBtn');
+
+  function fmtTime(t) {
+    var d = new Date(t);
+    return d.toISOString().slice(11, 23);
+  }
+  function renderSnapshot() {
+    try {
+      var snap = qfWallet.diagnosticSnapshot();
+      diagSnap.textContent = JSON.stringify(snap, null, 2);
+    } catch (e) {
+      diagSnap.textContent = 'snapshot error: ' + (e && e.message);
+    }
+  }
+  function appendLogEntry(entry) {
+    var line = fmtTime(entry.t) + '  ' + entry.msg + (entry.extra ? '  ' + JSON.stringify(entry.extra) : '');
+    diagLog.textContent += (diagLog.textContent ? '\n' : '') + line;
+    diagLog.scrollTop = diagLog.scrollHeight;
+  }
+  // Replay buffer accumulated before /wallet-return/ loaded.
+  try {
+    (qfWallet.diagBuffer || []).forEach(appendLogEntry);
+  } catch (e) {}
+  window.addEventListener('qfwallet:diag', function(ev) { if (ev && ev.detail) appendLogEntry(ev.detail); });
+  window.addEventListener('qfwallet:state', renderSnapshot);
+  if (copyBtn) copyBtn.addEventListener('click', async function() {
+    var payload = {
+      snapshot: qfWallet.diagnosticSnapshot(),
+      log: (qfWallet.diagBuffer || []).map(function(e) { return { t: fmtTime(e.t), msg: e.msg, extra: e.extra }; })
+    };
+    var text = JSON.stringify(payload, null, 2);
+    try { await navigator.clipboard.writeText(text); copyBtn.textContent = 'Copied ✓'; setTimeout(function() { copyBtn.textContent = 'Copy diagnostics'; }, 1500); }
+    catch (e) {
+      // Fallback: select the text for manual copy
+      var ta = document.createElement('textarea');
+      ta.value = text; document.body.appendChild(ta); ta.select();
+      try { document.execCommand('copy'); copyBtn.textContent = 'Copied ✓'; } catch (ee) { copyBtn.textContent = 'Copy failed'; }
+      ta.remove();
+      setTimeout(function() { copyBtn.textContent = 'Copy diagnostics'; }, 1500);
+    }
+  });
+  if (refreshBtn) refreshBtn.addEventListener('click', renderSnapshot);
+
+  qfWallet.logDiag('wallet-return: page loaded', { pathname: location.pathname, search: location.search });
+  renderSnapshot();
+
   // Session-first reconciliation: init the WC runtime and inspect the
   // provider's session object directly. We do NOT wait for a 'connect'
   // event — on deep-link return, that event may never fire against this
   // JS context.
   try {
+    qfWallet.logDiag('wallet-return: awaiting initWalletConnectRuntime');
     await qfWallet.initWalletConnectRuntime();
+    qfWallet.logDiag('wallet-return: WC runtime init resolved');
   } catch (e) {
+    qfWallet.logDiag('wallet-return: WC runtime init FAILED', { message: (e && e.message) });
     console.error('WC init failed on /wallet-return/:', e && e.message);
   }
+  renderSnapshot();
 
   // Fresh-connect marker tells us this session belongs to the most
   // recent Connect tap rather than a stale pairing from a previous visit.
@@ -145,7 +213,10 @@
     signInFlight = true;
     statusEl.textContent = 'Waiting for signature';
     show('awaitingSig');
+    qfWallet.logDiag('wallet-return: Finish sign-in tapped — calling ensureValidJwt(interactive)');
     var result = await qfWallet.ensureValidJwt({ interactive: true });
+    qfWallet.logDiag('wallet-return: ensureValidJwt returned', { status: result && result.status });
+    renderSnapshot();
     signInFlight = false;
     if (result && result.status === 'valid') {
       statusEl.textContent = 'Signed in';

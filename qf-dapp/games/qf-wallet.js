@@ -62,6 +62,44 @@
   var wcSessionProcessed = false;  // idempotency flag for handleWcSessionEstablished
   var wcLiveSessionVerified = false; // true after resumeAndReconcile has inspected provider.session
   var lastAuthError = null;    // last signing/auth failure message (for /wallet-return/ display)
+  var diagBuffer = [];         // in-memory diagnostic log
+
+  function qfDiag(msg, extra) {
+    var entry = { t: Date.now(), msg: String(msg), extra: extra || null };
+    diagBuffer.push(entry);
+    if (diagBuffer.length > 200) diagBuffer.shift();
+    try { console.log('[qfWallet]', entry.t, msg, extra || ''); } catch (e) {}
+    try { window.dispatchEvent(new CustomEvent('qfwallet:diag', { detail: entry })); } catch (e) {}
+  }
+
+  function diagnosticSnapshot() {
+    var prov = wcProvider;
+    var namespaceAccounts = null;
+    try { namespaceAccounts = prov && prov.session && prov.session.namespaces && prov.session.namespaces.eip155 && prov.session.namespaces.eip155.accounts; } catch (e) {}
+    return {
+      href: typeof location !== 'undefined' ? location.href : null,
+      storedState: readStoredWalletState(),
+      memory: {
+        address: state.address,
+        walletType: state.walletType,
+        chainId: state.chainId,
+        hasSigner: !!state.signer,
+        hasRawProvider: !!state.rawProvider,
+        verified: state.verified
+      },
+      wc: {
+        providerExists: !!prov,
+        sessionExists: !!(prov && prov.session),
+        sessionTopic: prov && prov.session && prov.session.topic,
+        accounts: prov && prov.accounts,
+        chainId: prov && prov.chainId,
+        namespaceAccounts: namespaceAccounts,
+        liveSessionVerified: wcLiveSessionVerified,
+        sessionProcessed: wcSessionProcessed
+      },
+      lastAuthError: lastAuthError
+    };
+  }
 
   // Belt-and-braces: hide any stray WalletConnect/Reown modal elements.
   // We never want the built-in modal to render — we have our own deep-link flow.
@@ -167,34 +205,48 @@
 
   // ── Auth: challenge-sign-verify flow ──────────────────────────────
   async function authenticate(address, signer) {
+    qfDiag('auth: entering authenticate', { address: address });
     var stored = loadStoredToken(address);
-    if (stored) return stored;
+    if (stored) { qfDiag('auth: stored token valid, short-circuit'); return stored; }
 
     try {
       lastAuthError = null;
+      qfDiag('auth: POST /auth/challenge');
       var challengeRes = await fetch(API_BASE + '/auth/challenge', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' }
       });
+      qfDiag('auth: challenge response', { status: challengeRes.status });
       var challengeData = await challengeRes.json();
       if (!challengeData.challenge || !challengeData.nonce) {
         lastAuthError = 'Challenge endpoint returned no challenge/nonce';
+        qfDiag('auth: challenge missing fields', challengeData);
         return null;
       }
 
+      qfDiag('auth: calling signer.signMessage', { challengeLen: challengeData.challenge.length });
       var signature = await signer.signMessage(challengeData.challenge);
+      qfDiag('auth: signMessage resolved', { sigLen: signature ? signature.length : 0 });
 
+      qfDiag('auth: POST /auth/verify');
       var verifyRes = await fetch(API_BASE + '/auth/verify', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ signature: signature, wallet: address, nonce: challengeData.nonce })
       });
+      qfDiag('auth: verify response', { status: verifyRes.status });
       var verifyData = await verifyRes.json();
-      if (verifyData.token) { saveAuthToken(verifyData.token); return verifyData.token; }
+      if (verifyData.token) {
+        qfDiag('auth: JWT issued');
+        saveAuthToken(verifyData.token);
+        return verifyData.token;
+      }
       lastAuthError = 'Verify rejected signature: ' + (verifyData.error || 'unknown');
+      qfDiag('auth: verify rejected', verifyData);
       return null;
     } catch (e) {
       lastAuthError = (e && e.message) || String(e);
+      qfDiag('auth: EXCEPTION', { message: lastAuthError, stack: (e && e.stack) ? String(e.stack).split('\n').slice(0, 3).join(' | ') : null });
       console.error('Auth failed:', e);
       return null;
     }
@@ -569,12 +621,14 @@
 
   function wireWcEvents(prov) {
     prov.on('display_uri', function(uri) {
+      qfDiag('wc-event: display_uri received', { uriLen: uri ? uri.length : 0 });
       // Deep-link only. All flow-marker writes happen in
       // connectViaWalletConnect() before prov.connect() is called.
       var target = 'metamask://wc?uri=' + encodeURIComponent(uri);
       window.location.href = target;
     });
     prov.on('connect', function() {
+      qfDiag('wc-event: connect fired', { accounts: prov.accounts, chainId: prov.chainId });
       // Best-effort — may not fire on rehydration paths. Session-first
       // reconciliation in resumeAndReconcile() does not depend on this.
       handleWcSessionEstablished(prov);
@@ -718,12 +772,21 @@
     return {
       signMessage: async function(message) {
         var acct = currentAccount();
-        if (!acct) throw new Error('WC session has no account — reconnect your wallet');
+        qfDiag('sign: entering signerProxy.signMessage', { acct: acct, hasSession: !!prov.session, topic: prov.session && prov.session.topic });
+        if (!acct) {
+          qfDiag('sign: no account available');
+          throw new Error('WC session has no account — reconnect your wallet');
+        }
         var msgHex = '0x' + Array.from(new TextEncoder().encode(message)).map(function(b) { return b.toString(16).padStart(2, '0'); }).join('');
-        // Do NOT deep-link away here — navigating to metamask:// mid-request
-        // can kill the JS context and drop the pending response, which
-        // produces a second signing request on return.
-        return prov.request({ method: 'personal_sign', params: [msgHex, acct] });
+        qfDiag('sign: calling prov.request personal_sign');
+        try {
+          var sig = await prov.request({ method: 'personal_sign', params: [msgHex, acct] });
+          qfDiag('sign: personal_sign resolved', { sigLen: sig ? sig.length : 0 });
+          return sig;
+        } catch (e) {
+          qfDiag('sign: personal_sign REJECTED', { message: (e && e.message) || String(e) });
+          throw e;
+        }
       },
       sendTransaction: async function(tx) {
         var hash = await prov.request({ method: 'eth_sendTransaction', params: [tx] });
@@ -761,7 +824,9 @@
       // 2.x releases triggers internal undefined.includes() calls when
       // the SDK's option-shape expectations differ. Letting it use the
       // chains/optionalChains already set at init() time is safer.
+      qfDiag('connect: calling prov.connect()');
       await prov.connect();
+      qfDiag('connect: prov.connect() resolved');
     } catch (e) {
       var msg = (e && e.message) || String(e);
       var stack = (e && e.stack) ? String(e.stack).split('\n').slice(0, 3).join(' | ') : '';
@@ -1285,6 +1350,9 @@
     initWalletConnectRuntime: initWalletConnectRuntime,
     wcHasLiveSession: function() { return wcHasLiveSession(wcProvider); },
     get lastAuthError() { return lastAuthError; },
+    get diagBuffer() { return diagBuffer.slice(); },
+    diagnosticSnapshot: diagnosticSnapshot,
+    logDiag: qfDiag,
     readStoredWalletState: readStoredWalletState,
     setWalletState: setWalletState,
     ensureValidJwt: ensureValidJwt,
