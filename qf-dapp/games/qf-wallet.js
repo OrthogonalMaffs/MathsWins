@@ -1,20 +1,26 @@
 /**
  * QF Games — Shared wallet connection module.
- * Supports MetaMask and Talisman (EVM mode).
- * Include after ethers.js CDN on any qf-dapp page.
  *
- * Usage:
- *   qfWallet.connect()          — opens wallet chooser or connects directly
- *   qfWallet.disconnect()       — disconnects, resets UI
- *   qfWallet.address             — connected EVM address (H160)
- *   qfWallet.qfName              — resolved .qf name or null
- *   qfWallet.displayName()       — .qf name or truncated address
- *   qfWallet.isConnected()       — boolean
- *   qfWallet.resolveAny(addr)    — resolve any address to .qf name (async)
- *   qfWallet.formatAddr(addr)    — .qf name from cache or truncated address (sync)
- *   qfWallet.onConnect(callback) — register callback for connection events
- *   qfWallet.onDisconnect(cb)    — register callback for disconnect events
- *   qfWallet.showMenu(el)        — show wallet dropdown menu anchored to element
+ * Desktop (EIP-6963): MetaMask, Talisman, SubWallet — unchanged.
+ * Mobile (no injected wallet): headless WalletConnect, deep-link to MetaMask.
+ *
+ * Public API:
+ *   qfWallet.connect()              — EIP-6963 chooser, or WC deep-link if no injected
+ *   qfWallet.disconnect()           — disconnects, clears canonical state
+ *   qfWallet.address                 — connected EVM address (H160)
+ *   qfWallet.qfName                  — resolved .qf name or null
+ *   qfWallet.displayName()           — .qf name or truncated address
+ *   qfWallet.isConnected()           — boolean
+ *   qfWallet.resolveAny(addr)        — resolve any address to .qf name (async)
+ *   qfWallet.formatAddr(addr)        — .qf name from cache or truncated address (sync)
+ *   qfWallet.onConnect(callback)     — register callback for connection events
+ *   qfWallet.onDisconnect(cb)        — register callback for disconnect events
+ *   qfWallet.showMenu(el)            — show wallet dropdown menu anchored to element
+ *   qfWallet.bootWalletNav()         — wire the shared nav (qf-nav.js calls this once)
+ *   qfWallet.readStoredWalletState() — canonical localStorage state (read)
+ *   qfWallet.setWalletState(patch)   — canonical localStorage state (merge+write)
+ *   qfWallet.ensureValidJwt({interactive}) — tri-state JWT: valid | needs_signature | (signs if interactive)
+ *   qfWallet.resumeAndReconcile()    — reconcile from live WC session + stored JWT
  */
 (function() {
   'use strict';
@@ -26,11 +32,22 @@
   var QNS_RESOLVER_NEW = '0x276b7e9343c19bea29d32dd4a8f84e6d1c183111';
   var QNS_ABI = ['function reverseResolve(address _addr) view returns (string)'];
 
+  // WalletConnect project ID (public, safe to ship in client bundle).
+  var WC_PROJECT_ID = 'eeddb553d4f9d0d41252eb77bbaf124d';
+  var WALLET_RETURN_PATH = '/qf-dapp/wallet-return/';
+  var POST_RETURN_COOLDOWN_MS = 8000;
+
+  var STATE_KEY = 'qf_wallet_state';
+  var FLOW_KEY = 'qf_wallet_flow';
+  var RETURN_PATH_KEY = 'qf_wallet_return_path';
+  var RETURNED_AT_KEY = 'qf_wallet_returned_at';
+  var LEGACY_JWT_KEY = 'qf_auth_token';
+
   var state = {
     address: null, balance: null, chainId: null,
     provider: null, signer: null, qfName: null, walletType: null,
-    rawProvider: null,  // the injected provider (window.ethereum etc)
-    verified: false     // true only after wallet proves it can sign (not just cached)
+    rawProvider: null,
+    verified: false
   };
 
   var nameCache = {};
@@ -38,39 +55,102 @@
   var disconnectCallbacks = [];
   var rpcProvider = null;
   var authToken = null;
+  var wcProvider = null;       // singleton WC provider instance
+  var wcInitPromise = null;    // dedupe concurrent init
 
   var API_BASE = 'https://dapp-api.mathswins.co.uk/api/dapp';
   if (typeof location !== 'undefined' && (location.hostname === 'localhost' || location.hostname === '127.0.0.1')) {
     API_BASE = 'http://127.0.0.1:3860/api/dapp';
   }
 
+  // ── Canonical wallet state (localStorage) ─────────────────────────
+  // Single source of truth for nav rendering across pages/tabs.
+  function defaultState() {
+    return {
+      status: 'disconnected',   // disconnected | connected
+      walletType: null,         // metamask | talisman | subwallet | walletconnect | sub-<key>
+      address: null,
+      chainId: null,
+      jwt: null,
+      authStatus: 'none',       // none | needs_signature | authenticated
+      updatedAt: 0
+    };
+  }
+
+  function readStoredWalletState() {
+    var base = defaultState();
+    try {
+      var raw = localStorage.getItem(STATE_KEY);
+      if (raw) {
+        var parsed = JSON.parse(raw);
+        for (var k in parsed) if (Object.prototype.hasOwnProperty.call(parsed, k)) base[k] = parsed[k];
+      }
+    } catch (e) {}
+    // Backward compat: seed jwt from legacy key if canonical is empty
+    if (!base.jwt) {
+      try {
+        var legacy = localStorage.getItem(LEGACY_JWT_KEY);
+        if (legacy && !isJwtExpired(legacy)) {
+          base.jwt = legacy;
+          if (base.status === 'connected') base.authStatus = 'authenticated';
+        }
+      } catch (e) {}
+    }
+    return base;
+  }
+
+  function setWalletState(patch) {
+    var current = readStoredWalletState();
+    for (var k in patch) if (Object.prototype.hasOwnProperty.call(patch, k)) current[k] = patch[k];
+    current.updatedAt = Date.now();
+    try { localStorage.setItem(STATE_KEY, JSON.stringify(current)); } catch (e) {}
+    // Keep legacy key in sync so freecell/minesweeper/my-account/qf-leaderboard-prompt.js keep working
+    if (patch && Object.prototype.hasOwnProperty.call(patch, 'jwt')) {
+      try {
+        if (current.jwt) localStorage.setItem(LEGACY_JWT_KEY, current.jwt);
+        else localStorage.removeItem(LEGACY_JWT_KEY);
+      } catch (e) {}
+    }
+    try { window.dispatchEvent(new CustomEvent('qfwallet:state', { detail: current })); } catch (e) {}
+    return current;
+  }
+
+  function isJwtExpired(token) {
+    try {
+      var parts = token.split('.');
+      if (parts.length !== 3) return true;
+      var payload = JSON.parse(atob(parts[1]));
+      if (!payload.exp) return false;
+      return payload.exp * 1000 <= Date.now();
+    } catch (e) { return true; }
+  }
+
   // ── Auth token persistence ────────────────────────────────────────
   function saveAuthToken(token) {
     authToken = token;
-    try { localStorage.setItem('qf_auth_token', token); } catch (e) {}
+    try { localStorage.setItem(LEGACY_JWT_KEY, token); } catch (e) {}
   }
 
   function clearAuthToken() {
     authToken = null;
-    try { localStorage.removeItem('qf_auth_token'); } catch (e) {}
+    try { localStorage.removeItem(LEGACY_JWT_KEY); } catch (e) {}
   }
 
   function loadStoredToken(address) {
     try {
-      var stored = localStorage.getItem('qf_auth_token');
+      var stored = localStorage.getItem(LEGACY_JWT_KEY);
       if (!stored) return null;
       var parts = stored.split('.');
       if (parts.length !== 3) return null;
       var payload = JSON.parse(atob(parts[1]));
-      if (payload.exp && payload.exp * 1000 < Date.now()) { localStorage.removeItem('qf_auth_token'); return null; }
-      if (payload.wallet && address && payload.wallet.toLowerCase() !== address.toLowerCase()) { localStorage.removeItem('qf_auth_token'); return null; }
+      if (payload.exp && payload.exp * 1000 < Date.now()) { localStorage.removeItem(LEGACY_JWT_KEY); return null; }
+      if (payload.wallet && address && payload.wallet.toLowerCase() !== address.toLowerCase()) { localStorage.removeItem(LEGACY_JWT_KEY); return null; }
       return stored;
     } catch (e) { return null; }
   }
 
   // ── Auth: challenge-sign-verify flow ──────────────────────────────
   async function authenticate(address, signer) {
-    // Check for valid stored token first
     var stored = loadStoredToken(address);
     if (stored) return stored;
 
@@ -115,7 +195,7 @@
 
   async function resolveQfName(addr) {
     if (!addr) return null;
-    if (!addr.startsWith('0x')) return null; // QNS is EVM-only
+    if (!addr.startsWith('0x')) return null;
     var key = addr.toLowerCase();
     if (nameCache[key] !== undefined) return nameCache[key];
     var prov = getRpcProvider();
@@ -150,39 +230,34 @@
       seen[id] = true;
       wallets.push({ id: id, name: name, icon: icon, provider: provider });
     }
-    // EIP-6963: each wallet announces independently — no hijacking
     _eip6963Providers.forEach(function(detail) {
       var rdns = (detail.info && detail.info.rdns) || '';
-      if (rdns.indexOf('talisman') !== -1) add('talisman', 'Talisman', '\uD83D\uDD2E', detail.provider);
-      else if (rdns.indexOf('metamask') !== -1) add('metamask', 'MetaMask', '\uD83E\uDD8A', detail.provider);
-      else if (rdns.indexOf('subwallet') !== -1) add('subwallet', 'SubWallet', '\uD83D\uDFE2', detail.provider);
+      if (rdns.indexOf('talisman') !== -1) add('talisman', 'Talisman', '🔮', detail.provider);
+      else if (rdns.indexOf('metamask') !== -1) add('metamask', 'MetaMask', '🦊', detail.provider);
+      else if (rdns.indexOf('subwallet') !== -1) add('subwallet', 'SubWallet', '🟢', detail.provider);
     });
-    // Legacy fallback: providers array
     if (window.ethereum && window.ethereum.providers && window.ethereum.providers.length > 0) {
       window.ethereum.providers.forEach(function(p) {
-        if (p.isTalisman) add('talisman', 'Talisman', '\uD83D\uDD2E', p);
-        if (p.isMetaMask) add('metamask', 'MetaMask', '\uD83E\uDD8A', p);
-        if (p.isSubWallet) add('subwallet', 'SubWallet', '\uD83D\uDFE2', p);
+        if (p.isTalisman) add('talisman', 'Talisman', '🔮', p);
+        if (p.isMetaMask) add('metamask', 'MetaMask', '🦊', p);
+        if (p.isSubWallet) add('subwallet', 'SubWallet', '🟢', p);
       });
     }
-    // Legacy fallback: separate globals
-    if (window.talismanEth) add('talisman', 'Talisman', '\uD83D\uDD2E', window.talismanEth);
-    if (window.SubWallet) add('subwallet', 'SubWallet', '\uD83D\uDFE2', window.SubWallet);
-    // Last resort: window.ethereum directly
+    if (window.talismanEth) add('talisman', 'Talisman', '🔮', window.talismanEth);
+    if (window.SubWallet) add('subwallet', 'SubWallet', '🟢', window.SubWallet);
     if (window.ethereum && !seen.talisman && !seen.metamask) {
-      if (window.ethereum.isTalisman) add('talisman', 'Talisman', '\uD83D\uDD2E', window.ethereum);
-      else if (window.ethereum.isMetaMask) add('metamask', 'MetaMask', '\uD83E\uDD8A', window.ethereum);
-      else add('browser', 'Browser Wallet', '\uD83D\uDD17', window.ethereum);
+      if (window.ethereum.isTalisman) add('talisman', 'Talisman', '🔮', window.ethereum);
+      else if (window.ethereum.isMetaMask) add('metamask', 'MetaMask', '🦊', window.ethereum);
+      else add('browser', 'Browser Wallet', '🔗', window.ethereum);
     }
-    // Substrate wallets via injectedWeb3
     if (window.injectedWeb3) {
       Object.keys(window.injectedWeb3).forEach(function(key) {
         var subId = 'sub-' + key;
         var name = key.charAt(0).toUpperCase() + key.slice(1) + ' (Substrate)';
-        var icon = '\uD83D\uDD17';
-        if (key === 'talisman') { name = 'Talisman (Substrate)'; icon = '\uD83D\uDD2E'; }
-        else if (key.indexOf('polkadot') !== -1) { name = 'Polkadot.js'; icon = '\uD83D\uDFE0'; }
-        else if (key.indexOf('subwallet') !== -1) { name = 'SubWallet (Substrate)'; icon = '\uD83D\uDFE2'; }
+        var icon = '🔗';
+        if (key === 'talisman') { name = 'Talisman (Substrate)'; icon = '🔮'; }
+        else if (key.indexOf('polkadot') !== -1) { name = 'Polkadot.js'; icon = '🟠'; }
+        else if (key.indexOf('subwallet') !== -1) { name = 'SubWallet (Substrate)'; icon = '🟢'; }
         add(subId, name, icon, { _substrate: true, _key: key });
       });
     }
@@ -212,7 +287,7 @@
     cancel.onclick = function() { closeModal(); };
     var hint = document.createElement('p');
     hint.style.cssText = "font-family:'Inter',sans-serif;font-size:.58rem;color:#6a6e7a;text-align:center;margin-top:.8rem;line-height:1.5;";
-    hint.textContent = "Can\u2019t see your account? Make sure you\u2019ve selected an Ethereum account in Talisman, not a Substrate one.";
+    hint.textContent = "Can’t see your account? Make sure you’ve selected an Ethereum account in Talisman, not a Substrate one.";
     box.appendChild(title); box.appendChild(sub); box.appendChild(list); box.appendChild(hint); box.appendChild(cancel);
     overlay.appendChild(box);
     overlay.addEventListener('click', function(e) { if (e.target === overlay) closeModal(); });
@@ -250,22 +325,7 @@
     return btn;
   }
 
-  function showNoWalletMessage(list) {
-    var msg = document.createElement('div');
-    msg.style.cssText = "text-align:center;padding:1rem;font-family:'Inter',sans-serif;font-size:.72rem;color:#8a8f9c;line-height:1.6;";
-    msg.innerHTML = 'No wallet detected.<br><br>'
-      + '<a href="https://metamask.io" target="_blank" style="color:#b8bcc6;text-decoration:none;">MetaMask</a>'
-      + ' · '
-      + '<a href="https://talisman.xyz" target="_blank" style="color:#b8bcc6;text-decoration:none;">Talisman</a>'
-      + ' · '
-      + '<a href="https://www.subwallet.app" target="_blank" style="color:#b8bcc6;text-decoration:none;">SubWallet</a>';
-    list.appendChild(msg);
-  }
-
   // ── Verification Gate ──────────────────────────────────────────────
-  // Silent reconnect populates address/balance for display but the wallet
-  // may be locked.  ensureVerified() forces a real wallet interaction before
-  // any transaction or signature can proceed.
   async function ensureVerified() {
     if (state.verified) return;
     if (!state.rawProvider) throw new Error('No wallet connected');
@@ -276,8 +336,6 @@
     state.verified = true;
   }
 
-  // Wrap a signer so sendTransaction / signMessage hit the verification
-  // gate automatically — game code never needs to call ensureVerified itself.
   function wrapSigner(signer) {
     var realSend = signer.sendTransaction.bind(signer);
     var realSign = signer.signMessage.bind(signer);
@@ -293,15 +351,14 @@
     return signer;
   }
 
-  // ── Connect ───────────────────────────────────────────────────────
+  // ── Connect (public entry) ────────────────────────────────────────
   async function connect() {
     var wallets = detectWallets();
     if (wallets.length === 0) {
-      createModal();
-      showNoWalletMessage(document.getElementById('qf-wallet-list'));
+      // No injected wallet — headless WalletConnect.
+      connectViaWalletConnect();
       return;
     }
-    // Single EVM wallet: connect directly, skip chooser modal
     var evmWallets = wallets.filter(function(w) { return !w.provider._substrate; });
     if (evmWallets.length === 1 && wallets.length === 1) {
       connectWithProvider(evmWallets[0].provider, evmWallets[0].id);
@@ -313,21 +370,18 @@
     wallets.forEach(function(w) { list.appendChild(walletButton(w)); });
   }
 
+  // ── Desktop EIP-6963 flow (UNCHANGED) ─────────────────────────────
   async function connectWithProvider(ethProvider, walletId, silent) {
     try {
       var address;
       if (silent) {
-        // Silent reconnect — just check if already authorised
         var accounts = await ethProvider.request({ method: 'eth_accounts' });
         if (!accounts || accounts.length === 0) return;
         address = accounts[0];
       } else {
-        // Manual connect — use eth_requestAccounts first (universally supported),
-        // then try wallet_requestPermissions for desktop multi-account selection
         var accounts = await ethProvider.request({ method: 'eth_requestAccounts' });
         address = accounts[0];
 
-        // On desktop with multi-account wallets, offer account picker via permissions API
         try {
           var permissions = await ethProvider.request({ method: 'wallet_requestPermissions', params: [{ eth_accounts: {} }] });
           var ethAccountsPerm = permissions.find(function(p) { return p.parentCapability === 'eth_accounts'; });
@@ -337,7 +391,7 @@
               address = caveat.value[0];
             }
           }
-        } catch (e) { /* wallet_requestPermissions not supported — address from eth_requestAccounts is fine */ }
+        } catch (e) { /* not supported */ }
       }
 
       var provider = new ethers.BrowserProvider(ethProvider);
@@ -345,7 +399,6 @@
       var network = await provider.getNetwork();
       var chainId = Number(network.chainId);
 
-      // Auto-add QF Network if wrong chain
       if (chainId !== QF_CHAIN_ID) {
         try {
           await ethProvider.request({ method: 'wallet_switchEthereumChain', params: [{ chainId: QF_CHAIN_HEX }] });
@@ -361,7 +414,6 @@
         chainId = Number(network.chainId);
       }
 
-      // Liveness check — verify wallet is actually responsive, not returning cached data
       try {
         await ethProvider.request({ method: 'eth_chainId' });
       } catch (e) {
@@ -382,32 +434,35 @@
 
       try { localStorage.setItem('qf_wallet_id', walletId); } catch (e) {}
 
-      // Authenticate with server — use raw signer to avoid ensureVerified popup
       authToken = await authenticate(address, { signMessage: function(msg) { return signer.signMessage(msg); } });
       if (authToken) state.verified = true;
 
+      setWalletState({
+        status: 'connected',
+        walletType: walletId,
+        address: address,
+        chainId: chainId,
+        jwt: authToken,
+        authStatus: authToken ? 'authenticated' : 'needs_signature'
+      });
+
       fireCallbacks();
 
-      // Resolve .qf name in background, fire callbacks again when resolved
       resolveQfName(address).then(function(name) {
         state.qfName = name;
         fireCallbacks();
       });
 
-      // Listen for account/chain changes — update in place, no reload
       ethProvider.removeAllListeners && ethProvider.removeAllListeners('accountsChanged');
       ethProvider.removeAllListeners && ethProvider.removeAllListeners('chainChanged');
       ethProvider.on('accountsChanged', function(accounts) {
         if (!accounts || accounts.length === 0) {
-          // User disconnected from within the wallet
           disconnect();
         } else {
-          // User switched account in the wallet — reconnect silently
           connectWithProvider(ethProvider, walletId);
         }
       });
       ethProvider.on('chainChanged', function() {
-        // Re-read balance and chain after switch
         connectWithProvider(ethProvider, walletId);
       });
 
@@ -428,10 +483,129 @@
     setTimeout(function() { var el = document.getElementById('qf-wallet-error'); if (el) el.remove(); }, 4000);
   }
 
-  // ── Substrate connection ──────────────────────────────────────────
+  // ── WalletConnect (headless) ──────────────────────────────────────
+  async function initWcProvider() {
+    if (wcProvider) return wcProvider;
+    if (wcInitPromise) return wcInitPromise;
+    wcInitPromise = (async function() {
+      var mod = await import('https://esm.sh/@walletconnect/ethereum-provider@2');
+      var EthereumProvider = mod.EthereumProvider || mod.default;
+      var prov = await EthereumProvider.init({
+        projectId: WC_PROJECT_ID,
+        chains: [QF_CHAIN_ID],
+        optionalChains: [QF_CHAIN_ID],
+        rpcMap: { 3426: QF_RPC },
+        showQrModal: false,
+        methods: ['eth_sendTransaction', 'personal_sign', 'eth_sign', 'eth_chainId', 'eth_accounts', 'wallet_switchEthereumChain', 'wallet_addEthereumChain'],
+        events: ['accountsChanged', 'chainChanged', 'connect', 'disconnect'],
+        metadata: {
+          name: 'QF Games',
+          description: 'Maths puzzle games on QF Network',
+          url: window.location.origin,
+          icons: [window.location.origin + '/qf-dapp/assets/icon-512.png']
+        }
+      });
+      wireWcEvents(prov);
+      wcProvider = prov;
+      return prov;
+    })();
+    return wcInitPromise;
+  }
+
+  function wireWcEvents(prov) {
+    prov.on('display_uri', function(uri) {
+      try { sessionStorage.setItem(RETURN_PATH_KEY, location.pathname + location.search); } catch (e) {}
+      try { localStorage.setItem(FLOW_KEY, 'wc'); } catch (e) {}
+      var target = 'metamask://wc?uri=' + encodeURIComponent(uri);
+      window.location.href = target;
+    });
+    prov.on('connect', function() {
+      handleWcSessionEstablished(prov);
+    });
+    prov.on('accountsChanged', function(accounts) {
+      if (!accounts || accounts.length === 0) { disconnect(); return; }
+      var s = readStoredWalletState();
+      if (s.walletType === 'walletconnect' && accounts[0].toLowerCase() !== (s.address || '').toLowerCase()) {
+        setWalletState({ address: accounts[0].toLowerCase(), jwt: null, authStatus: 'needs_signature' });
+      }
+    });
+    prov.on('chainChanged', function(chainIdHex) {
+      var cid = typeof chainIdHex === 'string' ? parseInt(chainIdHex, 16) : Number(chainIdHex);
+      var s = readStoredWalletState();
+      if (s.walletType === 'walletconnect') setWalletState({ chainId: cid });
+    });
+    prov.on('disconnect', function() {
+      var s = readStoredWalletState();
+      if (s.walletType === 'walletconnect') disconnect();
+    });
+  }
+
+  function handleWcSessionEstablished(prov) {
+    var addr = (prov.accounts && prov.accounts[0]) ? prov.accounts[0].toLowerCase() : null;
+    if (!addr) return;
+    var cid = prov.chainId ? Number(prov.chainId) : QF_CHAIN_ID;
+    setWalletState({
+      status: 'connected',
+      walletType: 'walletconnect',
+      address: addr,
+      chainId: cid,
+      jwt: null,
+      authStatus: 'none'
+    });
+    // Populate in-memory state so signMessage etc. work post-return.
+    try {
+      state.address = addr;
+      state.chainId = cid;
+      state.walletType = 'walletconnect';
+      state.rawProvider = prov;
+      state.provider = new ethers.BrowserProvider(prov);
+      state.signer = wrapSigner(signerProxy(prov, addr));
+      state.verified = false;
+    } catch (e) { console.error('WC state hydrate failed:', e); }
+
+    resolveQfName(addr).then(function(name) {
+      if (name) nameCache[addr] = name;
+    });
+
+    try { localStorage.removeItem(FLOW_KEY); } catch (e) {}
+    if (location.pathname.indexOf(WALLET_RETURN_PATH) !== 0) {
+      window.location.href = WALLET_RETURN_PATH;
+    }
+  }
+
+  function signerProxy(prov, address) {
+    // Minimal ethers-like signer that proxies through the WC provider.
+    return {
+      signMessage: async function(message) {
+        var msgHex = '0x' + Array.from(new TextEncoder().encode(message)).map(function(b) { return b.toString(16).padStart(2, '0'); }).join('');
+        return prov.request({ method: 'personal_sign', params: [msgHex, address] });
+      },
+      sendTransaction: async function(tx) {
+        var hash = await prov.request({ method: 'eth_sendTransaction', params: [tx] });
+        return { hash: hash, wait: async function() { return state.provider.waitForTransaction(hash); } };
+      }
+    };
+  }
+
+  async function connectViaWalletConnect() {
+    try {
+      var prov = await initWcProvider();
+      // If a session already exists (warm resume), just surface it.
+      if (prov.accounts && prov.accounts.length > 0) {
+        handleWcSessionEstablished(prov);
+        return;
+      }
+      // connect() emits 'display_uri' during this call; our handler deep-links.
+      await prov.connect({ chains: [QF_CHAIN_ID] });
+    } catch (e) {
+      console.error('WC connect failed:', e);
+      showWalletError('Could not connect via WalletConnect. Please try again.');
+    }
+  }
+
+  // ── Substrate connection (UNCHANGED) ───────────────────────────────
   async function connectSubstrate(subKey) {
     try {
-      // Lazy-load polkadot extension-dapp if not already loaded
       if (!window.polkadotExtensionDapp) {
         await new Promise(function(resolve, reject) {
           var s = document.createElement('script');
@@ -450,7 +624,6 @@
       var accounts = await ext.web3Accounts();
       if (!accounts || accounts.length === 0) { showWalletError('No Substrate accounts found.'); return; }
 
-      // Filter to the selected extension if possible
       var filtered = accounts.filter(function(a) { return a.meta && a.meta.source === subKey; });
       var accs = filtered.length > 0 ? filtered : accounts;
 
@@ -458,7 +631,6 @@
       if (accs.length === 1) {
         selected = accs[0];
       } else {
-        // Show account picker
         selected = await showSubstrateAccountPicker(accs);
         if (!selected) return;
       }
@@ -479,8 +651,16 @@
       try { localStorage.setItem('qf_wallet_id', 'sub-' + subKey); } catch (e) {}
       try { localStorage.setItem('qf_substrate_addr', selected.address); } catch (e) {}
 
-      // Authenticate with server
       authToken = await authenticate(selected.address, state.signer);
+
+      setWalletState({
+        status: 'connected',
+        walletType: 'sub-' + subKey,
+        address: selected.address,
+        chainId: null,
+        jwt: authToken,
+        authStatus: authToken ? 'authenticated' : 'needs_signature'
+      });
 
       fireCallbacks();
     } catch (e) {
@@ -549,12 +729,13 @@
 
   // ── Disconnect ────────────────────────────────────────────────────
   function disconnect() {
-    // Remove listeners
     if (state.rawProvider && state.rawProvider.removeAllListeners) {
       state.rawProvider.removeAllListeners('accountsChanged');
       state.rawProvider.removeAllListeners('chainChanged');
     }
-    // Clear dApp state only — revoke happens at the start of the next connect
+    if (wcProvider && state.walletType === 'walletconnect') {
+      try { wcProvider.disconnect(); } catch (e) {}
+    }
     state.address = null;
     state.balance = null;
     state.chainId = null;
@@ -567,6 +748,7 @@
     clearAuthToken();
     try { localStorage.removeItem('qf_wallet_id'); } catch (e) {}
     try { localStorage.removeItem('qf_substrate_addr'); } catch (e) {}
+    setWalletState(defaultState());
     fireDisconnectCallbacks();
   }
 
@@ -574,6 +756,10 @@
   function showWalletMenu(anchorEl) {
     var existing = document.getElementById('qf-wallet-menu');
     if (existing) { existing.remove(); return; }
+
+    var s = readStoredWalletState();
+    var displayAddr = state.address || s.address;
+    var displayName = state.qfName || (displayAddr ? nameCache[displayAddr.toLowerCase()] : null);
 
     var rect = anchorEl.getBoundingClientRect();
     var menu = document.createElement('div');
@@ -584,13 +770,13 @@
 
     var addrItem = document.createElement('div');
     addrItem.style.cssText = "padding:.5rem .8rem;font-family:'JetBrains Mono',monospace;font-size:.58rem;color:#4a4e5a;border-bottom:1px solid #2a2e36;word-break:break-all;";
-    addrItem.textContent = state.address;
+    addrItem.textContent = displayAddr || '';
     menu.appendChild(addrItem);
 
-    if (state.qfName) {
+    if (displayName) {
       var nameItem = document.createElement('div');
       nameItem.style.cssText = "padding:.4rem .8rem;font-family:'JetBrains Mono',monospace;font-size:.65rem;color:#d4d8e2;border-bottom:1px solid #2a2e36;";
-      nameItem.textContent = state.qfName;
+      nameItem.textContent = displayName;
       menu.appendChild(nameItem);
     }
 
@@ -613,48 +799,286 @@
     }, 10);
   }
 
-  // Auto-reconnect if previously connected
-  (function autoReconnect() {
+  // ── Resume & Reconcile ────────────────────────────────────────────
+  // Called on every page boot. Reconciles stored state with live WC
+  // session (if any) and never triggers signing automatically.
+  async function resumeAndReconcile() {
+    var s = readStoredWalletState();
+
+    // Desktop EIP-6963 auto-reconnect (unchanged semantics — silent).
     var savedId;
     try { savedId = localStorage.getItem('qf_wallet_id'); } catch (e) {}
-    if (!savedId) return;
-    // Wait briefly for wallet extensions to inject their providers
-    setTimeout(function() {
+    if (savedId && !state.address) {
       if (savedId.startsWith('sub-')) {
         connectSubstrate(savedId.slice(4));
-        return;
+      } else {
+        setTimeout(function() {
+          var wallets = detectWallets();
+          var match = wallets.find(function(w) { return w.id === savedId; });
+          if (match) connectWithProvider(match.provider, match.id, true);
+        }, 500);
       }
-      var wallets = detectWallets();
-      var match = wallets.find(function(w) { return w.id === savedId; });
-      if (match) connectWithProvider(match.provider, match.id, true);
-    }, 500);
-  })();
+    }
+
+    // WalletConnect: rehydrate singleton if stored state claims WC.
+    if (s.walletType === 'walletconnect' && s.status === 'connected') {
+      try {
+        var prov = await initWcProvider();
+        if (prov.accounts && prov.accounts.length > 0) {
+          var addr = prov.accounts[0].toLowerCase();
+          var cid = prov.chainId ? Number(prov.chainId) : (s.chainId || QF_CHAIN_ID);
+          state.address = addr;
+          state.chainId = cid;
+          state.walletType = 'walletconnect';
+          state.rawProvider = prov;
+          state.provider = new ethers.BrowserProvider(prov);
+          state.signer = wrapSigner(signerProxy(prov, addr));
+          state.verified = false;
+          setWalletState({
+            status: 'connected',
+            walletType: 'walletconnect',
+            address: addr,
+            chainId: cid
+          });
+          resolveQfName(addr).then(function(name) {
+            if (name) { nameCache[addr] = name; state.qfName = name; fireCallbacks(); renderNav(); }
+          });
+          fireCallbacks();
+        } else {
+          // Stored says connected but live session is gone.
+          setWalletState(defaultState());
+        }
+      } catch (e) {
+        console.error('WC resume failed:', e);
+      }
+    }
+
+    // Never triggers signing.
+    await ensureValidJwt({ interactive: false });
+    renderNav();
+  }
+
+  // ── Tri-state JWT ─────────────────────────────────────────────────
+  // Returns one of:
+  //   { status: 'valid' }
+  //   { status: 'needs_signature' }
+  //   { status: 'no_wallet' }
+  // Only signs when interactive === true AND we're outside the post-return cooldown.
+  async function ensureValidJwt(opts) {
+    var interactive = !!(opts && opts.interactive);
+    var s = readStoredWalletState();
+    if (!s.address || s.status !== 'connected') return { status: 'no_wallet' };
+
+    if (s.jwt && !isJwtExpired(s.jwt)) {
+      if (s.authStatus !== 'authenticated') setWalletState({ authStatus: 'authenticated' });
+      authToken = s.jwt;
+      return { status: 'valid' };
+    }
+
+    if (!interactive) {
+      if (s.authStatus !== 'needs_signature') setWalletState({ authStatus: 'needs_signature' });
+      return { status: 'needs_signature' };
+    }
+
+    // Cooldown: never sign within 8s of a deep-link return.
+    var returnedAt = 0;
+    try { returnedAt = parseInt(sessionStorage.getItem(RETURNED_AT_KEY) || '0', 10); } catch (e) {}
+    if (returnedAt && (Date.now() - returnedAt) < POST_RETURN_COOLDOWN_MS) {
+      return { status: 'needs_signature' };
+    }
+
+    var signer = await getSignerForCurrentState();
+    if (!signer) {
+      setWalletState({ authStatus: 'needs_signature' });
+      return { status: 'needs_signature' };
+    }
+
+    try {
+      var token = await authenticate(s.address, signer);
+      if (token) {
+        setWalletState({ jwt: token, authStatus: 'authenticated' });
+        authToken = token;
+        return { status: 'valid' };
+      }
+    } catch (e) {
+      console.error('JWT sign failed:', e);
+    }
+    setWalletState({ authStatus: 'needs_signature' });
+    return { status: 'needs_signature' };
+  }
+
+  async function getSignerForCurrentState() {
+    var s = readStoredWalletState();
+    if (state.signer) return { signMessage: function(m) { return state.signer.signMessage(m); } };
+    if (s.walletType === 'walletconnect') {
+      try {
+        var prov = await initWcProvider();
+        if (prov.accounts && prov.accounts.length > 0) {
+          return signerProxy(prov, prov.accounts[0]);
+        }
+      } catch (e) { console.error('WC signer init failed:', e); }
+    }
+    return null;
+  }
+
+  // ── Nav rendering (pure function of stored state) ─────────────────
+  function renderNav() {
+    var s = readStoredWalletState();
+    var connectBtn = document.getElementById('qfnConnect');
+    var addrEl = document.getElementById('qfnAddr');
+    var nameEl = document.getElementById('qfnName');
+    var balEl = document.getElementById('qfnBalance');
+    var netEl = document.getElementById('qfnNetwork');
+    var netNameEl = document.getElementById('qfnNetworkName');
+    var acctEl = document.getElementById('qfnAccount');
+    var finishEl = document.getElementById('qfnFinishSignin');
+    if (!connectBtn) return; // nav not rendered on this page
+
+    var rightEl = connectBtn.parentElement;
+
+    if (s.status === 'connected' && s.authStatus === 'needs_signature') {
+      connectBtn.style.display = 'none';
+      if (addrEl) addrEl.style.display = 'none';
+      if (nameEl) nameEl.style.display = 'none';
+      if (balEl) balEl.style.display = 'none';
+      if (netEl) netEl.style.display = 'none';
+      if (acctEl) acctEl.style.display = 'none';
+      if (rightEl) rightEl.classList.add('qfn-connected');
+      if (!finishEl && rightEl) {
+        finishEl = document.createElement('button');
+        finishEl.id = 'qfnFinishSignin';
+        finishEl.className = 'qfn-connect';
+        finishEl.textContent = 'Finish sign-in';
+        finishEl.addEventListener('click', function() { ensureValidJwt({ interactive: true }); });
+        rightEl.appendChild(finishEl);
+      }
+      if (finishEl) finishEl.style.display = '';
+      return;
+    }
+
+    if (finishEl) finishEl.style.display = 'none';
+
+    if (s.status === 'connected' && s.address) {
+      connectBtn.style.display = 'none';
+      if (rightEl) rightEl.classList.add('qfn-connected');
+      if (acctEl) acctEl.style.display = '';
+      var cachedName = nameCache[s.address.toLowerCase()] || state.qfName;
+      if (cachedName && nameEl) {
+        nameEl.textContent = cachedName;
+        nameEl.style.display = '';
+        if (addrEl) addrEl.style.display = 'none';
+      } else if (addrEl) {
+        addrEl.textContent = s.address.slice(0, 6) + '...' + s.address.slice(-4);
+        addrEl.style.display = '';
+        if (nameEl) nameEl.style.display = 'none';
+      }
+      var path = location.pathname;
+      var isLobby = /\/qf-dapp\/?$/.test(path) || /\/qf-dapp\/index\.html$/.test(path);
+      if (isLobby && netEl) {
+        netEl.style.display = 'flex';
+        if (s.chainId === QF_CHAIN_ID) {
+          netEl.className = 'qfn-network';
+          if (netNameEl) netNameEl.textContent = 'QF Network';
+        } else {
+          netEl.className = 'qfn-network wrong';
+          if (netNameEl) netNameEl.textContent = 'Wrong Network';
+        }
+      }
+      if (isLobby && balEl && state.balance) {
+        balEl.style.display = '';
+        balEl.textContent = parseFloat(ethers.formatEther(state.balance)).toFixed(2) + ' QF';
+      }
+      return;
+    }
+
+    // Disconnected
+    connectBtn.style.display = '';
+    if (rightEl) rightEl.classList.remove('qfn-connected');
+    if (addrEl) addrEl.style.display = 'none';
+    if (nameEl) nameEl.style.display = 'none';
+    if (balEl) balEl.style.display = 'none';
+    if (netEl) netEl.style.display = 'none';
+    if (acctEl) acctEl.style.display = 'none';
+  }
+
+  // ── Boot ───────────────────────────────────────────────────────────
+  var navBooted = false;
+  function bootWalletNav() {
+    if (navBooted) { renderNav(); return; }
+    navBooted = true;
+
+    // Wire connect button
+    var connectBtn = document.getElementById('qfnConnect');
+    if (connectBtn) {
+      connectBtn.addEventListener('click', function() { connect(); });
+    }
+
+    // Wire addr/name click → menu
+    var addrEl = document.getElementById('qfnAddr');
+    var nameEl = document.getElementById('qfnName');
+    if (addrEl) addrEl.addEventListener('click', function() { showWalletMenu(this); });
+    if (nameEl) nameEl.addEventListener('click', function() { showWalletMenu(this); });
+
+    // Render immediately from stored state
+    renderNav();
+
+    // Re-render when canonical state changes (same tab)
+    window.addEventListener('qfwallet:state', renderNav);
+    // Cross-tab storage sync
+    window.addEventListener('storage', function(e) {
+      if (e.key === STATE_KEY || e.key === LEGACY_JWT_KEY) renderNav();
+    });
+    // Returning from backgrounded tab (deep-link return)
+    window.addEventListener('pageshow', function() {
+      try { sessionStorage.setItem(RETURNED_AT_KEY, String(Date.now())); } catch (e) {}
+      resumeAndReconcile();
+    });
+    document.addEventListener('visibilitychange', function() {
+      if (document.visibilityState === 'visible') {
+        try { sessionStorage.setItem(RETURNED_AT_KEY, String(Date.now())); } catch (e) {}
+        resumeAndReconcile();
+      }
+    });
+
+    // Keep nav in sync when existing flows fire connect/disconnect callbacks
+    onConnect(function() { renderNav(); });
+    onDisconnect(function() { renderNav(); });
+
+    // Kick off reconcile in background
+    resumeAndReconcile();
+  }
 
   // ── Public API ────────────────────────────────────────────────────
   window.qfWallet = {
-    get address()    { return state.address; },
+    get address()    { return state.address || readStoredWalletState().address; },
     get balance()    { return state.balance; },
     get signer()     { return state.signer; },
     get provider()   { return state.provider; },
-    get chainId()    { return state.chainId; },
+    get chainId()    { return state.chainId || readStoredWalletState().chainId; },
     get qfName()     { return state.qfName; },
-    get walletType() { return state.walletType; },
+    get walletType() { return state.walletType || readStoredWalletState().walletType; },
     get verified()   { return state.verified; },
-    isConnected: function() { return !!state.address; },
-    get authToken() { return authToken; },
+    isConnected: function() {
+      if (state.address) return true;
+      var s = readStoredWalletState();
+      return s.status === 'connected' && !!s.address;
+    },
+    get authToken() { return authToken || readStoredWalletState().jwt; },
     authHeaders: function() {
       var h = { 'Content-Type': 'application/json' };
-      var token = authToken || loadStoredToken(state.address);
+      var s = readStoredWalletState();
+      var token = authToken || s.jwt || loadStoredToken(state.address || s.address);
       if (token) { authToken = token; h['Authorization'] = 'Bearer ' + token; }
-      else if (state.address) h['X-Wallet-Address'] = state.address;
+      else if (state.address || s.address) h['X-Wallet-Address'] = state.address || s.address;
       return h;
     },
     ensureVerified: ensureVerified,
     connect: connect,
     disconnect: disconnect,
     displayName: function() {
+      var addr = state.address || readStoredWalletState().address;
       if (state.qfName) return state.qfName;
-      if (state.address) return state.address.slice(0, 6) + '...' + state.address.slice(-4);
+      if (addr) return addr.slice(0, 6) + '...' + addr.slice(-4);
       return null;
     },
     resolveAny: resolveQfName,
@@ -662,9 +1086,15 @@
     onConnect: onConnect,
     onDisconnect: onDisconnect,
     showMenu: showWalletMenu,
-    nameCache: nameCache
+    nameCache: nameCache,
+    // New exports
+    bootWalletNav: bootWalletNav,
+    readStoredWalletState: readStoredWalletState,
+    setWalletState: setWalletState,
+    ensureValidJwt: ensureValidJwt,
+    resumeAndReconcile: resumeAndReconcile,
+    renderNav: renderNav
   };
 
-  // Legacy alias — older game pages reference dappWallet
   window.dappWallet = window.qfWallet;
 })();

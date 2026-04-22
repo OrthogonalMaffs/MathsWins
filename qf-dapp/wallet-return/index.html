@@ -1,0 +1,146 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<meta name="robots" content="noindex,nofollow">
+<title>QF Games — Returning…</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600&family=JetBrains+Mono:wght@400;600&family=Playfair+Display:wght@400;700&display=swap" rel="stylesheet">
+<style>
+  :root{--bg:#0e1013;--surface:#16181c;--surface2:#1e2025;--border:#1e2228;--text:#8a8f9c;--text-white:#e8eaf0;--silver:#b8bcc6;--silver-bright:#d4d8e2;--silver-dim:rgba(184,188,198,.08);--silver-border:rgba(184,188,198,.15);--muted:#4a4e5a;--red:#b03a3a}
+  *{box-sizing:border-box}
+  html,body{margin:0;background:var(--bg);color:var(--text-white);font-family:'Inter',system-ui,sans-serif;min-height:100%}
+  body{display:flex;flex-direction:column;align-items:center;justify-content:center;padding:2rem 1rem;text-align:center}
+  .card{max-width:360px;width:100%;background:var(--surface);border:1px solid var(--border);border-radius:12px;padding:1.8rem 1.4rem}
+  .logo{font-family:'Playfair Display',serif;font-size:1.4rem;letter-spacing:.02em;margin:0 0 .4rem}
+  .logo span{color:var(--silver-bright)}
+  .status{font-family:'JetBrains Mono',monospace;font-size:.65rem;color:var(--muted);letter-spacing:.06em;text-transform:uppercase;margin:0 0 1.2rem}
+  .msg{font-size:.8rem;color:var(--silver);line-height:1.5;margin:0 0 1.2rem}
+  .btn{display:inline-block;font-family:'Inter',sans-serif;font-weight:600;font-size:.75rem;padding:.6rem 1.1rem;border-radius:8px;border:1px solid var(--silver-border);background:var(--silver-dim);color:var(--silver-bright);cursor:pointer;transition:all .15s;text-decoration:none}
+  .btn:hover{background:var(--silver-bright);color:var(--bg)}
+  .btn.secondary{background:transparent;color:var(--muted)}
+  .btn.secondary:hover{background:var(--surface2);color:var(--text)}
+  .spinner{display:inline-block;width:22px;height:22px;border:2px solid var(--border);border-top-color:var(--silver-bright);border-radius:50%;animation:spin .9s linear infinite;margin:.4rem 0 1rem}
+  @keyframes spin{to{transform:rotate(360deg)}}
+  .row{display:flex;gap:.6rem;justify-content:center;flex-wrap:wrap;margin-top:.6rem}
+</style>
+</head>
+<body>
+<div class="card">
+  <h1 class="logo">QF <span>Games</span></h1>
+  <p class="status" id="status">Returning…</p>
+  <div id="loading">
+    <div class="spinner"></div>
+    <p class="msg">Reconciling wallet session.</p>
+  </div>
+  <div id="needsSig" style="display:none">
+    <p class="msg">Your wallet is connected. One more step: sign a short message to prove ownership. No transaction, no fee.</p>
+    <div class="row">
+      <button class="btn" id="finishBtn">Finish sign-in</button>
+      <a class="btn secondary" href="/qf-dapp/">Back to lobby</a>
+    </div>
+  </div>
+  <div id="noSession" style="display:none">
+    <p class="msg">No wallet session found.</p>
+    <div class="row">
+      <a class="btn" href="/qf-dapp/">Back to lobby</a>
+    </div>
+  </div>
+  <div id="signed" style="display:none">
+    <p class="msg">Signed in — redirecting…</p>
+  </div>
+</div>
+
+<script src="https://cdn.jsdelivr.net/npm/ethers@6/dist/ethers.umd.min.js"></script>
+<script src="/qf-dapp/games/qf-wallet.js"></script>
+<script>
+(async function() {
+  'use strict';
+  var loading = document.getElementById('loading');
+  var needsSig = document.getElementById('needsSig');
+  var noSession = document.getElementById('noSession');
+  var signed = document.getElementById('signed');
+  var statusEl = document.getElementById('status');
+  var finishBtn = document.getElementById('finishBtn');
+
+  function show(which) {
+    loading.style.display = which === 'loading' ? '' : 'none';
+    needsSig.style.display = which === 'needsSig' ? '' : 'none';
+    noSession.style.display = which === 'noSession' ? '' : 'none';
+    signed.style.display = which === 'signed' ? '' : 'none';
+  }
+
+  function returnPath() {
+    var p = null;
+    try { p = sessionStorage.getItem('qf_wallet_return_path'); } catch (e) {}
+    if (!p || p.indexOf('/qf-dapp/wallet-return') === 0) return '/qf-dapp/';
+    return p;
+  }
+
+  function redirectHome() {
+    try { sessionStorage.removeItem('qf_wallet_return_path'); } catch (e) {}
+    var p = returnPath();
+    window.location.replace(p);
+  }
+
+  try { sessionStorage.setItem('qf_wallet_returned_at', String(Date.now())); } catch (e) {}
+
+  await qfWallet.resumeAndReconcile();
+  var s = qfWallet.readStoredWalletState();
+
+  if (!s.address || s.status !== 'connected') {
+    statusEl.textContent = 'No session';
+    show('noSession');
+    return;
+  }
+
+  if (s.authStatus === 'authenticated') {
+    statusEl.textContent = 'Signed in';
+    show('signed');
+    setTimeout(redirectHome, 400);
+    return;
+  }
+
+  // needs_signature
+  statusEl.textContent = 'Almost there';
+  show('needsSig');
+
+  finishBtn.addEventListener('click', async function() {
+    finishBtn.disabled = true;
+    finishBtn.textContent = 'Waiting for wallet…';
+    var result = await qfWallet.ensureValidJwt({ interactive: true });
+    if (result && result.status === 'valid') {
+      statusEl.textContent = 'Signed in';
+      show('signed');
+      setTimeout(redirectHome, 400);
+    } else {
+      finishBtn.disabled = false;
+      finishBtn.textContent = 'Finish sign-in';
+    }
+  });
+
+  // If the user returns from the sig deep-link, re-check state.
+  window.addEventListener('pageshow', async function() {
+    try { sessionStorage.setItem('qf_wallet_returned_at', String(Date.now())); } catch (e) {}
+    var cur = qfWallet.readStoredWalletState();
+    if (cur.authStatus === 'authenticated') {
+      statusEl.textContent = 'Signed in';
+      show('signed');
+      setTimeout(redirectHome, 400);
+    }
+  });
+
+  window.addEventListener('qfwallet:state', function() {
+    var cur = qfWallet.readStoredWalletState();
+    if (cur.authStatus === 'authenticated') {
+      statusEl.textContent = 'Signed in';
+      show('signed');
+      setTimeout(redirectHome, 400);
+    }
+  });
+})();
+</script>
+</body>
+</html>

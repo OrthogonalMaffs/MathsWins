@@ -41,7 +41,6 @@
   // ── Detect page context ─────────────────────────────────────────────
   var path = location.pathname;
   var isLobby = /\/qf-dapp\/?$/.test(path) || /\/qf-dapp\/index\.html$/.test(path);
-  var isMyAccount = /\/qf-dapp\/my-account\//.test(path);
 
   // ── Build nav HTML ──────────────────────────────────────────────────
   var leftHTML = '';
@@ -73,97 +72,8 @@
     target.className = 'qfn';
   }
 
-  // ── Wire up connect button ──────────────────────────────────────────
-  var connectBtn = document.getElementById('qfnConnect');
-  if (connectBtn) {
-    connectBtn.addEventListener('click', function() {
-      if (typeof qfWallet !== 'undefined') qfWallet.connect();
-    });
-  }
-
-  // ── Wire up wallet menu on address/name click ───────────────────────
-  var addrEl = document.getElementById('qfnAddr');
-  var nameEl = document.getElementById('qfnName');
-  if (addrEl) addrEl.addEventListener('click', function() { if (typeof qfWallet !== 'undefined') qfWallet.showMenu(this); });
-  if (nameEl) nameEl.addEventListener('click', function() { if (typeof qfWallet !== 'undefined') qfWallet.showMenu(this); });
-
-  // ── Listen for wallet connection ────────────────────────────────────
-  if (typeof qfWallet !== 'undefined') {
-    qfWallet.onConnect(function(w) {
-      if (!w.address) return;
-
-      // Hide connect, show address — add connected class for mobile layout
-      var btn = document.getElementById('qfnConnect');
-      if (btn) btn.style.display = 'none';
-      var rightEl = btn && btn.parentElement;
-      if (rightEl) rightEl.classList.add('qfn-connected');
-
-      var addr = document.getElementById('qfnAddr');
-      if (addr) {
-        addr.style.display = '';
-        addr.textContent = w.address.slice(0, 6) + '...' + w.address.slice(-4);
-      }
-
-      // Show My Account link
-      var acct = document.getElementById('qfnAccount');
-      if (acct) acct.style.display = '';
-
-      // Balance (lobby gets full display)
-      if (isLobby && w.balance) {
-        var bal = document.getElementById('qfnBalance');
-        if (bal) {
-          bal.style.display = '';
-          bal.textContent = parseFloat(ethers.formatEther(w.balance)).toFixed(2) + ' QF';
-        }
-      }
-
-      // Network status (lobby only)
-      if (isLobby) {
-        var net = document.getElementById('qfnNetwork');
-        if (net) {
-          net.style.display = 'flex';
-          var netName = document.getElementById('qfnNetworkName');
-          if (w.chainId === 3426) {
-            net.className = 'qfn-network';
-            if (netName) netName.textContent = 'QF Network';
-          } else {
-            net.className = 'qfn-network wrong';
-            if (netName) netName.textContent = 'Wrong Network';
-          }
-        }
-      }
-
-      // QNS name
-      var name = document.getElementById('qfnName');
-      if (w.qfName && name) {
-        name.textContent = w.qfName;
-        name.style.display = '';
-        if (addr) addr.style.display = 'none';
-      } else if (!w.qfName && name) {
-        name.style.display = 'none';
-      }
-    });
-
-    qfWallet.onDisconnect(function() {
-      var btn = document.getElementById('qfnConnect');
-      if (btn) btn.style.display = '';
-      var rightEl = btn && btn.parentElement;
-      if (rightEl) rightEl.classList.remove('qfn-connected');
-
-      var addr = document.getElementById('qfnAddr');
-      if (addr) addr.style.display = 'none';
-
-      var name = document.getElementById('qfnName');
-      if (name) name.style.display = 'none';
-
-      var bal = document.getElementById('qfnBalance');
-      if (bal) bal.style.display = 'none';
-
-      var net = document.getElementById('qfnNetwork');
-      if (net) net.style.display = 'none';
-
-      var acct = document.getElementById('qfnAccount');
-      if (acct) acct.style.display = 'none';
-    });
+  // ── Hand off wiring to qf-wallet.js ─────────────────────────────────
+  if (typeof qfWallet !== 'undefined' && typeof qfWallet.bootWalletNav === 'function') {
+    qfWallet.bootWalletNav();
   }
 })();
