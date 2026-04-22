@@ -98,6 +98,25 @@
 
   try { sessionStorage.setItem('qf_wallet_returned_at', String(Date.now())); } catch (e) {}
 
+  // Session-first reconciliation: init the WC runtime and inspect the
+  // provider's session object directly. We do NOT wait for a 'connect'
+  // event — on deep-link return, that event may never fire against this
+  // JS context.
+  try {
+    await qfWallet.initWalletConnectRuntime();
+  } catch (e) {
+    console.error('WC init failed on /wallet-return/:', e && e.message);
+  }
+
+  // Fresh-connect marker tells us this session belongs to the most
+  // recent Connect tap rather than a stale pairing from a previous visit.
+  var freshConnect = false;
+  try {
+    var requestedAt = parseInt(localStorage.getItem('wc_connect_requested_at') || '0', 10);
+    if (requestedAt && (Date.now() - requestedAt) < 5 * 60 * 1000) freshConnect = true;
+    if (requestedAt) localStorage.removeItem('wc_connect_requested_at');
+  } catch (e) {}
+
   await qfWallet.resumeAndReconcile();
   var s = qfWallet.readStoredWalletState();
 

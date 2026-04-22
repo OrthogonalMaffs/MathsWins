@@ -42,6 +42,8 @@
   var RETURN_PATH_KEY = 'qf_wallet_return_path';
   var RETURNED_AT_KEY = 'qf_wallet_returned_at';
   var LEGACY_JWT_KEY = 'qf_auth_token';
+  var WC_CONNECT_REQUESTED_AT_KEY = 'wc_connect_requested_at';
+  var WC_CONNECT_REQUEST_VALID_MS = 5 * 60 * 1000;
 
   var state = {
     address: null, balance: null, chainId: null,
@@ -500,7 +502,13 @@
   }
 
   // ── WalletConnect (headless) ──────────────────────────────────────
-  async function initWcProvider() {
+  // Eager init: called from bootWalletNav() on every page load so that
+  // the provider exists and all listeners (display_uri, connect, etc.)
+  // are attached BEFORE the user taps Connect. Attaching listeners inside
+  // the tap handler creates a race — the module import + init can take
+  // hundreds of ms, and the user-gesture token that authorises the
+  // subsequent metamask:// navigation expires.
+  async function initWalletConnectRuntime() {
     if (wcProvider) return wcProvider;
     if (wcInitPromise) return wcInitPromise;
     wcInitPromise = (async function() {
@@ -528,14 +536,19 @@
     return wcInitPromise;
   }
 
+  // Back-compat alias for anything internal still calling the old name.
+  var initWcProvider = initWalletConnectRuntime;
+
   function wireWcEvents(prov) {
     prov.on('display_uri', function(uri) {
-      try { sessionStorage.setItem(RETURN_PATH_KEY, location.pathname + location.search); } catch (e) {}
-      try { localStorage.setItem(FLOW_KEY, 'wc'); } catch (e) {}
+      // Deep-link only. All flow-marker writes happen in
+      // connectViaWalletConnect() before prov.connect() is called.
       var target = 'metamask://wc?uri=' + encodeURIComponent(uri);
       window.location.href = target;
     });
     prov.on('connect', function() {
+      // Best-effort — may not fire on rehydration paths. Session-first
+      // reconciliation in resumeAndReconcile() does not depend on this.
       handleWcSessionEstablished(prov);
     });
     prov.on('accountsChanged', function(accounts) {
@@ -554,6 +567,15 @@
       var s = readStoredWalletState();
       if (s.walletType === 'walletconnect') disconnect();
     });
+  }
+
+  function wcHasLiveSession(prov) {
+    // Truth source: the WC session object. Accounts is derived from it
+    // but the session object itself is more definitive.
+    if (!prov) return false;
+    if (prov.session) return true;
+    if (prov.accounts && prov.accounts.length > 0) return true;
+    return false;
   }
 
   function hydrateWcMemoryState(prov, liveAddress) {
@@ -669,13 +691,29 @@
 
   async function connectViaWalletConnect() {
     try {
-      var prov = await initWcProvider();
-      // If a session already exists (warm resume), just surface it.
-      if (prov.accounts && prov.accounts.length > 0) {
+      // Eager init should already have run from bootWalletNav(); await
+      // here resolves immediately from the cached singleton.
+      var prov = await initWalletConnectRuntime();
+
+      // Warm resume — session already live, no need to re-pair.
+      if (wcHasLiveSession(prov)) {
         handleWcSessionEstablished(prov);
         return;
       }
-      // connect() emits 'display_uri' during this call; our handler deep-links.
+
+      // Mark this as a fresh connect attempt so /wallet-return/ can tell
+      // it apart from a stale session, and so we have the return path
+      // queued BEFORE prov.connect() runs (display_uri fires synchronously
+      // inside connect()).
+      try {
+        localStorage.setItem(WC_CONNECT_REQUESTED_AT_KEY, String(Date.now()));
+        localStorage.setItem(FLOW_KEY, 'wc');
+        sessionStorage.setItem(RETURN_PATH_KEY, location.pathname + location.search);
+      } catch (e) {}
+
+      // Tap-time work is minimal: just connect. Listeners are already
+      // attached from eager init, so display_uri fires into the handler
+      // that deep-links to metamask://.
       await prov.connect({ chains: [QF_CHAIN_ID] });
     } catch (e) {
       console.error('WC connect failed:', e);
@@ -900,17 +938,21 @@
       }
     }
 
-    // WalletConnect: rehydrate singleton if stored state claims WC.
+    // WalletConnect: session-first reconciliation. We do NOT wait for a
+    // connect event — on rehydration after a deep-link return, that
+    // event may never fire. Truth source is provider.session.
     if (s.walletType === 'walletconnect' && s.status === 'connected') {
       try {
-        var prov = await initWcProvider();
-        if (prov.accounts && prov.accounts.length > 0) {
+        var prov = await initWalletConnectRuntime();
+        if (wcHasLiveSession(prov)) {
           // Idempotent — preserves existing valid JWT, ensures chain, hydrates memory.
           handleWcSessionEstablished(prov);
-          var liveLower = prov.accounts[0].toLowerCase();
-          resolveQfName(liveLower).then(function(name) {
-            if (name) { nameCache[liveLower] = name; state.qfName = name; fireCallbacks(); renderNav(); }
-          });
+          var liveLower = (prov.accounts && prov.accounts[0] || '').toLowerCase();
+          if (liveLower) {
+            resolveQfName(liveLower).then(function(name) {
+              if (name) { nameCache[liveLower] = name; state.qfName = name; fireCallbacks(); renderNav(); }
+            });
+          }
           fireCallbacks();
         } else {
           // Stored says connected but live session is gone.
@@ -1077,6 +1119,13 @@
     if (navBooted) { renderNav(); return; }
     navBooted = true;
 
+    // Eager WalletConnect runtime init — fires in the background so the
+    // provider + all listeners exist before the user can tap Connect.
+    // Fire-and-forget: nav rendering must not wait on this.
+    initWalletConnectRuntime().catch(function(e) {
+      console.error('WC runtime init failed:', e && e.message);
+    });
+
     // Wire connect button
     var connectBtn = document.getElementById('qfnConnect');
     if (connectBtn) {
@@ -1159,6 +1208,8 @@
     nameCache: nameCache,
     // New exports
     bootWalletNav: bootWalletNav,
+    initWalletConnectRuntime: initWalletConnectRuntime,
+    wcHasLiveSession: function() { return wcHasLiveSession(wcProvider); },
     readStoredWalletState: readStoredWalletState,
     setWalletState: setWalletState,
     ensureValidJwt: ensureValidJwt,
