@@ -503,11 +503,31 @@
     if (existing) existing.remove();
     var errorDiv = document.createElement('div');
     errorDiv.id = 'qf-wallet-error';
-    errorDiv.style.cssText = 'position:fixed;top:60px;left:50%;transform:translateX(-50%);background:#1e2025;border:1px solid #b03a3a;border-radius:8px;padding:.8rem 1.2rem;z-index:9999;font-family:"Inter",sans-serif;font-size:.75rem;color:#e8eaf0;max-width:320px;text-align:center;box-shadow:0 8px 24px rgba(0,0,0,.5);';
-    errorDiv.textContent = msg;
+    errorDiv.style.cssText = 'position:fixed;top:60px;left:50%;transform:translateX(-50%);background:#1e2025;border:1px solid #b03a3a;border-radius:8px;padding:.8rem 1.2rem;z-index:9999;font-family:"Inter",sans-serif;font-size:.75rem;color:#e8eaf0;max-width:90vw;min-width:280px;text-align:left;box-shadow:0 8px 24px rgba(0,0,0,.5);word-break:break-word;line-height:1.4;';
+    var txt = document.createElement('div');
+    txt.textContent = msg;
+    errorDiv.appendChild(txt);
+    var dismiss = document.createElement('button');
+    dismiss.textContent = 'Dismiss';
+    dismiss.style.cssText = 'margin-top:.6rem;font-family:"JetBrains Mono",monospace;font-size:.55rem;background:transparent;border:1px solid #2a2e36;color:#8a8f9c;padding:.25rem .6rem;border-radius:4px;cursor:pointer;letter-spacing:.05em;';
+    dismiss.onclick = function() { errorDiv.remove(); };
+    errorDiv.appendChild(dismiss);
     document.body.appendChild(errorDiv);
-    setTimeout(function() { var el = document.getElementById('qf-wallet-error'); if (el) el.remove(); }, 4000);
+    // Stay visible long enough to read diagnostic text. User can dismiss early.
+    setTimeout(function() { var el = document.getElementById('qf-wallet-error'); if (el) el.remove(); }, 15000);
   }
+
+  // Global safety net: catch unhandled rejections from inside the WC SDK
+  // so we can surface them instead of losing them to the console only.
+  window.addEventListener('unhandledrejection', function(ev) {
+    var reason = ev && ev.reason;
+    var msg = (reason && reason.message) || String(reason || '');
+    // Heuristic: only surface if it smells like a WC-related failure.
+    if (/walletconnect|wc|session|provider|ethereum/i.test(msg) || /includes/i.test(msg)) {
+      lastAuthError = 'Unhandled WC rejection: ' + msg;
+      console.error('[qfWallet] unhandledrejection:', reason);
+    }
+  });
 
   // ── WalletConnect (headless) ──────────────────────────────────────
   // Eager init: called from bootWalletNav() on every page load so that
@@ -736,11 +756,18 @@
 
       // Tap-time work is minimal: just connect. Listeners are already
       // attached from eager init, so display_uri fires into the handler
-      // that deep-links to metamask://.
-      await prov.connect({ chains: [QF_CHAIN_ID] });
+      // that deep-links to metamask://. Call connect() with NO args —
+      // passing {chains:[...]} to some @walletconnect/ethereum-provider
+      // 2.x releases triggers internal undefined.includes() calls when
+      // the SDK's option-shape expectations differ. Letting it use the
+      // chains/optionalChains already set at init() time is safer.
+      await prov.connect();
     } catch (e) {
+      var msg = (e && e.message) || String(e);
+      var stack = (e && e.stack) ? String(e.stack).split('\n').slice(0, 3).join(' | ') : '';
+      lastAuthError = 'WC connect failed: ' + msg + (stack ? ' [' + stack + ']' : '');
       console.error('WC connect failed:', e);
-      showWalletError('Could not connect via WalletConnect. Please try again.');
+      showWalletError('Could not connect: ' + msg);
     }
   }
 
