@@ -157,6 +157,16 @@ Platform: Academy (9 courses), Tools (28 calculators), Games (22 dApp + 13 main 
 - **Fix in `qf-dapp/games/minesweeper/index.html`:** record touchstart x/y, only cancel the timer when movement exceeds `LONG_PRESS_MOVE_TOLERANCE_PX = 10`, bumped `LONG_PRESS_MS` 300 → 500 (platform convention). `toggleFlag` now surfaces "Reveal a cell first, then flag." via `setMsg` when `!minesPlaced` instead of silently bailing. Commit `f52feb0`.
 - **Desktop right-click path untouched** — mouse handlers, chord, and game engine unchanged.
 
+## Parked: WalletConnect mobile integration (2026-04-21)
+
+- **Goal:** give mobile users (no `window.ethereum`) a wallet path plus a PWA install experience.
+- **State:** parked on branch `feat/walletconnect-appkit` at commit `304a15a`. Pages source is back on `main`; the feat branch is not merged. Nothing live on the site.
+- **What's in `304a15a`:** `qf-dapp/games/qf-wallet.js` adds a `connectViaAppKit()` branch, gated on `detectWallets().length === 0` (agreed gate — single source of truth, preserves Substrate/Talisman flows on desktop). Lazy-imports `@reown/appkit` + `@reown/appkit-adapter-ethers` from esm.sh. `qf-dapp/manifest.json` + `qf-dapp/assets/icon-192.png`/`icon-512.png` + manifest link and `theme-color` meta in all 41 dApp HTML pages.
+- **Blocker 1 — w3m-modal sizing on mobile.** AppKit's modal is a shadow-DOM web component. Inline host-level styles, CSS via plain selectors, `::part(card|container)` selectors, and JS-time positioning of the host element all failed to constrain internal layout on a real phone. No documented Reown v1 CSS variable for modal height. The internal card appears to be fixed-positioned relative to the viewport inside the shadow root, so outside-the-shadow levers don't reach it.
+- **Blocker 2 — nav repaint race.** After deep-link return from the wallet app, the nav did not reliably flip from "Connect Wallet" to the connected state. `fireCallbacks()` fired; setTimeout(300) re-fire didn't help; one-shot `visibilitychange → visible` re-fire didn't help. Root cause not identified — not timing alone.
+- **Attempts discarded (not in `304a15a`):** MutationObserver injection; w3m-modal inline sizing; host-level CSS + ::part(); visibilitychange re-fire; full headless rewrite using `@walletconnect/ethereum-provider` with `showQrModal:false` + `metamask://wc?uri=` deep link (reached `3b33448`, also not verified to work). All rolled back via `git reset --hard 304a15a` + force-push-with-lease.
+- **When resumed:** the headless approach is probably the right shape (sidesteps shadow-DOM entirely), but neither the modal-sizing nor the nav-repaint problem was confirmed fixed in any live test — reproduce them in a local tunnel before committing again. Don't re-run modal-sizing experiments.
+
 ## Standing rules added 2026-04-19
 
 - **Escrow floor:** wallet must always hold at least `obligations + 100 QF`. Obligations = active league pots + held duel stakes + pending refunds. `scripts/escrow-sweep.mjs` is the canonical tool; manual drains below that floor are unsafe.
