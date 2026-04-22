@@ -42,6 +42,13 @@
       <a class="btn secondary" href="/qf-dapp/">Back to lobby</a>
     </div>
   </div>
+  <div id="awaitingSig" style="display:none">
+    <div class="spinner"></div>
+    <p class="msg"><strong style="color:var(--text-white)">Open MetaMask</strong> to approve the signature. Return here once signed — we’ll finish sign-in automatically.</p>
+    <div class="row">
+      <button class="btn secondary" id="cancelSigBtn">Cancel</button>
+    </div>
+  </div>
   <div id="noSession" style="display:none">
     <p class="msg">No wallet session found.</p>
     <div class="row">
@@ -65,9 +72,13 @@
   var statusEl = document.getElementById('status');
   var finishBtn = document.getElementById('finishBtn');
 
+  var awaitingSig = document.getElementById('awaitingSig');
+  var cancelSigBtn = document.getElementById('cancelSigBtn');
+
   function show(which) {
     loading.style.display = which === 'loading' ? '' : 'none';
     needsSig.style.display = which === 'needsSig' ? '' : 'none';
+    awaitingSig.style.display = which === 'awaitingSig' ? '' : 'none';
     noSession.style.display = which === 'noSession' ? '' : 'none';
     signed.style.display = which === 'signed' ? '' : 'none';
   }
@@ -107,19 +118,33 @@
   statusEl.textContent = 'Almost there';
   show('needsSig');
 
+  var signInFlight = false;
+
   finishBtn.addEventListener('click', async function() {
-    finishBtn.disabled = true;
-    finishBtn.textContent = 'Waiting for wallet…';
+    if (signInFlight) return;
+    signInFlight = true;
+    statusEl.textContent = 'Waiting for signature';
+    show('awaitingSig');
     var result = await qfWallet.ensureValidJwt({ interactive: true });
+    signInFlight = false;
     if (result && result.status === 'valid') {
       statusEl.textContent = 'Signed in';
       show('signed');
       setTimeout(redirectHome, 400);
     } else {
-      finishBtn.disabled = false;
-      finishBtn.textContent = 'Finish sign-in';
+      // Fall back to the needs_signature view so user can retry.
+      statusEl.textContent = 'Almost there';
+      show('needsSig');
     }
   });
+
+  if (cancelSigBtn) {
+    cancelSigBtn.addEventListener('click', function() {
+      // Note: doesn't cancel the pending WC request, just returns UI to retry state.
+      statusEl.textContent = 'Almost there';
+      show('needsSig');
+    });
+  }
 
   // If the user returns from the sig deep-link, re-check state.
   window.addEventListener('pageshow', async function() {

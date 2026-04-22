@@ -57,6 +57,18 @@
   var authToken = null;
   var wcProvider = null;       // singleton WC provider instance
   var wcInitPromise = null;    // dedupe concurrent init
+  var wcSessionProcessed = false;  // idempotency flag for handleWcSessionEstablished
+
+  // Belt-and-braces: hide any stray WalletConnect/Reown modal elements.
+  // We never want the built-in modal to render — we have our own deep-link flow.
+  (function installModalGuard() {
+    try {
+      var s = document.createElement('style');
+      s.setAttribute('data-qf-wc-guard', '1');
+      s.textContent = 'w3m-modal,wcm-modal,w3m-router,wcm-router,[class*="w3m-"][class*="modal"]{display:none!important;visibility:hidden!important;pointer-events:none!important}';
+      (document.head || document.documentElement).appendChild(s);
+    } catch (e) {}
+  })();
 
   var API_BASE = 'https://dapp-api.mathswins.co.uk/api/dapp';
   if (typeof location !== 'undefined' && (location.hostname === 'localhost' || location.hostname === '127.0.0.1')) {
@@ -492,7 +504,7 @@
     if (wcProvider) return wcProvider;
     if (wcInitPromise) return wcInitPromise;
     wcInitPromise = (async function() {
-      var mod = await import('https://esm.sh/@walletconnect/ethereum-provider@2');
+      var mod = await import('https://esm.sh/@walletconnect/ethereum-provider@2.17.0');
       var EthereumProvider = mod.EthereumProvider || mod.default;
       var prov = await EthereumProvider.init({
         projectId: WC_PROJECT_ID,
@@ -544,32 +556,82 @@
     });
   }
 
+  function hydrateWcMemoryState(prov, liveAddress) {
+    try {
+      state.address = (liveAddress || '').toLowerCase();
+      state.chainId = prov.chainId ? Number(prov.chainId) : QF_CHAIN_ID;
+      state.walletType = 'walletconnect';
+      state.rawProvider = prov;
+      state.provider = new ethers.BrowserProvider(prov);
+      state.signer = wrapSigner(signerProxy(prov));
+      state.verified = false;
+    } catch (e) { console.error('WC state hydrate failed:', e); }
+  }
+
+  async function ensureQfChain(prov) {
+    try {
+      await prov.request({ method: 'wallet_switchEthereumChain', params: [{ chainId: QF_CHAIN_HEX }] });
+    } catch (switchErr) {
+      try {
+        await prov.request({
+          method: 'wallet_addEthereumChain',
+          params: [{
+            chainId: QF_CHAIN_HEX,
+            chainName: 'QF Network Mainnet',
+            nativeCurrency: { name: 'QF', symbol: 'QF', decimals: 18 },
+            rpcUrls: [QF_RPC],
+            blockExplorerUrls: []
+          }]
+        });
+      } catch (addErr) {
+        console.error('QF chain add/switch failed over WC:', addErr && addErr.message);
+      }
+    }
+  }
+
   function handleWcSessionEstablished(prov) {
-    var addr = (prov.accounts && prov.accounts[0]) ? prov.accounts[0].toLowerCase() : null;
-    if (!addr) return;
+    var live = (prov.accounts && prov.accounts[0]) ? prov.accounts[0] : null;  // preserve case
+    if (!live) return;
+    var liveLower = live.toLowerCase();
+
+    // Idempotent: if we've already processed this session in this page
+    // lifecycle, just make sure in-memory state is hydrated and return.
+    if (wcSessionProcessed) {
+      hydrateWcMemoryState(prov, live);
+      return;
+    }
+    wcSessionProcessed = true;
+
+    // Preserve an existing valid JWT if address matches — rehydration on
+    // page load must not wipe authentication state.
+    var prior = readStoredWalletState();
+    var preservedJwt = null;
+    if (prior.walletType === 'walletconnect' &&
+        prior.address && prior.address.toLowerCase() === liveLower &&
+        prior.jwt && !isJwtExpired(prior.jwt)) {
+      preservedJwt = prior.jwt;
+    }
+
     var cid = prov.chainId ? Number(prov.chainId) : QF_CHAIN_ID;
     setWalletState({
       status: 'connected',
       walletType: 'walletconnect',
-      address: addr,
+      address: liveLower,
       chainId: cid,
-      jwt: null,
-      authStatus: 'none'
+      jwt: preservedJwt,
+      authStatus: preservedJwt ? 'authenticated' : 'none'
     });
-    // Populate in-memory state so signMessage etc. work post-return.
-    try {
-      state.address = addr;
-      state.chainId = cid;
-      state.walletType = 'walletconnect';
-      state.rawProvider = prov;
-      state.provider = new ethers.BrowserProvider(prov);
-      state.signer = wrapSigner(signerProxy(prov, addr));
-      state.verified = false;
-    } catch (e) { console.error('WC state hydrate failed:', e); }
 
-    resolveQfName(addr).then(function(name) {
-      if (name) nameCache[addr] = name;
+    hydrateWcMemoryState(prov, live);
+
+    resolveQfName(liveLower).then(function(name) {
+      if (name) nameCache[liveLower] = name;
     });
+
+    // Make sure the wallet ends up on QF Network (chain 3426).
+    if (cid !== QF_CHAIN_ID) {
+      ensureQfChain(prov);
+    }
 
     try { localStorage.removeItem(FLOW_KEY); } catch (e) {}
     if (location.pathname.indexOf(WALLET_RETURN_PATH) !== 0) {
@@ -577,38 +639,29 @@
     }
   }
 
-  function isTouchDevice() {
-    return ('ontouchstart' in window) || (navigator.maxTouchPoints > 0);
-  }
-
-  function foregroundWalletApp() {
-    // Mobile only — desktop has no wallet app to foreground.
-    if (!isTouchDevice()) return;
-    try {
-      var a = document.createElement('a');
-      a.href = 'metamask://';
-      a.rel = 'noopener noreferrer';
-      a.style.display = 'none';
-      document.body.appendChild(a);
-      a.click();
-      a.remove();
-    } catch (e) { /* noop */ }
-  }
-
-  function signerProxy(prov, address) {
+  function signerProxy(prov) {
     // Minimal ethers-like signer that proxies through the WC provider.
-    // Uses the already-connected WC session — no re-pairing.
+    // Uses the already-connected WC session — no re-pairing. Reads the
+    // live account on each call so address case always matches what
+    // MetaMask currently considers the connected account (avoids a
+    // mid-flow "switch account" prompt).
+    function currentAccount() {
+      return (prov.accounts && prov.accounts[0]) || null;
+    }
     return {
       signMessage: async function(message) {
+        var acct = currentAccount();
+        if (!acct) throw new Error('No WalletConnect account available');
         var msgHex = '0x' + Array.from(new TextEncoder().encode(message)).map(function(b) { return b.toString(16).padStart(2, '0'); }).join('');
-        var pending = prov.request({ method: 'personal_sign', params: [msgHex, address] });
-        foregroundWalletApp();
-        return pending;
+        // Do NOT deep-link away here — navigating to metamask:// mid-request
+        // can kill the JS context and drop the pending response, which
+        // produces a second signing request on return. The WC relay will
+        // route the request to MetaMask, which surfaces a system
+        // notification. The /wallet-return/ UI tells the user to open MM.
+        return prov.request({ method: 'personal_sign', params: [msgHex, acct] });
       },
       sendTransaction: async function(tx) {
-        var pending = prov.request({ method: 'eth_sendTransaction', params: [tx] });
-        foregroundWalletApp();
-        var hash = await pending;
+        var hash = await prov.request({ method: 'eth_sendTransaction', params: [tx] });
         return { hash: hash, wait: async function() { return state.provider.waitForTransaction(hash); } };
       }
     };
@@ -852,23 +905,11 @@
       try {
         var prov = await initWcProvider();
         if (prov.accounts && prov.accounts.length > 0) {
-          var addr = prov.accounts[0].toLowerCase();
-          var cid = prov.chainId ? Number(prov.chainId) : (s.chainId || QF_CHAIN_ID);
-          state.address = addr;
-          state.chainId = cid;
-          state.walletType = 'walletconnect';
-          state.rawProvider = prov;
-          state.provider = new ethers.BrowserProvider(prov);
-          state.signer = wrapSigner(signerProxy(prov, addr));
-          state.verified = false;
-          setWalletState({
-            status: 'connected',
-            walletType: 'walletconnect',
-            address: addr,
-            chainId: cid
-          });
-          resolveQfName(addr).then(function(name) {
-            if (name) { nameCache[addr] = name; state.qfName = name; fireCallbacks(); renderNav(); }
+          // Idempotent — preserves existing valid JWT, ensures chain, hydrates memory.
+          handleWcSessionEstablished(prov);
+          var liveLower = prov.accounts[0].toLowerCase();
+          resolveQfName(liveLower).then(function(name) {
+            if (name) { nameCache[liveLower] = name; state.qfName = name; fireCallbacks(); renderNav(); }
           });
           fireCallbacks();
         } else {
@@ -943,7 +984,7 @@
       try {
         var prov = await initWcProvider();
         if (prov.accounts && prov.accounts.length > 0) {
-          return signerProxy(prov, prov.accounts[0]);
+          return signerProxy(prov);
         }
       } catch (e) { console.error('WC signer init failed:', e); }
     }
