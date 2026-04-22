@@ -1200,7 +1200,14 @@
         finishEl.id = 'qfnFinishSignin';
         finishEl.className = 'qfn-connect';
         finishEl.textContent = 'Finish sign-in';
-        finishEl.addEventListener('click', function() { ensureValidJwt({ interactive: true }); });
+        // Navigate to /wallet-return/ rather than firing in-place —
+        // that page has the proper progress UI, diagnostic log, and a
+        // visible error surface. In-place firing gave zero feedback
+        // when the sign failed.
+        finishEl.addEventListener('click', function() {
+          try { sessionStorage.setItem(RETURN_PATH_KEY, location.pathname + location.search); } catch (e) {}
+          window.location.href = WALLET_RETURN_PATH;
+        });
         rightEl.appendChild(finishEl);
       }
       if (finishEl) finishEl.style.display = '';
@@ -1252,16 +1259,115 @@
     if (acctEl) acctEl.style.display = 'none';
   }
 
+  // ── Floating diagnostic overlay (enabled via ?qfdiag=1) ──────────
+  function maybeInstallDiagOverlay() {
+    try {
+      var q = (location.search || '').toLowerCase();
+      // Sticky: once enabled on any page, remembers so you don't have
+      // to re-add ?qfdiag=1 every navigation.
+      if (q.indexOf('qfdiag=1') !== -1) { try { localStorage.setItem('qf_diag_mode', '1'); } catch (e) {} }
+      if (q.indexOf('qfdiag=0') !== -1) { try { localStorage.removeItem('qf_diag_mode'); } catch (e) {} return; }
+      var sticky = false;
+      try { sticky = localStorage.getItem('qf_diag_mode') === '1'; } catch (e) {}
+      if (!sticky && q.indexOf('qfdiag=1') === -1) return;
+      if (document.getElementById('qf-diag-overlay')) return;
+    } catch (e) { return; }
+
+    var wrap = document.createElement('div');
+    wrap.id = 'qf-diag-overlay';
+    wrap.style.cssText = 'position:fixed;left:8px;right:8px;bottom:8px;z-index:99998;background:#0b0d10;border:1px solid #2a2e36;border-radius:8px;font-family:"JetBrains Mono",monospace;font-size:.55rem;color:#b8bcc6;max-height:60vh;display:flex;flex-direction:column;box-shadow:0 6px 18px rgba(0,0,0,.6);';
+    var head = document.createElement('div');
+    head.style.cssText = 'display:flex;justify-content:space-between;align-items:center;padding:.35rem .55rem;border-bottom:1px solid #2a2e36;gap:.4rem';
+    var title = document.createElement('span');
+    title.textContent = 'QF DIAG';
+    title.style.cssText = 'color:#d4d8e2;letter-spacing:.1em';
+    var btnRow = document.createElement('div');
+    btnRow.style.cssText = 'display:flex;gap:.3rem;flex-wrap:wrap';
+    function mkBtn(label) {
+      var b = document.createElement('button');
+      b.textContent = label;
+      b.style.cssText = 'font:inherit;background:#16181c;border:1px solid #2a2e36;color:#8a8f9c;padding:.2rem .5rem;border-radius:4px;cursor:pointer';
+      return b;
+    }
+    var copyBtn = mkBtn('Copy');
+    var refreshBtn = mkBtn('Snap');
+    var clearBtn = mkBtn('Clear');
+    var toggleBtn = mkBtn('–');
+    var offBtn = mkBtn('Off');
+    btnRow.appendChild(copyBtn); btnRow.appendChild(refreshBtn); btnRow.appendChild(clearBtn); btnRow.appendChild(toggleBtn); btnRow.appendChild(offBtn);
+    head.appendChild(title); head.appendChild(btnRow);
+    var body = document.createElement('div');
+    body.style.cssText = 'padding:.4rem .55rem;overflow:auto;display:flex;flex-direction:column;gap:.4rem';
+    var snapPre = document.createElement('pre');
+    snapPre.style.cssText = 'margin:0;white-space:pre-wrap;word-break:break-all;background:#16181c;border:1px solid #2a2e36;border-radius:4px;padding:.4rem;color:#8a8f9c;font-size:.5rem;max-height:160px;overflow:auto';
+    var logPre = document.createElement('pre');
+    logPre.style.cssText = 'margin:0;white-space:pre-wrap;word-break:break-all;background:#16181c;border:1px solid #2a2e36;border-radius:4px;padding:.4rem;color:#b8bcc6;font-size:.5rem;max-height:220px;overflow:auto';
+    body.appendChild(snapPre); body.appendChild(logPre);
+    wrap.appendChild(head); wrap.appendChild(body);
+    document.body.appendChild(wrap);
+
+    function fmtTime(t) { return new Date(t).toISOString().slice(11, 23); }
+    function renderSnap() {
+      try { snapPre.textContent = JSON.stringify(diagnosticSnapshot(), null, 2); }
+      catch (e) { snapPre.textContent = 'snap error: ' + (e && e.message); }
+    }
+    function appendLine(entry) {
+      var line = fmtTime(entry.t) + '  ' + entry.msg + (entry.extra ? '  ' + JSON.stringify(entry.extra) : '');
+      logPre.textContent += (logPre.textContent ? '\n' : '') + line;
+      logPre.scrollTop = logPre.scrollHeight;
+    }
+    // Replay accumulated buffer
+    diagBuffer.forEach(appendLine);
+    renderSnap();
+    window.addEventListener('qfwallet:diag', function(ev) { if (ev && ev.detail) appendLine(ev.detail); });
+    window.addEventListener('qfwallet:state', renderSnap);
+
+    copyBtn.addEventListener('click', async function() {
+      var payload = {
+        snapshot: diagnosticSnapshot(),
+        log: diagBuffer.map(function(e) { return { t: fmtTime(e.t), msg: e.msg, extra: e.extra }; })
+      };
+      var text = JSON.stringify(payload, null, 2);
+      try { await navigator.clipboard.writeText(text); copyBtn.textContent = '✓'; setTimeout(function() { copyBtn.textContent = 'Copy'; }, 1200); }
+      catch (e) {
+        var ta = document.createElement('textarea'); ta.value = text; document.body.appendChild(ta); ta.select();
+        try { document.execCommand('copy'); copyBtn.textContent = '✓'; } catch (ee) { copyBtn.textContent = 'fail'; }
+        ta.remove();
+        setTimeout(function() { copyBtn.textContent = 'Copy'; }, 1200);
+      }
+    });
+    refreshBtn.addEventListener('click', renderSnap);
+    clearBtn.addEventListener('click', function() { logPre.textContent = ''; diagBuffer.length = 0; });
+    toggleBtn.addEventListener('click', function() {
+      var hidden = body.style.display === 'none';
+      body.style.display = hidden ? '' : 'none';
+      toggleBtn.textContent = hidden ? '–' : '+';
+    });
+    offBtn.addEventListener('click', function() {
+      try { localStorage.removeItem('qf_diag_mode'); } catch (e) {}
+      wrap.remove();
+    });
+
+    qfDiag('diag-overlay: installed', { path: location.pathname });
+  }
+
   // ── Boot ───────────────────────────────────────────────────────────
   var navBooted = false;
   function bootWalletNav() {
     if (navBooted) { renderNav(); return; }
     navBooted = true;
 
+    // Install floating diag overlay if enabled.
+    maybeInstallDiagOverlay();
+
     // Eager WalletConnect runtime init — fires in the background so the
     // provider + all listeners exist before the user can tap Connect.
     // Fire-and-forget: nav rendering must not wait on this.
-    initWalletConnectRuntime().catch(function(e) {
+    qfDiag('boot: calling initWalletConnectRuntime (eager)');
+    initWalletConnectRuntime().then(function(prov) {
+      qfDiag('boot: WC runtime init resolved', { sessionExists: !!(prov && prov.session), accounts: prov && prov.accounts });
+    }).catch(function(e) {
+      qfDiag('boot: WC runtime init FAILED', { message: (e && e.message) });
       console.error('WC runtime init failed:', e && e.message);
     });
 
