@@ -1259,23 +1259,31 @@
     if (acctEl) acctEl.style.display = 'none';
   }
 
-  // ── Floating diagnostic overlay (enabled via ?qfdiag=1) ──────────
+  // ── Floating diagnostic overlay (enabled via ?qfdiag=1 or #diag) ─
   function maybeInstallDiagOverlay() {
+    var shouldInstall = false;
     try {
       var q = (location.search || '').toLowerCase();
-      // Sticky: once enabled on any page, remembers so you don't have
-      // to re-add ?qfdiag=1 every navigation.
-      if (q.indexOf('qfdiag=1') !== -1) { try { localStorage.setItem('qf_diag_mode', '1'); } catch (e) {} }
+      var h = (location.hash || '').toLowerCase();
       if (q.indexOf('qfdiag=0') !== -1) { try { localStorage.removeItem('qf_diag_mode'); } catch (e) {} return; }
-      var sticky = false;
-      try { sticky = localStorage.getItem('qf_diag_mode') === '1'; } catch (e) {}
-      if (!sticky && q.indexOf('qfdiag=1') === -1) return;
-      if (document.getElementById('qf-diag-overlay')) return;
+      if (q.indexOf('qfdiag=1') !== -1 || h.indexOf('diag') !== -1) {
+        try { localStorage.setItem('qf_diag_mode', '1'); } catch (e) {}
+        shouldInstall = true;
+      }
+      try { if (localStorage.getItem('qf_diag_mode') === '1') shouldInstall = true; } catch (e) {}
     } catch (e) { return; }
+    if (!shouldInstall) return;
+    if (!document.body) {
+      // DOM not ready yet — retry after it is.
+      document.addEventListener('DOMContentLoaded', maybeInstallDiagOverlay);
+      return;
+    }
+    if (document.getElementById('qf-diag-overlay')) return;
 
     var wrap = document.createElement('div');
     wrap.id = 'qf-diag-overlay';
-    wrap.style.cssText = 'position:fixed;left:8px;right:8px;bottom:8px;z-index:99998;background:#0b0d10;border:1px solid #2a2e36;border-radius:8px;font-family:"JetBrains Mono",monospace;font-size:.55rem;color:#b8bcc6;max-height:60vh;display:flex;flex-direction:column;box-shadow:0 6px 18px rgba(0,0,0,.6);';
+    // Top of viewport, bright border so it's impossible to miss.
+    wrap.style.cssText = 'position:fixed;left:4px;right:4px;top:4px;z-index:2147483647;background:#0b0d10;border:2px solid #d4a847;border-radius:8px;font-family:"JetBrains Mono",monospace;font-size:.6rem;color:#b8bcc6;max-height:70vh;display:flex;flex-direction:column;box-shadow:0 6px 18px rgba(0,0,0,.8);';
     var head = document.createElement('div');
     head.style.cssText = 'display:flex;justify-content:space-between;align-items:center;padding:.35rem .55rem;border-bottom:1px solid #2a2e36;gap:.4rem';
     var title = document.createElement('span');
@@ -1351,14 +1359,21 @@
     qfDiag('diag-overlay: installed', { path: location.pathname });
   }
 
+  // Install diag overlay as early as possible — do not wait for
+  // bootWalletNav (which only runs if qf-nav.js successfully loads and
+  // calls it). This makes the overlay available even if something
+  // upstream errors.
+  try { maybeInstallDiagOverlay(); } catch (e) { console.error('diag overlay install failed:', e); }
+
   // ── Boot ───────────────────────────────────────────────────────────
   var navBooted = false;
   function bootWalletNav() {
     if (navBooted) { renderNav(); return; }
     navBooted = true;
 
-    // Install floating diag overlay if enabled.
-    maybeInstallDiagOverlay();
+    // Ensure overlay is installed even if the early call above ran
+    // before DOM was ready.
+    try { maybeInstallDiagOverlay(); } catch (e) {}
 
     // Eager WalletConnect runtime init — fires in the background so the
     // provider + all listeners exist before the user can tap Connect.
