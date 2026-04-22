@@ -37,6 +37,7 @@
   </div>
   <div id="needsSig" style="display:none">
     <p class="msg">Your wallet is connected. One more step: sign a short message to prove ownership. No transaction, no fee.</p>
+    <p class="msg" id="errMsg" style="color:var(--red);display:none"></p>
     <div class="row">
       <button class="btn" id="finishBtn">Finish sign-in</button>
       <a class="btn secondary" href="/qf-dapp/">Back to lobby</a>
@@ -151,8 +152,15 @@
       show('signed');
       setTimeout(redirectHome, 400);
     } else {
-      // Fall back to the needs_signature view so user can retry.
-      statusEl.textContent = 'Almost there';
+      // Fall back to the needs_signature view so user can retry, and
+      // surface whatever error the auth layer captured.
+      statusEl.textContent = 'Sign-in failed';
+      var errEl = document.getElementById('errMsg');
+      if (errEl) {
+        var msg = qfWallet.lastAuthError || (result && result.status) || 'Unknown error';
+        errEl.textContent = 'Details: ' + msg;
+        errEl.style.display = '';
+      }
       show('needsSig');
     }
   });

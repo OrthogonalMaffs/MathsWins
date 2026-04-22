@@ -60,6 +60,8 @@
   var wcProvider = null;       // singleton WC provider instance
   var wcInitPromise = null;    // dedupe concurrent init
   var wcSessionProcessed = false;  // idempotency flag for handleWcSessionEstablished
+  var wcLiveSessionVerified = false; // true after resumeAndReconcile has inspected provider.session
+  var lastAuthError = null;    // last signing/auth failure message (for /wallet-return/ display)
 
   // Belt-and-braces: hide any stray WalletConnect/Reown modal elements.
   // We never want the built-in modal to render — we have our own deep-link flow.
@@ -169,12 +171,16 @@
     if (stored) return stored;
 
     try {
+      lastAuthError = null;
       var challengeRes = await fetch(API_BASE + '/auth/challenge', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' }
       });
       var challengeData = await challengeRes.json();
-      if (!challengeData.challenge || !challengeData.nonce) return null;
+      if (!challengeData.challenge || !challengeData.nonce) {
+        lastAuthError = 'Challenge endpoint returned no challenge/nonce';
+        return null;
+      }
 
       var signature = await signer.signMessage(challengeData.challenge);
 
@@ -185,8 +191,10 @@
       });
       var verifyData = await verifyRes.json();
       if (verifyData.token) { saveAuthToken(verifyData.token); return verifyData.token; }
+      lastAuthError = 'Verify rejected signature: ' + (verifyData.error || 'unknown');
       return null;
     } catch (e) {
+      lastAuthError = (e && e.message) || String(e);
       console.error('Auth failed:', e);
       return null;
     }
@@ -656,30 +664,45 @@
     }
 
     try { localStorage.removeItem(FLOW_KEY); } catch (e) {}
-    if (location.pathname.indexOf(WALLET_RETURN_PATH) !== 0) {
+    // Only redirect to /wallet-return/ when the user actually needs to
+    // complete sign-in. If we already hold a valid JWT (rehydration on a
+    // page load), stay where we are — bouncing an authenticated user
+    // through /wallet-return/ is pure churn.
+    var s2 = readStoredWalletState();
+    if (s2.authStatus !== 'authenticated' && location.pathname.indexOf(WALLET_RETURN_PATH) !== 0) {
       window.location.href = WALLET_RETURN_PATH;
     }
   }
 
   function signerProxy(prov) {
     // Minimal ethers-like signer that proxies through the WC provider.
-    // Uses the already-connected WC session — no re-pairing. Reads the
-    // live account on each call so address case always matches what
-    // MetaMask currently considers the connected account (avoids a
-    // mid-flow "switch account" prompt).
+    // Reads the account live on each call — prefers prov.accounts (keeps
+    // original case from the wallet), falls back to canonical stored
+    // state for edge cases where session is present but accounts array
+    // hasn't hydrated yet.
     function currentAccount() {
-      return (prov.accounts && prov.accounts[0]) || null;
+      if (prov.accounts && prov.accounts[0]) return prov.accounts[0];
+      try {
+        if (prov.session && prov.session.namespaces && prov.session.namespaces.eip155) {
+          var accs = prov.session.namespaces.eip155.accounts || [];
+          if (accs.length > 0) {
+            // "eip155:3426:0xabc..." → "0xabc..."
+            var parts = accs[0].split(':');
+            if (parts.length >= 3) return parts[2];
+          }
+        }
+      } catch (e) {}
+      var s = readStoredWalletState();
+      return s.address || null;
     }
     return {
       signMessage: async function(message) {
         var acct = currentAccount();
-        if (!acct) throw new Error('No WalletConnect account available');
+        if (!acct) throw new Error('WC session has no account — reconnect your wallet');
         var msgHex = '0x' + Array.from(new TextEncoder().encode(message)).map(function(b) { return b.toString(16).padStart(2, '0'); }).join('');
         // Do NOT deep-link away here — navigating to metamask:// mid-request
         // can kill the JS context and drop the pending response, which
-        // produces a second signing request on return. The WC relay will
-        // route the request to MetaMask, which surfaces a system
-        // notification. The /wallet-return/ UI tells the user to open MM.
+        // produces a second signing request on return.
         return prov.request({ method: 'personal_sign', params: [msgHex, acct] });
       },
       sendTransaction: async function(tx) {
@@ -955,12 +978,18 @@
           }
           fireCallbacks();
         } else {
-          // Stored says connected but live session is gone.
+          // Stored says connected but live session is gone — clear it
+          // so the nav falls back to Connect Wallet.
           setWalletState(defaultState());
         }
       } catch (e) {
         console.error('WC resume failed:', e);
+      } finally {
+        wcLiveSessionVerified = true;
       }
+    } else {
+      // Not a WC session — no verification needed, render from storage directly.
+      wcLiveSessionVerified = true;
     }
 
     // Never triggers signing.
@@ -1047,6 +1076,24 @@
     if (!connectBtn) return; // nav not rendered on this page
 
     var rightEl = connectBtn.parentElement;
+
+    // WalletConnect-specific safety gate: never show Finish sign-in or
+    // wallet address from stored state alone. Stored state may claim a
+    // connected WC session that has actually been torn down by the peer
+    // (user cleared cache on wallet side, session expired, etc.). Wait
+    // until resumeAndReconcile has inspected provider.session before
+    // committing to any connected UI. Until then, render Connect Wallet.
+    if (s.walletType === 'walletconnect' && s.status === 'connected' && !wcLiveSessionVerified) {
+      connectBtn.style.display = '';
+      if (rightEl) rightEl.classList.remove('qfn-connected');
+      if (addrEl) addrEl.style.display = 'none';
+      if (nameEl) nameEl.style.display = 'none';
+      if (balEl) balEl.style.display = 'none';
+      if (netEl) netEl.style.display = 'none';
+      if (acctEl) acctEl.style.display = 'none';
+      if (finishEl) finishEl.style.display = 'none';
+      return;
+    }
 
     if (s.status === 'connected' && s.authStatus === 'needs_signature') {
       connectBtn.style.display = 'none';
@@ -1210,6 +1257,7 @@
     bootWalletNav: bootWalletNav,
     initWalletConnectRuntime: initWalletConnectRuntime,
     wcHasLiveSession: function() { return wcHasLiveSession(wcProvider); },
+    get lastAuthError() { return lastAuthError; },
     readStoredWalletState: readStoredWalletState,
     setWalletState: setWalletState,
     ensureValidJwt: ensureValidJwt,
