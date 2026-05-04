@@ -4,7 +4,7 @@
  * Idempotent: safe to call multiple times on the same league.
  */
 import { ethers } from 'ethers';
-import { readFileSync } from 'fs';
+import { readFileSync, writeFileSync, mkdirSync } from 'fs';
 import { join, dirname } from 'path';
 import { fileURLToPath } from 'url';
 import { getDb } from './db/index.mjs';
@@ -20,7 +20,8 @@ const __dirname = dirname(fileURLToPath(import.meta.url));
 
 const QF_RPC = process.env.QF_RPC_URL || 'https://archive.mainnet.qfnode.net/eth';
 const TROPHY_CONTRACT = process.env.TROPHY_CONTRACT || '0xBC41549872d5480b95733e4f29359b7EAB4E05b8';
-const PINATA_JWT = process.env.PINATA_JWT || '';
+const TROPHY_METADATA_DIR = join(__dirname, '../data/trophy-metadata');
+const TROPHY_METADATA_BASE_URL = 'https://dapp-api.mathswins.co.uk/trophy-metadata';
 
 const PRIZE_SPLITS = [0.50, 0.25, 0.15, 0.10];
 
@@ -30,17 +31,40 @@ const TROPHY_ABI = [
   'function totalSupply() view returns (uint256)'
 ];
 
-// IPFS CIDs for all trophy images (9 games × 2 tiers)
+// Trophy image URLs — served from the GitHub Pages frontend (qf-dapp/games/<slug>/assets/)
 const TROPHY_IMAGE_CIDS = {
-  'sudoku-duel':         { silver: 'QmZoLgehMYQ4otZE1CkoEaXszU7YCmHLQ6L9tnRWuZzNQm', bronze: 'QmZ2HHf26qeMfJ62rXjaT3THpD7EpSQZ2JHi3RssciMydb' },
-  'kenken':              { silver: 'QmeBJB4RQMTddzfASvNxD3TvnaQEKoQUmPgMBrnKBhxqdz', bronze: 'QmeFA6EJ5JGksPVCft8ZEMU9mVoEEzmxRpGjkJzFjVbCbs' },
-  'kakuro':              { silver: 'QmUeY8zQD2HJYGJ2n5hGyXJSjj64sfUhjuRZjLnLGajEFz', bronze: 'QmUbYwbYiFqsq4JKRdQ1MHq8ag2jipiQ5tEntiCWMYJdYY' },
-  'nonogram':            { silver: 'QmRwxnzXbhyMGP7K6vwiiW1u7NdLmKMG3mJF69tb9iCsHn', bronze: 'QmYLCVkcA7ewsZMTogCQPQ6u5VEHCiKB6M7K4H6SEAakwY' },
-  'cryptarithmetic-club':{ silver: 'QmaMecjW13rjpMufpNdWKuhCJYMxUWB4cdn7w3GEVptE7g', bronze: 'QmP97Ai4jy4xHkUEfN1qjS6qH4tdRxXGsz2kfRRzAyeX26' },
-  'prime-or-composite':  { silver: 'QmXf97o3GZmd6J8iPrY4eYCSUjaigFPkw65UucE4fZeWEV', bronze: 'QmSDjmMXqyjm9Nk4pqo8AF4KZMLjNzqGaJ5RTSTNS17896' },
-  'countdown-numbers':   { silver: 'Qmc3CgHNeCoKVCkbwi8iHEE751A7yDiozqXtQ18hzEVRVr', bronze: 'QmXNvR55qkat5DgDD1Yc4Q7kyGYEyQgdEgaYZ3JoaAfdSu' },
-  'estimation-engine':   { silver: 'QmenQZ83D3MwN1uzSqDU9PdCxMsSQBnJCQWfg5XGcnKPFd', bronze: 'QmWsex9ocpK3bQQm2XABLFM7eVT4FzdbupQcxCuAJH4JhZ' },
-  'sequence-solver':     { silver: 'Qmdq3DSx57fZnm6K8u6oMg1fhx5jbNWZ7Xut88yT8RYoXB', bronze: 'QmSUeaTp2SQyXpgAfopqrfdY8Pj7AKydKoDNALKDyMG6xS' }
+  'sudoku-duel':          { silver: 'https://mathswins.co.uk/qf-dapp/games/sudoku-duel/assets/logo-silver.png',
+                            bronze: 'https://mathswins.co.uk/qf-dapp/games/sudoku-duel/assets/logo-bronze.png' },
+  'kenken':               { silver: 'https://mathswins.co.uk/qf-dapp/games/kenken/assets/logo-silver.png',
+                            bronze: 'https://mathswins.co.uk/qf-dapp/games/kenken/assets/logo-bronze.png' },
+  'kakuro':               { silver: 'https://mathswins.co.uk/qf-dapp/games/kakuro/assets/logo-silver.png',
+                            bronze: 'https://mathswins.co.uk/qf-dapp/games/kakuro/assets/logo-bronze.png' },
+  'nonogram':             { silver: 'https://mathswins.co.uk/qf-dapp/games/nonogram/assets/logo-silver.png',
+                            bronze: 'https://mathswins.co.uk/qf-dapp/games/nonogram/assets/logo-bronze.png' },
+  'cryptarithmetic-club': { silver: 'https://mathswins.co.uk/qf-dapp/games/cryptarithmetic-club/assets/logo-silver.png',
+                            bronze: 'https://mathswins.co.uk/qf-dapp/games/cryptarithmetic-club/assets/logo-bronze.png' },
+  'prime-or-composite':   { silver: 'https://mathswins.co.uk/qf-dapp/games/prime-or-composite/assets/logo-silver.png',
+                            bronze: 'https://mathswins.co.uk/qf-dapp/games/prime-or-composite/assets/logo-bronze.png' },
+  'countdown-numbers':    { silver: 'https://mathswins.co.uk/qf-dapp/games/countdown-numbers/assets/logo-silver.png',
+                            bronze: 'https://mathswins.co.uk/qf-dapp/games/countdown-numbers/assets/logo-bronze.png' },
+  'estimation-engine':    { silver: 'https://mathswins.co.uk/qf-dapp/games/estimation-engine/assets/logo-silver.png',
+                            bronze: 'https://mathswins.co.uk/qf-dapp/games/estimation-engine/assets/logo-bronze.png' },
+  'sequence-solver':      { silver: 'https://mathswins.co.uk/qf-dapp/games/sequence-solver/assets/logo-silver.png',
+                            bronze: 'https://mathswins.co.uk/qf-dapp/games/sequence-solver/assets/logo-bronze.png' },
+  'minesweeper':          { silver: 'https://mathswins.co.uk/qf-dapp/games/minesweeper/assets/logo-silver.png',
+                            bronze: 'https://mathswins.co.uk/qf-dapp/games/minesweeper/assets/logo-bronze.png' },
+  'freecell':             { silver: 'https://mathswins.co.uk/qf-dapp/games/freecell/assets/logo-silver.png',
+                            bronze: 'https://mathswins.co.uk/qf-dapp/games/freecell/assets/logo-bronze.png' },
+  'poker-patience':       { silver: 'https://mathswins.co.uk/qf-dapp/games/poker-patience/assets/logo-silver.png',
+                            bronze: 'https://mathswins.co.uk/qf-dapp/games/poker-patience/assets/logo-bronze.png' },
+  'cribbage-solitaire':   { silver: 'https://mathswins.co.uk/qf-dapp/games/cribbage-solitaire/assets/logo-silver.png',
+                            bronze: 'https://mathswins.co.uk/qf-dapp/games/cribbage-solitaire/assets/logo-bronze.png' },
+  'golf-solitaire':       { silver: 'https://mathswins.co.uk/qf-dapp/games/golf-solitaire/assets/logo-silver.png',
+                            bronze: 'https://mathswins.co.uk/qf-dapp/games/golf-solitaire/assets/logo-bronze.png' },
+  'battleships':          { silver: 'https://mathswins.co.uk/qf-dapp/games/battleships/assets/logo-silver.png',
+                            bronze: 'https://mathswins.co.uk/qf-dapp/games/battleships/assets/logo-bronze.png' },
+  'sudoku-duel':          { silver: 'https://mathswins.co.uk/qf-dapp/games/sudoku-duel/assets/logo-silver.png',
+                            bronze: 'https://mathswins.co.uk/qf-dapp/games/sudoku-duel/assets/logo-bronze.png' }
 };
 
 const GAME_NAMES = {
@@ -54,16 +78,12 @@ function ordinal(n) {
   return n === 1 ? '1st' : n === 2 ? '2nd' : n === 3 ? '3rd' : n + 'th';
 }
 
-// ── Pin JSON to IPFS via Pinata ─────────────────────────────────────
-async function pinJSONToIPFS(json, name) {
-  const res = await fetch('https://api.pinata.cloud/pinning/pinJSONToIPFS', {
-    method: 'POST',
-    headers: { 'Authorization': 'Bearer ' + PINATA_JWT, 'Content-Type': 'application/json' },
-    body: JSON.stringify({ pinataContent: json, pinataMetadata: { name } })
-  });
-  const data = await res.json();
-  if (!data.IpfsHash) throw new Error('Pinata pin failed: ' + JSON.stringify(data));
-  return data.IpfsHash;
+// ── Write trophy metadata JSON to local disk; served by the Cloudflare tunnel ──
+function writeTrophyMetadata(metadata, pinName) {
+  mkdirSync(TROPHY_METADATA_DIR, { recursive: true });
+  const filePath = join(TROPHY_METADATA_DIR, pinName + '.json');
+  writeFileSync(filePath, JSON.stringify(metadata));
+  return TROPHY_METADATA_BASE_URL + '/' + pinName + '.json';
 }
 
 // ── Get escrow signer for trophy minting ────────────────────────────
@@ -141,7 +161,7 @@ export async function doSettleLeague(leagueId) {
         const metadata = {
           name: gameName + ' — ' + tierLabel + ' League ' + ordinal(winner.position),
           description: 'Awarded for ' + ordinal(winner.position) + ' place in MathsWins ' + gameName + ' ' + tierLabel + ' League. Soulbound — non-transferable.',
-          image: 'ipfs://' + imageCIDs[league.tier],
+          image: imageCIDs[league.tier],
           external_url: 'https://mathswins.co.uk/qf-dapp/games/' + league.game_id + '/league/',
           attributes: [
             { trait_type: 'Game', value: gameName },
@@ -153,13 +173,13 @@ export async function doSettleLeague(leagueId) {
           ]
         };
 
-        // Pin metadata
+        // Write metadata to disk; served via Cloudflare tunnel
         const pinName = league.game_id + '-' + league.tier + '-' + leagueId.slice(0, 8) + '-' + ordinal(winner.position);
-        const metadataCID = await pinJSONToIPFS(metadata, pinName);
-        console.log('  Pinned metadata for ' + ordinal(winner.position) + ': ' + metadataCID);
+        const metadataURL = writeTrophyMetadata(metadata, pinName);
+        console.log('  Wrote metadata for ' + ordinal(winner.position) + ': ' + metadataURL);
 
         // Mint trophy
-        const mintTx = await trophyContract.mint(winner.wallet, 'ipfs://' + metadataCID);
+        const mintTx = await trophyContract.mint(winner.wallet, metadataURL);
         const receipt = await mintTx.wait();
         console.log('  Minted trophy to ' + winner.wallet.slice(0, 8) + '... tx: ' + receipt.hash);
 

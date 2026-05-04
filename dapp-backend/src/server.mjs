@@ -127,6 +127,9 @@ app.use('/api/dapp', (req, res, next) => {
 // ── Routes ──────────────────────────────────────────────────────────────────
 app.use('/api/dapp', apiRoutes);
 
+// Static — trophy metadata JSON files referenced by tokenURI
+app.use('/trophy-metadata', express.static(path.join(__dirname, '../data/trophy-metadata')));
+
 // Health check
 app.get('/health', async (req, res) => {
   const balance = await getEscrowBalance();
