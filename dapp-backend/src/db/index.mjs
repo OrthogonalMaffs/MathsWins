@@ -1708,10 +1708,21 @@ export function getWalletLeagueHistory(wallet, limit) {
 
 export function getWalletTrophies(wallet) {
   const db = getDb();
-  const tableExists = db.prepare("SELECT name FROM sqlite_master WHERE type='table' AND name='commemorative_mints'").get();
-  if (!tableExists) return [];
-  return db.prepare('SELECT * FROM commemorative_mints WHERE wallet = ? ORDER BY minted_at DESC')
-    .all(wallet.toLowerCase());
+  return db.prepare(`
+    SELECT
+      lp.league_id,
+      lp.position,
+      lp.tx_hash,
+      lp.amount,
+      l.game_id,
+      l.tier,
+      l.settled_at AS minted_at
+    FROM league_prizes lp
+    JOIN leagues l ON l.id = lp.league_id
+    WHERE lp.wallet = ?
+      AND lp.tx_hash IS NOT NULL
+    ORDER BY l.settled_at DESC
+  `).all(wallet.toLowerCase());
 }
 
 export function getGameStateForLeaguePuzzle(wallet, leagueId, puzzleIndex) {
