@@ -1013,37 +1013,28 @@ async function renderAchievements() {
 
     // Determine image source: minted uses metadata_cid, unminted bespoke uses ipfs-mapping
     var imageSrc = null;
-    if (a.minted_at && a.metadata_cid) {
-      // Fetch metadata to get image URL — clickable lightbox for minted
-      (function(wrapEl, cid, achName) {
-        fetch('https://gateway.pinata.cloud/ipfs/' + cid)
-          .then(function(r) { if (!r.ok) throw new Error('fetch failed'); return r.json(); })
-          .then(function(meta) {
-            if (!meta || !meta.image) throw new Error('no image');
-            var imgUrl = meta.image;
-            if (imgUrl.startsWith('ipfs://')) imgUrl = 'https://gateway.pinata.cloud/ipfs/' + imgUrl.slice(7);
-            var img = document.createElement('img');
-            img.alt = achName;
-            img.onload = function() { img.classList.add('loaded'); };
-            img.onerror = function() { wrapEl.innerHTML = '<div class="ach-placeholder"><span class="lock-icon">&#x1F5BC;</span></div>'; };
-            img.src = imgUrl;
-            wrapEl.insertBefore(img, wrapEl.firstChild);
-            wrapEl.classList.add('clickable');
-            wrapEl.onclick = function(e) { e.stopPropagation(); openLightbox(imgUrl, achName); };
-          })
-          .catch(function() { wrapEl.innerHTML = '<div class="ach-placeholder"><span class="lock-icon">&#x1F5BC;</span></div>'; });
-      })(wrap, a.metadata_cid, a.name || a.achievement_id);
+    if (a.minted_at && bespokeEntry && bespokeEntry.image_ipfs) {
+      // Minted — image_ipfs is now a direct https://mathswins.co.uk URL
+      // (post-Pinata migration). Skip the metadata fetch.
+      (function(wrapEl, imgUrl, achName) {
+        var img = document.createElement('img');
+        img.alt = achName;
+        img.onload = function() { img.classList.add('loaded'); };
+        img.onerror = function() { wrapEl.innerHTML = '<div class="ach-placeholder"><span class="lock-icon">&#x1F5BC;</span></div>'; };
+        img.src = imgUrl;
+        wrapEl.insertBefore(img, wrapEl.firstChild);
+        wrapEl.classList.add('clickable');
+        wrapEl.onclick = function(e) { e.stopPropagation(); openLightbox(imgUrl, achName); };
+      })(wrap, bespokeEntry.image_ipfs, a.name || a.achievement_id);
     } else if (isBlur && bespokeEntry) {
       // Unminted bespoke — show blurred image from ipfs-mapping
       (function(wrapEl, entry) {
-        var imgUrl = entry.image_ipfs;
-        if (imgUrl.startsWith('ipfs://')) imgUrl = 'https://gateway.pinata.cloud/ipfs/' + imgUrl.slice(7);
         var img = document.createElement('img');
         img.alt = 'Blurred preview';
         img.className = 'blurred';
         img.onload = function() { img.classList.add('loaded'); };
         img.onerror = function() { wrapEl.innerHTML = '<div class="ach-placeholder"><span class="lock-icon">&#x1F512;</span><span class="lock-text">Mint to reveal</span></div>'; };
-        img.src = imgUrl;
+        img.src = entry.image_ipfs;
         wrapEl.insertBefore(img, wrapEl.firstChild);
       })(wrap, bespokeEntry);
     }
@@ -1207,9 +1198,13 @@ function renderTrophies() {
 
     var imgUrl = 'https://mathswins.co.uk/qf-dapp/games/' + t.game_id + '/assets/logo-' + t.tier + '.png';
     var posLabel = t.position ? ordinal(t.position) : '';
+    var tierCap = t.tier ? (t.tier.charAt(0).toUpperCase() + t.tier.slice(1)) : '';
+    var lbName = gName + (tierCap ? ' — ' + tierCap : '') + (posLabel ? ' ' + posLabel : '');
 
     html += '<div class="trophy-card">' +
-      '<img class="trophy-img" src="' + imgUrl + '" alt="' + gName + ' trophy">' +
+      '<img class="trophy-img" src="' + imgUrl + '" alt="' + gName + ' trophy" ' +
+        'onclick="openLightbox(\'' + imgUrl + '\',\'' + lbName.replace(/'/g, "\\'") + '\')" ' +
+        'style="cursor:pointer">' +
       '<div class="trophy-info">' +
         '<div class="trophy-game">' + gName + '</div>' +
         (tier ? '<div class="trophy-tier ' + tierClass + '">' + tier + ' trophy</div>' : '') +
