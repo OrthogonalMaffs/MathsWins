@@ -5,6 +5,14 @@ import { fileURLToPath } from 'url';
 
 const __dirname = dirname(fileURLToPath(import.meta.url));
 
+// Owner wallets — Pioneer status (first-to-earn tag) is suppressed for these
+// addresses at award-time so platform builders can't claim Pioneer NFTs by
+// virtue of testing first. Read once at module load; ecosystem.config.cjs is
+// the source of truth.
+const OWNER_WALLETS_SET = new Set(
+  (process.env.OWNER_WALLETS || '').split(',').map(a => a.trim().toLowerCase()).filter(Boolean)
+);
+
 let db;
 
 export function getDb() {
@@ -798,9 +806,11 @@ export function awardAchievement(wallet, achievementId) {
     throw e;
   }
 
-  // Check if this wallet is the pioneer (first to earn)
+  // Check if this wallet is the pioneer (first to earn).
+  // Owner wallets (builders, ledger, notabot) are excluded so testing wallets
+  // never claim Pioneer status — the row stays unclaimed for a real player.
   const reg = db.prepare('SELECT first_claimed_by FROM achievement_registry WHERE achievement_id = ?').get(achievementId);
-  if (reg && !reg.first_claimed_by) {
+  if (reg && !reg.first_claimed_by && !OWNER_WALLETS_SET.has(w)) {
     db.prepare('UPDATE achievement_registry SET first_claimed_by = ?, first_claimed_at = ? WHERE achievement_id = ? AND first_claimed_by IS NULL')
       .run(w, now, achievementId);
     db.prepare('UPDATE achievement_eligibility SET is_pioneer = 1 WHERE wallet = ? AND achievement_id = ?')
