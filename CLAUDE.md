@@ -68,8 +68,8 @@ Platform: Academy (9 courses), Tools (28 calculators), Games (22 dApp + 13 main 
 - New Resolver: `0x276b7e9343c19bea29d32dd4a8f84e6d1c183111` | Old: `0xd5d12431b2956248861dbec5e8a9bc6023114e80`
 
 ## Known Issues (2026-04-18)
-- **`ACHIEVEMENT_METADATA` dict drift fixed 2026-04-17** (commit 31345b5 — loads `ipfs-mapping.json` at startup). Token 11 setTokenURI fix still pending.
-- **Token 11 wrong tokenURI.** `wrong-answer-streak` points to tier-fallback CID. Fix: `setTokenURI(11, <correct CID>)`.
+- **`ACHIEVEMENT_METADATA` dict drift fixed 2026-04-17** (commit 31345b5 — loads `ipfs-mapping.json` at startup).
+- **Token 11 + 25 other minted tokenURIs** swept off Pinata to `https://mathswins.co.uk/qf-dapp/nft/achievements/metadata/<id>.json` 2026-05-04 via `qf-dapp/scripts/set-token-uris.mjs`. Pinata account is now disabled — see `mathswins-pinata-decommissioned-2026-05-04.md`.
 - **Test-activity exclusion not enforced.** BUILDER_WALLETS bypasses payment only — achievement/record writes still fire. Architectural fix pending.
 - **~7 orphan achievements** still need per-game frontend wiring (down from 13 — 4 Maffsy + Clairvoyant + On-the-nose wired today). See `docs/achievement-system.md`.
 - **FreeCell auto-complete bug.** Does not trigger when tableau sorted descending + foundations at 8s. UNDO greying mid-game is a separate issue. Both pending.
@@ -127,6 +127,25 @@ Platform: Academy (9 courses), Tools (28 calculators), Games (22 dApp + 13 main 
 
   Verification: 4 toggles × 26 parallel = 104 GETs all returned 200; 130 POSTs to non-whitelisted endpoint returned exactly 120 × 401 + 10 × 429 (proves global limiter at 120/IP is firing per real client IP). Browser-confirmed by Jon. The unrelated POST `/duel/:code/broadcast` per-wallet 5/24h limiter at `routes/api.mjs:776` is intentionally untouched (anti-abuse, per-wallet not per-IP).
 
+## Pinata migration + first league settlement (2026-05-04 → 2026-05-05)
+
+- **All NFT assets migrated off Pinata** to GitHub Pages + Box 1 disk. Pinata account `jonfox78@gmail.com` is DISABLED. Never reintroduce `gateway.pinata.cloud`, `api.pinata.cloud`, `PINATA_JWT`, or `pinJSONToIPFS`.
+  - 163 achievement images at `https://mathswins.co.uk/qf-dapp/achievements/assets/bespoke/<id>.png`
+  - 163 achievement metadata JSONs at `https://mathswins.co.uk/qf-dapp/nft/achievements/metadata/<id>.json` (regenerated from `achievement_registry`)
+  - Trophy images at `https://mathswins.co.uk/qf-dapp/games/<game_id>/assets/logo-<tier>.png`
+  - Trophy metadata written by `writeTrophyMetadata` in `league-settle.mjs` to `/home/jon/mathswins-dapp/data/trophy-metadata/<pinName>.json`, served at `https://dapp-api.mathswins.co.uk/trophy-metadata/<pinName>.json` via the existing Cloudflare tunnel (hostname-based, all paths forward). Static route added in `server.mjs`.
+  - `dapp-backend/src/achievements/ipfs-mapping.json` and `qf-dapp/achievements/ipfs-mapping.json` both rewritten — 163 entries each, 0 `ipfs://` or `gateway.pinata.cloud` strings remain.
+  - 26 already-minted tokenURIs swept on-chain via `qf-dapp/scripts/set-token-uris.mjs` (single-use, reads `OWNER_PRIVATE_KEY` from a local `.env`, runs setTokenURI on QFAchievement v2).
+  - Commits `6034e38` (achievement migration), `758dcc4` (trophy migration).
+
+- **`league_prizes` schema fix (Box 1 ALTER).** `tx_hash TEXT` and `paid_at INTEGER` columns were missing on Box 1 (drift from `schema.sql`). Added via two `ALTER TABLE` statements at the start of the settlement-fix work. Settlement code already referenced these columns.
+
+- **First league ever (`d9d7e207-456c-4ea7-80f2-6e3006cb85c5`, sudoku-duel bronze) settled 2026-05-04 21:29 UTC.** Trophies minted to positions 1–3 (notabot 170 QF, Soapy 85 QF, 0x08ba 51 QF). Position 4 (Kyle, 0 puzzles) was excluded by the leaderboard query. **Soapy's 85 QF transfer rejected by QF Network with substrate error 1010 — funds still in escrow, manual top-up pending.** See `mathswins-soapy-stuck-prize-2026-05-04.md`.
+
+- **`getWalletTrophies` repointed** from non-existent `commemorative_mints` table to `league_prizes JOIN leagues` (commit `ed5ccef`). My Account Trophies tab now displays the trophy with image + position + prize amount + date + tx hash. Trophy image is clickable → opens existing `openLightbox` overlay. Commits `9e953aa` (trophy display) and `8bd035b` (lightbox wire + achievement image URL fix post-Pinata).
+
+- **Pioneer guard for owner wallets** finally landed in `awardAchievement` itself (commit `ee39836`) — reads `OWNER_WALLETS` env into `OWNER_WALLETS_SET` at module load and skips `is_pioneer = 1` + `first_claimed_by` writes for any owner. Same session cleared 6 illegitimate notabot Pioneer flags + 6 `first_claimed_by` rows (kept `bug-hunter` #18 only).
+
 ## Late-night 2026-04-19 → 2026-04-20
 
 - **`OWNER_WALLETS` expanded to 4.** Added `0x7a3C15461f89742d8416c560Ba07CF8732a6f8EF` (notabot.qf) to the list in `ecosystem.config.cjs` so Regicide/Detention trigger when Jon's primary wallet places in a league. `.env` also carries the same value but is overridden by the PM2 env block (see `server.mjs` .env-loader comment: "ecosystem.config.cjs values always take precedence"). Lands on overnight 03:05 restart.
@@ -138,7 +157,7 @@ Platform: Academy (9 courses), Tools (28 calculators), Games (22 dApp + 13 main 
 
 ## Change Required (picked up with PC, 2026-04-20)
 
-- **`PIONEER_EXCLUDED_WALLETS` env + `awardAchievement` guard.** Hard rule: notabot.qf (`0x7a3C…f8EF`) must never be Pioneer on any NFT (exception: the already-minted `bug-hunter` #18). Implementation sketch: new env var in `ecosystem.config.cjs` following the `OWNER_WALLETS` pattern; `awardAchievement` in `dapp-backend/src/db/index.mjs:758` reads list and skips the `UPDATE achievement_registry SET first_claimed_by` + `UPDATE achievement_eligibility SET is_pioneer = 1` block when wallet matches. No on-chain change (pioneer is DB-only). Memory rule `feedback_notabot-no-pioneer.md` is the interim safety net. PC to review before code lands.
+- **Pioneer guard SHIPPED 2026-05-05 (commit `ee39836`)** — different shape: reused existing `OWNER_WALLETS` env (which already includes notabot) rather than introducing a new `PIONEER_EXCLUDED_WALLETS` env. `db/index.mjs` reads `OWNER_WALLETS_SET` once at module load; `awardAchievement` skips the `is_pioneer = 1` + `first_claimed_by` writes for any address in the set. Mint-route `isOwner` guard at `api.mjs:2360` left in place as belt-and-braces. Same session cleared 6 illegitimate notabot Pioneer flags (kept `bug-hunter` #18, the only legitimate one).
 - **Box 1 drift audit (defer).** Box 1 `/home/jon/mathswins-dapp/src/` has 21 files that local GitHub clone doesn't — legacy `api.mjs`/`index.mjs`/`estimation-engine.mjs`/`kenken.mjs` at src root, plus a duplicate `src/games/games/` subtree of all 16 game files. Likely dead code from earlier refactors but requires per-file import audit before deletion. Not restart-adjacent; separate session.
 
 ## Maffsy gate fix + all-time leaderboard (2026-04-20)
