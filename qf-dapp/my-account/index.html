@@ -200,7 +200,9 @@ body{background:var(--bg);color:var(--text);font-family:'Inter',sans-serif;min-h
 
 /* ── Trophy cards ── */
 .trophy-grid{display:grid;grid-template-columns:repeat(2,1fr);gap:.6rem}
-.trophy-card{background:var(--surface);border:1px solid var(--border);border-radius:8px;padding:1rem;display:flex;flex-direction:column;gap:.3rem}
+.trophy-card{background:var(--surface);border:1px solid var(--border);border-radius:8px;padding:1rem;display:flex;align-items:center;gap:1rem}
+.trophy-img{width:80px;height:80px;object-fit:contain;border-radius:8px;flex-shrink:0}
+.trophy-info{display:flex;flex-direction:column;gap:.25rem;min-width:0}
 .trophy-game{font-family:'DM Mono',monospace;font-size:.72rem;color:var(--silver-bright)}
 .trophy-tier{font-family:'DM Mono',monospace;font-size:.55rem;text-transform:uppercase;letter-spacing:.06em}
 .trophy-tier.bronze{color:#cd7f32}
@@ -1203,11 +1205,19 @@ function renderTrophies() {
     var tier = leagueInfo ? (leagueInfo.tier || 'bronze') : '';
     var tierClass = tier.toLowerCase();
 
+    var imgUrl = 'https://mathswins.co.uk/qf-dapp/games/' + t.game_id + '/assets/logo-' + t.tier + '.png';
+    var posLabel = t.position ? ordinal(t.position) : '';
+
     html += '<div class="trophy-card">' +
-      '<div class="trophy-game">' + gName + '</div>' +
-      (tier ? '<div class="trophy-tier ' + tierClass + '">' + tier + ' trophy</div>' : '') +
-      '<div class="trophy-detail">' + formatDate(t.minted_at) + '</div>' +
-      (t.tx_hash ? '<div class="trophy-detail">' + truncTx(t.tx_hash) + '</div>' : '') +
+      '<img class="trophy-img" src="' + imgUrl + '" alt="' + gName + ' trophy">' +
+      '<div class="trophy-info">' +
+        '<div class="trophy-game">' + gName + '</div>' +
+        (tier ? '<div class="trophy-tier ' + tierClass + '">' + tier + ' trophy</div>' : '') +
+        (posLabel ? '<div class="trophy-detail">' + posLabel + '</div>' : '') +
+        (t.amount ? '<div class="trophy-detail">Prize: ' + t.amount + ' QF</div>' : '') +
+        '<div class="trophy-detail">' + formatDate(t.minted_at) + '</div>' +
+        (t.tx_hash ? '<div class="trophy-detail">' + truncTx(t.tx_hash) + '</div>' : '') +
+      '</div>' +
       '</div>';
   });
   html += '</div>';
